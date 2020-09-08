@@ -12,16 +12,6 @@
     <artifactId>ocean-imes-config</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-imes-config</name>
+    <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

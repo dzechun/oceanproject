@@ -21,3 +21,6 @@ security:
   user:
     name: root
     password: root
+eureka:
+  client:
+    register-with-eureka: false
