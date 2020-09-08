@@ -12,14 +12,14 @@
     <artifactId>ocean-imes-config</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-imes-config</name>
-    <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>cz.mallat.uasparser</groupId>
-            <artifactId>uasparser</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
