@@ -1,6 +1,6 @@
 package com.fantechs.common.base.exception;
 
-import com.fantechs.common.constants.ErrorCodeEnum;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import lombok.Data;
 
 /**

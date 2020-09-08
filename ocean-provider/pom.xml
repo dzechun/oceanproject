@@ -16,5 +16,6 @@
 
     <modules>
         <module>ocean-fileserver</module>  <!-- 文件服务 -->
+        <module>ocean-security</module>    <!-- 用户认证中心 -->
     </modules>
 </project>
