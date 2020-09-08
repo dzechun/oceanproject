@@ -20,6 +20,7 @@
         <module>ocean-common</module>  <!-- 公共模块 -->
         <module>ocean-txlcn</module>  <!-- 分布式锁 -->
         <module>ocean-provider</module>  <!-- 服务中心 -->
+        <module>ocean-provider-api</module>  <!-- feign对外接口 -->
     </modules>
 
     <!-- 整合依赖版本管理-->

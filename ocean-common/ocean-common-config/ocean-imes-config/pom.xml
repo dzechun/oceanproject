@@ -14,4 +14,12 @@
     <name>ocean-imes-config</name>
     <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>cz.mallat.uasparser</groupId>
+            <artifactId>uasparser</artifactId>
+            <version>0.6.0</version>
+        </dependency>
+    </dependencies>
 </project>
