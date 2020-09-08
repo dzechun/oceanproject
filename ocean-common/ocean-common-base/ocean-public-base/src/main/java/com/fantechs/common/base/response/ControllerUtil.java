@@ -1,7 +1,8 @@
 package com.fantechs.common.base.response;
 
-import com.fantechs.common.constants.ErrorCodeEnum;
-import com.fantechs.common.utils.StringUtils;
+
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

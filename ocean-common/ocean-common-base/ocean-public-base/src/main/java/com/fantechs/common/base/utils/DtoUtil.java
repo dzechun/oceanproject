@@ -1,7 +1,7 @@
 package com.fantechs.common.base.utils;
 
 
-import com.fantechs.common.response.ResponseEntity;
+import com.fantechs.common.base.response.ResponseEntity;
 
 /**
  * 用于返回Dto的工具类
