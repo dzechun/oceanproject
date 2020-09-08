@@ -1,0 +1,20 @@
+server:
+  port: 7979
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: @pom.artifactId@
+  cloud:
+    inetutils:
+      ignoredInterfaces:
+        - docker0
+        - veth.*
+        - VM.*
+      preferredNetworks:
+        - 192.168
+
+swagger:
+  title: @pom.artifactId@
+  description: @pom.description@

@@ -15,13 +15,15 @@ spring:
       preferredNetworks:
         - 192.168
 
-security:
-  basic:
-    enabled: true
-  user:
-    name: root
-    password: root
+  security:
+    basic:
+      enabled: true
+    user:
+      name: root
+      password: root
 eureka:
+  server:
+    enable-self-preservation: false
   client:
      register-with-eureka: false #禁止自己当做服务注册
      fetch-registry: false       #屏蔽注册信息
