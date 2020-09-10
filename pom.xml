@@ -21,6 +21,7 @@
         <module>ocean-txlcn</module>  <!-- 分布式锁 -->
         <module>ocean-provider</module>  <!-- 服务中心 -->
         <module>ocean-provider-api</module>  <!-- feign对外接口 -->
+        <module>ocean-gateway</module>  <!-- 网关 -->
     </modules>
 
     <!-- 整合依赖版本管理-->
@@ -273,5 +274,29 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>dev</id>-->
+            <!--<properties>-->
+                <!--<profileActive>dev</profileActive>-->
+            <!--</properties>-->
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>test</id>-->
+            <!--<properties>-->
+                <!--<profileActive>test</profileActive>-->
+            <!--</properties>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>pro</id>-->
+            <!--<properties>-->
+                <!--<profileActive>pro</profileActive>-->
+            <!--</properties>-->
+        <!--</profile>-->
+    <!--</profiles>-->
 
 </project>

@@ -3,19 +3,20 @@ package com.fantechs.provider.fileserver.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.ConstantUtils;
 import com.fantechs.common.base.utils.FileCheckUtil;
 import com.fantechs.provider.fileserver.common.FastDFSClient;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -33,6 +34,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/file")
+@Api(tags = "文件管理")
 public class FileUploadController {
 	@Autowired
 	private FastDFSClient fdfsClient;
@@ -45,8 +47,9 @@ public class FileUploadController {
 	 * @return
 	 * @throws IOException
 	 */
+	@ApiOperation("文件上传")
 	@PostMapping(value="/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-		public ResponseEntity uploadMultipleFile(@RequestPart(value = "file") MultipartFile file) throws IOException {
+		public ResponseEntity uploadMultipleFile(@ApiParam(value = "文件必传",required = true) @RequestPart(value = "file") MultipartFile file) throws IOException {
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		String fileName = file.getOriginalFilename();
@@ -65,10 +68,11 @@ public class FileUploadController {
 	 * @param response
 	 * @throws Exception
 	 */
-	@RequestMapping("/download")
-	public void  download(String fileUrl, HttpServletResponse response) throws Exception{
+	@ApiOperation(value = "文件下载",notes = "文件下载")
+	@PostMapping("/download")
+	public void  download(@ApiParam(value = "传入文件地址",required = true) @RequestParam(value = "fileUrl",required=true) String fileUrl, HttpServletResponse response) throws Exception{
 		if(StringUtils.isEmpty(fileUrl)){
-			new Exception();
+			 new BizErrorException(ErrorCodeEnum.GL99990100);
 		}
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/")+1);
 		byte[] data = fdfsClient.download(fileUrl);
