@@ -3,7 +3,7 @@ package com.fantechs.common.base.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.sysmanage.SmtUser;
+import com.fantechs.common.base.entity.security.User;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import cz.mallat.uasparser.UserAgentInfo;
 
@@ -33,7 +33,7 @@ public class TokenUtil {
     public static int REPLACEMENT_DELAY=2*60;//2分钟 旧token延期失效时间
     public static String tokenPrefix = "token:";//统一加入 token前缀标识
     public static String refreshTokenPrefix = "refreshToken:";//统一加入 token前缀标识
-    
+
 
     /***
      * @param agent Http头中的user-agent信息
@@ -43,7 +43,7 @@ public class TokenUtil {
      *  <br/>
      *  MOBILE：“前缀MOBILE-USERCODE-USERID-CREATIONDATE-RONDEM[6位]”
      */
-    public static String generateToken(String agent, SmtUser user, String refreshTokenIp) {
+    public static String generateToken(String agent, User user, String refreshTokenIp) {
         // TODO Auto-generated method stub
         try {
             UserAgentInfo userAgentInfo = UserAgentUtil.getUasParser().parse(
@@ -65,12 +65,12 @@ public class TokenUtil {
                 sb.append("PC-");
             } else
                 sb.append("MOBILE-");
-			sb.append(user.getUserCode() + "-");
-            sb.append(MD5.getMd5(user.getUserId()+"",32) + "-");//加密用户ID
+            sb.append(user.getCode() + "-");
+            sb.append(MD5.getMd5(user.getId()+"",32) + "-");//加密用户ID
             if(StringUtils.isNotEmpty(refreshTokenIp)){
                 sb.append(MD5.getMd5(refreshTokenIp,16) + "-");
             }else{
-                sb.append(user.getUserId() + "-");
+                sb.append(user.getId() + "-");
             }
             sb.append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
                     + "-");
@@ -84,7 +84,7 @@ public class TokenUtil {
         return null;
     }
 
-    public static void save(String token, SmtUser user) {
+    public static void save(String token, User user) {
         if(token.startsWith(refreshTokenPrefix)){
             redisUtil.set(token, user, refresh_expire);
         }else if (token.startsWith(tokenPrefix+"PC-")) {
@@ -95,9 +95,9 @@ public class TokenUtil {
         }
     }
 
-    public static SmtUser load(String token) {
+    public static User load(String token) {
         Object o = redisUtil.get(token);
-        return JSONObject.parseObject(JSONObject.toJSONString(o), SmtUser.class);
+        return JSONObject.parseObject(JSONObject.toJSONString(o), User.class);
     }
 
     public static void delete(String token) {
@@ -151,11 +151,11 @@ public class TokenUtil {
         String newToken;
         long ttl = redisUtil.getExpire(refreshToken);// token有效期（剩余秒数 ）
         if (ttl > 0 || ttl == -1) {// 兼容手机与PC端的token在有效期
-            SmtUser user = load(refreshToken);
+            User user = load(refreshToken);
             newToken = generateToken(agent, user,null);
             save(newToken, user);// 缓存新token
             if(validate(agent,oldToken))
-            redisUtil.set(oldToken, JSON.toJSONString(user),REPLACEMENT_DELAY);// 2分钟后旧token过期，注意手机端由永久有效变为2分钟（REPLACEMENT_DELAY默认值）后失效
+                redisUtil.set(oldToken, JSON.toJSONString(user),REPLACEMENT_DELAY);// 2分钟后旧token过期，注意手机端由永久有效变为2分钟（REPLACEMENT_DELAY默认值）后失效
         } else {// 其它未考虑情况，不予置换
             throw new TokenValidationFailedException(ErrorCodeEnum.UAC10011039);
         }

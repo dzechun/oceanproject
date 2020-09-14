@@ -15,13 +15,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>cz.mallat.uasparser</groupId>
             <artifactId>uasparser</artifactId>
             <version>0.6.0</version>
