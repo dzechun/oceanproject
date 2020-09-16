@@ -40,7 +40,6 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             List<String> roleIds = new  LinkedList<>();
             //menuType 1-web 2-pc 3-PDA
             int menuType=3;  //PDA
-            log.info("===================agent:"+httpServletRequest.getHeader("user-agent"));
             if(httpServletRequest.getHeader("user-agent").contains("Apache-HttpClient")){
                 menuType =1;
             }else if(!UserAgentUtil.CheckAgent(httpServletRequest.getHeader("user-agent"))){
