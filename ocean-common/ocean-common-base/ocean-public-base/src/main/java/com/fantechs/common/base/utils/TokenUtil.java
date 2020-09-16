@@ -155,7 +155,7 @@ public class TokenUtil {
             newToken = generateToken(agent, user,null);
             save(newToken, user);// 缓存新token
             if(validate(agent,oldToken))
-            redisUtil.set(oldToken, JSON.toJSONString(user),REPLACEMENT_DELAY);// 2分钟后旧token过期，注意手机端由永久有效变为2分钟（REPLACEMENT_DELAY默认值）后失效
+                redisUtil.set(oldToken, JSON.toJSONString(user),REPLACEMENT_DELAY);// 2分钟后旧token过期，注意手机端由永久有效变为2分钟（REPLACEMENT_DELAY默认值）后失效
         } else {// 其它未考虑情况，不予置换
             throw new TokenValidationFailedException(ErrorCodeEnum.UAC10011039);
         }
