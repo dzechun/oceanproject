@@ -18,15 +18,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class AOP {
-
     @Pointcut("execution(public * *..controller..*.*(..))")
     public void pointCut(){}
 
     @Before("pointCut()")
-    /**
-     * joinPoint.getSignature().getDeclaringTypeName() 获取包名
-     * joinPoint.getSignature().getName() 获取方法名
-     */
     public void logBeforeController(JoinPoint joinPoint){
         StringBuffer stringBuffer=new StringBuffer("(");
         Object[] args = joinPoint.getArgs();

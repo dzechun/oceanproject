@@ -14,16 +14,20 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+
+#根据服务名配置路由
 zuul:
-  RibbonRoutingFilter:
-    route:
-      disable: true
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 30000
   routes:
-    provider:
-      path: /ocean-fileserver/**
-      url: http://localhost:8763/
-      serviceId: OCEAN-FILESERVER
+    ocean-security:
+        path: /ocean-security/**
+        serviceId: ocean-security
+    ocean-fileserver:
+        path: /ocean-fileserver/**
+        serviceId: ocean-fileserver
+
 logging:
   level:
     org.springframework.cloud.gateway: debug
-spring.main.allow-bean-definition-overriding: true

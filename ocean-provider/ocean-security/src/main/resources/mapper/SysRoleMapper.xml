@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.security.mapper.SysRoleMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.SysRole">
+    <id column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_desc" jdbcType="VARCHAR" property="roleDesc" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_id, role_code, role_name, role_desc, create_user_id, create_time, modified_user_id, 
+    modified_time, status, is_delete
+  </sql>
+  <select id="findRolesByUserId" parameterType="java.lang.Long" resultType="com.fantechs.common.base.entity.security.SysRole">
+    SELECT r.role_id AS roleId FROM `sys_role` r
+    INNER JOIN `sys_user_role` ur ON r.`role_id`=ur.`role_id` AND ur.`user_id`=#{userId}
+  </select>
+</mapper>

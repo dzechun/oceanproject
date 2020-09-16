@@ -2,6 +2,7 @@ package com.fantechs.common.base.exception;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Auther: bingo.ren
@@ -10,20 +11,40 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
-public class BizErrorException extends Exception{
+@Slf4j
+public class BizErrorException extends RuntimeException{
+
+    private static final long serialVersionUID = 3160241586346324994L;
+
     private Integer code;
     private String msg;
     public BizErrorException() {
         super();
     }
-
-    public BizErrorException(ErrorCodeEnum errorCode, String msg){
-        this.code=errorCode.getCode();
-        this.msg=msg;
+    public BizErrorException(Throwable cause) {
+        super(cause);
     }
 
-    public BizErrorException(ErrorCodeEnum errorCode) {
-        this.code=errorCode.getCode();
-        this.msg=errorCode.getMsg();
+    public BizErrorException(String message) {
+        super(message);
+    }
+
+    public BizErrorException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+
+    public BizErrorException(int code, String msg){
+        super(msg);
+        this.code = code;
+    }
+
+    public BizErrorException(int code, String msgFormat, Object... args) {
+        super(String.format(msgFormat, args));
+        this.code = code;
+    }
+    public BizErrorException(ErrorCodeEnum codeEnum, Object... args) {
+        super(String.format(codeEnum.getMsg(), args));
+        this.code = codeEnum.getCode();
     }
 }

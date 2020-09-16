@@ -1,26 +1,21 @@
-package com.fantechs.common.base.entity.sysmanage;
+package com.fantechs.common.base.entity.security;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.*;
 
-@Table(name = "smt_menuinfo")
+@Table(name = "sys_menuinfo")
 @Data
-public class SmtMenuinfo implements Serializable{
-    private static final long serialVersionUID = 3765896036685393077L;
+public class SysMenuInfo {
     /**
      * 菜单id
      */
     @Id
     @Column(name = "menu_id")
     @ApiModelProperty(name = "menuId",value = "菜单id")
-    private String menuId;
+    private Long menuId;
 
     /**
      * 菜单编码
@@ -41,14 +36,14 @@ public class SmtMenuinfo implements Serializable{
      */
     @Column(name = "order_num")
     @ApiModelProperty(name = "orderNum",value = "菜单顺序")
-    private Long orderNum;
+    private Integer orderNum;
 
     /**
      * 父级菜单id
      */
     @Column(name = "parent_id")
     @ApiModelProperty(name = "parentId",value = "父级菜单id")
-    private String parentId;
+    private Long parentId;
 
     /**
      * 菜单描述
@@ -78,12 +73,6 @@ public class SmtMenuinfo implements Serializable{
     private String url;
 
     /**
-     * 菜单图标
-     */
-    @ApiModelProperty(name = "icon",value = "菜单图标")
-    private String icon;
-
-    /**
      * 初始菜单id
      */
     @Column(name = "premenu_id")
@@ -91,62 +80,64 @@ public class SmtMenuinfo implements Serializable{
     private String premenuId;
 
     /**
-     * 菜单所属平台类型（1、WEB 2、PDA 3、平板）
+     * 菜单所属平台类型（1、WEB 2、Windows 3、PDA）
      */
     @Column(name = "menu_type")
     @ApiModelProperty(name = "menuType",value = "菜单所属平台类型（1、WEB 2、Windows 3、PDA）")
-    private Integer menuType;
+    private Byte menuType;
 
     /**
      * 是否隐藏（0、否 1、是）
      */
     @Column(name = "is_hide")
     @ApiModelProperty(name = "isHide",value = "是否隐藏（0、否 1、是）")
-    private Integer isHide;
+    private Byte isHide;
 
     /**
-     * 逻辑删除（0 正常,1 删除 ）
+     * 逻辑删除（0 删除,1 正常 ）
      */
     @Column(name = "is_delete")
-    @ApiModelProperty(name = "isDelete",value = "逻辑删除（0 正常,1 删除 ）")
-    private Long isDelete;
+    @ApiModelProperty(name = "isDelete",value = "逻辑删除（0 删除,1 正常 ）")
+    private Byte isDelete;
+
+    /**
+     * 菜单图标
+     */
+    @ApiModelProperty(name = "icon",value = "菜单图标")
+    private String icon;
 
     /**
      * 打开方式（1、原始页 2、新页面）
      */
     @Column(name = "is_oppen")
     @ApiModelProperty(name = "isOppen",value = "打开方式（1、原始页 2、新页面）")
-    private Long isOppen;
-
+    private Byte isOppen;
 
     /**
-     * 创建账号
+     * 创建人id
      */
     @Column(name = "create_user_id")
-    @ApiModelProperty(name = "createUserId",value = "创建用户Id")
-    private String createUserId;
+    @ApiModelProperty(name = "createUserId",value = "创建人ID")
+    private Long createUserId;
 
     /**
      * 创建时间
      */
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
-     * 修改账号
+     * 修改人id
      */
     @Column(name = "modified_user_id")
-    @ApiModelProperty(name = "modifiedUserId",value = "修改用户id")
-    private String modifiedUserId;
+    @ApiModelProperty(name = "modifiedUserId",value = "修改人ID")
+    private Long modifiedUserId;
 
     /**
      * 修改时间
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
-
 }

@@ -77,10 +77,30 @@ public class ControllerUtil {
         return  dto;
     }
 
+    /**
+     * 返回错误信息、错误码
+     * @param message
+     * @param errorCode
+     * @param <T>
+     * @return
+     */
     public static <T> ResponseEntity<T> returnFail(String message, int errorCode){
         ResponseEntity<T> dto=new ResponseEntity<>();
         dto.setMessage(message);
         dto.setCode(errorCode);
+        return  dto;
+    }
+
+    /**
+     * 返回错误信息对象
+     * @param errorCode
+     * @param <T>
+     * @return
+     */
+    public static <T> ResponseEntity<T> returnFail(ErrorCodeEnum errorCode){
+        ResponseEntity<T> dto=new ResponseEntity<>();
+        dto.setMessage(errorCode.getMsg());
+        dto.setCode(errorCode.getCode());
         return  dto;
     }
 
@@ -101,6 +121,11 @@ public class ControllerUtil {
     }
 
 
+    /**
+     * 查询对象转Map
+     * @param o
+     * @return
+     */
     public static Map<String,Object> dynamicConditionByEntity(Object o){
         Map<String, Object> map = new HashMap<>();
         Class<?> clazz = o.getClass();

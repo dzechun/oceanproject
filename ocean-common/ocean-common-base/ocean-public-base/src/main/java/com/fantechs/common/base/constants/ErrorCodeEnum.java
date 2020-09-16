@@ -227,7 +227,21 @@ public enum ErrorCodeEnum {
     /**
      * Uac 10012008 error code enum.
      */
-    UAC10012008(10012008, "找不到绑定的角色, roleId=%s");
+    UAC10012008(10012008, "找不到绑定的角色, roleId=%s"),
+
+    /**
+     * Uac 10012008 error code enum.
+     */
+    UAC10012009(10012009, "未激活用户, loginName=%s"),
+
+
+
+    /**
+     * operate 10012005 error code enum.
+     * 删除失败
+     */
+    OPT20012000(20012000,"删除数据失败, id=%s") ;
+
 
 
 

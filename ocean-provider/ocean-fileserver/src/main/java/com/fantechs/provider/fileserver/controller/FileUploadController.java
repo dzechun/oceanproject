@@ -1,12 +1,10 @@
 package com.fantechs.provider.fileserver.controller;
 
 
-
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.ConstantUtils;
 import com.fantechs.common.base.utils.FileCheckUtil;
 import com.fantechs.provider.fileserver.common.FastDFSClient;
 import io.swagger.annotations.Api;
@@ -50,7 +48,6 @@ public class FileUploadController {
 	@ApiOperation("文件上传")
 	@PostMapping(value="/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 		public ResponseEntity uploadMultipleFile(@ApiParam(value = "文件必传",required = true) @RequestPart(value = "file") MultipartFile file) throws IOException {
-
 		Map<String, Object> data = new HashMap<String, Object>();
 		String fileName = file.getOriginalFilename();
 		if(!FileCheckUtil.checkFileType(fileName)){
@@ -71,6 +68,7 @@ public class FileUploadController {
 	@ApiOperation(value = "文件下载",notes = "文件下载")
 	@PostMapping("/download")
 	public void  download(@ApiParam(value = "传入文件地址",required = true) @RequestParam(value = "fileUrl",required=true) String fileUrl, HttpServletResponse response) throws Exception{
+
 		if(StringUtils.isEmpty(fileUrl)){
 			 new BizErrorException(ErrorCodeEnum.GL99990100);
 		}

@@ -3,6 +3,8 @@ package com.fantechs.common.base.utils;
 import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
+import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.genid.GenId;
 
 
 /**
@@ -11,7 +13,8 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
  * @date 2019-9-8
  * 备注：
  */
-public class UUIDUtils {
+@Service
+public class UUIDUtils  implements GenId<String> {
 	
 	private static TimeBasedGenerator timeBasedGenerator=Generators.timeBasedGenerator(EthernetAddress.fromInterface());
 
@@ -36,5 +39,10 @@ public class UUIDUtils {
 
 	public static void main(String[] args) {
 		System.out.println(UUIDUtils.getUUID());
+	}
+
+	@Override
+	public String genId(String s, String s1) {
+		return getUUID();
 	}
 }
