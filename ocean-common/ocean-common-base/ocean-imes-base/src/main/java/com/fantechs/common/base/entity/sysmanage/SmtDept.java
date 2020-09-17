@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.sysmanage;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ public class SmtDept implements Serializable {
      * 部门代码
      */
     @Column(name = "dept_code")
+    @ApiModelProperty(name="deptCode" ,value="部门代码")
     @Excel(name = "部门代码", height = 20, width = 30)
     private String deptCode;
 
@@ -33,6 +35,7 @@ public class SmtDept implements Serializable {
      * 部门名称
      */
     @Column(name = "dept_name")
+    @ApiModelProperty(name="deptName" ,value="部门名称")
     @Excel(name = "部门名称", height = 20, width = 30)
     private String deptName;
 
@@ -40,6 +43,7 @@ public class SmtDept implements Serializable {
      * 部门描述
      */
     @Column(name = "dept_desc")
+    @ApiModelProperty(name="deptDesc" ,value="部门描述")
     @Excel(name = "部门代码", height = 20, width = 30)
     private String deptDesc;
 
@@ -47,18 +51,21 @@ public class SmtDept implements Serializable {
      * 厂别ID
      */
     @Column(name = "factory_id")
+    @ApiModelProperty(name="factoryId" ,value="厂别ID")
     private Long factoryId;
 
     /**
      * 厂别名称
      */
     @Transient
-    @Excel(name = "厂别名称", height = 20, width = 30)
+    @ApiModelProperty(name="factoryName" ,value="厂别名称")
+    @Excel(name = "厂别", height = 20, width = 30)
     private String factoryName;
 
     /**
      * 状态
      */
+    @ApiModelProperty(name="status" ,value="状态")
     @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Integer status;
 
@@ -66,19 +73,22 @@ public class SmtDept implements Serializable {
      * 创建账号
      */
     @Column(name = "create_user_id")
+    @ApiModelProperty(name="createUserId" ,value="创建账号")
     private Long createUserId;
 
     /**
      * 创建账号名称
      */
     @Transient
-    @Excel(name = "创建账号名称", height = 20, width = 30)
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String createUserName;
 
     /**
      * 创建时间
      */
     @Column(name = "create_time")
+    @ApiModelProperty(name="createTime" ,value="创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
@@ -86,12 +96,14 @@ public class SmtDept implements Serializable {
      * 修改账号
      */
     @Column(name = "modified_user_id")
+    @ApiModelProperty(name="modifiedUserId" ,value="修改账号")
     private Long modifiedUserId;
     /**
      * 修改账号名称
      */
     @Transient
-    @Excel(name = "修改账号名称", height = 20, width = 30)
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
     private String modifiedUserName;
 
 
@@ -99,6 +111,7 @@ public class SmtDept implements Serializable {
      * 修改时间
      */
     @Column(name = "modified_time")
+    @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
