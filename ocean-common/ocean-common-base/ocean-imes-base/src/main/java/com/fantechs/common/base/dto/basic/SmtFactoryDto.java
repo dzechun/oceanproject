@@ -1,8 +1,8 @@
-package com.fantechs.common.base.dot.sysmanage;
+package com.fantechs.common.base.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
-import com.fantechs.common.base.entity.sysmanage.SmtFactory;
+import com.fantechs.common.base.entity.basic.SmtFactory;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -1,9 +1,9 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
-import com.fantechs.common.base.entity.sysmanage.SmtDept;
-import com.fantechs.common.base.entity.sysmanage.history.SmtHtDept;
-import com.fantechs.common.base.entity.sysmanage.search.SearchSmtDept;
+import com.fantechs.common.base.entity.basic.SmtDept;
+import com.fantechs.common.base.entity.basic.history.SmtHtDept;
+import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

@@ -2,8 +2,8 @@ package com.fantechs.provider.imes.basic.service;
 
 
 
-import com.fantechs.common.base.dot.sysmanage.SmtFactoryDto;
-import com.fantechs.common.base.entity.sysmanage.SmtFactory;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.entity.basic.SmtFactory;
 
 import java.util.List;
 import java.util.Map;

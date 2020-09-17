@@ -1,5 +1,6 @@
-package com.fantechs.common.base.entity.sysmanage.history;
+package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -7,21 +8,17 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_ht_work_shop")
+@Table(name = "smt_work_shop")
 @Data
-public class SmtHtWorkShop implements Serializable {
-    private static final long serialVersionUID = 1843661571608472948L;
+public class SmtWorkShop  implements Serializable{
+    private static final long serialVersionUID = 5732515197537200878L;
     /**
      * id
      */
     @Id
-    @Column(name = "ht_work_shop_id")
-    private Long htWorkShopId;
-
     @Column(name = "work_shop_id")
     @ApiModelProperty(name = "workShopId",value = "车间id")
     private Long workShopId;
@@ -30,6 +27,7 @@ public class SmtHtWorkShop implements Serializable {
      * 车间编码
      */
     @Column(name = "work_shop_code")
+    @Excel(name = "车间编码", height = 20, width = 30,orderNum="1")
     @ApiModelProperty(name = "workShopCode",value = "车间编码")
     private String workShopCode;
 
@@ -37,6 +35,7 @@ public class SmtHtWorkShop implements Serializable {
      * 车间名称
      */
     @Column(name = "work_shop_name")
+    @Excel(name = "车间名称", height = 20, width = 30,orderNum="2")
     @ApiModelProperty(name = "workShopName",value = "车间名称")
     private String workShopName;
 
@@ -45,6 +44,7 @@ public class SmtHtWorkShop implements Serializable {
      */
     @Column(name = "work_shop_desc")
     @ApiModelProperty(name = "workShopDesc",value = "车间描述")
+    @Excel(name = "车间描述", height = 20, width = 30,orderNum="3")
     private String workShopDesc;
 
     /**
@@ -67,6 +67,7 @@ public class SmtHtWorkShop implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -81,6 +82,7 @@ public class SmtHtWorkShop implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
@@ -88,6 +90,7 @@ public class SmtHtWorkShop implements Serializable {
      * 车间状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name = "status",value = "车间状态（0、不启用 1、启用）")
+    @Excel(name = "车间状状态", height = 20, width = 30 ,orderNum="5",replace = {"不启用_0", "启用_1"})
     private Integer status;
 
     /**
@@ -104,19 +107,5 @@ public class SmtHtWorkShop implements Serializable {
      * 扩展字段3
      */
     private String option3;
-
-    /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    private String modifiedUserName;
 
 }

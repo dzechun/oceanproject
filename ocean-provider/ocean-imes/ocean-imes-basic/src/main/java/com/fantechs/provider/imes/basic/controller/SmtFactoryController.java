@@ -1,10 +1,10 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
-import com.fantechs.common.base.dot.sysmanage.SmtFactoryDto;
-import com.fantechs.common.base.entity.sysmanage.SmtFactory;
-import com.fantechs.common.base.entity.sysmanage.history.SmtHtFactory;
-import com.fantechs.common.base.entity.sysmanage.search.SearchSmtFactory;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.entity.basic.SmtFactory;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
+import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.sysmanage;
+package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -12,48 +12,57 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_role")
+@Table(name = "smt_spec_item")
 @Data
-public class SmtRole implements Serializable {
-    private static final long serialVersionUID = -6390912935642574125L;
+public class SmtSpecItem implements Serializable {
+
+    private static final long serialVersionUID = -4072661553411752786L;
     /**
-     * 角色id
+     * 配置项ID
      */
     @Id
-    @Column(name = "role_id")
-    @ApiModelProperty(name="roleId" ,value="角色id")
-    private Long roleId;
+    @Column(name = "spec_id")
+    @ApiModelProperty(name="specId" ,value="配置项ID")
+    private Long specId;
 
     /**
-     * 角色编码
+     * 配置项代码
      */
-    @Column(name = "role_code")
-    @ApiModelProperty(name="roleCode" ,value="角色编码")
-    @Excel(name = "角色编码", height = 20, width = 30)
-    private String roleCode;
+    @Column(name = "spec_code")
+    @ApiModelProperty(name="specCode" ,value="配置项代码")
+    @Excel(name = "配置项代码", height = 20, width = 30)
+    private String specCode;
 
     /**
-     * 角色名称
+     * 配置项名称
      */
-    @Column(name = "role_name")
-    @ApiModelProperty(name="roleName" ,value="角色名称")
-    @Excel(name = "角色名称", height = 20, width = 30)
-    private String roleName;
+    @Column(name = "spec_name")
+    @ApiModelProperty(name="specName" ,value="配置项名称")
+    @Excel(name = "配置项名称", height = 20, width = 30)
+    private String specName;
 
     /**
-     * 角色描述
+     * 参数
      */
-    @Column(name = "role_desc")
-    @ApiModelProperty(name="roleDesc" ,value="角色描述")
-    @Excel(name = "角色描述", height = 20, width = 30)
-    private String roleDesc;
+    @Column(name = "para")
+    @ApiModelProperty(name="para" ,value="参数")
+    @Excel(name = "参数", height = 20, width = 30)
+    private String para;
+
+    /**
+     * 参数值
+     */
+    @Column(name = "para_value")
+    @ApiModelProperty(name="paraValue" ,value="参数值")
+    @Excel(name = "参数值", height = 20, width = 30)
+    private String paraValue;
 
     /**
      * 创建账号
      */
     @Column(name = "create_user_id")
-    @ApiModelProperty(name="createUserId" ,value="创建用户")
-    @Excel(name = "创建用户", height = 20, width = 30)
+    @ApiModelProperty(name="createUserId" ,value="创建账号")
+    @Excel(name = "创建账号", height = 20, width = 30)
     private Long createUserId;
 
     /**
@@ -76,8 +85,8 @@ public class SmtRole implements Serializable {
      * 修改账号
      */
     @Column(name = "modified_user_id")
-    @ApiModelProperty(name="modifiedUserId" ,value="修改用户")
-    @Excel(name = "修改用户", height = 20, width = 30)
+    @ApiModelProperty(name="modifiedUserId" ,value="修改账号")
+    @Excel(name = "修改账号", height = 20, width = 30)
     private Long modifiedUserId;
 
     /**
@@ -96,12 +105,7 @@ public class SmtRole implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
-    /**
-     * 角色状态（0、不启用 1、启用）
-     */
-    @Column(name = "status")
-    @ApiModelProperty(name="status" ,value="角色状态（0、不启用 1、启用）")
-    private Integer status;
+
     /**
      * 扩展字段1
      */

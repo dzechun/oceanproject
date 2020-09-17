@@ -2,7 +2,7 @@ package com.fantechs.provider.imes.basic.service;
 
 
 
-import com.fantechs.common.base.entity.sysmanage.history.SmtHtFactory;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.sysmanage.history;
+package com.fantechs.common.base.entity.basic.history;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,45 +10,52 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_ht_role")
+@Table(name = "smt_ht_spec_item")
 @Data
-public class SmtHtRole implements Serializable{
+public class SmtHtSpecItem implements Serializable {
 
-    private static final long serialVersionUID = -4645523137596084316L;
+    private static final long serialVersionUID = -7436037670166462777L;
     /**
-     * 角色历史id
+     * 配置项历史ID
      */
     @Id
-    @Column(name = "ht_role_id")
-    @ApiModelProperty(name="htRoleId" ,value="角色历史id")
-    private Long htRoleId;
+    @Column(name = "ht_spec_id")
+    @ApiModelProperty(name="htSpecId" ,value="配置项历史ID")
+    private Long htSpecId;
 
     /**
-     * 角色编码
+     * 配置项代码
      */
-    @Column(name = "role_code")
-    @ApiModelProperty(name="roleCode" ,value="角色编码")
-    private String roleCode;
+    @Column(name = "spec_code")
+    @ApiModelProperty(name="specCode" ,value="配置项代码")
+    private String specCode;
 
     /**
-     * 角色名称
+     * 配置项名称
      */
-    @Column(name = "role_name")
-    @ApiModelProperty(name="roleName" ,value="角色名称")
-    private String roleName;
+    @Column(name = "spec_name")
+    @ApiModelProperty(name="specName" ,value="配置项名称")
+    private String specName;
 
     /**
-     * 角色描述
+     * 参数
      */
-    @Column(name = "role_desc")
-    @ApiModelProperty(name="roleDesc" ,value="角色描述")
-    private String roleDesc;
+    @Column(name = "para")
+    @ApiModelProperty(name="para" ,value="参数")
+    private String para;
+
+    /**
+     * 参数值
+     */
+    @Column(name = "para_value")
+    @ApiModelProperty(name="paraValue" ,value="参数值")
+    private String paraValue;
 
     /**
      * 创建账号
      */
     @Column(name = "create_user_id")
-    @ApiModelProperty(name="createUserId" ,value="创建用户")
+    @ApiModelProperty(name="createUserId" ,value="创建账号")
     private Long createUserId;
 
     /**
@@ -69,7 +76,7 @@ public class SmtHtRole implements Serializable{
      * 修改账号
      */
     @Column(name = "modified_user_id")
-    @ApiModelProperty(name="modifiedUserId" ,value="修改用户")
+    @ApiModelProperty(name="modifiedUserId" ,value="修改账号")
     private Long modifiedUserId;
 
     /**
@@ -86,12 +93,6 @@ public class SmtHtRole implements Serializable{
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     private Date modifiedTime;
 
-    /**
-     * 角色状态（0、不启用 1、启用）
-     */
-    @Column(name = "status")
-    @ApiModelProperty(name="status" ,value="角色状态（0、不启用 1、启用）")
-    private Integer status;
     /**
      * 扩展字段1
      */

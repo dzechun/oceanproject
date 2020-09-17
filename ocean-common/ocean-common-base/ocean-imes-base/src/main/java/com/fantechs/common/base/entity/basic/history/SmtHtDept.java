@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.sysmanage;
+package com.fantechs.common.base.entity.basic.history;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,31 +9,55 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_user_role")
+@Table(name = "smt_ht_dept")
 @Data
-public class SmtUserRole implements Serializable {
-
-    private static final long serialVersionUID = -7109497559493175283L;
+public class SmtHtDept implements Serializable {
     /**
-     * id
+     * 部门履历ID
      */
     @Id
-    @Column(name = "user_role_id")
-    private Long userRoleId;
+    @Column(name = "ht_dept_id")
+    private Long htDeptId;
 
     /**
-     * 角色id
+     * 部门ID
      */
-    @Column(name = "role_id")
-    @ApiModelProperty(name="roleId" ,value="角色id")
-    private Long roleId;
+    @Column(name = "dept_id")
+    @ApiModelProperty(name="deptId" ,value="部门ID")
+    private Long deptId;
+    /**
+     * 部门代码
+     */
+    @Column(name = "dept_code")
+    @ApiModelProperty(name="deptCode" ,value="部门代码")
+    private String deptCode;
 
     /**
-     * 用户id
+     * 部门名称
      */
-    @Column(name = "user_id")
-    @ApiModelProperty(name="userId" ,value="用户id")
-    private Long userId;
+    @Column(name = "dept_name")
+    @ApiModelProperty(name="deptName" ,value="部门名称")
+    private String deptName;
+
+    /**
+     * 部门描述
+     */
+    @Column(name = "dept_desc")
+    @ApiModelProperty(name="deptDesc" ,value="部门描述")
+    private String deptDesc;
+
+    /**
+     * 厂别ID
+     */
+    @Column(name = "factory_id")
+    @ApiModelProperty(name="factoryId" ,value="厂别ID")
+    private Long factoryId;
+
+    /**
+     * 状态
+     */
+    @ApiModelProperty(name="status" ,value="状态")
+    private Integer status;
 
     /**
      * 创建账号
@@ -77,5 +101,4 @@ public class SmtUserRole implements Serializable {
      * 扩展字段3
      */
     private String option3;
-
 }

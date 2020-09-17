@@ -1,5 +1,6 @@
-package com.fantechs.common.base.entity.sysmanage.history;
+package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -7,43 +8,43 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_ht_factory")
+@Table(name = "smt_factory")
 @Data
-public class SmtHtFactory implements Serializable {
-    private static final long serialVersionUID = 7869934677097537670L;
+public class SmtFactory implements Serializable {
+
+    private static final long serialVersionUID = -2911021021255393740L;
     /**
      * id
      */
     @Id
-    @Column(name = "ht_factory_id")
-    private Long htFactoryId;
-
     @Column(name = "factory_id")
     @ApiModelProperty(name="factoryId" ,value="厂别id")
     private Long factoryId;
 
     /**
-     * 厂别编码
+     * 工厂编码
      */
     @Column(name = "factory_code")
+    @Excel(name = "工厂编码",  height = 20, width = 30, orderNum="1")
     @ApiModelProperty(name="factoryCode" ,value="厂别编码")
     private String factoryCode;
 
     /**
-     * 厂别名称
+     * 工厂名称
      */
     @Column(name = "factory_name")
+    @Excel(name = "工厂名称", height = 20, width = 30 ,orderNum="2")
     @ApiModelProperty(name="factoryName" ,value="厂别名称")
     private String factoryName;
 
     /**
-     * 厂别描述
+     * 工厂描述
      */
     @Column(name = "factory_desc")
+    @Excel(name = "工厂描述", height = 20, width = 30,orderNum="3")
     @ApiModelProperty(name="factoryDesc" ,value="厂别描述")
     private String factoryDesc;
 
@@ -60,6 +61,7 @@ public class SmtHtFactory implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="6",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -75,12 +77,14 @@ public class SmtHtFactory implements Serializable {
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="7",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
      * 工厂状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name="status" ,value="工厂状态（0、不启用 1、启用）")
+    @Excel(name = "工厂状态", height = 20, width = 30 ,orderNum="4",replace = {"不启用_0", "启用_1"})
     private Integer status;
 
     /**
@@ -98,18 +102,4 @@ public class SmtHtFactory implements Serializable {
      */
     private String option3;
 
-    /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    private String modifiedUserName;
-
-    }
+   }

@@ -1,5 +1,6 @@
-package com.fantechs.common.base.entity.sysmanage.history;
+package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -7,77 +8,80 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_ht_pro_line")
+@Table(name = "smt_pro_line")
 @Data
-public class SmtHtProLine {
-    /**
-     * 线别履历ID
-     */
-    @Id
-    @Column(name = "ht_pro_line_id")
-    private Long htProLineId;
+public class SmtProLine implements Serializable {
 
+    private static final long serialVersionUID = -7775679129014320519L;
     /**
      * 线别ID
      */
+    @Id
     @Column(name = "pro_line_id")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
     private Long proLineId;
+
     /**
      * 线别代码
      */
     @Column(name = "pro_code")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="proCode" ,value="线别代码")
+    @Excel(name = "线别代码", height = 20, width = 30)
     private String proCode;
 
     /**
      * 线别名称
      */
     @Column(name = "pro_name")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="proName" ,value="线别名称")
+    @Excel(name = "线别名称", height = 20, width = 30)
     private String proName;
 
     /**
      * 线别描述
      */
     @Column(name = "pro_desc")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="proDesc" ,value="线别描述")
+    @Excel(name = "线别描述", height = 20, width = 30)
     private String proDesc;
 
     /**
      * 厂别ID
      */
     @Column(name = "factory_id")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="factoryId" ,value="厂别ID")
     private Long factoryId;
 
     /**
      * 厂别名称
      */
     @Transient
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="factoryName" ,value="厂别名称")
+    @Excel(name = "厂别名称", height = 20, width = 30)
     private String factoryName;
 
     /**
      * 车间ID
      */
     @Column(name = "work_shop_id")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
-    private Long workShopId;
+    @ApiModelProperty(name="workShopId" ,value="车间ID")
+    private String workShopId;
 
     /**
      * 车间名称
      */
     @Transient
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="workShopName" ,value="车间名称")
+    @Excel(name = "车间名称", height = 20, width = 30)
     private String workShopName;
 
     /**
      * 产线状态（0、无效 1、有效）
      */
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @ApiModelProperty(name="status" ,value="产线状态")
+    @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Integer status;
 
     /**
@@ -92,6 +96,7 @@ public class SmtHtProLine {
      */
     @Transient
     @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -99,6 +104,7 @@ public class SmtHtProLine {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -113,6 +119,7 @@ public class SmtHtProLine {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private String modifiedUserName;
 
     /**
@@ -120,6 +127,7 @@ public class SmtHtProLine {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30)
     private Date modifiedTime;
 
     /**
@@ -136,4 +144,5 @@ public class SmtHtProLine {
      * 扩展字段3
      */
     private String option3;
+
 }

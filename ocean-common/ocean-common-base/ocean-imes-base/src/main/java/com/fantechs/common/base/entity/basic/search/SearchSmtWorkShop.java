@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.sysmanage.search;
+package com.fantechs.common.base.entity.basic.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
