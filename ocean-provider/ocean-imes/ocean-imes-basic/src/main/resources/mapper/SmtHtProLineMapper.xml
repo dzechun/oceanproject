@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtProLineMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtProLine">
+    <id column="ht_pro_line_id" jdbcType="BIGINT" property="htProLineId" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="pro_desc" jdbcType="VARCHAR" property="proDesc" />
+    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ht_pro_line_id, pro_line_id, pro_code, pro_name, pro_desc, factory_id, work_shop_id, 
+    status, create_user_id, create_time, modified_user_id, modified_time, option1, option2, 
+    option3
+  </sql>
+
+  <select id="selectHtProLines" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProLine" resultMap="BaseResultMap">
+    select shpl.ht_pro_line_id,shpl.pro_line_id,shpl.pro_code, shpl.pro_name, shpl.pro_desc, shpl.factory_id,f.factory_name as factoryName,
+    shpl.work_shop_id, ws.work_shop_name as workShopName,shpl.status, shpl.create_user_id,
+    u.user_name as createUserName,shpl.create_time, shpl.modified_user_id,s.user_name as modifiedUserName,shpl.modified_time
+    from smt_ht_pro_line shpl
+    left join smt_user u on shpl.create_user_id=u.user_id
+    left join smt_user s on shpl.modified_user_id=s.user_id
+    left join smt_factory f on shpl.factory_id=f.factory_id
+    left join smt_work_shop ws on  shpl.work_shop_id= ws.work_shop_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(shpl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="proCode!=null and proCode!=''">
+        and shpl.pro_code like CONCAT('%', #{proCode}, '%')
+      </if>
+      <if test="proName!=null and proName!=''">
+        and shpl.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="proDesc!=null and proDesc!=''">
+        and shpl.pro_desc like CONCAT('%', #{proDesc}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>
