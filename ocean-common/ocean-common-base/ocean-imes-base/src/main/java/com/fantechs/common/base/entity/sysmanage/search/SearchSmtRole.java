@@ -41,5 +41,5 @@ public class SearchSmtRole  extends BaseQuery implements Serializable {
      * 角色ID
      */
     @ApiModelProperty(name="roleId" ,value="角色ID")
-    private  String roleId;
+    private  Long roleId;
 }

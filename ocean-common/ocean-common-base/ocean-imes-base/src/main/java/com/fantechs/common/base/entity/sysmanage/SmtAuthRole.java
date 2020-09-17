@@ -19,18 +19,18 @@ public class SmtAuthRole implements Serializable{
      */
     @Id
     @ApiModelProperty(name ="authId",value = "权限ID")
-    private String authId;
+    private Long authId;
 
     /**
      * 角色id
      */
     @ApiModelProperty(name = "roleId",value = "角色id")
-    private String roleId;
+    private Long roleId;
 
     /**
      * 菜单
      */
     @ApiModelProperty(name="menuId",value = "菜单ID")
-    private String menuId;
+    private Long menuId;
 
 }

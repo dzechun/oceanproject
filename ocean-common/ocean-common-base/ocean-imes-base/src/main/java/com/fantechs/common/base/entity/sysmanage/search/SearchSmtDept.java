@@ -40,6 +40,6 @@ public class SearchSmtDept  extends BaseQuery implements Serializable {
      * 厂别ID
      */
     @ApiModelProperty(name="factoryId" ,value="厂别ID")
-    private String factoryId;
+    private Long factoryId;
 
 }

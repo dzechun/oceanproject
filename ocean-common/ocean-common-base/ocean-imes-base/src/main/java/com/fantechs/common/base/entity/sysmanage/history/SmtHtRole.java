@@ -21,7 +21,7 @@ public class SmtHtRole implements Serializable{
     @Id
     @Column(name = "ht_role_id")
     @ApiModelProperty(name="htRoleId" ,value="角色历史id")
-    private String htRoleId;
+    private Long htRoleId;
 
     /**
      * 角色编码
@@ -49,7 +49,7 @@ public class SmtHtRole implements Serializable{
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name="createUserId" ,value="创建用户")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -70,7 +70,7 @@ public class SmtHtRole implements Serializable{
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name="modifiedUserId" ,value="修改用户")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改账号名称

@@ -20,11 +20,11 @@ public class SmtHtWorkShop implements Serializable {
      */
     @Id
     @Column(name = "ht_work_shop_id")
-    private String htWorkShopId;
+    private Long htWorkShopId;
 
     @Column(name = "work_shop_id")
     @ApiModelProperty(name = "workShopId",value = "车间id")
-    private String workShopId;
+    private Long workShopId;
 
     /**
      * 车间编码
@@ -52,14 +52,14 @@ public class SmtHtWorkShop implements Serializable {
      */
     @Column(name = "factory_id")
     @ApiModelProperty(name = "factoryId",value = "工厂id")
-    private String factoryId;
+    private Long factoryId;
 
     /**
      * 创建账号
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name = "createUserId",value = "创建账号id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建时间
@@ -74,7 +74,7 @@ public class SmtHtWorkShop implements Serializable {
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name = "modifiedUserId",value = "修改账号id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改时间

@@ -24,7 +24,7 @@ public class SmtUser implements Serializable {
     @Id
     @Column(name = "user_id")
     @ApiModelProperty(name="userId" ,value="用户id")
-    private String userId;
+    private Long userId;
 
     /**
      * 用户帐号
@@ -73,7 +73,7 @@ public class SmtUser implements Serializable {
     @Column(name = "org_id")
     @ApiModelProperty(name="orgId" ,value="厂别")
     //@Excel(name="厂别")
-    private String orgId;
+    private Long orgId;
 
     /**
      * 厂别名称
@@ -88,7 +88,7 @@ public class SmtUser implements Serializable {
     @Column(name = "dept_id")
     @ApiModelProperty(name="deptId" ,value="部门id")
     //@Excel(name="部门")
-    private String deptId;
+    private Long deptId;
 
     /**
      * 部门名称
@@ -126,7 +126,7 @@ public class SmtUser implements Serializable {
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name="createUserId" ,value="创建用户id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -148,7 +148,7 @@ public class SmtUser implements Serializable {
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name="modifiedUserId" ,value="修改用户id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改账号名称

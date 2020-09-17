@@ -20,11 +20,11 @@ public class SmtHtFactory implements Serializable {
      */
     @Id
     @Column(name = "ht_factory_id")
-    private String htFactoryId;
+    private Long htFactoryId;
 
     @Column(name = "factory_id")
     @ApiModelProperty(name="factoryId" ,value="厂别id")
-    private String factoryId;
+    private Long factoryId;
 
     /**
      * 厂别编码
@@ -52,7 +52,7 @@ public class SmtHtFactory implements Serializable {
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name="createUserId" ,value="创建账号id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建时间
@@ -67,7 +67,7 @@ public class SmtHtFactory implements Serializable {
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name="modifiedUserId" ,value="修改账号id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改时间

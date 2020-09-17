@@ -21,13 +21,13 @@ public class SmtHtMenuInfo implements Serializable{
      */
     @Id
     @Column(name = "ht_menu_id")
-    private String htMenuId;
+    private Long htMenuId;
 
     /**
      * 菜单id
      */
     @Column(name = "menu_id")
-    private String menuId;
+    private Long menuId;
 
 
     /**
@@ -56,7 +56,7 @@ public class SmtHtMenuInfo implements Serializable{
      */
     @Column(name = "parent_id")
     @ApiModelProperty(name = "parentId",value = "父级菜单id")
-    private String parentId;
+    private Long parentId;
 
     /**
      * 菜单描述
@@ -96,7 +96,7 @@ public class SmtHtMenuInfo implements Serializable{
      */
     @Column(name = "premenu_id")
     @ApiModelProperty(name = "premenuId",value = "初始菜单id")
-    private String premenuId;
+    private Long premenuId;
 
     /**
      * 菜单所属平台类型（1、WEB 2、PDA 3、平板）
@@ -132,7 +132,7 @@ public class SmtHtMenuInfo implements Serializable{
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name = "createUserId",value = "创建用户Id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建时间
@@ -147,7 +147,7 @@ public class SmtHtMenuInfo implements Serializable{
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name = "modifiedUserId",value = "修改用户id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改时间

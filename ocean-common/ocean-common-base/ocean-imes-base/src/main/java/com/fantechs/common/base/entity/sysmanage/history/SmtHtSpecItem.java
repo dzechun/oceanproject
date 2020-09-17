@@ -21,7 +21,7 @@ public class SmtHtSpecItem implements Serializable {
     @Id
     @Column(name = "ht_spec_id")
     @ApiModelProperty(name="htSpecId" ,value="配置项历史ID")
-    private String htSpecId;
+    private Long htSpecId;
 
     /**
      * 配置项代码
@@ -56,7 +56,7 @@ public class SmtHtSpecItem implements Serializable {
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name="createUserId" ,value="创建账号")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -77,7 +77,7 @@ public class SmtHtSpecItem implements Serializable {
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name="modifiedUserId" ,value="修改账号")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改账号名称

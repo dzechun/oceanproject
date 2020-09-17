@@ -23,7 +23,7 @@ public class SmtSpecItem implements Serializable {
     @Id
     @Column(name = "spec_id")
     @ApiModelProperty(name="specId" ,value="配置项ID")
-    private String specId;
+    private Long specId;
 
     /**
      * 配置项代码
@@ -63,7 +63,7 @@ public class SmtSpecItem implements Serializable {
     @Column(name = "create_user_id")
     @ApiModelProperty(name="createUserId" ,value="创建账号")
     @Excel(name = "创建账号", height = 20, width = 30)
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -87,7 +87,7 @@ public class SmtSpecItem implements Serializable {
     @Column(name = "modified_user_id")
     @ApiModelProperty(name="modifiedUserId" ,value="修改账号")
     @Excel(name = "修改账号", height = 20, width = 30)
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改账号名称

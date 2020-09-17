@@ -20,7 +20,7 @@ public class SmtDept implements Serializable {
      */
     @Id
     @Column(name = "dept_id")
-    private String deptId;
+    private Long deptId;
 
     /**
      * 部门代码
@@ -47,7 +47,7 @@ public class SmtDept implements Serializable {
      * 厂别ID
      */
     @Column(name = "factory_id")
-    private String factoryId;
+    private Long factoryId;
 
     /**
      * 厂别名称
@@ -66,7 +66,7 @@ public class SmtDept implements Serializable {
      * 创建账号
      */
     @Column(name = "create_user_id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -86,7 +86,7 @@ public class SmtDept implements Serializable {
      * 修改账号
      */
     @Column(name = "modified_user_id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
     /**
      * 修改账号名称
      */

@@ -20,7 +20,7 @@ public class SmtProLine implements Serializable {
      */
     @Id
     @Column(name = "pro_line_id")
-    private String proLineId;
+    private Long proLineId;
 
     /**
      * 线别代码
@@ -47,7 +47,7 @@ public class SmtProLine implements Serializable {
      * 厂别ID
      */
     @Column(name = "factory_id")
-    private String factoryId;
+    private Long factoryId;
 
     /**
      * 厂别名称
@@ -79,7 +79,7 @@ public class SmtProLine implements Serializable {
      * 创建账号
      */
     @Column(name = "create_user_id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -99,7 +99,7 @@ public class SmtProLine implements Serializable {
      * 修改账号
      */
     @Column(name = "modified_user_id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改账号名称

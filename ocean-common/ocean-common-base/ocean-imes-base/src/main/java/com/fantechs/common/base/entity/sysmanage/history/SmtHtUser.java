@@ -20,8 +20,14 @@ public class SmtHtUser implements Serializable {
     @Id
     @Column(name = "ht_user_id")
     @ApiModelProperty(name="userId" ,value="用户历史id")
-    private String htUserId;
+    private Long htUserId;
 
+    /**
+     * 用户ID
+     */
+    @Column(name = "user_id")
+    @ApiModelProperty(name="userId" ,value="用户id")
+    private Long userId;
     /**
      * 用户帐号
      */
@@ -97,7 +103,7 @@ public class SmtHtUser implements Serializable {
      */
     @Column(name = "create_user_id")
     @ApiModelProperty(name="createUserId" ,value="创建用户id")
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 创建账号名称
@@ -118,7 +124,7 @@ public class SmtHtUser implements Serializable {
      */
     @Column(name = "modified_user_id")
     @ApiModelProperty(name="modifiedUserId" ,value="修改用户id")
-    private String modifiedUserId;
+    private Long modifiedUserId;
 
     /**
      * 修改账号名称
