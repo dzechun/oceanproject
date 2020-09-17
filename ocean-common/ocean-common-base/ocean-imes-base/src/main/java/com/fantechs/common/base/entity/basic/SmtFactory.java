@@ -88,6 +88,12 @@ public class SmtFactory implements Serializable {
     private Integer status;
 
     /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @Column(name = "is_delete")
+    @ApiModelProperty(name="isDelete" ,value="逻辑删除（0、删除 1、正常）")
+    private Byte isDelete;
+    /**
      * 扩展字段1
      */
     private String option1;

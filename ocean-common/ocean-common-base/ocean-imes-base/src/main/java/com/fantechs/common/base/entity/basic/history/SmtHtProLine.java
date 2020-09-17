@@ -7,11 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_ht_pro_line")
 @Data
-public class SmtHtProLine {
+public class SmtHtProLine implements Serializable {
     /**
      * 线别履历ID
      */

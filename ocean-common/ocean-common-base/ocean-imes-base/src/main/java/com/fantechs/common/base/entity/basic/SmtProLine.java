@@ -129,7 +129,12 @@ public class SmtProLine implements Serializable {
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Excel(name = "修改时间", height = 20, width = 30)
     private Date modifiedTime;
-
+    /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @Column(name = "is_delete")
+    @ApiModelProperty(name="isDelete" ,value="逻辑删除（0、删除 1、正常）")
+    private Byte isDelete;
     /**
      * 扩展字段1
      */

@@ -105,6 +105,12 @@ public class SmtSpecItem implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
+    /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @Column(name = "is_delete")
+    @ApiModelProperty(name="isDelete" ,value="逻辑删除（0、删除 1、正常）")
+    private Byte isDelete;
 
     /**
      * 扩展字段1
