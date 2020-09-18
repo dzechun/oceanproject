@@ -40,7 +40,7 @@ public class ${modelNameUpperCamel}Controller {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody ${modelNameUpperCamel} ${modelNameLowerCamel}) {
-        if(StringUtils.isEmpty(${modelNameLowerCamel}.get${modelNameLowerCamel}Id()
+        if(StringUtils.isEmpty(${modelNameLowerCamel}.get${modelNameUpperCamel}Id()
         )){
         return ControllerUtil.returnFailByParameError();
         }
