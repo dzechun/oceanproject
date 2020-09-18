@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtProductModelMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtProductModel">
+    <id column="ht_product_model_id" jdbcType="BIGINT" property="htProductModelId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ht_product_model_id, product_model_id, product_model_code, product_model_name, product_model_desc, 
+    status, create_user_id, create_time, modified_user_id, modified_time, option1, option2, 
+    option3
+  </sql>
+
+  <select id="selectHtProductModels" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductModel" resultMap="BaseResultMap">
+    select shpm.ht_product_model_id, shpm.product_model_id,shpm.product_model_code, shpm.product_model_name, shpm.product_model_desc,
+    shpm.status, shpm.create_user_id, u.user_name as createUserName,shpm.create_time, shpm.modified_user_id,
+    s.user_name as modifiedUserName,shpm.modified_time
+    from smt_ht_product_model shpm
+    left join smt_user u on shpm.create_user_id=u.user_id
+    left join smt_user s on shpm.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(shpm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="productModelCode!=null and productModelCode!=''">
+        and shpm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+      </if>
+      <if test="productModelDesc!=null and productModelDesc!=''">
+        and shpm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>

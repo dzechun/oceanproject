@@ -10,75 +10,49 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_ht_pro_line")
+@Table(name = "smt_ht_product_model")
 @Data
-public class SmtHtProLine implements Serializable {
+public class SmtHtProductModel implements Serializable {
+
+    private static final long serialVersionUID = -4889750811074204896L;
     /**
-     * 线别履历ID
+     *  产品型号履历ID
      */
     @Id
-    @Column(name = "ht_pro_line_id")
-    private Long htProLineId;
+    @Column(name = "ht_product_model_id")
+    private String htProductModelId;
 
     /**
-     * 线别ID
+     *  产品型号ID
      */
-    @Column(name = "pro_line_id")
-    @ApiModelProperty(name="proLineId" ,value="线别ID")
-    private Long proLineId;
+    @Column(name = "product_model_id")
+    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
+    private Long productModelId;
     /**
-     * 线别代码
+     *  产品型号编码
      */
-    @Column(name = "pro_code")
-    @ApiModelProperty(name="proCode" ,value="线别代码")
-    private String proCode;
+    @Column(name = "product_model_code")
+    @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
+    private String productModelCode;
 
     /**
-     * 线别名称
+     *  产品型号名称
      */
-    @Column(name = "pro_name")
-    @ApiModelProperty(name="proName" ,value="线别名称")
-    private String proName;
+    @Column(name = "product_model_name")
+    @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    private String productModelName;
 
     /**
-     * 线别描述
+     *  产品型号描述
      */
-    @Column(name = "pro_desc")
-    @ApiModelProperty(name="proDesc" ,value="线别描述")
-    private String proDesc;
+    @Column(name = "product_model_desc")
+    @ApiModelProperty(name="productModelDesc" ,value="产品型号描述")
+    private String productModelDesc;
 
     /**
-     * 厂别ID
+     * 状态（0、无效 1、有效）
      */
-    @Column(name = "factory_id")
-    @ApiModelProperty(name="factoryId" ,value="厂别ID")
-    private Long factoryId;
-
-    /**
-     * 厂别名称
-     */
-    @Transient
-    @ApiModelProperty(name="factoryName" ,value="厂别名称")
-    private String factoryName;
-
-    /**
-     * 车间ID
-     */
-    @Column(name = "work_shop_id")
-    @ApiModelProperty(name="workShopId" ,value="车间ID")
-    private Long workShopId;
-
-    /**
-     * 车间名称
-     */
-    @Transient
-    @ApiModelProperty(name="workShopName" ,value="车间名称")
-    private String workShopName;
-
-    /**
-     * 产线状态（0、无效 1、有效）
-     */
-    @ApiModelProperty(name="proLineId" ,value="状态")
+    @ApiModelProperty(name="status" ,value="状态")
     private Integer status;
 
     /**
@@ -137,4 +111,5 @@ public class SmtHtProLine implements Serializable {
      * 扩展字段3
      */
     private String option3;
+
 }

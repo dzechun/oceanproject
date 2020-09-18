@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtMaterial">
+    <id column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="material_type" jdbcType="VARCHAR" property="materialType" />
+    <result column="material_source" jdbcType="INTEGER" property="materialSource" />
+    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
+    <result column="if_compoboard" jdbcType="BIT" property="ifCompoboard" />
+    <result column="if_linking_board" jdbcType="BIT" property="ifLinkingBoard" />
+    <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
+    <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    material_id, material_code, material_name, material_desc, unit, version, product_model_id, 
+    material_type, material_source, barcode_rule_id, if_compoboard, if_linking_board, 
+    linking_board_number, status, customer_material_code, min_package_number, create_user_id, 
+    create_time, modified_user_id, modified_time, is_delete, option1, option2, option3
+  </sql>
+
+  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterial" resultMap="BaseResultMap">
+    select  sm.material_id, sm.material_code, sm.material_name, sm.material_desc, sm.unit, sm.version,sm.product_model_id,
+    spm.product_model_code as productModelCode, sm.material_type,sm.material_source, sm.barcode_rule_id, sm.if_compoboard,
+    sm.if_linking_board, sm.linking_board_number,sm.status, sm.customer_material_code, sm.` min_package_number`,
+    sm.create_user_id, u.user_name as createUserName,sm.create_time,sm.modified_user_id, s.user_name as modifiedUserName,
+    sm.modified_time, sm.is_delete
+    from smt_material sm
+    left join smt_user u on sm.create_user_id=u.user_id
+    left join smt_user s on sm.modified_user_id=s.user_id
+    left join smt_product_model spm on sm.product_model_id=spm.product_model_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName!=null and materialName!=''">
+        and sm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>
