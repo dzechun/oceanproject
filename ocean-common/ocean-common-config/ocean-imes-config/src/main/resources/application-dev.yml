@@ -27,10 +27,10 @@ spring:
     #  filters: stat,wall,logback
     filters: stat,wall,slf4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-    redis:
-      host: 10.182.163.81
-      port: 6379
-      password:
+  redis:
+    host: 10.182.163.81
+    port: 6379
+    password:
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8

@@ -11,7 +11,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 public class CurrentUserInfoUtils {
-    private static RedisUtil redisUtil=(RedisUtil) SpringUtil.getBean(RedisUtil.class);
 
     public static String getToken() throws TokenValidationFailedException, BizErrorException {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -31,11 +30,10 @@ public class CurrentUserInfoUtils {
      */
     public static SysUser getCurrentUserInfo() throws TokenValidationFailedException, BizErrorException {
         String token = getToken();
-        Object o= redisUtil.get(token);
-        if(StringUtils.isEmpty(o)){
+        SysUser user = TokenUtil.load(token);
+        if(StringUtils.isEmpty(user)){
             throw new TokenValidationFailedException(ErrorCodeEnum.UAC10011039);
         }
-        SysUser user = JSONObject.parseObject(JSONObject.toJSONString(o),SysUser.class);
         return user;
     }
 }

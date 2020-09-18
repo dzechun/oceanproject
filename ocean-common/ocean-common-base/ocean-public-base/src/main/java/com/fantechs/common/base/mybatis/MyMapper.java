@@ -11,8 +11,8 @@
 
 package com.fantechs.common.base.mybatis;
 
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.common.MySqlMapper;
+import tk.mybatis.mapper.common.*;
+import tk.mybatis.mapper.common.special.InsertListMapper;
 
 
 /**
@@ -20,5 +20,5 @@ import tk.mybatis.mapper.common.MySqlMapper;
  *
  * @param <T> the type parameter @author paascloud.net@gmail.com
  */
-public interface MyMapper<T> extends Mapper<T>, MySqlMapper<T> {
+public interface MyMapper<T> extends Mapper<T>, IdsMapper<T>, InsertListMapper<T> {
 }
