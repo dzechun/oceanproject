@@ -91,9 +91,6 @@ public class SmtDeptServiceImpl implements SmtDeptService {
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
-        if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
-        }
         smtDept.setModifiedUserId(currentUser.getUserId());
         smtDept.setModifiedTime(new Date());
         int i= smtDeptMapper.updateByPrimaryKeySelective(smtDept);
