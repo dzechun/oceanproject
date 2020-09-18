@@ -75,7 +75,7 @@ public class SmtProLineController {
 
     @ApiOperation("删除生产线信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "生产线对象ID",required = true)@RequestBody List<String> proLineIds){
+    public ResponseEntity delete(@ApiParam(value = "生产线对象ID",required = true)@RequestBody List<Long> proLineIds){
         if(StringUtils.isEmpty(proLineIds)){
             return ControllerUtil.returnFailByParameError();
         }

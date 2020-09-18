@@ -96,7 +96,7 @@ public class SmtProLineServiceImpl  implements SmtProLineService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<String> proLineIds) {
+    public int deleteByIds(List<Long> proLineIds) {
         int i=0;
         List<SmtHtProLine> list=new ArrayList<>();
         SysUser currentUser = null;
@@ -109,7 +109,7 @@ public class SmtProLineServiceImpl  implements SmtProLineService {
             return ErrorCodeEnum.UAC10011039.getCode();
         }
 
-        for (String proLineId : proLineIds) {
+        for (Long proLineId : proLineIds) {
             SmtProLine smtProLine = smtProLineMapper.selectByPrimaryKey(proLineId);
             if(StringUtils.isEmpty(smtProLine)){
                 throw new BizErrorException("该生产线已被删除。");

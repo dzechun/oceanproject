@@ -106,7 +106,7 @@ public class SmtDeptServiceImpl implements SmtDeptService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<String> deptIds) {
+    public int deleteByIds(List<Long> deptIds) {
         int i=0;
         SysUser currentUser = null;
         try {
@@ -119,7 +119,7 @@ public class SmtDeptServiceImpl implements SmtDeptService {
             return ErrorCodeEnum.UAC10011039.getCode();
         }
 
-        for (String deptId : deptIds) {
+        for (Long deptId : deptIds) {
             SmtDept smtDept = smtDeptMapper.selectByPrimaryKey(deptId);
             if(StringUtils.isEmpty(smtDept)){
                 throw new BizErrorException("该部门已被删除。");

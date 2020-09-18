@@ -15,7 +15,7 @@ public interface SmtFactoryService {
     List<SmtFactoryDto> findList(Map<String, Object> map);
     int insert(SmtFactory smtFactory);
     int deleteById(String smtFactoryId);
-    int deleteByIds(List<String> smtFactoryIds);
+    int deleteByIds(List<Long> smtFactoryIds);
     int updateById(SmtFactory smtFactory);
-    SmtFactory findById(String smtFactoryId);
+    SmtFactory findById(Long smtFactoryId);
 }

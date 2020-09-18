@@ -81,7 +81,7 @@ public class SmtDeptController {
 
     @ApiOperation("删除部门信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "部门对象ID",required = true)@RequestBody List<String> deptIds){
+    public ResponseEntity delete(@ApiParam(value = "部门对象ID",required = true)@RequestBody List<Long> deptIds){
         if(StringUtils.isEmpty(deptIds)){
             return ControllerUtil.returnFailByParameError();
         }

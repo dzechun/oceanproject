@@ -20,7 +20,7 @@ public interface SmtDeptService {
     int updateById(SmtDept smtDept);
 
     //删除部门信息
-    int deleteByIds(List<String> deptIds);
+    int deleteByIds(List<Long> deptIds);
 
     //导出部门信息
     List<SmtDept> exportDepts(SearchSmtDept searchSmtDept);

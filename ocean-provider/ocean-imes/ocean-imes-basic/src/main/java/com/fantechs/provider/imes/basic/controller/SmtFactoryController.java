@@ -84,7 +84,7 @@ public class SmtFactoryController {
 
     @ApiOperation("删除厂别信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "厂别对象ID",required = true) @RequestBody List<String> factoryIds){
+    public ResponseEntity delete(@ApiParam(value = "厂别对象ID",required = true) @RequestBody List<Long> factoryIds){
         if(StringUtils.isEmpty(factoryIds)){
             return ControllerUtil.returnFailByParameError();
         }
@@ -93,7 +93,7 @@ public class SmtFactoryController {
 
     @ApiOperation("获取厂别详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtFactory> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam String factoryId){
+    public ResponseEntity<SmtFactory> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam Long factoryId){
         if(StringUtils.isEmpty(factoryId)){
             return ControllerUtil.returnFailByParameError();
         }
