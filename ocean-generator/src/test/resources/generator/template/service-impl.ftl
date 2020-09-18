@@ -16,4 +16,8 @@ public class ${modelNameUpperCamel}ServiceImpl  extends BaseService<${modelNameU
     @Autowired
     private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
 
+    @Override
+    public List<${modelNameUpperCamel}> findList(Map<String, Object> map) {
+        return ${modelNameLowerCamel}Mapper.findList(map);
+    }
 }
