@@ -35,8 +35,15 @@ public class SysUserDto extends SysUser implements UserDetails,Serializable {
      * token(为了对接方便，先开放token)
      */
     @Transient
-    @ApiModelProperty(name="token" ,value="为了对接方便，先开放token")
+    @ApiModelProperty(name="token" ,value="token")
     private String token;
+
+    /**
+     * token(为了对接方便，先开放token)
+     */
+    @Transient
+    @ApiModelProperty(name="refreshToken" ,value="refreshToken")
+    private String refreshToken;
 
 
 
