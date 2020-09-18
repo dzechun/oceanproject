@@ -20,7 +20,7 @@ public class SmtFactory implements Serializable {
     @Id
     @Column(name = "factory_id")
     @ApiModelProperty(name="factoryId" ,value="厂别id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long factoryId;
 
     /**
