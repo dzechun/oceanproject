@@ -23,8 +23,8 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    factory_id, factory_code, factory_name, factory_desc, status, create_user_id, create_time, 
-    modified_user_id, modified_time, is_delete, option1, option2, option3
+    sf.factory_id, sf.factory_code, sf.factory_name, sf.factory_desc, status, sf.create_user_id, sf.create_time,
+    sf.modified_user_id, sf.modified_time, sf.is_delete, sf.option1, sf.option2, sf.option3
   </sql>
 
   <select id="findList"  resultMap="BaseResultMapDto" parameterType="map">

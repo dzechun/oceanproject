@@ -20,8 +20,8 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
   <sql id="Base_Column_List">
-    ht_factory_id, factory_id, factory_code, factory_name, factory_desc, create_user_id, 
-    create_time, modified_user_id, modified_time, status, option1, option2, option3
+    hf.ht_factory_id, hf.factory_id, hf.factory_code, hf.factory_name, hf.factory_desc, hf.create_user_id,
+    hf.create_time, hf.modified_user_id, hf.modified_time, hf.status, hf.option1, hf.option2, hf.option3
   </sql>
 
   <select id="findList" resultMap="BaseResultMap" parameterType="map">

@@ -25,9 +25,9 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    work_shop_id, work_shop_code, work_shop_name, work_shop_desc, factory_id, create_user_id, 
-    create_time, modified_user_id, modified_time, status, is_delete, option1, option2, 
-    option3
+    ws.work_shop_id, ws.work_shop_code, ws.work_shop_name, ws.work_shop_desc, ws.factory_id, ws.create_user_id,
+    ws.create_time, ws.modified_user_id, ws.modified_time, status, ws.is_delete, ws.option1, ws.option2,
+    ws.option3
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
