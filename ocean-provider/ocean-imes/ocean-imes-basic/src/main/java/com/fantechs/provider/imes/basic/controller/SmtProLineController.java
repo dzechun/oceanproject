@@ -45,7 +45,7 @@ public class SmtProLineController {
 
     @ApiOperation("根据条件查询生产线信息列表")
     @PostMapping("/selectProLines")
-    public ResponseEntity<List<SmtProLine>> selectProLines(@RequestBody SearchSmtProLine searchSmtProLine){
+    public ResponseEntity<List<SmtProLine>> selectProLines(@RequestBody(required = false) SearchSmtProLine searchSmtProLine){
         Page<Object> page = PageHelper.startPage(searchSmtProLine.getStartPage(),searchSmtProLine.getPageSize());
         List<SmtProLine> smtProLines = smtProLineServiceImpl.findList(searchSmtProLine);
         return ControllerUtil.returnDataSuccess(smtProLines,(int)page.getTotal());
