@@ -64,13 +64,13 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         smtWorkShop.setModifiedUserId(user.getUserId());
         smtWorkShop.setModifiedTime(new Date());
         smtWorkShop.setStatus(StringUtils.isEmpty(smtWorkShop.getStatus())?1:smtWorkShop.getStatus());
-
+        int i = smtWorkShopMapper.insertUseGeneratedKeys(smtWorkShop);
 
         SmtHtWorkShop smtHtWorkShop  = new SmtHtWorkShop();
         BeanUtils.copyProperties(smtWorkShop,smtHtWorkShop);
         smtHtWorkShopMapper.insert(smtHtWorkShop);
 
-        return smtWorkShopMapper.insertSelective(smtWorkShop);
+        return i;
     }
 
     @Override
