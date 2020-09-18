@@ -13,6 +13,7 @@ package com.fantechs.common.base.mybatis;
 
 import tk.mybatis.mapper.common.*;
 import tk.mybatis.mapper.common.special.InsertListMapper;
+import tk.mybatis.mapper.common.special.InsertUseGeneratedKeysMapper;
 
 
 /**
@@ -20,5 +21,5 @@ import tk.mybatis.mapper.common.special.InsertListMapper;
  *
  * @param <T> the type parameter @author paascloud.net@gmail.com
  */
-public interface MyMapper<T> extends Mapper<T>, IdsMapper<T>, InsertListMapper<T> {
+public interface MyMapper<T> extends Mapper<T>, IdsMapper<T>, InsertListMapper<T>,InsertUseGeneratedKeysMapper<T> {
 }
