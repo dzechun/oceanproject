@@ -15,6 +15,10 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
 
+# 添加ribbon的超时时间设置
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
 
 #根据服务名配置路由
 zuul:
@@ -28,6 +32,14 @@ zuul:
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeout-in-milliseconds: 30000
 
 logging:
   level:
