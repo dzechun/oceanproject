@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtWorkShop">
+    <id column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
+    <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode" />
+    <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+    <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
+    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtWorkShopDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    work_shop_id, work_shop_code, work_shop_name, work_shop_desc, factory_id, create_user_id, 
+    create_time, modified_user_id, modified_time, status, is_delete, option1, option2, 
+    option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,sf.factory_name
+    from smt_work_shop ws
+    LEFT JOIN smt_user su  ON ws.create_user_id = su.user_id
+    LEFT JOIN smt_user sus ON ws.modified_user_id = sus.user_id
+    LEFT JOIN smt_factory sf ON sf.factory_id = ws.factory_id
+    <where>
+      <if test="workShopCode != null">
+        and  ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
+      </if>
+      <if test="workShopName != null">
+        and  ws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+      </if>
+      <if test="workShopDesc != null">
+        and  ws.work_shop_desc like CONCAT('%', #{workShopDesc}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+</mapper>

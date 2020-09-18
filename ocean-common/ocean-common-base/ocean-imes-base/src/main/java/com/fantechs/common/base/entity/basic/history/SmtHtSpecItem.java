@@ -24,6 +24,13 @@ public class SmtHtSpecItem implements Serializable {
     private Long htSpecId;
 
     /**
+     * 配置项ID
+     */
+    @Column(name = "spec_id")
+    @ApiModelProperty(name="specId" ,value="配置项ID")
+    private Long specId;
+
+    /**
      * 配置项代码
      */
     @Column(name = "spec_code")

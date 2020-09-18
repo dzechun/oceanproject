@@ -5,9 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,6 +19,7 @@ public class SmtWorkShop  implements Serializable{
     @Id
     @Column(name = "work_shop_id")
     @ApiModelProperty(name = "workShopId",value = "车间id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workShopId;
 
     /**
