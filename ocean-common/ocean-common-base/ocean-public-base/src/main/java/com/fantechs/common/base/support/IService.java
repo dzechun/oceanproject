@@ -116,6 +116,15 @@ public interface IService<T> {
 	int batchDelete(List<T> list);
 
 	/**
+	 * 批量删除  @param list the list
+	 *
+	 * @param ids
+	 *
+	 * @return the int
+	 */
+	int batchDelete(String ids);
+
+	/**
 	 * 根据主键字段进行删除, 方法参数必须包含完整的主键属性  @param key the key
 	 *
 	 * @param key the key

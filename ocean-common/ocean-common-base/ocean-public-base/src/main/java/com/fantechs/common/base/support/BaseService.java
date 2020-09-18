@@ -204,6 +204,11 @@ public abstract class BaseService<T> implements IService<T> {
 		return result;
 	}
 
+	@Override
+	public int batchDelete(String ids) {
+		return mapper.deleteByIds(ids);
+	}
+
 	/**
 	 * Select count by example int.
 	 *
