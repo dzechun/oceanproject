@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
+import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtFactoryMapper;
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class SmtFactoryServiceImpl implements SmtFactoryService {
+public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements SmtFactoryService {
     @Autowired
     private SmtFactoryMapper smtFactoryMapper;
     @Autowired

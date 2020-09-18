@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.entity.basic.history.SmtHtProLine;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProLine;
+import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProLineMapper;
 import com.fantechs.provider.imes.basic.service.SmtHtProLineService;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class SmtHtProLineServiceImpl  implements SmtHtProLineService {
+public class SmtHtProLineServiceImpl extends BaseService<SmtHtProLine> implements SmtHtProLineService {
 
     @Resource
     private SmtHtProLineMapper smtHtProLineMapper;
