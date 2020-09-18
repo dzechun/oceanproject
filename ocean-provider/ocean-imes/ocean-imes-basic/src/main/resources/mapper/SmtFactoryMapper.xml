@@ -23,7 +23,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    sf.factory_id, sf.factory_code, sf.factory_name, sf.factory_desc, status, sf.create_user_id, sf.create_time,
+    sf.factory_id, sf.factory_code, sf.factory_name, sf.factory_desc, sf.status, sf.create_user_id, sf.create_time,
     sf.modified_user_id, sf.modified_time, sf.is_delete, sf.option1, sf.option2, sf.option3
   </sql>
 
