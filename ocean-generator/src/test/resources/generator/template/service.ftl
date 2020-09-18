@@ -1,14 +1,14 @@
 package ${basePackage}.service;
 
 import ${basePackage}.model.${modelNameUpperCamel};
-import ${basePackage}.service.Service;
-import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.support.IService;
 
 /**
  *
  * Created by ${author} on ${date}.
  */
 
-public interface ${modelNameUpperCamel}Service extends BaseService<${modelNameUpperCamel}> {
+public interface ${modelNameUpperCamel}Service extends IService<${modelNameUpperCamel}> {
 
+     List<${modelNameUpperCamel}> findList(Map<String,Object> map);
 }
