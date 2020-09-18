@@ -75,7 +75,6 @@ public class SmtDeptServiceImpl implements SmtDeptService {
         //新增部门历史信息
         SmtHtDept smtHtDept=new SmtHtDept();
         BeanUtils.copyProperties(smtDept,smtHtDept);
-        smtHtDept.setDeptId(smtDept.getDeptId());
         smtHtDeptMapper.insertSelective(smtHtDept);
         return i;
     }
