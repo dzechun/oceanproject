@@ -105,7 +105,7 @@ public class SmtFactoryServiceImpl implements SmtFactoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<String> smtFactoryIds) {
+    public int deleteByIds(List<Long> smtFactoryIds) {
         SysUser user = null;
         try {
             user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -116,7 +116,7 @@ public class SmtFactoryServiceImpl implements SmtFactoryService {
             return ErrorCodeEnum.UAC10011039.getCode();
         }
         List<SmtHtFactory>  smtHtFactorys = new LinkedList<>();
-        for(String id : smtFactoryIds){
+        for(Long id : smtFactoryIds){
             SmtFactory smtFactory = smtFactoryMapper.selectByPrimaryKey(id);
             if(StringUtils.isNotEmpty(smtFactory)){
                 SmtHtFactory smtHtFactory  = new SmtHtFactory();
@@ -174,7 +174,7 @@ public class SmtFactoryServiceImpl implements SmtFactoryService {
     }
 
     @Override
-    public SmtFactory findById(String id) {
+    public SmtFactory findById(Long id) {
         return smtFactoryMapper.selectByPrimaryKey(id);
     }
 }
