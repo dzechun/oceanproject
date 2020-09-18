@@ -26,7 +26,7 @@ import java.util.List;
 public class ${modelNameUpperCamel}Controller {
 
     @Autowired
-    ${modelNameUpperCamel}Service ${modelNameLowerCamel}Service;
+    private ${modelNameUpperCamel}Service ${modelNameLowerCamel}Service;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -66,7 +66,7 @@ public class ${modelNameUpperCamel}Controller {
     @ApiOperation("根据条件查询角色信息列表")
     @PostMapping("/findList")
     public ResponseEntity<${modelNameUpperCamel}> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
-        Page<Object> page = PageHelper.startPage(search${modelNameLowerCamel}.getStartPage(),search${modelNameLowerCamel}.getPageSize());
+        Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
         List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
