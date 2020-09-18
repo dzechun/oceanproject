@@ -40,7 +40,7 @@ public class ${modelNameUpperCamel}Controller {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody ${modelNameUpperCamel} ${modelNameLowerCamel}) {
-        if(StringUtils.isEmpty(${modelNameLowerCamel}.get${modelNameLowerCamel}Id()
+        if(StringUtils.isEmpty(${modelNameLowerCamel}.get${modelNameUpperCamel}Id()
         )){
         return ControllerUtil.returnFailByParameError();
         }
@@ -50,7 +50,11 @@ public class ${modelNameUpperCamel}Controller {
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<${modelNameUpperCamel}> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam Long id) {
-        return  ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.findById(id);
+        if(StringUtils.isEmpty(id)){
+            return ControllerUtil.returnFailByParameError();
+        }
+        ${modelNameUpperCamel}  ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.findById(id)
+        return  ControllerUtil.returnDataSuccess(${modelNameLowerCamel},StringUtils.isEmpty(${modelNameLowerCamel})?0:1);
     }
 
     @ApiOperation("根据条件查询角色信息列表")

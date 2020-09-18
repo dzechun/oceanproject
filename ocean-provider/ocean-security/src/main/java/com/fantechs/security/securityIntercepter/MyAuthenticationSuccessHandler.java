@@ -60,6 +60,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         httpServletResponse.setHeader("token", token);
         httpServletResponse.setHeader("refreshToken",refreshToken);
         loginUser.setToken(token);
+        loginUser.setRefreshToken(refreshToken);
         httpServletResponse.setHeader("Access-Control-Expose-Headers", "token,refreshToken");
 
         ResponseEntity<Object> responseEntity = ControllerUtil.returnDataSuccess(loginUser, 1);
