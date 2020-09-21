@@ -6,11 +6,12 @@ import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysMenuInfo;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysAuthRoleMapper;
 import com.fantechs.security.mapper.SysMenuInfoMapper;
 import com.fantechs.security.mapper.SysRoleMapper;
-import com.fantechs.security.service.SysMenuinService;
+import com.fantechs.security.service.SysMenuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -23,7 +24,7 @@ import java.util.Map;
  * Created by lfz on 2020/8/15.
  */
 @Service
-public class SysMenuServiceImpl  implements SysMenuinService {
+public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements SysMenuInfoService {
     @Autowired
     private SysMenuInfoMapper sysMenuInfoMapper;
 //    @Autowired
@@ -51,7 +52,7 @@ public class SysMenuServiceImpl  implements SysMenuinService {
                     //---判断用户角色是否属于当前菜单
                     boolean isR = false;
                     for (SysAuthRole tSysAuthforrole : tSysAuthforroles) {
-                        if (rolesId.contains(tSysAuthforrole.getRoleId())) {
+                        if (rolesId.contains(tSysAuthforrole.getRoleId().toString())) {
                             isR = true;
                             break;
                         }
@@ -88,11 +89,6 @@ public class SysMenuServiceImpl  implements SysMenuinService {
             }
         }
         return tSysMenuinfos;
-    }
-
-    @Override
-    public SysMenuInfoDto findById(Long id) {
-        return sysMenuInfoMapper.selectById(id);
     }
 
     @Override

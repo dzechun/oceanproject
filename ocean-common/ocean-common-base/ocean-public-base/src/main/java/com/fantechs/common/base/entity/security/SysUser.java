@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.*;
 
 @Table(name = "sys_user")
@@ -151,4 +152,11 @@ public class SysUser {
     @Column(name = "is_delete")
     @ApiModelProperty(name="isDelete" ,value="逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
+
+    /**
+     *权限
+     */
+    @Transient
+    @JSONField(serialize = false)
+    private Set<String> authority;
 }

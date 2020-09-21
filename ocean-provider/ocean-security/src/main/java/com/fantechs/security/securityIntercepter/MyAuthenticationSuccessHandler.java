@@ -1,18 +1,18 @@
 package com.fantechs.security.securityIntercepter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
+import com.fantechs.security.service.SysMenuInfoService;
 import com.fantechs.security.utils.MySecurityTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -22,12 +22,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     private static Logger log= LoggerFactory.getLogger(MyAuthenticationSuccessHandler.class);
+
+    @Autowired
+    private SysMenuInfoService sysMenuInfoService;
+
+    private Set<String> permsSet = new HashSet<>();
 
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset=utf-8");
@@ -38,12 +45,30 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             //---加入角色权限所对应的菜单名称
             List<SysRole> roles = loginUser.getRoles();
             List<String> roleIds = new  LinkedList<>();
-            //menuType 1-web 2-pc 3-PDA
+            //menuType 1-web(客户端) 2-pc 3-PDA(移动设备)
             int menuType=3;  //PDA
+            log.info("=========================="+httpServletRequest.getHeader("user-agent"));
             if(httpServletRequest.getHeader("user-agent").contains("Apache-HttpClient")){
                 menuType =1;
             }else if(!UserAgentUtil.CheckAgent(httpServletRequest.getHeader("user-agent"))){
                 menuType=2;
+            }
+            if (StringUtils.isNotEmpty(roles)) {
+                for(SysRole role :roles){
+                    roleIds.add(role.getRoleId().toString());
+                }
+                //构建角色菜单树
+                List<SysMenuInListDTO>  roleMenuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+                        "parentId","0",
+                        "menuType",menuType+""
+                ),roleIds);
+
+                if(StringUtils.isNotEmpty(roleMenuList)){
+                    loginUser.setMenuList(roleMenuList);
+                    //获取所有菜单地址
+                    getPermsSet(roleMenuList);
+                }
+
             }
         }
 
@@ -51,7 +76,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         TokenUtil.clearTokenByRequest(httpServletRequest);
         //---生成token
         SysUser sysUser = MySecurityTool.getCurrentLoginUser();
-//        sysUser.setAuthority(permsSet);
+        sysUser.setAuthority(permsSet);
 
         String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
         String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
@@ -95,14 +120,14 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         return ip;
     }
 
-//    public  void  getPermsSet(List<SysMenuinListDTO> menuList){
-//        for(SysMenuinListDTO SysMenuinListDTO:menuList){
-//            if(StringUtils.isNotEmpty(SysMenuinListDTO.getSysMenuInfoDto().getUrl())){
-//                permsSet.add(SysMenuinListDTO.getSysMenuInfoDto().getUrl());
-//            }
-//            if(StringUtils.isNotEmpty(SysMenuinListDTO.getSysMenuinList())){
-//                getPermsSet(SysMenuinListDTO.getSysMenuinList());
-//            }
-//        }
-//    }
+    public  void  getPermsSet(List<SysMenuInListDTO> menuList){
+        for(SysMenuInListDTO SysMenuinListDTO:menuList){
+            if(StringUtils.isNotEmpty(SysMenuinListDTO.getSysMenuInfoDto().getUrl())){
+                permsSet.add(SysMenuinListDTO.getSysMenuInfoDto().getUrl());
+            }
+            if(StringUtils.isNotEmpty(SysMenuinListDTO.getSysMenuinList())){
+                getPermsSet(SysMenuinListDTO.getSysMenuinList());
+            }
+        }
+    }
 }

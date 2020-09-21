@@ -4,7 +4,7 @@ package com.fantechs.security.securityIntercepter;
 import com.fantechs.common.base.dto.security.SysMenuInfoDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.security.service.SysMenuinService;
+import com.fantechs.security.service.SysMenuInfoService;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class MyFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
     @Resource
-    private SysMenuinService SysMenuinfoService;
+    private SysMenuInfoService SysMenuinfoService;
     private AntPathMatcher antPathMatcher=new AntPathMatcher();
 
     /**

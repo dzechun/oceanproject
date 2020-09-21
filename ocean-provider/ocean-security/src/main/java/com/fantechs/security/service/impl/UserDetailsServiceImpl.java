@@ -45,9 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Example example = new Example(SysUserDto.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("status",1).orIsNull("status");
-        example.and(criteria);
-        criteria.andEqualTo("userName", s);
+        criteria.andEqualTo("status",1).andEqualTo("userName", s);
         SysUserDto userDto = sysUserMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(userDto)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);

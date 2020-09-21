@@ -1,5 +1,6 @@
 package com.fantechs.common.base.dto.security;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,6 +26,7 @@ public class SysUserDto extends SysUser implements UserDetails,Serializable {
     private static final long serialVersionUID = -1710596362169456736L;
     @Transient
     @ApiModelProperty(name="smtRole" ,value="角色对象")
+    @JSONField(serialize = false)
     private List<SysRole> roles;
 
     @Transient
@@ -32,14 +34,14 @@ public class SysUserDto extends SysUser implements UserDetails,Serializable {
     private List<SysMenuInListDTO> menuList;
 
     /**
-     * token(为了对接方便，先开放token)
+     * token
      */
     @Transient
     @ApiModelProperty(name="token" ,value="token")
     private String token;
 
     /**
-     * token(为了对接方便，先开放token)
+     * refreshToken
      */
     @Transient
     @ApiModelProperty(name="refreshToken" ,value="refreshToken")
