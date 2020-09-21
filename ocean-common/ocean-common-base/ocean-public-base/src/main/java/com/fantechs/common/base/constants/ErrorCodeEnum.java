@@ -243,6 +243,8 @@ public enum ErrorCodeEnum {
     OPT20012000(20012000,"删除数据失败, id=%s"),
 
     OPT20012001(20012001,"编码重复"),
+
+    OPT20012002(20012002,"未知错误"),
     ;
 
     private Integer code;
