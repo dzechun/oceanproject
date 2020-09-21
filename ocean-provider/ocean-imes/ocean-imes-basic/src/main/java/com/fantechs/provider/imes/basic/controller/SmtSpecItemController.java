@@ -37,16 +37,16 @@ import java.util.List;
 @Slf4j
 public class SmtSpecItemController {
     @Autowired
-    private SmtSpecItemService smtSpecItemServiceImpl;
+    private SmtSpecItemService smtSpecItemService;
     @Autowired
-    private SmtHtSpecItemService smtHtSpecItemServiceImpl;
+    private SmtHtSpecItemService smtHtSpecItemService;
 
     @ApiOperation("根据条件查询程序配置项列表")
     @PostMapping("/selectSpecItems")
     public ResponseEntity<List<SmtSpecItem>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtSpecItem searchSmtSpecItem){
         Page<Object> page = PageHelper.startPage(searchSmtSpecItem.getStartPage(),searchSmtSpecItem.getPageSize());
-        List<SmtSpecItem> smtSpecItems = smtSpecItemServiceImpl.selectSpecItems(searchSmtSpecItem);
+        List<SmtSpecItem> smtSpecItems = smtSpecItemService.selectSpecItems(searchSmtSpecItem);
         return ControllerUtil.returnDataSuccess(smtSpecItems,(int)page.getTotal());
     }
 
@@ -56,7 +56,7 @@ public class SmtSpecItemController {
         if(StringUtils.isEmpty(specId)){
             return ControllerUtil.returnFail("缺少必需参数", ErrorCodeEnum.GL99990100.getCode());
         }
-        SmtSpecItem smtSpecItem=smtSpecItemServiceImpl.selectById(specId);
+        SmtSpecItem smtSpecItem=smtSpecItemService.selectById(specId);
         return ControllerUtil.returnDataSuccess(smtSpecItem,StringUtils.isEmpty(smtSpecItem)?0:1);
     }
 
@@ -70,7 +70,7 @@ public class SmtSpecItemController {
                 smtSpecItem.getPara())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtSpecItemServiceImpl.insert(smtSpecItem));
+        return ControllerUtil.returnCRUD(smtSpecItemService.insert(smtSpecItem));
     }
 
     @ApiOperation("修改程序配置项")
@@ -79,7 +79,7 @@ public class SmtSpecItemController {
         if(StringUtils.isEmpty(smtSpecItem.getSpecId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtSpecItemServiceImpl.updateById(smtSpecItem));
+        return ControllerUtil.returnCRUD(smtSpecItemService.updateById(smtSpecItem));
     }
 
     @ApiOperation("删除程序配置项")
@@ -88,7 +88,7 @@ public class SmtSpecItemController {
         if(StringUtils.isEmpty(specIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtSpecItemServiceImpl.deleteByIds(specIds));
+        return ControllerUtil.returnCRUD(smtSpecItemService.deleteByIds(specIds));
     }
 
     /**
@@ -100,7 +100,7 @@ public class SmtSpecItemController {
     @ApiOperation(value = "导出程序配置项信息excel",notes = "导出程序配置项信息excel")
     public void exportSpecItems(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                             @RequestBody(required = false) SearchSmtSpecItem searchSmtSpecItem){
-        List<SmtSpecItemExcelDTO> list = smtSpecItemServiceImpl.exportSpecItems(searchSmtSpecItem);
+        List<SmtSpecItemExcelDTO> list = smtSpecItemService.exportSpecItems(searchSmtSpecItem);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "程序配置项信息导出", "程序配置项信息", SmtSpecItemExcelDTO.class, "程序配置项信息.xls", response);
@@ -113,7 +113,7 @@ public class SmtSpecItemController {
     @ApiOperation(value = "根据条件查询程序配置项履历信息",notes = "根据条件查询程序配置项履历信息")
     public ResponseEntity<List<SmtHtSpecItem>> selectHtSpecItems(@RequestBody(required = false) SearchSmtSpecItem searchSmtSpecItem) {
         Page<Object> page = PageHelper.startPage(searchSmtSpecItem.getStartPage(),searchSmtSpecItem.getPageSize());
-        List<SmtHtSpecItem> smtHtSpecItems = smtHtSpecItemServiceImpl.findHtSpecItemList(ControllerUtil.dynamicConditionByEntity(searchSmtSpecItem));
+        List<SmtHtSpecItem> smtHtSpecItems = smtHtSpecItemService.findHtSpecItemList(ControllerUtil.dynamicConditionByEntity(searchSmtSpecItem));
         return  ControllerUtil.returnDataSuccess(smtHtSpecItems, (int)page.getTotal());
     }
 }

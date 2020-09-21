@@ -38,16 +38,16 @@ import java.util.List;
 @Slf4j
 public class SmtProLineController {
     @Autowired
-    private SmtProLineService smtProLineServiceImpl;
+    private SmtProLineService smtProLineService;
 
     @Autowired
-    private SmtHtProLineService smtHtProLineServiceImpl;
+    private SmtHtProLineService smtHtProLineService;
 
     @ApiOperation("根据条件查询生产线信息列表")
     @PostMapping("/selectProLines")
     public ResponseEntity<List<SmtProLine>> selectProLines(@RequestBody(required = false) SearchSmtProLine searchSmtProLine){
         Page<Object> page = PageHelper.startPage(searchSmtProLine.getStartPage(),searchSmtProLine.getPageSize());
-        List<SmtProLine> smtProLines = smtProLineServiceImpl.findList(searchSmtProLine);
+        List<SmtProLine> smtProLines = smtProLineService.findList(searchSmtProLine);
         return ControllerUtil.returnDataSuccess(smtProLines,(int)page.getTotal());
     }
 
@@ -61,7 +61,7 @@ public class SmtProLineController {
                 smtProLine.getWorkShopId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProLineServiceImpl.insert(smtProLine));
+        return ControllerUtil.returnCRUD(smtProLineService.insert(smtProLine));
     }
 
     @ApiOperation("修改生产线信息")
@@ -70,7 +70,7 @@ public class SmtProLineController {
         if(StringUtils.isEmpty(smtProLine.getProLineId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProLineServiceImpl.updateById(smtProLine));
+        return ControllerUtil.returnCRUD(smtProLineService.updateById(smtProLine));
     }
 
     @ApiOperation("删除生产线信息")
@@ -79,7 +79,7 @@ public class SmtProLineController {
         if(StringUtils.isEmpty(proLineIds)){
             return ControllerUtil.returnFailByParameError();
         }
-            return ControllerUtil.returnCRUD(smtProLineServiceImpl.deleteByIds(proLineIds));
+            return ControllerUtil.returnCRUD(smtProLineService.deleteByIds(proLineIds));
     }
 
     /**
@@ -91,7 +91,7 @@ public class SmtProLineController {
     @ApiOperation(value = "导出生产线信息excel",notes = "导出生产线信息excel")
     public void exportProLines(HttpServletResponse response, @ApiParam(value = "查询对象")
                                @RequestBody(required = false) SearchSmtProLine searchSmtProLine){
-        List<SmtProLine> list = smtProLineServiceImpl.exportProLines(searchSmtProLine);
+        List<SmtProLine> list = smtProLineService.exportProLines(searchSmtProLine);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "生产线信息导出", "生产线信息", SmtProLine.class, "生产线信息.xls", response);
@@ -105,7 +105,7 @@ public class SmtProLineController {
     @ApiOperation(value = "根据条件查询生产线履历信息",notes = "根据条件查询生产线履历信息")
     public ResponseEntity<List<SmtHtProLine>> selectHtProLines(@ApiParam(value = "查询对象")@RequestBody SearchSmtProLine searchSmtProLine) {
         Page<Object> page = PageHelper.startPage(searchSmtProLine.getStartPage(),searchSmtProLine.getPageSize());
-        List<SmtHtProLine> smtHtDepts=smtHtProLineServiceImpl.selectHtProLines(searchSmtProLine);
+        List<SmtHtProLine> smtHtDepts=smtHtProLineService.selectHtProLines(searchSmtProLine);
         return  ControllerUtil.returnDataSuccess(smtHtDepts, (int)page.getTotal());
     }
 }

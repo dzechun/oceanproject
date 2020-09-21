@@ -39,10 +39,10 @@ import java.util.List;
 public class SmtProductModelController {
 
     @Autowired
-    private SmtProductModelService smtProductModelServiceImpl;
+    private SmtProductModelService smtProductModelService;
 
     @Autowired
-    private SmtHtProductModelService smtHtProductModelServiceImpl;
+    private SmtHtProductModelService smtHtProductModelService;
 
 
     @ApiOperation("根据条件查询产品型号信息列表")
@@ -51,7 +51,7 @@ public class SmtProductModelController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtProductModel searchSmtProductModel
     ){
         Page<Object> page = PageHelper.startPage(searchSmtProductModel.getStartPage(),searchSmtProductModel.getPageSize());
-        List<SmtProductModel> smtProductModels = smtProductModelServiceImpl.selectProductModels(searchSmtProductModel);
+        List<SmtProductModel> smtProductModels = smtProductModelService.selectProductModels(searchSmtProductModel);
         return ControllerUtil.returnDataSuccess(smtProductModels,(int)page.getTotal());
     }
 
@@ -63,7 +63,7 @@ public class SmtProductModelController {
                 smtProductModel.getProductModelCode())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProductModelServiceImpl.insert(smtProductModel));
+        return ControllerUtil.returnCRUD(smtProductModelService.insert(smtProductModel));
     }
 
     @ApiOperation("修改产品型号信息")
@@ -72,7 +72,7 @@ public class SmtProductModelController {
         if(StringUtils.isEmpty(smtProductModel.getProductModelId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProductModelServiceImpl.updateById(smtProductModel));
+        return ControllerUtil.returnCRUD(smtProductModelService.updateById(smtProductModel));
     }
 
     @ApiOperation("删除产品型号信息")
@@ -81,7 +81,7 @@ public class SmtProductModelController {
         if(StringUtils.isEmpty(productModelIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProductModelServiceImpl.deleteByIds(productModelIds));
+        return ControllerUtil.returnCRUD(smtProductModelService.deleteByIds(productModelIds));
     }
 
     /**
@@ -93,7 +93,7 @@ public class SmtProductModelController {
     @ApiOperation(value = "导出产品型号信息excel",notes = "导出产品型号信息excel")
     public void exportProductModels(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtProductModel searchSmtProductModel){
-        List<SmtProductModel> list = smtProductModelServiceImpl.exportProductModels(searchSmtProductModel);
+        List<SmtProductModel> list = smtProductModelService.exportProductModels(searchSmtProductModel);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "产品型号信息导出", "产品型号信息", SmtProductModel.class, "产品型号信息.xls", response);
@@ -108,8 +108,9 @@ public class SmtProductModelController {
     public ResponseEntity<List<SmtHtProductModel>> selectHtProductModels(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtProductModel searchSmtProductModel) {
         Page<Object> page = PageHelper.startPage(searchSmtProductModel.getStartPage(),searchSmtProductModel.getPageSize());
-        List<SmtHtProductModel> smtHtProductModels=smtHtProductModelServiceImpl.selectHtProductModels(searchSmtProductModel);
+        List<SmtHtProductModel> smtHtProductModels=smtHtProductModelServic.selectHtProductModels(searchSmtProductModel);
         return  ControllerUtil.returnDataSuccess(smtHtProductModels, (int)page.getTotal());
     }
 
 }
+e

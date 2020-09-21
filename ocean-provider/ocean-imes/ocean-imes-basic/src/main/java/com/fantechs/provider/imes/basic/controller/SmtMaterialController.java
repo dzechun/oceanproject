@@ -38,16 +38,16 @@ public class SmtMaterialController {
 
 
     @Autowired
-    private SmtMaterialService smtMaterialServiceImpl;
+    private SmtMaterialService smtMaterialService;
 
     @Autowired
-    private SmtHtMaterialService smtHtMaterialServiceImpl;
+    private SmtHtMaterialService smtHtMaterialService;
 
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SmtMaterial>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial ){
         Page<Object> page = PageHelper.startPage(searchSmtMaterial.getStartPage(),searchSmtMaterial.getPageSize());
-        List<SmtMaterial> smtMaterials = smtMaterialServiceImpl.findList(searchSmtMaterial);
+        List<SmtMaterial> smtMaterials = smtMaterialService.findList(searchSmtMaterial);
         return ControllerUtil.returnDataSuccess(smtMaterials,(int)page.getTotal());
     }
 
@@ -58,7 +58,7 @@ public class SmtMaterialController {
                 smtMaterial.getMaterialCode())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtMaterialServiceImpl.insert(smtMaterial));
+        return ControllerUtil.returnCRUD(smtMaterialService.insert(smtMaterial));
 
     }
 
@@ -69,7 +69,7 @@ public class SmtMaterialController {
         if(StringUtils.isEmpty(smtMaterial.getMaterialCode())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtMaterialServiceImpl.updateById(smtMaterial));
+        return ControllerUtil.returnCRUD(smtMaterialService.updateById(smtMaterial));
 
     }
 
@@ -79,7 +79,7 @@ public class SmtMaterialController {
         if(StringUtils.isEmpty(materialIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtMaterialServiceImpl.deleteByIds(materialIds));
+        return ControllerUtil.returnCRUD(smtMaterialService.deleteByIds(materialIds));
     }
 
     @ApiOperation("获取物料详情")
@@ -88,7 +88,7 @@ public class SmtMaterialController {
         if(StringUtils.isEmpty(materialId)){
             return ControllerUtil.returnFailByParameError();
         }
-        SmtMaterial smtMaterial = smtMaterialServiceImpl.findById(materialId);
+        SmtMaterial smtMaterial = smtMaterialService.findById(materialId);
         return  ControllerUtil.returnDataSuccess(smtMaterial,StringUtils.isEmpty(smtMaterial)?0:1);
     }
 
@@ -102,7 +102,7 @@ public class SmtMaterialController {
     @ApiOperation(value = "导出物料excel",notes = "导出物料excel")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                               @RequestBody(required = false)SearchSmtMaterial searchSmtMaterial){
-        List<SmtMaterial> list = smtMaterialServiceImpl.findList(searchSmtMaterial);
+        List<SmtMaterial> list = smtMaterialService.findList(searchSmtMaterial);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "导出物料信息", "物料信息", SmtMaterial.class, "物料信息.xls", response);
@@ -115,7 +115,7 @@ public class SmtMaterialController {
     @PostMapping("/findHtList")
     public ResponseEntity< List<SmtHtMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial){
         Page<Object> page = PageHelper.startPage(searchSmtMaterial.getStartPage(),searchSmtMaterial.getPageSize());
-        List<SmtHtMaterial> htMaterials = smtHtMaterialServiceImpl.findHtList(searchSmtMaterial);
+        List<SmtHtMaterial> htMaterials = smtHtMaterialService.findHtList(searchSmtMaterial);
         return ControllerUtil.returnDataSuccess(htMaterials,(int)page.getTotal());
     }
 }
