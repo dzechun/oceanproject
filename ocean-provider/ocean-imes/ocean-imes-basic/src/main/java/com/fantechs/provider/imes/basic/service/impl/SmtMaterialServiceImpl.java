@@ -56,7 +56,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
         List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
         if(null!=smtMaterials&&smtMaterials.size()>0){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);

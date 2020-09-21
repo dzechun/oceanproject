@@ -60,7 +60,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SmtFactory odlsmtFactory = smtFactoryMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlsmtFactory)){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtFactory.setCreateUserId(user.getUserId());
         smtFactory.setCreateTime(new Date());

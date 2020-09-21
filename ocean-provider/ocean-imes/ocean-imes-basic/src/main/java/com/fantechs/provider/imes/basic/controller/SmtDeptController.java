@@ -36,10 +36,10 @@ import java.util.List;
 public class SmtDeptController {
 
     @Autowired
-    private SmtDeptService smtDeptServiceImpl;
+    private SmtDeptService smtDeptService;
 
     @Autowired
-    private SmtHtDeptService smtHtDeptServiceImpl;
+    private SmtHtDeptService smtHtDeptService;
 
     @ApiOperation("根据条件查询部门信息列表")
     @PostMapping("/selectDepts")
@@ -47,14 +47,14 @@ public class SmtDeptController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtDept searchSmtDept
     ){
         Page<Object> page = PageHelper.startPage(searchSmtDept.getStartPage(),searchSmtDept.getPageSize());
-        List<SmtDept> smtDeptes = smtDeptServiceImpl.selectDepts(searchSmtDept);
+        List<SmtDept> smtDeptes = smtDeptService.selectDepts(searchSmtDept);
         return ControllerUtil.returnDataSuccess(smtDeptes,(int)page.getTotal());
     }
 
     @ApiOperation("根据厂别ID查询部门信息列表(用户功能调用)")
     @GetMapping("/selectDeptByFactoryId")
     public ResponseEntity<List<SmtDept>> selectDeptByFactoryId(@ApiParam(value = "传入factoryId",required = true) @RequestParam String factoryId){
-        List<SmtDept> smtDeptes = smtDeptServiceImpl.selectDeptByFactoryId(factoryId);
+        List<SmtDept> smtDeptes = smtDeptService.selectDeptByFactoryId(factoryId);
         return ControllerUtil.returnDataSuccess(smtDeptes, StringUtils.isEmpty(smtDeptes)?0:1);
     }
 
@@ -67,7 +67,7 @@ public class SmtDeptController {
                 smtDept.getFactoryId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtDeptServiceImpl.insert(smtDept));
+        return ControllerUtil.returnCRUD(smtDeptService.insert(smtDept));
     }
 
     @ApiOperation("修改部门信息")
@@ -76,7 +76,7 @@ public class SmtDeptController {
         if(StringUtils.isEmpty(smtDept.getDeptId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtDeptServiceImpl.updateById(smtDept));
+        return ControllerUtil.returnCRUD(smtDeptService.updateById(smtDept));
     }
 
     @ApiOperation("删除部门信息")
@@ -85,7 +85,7 @@ public class SmtDeptController {
         if(StringUtils.isEmpty(deptIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtDeptServiceImpl.deleteByIds(deptIds));
+        return ControllerUtil.returnCRUD(smtDeptService.deleteByIds(deptIds));
     }
 
     /**
@@ -97,7 +97,7 @@ public class SmtDeptController {
     @ApiOperation(value = "导出部门信息excel",notes = "导出部门信息excel")
     public void exportDepts(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtDept searchSmtDept){
-        List<SmtDept> list = smtDeptServiceImpl.exportDepts(searchSmtDept);
+        List<SmtDept> list = smtDeptService.exportDepts(searchSmtDept);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "部门信息导出", "部门信息", SmtDept.class, "部门信息.xls", response);
@@ -113,7 +113,7 @@ public class SmtDeptController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtDept searchSmtDept
              ) {
         Page<Object> page = PageHelper.startPage(searchSmtDept.getStartPage(),searchSmtDept.getPageSize());
-        List<SmtHtDept> smtHtDepts=smtHtDeptServiceImpl.selectHtDepts(searchSmtDept);
+        List<SmtHtDept> smtHtDepts=smtHtDeptService.selectHtDepts(searchSmtDept);
         return  ControllerUtil.returnDataSuccess(smtHtDepts, (int)page.getTotal());
     }
 

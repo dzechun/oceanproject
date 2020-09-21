@@ -57,7 +57,7 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
         criteria.andEqualTo("specCode",smtSpecItem.getSpecCode());
         List<SmtSpecItem> smtSpecItems = smtSpecItemMapper.selectByExample(example);
         if(null!=smtSpecItems&&smtSpecItems.size()>0){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtSpecItem.setCreateUserId(currentUser.getUserId());

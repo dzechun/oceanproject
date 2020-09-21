@@ -57,7 +57,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         criteria.andEqualTo("deptCode",smtDept.getDeptCode());
         List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
         if(null!=smtDepts&&smtDepts.size()>0){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         Example example1 = new Example(SmtDept.class);

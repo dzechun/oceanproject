@@ -146,7 +146,7 @@ public class SmtMaterial implements Serializable {
     /**
      * 最小包装数
      */
-    @Column(name = "` min_package_number`")
+    @Column(name = "min_package_number")
     @ApiModelProperty(name="minPackageNumber" ,value="最小包装数")
     @Excel(name = "最小包装数", height = 20, width = 30)
     private Integer minPackageNumber;
