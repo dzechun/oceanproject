@@ -145,8 +145,8 @@ public class SysUserController {
         int i=0;
         try {
             // 导入操作
-            List<SysUser> smtUsers = EasyPoiUtils.importExcel(file,SysUser.class);
-            i= sysUserService.importUsers(smtUsers);
+            List<SysUser> sysUsers = EasyPoiUtils.importExcel(file,SysUser.class);
+            i= sysUserService.importUsers(sysUsers);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
