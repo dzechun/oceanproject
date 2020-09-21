@@ -132,7 +132,7 @@ public class SmtHtMaterial implements Serializable {
     /**
      * 最小包装数
      */
-    @Column(name = "` min_package_number`")
+    @Column(name = "min_package_number")
     @ApiModelProperty(name="minPackageNumber" ,value="最小包装数")
     private Integer minPackageNumber;
 
