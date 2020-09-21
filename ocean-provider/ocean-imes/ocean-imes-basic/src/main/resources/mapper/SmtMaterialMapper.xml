@@ -37,7 +37,7 @@
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterial" resultMap="BaseResultMap">
     select  sm.material_id, sm.material_code, sm.material_name, sm.material_desc, sm.unit, sm.version,sm.product_model_id,
     spm.product_model_code as productModelCode, sm.material_type,sm.material_source, sm.barcode_rule_id, sm.if_compoboard,
-    sm.if_linking_board, sm.linking_board_number,sm.status, sm.customer_material_code, sm.` min_package_number`,
+    sm.if_linking_board, sm.linking_board_number,sm.status, sm.customer_material_code, sm.min_package_number,
     sm.create_user_id, u.user_name as createUserName,sm.create_time,sm.modified_user_id, s.user_name as modifiedUserName,
     sm.modified_time, sm.is_delete
     from smt_material sm
