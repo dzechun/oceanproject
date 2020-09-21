@@ -56,7 +56,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         criteria.andEqualTo("proCode",smtProLine.getProCode());
         List<SmtProLine> smtProLines = smtProLineMapper.selectByExample(example);
         if(null!=smtProLines&&smtProLines.size()>0){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtProLine.setCreateUserId(currentUser.getUserId());

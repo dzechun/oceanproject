@@ -56,7 +56,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         criteria.andEqualTo("productModelCode",smtProductModel.getProductModelCode());
         List<SmtProductModel> smtProductModels = smtProductModelMapper.selectByExample(example);
         if(null!=smtProductModels&&smtProductModels.size()>0){
-           //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtProductModel.setCreateUserId(currentUser.getUserId());
         smtProductModel.setCreateTime(new Date());

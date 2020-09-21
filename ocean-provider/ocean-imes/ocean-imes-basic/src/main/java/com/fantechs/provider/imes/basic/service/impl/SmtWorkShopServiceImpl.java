@@ -57,7 +57,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         SmtWorkShop odlSmtWorkShop = smtWorkShopMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlSmtWorkShop)){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtWorkShop.setCreateUserId(user.getUserId());
         smtWorkShop.setCreateTime(new Date());
