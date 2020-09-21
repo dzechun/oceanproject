@@ -108,9 +108,8 @@ public class SmtProductModelController {
     public ResponseEntity<List<SmtHtProductModel>> selectHtProductModels(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtProductModel searchSmtProductModel) {
         Page<Object> page = PageHelper.startPage(searchSmtProductModel.getStartPage(),searchSmtProductModel.getPageSize());
-        List<SmtHtProductModel> smtHtProductModels=smtHtProductModelServic.selectHtProductModels(searchSmtProductModel);
+        List<SmtHtProductModel> smtHtProductModels=smtHtProductModelService.selectHtProductModels(searchSmtProductModel);
         return  ControllerUtil.returnDataSuccess(smtHtProductModels, (int)page.getTotal());
     }
 
 }
-e
