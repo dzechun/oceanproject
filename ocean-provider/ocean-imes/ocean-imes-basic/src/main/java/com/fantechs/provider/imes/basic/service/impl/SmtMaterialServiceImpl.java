@@ -59,7 +59,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             //return ConstantUtils.SYS_CODE_REPEAT;
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
-        int i = smtMaterialMapper.insertSelective(smtMaterial);
+        int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
 
         //新增物料历史信息
         SmtHtMaterial smtHtMaterial=new SmtHtMaterial();

@@ -17,6 +17,8 @@ spring:
 
 # 添加ribbon的超时时间设置
 ribbon:
+  eureka:
+    enabled: false
   ReadTimeout: 30000
   ConnectTimeout: 30000
 
@@ -26,9 +28,9 @@ zuul:
     socket-timeout-millis: 60000
     connect-timeout-millis: 30000
   routes:
-    ocean-security:
-        path: /ocean-security/**
-        serviceId: ocean-security
+    ocean-security:               #传统的路由配置,此名称可以自定义
+        path: /ocean-security/**  #映射的url
+        serviceId: ocean-security #服务名
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
