@@ -10,6 +10,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
@@ -43,25 +43,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Example example = new Example(SysUserDto.class);
+        Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("status",1).andEqualTo("userName", s);
-        SysUserDto userDto = sysUserMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(userDto)){
+        SysUser user = sysUserMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);
         }
-        if(userDto.getIsDelete()==0){
+        if(user.getIsDelete()==0){
             throw new BizErrorException(ErrorCodeEnum.UAC10012009,s);
         }
         List<SysRole> rolesByUserId=new LinkedList<>();
         try{
-            rolesByUserId = sysRoleMapper.findRolesByUserId(userDto.getUserId());
+            rolesByUserId = sysRoleMapper.findRolesByUserId(user.getUserId());
         }catch (Exception e){
             log.error(e.getMessage());
         }
         if(StringUtils.isEmpty(rolesByUserId)){
             throw new BizErrorException(ErrorCodeEnum.GL99990401);
         }
+        SysUserDto userDto  = new SysUserDto();
+        BeanUtils.copyProperties(user,userDto);
         userDto.setRoles(rolesByUserId);
         return userDto;
     }
