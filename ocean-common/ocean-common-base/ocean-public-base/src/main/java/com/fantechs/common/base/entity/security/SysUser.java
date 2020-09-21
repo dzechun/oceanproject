@@ -25,6 +25,7 @@ public class SysUser {
      */
     @Column(name = "user_name")
     @ApiModelProperty(name="userName" ,value="用户帐号")
+    @Excel(name="用户帐号")
     private String userName;
 
     /**
@@ -32,6 +33,7 @@ public class SysUser {
      */
     @Column(name = "user_code")
     @ApiModelProperty(name="userCode" ,value="用户编码")
+    @Excel(name="用户编码")
     private String userCode;
 
     /**
@@ -39,18 +41,21 @@ public class SysUser {
      */
     @Column(name = "nick_name")
     @ApiModelProperty(name="nickName" ,value="用户名称")
+    @Excel(name="用户名称")
     private String nickName;
 
     /**
      * 密码
      */
     @ApiModelProperty(name="password" ,value="密码")
+    @Excel(name="密码")
     private String password;
 
     /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="用户状态(0-无效 1-有效)")
+    @Excel(name="状态",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
@@ -86,12 +91,14 @@ public class SysUser {
      * 电话
      */
     @ApiModelProperty(name="telephone" ,value="电话")
+    @Excel(name="分机")
     private String telephone;
 
     /**
      * 手机
      */
     @ApiModelProperty(name="mobile" ,value="手机")
+    @Excel(name="手机")
     private String mobile;
 
     /**
@@ -99,6 +106,7 @@ public class SysUser {
      */
 
     @ApiModelProperty(name="email" ,value="email")
+    @Excel(name="邮件地址")
     private String email;
 
     /**
