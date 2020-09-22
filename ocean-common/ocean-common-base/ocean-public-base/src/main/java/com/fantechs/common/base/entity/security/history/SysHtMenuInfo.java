@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Table(name = "sys_ht_menuinfo")
 @Data
-public class SysHtMenuinfo {
+public class SysHtMenuInfo {
     /**
      * 菜单履历id
      */

@@ -11,4 +11,6 @@ import java.util.Map;
 public interface SysMenuInfoMapper extends MyMapper<SysMenuInfo> {
     List<SysMenuInfoDto> findList(Map<String, Object> param);
     SysMenuInfoDto selectById(Long id);
+
+    int delBatchByIds(List<Long> menuIds);
 }

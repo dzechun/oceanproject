@@ -9,4 +9,12 @@
   <sql id="Base_Column_List">
     auth_id, role_id, menu_id
   </sql>
+
+  <!--通过菜单ID批量删除权限-->
+  <delete id="delBatchByMenuIds" parameterType="list">
+    delete from sys_auth_role where  menu_id in
+    <foreach collection="list" index="index" item="item" open="("  separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
 </mapper>

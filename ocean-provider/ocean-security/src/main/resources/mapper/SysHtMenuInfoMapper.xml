@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.security.mapper.SysHtMenuinfoMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.history.SysHtMenuinfo">
+<mapper namespace="com.fantechs.security.mapper.SysHtMenuInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.history.SysHtMenuInfo">
     <id column="ht_menu_id" jdbcType="BIGINT" property="htMenuId" />
     <result column="menu_id" jdbcType="BIGINT" property="menuId" />
     <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
@@ -28,4 +28,27 @@
     is_menu, url, premenu_id, menu_type, is_hide, is_delete, icon, is_oppen, create_user_id, 
     create_time, modified_user_id, modified_time
   </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from sys_ht_menuinfo sm
+    LEFT JOIN sys_user su  ON sm.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON sm.modified_user_id = sus.user_id
+    <where>
+      <if test="menuCode != null">
+        and sm.menu_code like CONCAT('%', #{menuCode}, '%')
+      </if>
+      <if test="menuName != null">
+        and  sm.menu_name like CONCAT('%', #{menuName}, '%')
+      </if>
+      <if test="parentId != null">
+        and sm.parent_id = #{parentId}
+      </if>
+      <if test="menuType != null">
+        and sm.menu_type = #{menuType}
+      </if>
+    </where>
+
+  </select>
 </mapper>

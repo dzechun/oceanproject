@@ -245,6 +245,8 @@ public enum ErrorCodeEnum {
     OPT20012001(20012001,"编码重复"),
 
     OPT20012002(20012002,"未知错误"),
+
+    OPT20012003(20012003,"数据不存在"),
     ;
 
     private Integer code;

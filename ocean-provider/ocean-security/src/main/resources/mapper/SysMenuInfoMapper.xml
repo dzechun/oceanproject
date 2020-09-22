@@ -65,4 +65,14 @@
     LEFT JOIN smt_user sus ON sm.modified_user_id = sus.user_id
     where sm.menu_id = #{menuId,jdbcType=BIGINT}
   </select>
+
+  <!--通过菜单ID批量删除权限-->
+  <delete id="delBatchByIds" parameterType="list">
+    delete from  sys_menuinfo
+    where menu_id in
+    <foreach collection="list" index="index" item="item" open="("  separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
 </mapper>
