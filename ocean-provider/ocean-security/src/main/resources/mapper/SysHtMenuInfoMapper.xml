@@ -24,9 +24,9 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    ht_menu_id, menu_id, menu_code, menu_name, order_num, parent_id, menu_desc, menu_level, 
-    is_menu, url, premenu_id, menu_type, is_hide, is_delete, icon, is_oppen, create_user_id, 
-    create_time, modified_user_id, modified_time
+    sm.ht_menu_id, sm.menu_id, sm.menu_code, sm.menu_name, sm.order_num, sm.parent_id, sm.menu_desc, sm.menu_level,
+    sm.is_menu, sm.url, sm.premenu_id, sm.menu_type, sm.is_hide, sm.is_delete, sm.icon, sm.is_oppen, sm.create_user_id,
+    sm.create_time, sm.modified_user_id, sm.modified_time
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
