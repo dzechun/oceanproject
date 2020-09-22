@@ -18,6 +18,7 @@ public class SysUser {
     @Id
     @Column(name = "user_id")
     @ApiModelProperty(name="userId" ,value="用户id")
+    @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Long userId;
 
     /**
@@ -56,7 +57,8 @@ public class SysUser {
      */
     @ApiModelProperty(name="status" ,value="用户状态(0-无效 1-有效)")
     @Excel(name="状态",replace = {"无效_0", "有效_1"})
-    private Byte status;
+    //@Excel(name="状态")
+    private Integer status;
 
     /**
      * 厂别id

@@ -268,15 +268,20 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
             sysUser.setCreateUserId(currentUser.getUserId());
             sysUser.setCreateTime(new Date());
+            sysUser.setIsDelete((byte) 1);
             list.add(sysUser);
+        }
+        if (StringUtils.isNotEmpty(list)) {
+            i = sysUserMapper.insertList(list);
+        }
 
+        for (SysUser sysUser : list) {
             //新增用户历史信息
             SysHtUser sysHtUser=new SysHtUser();
             BeanUtils.copyProperties(sysUser,sysHtUser);
             htUsers.add(sysHtUser);
         }
         if (StringUtils.isNotEmpty(list)) {
-            i = sysUserMapper.insertList(list);
             sysHtUserMapper.insertList(htUsers);
         }
         return  i;

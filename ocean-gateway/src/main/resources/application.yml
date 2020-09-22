@@ -17,8 +17,6 @@ spring:
 
 # 添加ribbon的超时时间设置
 ribbon:
-  eureka:
-    enabled: false
   ReadTimeout: 30000
   ConnectTimeout: 30000
 
@@ -34,7 +32,13 @@ zuul:
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
-
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeout-in-milliseconds: 30000
 
 logging:
   level:
