@@ -35,13 +35,6 @@ zuul:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
 
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeout-in-milliseconds: 30000
 
 logging:
   level:
