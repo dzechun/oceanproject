@@ -24,8 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Set;
 
 /**
  * The class Auth header filter.
@@ -69,9 +68,6 @@ public class AuthHeaderFilter extends ZuulFilter {
 	public boolean shouldFilter() {
 		RequestContext requestContext = RequestContext.getCurrentContext();
 		HttpServletRequest request = requestContext.getRequest();
-
-		System.out.println(request.getRequestURI());
-
 		if (request.getRequestURI().contains(SWAGGER_URI)|| request.getRequestURI().contains(LOGIN_URI)) {
 			return false;
 		}
@@ -108,38 +104,22 @@ public class AuthHeaderFilter extends ZuulFilter {
 			result.setMessage(ErrorCodeEnum.UAC10011039.getMsg());
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
-
 		}else{
-			if(StringUtils.isEmpty(user.getAuthority())){
-				requestContext.setSendZuulResponse(false);
-				requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
-				result.setCode(ErrorCodeEnum.GL99990401.getCode());
-				result.setMessage(ErrorCodeEnum.GL99990401.getMsg());
-				requestContext.setResponseBody(JSONObject.toJSONString(result));
-				requestContext.getResponse().setContentType("text/html;charset=UTF-8");
-
-			}else{
+			if(StringUtils.isNotEmpty(user.getAuthority())){
 				StringBuffer sb = new StringBuffer();
 				String path = request.getServletPath();
 				String[] pathArr =  path.split("/");
-
-				if(pathArr.length<2){
-					requestContext.setSendZuulResponse(false);
-					requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
-					result.setCode(ErrorCodeEnum.GL99990401.getCode());
-					result.setMessage(ErrorCodeEnum.GL99990401.getMsg());
-					requestContext.setResponseBody(JSONObject.toJSONString(result));
-					requestContext.getResponse().setContentType("text/html;charset=UTF-8");
-				}
-				//去除服务名，匹配权限URL
-				for(int i=2;i<pathArr.length;i++){
-					sb.append("/").append(pathArr[i]);
-				}
-				Set<String> authority = user.getAuthority();
-				for(String authorityUrl :authority){
-					if(authorityUrl.equals(sb.toString())){
-						flag = true;
-						break;
+				if(pathArr.length>2){
+					//去除服务名，匹配权限URL
+					for(int i=2;i<pathArr.length;i++){
+						sb.append("/").append(pathArr[i]);
+					}
+					Set<String> authority = user.getAuthority();
+					for(String authorityUrl :authority){
+						if(authorityUrl.equals(sb.toString())){
+							flag = true;
+							break;
+						}
 					}
 				}
 			}
