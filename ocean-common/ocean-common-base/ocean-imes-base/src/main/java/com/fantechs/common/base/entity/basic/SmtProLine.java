@@ -117,7 +117,7 @@ public class SmtProLine implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
-    @Excel(name = "修改账号", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改账号", height = 20, width = 30)
     private String modifiedUserName;
 
     /**
@@ -125,7 +125,7 @@ public class SmtProLine implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30)
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
     /**
      * 逻辑删除（0、删除 1、正常）
