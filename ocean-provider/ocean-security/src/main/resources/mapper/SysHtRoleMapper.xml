@@ -17,4 +17,22 @@
     ht_role_id, role_id, role_code, role_name, role_desc, create_user_id, create_time, 
     modified_user_id, modified_time, status
   </sql>
+
+  <select id="selectHtRoles" parameterType="com.fantechs.common.base.entity.security.search.SearchSysRole" resultMap="BaseResultMap">
+    select shr.ht_role_id, shr.role_code, shr.role_name, shr.role_desc, shr.create_user_id, u.user_name as createUserName,
+    shr.create_time, shr.modified_user_id,s.user_name as modifiedUserName,
+    shr.modified_time
+    from sys_ht_role shr
+    left join sys_user u on shr.create_user_id=u.user_id
+    left join sys_user s on shr.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="roleName!=null and roleName!=''">
+        and shr.role_name like CONCAT('%', #{roleName}, '%')
+      </if>
+      <if test="roleDesc!=null and roleDesc!=''">
+        and shr.role_desc like CONCAT('%', #{roleDesc}, '%')
+      </if>
+    </where>
+  </select>
 </mapper>

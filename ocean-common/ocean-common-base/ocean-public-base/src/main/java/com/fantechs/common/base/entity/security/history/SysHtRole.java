@@ -3,12 +3,13 @@ package com.fantechs.common.base.entity.security.history;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_ht_role")
 @Data
-public class SysHtRole {
+public class SysHtRole implements Serializable {
     /**
      * id
      */
@@ -93,10 +94,4 @@ public class SysHtRole {
     @ApiModelProperty(name="status" ,value="角色状态（0、不启用 1、启用）")
     private Byte status;
 
-    /**
-     * 逻辑删除（0、删除 1、正常）
-     */
-    @Column(name = "is_delete")
-    @ApiModelProperty(name="isDelete" ,value="逻辑删除（0、删除 1、正常）")
-    private Byte isDelete;
 }

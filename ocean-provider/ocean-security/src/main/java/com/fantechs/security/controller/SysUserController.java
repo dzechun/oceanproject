@@ -21,8 +21,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +33,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @RestController
-@RequestMapping(value = "/smtUser")
+@RequestMapping(value = "/sysUser")
 @Api(tags = "用户管理")
 @Slf4j
 public class SysUserController {

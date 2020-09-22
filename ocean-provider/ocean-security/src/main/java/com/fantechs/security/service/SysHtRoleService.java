@@ -1,11 +1,10 @@
-package com.fantechs.security.mapper;
+package com.fantechs.security.service;
 
 import com.fantechs.common.base.entity.security.history.SysHtRole;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
-import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
 
-public interface SysHtRoleMapper extends MyMapper<SysHtRole> {
+public interface SysHtRoleService {
     List<SysHtRole> selectHtRoles(SearchSysRole searchSysRole);
 }

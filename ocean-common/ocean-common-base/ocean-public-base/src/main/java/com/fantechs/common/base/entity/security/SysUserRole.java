@@ -12,6 +12,7 @@ public class SysUserRole {
      */
     @Id
     @Column(name = "user_role_id")
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userRoleId;
 
     /**
