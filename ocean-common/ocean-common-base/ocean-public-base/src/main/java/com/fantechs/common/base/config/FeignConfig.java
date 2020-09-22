@@ -1,4 +1,4 @@
-package com.fantechs.provider.api.security.config;
+package com.fantechs.common.base.config;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

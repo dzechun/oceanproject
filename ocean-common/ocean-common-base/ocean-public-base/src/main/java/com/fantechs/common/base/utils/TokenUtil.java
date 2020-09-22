@@ -55,7 +55,9 @@ public class TokenUtil {
                 sb.append(refreshTokenPrefix);//统一前缀
             }
             if (userAgentInfo.getDeviceType().equals(UserAgentInfo.UNKNOWN)) {
-                if (UserAgentUtil.CheckAgent(agent)) {
+                if(agent.contains("Apache-HttpClient")){
+                    sb.append("NET-");
+                }else if (UserAgentUtil.CheckAgent(agent)) {
                     sb.append("MOBILE-");
                 } else {
                     sb.append("PC-");
