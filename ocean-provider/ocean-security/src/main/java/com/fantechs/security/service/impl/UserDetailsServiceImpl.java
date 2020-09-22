@@ -45,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("status",1).andEqualTo("userName", s);
+        criteria.andEqualTo("status",1).andEqualTo("userName", s).orEqualTo("userCode",s);
         SysUser user = sysUserMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);
