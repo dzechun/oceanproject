@@ -267,8 +267,6 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         SysHtMenuInfo SysHtMenuInfo  = new SysHtMenuInfo();
         BeanUtils.copyProperties(sysMenuInfo,SysHtMenuInfo);
         SysHtMenuInfo.setModifiedUserId(user.getUserId());
-        SysHtMenuInfo.setCreateUserId(user.getUserId());
-        SysHtMenuInfo.setCreateTime(new Date());
         SysHtMenuInfo.setModifiedTime(new Date());
 
         sysHtMenuInfoMapper.insertSelective(SysHtMenuInfo);
