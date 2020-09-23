@@ -130,6 +130,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
 
         if(StringUtils.isNotEmpty(odlsmtWorkShop)&&!odlsmtWorkShop.getWorkShopId().equals(smtWorkShop.getWorkShopId())){
             //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtWorkShop.setModifiedTime(new Date());
         smtWorkShop.setModifiedUserId(user.getUserId());

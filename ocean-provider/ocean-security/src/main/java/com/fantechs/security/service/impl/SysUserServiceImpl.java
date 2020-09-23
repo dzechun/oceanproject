@@ -115,7 +115,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         SysUser user = sysUserMapper.selectByPrimaryKey(sysUser.getUserId());
         if(StringUtils.isEmpty(user)){
-            throw new BizErrorException("该用户已被删除。");
+            //throw new BizErrorException("该用户已被删除。");
+            return ErrorCodeEnum.OPT20012003.getCode();
         }
 
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
@@ -168,7 +169,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         for (String userId : userIds) {
             SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
             if(StringUtils.isEmpty(sysUser)){
-                throw new BizErrorException("该用户已删除。");
+                //throw new BizErrorException("该用户已删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
 
             //新增用户历史信息
