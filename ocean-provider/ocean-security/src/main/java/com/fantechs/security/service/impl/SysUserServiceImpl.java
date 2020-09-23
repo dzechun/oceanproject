@@ -76,9 +76,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("status",1).orIsNull("status");
-        example.and(criteria1);
         criteria.andEqualTo("userName", sysUser.getUserName()).orEqualTo("userCode",sysUser.getUserCode());
         SysUser oneByUser = sysUserMapper.selectOneByExample(example);
 
@@ -118,16 +115,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        Example.Criteria criteria2 = example.createCriteria();
-        criteria2.andNotEqualTo("userId",sysUser.getUserId());
-        criteria1.andEqualTo("status",1).orIsNull("status");
-        example.and(criteria1);
-        example.and(criteria2);
         criteria.andEqualTo("userName", sysUser.getUserName()).orEqualTo("userCode",sysUser.getUserCode());
         SysUser oneByUser = sysUserMapper.selectOneByExample(example);
 
-        if(null!=oneByUser){
+        if(StringUtils.isNotEmpty(oneByUser)&&!sysUser.getUserId().equals(oneByUser.getUserId())){
             throw new BizErrorException("该用户的帐号/工号已存在。");
         }
         int i =sysUserMapper.updateByPrimaryKeySelective(sysUser);

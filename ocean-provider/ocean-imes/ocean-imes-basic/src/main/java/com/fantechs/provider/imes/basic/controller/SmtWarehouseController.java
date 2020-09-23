@@ -23,7 +23,7 @@ import java.util.List;
  * Created by wcz on 2020/09/23.
  */
 @RestController
-@Api(tags = "warehouse控制器")
+@Api(tags = "仓库信息")
 @RequestMapping("/smtWarehouse")
 public class SmtWarehouseController {
 
