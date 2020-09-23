@@ -113,7 +113,8 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         for (Long proLineId : proLineIds) {
             SmtProLine smtProLine = smtProLineMapper.selectByPrimaryKey(proLineId);
             if(StringUtils.isEmpty(smtProLine)){
-                throw new BizErrorException("该生产线已被删除。");
+                //throw new BizErrorException("该生产线已被删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增生产线历史信息
             SmtHtProLine smtHtProLine=new SmtHtProLine();

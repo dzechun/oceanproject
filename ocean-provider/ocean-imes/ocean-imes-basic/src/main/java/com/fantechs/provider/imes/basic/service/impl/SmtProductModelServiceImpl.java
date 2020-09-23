@@ -113,7 +113,8 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         for (Long  productModelId : productModelIds) {
             SmtProductModel smtProductModel = smtProductModelMapper.selectByPrimaryKey(productModelId);
             if(StringUtils.isEmpty(smtProductModel)){
-                throw new BizErrorException("该产品型号已被删除。");
+                //throw new BizErrorException("该产品型号已被删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增产品型号历史信息
             SmtHtProductModel smtHtProductModel=new SmtHtProductModel();

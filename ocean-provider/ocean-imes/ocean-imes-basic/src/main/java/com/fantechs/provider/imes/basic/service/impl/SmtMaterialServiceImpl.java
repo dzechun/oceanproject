@@ -111,7 +111,8 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         for (Long  materialId : materialIds) {
             SmtMaterial smtMaterial = smtMaterialMapper.selectByPrimaryKey(materialId);
             if(StringUtils.isEmpty(smtMaterial)){
-                throw new BizErrorException("该物料已被删除。");
+                //throw new BizErrorException("该物料已被删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增物料历史信息
             SmtHtMaterial smtHtMaterial=new SmtHtMaterial();

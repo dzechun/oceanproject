@@ -123,7 +123,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         for (Long deptId : deptIds) {
             SmtDept smtDept = smtDeptMapper.selectByPrimaryKey(deptId);
             if(StringUtils.isEmpty(smtDept)){
-                throw new BizErrorException("该部门已被删除。");
+                //throw new BizErrorException("该部门已被删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增部门历史信息
             SmtHtDept smtHtDept=new SmtHtDept();

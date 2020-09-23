@@ -149,9 +149,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
             return ErrorCodeEnum.UAC10011039.getCode();
         }
 
-        if(StringUtils.isEmpty(user)){
-            //return   ConstantUtils.USER_TOKEN_ERROR;
-        }
         Example example = new Example(SmtFactory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("factoryCode", smtFactory.getFactoryCode());
@@ -159,7 +156,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SmtFactory odlsmtFactory = smtFactoryMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlsmtFactory)&&!odlsmtFactory.getFactoryId().equals(smtFactory.getFactoryId())){
-            //return ConstantUtils.SYS_CODE_REPEAT;
+            return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtFactory.setModifiedTime(new Date());
         smtFactory.setModifiedUserId(user.getUserId());

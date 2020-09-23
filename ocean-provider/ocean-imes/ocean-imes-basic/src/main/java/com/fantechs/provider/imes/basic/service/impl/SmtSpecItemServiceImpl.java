@@ -114,7 +114,8 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
         for (String specId : specIds) {
             SmtSpecItem smtSpecItem = smtSpecItemMapper.selectByPrimaryKey(specId);
             if(StringUtils.isEmpty(smtSpecItem)){
-                throw new BizErrorException("该程序配置项已被删除。");
+                //throw new BizErrorException("该程序配置项已被删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
 
             //新增角色历史信息
