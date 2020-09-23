@@ -118,7 +118,8 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         for (Long roleId : roleIds) {
             SysRole sysRole = sysRoleMapper.selectByPrimaryKey(roleId);
             if(StringUtils.isEmpty(sysRole)){
-                throw new BizErrorException("该角色已被删除。");
+                //throw new BizErrorException("该角色已被删除。");
+                return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增角色历史信息
             SysHtRole sysHtRole=new SysHtRole();
