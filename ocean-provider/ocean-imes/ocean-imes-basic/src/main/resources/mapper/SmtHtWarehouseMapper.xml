@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtWarehouseMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtWarehouse">
+    <id column="ht_warehouse_id" jdbcType="BIGINT" property="htWarehouseId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouse_desc" jdbcType="VARCHAR" property="warehouseDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse" resultMap="BaseResultMap">
+    select  shw.ht_warehouse_id,shw.warehouse_id,shw.warehouse_code,shw.warehouse_name,shw.warehouse_desc,shw.status,shw.create_user_id
+    u.user_name as createUserName,shw.create_time,shw.modified_user_id, s.user_name as modifiedUserName,
+    shw.modified_time, shw.is_delete
+    from smt_ht_warehouse shw
+    left join smt_user u on sw.create_user_id=u.user_id
+    left join smt_user s on sw.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(shw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="warehouseCode!=null and warehouseCode!=''">
+        and shw.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and shw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="warehouseDesc!=null and warehouseDesc!=''">
+        and shw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>

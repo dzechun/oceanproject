@@ -55,7 +55,7 @@ public class ${modelNameUpperCamel}Controller {
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<${modelNameUpperCamel}> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam Long id) {
+    public ResponseEntity<${modelNameUpperCamel}> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
         if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }
@@ -63,9 +63,9 @@ public class ${modelNameUpperCamel}Controller {
         return  ControllerUtil.returnDataSuccess(${modelNameLowerCamel},StringUtils.isEmpty(${modelNameLowerCamel})?0:1);
     }
 
-    @ApiOperation("根据条件查询角色信息列表")
+    @ApiOperation("根据条件查询信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<${modelNameUpperCamel}> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
+    public ResponseEntity<List<${modelNameUpperCamel}>> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
         Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
         List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
