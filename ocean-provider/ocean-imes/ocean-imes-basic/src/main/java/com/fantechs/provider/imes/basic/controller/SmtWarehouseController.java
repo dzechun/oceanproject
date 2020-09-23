@@ -1,10 +1,14 @@
 package com.fantechs.provider.imes.basic.controller;
 
+import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
 import com.fantechs.common.base.entity.basic.SmtWarehouse;
 import com.fantechs.common.base.entity.basic.history.SmtHtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.entity.basic.search.SearchSmtWorkShop;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.service.SmtHtWarehouseService;
 import com.fantechs.provider.imes.basic.service.SmtWarehouseService;
@@ -16,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -82,5 +87,22 @@ public class SmtWarehouseController {
         Page<Object> page = PageHelper.startPage(searchSmtWarehouse.getStartPage(),searchSmtWarehouse.getPageSize());
         List<SmtHtWarehouse> list = smtHtWarehouseService.findHtList(searchSmtWarehouse);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    /**
+     * 导出数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出仓库信息excel",notes = "导出仓库信息excel")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtWarehouse searchSmtWarehouse){
+        List<SmtWarehouse> list = smtWarehouseService.findList(searchSmtWarehouse);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出仓库信息", "仓库信息", SmtWarehouse.class, "仓库信息.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 }

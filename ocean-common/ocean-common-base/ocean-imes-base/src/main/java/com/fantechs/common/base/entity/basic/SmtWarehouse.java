@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ public class SmtWarehouse implements Serializable {
      */
     @Column(name = "warehouse_code")
     @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
+    @Excel(name = "仓库编码", height = 20, width = 30)
     private String warehouseCode;
 
     /**
@@ -30,6 +32,7 @@ public class SmtWarehouse implements Serializable {
      */
     @Column(name = "warehouse_name")
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
     private String warehouseName;
 
     /**
@@ -37,13 +40,15 @@ public class SmtWarehouse implements Serializable {
      */
     @Column(name = "warehouse_desc")
     @ApiModelProperty(name = "warehouseDesc",value = "仓库描述")
+    @Excel(name = "仓库描述", height = 20, width = 30)
     private String warehouseDesc;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
-    private Byte status;
+    @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
+    private Integer status;
 
     /**
      * 创建人ID
@@ -53,10 +58,19 @@ public class SmtWarehouse implements Serializable {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -67,10 +81,19 @@ public class SmtWarehouse implements Serializable {
     private Long modifiedUserId;
 
     /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
+    private String modifiedUserName;
+
+    /**
      * 修改时间
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
