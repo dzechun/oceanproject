@@ -22,8 +22,10 @@ import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 
 /**
@@ -36,7 +38,8 @@ import java.util.Set;
 public class AuthHeaderFilter extends ZuulFilter {
 
 	//排除过滤的 uri 地址
-	private static final String LOGIN_URI = "/ocean-security/";
+	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/refreshtoken," +
+			"/ocean-security/userinfo";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
 	/**
@@ -68,7 +71,11 @@ public class AuthHeaderFilter extends ZuulFilter {
 	public boolean shouldFilter() {
 		RequestContext requestContext = RequestContext.getCurrentContext();
 		HttpServletRequest request = requestContext.getRequest();
-		if (request.getRequestURI().contains(SWAGGER_URI)|| request.getRequestURI().contains(LOGIN_URI)) {
+		if (request.getMethod().equals(RequestMethod.OPTIONS.name())) {
+			log.info("OPTIONS请求不做拦截操作");
+			return false;
+		}
+		if (request.getRequestURI().contains(SWAGGER_URI)|| LOGIN_URI.contains(request.getRequestURI())) {
 			return false;
 		}
 			return true;

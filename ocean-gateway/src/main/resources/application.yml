@@ -32,6 +32,10 @@ zuul:
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
+
+  sensitive-headers: Access-Control-Allow-Origin
+  ignored-headers: Access-Control-Allow-Origin,H-APP-Id,token,APPToken
+
 hystrix:
   command:
     default:
