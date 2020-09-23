@@ -34,7 +34,7 @@ zuul:
         serviceId: ocean-fileserver
 
   sensitive-headers: Access-Control-Allow-Origin
-  ignored-headers: Access-Control-Allow-Origin,H-APP-Id,token,APPToken
+  ignored-headers: Access-Control-Allow-Origin
 
 hystrix:
   command:

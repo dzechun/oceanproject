@@ -63,12 +63,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SysUser sysUser){
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -103,12 +98,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SysUser sysUser){
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -156,12 +146,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     public int delUser(List<String> userIds) {
         int i=0;
         List<SysHtUser> list = new LinkedList<>();
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -208,12 +193,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     @Transactional(rollbackFor = Exception.class)
     public int importUsers(List<SysUser> sysUsers) {
         int i = 0;
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }

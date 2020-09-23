@@ -8,7 +8,6 @@ import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.entity.security.history.SysHtRole;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -47,14 +46,9 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SysRole sysRole) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw  new BizErrorException( ErrorCodeEnum.UAC10011039);
         }
 
         Example example = new Example(SysRole.class);
@@ -79,12 +73,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SysRole sysRole) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -105,12 +94,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     public int deleteByIds(List<Long> roleIds) {
         int i=0;
         List<SysHtRole> list=new ArrayList<>();
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -164,18 +148,12 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
     @Override
     public int addUser(Long roleId, List<Long> userIds) {
-        List<SysUserRole> list=new ArrayList<>();
 
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
-
+        List<SysUserRole> list=new ArrayList<>();
         Example example = new Example(SysUserRole.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("roleId",roleId);

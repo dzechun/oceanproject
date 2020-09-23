@@ -121,12 +121,10 @@ public class AuthHeaderFilter extends ZuulFilter {
 					for(int i=2;i<pathArr.length;i++){
 						sb.append("/").append(pathArr[i]);
 					}
+					String url =sb.toString();
 					Set<String> authority = user.getAuthority();
-					for(String authorityUrl :authority){
-						if(authorityUrl.equals(sb.toString())){
-							flag = true;
-							break;
-						}
+					if(authority.contains(url)){
+						flag = true;
 					}
 				}
 			}
@@ -139,8 +137,11 @@ public class AuthHeaderFilter extends ZuulFilter {
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
 		}else{
+			requestContext.addZuulRequestHeader("token", request.getHeader("token"));
+			requestContext.addZuulRequestHeader("user-agent", request.getHeader("user-agent"));
 			requestContext.setSendZuulResponse(true);// 对该请求进行路由
 			requestContext.setResponseStatusCode(HttpStatus.OK.value());
+
 		}
 		return null;
 	}

@@ -52,7 +52,6 @@ public class SysMenuInfoController {
                 sysMenuInfo.getMenuName(),
                 sysMenuInfo.getParentId(),
                 sysMenuInfo.getUrl(),
-                sysMenuInfo.getIsHide(),
                 sysMenuInfo.getMenuType())){
             return ControllerUtil.returnFailByParameError();
         }

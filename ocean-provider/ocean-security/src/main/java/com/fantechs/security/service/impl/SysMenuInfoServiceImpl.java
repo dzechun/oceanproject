@@ -8,6 +8,7 @@ import com.fantechs.common.base.entity.security.SysMenuInfo;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtMenuInfo;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -113,14 +114,9 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SysMenuInfo sysMenuInfo){
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
-        if(StringUtils.isEmpty(user)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw  new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
         Example example = new Example(SysMenuInfo.class);
@@ -132,9 +128,9 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)){
             return ErrorCodeEnum.OPT20012001.getCode();
         }
-        sysMenuInfo.setCreateUserId(user.getUserId());
+        sysMenuInfo.setCreateUserId(currentUser.getUserId());
         sysMenuInfo.setCreateTime(new Date());
-        sysMenuInfo.setModifiedUserId(user.getUserId());
+        sysMenuInfo.setModifiedUserId(currentUser.getUserId());
         sysMenuInfo.setModifiedTime(new Date());
         sysMenuInfo.setIsDelete((byte) 1);
         sysMenuInfo.setParentId(null == sysMenuInfo.getParentId()? 0 : sysMenuInfo.getParentId());
@@ -151,13 +147,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteById(Long id){
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
-        if(StringUtils.isEmpty(user)){
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
 
@@ -174,10 +165,10 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         for(SysMenuInfo menuinfo : list ){
             SysHtMenuInfo SysHtMenuInfo  = new SysHtMenuInfo();
             BeanUtils.copyProperties(menuinfo,SysHtMenuInfo);
-            SysHtMenuInfo.setCreateUserId(user.getUserId());
+            SysHtMenuInfo.setCreateUserId(currentUser.getUserId());
             SysHtMenuInfo.setCreateTime(new Date());
             SysHtMenuInfo.setModifiedTime(new Date());
-            SysHtMenuInfo.setModifiedUserId(user.getUserId());
+            SysHtMenuInfo.setModifiedUserId(currentUser.getUserId());
             htList.add(SysHtMenuInfo);
             menuIds.add(menuinfo.getMenuId());
         }
@@ -195,11 +186,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     @Override
     public int deleteByIds(List<Long> ids) {
         SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -241,13 +228,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SysMenuInfo sysMenuInfo) {
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
-        if(StringUtils.isEmpty(user)){
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
 
@@ -261,12 +243,12 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
             return ErrorCodeEnum.OPT20012001.getCode();
         }
 
-        sysMenuInfo.setModifiedUserId(user.getUserId());
+        sysMenuInfo.setModifiedUserId(currentUser.getUserId());
 
         //插入历史表
         SysHtMenuInfo SysHtMenuInfo  = new SysHtMenuInfo();
         BeanUtils.copyProperties(sysMenuInfo,SysHtMenuInfo);
-        SysHtMenuInfo.setModifiedUserId(user.getUserId());
+        SysHtMenuInfo.setModifiedUserId(currentUser.getUserId());
         SysHtMenuInfo.setModifiedTime(new Date());
 
         sysHtMenuInfoMapper.insertSelective(SysHtMenuInfo);

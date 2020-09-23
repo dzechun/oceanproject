@@ -43,12 +43,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SmtFactory smtFactory) {
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -79,12 +74,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteById(String id) {
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -107,12 +97,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteByIds(List<Long> smtFactoryIds) {
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
@@ -139,12 +124,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtFactory smtFactory) {
-        SysUser user = null;
-        try {
-            user = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             return ErrorCodeEnum.UAC10011039.getCode();
         }
