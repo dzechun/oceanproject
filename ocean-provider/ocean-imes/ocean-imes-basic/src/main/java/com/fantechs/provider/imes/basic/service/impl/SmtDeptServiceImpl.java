@@ -45,7 +45,6 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtDept.class);
@@ -54,7 +53,6 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
         if(null!=smtDepts&&smtDepts.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         Example example1 = new Example(SmtDept.class);
@@ -63,7 +61,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         criteria1.andEqualTo("deptName",smtDept.getDeptName());
         SmtDept dept = smtDeptMapper.selectOneByExample(example1);
         if(StringUtils.isNotEmpty(dept)){
-            throw new BizErrorException("同一个工厂里面部门名称不能重复。");
+            throw new BizErrorException("该工厂里面部门名称已存在");
         }
 
         smtDept.setCreateUserId(currentUser.getUserId());
@@ -83,7 +81,6 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SmtDept.class);
         Example.Criteria criteria = example.createCriteria();
@@ -114,14 +111,12 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         List<SmtHtDept> list=new ArrayList<>();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long deptId : deptIds) {
             SmtDept smtDept = smtDeptMapper.selectByPrimaryKey(deptId);
             if(StringUtils.isEmpty(smtDept)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增部门历史信息
             SmtHtDept smtHtDept=new SmtHtDept();

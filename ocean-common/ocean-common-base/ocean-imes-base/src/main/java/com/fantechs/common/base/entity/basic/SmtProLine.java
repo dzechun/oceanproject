@@ -18,7 +18,6 @@ public class SmtProLine implements Serializable {
      */
     @Id
     @Column(name = "pro_line_id")
-    @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Long proLineId;
 
     /**

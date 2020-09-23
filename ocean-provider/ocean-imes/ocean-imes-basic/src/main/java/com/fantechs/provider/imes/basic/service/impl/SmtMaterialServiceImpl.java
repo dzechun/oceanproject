@@ -44,7 +44,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtMaterial.class);
@@ -53,7 +52,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
         if(null!=smtMaterials&&smtMaterials.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
@@ -71,7 +69,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SmtMaterial.class);
         Example.Criteria criteria = example.createCriteria();
@@ -102,14 +99,12 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long  materialId : materialIds) {
             SmtMaterial smtMaterial = smtMaterialMapper.selectByPrimaryKey(materialId);
             if(StringUtils.isEmpty(smtMaterial)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增物料历史信息
             SmtHtMaterial smtHtMaterial=new SmtHtMaterial();

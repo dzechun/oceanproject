@@ -2,13 +2,11 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtSpecItemExcelDTO;
 import com.fantechs.common.base.entity.basic.SmtSpecItem;
 import com.fantechs.common.base.entity.basic.history.SmtHtSpecItem;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -45,7 +43,6 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtSpecItem.class);
@@ -58,7 +55,7 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
 
         smtSpecItem.setCreateUserId(currentUser.getUserId());
         smtSpecItem.setCreateTime(new Date());
-        smtSpecItemMapper.insertSelective(smtSpecItem);
+        smtSpecItemMapper.insertUseGeneratedKeys(smtSpecItem);
 
         //新增配置项历史信息
         SmtHtSpecItem smtHtSpecItem=new SmtHtSpecItem();
@@ -73,7 +70,6 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SmtSpecItem.class);
         Example.Criteria criteria = example.createCriteria();
@@ -87,8 +83,6 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
         smtSpecItem.setModifiedTime(new Date());
         int i = smtSpecItemMapper.updateByPrimaryKeySelective(smtSpecItem);
 
-        //新增配置项历史信息
-        //int i = insertHtSpecItem(smtSpecItem, currentUser);
         SmtHtSpecItem smtHtSpecItem=new SmtHtSpecItem();
         BeanUtils.copyProperties(smtSpecItem,smtHtSpecItem);
         smtHtSpecItem.setModifiedUserId(currentUser.getUserId());
@@ -106,53 +100,23 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (String specId : specIds) {
             SmtSpecItem smtSpecItem = smtSpecItemMapper.selectByPrimaryKey(specId);
             if(StringUtils.isEmpty(smtSpecItem)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                //return ErrorCodeEnum.OPT20012003.getCode();
             }
-
-            //新增角色历史信息
-            //i= insertHtSpecItem(smtSpecItem, currentUser);
             SmtHtSpecItem smtHtSpecItem=new SmtHtSpecItem();
             BeanUtils.copyProperties(smtSpecItem,smtHtSpecItem);
             smtHtSpecItem.setModifiedUserId(currentUser.getUserId());
             smtHtSpecItem.setModifiedTime(new Date());
             list.add(smtHtSpecItem);
-
             smtSpecItemMapper.deleteByPrimaryKey(specId);
 
         }
-        //i=smtHtSpecItemMapper.addBatchHtItem(list);
         i=smtHtSpecItemMapper.insertList(list);
         return i;
     }
 
-    @Override
-    public List<SmtSpecItemExcelDTO> exportSpecItems(SearchSmtSpecItem searchSmtSpecItem) {
-        List<SmtSpecItem> smtSpecItems = this.selectSpecItems(searchSmtSpecItem);
-
-        List<SmtSpecItemExcelDTO> dtoList=new ArrayList<>();
-        for (SmtSpecItem smtSpecItem : smtSpecItems) {
-            SmtSpecItemExcelDTO smtSpecItemExcelDTO =new SmtSpecItemExcelDTO();
-            try {
-
-                BeanUtils.copyProperties(smtSpecItem, smtSpecItemExcelDTO);
-
-                dtoList.add(smtSpecItemExcelDTO);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        return dtoList;
-    }
-
-    @Override
-    public SmtSpecItem selectById(Long specId) {
-        return smtSpecItemMapper.selectByPrimaryKey(specId);
-    }
 }

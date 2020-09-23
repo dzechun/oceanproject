@@ -93,7 +93,7 @@ public class SmtProductModelController {
     @ApiOperation(value = "导出产品型号信息excel",notes = "导出产品型号信息excel")
     public void exportProductModels(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtProductModel searchSmtProductModel){
-        List<SmtProductModel> list = smtProductModelService.exportProductModels(searchSmtProductModel);
+        List<SmtProductModel> list = smtProductModelService.selectProductModels(searchSmtProductModel);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "产品型号信息导出", "产品型号信息", SmtProductModel.class, "产品型号信息.xls", response);

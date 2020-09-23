@@ -19,19 +19,6 @@ public class SmtHtSpecItemServiceImpl extends BaseService<SmtHtSpecItem> impleme
 
     @Override
     public List<SmtHtSpecItem> findHtSpecItemList(Map<String, Object> map) {
-       /* Example example = new Example(SmtHtSpecItem.class);
-        Example.Criteria criteria = example.createCriteria();
-        if (!StringUtils.isEmpty(map)) {
-            map.forEach((k, v) -> {
-                if (!StringUtils.isEmpty(v)) {
-                    switch (k) {
-                        default:
-                            criteria.andLike(k,"%" + v + "%");
-                            break;
-                    }
-                }
-            });
-        }*/
         return smtHtSpecItemMapper.findHtSpecItemList(map);
     }
 }

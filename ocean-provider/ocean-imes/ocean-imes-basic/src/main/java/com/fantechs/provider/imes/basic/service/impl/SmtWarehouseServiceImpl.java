@@ -41,7 +41,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtWarehouse.class);
@@ -50,17 +49,16 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         List<SmtWarehouse> smtWarehouses = smtWarehouseMapper.selectByExample(example);
         if(null!=smtWarehouses&&smtWarehouses.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtWarehouse.setCreateUserId(currentUser.getUserId());
         smtWarehouse.setCreateTime(new Date());
-        int i = smtWarehouseMapper.insertUseGeneratedKeys(smtWarehouse);
+         smtWarehouseMapper.insertUseGeneratedKeys(smtWarehouse);
 
         //新增仓库历史信息
         SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
         BeanUtils.copyProperties(smtWarehouse,smtHtWarehouse);
-        smtHtWarehouseMapper.insertSelective(smtHtWarehouse);
+        int i = smtHtWarehouseMapper.insertSelective(smtHtWarehouse);
         return i;
     }
 
@@ -72,7 +70,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         String[] deptIds = ids.split(",");
@@ -80,7 +77,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
             SmtWarehouse smtWarehouse = smtWarehouseMapper.selectByPrimaryKey(Long.parseLong(deptId));
             if(StringUtils.isEmpty(smtWarehouse)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增仓库历史信息
             SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
@@ -99,7 +95,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtWarehouse.class);
@@ -110,7 +105,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
         if(StringUtils.isNotEmpty(warehouse)&&!warehouse.getWarehouseId().equals(smtWarehouse.getWarehouseId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtWarehouse.setModifiedUserId(currentUser.getUserId());

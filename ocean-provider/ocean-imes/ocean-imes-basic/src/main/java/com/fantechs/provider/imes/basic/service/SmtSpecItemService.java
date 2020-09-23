@@ -1,14 +1,13 @@
 package com.fantechs.provider.imes.basic.service;
 
 
-
-import com.fantechs.common.base.dto.basic.SmtSpecItemExcelDTO;
 import com.fantechs.common.base.entity.basic.SmtSpecItem;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSpecItem;
+import com.fantechs.common.base.support.IService;
 
 import java.util.List;
 
-public interface SmtSpecItemService {
+public interface SmtSpecItemService extends IService<SmtSpecItem> {
     //通过条件查询配置项信息
     List<SmtSpecItem> selectSpecItems(SearchSmtSpecItem searchSmtSpecItem);
 
@@ -21,9 +20,4 @@ public interface SmtSpecItemService {
     //删除配置项信息
     int deleteByIds(List<String> specIds);
 
-    //通过条件导出配置项信息
-    List<SmtSpecItemExcelDTO> exportSpecItems(SearchSmtSpecItem searchSmtSpecItem);
-
-    //通过配置项ID查询配置项信息
-    SmtSpecItem selectById(Long specId);
 }

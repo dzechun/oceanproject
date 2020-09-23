@@ -20,7 +20,6 @@ public class SmtSpecItem implements Serializable {
     @Id
     @Column(name = "spec_id")
     @ApiModelProperty(name="specId" ,value="配置项ID")
-    @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Long specId;
 
     /**

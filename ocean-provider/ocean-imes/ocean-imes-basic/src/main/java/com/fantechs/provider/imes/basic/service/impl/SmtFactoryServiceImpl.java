@@ -47,7 +47,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtFactory.class);
@@ -58,7 +57,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
         if(StringUtils.isNotEmpty(odlsmtFactory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtFactory.setCreateUserId(user.getUserId());
         smtFactory.setCreateTime(new Date());
@@ -80,7 +78,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         SmtFactory smtFactory = smtFactoryMapper.selectByPrimaryKey(id);
 
@@ -104,7 +101,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         List<SmtHtFactory>  smtHtFactorys = new LinkedList<>();
         for(Long id : smtFactoryIds){
@@ -132,7 +128,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtFactory.class);
@@ -143,7 +138,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
         if(StringUtils.isNotEmpty(odlsmtFactory)&&!odlsmtFactory.getFactoryId().equals(smtFactory.getFactoryId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtFactory.setModifiedTime(new Date());
         smtFactory.setModifiedUserId(user.getUserId());

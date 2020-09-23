@@ -44,7 +44,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtProductModel.class);
@@ -53,7 +52,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         List<SmtProductModel> smtProductModels = smtProductModelMapper.selectByExample(example);
         if(null!=smtProductModels&&smtProductModels.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtProductModel.setCreateUserId(currentUser.getUserId());
         smtProductModel.setCreateTime(new Date());
@@ -72,7 +70,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SmtProductModel.class);
         Example.Criteria criteria = example.createCriteria();
@@ -103,14 +100,12 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long  productModelId : productModelIds) {
             SmtProductModel smtProductModel = smtProductModelMapper.selectByPrimaryKey(productModelId);
             if(StringUtils.isEmpty(smtProductModel)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增产品型号历史信息
             SmtHtProductModel smtHtProductModel=new SmtHtProductModel();
@@ -119,18 +114,14 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             smtHtProductModel.setModifiedTime(new Date());
             list.add(smtHtProductModel);
 
-            smtProductModelMapper.deleteByPrimaryKey(productModelId);
+            i+= smtProductModelMapper.deleteByPrimaryKey(productModelId);
         }
 
-       //i=smtHtProductModelMapper.addBatchHtProductModel(list);
-        i=smtHtProductModelMapper.insertList(list);
-        return i;
-    }
+        if(StringUtils.isNotEmpty(list)){
+            smtHtProductModelMapper.insertList(list);
+        }
 
-    @Override
-    public List<SmtProductModel> exportProductModels(SearchSmtProductModel searchSmtProductModel) {
-        List<SmtProductModel> smtProductModels = this.selectProductModels(searchSmtProductModel);
-        return smtProductModels;
+        return i;
     }
 
 }

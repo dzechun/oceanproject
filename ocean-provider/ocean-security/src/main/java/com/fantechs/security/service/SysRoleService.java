@@ -4,10 +4,11 @@ import com.fantechs.common.base.dto.security.SysRoleExcelDTO;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
+import com.fantechs.common.base.support.IService;
 
 import java.util.List;
 
-public interface SysRoleService {
+public interface SysRoleService  extends IService<SysRole>{
 
     //通过条件查询角色信息
     List<SysRole> selectRoles(SearchSysRole searchSysRole);
@@ -26,10 +27,6 @@ public interface SysRoleService {
 
     // 查询未绑定角色的用户信息
     List<SysUser> findUnBindUser(String searchStr, Long roleId);
-
-
-    //通过条件导出角色信息
-    List<SysRoleExcelDTO> selectRolesExcelDto(SearchSysRole searchSysRole);
 
     //添加用户
     int addUser(Long roleId, List<Long> userIds);

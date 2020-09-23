@@ -17,6 +17,4 @@ public interface SmtProductModelService  {
 
     int deleteByIds(List<Long> productModelIds);
 
-    List<SmtProductModel> exportProductModels(SearchSmtProductModel searchSmtProductModel);
-
 }

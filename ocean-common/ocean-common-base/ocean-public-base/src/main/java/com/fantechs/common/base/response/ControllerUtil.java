@@ -154,7 +154,7 @@ public class ControllerUtil {
      * @return
      */
     public static <T> ResponseEntity<T> returnCRUD(int count){
-        if(count>0&&count<10000){
+        if(count>0){
             return returnSuccess("操作成功");
         }else{
             return returnFail(ErrorCodeEnum.GL99990005.getMsg(), ErrorCodeEnum.GL99990005.getCode());

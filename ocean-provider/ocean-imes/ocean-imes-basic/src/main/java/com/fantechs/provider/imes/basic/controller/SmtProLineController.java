@@ -91,7 +91,7 @@ public class SmtProLineController {
     @ApiOperation(value = "导出生产线信息excel",notes = "导出生产线信息excel")
     public void exportProLines(HttpServletResponse response, @ApiParam(value = "查询对象")
                                @RequestBody(required = false) SearchSmtProLine searchSmtProLine){
-        List<SmtProLine> list = smtProLineService.exportProLines(searchSmtProLine);
+        List<SmtProLine> list = smtProLineService.findList(searchSmtProLine);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "生产线信息导出", "生产线信息", SmtProLine.class, "生产线信息.xls", response);

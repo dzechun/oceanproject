@@ -124,7 +124,7 @@ public class SysRoleController {
     @ApiOperation(value = "导出角色信息excel",notes = "导出角色信息excel")
     public void exportRoles(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSysRole searchSysRole){
-        List<SysRoleExcelDTO> list = sysRoleService.selectRolesExcelDto(searchSysRole);
+        List<SysRole> list = sysRoleService.selectRoles(searchSysRole);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "角色信息导出", "角色信息", SysRoleExcelDTO.class, "角色信息.xls", response);

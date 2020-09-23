@@ -2,7 +2,6 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtSpecItemExcelDTO;
 import com.fantechs.common.base.entity.basic.SmtSpecItem;
 import com.fantechs.common.base.entity.basic.history.SmtHtSpecItem;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSpecItem;
@@ -56,7 +55,7 @@ public class SmtSpecItemController {
         if(StringUtils.isEmpty(specId)){
             return ControllerUtil.returnFail("缺少必需参数", ErrorCodeEnum.GL99990100.getCode());
         }
-        SmtSpecItem smtSpecItem=smtSpecItemService.selectById(specId);
+        SmtSpecItem smtSpecItem=smtSpecItemService.selectByKey(specId);
         return ControllerUtil.returnDataSuccess(smtSpecItem,StringUtils.isEmpty(smtSpecItem)?0:1);
     }
 
@@ -100,10 +99,10 @@ public class SmtSpecItemController {
     @ApiOperation(value = "导出程序配置项信息excel",notes = "导出程序配置项信息excel")
     public void exportSpecItems(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                             @RequestBody(required = false) SearchSmtSpecItem searchSmtSpecItem){
-        List<SmtSpecItemExcelDTO> list = smtSpecItemService.exportSpecItems(searchSmtSpecItem);
+        List<SmtSpecItem> list = smtSpecItemService.selectSpecItems(searchSmtSpecItem);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "程序配置项信息导出", "程序配置项信息", SmtSpecItemExcelDTO.class, "程序配置项信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "程序配置项信息导出", "程序配置项信息", SmtSpecItem.class, "程序配置项信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

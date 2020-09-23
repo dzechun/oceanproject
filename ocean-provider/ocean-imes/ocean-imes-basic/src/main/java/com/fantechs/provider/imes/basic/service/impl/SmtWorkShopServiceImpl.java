@@ -39,13 +39,11 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         return smtWorkShopMapper.findList(map);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SmtWorkShop smtWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SmtWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
@@ -55,7 +53,6 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
 
         if(StringUtils.isNotEmpty(odlSmtWorkShop)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtWorkShop.setCreateUserId(user.getUserId());
         smtWorkShop.setCreateTime(new Date());
@@ -71,13 +68,11 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         return i;
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteById(String id) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         SmtWorkShop smtWorkShop = smtWorkShopMapper.selectByPrimaryKey(id);
 
@@ -103,14 +98,11 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         }
         return i;
     }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtWorkShop smtWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SmtWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
@@ -120,7 +112,6 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
 
         if(StringUtils.isNotEmpty(odlsmtWorkShop)&&!odlsmtWorkShop.getWorkShopId().equals(smtWorkShop.getWorkShopId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtWorkShop.setModifiedTime(new Date());
         smtWorkShop.setModifiedUserId(user.getUserId());
@@ -133,10 +124,5 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         smtHtWorkShopMapper.insert(smtHtWorkShop);
 
         return smtWorkShopMapper.updateByPrimaryKeySelective(smtWorkShop);
-    }
-
-    @Override
-    public SmtWorkShop findById(String id) {
-        return smtWorkShopMapper.selectByPrimaryKey(id);
     }
 }

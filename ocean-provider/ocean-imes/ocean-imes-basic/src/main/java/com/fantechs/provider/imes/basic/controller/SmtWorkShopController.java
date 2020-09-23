@@ -80,7 +80,7 @@ public class SmtWorkShopController {
         )){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtWorkShopService.updateById(smtWorkShop));
+        return ControllerUtil.returnCRUD(smtWorkShopService.update(smtWorkShop));
 
     }
 
@@ -99,7 +99,7 @@ public class SmtWorkShopController {
         if(StringUtils.isEmpty(workShopId)){
             return ControllerUtil.returnFailByParameError();
         }
-        SmtWorkShop smtWorkShop = smtWorkShopService.findById(workShopId);
+        SmtWorkShop smtWorkShop = smtWorkShopService.selectByKey(workShopId);
         return  ControllerUtil.returnDataSuccess(smtWorkShop,StringUtils.isEmpty(smtWorkShop)?0:1);
     }
 

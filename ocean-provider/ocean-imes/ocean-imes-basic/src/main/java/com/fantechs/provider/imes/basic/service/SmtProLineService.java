@@ -16,6 +16,4 @@ public interface SmtProLineService {
     int updateById(SmtProLine smtProLine);
 
     int deleteByIds(List<Long> proLineIds);
-
-    List<SmtProLine> exportProLines(SearchSmtProLine searchSmtProLine);
 }

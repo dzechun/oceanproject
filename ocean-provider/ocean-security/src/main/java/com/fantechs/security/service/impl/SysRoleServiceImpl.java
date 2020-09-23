@@ -57,7 +57,6 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         List<SysRole> sysRoles = sysRoleMapper.selectByExample(example);
         if(null!=sysRoles&&sysRoles.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         sysRole.setCreateUserId(currentUser.getUserId());
@@ -77,7 +76,6 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         Example example = new Example(SysRole.class);
         Example.Criteria criteria = example.createCriteria();
@@ -109,7 +107,6 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long roleId : roleIds) {
@@ -142,30 +139,12 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         return sysRoleMapper.findUnBindUser(searchStr,roleId);
     }
 
-
-    @Override
-    public List<SysRoleExcelDTO> selectRolesExcelDto(SearchSysRole searchSysRole) {
-        List<SysRole> sysRoles = this.selectRoles(searchSysRole);
-        List<SysRoleExcelDTO> dtoList=new ArrayList<>();
-        for (SysRole sysRole : sysRoles) {
-            SysRoleExcelDTO sysRoleExcelDTO =new SysRoleExcelDTO();
-            try {
-                BeanUtils.copyProperties(sysRole, sysRoleExcelDTO);
-                dtoList.add(sysRoleExcelDTO);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        return dtoList;
-    }
-
     @Override
     public int addUser(Long roleId, List<Long> userIds) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         List<SysUserRole> list=new ArrayList<>();
         Example example = new Example(SysUserRole.class);

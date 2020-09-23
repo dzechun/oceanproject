@@ -44,26 +44,24 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
-
+        int i=0;
         Example example = new Example(SmtProLine.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("proCode",smtProLine.getProCode());
         List<SmtProLine> smtProLines = smtProLineMapper.selectByExample(example);
         if(null!=smtProLines&&smtProLines.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtProLine.setCreateUserId(currentUser.getUserId());
         smtProLine.setCreateTime(new Date());
-        int i = smtProLineMapper.insertSelective(smtProLine);
+        smtProLineMapper.insertUseGeneratedKeys(smtProLine);
 
         //新增生产线历史信息
         SmtHtProLine smtHtProLine=new SmtHtProLine();
         BeanUtils.copyProperties(smtProLine,smtHtProLine);
-        smtHtProLineMapper.insertSelective(smtHtProLine);
+       i =  smtHtProLineMapper.insertSelective(smtHtProLine);
         return i;
     }
 
@@ -73,7 +71,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtProLine.class);
@@ -105,14 +102,12 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long proLineId : proLineIds) {
             SmtProLine smtProLine = smtProLineMapper.selectByPrimaryKey(proLineId);
             if(StringUtils.isEmpty(smtProLine)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增生产线历史信息
             SmtHtProLine smtHtProLine=new SmtHtProLine();
@@ -126,11 +121,5 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
         i=smtHtProLineMapper.insertList(list);
         return i;
-    }
-
-    @Override
-    public List<SmtProLine> exportProLines(SearchSmtProLine searchSmtProLine) {
-        List<SmtProLine> smtProLines = this.findList(searchSmtProLine);
-        return smtProLines;
     }
 }

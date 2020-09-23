@@ -127,7 +127,6 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         sysMenuInfo.setCreateUserId(currentUser.getUserId());
         sysMenuInfo.setCreateTime(new Date());
@@ -151,13 +150,11 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         SysMenuInfo sysMenuInfo = sysMenuInfoMapper.selectByPrimaryKey(id);
         if(StringUtils.isEmpty(sysMenuInfo)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            //return ErrorCodeEnum.OPT20012003.getCode();
         }
 
         //通过当前节点获取所有子节点
@@ -192,7 +189,6 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         List<Long> menuIds =  new LinkedList<>();
@@ -202,7 +198,6 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
             SysMenuInfo sysMenuInfo = sysMenuInfoMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(sysMenuInfo)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                //return  ErrorCodeEnum.OPT20012003.getCode();
             }
             //通过当前节点获取所有子节点
             List<SysMenuInfo> list =getMenuList(sysMenuInfo);
@@ -247,7 +242,6 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)&&!odlSysMenuinfo.getMenuId().equals(sysMenuInfo.getMenuId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         sysMenuInfo.setModifiedUserId(currentUser.getUserId());
