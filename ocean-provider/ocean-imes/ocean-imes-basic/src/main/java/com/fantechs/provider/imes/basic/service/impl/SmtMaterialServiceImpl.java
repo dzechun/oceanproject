@@ -41,14 +41,10 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SmtMaterial smtMaterial) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtMaterial.class);
@@ -56,7 +52,8 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
         List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
         if(null!=smtMaterials&&smtMaterials.size()>0){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
@@ -71,15 +68,19 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtMaterial smtMaterial) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
+        Example example = new Example(SmtMaterial.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
+        SmtMaterial material = smtMaterialMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(material)&&!material.getMaterialId().equals(smtMaterial.getMaterialId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
         smtMaterial.setModifiedUserId(currentUser.getUserId());
         smtMaterial.setModifiedTime(new Date());
         int i= smtMaterialMapper.updateByPrimaryKeySelective(smtMaterial);
@@ -98,21 +99,17 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     public int deleteByIds(List<Long> materialIds) {
         int i=0;
         List<SmtHtMaterial> list=new ArrayList<>();
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long  materialId : materialIds) {
             SmtMaterial smtMaterial = smtMaterialMapper.selectByPrimaryKey(materialId);
             if(StringUtils.isEmpty(smtMaterial)){
-                //throw new BizErrorException("该物料已被删除。");
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增物料历史信息
             SmtHtMaterial smtHtMaterial=new SmtHtMaterial();

@@ -41,14 +41,10 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SmtProductModel smtProductModel) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtProductModel.class);
@@ -56,7 +52,8 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         criteria.andEqualTo("productModelCode",smtProductModel.getProductModelCode());
         List<SmtProductModel> smtProductModels = smtProductModelMapper.selectByExample(example);
         if(null!=smtProductModels&&smtProductModels.size()>0){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtProductModel.setCreateUserId(currentUser.getUserId());
         smtProductModel.setCreateTime(new Date());
@@ -72,15 +69,19 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtProductModel smtProductModel) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
+        Example example = new Example(SmtProductModel.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("productModelCode",smtProductModel.getProductModelCode());
+        SmtProductModel productModel = smtProductModelMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(productModel)&&!productModel.getProductModelId().equals(smtProductModel.getProductModelId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
         smtProductModel.setModifiedUserId(currentUser.getUserId());
         smtProductModel.setModifiedTime(new Date());
         int i= smtProductModelMapper.updateByPrimaryKeySelective(smtProductModel);
@@ -88,7 +89,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         //新增产品型号历史信息
         SmtHtProductModel smtHtProductModel=new SmtHtProductModel();
         BeanUtils.copyProperties(smtProductModel,smtHtProductModel);
-        //smtHtProductModel.setHtProductModelId(UUIDUtils.getUUID());
         smtHtProductModel.setModifiedUserId(currentUser.getUserId());
         smtHtProductModel.setModifiedTime(new Date());
         smtHtProductModelMapper.insertSelective(smtHtProductModel);
@@ -100,21 +100,17 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
     public int deleteByIds(List<Long> productModelIds) {
         int i=0;
         List<SmtHtProductModel> list=new ArrayList<>();
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long  productModelId : productModelIds) {
             SmtProductModel smtProductModel = smtProductModelMapper.selectByPrimaryKey(productModelId);
             if(StringUtils.isEmpty(smtProductModel)){
-                //throw new BizErrorException("该产品型号已被删除。");
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增产品型号历史信息
             SmtHtProductModel smtHtProductModel=new SmtHtProductModel();

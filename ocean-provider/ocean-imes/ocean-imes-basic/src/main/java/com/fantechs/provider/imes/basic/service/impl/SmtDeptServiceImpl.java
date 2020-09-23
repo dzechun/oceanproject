@@ -42,14 +42,10 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SmtDept smtDept) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtDept.class);
@@ -57,7 +53,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         criteria.andEqualTo("deptCode",smtDept.getDeptCode());
         List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
         if(null!=smtDepts&&smtDepts.size()>0){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         Example example1 = new Example(SmtDept.class);
@@ -83,15 +80,19 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtDept smtDept) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
+        Example example = new Example(SmtDept.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("deptCode",smtDept.getDeptCode());
+        SmtDept dept = smtDeptMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(dept)&&!dept.getDeptId().equals(smtDept.getDeptId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
         smtDept.setModifiedUserId(currentUser.getUserId());
         smtDept.setModifiedTime(new Date());
         int i= smtDeptMapper.updateByPrimaryKeySelective(smtDept);
@@ -109,22 +110,18 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
     @Transactional(rollbackFor = Exception.class)
     public int deleteByIds(List<Long> deptIds) {
         int i=0;
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<SmtHtDept> list=new ArrayList<>();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long deptId : deptIds) {
             SmtDept smtDept = smtDeptMapper.selectByPrimaryKey(deptId);
             if(StringUtils.isEmpty(smtDept)){
-                //throw new BizErrorException("该部门已被删除。");
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增部门历史信息
             SmtHtDept smtHtDept=new SmtHtDept();

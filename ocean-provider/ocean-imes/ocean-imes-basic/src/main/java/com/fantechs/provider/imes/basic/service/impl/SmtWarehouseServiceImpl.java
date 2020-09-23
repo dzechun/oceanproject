@@ -2,15 +2,11 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtDept;
-import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtWarehouse;
-import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.history.SmtHtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -42,14 +38,10 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     public int insert(SmtWarehouse smtWarehouse) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtWarehouse.class);
@@ -57,7 +49,8 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         criteria.andEqualTo("warehouseCode",smtWarehouse.getWarehouseCode());
         List<SmtWarehouse> smtWarehouses = smtWarehouseMapper.selectByExample(example);
         if(null!=smtWarehouses&&smtWarehouses.size()>0){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtWarehouse.setCreateUserId(currentUser.getUserId());
@@ -76,21 +69,18 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         int i=0;
         List<SmtHtWarehouse> list=new ArrayList<>();
 
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         String[] deptIds = ids.split(",");
         for (String deptId : deptIds) {
             SmtWarehouse smtWarehouse = smtWarehouseMapper.selectByPrimaryKey(Long.parseLong(deptId));
             if(StringUtils.isEmpty(smtWarehouse)){
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增仓库历史信息
             SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
@@ -106,14 +96,10 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     public int updateById(SmtWarehouse smtWarehouse) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtWarehouse.class);
@@ -123,7 +109,8 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         SmtWarehouse warehouse = smtWarehouseMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(warehouse)&&!warehouse.getWarehouseId().equals(smtWarehouse.getWarehouseId())){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         smtWarehouse.setModifiedUserId(currentUser.getUserId());

@@ -48,7 +48,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     public int insert(SysRole sysRole) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            throw  new BizErrorException( ErrorCodeEnum.UAC10011039);
+            throw new BizErrorException( ErrorCodeEnum.UAC10011039);
         }
 
         Example example = new Example(SysRole.class);
@@ -56,7 +56,8 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         criteria.andEqualTo("roleCode",sysRole.getRoleCode());
         List<SysRole> sysRoles = sysRoleMapper.selectByExample(example);
         if(null!=sysRoles&&sysRoles.size()>0){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         sysRole.setCreateUserId(currentUser.getUserId());
@@ -75,8 +76,19 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     public int updateById(SysRole sysRole) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
+        Example example = new Example(SysRole.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleCode",sysRole.getRoleCode());
+        SysRole role = sysRoleMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(role)&&!role.getRoleId().equals(sysRole.getRoleId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        sysRole.setModifiedUserId(currentUser.getUserId());
+        sysRole.setModifiedTime(new Date());
         int i= sysRoleMapper.updateByPrimaryKeySelective(sysRole);
 
         //新增角色历史信息
@@ -96,14 +108,15 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         List<SysHtRole> list=new ArrayList<>();
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (Long roleId : roleIds) {
             SysRole sysRole = sysRoleMapper.selectByPrimaryKey(roleId);
             if(StringUtils.isEmpty(sysRole)){
-                //throw new BizErrorException("该角色已被删除。");
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
             //新增角色历史信息
             SysHtRole sysHtRole=new SysHtRole();
@@ -151,7 +164,8 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         List<SysUserRole> list=new ArrayList<>();
         Example example = new Example(SysUserRole.class);

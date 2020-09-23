@@ -65,7 +65,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     public int insert(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
             sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
@@ -97,13 +98,14 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     public int updateById(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         SysUser user = sysUserMapper.selectByPrimaryKey(sysUser.getUserId());
         if(StringUtils.isEmpty(user)){
-            //throw new BizErrorException("该用户已被删除。");
-            return ErrorCodeEnum.OPT20012003.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            //return ErrorCodeEnum.OPT20012003.getCode();
         }
 
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
@@ -121,14 +123,14 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         if(StringUtils.isNotEmpty(oneByUser)&&!sysUser.getUserId().equals(oneByUser.getUserId())){
             throw new BizErrorException("该用户的帐号/工号已存在。");
         }
-        int i =sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        sysUserMapper.updateByPrimaryKeySelective(sysUser);
 
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
         BeanUtils.copyProperties(sysUser, sysHtUser);
         sysHtUser.setModifiedUserId(currentUser.getUserId());
         sysHtUser.setModifiedTime(new Date());
-        sysHtUserMapper.insertSelective(sysHtUser);
+        int i = sysHtUserMapper.insertSelective(sysHtUser);
         return i;
     }
 
@@ -145,8 +147,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         for (String userId : userIds) {
             SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
             if(StringUtils.isEmpty(sysUser)){
-                //throw new BizErrorException("该用户已删除。");
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
 
             //新增用户历史信息

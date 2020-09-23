@@ -116,7 +116,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     public int insert(SysMenuInfo sysMenuInfo){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            throw  new BizErrorException(ErrorCodeEnum.UAC10011039);
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
         Example example = new Example(SysMenuInfo.class);
@@ -126,7 +126,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         SysMenuInfo odlSysMenuinfo = sysMenuInfoMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         sysMenuInfo.setCreateUserId(currentUser.getUserId());
         sysMenuInfo.setCreateTime(new Date());
@@ -149,12 +150,14 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     public int deleteById(Long id){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         SysMenuInfo sysMenuInfo = sysMenuInfoMapper.selectByPrimaryKey(id);
         if(StringUtils.isEmpty(sysMenuInfo)){
-            return ErrorCodeEnum.OPT20012003.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            //return ErrorCodeEnum.OPT20012003.getCode();
         }
 
         //通过当前节点获取所有子节点
@@ -188,7 +191,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         SysUser user = null;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         List<Long> menuIds =  new LinkedList<>();
@@ -197,7 +201,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         for(Long id : ids){
             SysMenuInfo sysMenuInfo = sysMenuInfoMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(sysMenuInfo)){
-                return  ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                //return  ErrorCodeEnum.OPT20012003.getCode();
             }
             //通过当前节点获取所有子节点
             List<SysMenuInfo> list =getMenuList(sysMenuInfo);
@@ -230,7 +235,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     public int updateById(SysMenuInfo sysMenuInfo) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SysMenuInfo.class);
@@ -240,7 +246,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         SysMenuInfo odlSysMenuinfo = sysMenuInfoMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)&&!odlSysMenuinfo.getMenuId().equals(sysMenuInfo.getMenuId())){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
 
         sysMenuInfo.setModifiedUserId(currentUser.getUserId());

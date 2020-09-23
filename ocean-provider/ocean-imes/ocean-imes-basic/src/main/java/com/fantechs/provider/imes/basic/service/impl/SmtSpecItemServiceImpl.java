@@ -42,14 +42,10 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(SmtSpecItem smtSpecItem) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtSpecItem.class);
@@ -74,15 +70,21 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtSpecItem smtSpecItem) {
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
+        Example example = new Example(SmtSpecItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("specCode",smtSpecItem.getSpecCode());
+        SmtSpecItem specItem = smtSpecItemMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(smtSpecItem)&&!specItem.getSpecId().equals(smtSpecItem.getSpecId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        smtSpecItem.setModifiedUserId(currentUser.getUserId());
+        smtSpecItem.setModifiedTime(new Date());
         int i = smtSpecItemMapper.updateByPrimaryKeySelective(smtSpecItem);
 
         //新增配置项历史信息
@@ -101,21 +103,17 @@ public class SmtSpecItemServiceImpl extends BaseService<SmtSpecItem> implements 
     public int deleteByIds(List<String> specIds) {
         int i=0;
         List<SmtHtSpecItem> list=new ArrayList<>();
-        SysUser currentUser = null;
-        try {
-            currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        } catch (TokenValidationFailedException e) {
-            e.printStackTrace();
-        }
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         for (String specId : specIds) {
             SmtSpecItem smtSpecItem = smtSpecItemMapper.selectByPrimaryKey(specId);
             if(StringUtils.isEmpty(smtSpecItem)){
-                //throw new BizErrorException("该程序配置项已被删除。");
-                return ErrorCodeEnum.OPT20012003.getCode();
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                //return ErrorCodeEnum.OPT20012003.getCode();
             }
 
             //新增角色历史信息

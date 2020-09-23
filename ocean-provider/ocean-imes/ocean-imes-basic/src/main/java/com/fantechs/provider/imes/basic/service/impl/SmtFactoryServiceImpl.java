@@ -6,6 +6,7 @@ import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -45,7 +46,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     public int insert(SmtFactory smtFactory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtFactory.class);
@@ -55,7 +57,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SmtFactory odlsmtFactory = smtFactoryMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlsmtFactory)){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtFactory.setCreateUserId(user.getUserId());
         smtFactory.setCreateTime(new Date());
@@ -76,7 +79,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     public int deleteById(String id) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         SmtFactory smtFactory = smtFactoryMapper.selectByPrimaryKey(id);
 
@@ -99,7 +103,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     public int deleteByIds(List<Long> smtFactoryIds) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         List<SmtHtFactory>  smtHtFactorys = new LinkedList<>();
         for(Long id : smtFactoryIds){
@@ -126,7 +131,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     public int updateById(SmtFactory smtFactory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         Example example = new Example(SmtFactory.class);
@@ -136,7 +142,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         SmtFactory odlsmtFactory = smtFactoryMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlsmtFactory)&&!odlsmtFactory.getFactoryId().equals(smtFactory.getFactoryId())){
-            return ErrorCodeEnum.OPT20012001.getCode();
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            //return ErrorCodeEnum.OPT20012001.getCode();
         }
         smtFactory.setModifiedTime(new Date());
         smtFactory.setModifiedUserId(user.getUserId());
