@@ -19,7 +19,6 @@ public class SmtHtStorageMaterial {
     /**
      * 储位物料ID
      */
-    @Id
     @Column(name = "storage_material_id")
     @ApiModelProperty(name = "storageMaterialId",value = "储位物料ID")
     private Long storageMaterialId;
