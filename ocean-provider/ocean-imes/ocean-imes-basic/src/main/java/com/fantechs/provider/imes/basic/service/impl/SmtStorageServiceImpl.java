@@ -1,10 +1,8 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtHtStorage;
+import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
-import com.fantechs.common.base.entity.basic.SmtWarehouse;
-import com.fantechs.common.base.entity.basic.history.SmtHtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -74,9 +72,9 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        String[] deptIds = ids.split(",");
-        for (String deptId : deptIds) {
-            SmtStorage smtStorage = smtStorageMapper.selectByPrimaryKey(Long.parseLong(deptId));
+        String[] storageIds = ids.split(",");
+        for (String storageId : storageIds) {
+            SmtStorage smtStorage = smtStorageMapper.selectByPrimaryKey(Long.parseLong(storageId));
             if(StringUtils.isEmpty(smtStorage)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }

@@ -1,12 +1,10 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
-import com.fantechs.common.base.entity.basic.SmtHtStorage;
+import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.SmtWarehouse;
-import com.fantechs.common.base.entity.basic.history.SmtHtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
-import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

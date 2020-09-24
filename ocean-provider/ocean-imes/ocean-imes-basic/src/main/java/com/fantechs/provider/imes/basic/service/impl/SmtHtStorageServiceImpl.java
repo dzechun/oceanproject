@@ -1,7 +1,7 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 
-import com.fantechs.common.base.entity.basic.SmtHtStorage;
+import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.imes.basic.mapper.SmtHtStorageMapper;

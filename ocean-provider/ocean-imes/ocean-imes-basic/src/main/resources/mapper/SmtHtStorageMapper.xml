@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtStorageMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtHtStorage">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtStorage">
     <id column="ht_storage_id" jdbcType="BIGINT" property="htStorageId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />

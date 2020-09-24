@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic;
+package com.fantechs.common.base.entity.basic.history;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,13 +6,20 @@ import lombok.Data;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "smt_storage")
+@Table(name = "smt_ht_storage")
 @Data
-public class SmtStorage {
+public class SmtHtStorage {
+    /**
+     * 储位历史ID
+     */
+    @Id
+    @Column(name = "ht_storage_id")
+    @ApiModelProperty(name = "htStorageId",value = "储位历史ID")
+    private Long htStorageId;
+
     /**
      * 储位ID
      */
-    @Id
     @Column(name = "storage_id")
     @ApiModelProperty(name = "storageId",value = "储位ID")
     private Long storageId;
@@ -56,7 +63,7 @@ public class SmtStorage {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
-    private Byte status;
+    private Integer status;
 
     /**
      * 创建人ID
@@ -107,5 +114,4 @@ public class SmtStorage {
      * 扩展字段3
      */
     private String option3;
-
 }

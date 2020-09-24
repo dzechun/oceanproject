@@ -6,16 +6,16 @@ import lombok.Data;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "smt_ht_storage")
+@Table(name = "smt_storage_material")
 @Data
-public class SmtHtStorage {
+public class SmtStorageMaterial {
     /**
-     * 储位历史ID
+     * 储位物料ID
      */
     @Id
-    @Column(name = "ht_storage_id")
-    @ApiModelProperty(name = "htStorageId",value = "储位历史ID")
-    private Long htStorageId;
+    @Column(name = "storage_material_id")
+    @ApiModelProperty(name = "storageMaterialId",value = "储位物料ID")
+    private Long storageMaterialId;
 
     /**
      * 储位ID
@@ -25,51 +25,37 @@ public class SmtHtStorage {
     private Long storageId;
 
     /**
-     * 储位编码
+     * 物料ID
      */
-    @Column(name = "storage_code")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    private String storageCode;
-
-    /**
-     * 储位名称
-     */
-    @Column(name = "storage_name")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    private String storageName;
-
-    /**
-     * 储位描述
-     */
-    @Column(name = "storage_desc")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    private String storageDesc;
+    @Column(name = "material_id")
+    @ApiModelProperty(name = "materialId",value = "物料ID")
+    private Long materialId;
 
     /**
      * 仓库ID
      */
     @Column(name = "warehouse_id")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
+    @ApiModelProperty(name = "warehouseId",value = "仓库ID")
     private Long warehouseId;
 
     /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
+    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
     private Long warehouseAreaId;
 
     /**
      * 状态(0无效，1有效)
      */
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    private Byte status;
+    @ApiModelProperty(name = "status",value = "状态")
+    private Integer status;
 
     /**
      * 创建人ID
      */
     @Column(name = "create_user_id")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
+    @ApiModelProperty(name = "createUserId",value = "创建人ID")
     private Long createUserId;
 
     /**
@@ -114,4 +100,5 @@ public class SmtHtStorage {
      * 扩展字段3
      */
     private String option3;
+
 }

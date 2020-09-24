@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic;
+package com.fantechs.common.base.entity.basic.history;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,37 +6,37 @@ import lombok.Data;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "smt_storage")
+@Table(name = "smt_ht_storage_material")
 @Data
-public class SmtStorage {
+public class SmtHtStorageMaterial {
+    /**
+     * 储位物料ID
+     */
+    @Id
+    @Column(name = "ht_storage_material_id")
+    private Long htStorageMaterialId;
+
+    /**
+     * 储位物料ID
+     */
+    @Id
+    @Column(name = "storage_material_id")
+    @ApiModelProperty(name = "storageMaterialId",value = "储位物料ID")
+    private Long storageMaterialId;
+
     /**
      * 储位ID
      */
-    @Id
     @Column(name = "storage_id")
     @ApiModelProperty(name = "storageId",value = "储位ID")
     private Long storageId;
 
     /**
-     * 储位编码
+     * 物料ID
      */
-    @Column(name = "storage_code")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    private String storageCode;
-
-    /**
-     * 储位名称
-     */
-    @Column(name = "storage_name")
-    @ApiModelProperty(name = "storageName",value = "储位名称")
-    private String storageName;
-
-    /**
-     * 储位描述
-     */
-    @Column(name = "storage_desc")
-    @ApiModelProperty(name = "storageDesc",value = "储位描述")
-    private String storageDesc;
+    @Column(name = "material_id")
+    @ApiModelProperty(name = "materialId",value = "物料ID")
+    private Long materialId;
 
     /**
      * 仓库ID
@@ -56,7 +56,7 @@ public class SmtStorage {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
-    private Byte status;
+    private Integer status;
 
     /**
      * 创建人ID
@@ -107,5 +107,4 @@ public class SmtStorage {
      * 扩展字段3
      */
     private String option3;
-
 }
