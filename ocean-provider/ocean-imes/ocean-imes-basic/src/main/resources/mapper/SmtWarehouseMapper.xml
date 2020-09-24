@@ -18,7 +18,7 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse" resultMap="BaseResultMap">
-    select  sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,sw.warehouse_desc,sw.status,sw.create_user_id
+    select  sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,sw.warehouse_desc,sw.status,sw.create_user_id,
     u.user_name as createUserName,sw.create_time,sw.modified_user_id, s.user_name as modifiedUserName,
     sw.modified_time, sw.is_delete
     from smt_warehouse sw
