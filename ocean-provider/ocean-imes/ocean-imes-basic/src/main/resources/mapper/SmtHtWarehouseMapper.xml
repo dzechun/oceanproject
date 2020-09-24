@@ -19,12 +19,12 @@
   </resultMap>
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse" resultMap="BaseResultMap">
-    select  shw.ht_warehouse_id,shw.warehouse_id,shw.warehouse_code,shw.warehouse_name,shw.warehouse_desc,shw.status,shw.create_user_id
+    select  shw.ht_warehouse_id,shw.warehouse_id,shw.warehouse_code,shw.warehouse_name,shw.warehouse_desc,shw.status,shw.create_user_id,
     u.user_name as createUserName,shw.create_time,shw.modified_user_id, s.user_name as modifiedUserName,
     shw.modified_time, shw.is_delete
     from smt_ht_warehouse shw
-    left join smt_user u on sw.create_user_id=u.user_id
-    left join smt_user s on sw.modified_user_id=s.user_id
+    left join smt_user u on shw.create_user_id=u.user_id
+    left join smt_user s on shw.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

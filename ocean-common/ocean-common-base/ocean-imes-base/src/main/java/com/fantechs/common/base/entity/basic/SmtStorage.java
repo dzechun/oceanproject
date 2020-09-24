@@ -1,27 +1,46 @@
-package com.fantechs.common.base.entity.basic.history;
+package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.*;
 
-@Table(name = "smt_ht_warehouse")
+@Table(name = "smt_storage")
 @Data
-public class SmtHtWarehouse implements Serializable {
-
+public class SmtStorage {
     /**
-     * 仓库历史ID
+     * 储位ID
      */
     @Id
-    @Column(name = "ht_warehouse_id")
-    @ApiModelProperty(name = "htWarehouseId",value = "仓库历史ID")
-    private Long htWarehouseId;
+    @Column(name = "storage_id")
+    @ApiModelProperty(name = "storageId",value = "储位ID")
+    private Long storageId;
+
+    /**
+     * 储位编码
+     */
+    @Column(name = "storage_code")
+    @ApiModelProperty(name = "storageCode",value = "储位编码")
+    @Excel(name = "储位编码", height = 20, width = 30)
+    private String storageCode;
+
+    /**
+     * 储位名称
+     */
+    @Column(name = "storage_name")
+    @ApiModelProperty(name = "storageName",value = "储位名称")
+    @Excel(name = "储位名称", height = 20, width = 30)
+    private String storageName;
+
+    /**
+     * 储位描述
+     */
+    @Column(name = "storage_desc")
+    @ApiModelProperty(name = "storageDesc",value = "储位描述")
+    @Excel(name = "储位描述", height = 20, width = 30)
+    private String storageDesc;
 
     /**
      * 仓库ID
@@ -31,30 +50,33 @@ public class SmtHtWarehouse implements Serializable {
     private Long warehouseId;
 
     /**
-     * 仓库编码
-     */
-    @Column(name = "warehouse_code")
-    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
-    private String warehouseCode;
-
-    /**
      * 仓库名称
      */
-    @Column(name = "warehouse_name")
+    @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
     private String warehouseName;
 
     /**
-     * 仓库描述
+     * 仓库区域ID
      */
-    @Column(name = "warehouse_desc")
-    @ApiModelProperty(name = "warehouseDesc",value = "仓库描述")
-    private String warehouseDesc;
+    @Column(name = "warehouse_area_id")
+    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
+    private Long warehouseAreaId;
+
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    @Excel(name = "仓库区域名称", height = 20, width = 30)
+    private String warehouseAreaName;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
+    @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Integer status;
 
     /**
@@ -69,6 +91,7 @@ public class SmtHtWarehouse implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -76,6 +99,7 @@ public class SmtHtWarehouse implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -90,6 +114,7 @@ public class SmtHtWarehouse implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
     private String modifiedUserName;
 
     /**
@@ -97,6 +122,7 @@ public class SmtHtWarehouse implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
@@ -120,4 +146,5 @@ public class SmtHtWarehouse implements Serializable {
      * 扩展字段3
      */
     private String option3;
+
 }

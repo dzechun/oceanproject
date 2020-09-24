@@ -15,6 +15,7 @@ import com.fantechs.provider.imes.basic.mapper.SmtWarehouseMapper;
 import com.fantechs.provider.imes.basic.service.SmtWarehouseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int insert(SmtWarehouse smtWarehouse) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -63,6 +65,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDel(String ids) {
         int i=0;
         List<SmtHtWarehouse> list=new ArrayList<>();
@@ -72,9 +75,9 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        String[] deptIds = ids.split(",");
-        for (String deptId : deptIds) {
-            SmtWarehouse smtWarehouse = smtWarehouseMapper.selectByPrimaryKey(Long.parseLong(deptId));
+        String[] warehouseIds = ids.split(",");
+        for (String warehouseId : warehouseIds) {
+            SmtWarehouse smtWarehouse = smtWarehouseMapper.selectByPrimaryKey(Long.parseLong(warehouseId));
             if(StringUtils.isEmpty(smtWarehouse)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
@@ -91,6 +94,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtWarehouse smtWarehouse) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){

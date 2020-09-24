@@ -26,4 +26,6 @@ public interface SmtDeptService {
     List<SmtDept> exportDepts(SearchSmtDept searchSmtDept);
 
     List<SmtDept> selectDeptByFactoryId(String factoryId);
+
+    SmtDept selectByKey(Long id);
 }

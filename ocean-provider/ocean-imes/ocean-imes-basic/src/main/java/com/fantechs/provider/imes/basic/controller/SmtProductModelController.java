@@ -91,6 +91,16 @@ public class SmtProductModelController {
         return ControllerUtil.returnCRUD(smtProductModelService.deleteByIds(productModelIds));
     }
 
+    @ApiOperation("获取详情")
+    @PostMapping("/detail")
+    public ResponseEntity<SmtProductModel> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
+        if(StringUtils.isEmpty(id)){
+            return ControllerUtil.returnFailByParameError();
+        }
+        SmtProductModel smtProductModel = smtProductModelService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(smtProductModel,StringUtils.isEmpty(smtProductModel)?0:1);
+    }
+
     /**
      * 导出数据
      * @return

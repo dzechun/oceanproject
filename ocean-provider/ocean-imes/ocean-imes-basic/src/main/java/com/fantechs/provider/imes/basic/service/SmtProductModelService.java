@@ -18,4 +18,5 @@ public interface SmtProductModelService extends IService<SmtProductModel> {
 
     int deleteByIds(List<Long> productModelIds);
 
+    SmtProductModel selectByKey(Long id);
 }
