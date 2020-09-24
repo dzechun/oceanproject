@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -94,6 +95,13 @@ public class SmtHtMaterial implements Serializable {
     @Column(name = "barcode_rule_id")
     @ApiModelProperty(name="barcodeRuleId" ,value="条码规则集合ID")
     private Long barcodeRuleId;
+
+    /**
+     * 条码规则集合ID
+     */
+    @Transient
+    @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
+    private String barcodeRuleName;
 
     /**
      * 是否组合板(0.否 1.是)

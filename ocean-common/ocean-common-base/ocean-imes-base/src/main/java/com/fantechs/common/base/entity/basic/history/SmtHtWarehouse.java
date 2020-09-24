@@ -1,11 +1,13 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -63,6 +65,13 @@ public class SmtHtWarehouse implements Serializable {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -75,6 +84,13 @@ public class SmtHtWarehouse implements Serializable {
     @Column(name = "modified_user_id")
     @ApiModelProperty(name = "modifiedUserId",value = "修改人ID")
     private Long modifiedUserId;
+
+    /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    private String modifiedUserName;
 
     /**
      * 修改时间

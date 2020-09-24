@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -53,11 +54,25 @@ public class SmtHtStorage {
     private Long warehouseId;
 
     /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+    /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
     private Long warehouseAreaId;
+
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    private String warehouseAreaName;
 
     /**
      * 状态(0无效，1有效)
@@ -73,6 +88,13 @@ public class SmtHtStorage {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -85,6 +107,13 @@ public class SmtHtStorage {
     @Column(name = "modified_user_id")
     @ApiModelProperty(name = "modifiedUserId",value = "修改人ID")
     private Long modifiedUserId;
+
+    /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    private String modifiedUserName;
 
     /**
      * 修改时间

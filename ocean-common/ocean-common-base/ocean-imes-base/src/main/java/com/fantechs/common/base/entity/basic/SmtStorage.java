@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -22,6 +23,7 @@ public class SmtStorage {
      */
     @Column(name = "storage_code")
     @ApiModelProperty(name = "storageCode",value = "储位编码")
+    @Excel(name = "储位编码", height = 20, width = 30)
     private String storageCode;
 
     /**
@@ -29,6 +31,7 @@ public class SmtStorage {
      */
     @Column(name = "storage_name")
     @ApiModelProperty(name = "storageName",value = "储位名称")
+    @Excel(name = "储位名称", height = 20, width = 30)
     private String storageName;
 
     /**
@@ -36,6 +39,7 @@ public class SmtStorage {
      */
     @Column(name = "storage_desc")
     @ApiModelProperty(name = "storageDesc",value = "储位描述")
+    @Excel(name = "储位描述", height = 20, width = 30)
     private String storageDesc;
 
     /**
@@ -46,6 +50,14 @@ public class SmtStorage {
     private Long warehouseId;
 
     /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
+    private String warehouseName;
+
+    /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
@@ -53,9 +65,18 @@ public class SmtStorage {
     private Long warehouseAreaId;
 
     /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    @Excel(name = "仓库区域名称", height = 20, width = 30)
+    private String warehouseAreaName;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
+    @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
@@ -66,10 +87,19 @@ public class SmtStorage {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -80,10 +110,19 @@ public class SmtStorage {
     private Long modifiedUserId;
 
     /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
+    private String modifiedUserName;
+
+    /**
      * 修改时间
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

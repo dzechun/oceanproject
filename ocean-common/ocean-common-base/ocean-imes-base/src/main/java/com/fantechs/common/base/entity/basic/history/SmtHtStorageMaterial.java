@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -31,11 +32,60 @@ public class SmtHtStorageMaterial {
     private Long storageId;
 
     /**
+     * 储位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "storageCode",value = "储位编码")
+    private String storageCode;
+
+    /**
+     * 储位名称
+     */
+    @Transient
+    @ApiModelProperty(name = "storageName",value = "储位名称")
+    private String storageName;
+
+    /**
+     * 储位描述
+     */
+    @Transient
+    @ApiModelProperty(name = "storageDesc",value = "储位描述")
+    private String storageDesc;
+
+    /**
      * 物料ID
      */
     @Column(name = "material_id")
     @ApiModelProperty(name = "materialId",value = "物料ID")
     private Long materialId;
+
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    /**
+     * 版本
+     */
+    @Transient
+    @ApiModelProperty(name="version" ,value="版本")
+    private String version;
+
+    /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    private String materialDesc;
 
     /**
      * 仓库ID
@@ -45,11 +95,25 @@ public class SmtHtStorageMaterial {
     private Long warehouseId;
 
     /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+    /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
     private Long warehouseAreaId;
+
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    private String warehouseAreaName;
 
     /**
      * 状态(0无效，1有效)
@@ -65,6 +129,13 @@ public class SmtHtStorageMaterial {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -77,6 +148,13 @@ public class SmtHtStorageMaterial {
     @Column(name = "modified_user_id")
     @ApiModelProperty(name = "modifiedUserId",value = "修改人ID")
     private Long modifiedUserId;
+
+    /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    private String modifiedUserName;
 
     /**
      * 修改时间
