@@ -118,6 +118,8 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         //新增储位物料历史信息
         SmtHtStorageMaterial smtHtStorageMaterial=new SmtHtStorageMaterial();
         BeanUtils.copyProperties(smtStorageMaterial,smtHtStorageMaterial);
+        smtHtStorageMaterial.setCreateUserId(smtStorageMaterial.getCreateUserId());
+        smtHtStorageMaterial.setCreateTime(smtStorageMaterial.getCreateTime());
         smtHtStorageMaterial.setModifiedUserId(currentUser.getUserId());
         smtHtStorageMaterial.setModifiedTime(new Date());
         smtHtStorageMaterialMapper.insertSelective(smtHtStorageMaterial);
