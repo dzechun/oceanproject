@@ -28,8 +28,8 @@ import java.util.List;
  * Created by wcz on 2020/09/23.
  */
 @RestController
-@Api(tags = "storage控制器")
-@RequestMapping("/storage")
+@Api(tags = "储位信息")
+@RequestMapping("/smtStorage")
 public class SmtStorageController {
 
     @Autowired
