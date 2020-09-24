@@ -99,15 +99,6 @@ public class SysRoleController {
         return ControllerUtil.returnCRUD(sysRoleService.addUser(roleId,userIds));
     }
 
-    @ApiOperation("获取详情")
-    @PostMapping("/detail")
-    public ResponseEntity<SysRole> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
-        if(StringUtils.isEmpty(id)){
-            return ControllerUtil.returnFailByParameError();
-        }
-        SysRole sysRole = sysRoleService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(sysRole,StringUtils.isEmpty(sysRole)?0:1);
-    }
     /**
      * 导出数据
      * @return
