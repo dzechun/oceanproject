@@ -20,10 +20,12 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorage" resultMap="BaseResultMap">
-    select  ss.storage_id,ss.storage_code,ss.storage_name,ss.storage_desc,ss.warehouse_id,ss.warehouse_area_id,ss.status,ss.create_user_id,
-    u.user_name as createUserName,ss.create_time,ss.modified_user_id, s.user_name as modifiedUserName,
-    ss.modified_time, ss.is_delete
+    select  ss.storage_id,ss.storage_code,ss.storage_name,ss.storage_desc,ss.warehouse_id,sw.warehouse_name as warehouseName,
+    ss.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,ss.status,ss.create_user_id,u.user_name as createUserName,
+    ss.create_time,ss.modified_user_id, s.user_name as modifiedUserName,ss.modified_time, ss.is_delete
     from smt_storage ss
+    left join smt_warehouse sw on ss.warehouse_id=sw.warehouse_id
+    left join smt_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
     left join smt_user u on ss.create_user_id=u.user_id
     left join smt_user s on ss.modified_user_id=s.user_id
     <where>

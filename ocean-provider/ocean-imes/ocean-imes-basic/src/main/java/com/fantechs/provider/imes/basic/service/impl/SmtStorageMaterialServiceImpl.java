@@ -46,7 +46,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         Example example = new Example(SmtStorageMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
-        criteria.andNotEqualTo("materialId",smtStorageMaterial.getMaterialId());
+        criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
         List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(example);
         if(null!=smtStorageMaterials&&smtStorageMaterials.size()>0){
             throw new BizErrorException("该储位上的物料已存在。");
@@ -103,7 +103,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         Example example = new Example(SmtStorageMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
-        criteria.andNotEqualTo("materialId",smtStorageMaterial.getMaterialId());
+        criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
 
         SmtStorageMaterial storageMaterial = smtStorageMaterialMapper.selectOneByExample(example);
 
