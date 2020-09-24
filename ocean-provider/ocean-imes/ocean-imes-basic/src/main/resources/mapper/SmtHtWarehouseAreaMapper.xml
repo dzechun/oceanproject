@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.ht.SmtHtWarehouseAreaMapper">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtWarehouseAreaMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtWarehouseArea">
     <id column="ht_warehouse_area_id" jdbcType="BIGINT" property="htWarehouseAreaId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
@@ -17,5 +17,37 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
   </resultMap>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    select  wha.ht_warehouse_area_id,wha.warehouse_area_id,wha.warehouse_area_code,wha.warehouse_area_name,wha.warehouse_area_desc,
+    wha.warehouse_id,wha.status,wha.create_user_id,wha.create_time,wha.modified_user_id,wha.is_delete,wha.option1,wha.option2,wha.option3,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name, sw.warehouse_name
+    FROM  smt_ht_warehouse_area wha
+    LEFT JOIN smt_user su  ON wha.create_user_id = su.user_id
+    LEFT JOIN smt_user sus ON wha.modified_user_id = sus.user_id
+    LEfT JOIN smt_warehouse sw ON wha.warehouse_id= sw.warehouse_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="warehouseAreaCode != null">
+        and wha.warehouse_area_code like CONCAT('%', #{warehouseAreaCode}, '%')
+      </if>
+      <if test="warehouseAreaName != null">
+        and  wha.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+      </if>
+      <if test="warehouseAreaDesc != null">
+        and wha.warehouse_area_desc like CONCAT('%', #{warehouseAreaDesc}, '%')
+      </if>
+      <if test="warehouseId != null">
+        and wha.warehouse_id like CONCAT('%', #{warehouseId}, '%')
+      </if>
+    </where>
+    order by  create_time desc
+  </select>
 </mapper>

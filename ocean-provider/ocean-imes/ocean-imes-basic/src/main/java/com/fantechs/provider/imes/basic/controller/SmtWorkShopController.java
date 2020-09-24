@@ -38,7 +38,7 @@ public class SmtWorkShopController {
     @Autowired
     private SmtHtWorkShopService smtHtWorkShopService;
 
-    @ApiOperation("根据条件查询角色信息列表")
+    @ApiOperation("查询列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SmtWorkShopDto>> findList(
             @ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop
@@ -48,7 +48,7 @@ public class SmtWorkShopController {
         return ControllerUtil.returnDataSuccess(smtFactoryDtos,(int)page.getTotal());
     }
 
-    @ApiOperation("增加车间信息")
+    @ApiOperation("新增车间")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：workShopCode、workShopName、factoryId",required = true)@RequestBody SmtWorkShop smtWorkShop){
         if(StringUtils.isEmpty(
@@ -61,7 +61,7 @@ public class SmtWorkShopController {
 
     }
 
-    @ApiOperation(value = "获取菜单列表",notes = "返回数据包含菜单对应的角色权限")
+    @ApiOperation(value = "履历列表",notes = "履历列表")
     @PostMapping("/findHtList")
     public ResponseEntity< List<SmtHtWorkShop>> findHtList(
             @ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop){
@@ -70,7 +70,7 @@ public class SmtWorkShopController {
         return ControllerUtil.returnDataSuccess(menuList,(int)page.getTotal());
     }
 
-    @ApiOperation("修改车间信息")
+    @ApiOperation("修改车间")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "车间信息对象，workShopId、workShopCode、workShopName、factoryId必传",required = true)@RequestBody SmtWorkShop smtWorkShop){
         if(StringUtils.isEmpty(smtWorkShop.getWorkShopId(),
@@ -84,7 +84,7 @@ public class SmtWorkShopController {
 
     }
 
-    @ApiOperation("删除车间信息")
+    @ApiOperation("删除车间")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "车间对象ID",required = true) @RequestBody List<String> workShopIds){
         if(StringUtils.isEmpty(workShopIds)){
@@ -110,7 +110,7 @@ public class SmtWorkShopController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出车间excel",notes = "导出车间excel")
+    @ApiOperation(value = "导出excel",notes = "导出车间excel")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop){
         List<SmtWorkShopDto> smtWorkShopDtos = smtWorkShopService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtWorkShop));
         try {

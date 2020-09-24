@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Table(name = "smt_ht_warehouse_area")
@@ -109,4 +110,26 @@ public class SmtHtWarehouseArea {
      * 扩展字段3
      */
     private String option3;
+
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建人")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改人")
+    private String modifiedUserName;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    private String  warehouseName;
 }

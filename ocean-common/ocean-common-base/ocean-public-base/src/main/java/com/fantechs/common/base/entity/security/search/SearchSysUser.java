@@ -22,4 +22,16 @@ public class SearchSysUser extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="userName" ,value="用户名称")
     private String userName;
+
+    /**
+     * 角色ID
+     */
+    @ApiModelProperty(name="roleId" ,value="角色id")
+    private Long roleId;
+
+    /**
+     * 角色ID
+     */
+    @ApiModelProperty(name="searchType" ,value="绑定状态 0-未绑定 1-绑定")
+    private Integer searchType;
 }

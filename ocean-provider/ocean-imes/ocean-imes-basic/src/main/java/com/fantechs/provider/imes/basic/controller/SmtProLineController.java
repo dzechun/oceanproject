@@ -44,7 +44,7 @@ public class SmtProLineController {
     private SmtHtProLineService smtHtProLineService;
 
     @ApiOperation("根据条件查询生产线信息列表")
-    @PostMapping("/selectProLines")
+    @PostMapping("/findList")
     public ResponseEntity<List<SmtProLine>> selectProLines(@RequestBody(required = false) SearchSmtProLine searchSmtProLine){
         Page<Object> page = PageHelper.startPage(searchSmtProLine.getStartPage(),searchSmtProLine.getPageSize());
         List<SmtProLine> smtProLines = smtProLineService.findList(searchSmtProLine);
@@ -87,7 +87,7 @@ public class SmtProLineController {
      * @return
      * @throws
      */
-    @PostMapping(value = "/exportProLines")
+    @PostMapping(value = "/export")
     @ApiOperation(value = "导出生产线信息excel",notes = "导出生产线信息excel")
     public void exportProLines(HttpServletResponse response, @ApiParam(value = "查询对象")
                                @RequestBody(required = false) SearchSmtProLine searchSmtProLine){
@@ -101,7 +101,7 @@ public class SmtProLineController {
     }
 
 
-    @PostMapping("/selectHtProLines")
+    @PostMapping("/findHtList")
     @ApiOperation(value = "根据条件查询生产线履历信息",notes = "根据条件查询生产线履历信息")
     public ResponseEntity<List<SmtHtProLine>> selectHtProLines(@ApiParam(value = "查询对象")@RequestBody SearchSmtProLine searchSmtProLine) {
         Page<Object> page = PageHelper.startPage(searchSmtProLine.getStartPage(),searchSmtProLine.getPageSize());

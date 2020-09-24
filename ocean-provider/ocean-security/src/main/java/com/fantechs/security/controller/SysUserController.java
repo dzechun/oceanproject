@@ -45,24 +45,8 @@ public class SysUserController {
     private SysHtUserService sysHtUserService;
 
 
-    /*
-     * 用户信息
-     */
-    @GetMapping("/selectAllUsers")
-    @ApiOperation(value = "初始显示所有用户信息",notes = "初始显示所有用户信息")
-    public ResponseEntity<List<SysUser>> selectAllUsers(
-            @ApiParam(value ="当前页",required = false) @RequestParam(value = "startPage", defaultValue = "1",required = false) String startPage,
-            @ApiParam(value ="显示数量",required = false) @RequestParam(value = "pageSize", defaultValue = "10",required = false)  String pageSize ) {
-
-        Page<Object> page = PageHelper.startPage(Integer.parseInt(startPage), Integer.parseInt(pageSize));
-        List<SysUser> sysUsers = sysUserService.selectAllUsers();
-
-
-        return  ControllerUtil.returnDataSuccess(sysUsers, (int)page.getTotal());
-    }
-
-    @PostMapping("/selectUsers")
-    @ApiOperation(value = "根据条件查询用户信息",notes = "根据条件查询用户信息")
+    @PostMapping("/findList")
+    @ApiOperation(value = "查询用户列表",notes = "根据条件查询用户信息")
     public ResponseEntity<List<SysUser>> selectUsers(
             @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysUser searchSysUser ) {
         Page<Object> page = PageHelper.startPage(searchSysUser.getStartPage(),searchSysUser.getPageSize());
@@ -71,7 +55,7 @@ public class SysUserController {
     }
 
 
-    @GetMapping("/selectUserById")
+    @GetMapping("/detail")
     @ApiOperation(value = "通过ID获取单个用户信息",notes = "通过ID获取单个用户信息")
     public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam String userId) {
         SysUser sysUser = sysUserService.selectById(userId);
@@ -102,7 +86,7 @@ public class SysUserController {
     }
 
 
-    @PostMapping("/delUser")
+    @PostMapping("/delete")
     @ApiOperation(value = "删除用户信息",notes = "删除用户信息")
     public ResponseEntity delUser(@ApiParam(value = "传入主键userId",required = true) @RequestBody List<String> userIds) {
         if(StringUtils.isEmpty(userIds)){
@@ -111,7 +95,7 @@ public class SysUserController {
         return ControllerUtil.returnCRUD(sysUserService.delUser(userIds));
     }
 
-    @PostMapping(value = "/exportUsers")
+    @PostMapping(value = "/export")
     @ApiOperation(value = "导出用户信息excel",notes = "导出用户信息excel")
     public void exportUsers(HttpServletResponse response, @ApiParam(value ="输入查询条件")
     @RequestBody(required = false) SearchSysUser searchSysUser){
@@ -136,7 +120,7 @@ public class SysUserController {
      * @return
      * @throws
      */
-    @PostMapping(value = "/importUsers")
+    @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入用户信息",notes = "从excel导入用户信息")
     public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestBody(required = true) MultipartFile file){
@@ -153,7 +137,7 @@ public class SysUserController {
         return ControllerUtil.returnCRUD(i);
     }
 
-    @PostMapping("/selectHtUsers")
+    @PostMapping("/findHtList")
     @ApiOperation(value = "根据条件查询用户信息",notes = "根据条件查询用户信息")
     public ResponseEntity<List<SysHtUser>> selectHtUsers(
             @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysUser searchSysUser){

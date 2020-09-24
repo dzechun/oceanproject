@@ -40,24 +40,4 @@
     </where>
   </select>
 
-  <select id="findUnBindUser" parameterType="java.lang.String" resultType="com.fantechs.common.base.entity.security.SysUser">
-    select su.user_id as userId, su.user_name as userName, su.user_code as userCode, su.nick_name as nickName,su.status
-    from sys_user su
-    where su.user_id NOT IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
-    <if test="searchStr != null and searchStr!=''">
-      AND (su.user_code like concat("%",#{searchStr},"%")  OR su.user_name like concat("%",#{searchStr},"%"))
-    </if>
-    AND su.status=1
-  </select>
-
-  <select id="findBindUser" parameterType="java.lang.String" resultType="com.fantechs.common.base.entity.security.SysUser">
-    select su.user_id as userId, su.user_name as userName,  su.user_code as userCode, su.nick_name as nickName,su.status
-    from sys_user su
-    where su.user_id  IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
-    <if test="searchStr != null and searchStr!=''">
-      AND (su.user_code like concat("%",#{searchStr},"%")  OR su.user_name like concat("%",#{searchStr},"%"))
-    </if>
-    AND su.status=1
-  </select>
-
 </mapper>

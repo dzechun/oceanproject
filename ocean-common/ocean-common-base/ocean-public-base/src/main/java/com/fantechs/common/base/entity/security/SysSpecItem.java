@@ -1,17 +1,20 @@
-package com.fantechs.common.base.entity.basic;
+package com.fantechs.common.base.entity.security;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_spec_item")
+@Table(name = "sys_spec_item")
 @Data
-public class SmtSpecItem implements Serializable {
+public class SysSpecItem implements Serializable {
 
     private static final long serialVersionUID = -4072661553411752786L;
     /**

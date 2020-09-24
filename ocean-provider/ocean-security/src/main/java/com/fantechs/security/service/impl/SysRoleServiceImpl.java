@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleService {
@@ -127,16 +128,6 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
         i=sysHtRoleMapper.insertList(list);
         return i;
-    }
-
-    @Override
-    public List<SysUser> findBindUser(String searchStr, Long roleId) {
-        return sysRoleMapper.findBindUser(searchStr,roleId);
-    }
-
-    @Override
-    public List<SysUser> findUnBindUser(String searchStr, Long roleId) {
-        return sysRoleMapper.findUnBindUser(searchStr,roleId);
     }
 
     @Override

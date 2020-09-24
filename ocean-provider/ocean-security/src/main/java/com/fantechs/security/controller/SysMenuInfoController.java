@@ -33,7 +33,7 @@ public class SysMenuInfoController {
     private SysHtMenuInfoService sysHtMenuInfoService;
 
     @ApiOperation(value = "获取菜单列表",notes = "返回数据包含菜单对应的角色权限")
-    @PostMapping("/getListAll")
+    @PostMapping("/findAllList")
     public ResponseEntity<List<SysMenuInListDTO>> getListAll(
             @ApiParam(value = "菜单所属平台类型（1、WEB 2、Windos 3、PDA）")@RequestParam(required = true) Integer menuType){
         List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
@@ -43,7 +43,7 @@ public class SysMenuInfoController {
         return ControllerUtil.returnDataSuccess(menuList, StringUtils.isEmpty(menuList)?0:1);
     }
 
-    @ApiOperation("增加菜单信息")
+    @ApiOperation("增加菜单")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：Ordernum、IsMenu、Menuname、MenuType、Parentid（如果没有父级传0）、Url、IsHide",required = true)@RequestBody SysMenuInfo sysMenuInfo){
         if(StringUtils.isEmpty(
@@ -58,7 +58,7 @@ public class SysMenuInfoController {
         return ControllerUtil.returnCRUD(sysMenuInfoService.insert(sysMenuInfo));
     }
 
-    @ApiOperation("删除菜单数据")
+    @ApiOperation("删除菜单")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)@RequestBody List<Long> menuIds){
         if(StringUtils.isEmpty(menuIds)){
@@ -67,7 +67,7 @@ public class SysMenuInfoController {
         return ControllerUtil.returnCRUD(sysMenuInfoService.deleteByIds(menuIds));
     }
 
-    @ApiOperation("修改菜单数据")
+    @ApiOperation("修改菜单")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "菜单对象，必传菜单对象ID",required = true)@RequestBody SysMenuInfo sysMenuInfo) {
         if (StringUtils.isEmpty(sysMenuInfo.getMenuId(),
@@ -80,8 +80,8 @@ public class SysMenuInfoController {
         return ControllerUtil.returnCRUD(sysMenuInfoService.updateById(sysMenuInfo));
     }
 
-    @ApiOperation(value = "获取菜单列表",notes = "返回数据包含菜单对应的角色权限")
-    @PostMapping("/getHtPageList")
+    @ApiOperation(value = "菜单列表",notes = "返回数据包含菜单对应的角色权限")
+    @PostMapping("/findHtList")
     public ResponseEntity< List<SysHtMenuInfo>> getHtPageList(
             @ApiParam(value = "菜单编码")@RequestBody(required = false) SearchSysMenuInfo searchSysMenuInfo){
         Page<Object> page = PageHelper.startPage(searchSysMenuInfo.getStartPage(),searchSysMenuInfo.getPageSize());
@@ -89,8 +89,8 @@ public class SysMenuInfoController {
         return ControllerUtil.returnDataSuccess(menuList,(int)page.getTotal());
     }
 
-    @ApiOperation("获取菜单详情")
-    @PostMapping("/getMenuDetail")
+    @ApiOperation("菜单详情")
+    @PostMapping("/detail")
     public ResponseEntity<SysMenuInfoDto> getMenuDetail(@ApiParam(value = "菜单ID",required = true)@RequestParam Long menuId){
         if(StringUtils.isEmpty(menuId)){
             return ControllerUtil.returnFailByParameError();

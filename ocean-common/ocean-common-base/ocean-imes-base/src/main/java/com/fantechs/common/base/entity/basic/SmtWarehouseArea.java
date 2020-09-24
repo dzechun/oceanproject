@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class SmtWarehouseArea {
      */
     @Column(name = "warehouse_area_code")
     @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")
+    @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum="1")
     private String warehouseAreaCode;
 
     /**
@@ -32,6 +34,7 @@ public class SmtWarehouseArea {
      */
     @Column(name = "warehouse_area_name")
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="2")
     private String warehouseAreaName;
 
     /**
@@ -39,6 +42,7 @@ public class SmtWarehouseArea {
      */
     @Column(name = "warehouse_area_desc")
     @ApiModelProperty(name="warehouseAreaDesc" ,value="仓库区域描述")
+    @Excel(name = "仓库区域描述", height = 20, width = 30,orderNum="3")
     private String warehouseAreaDesc;
 
     /**
@@ -52,6 +56,7 @@ public class SmtWarehouseArea {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status" ,value="状态(0无效，1有效)")
+    @Excel(name = "工厂状态", height = 20, width = 30 ,orderNum="5",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
@@ -67,6 +72,7 @@ public class SmtWarehouseArea {
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -82,6 +88,7 @@ public class SmtWarehouseArea {
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

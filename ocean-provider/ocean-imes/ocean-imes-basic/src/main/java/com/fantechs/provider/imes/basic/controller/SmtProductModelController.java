@@ -18,10 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -46,7 +43,7 @@ public class SmtProductModelController {
 
 
     @ApiOperation("根据条件查询产品型号信息列表")
-    @PostMapping("/selectProductModels")
+    @PostMapping("/findList")
     public ResponseEntity<List<SmtProductModel>> selectProductModels(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtProductModel searchSmtProductModel
     ){
@@ -56,7 +53,7 @@ public class SmtProductModelController {
     }
 
 
-    @ApiOperation("增加产品型号信息")
+    @ApiOperation("新增产品型号")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：productModelCode",required = true)@RequestBody SmtProductModel smtProductModel){
         if(StringUtils.isEmpty(
@@ -66,7 +63,17 @@ public class SmtProductModelController {
         return ControllerUtil.returnCRUD(smtProductModelService.insert(smtProductModel));
     }
 
-    @ApiOperation("修改产品型号信息")
+    @ApiOperation("获取详情")
+    @PostMapping("/detail")
+    public ResponseEntity<SmtProductModel> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam Long id) {
+        if(StringUtils.isEmpty(id)){
+            return ControllerUtil.returnFailByParameError();
+        }
+        SmtProductModel  smtProductModel = smtProductModelService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(smtProductModel,StringUtils.isEmpty(smtProductModel)?0:1);
+    }
+
+    @ApiOperation("修改产品型号")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "部门产品型号对象，产品型号信息Id必传",required = true)@RequestBody SmtProductModel smtProductModel){
         if(StringUtils.isEmpty(smtProductModel.getProductModelId())){
@@ -75,7 +82,7 @@ public class SmtProductModelController {
         return ControllerUtil.returnCRUD(smtProductModelService.updateById(smtProductModel));
     }
 
-    @ApiOperation("删除产品型号信息")
+    @ApiOperation("删除产品型号")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "产品型号对象ID",required = true)@RequestBody List<Long> productModelIds){
         if(StringUtils.isEmpty(productModelIds)){
@@ -89,8 +96,8 @@ public class SmtProductModelController {
      * @return
      * @throws
      */
-    @PostMapping(value = "/exportProductModels")
-    @ApiOperation(value = "导出产品型号信息excel",notes = "导出产品型号信息excel")
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出产品型号excel")
     public void exportProductModels(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtProductModel searchSmtProductModel){
         List<SmtProductModel> list = smtProductModelService.selectProductModels(searchSmtProductModel);
@@ -103,7 +110,7 @@ public class SmtProductModelController {
     }
 
 
-    @PostMapping("/selectHtProductModels")
+    @PostMapping("/findHtList")
     @ApiOperation(value = "根据条件查询产品型号履历信息",notes = "根据条件查询产品型号履历信息")
     public ResponseEntity<List<SmtHtProductModel>> selectHtProductModels(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtProductModel searchSmtProductModel) {

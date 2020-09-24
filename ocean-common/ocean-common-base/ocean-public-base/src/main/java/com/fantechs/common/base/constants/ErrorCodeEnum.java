@@ -240,7 +240,7 @@ public enum ErrorCodeEnum {
      * operate 10012005 error code enum.
      * 删除失败
      */
-    OPT20012000(20012000,"删除数据失败, id=%s"),
+    OPT20012000(20012000,"删除数据失败, id=%s不存在"),
 
     OPT20012001(20012001,"编码重复"),
 

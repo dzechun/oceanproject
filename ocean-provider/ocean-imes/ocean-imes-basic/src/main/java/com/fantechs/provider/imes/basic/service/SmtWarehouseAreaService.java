@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.basic.service;
 
+import com.fantechs.common.base.dto.basic.SmtWarehouseAreaDto;
 import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
 import com.fantechs.common.base.support.IService;
 
@@ -13,5 +14,5 @@ import java.util.Map;
 
 public interface SmtWarehouseAreaService extends IService<SmtWarehouseArea> {
 
-   List<SmtWarehouseArea> findList(Map<String,Object> map);
+   List<SmtWarehouseAreaDto> findList(Map<String,Object> map);
 }

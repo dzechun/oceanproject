@@ -2,7 +2,6 @@ package com.fantechs.security.controller;
 
 import com.fantechs.common.base.dto.security.SysRoleExcelDTO;
 import com.fantechs.common.base.entity.security.SysRole;
-import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtRole;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -41,8 +40,8 @@ public class SysRoleController {
     @Autowired
     private SysHtRoleService sysHtRoleService;
 
-    @ApiOperation("根据条件查询角色信息列表")
-    @PostMapping("/selectRoles")
+    @ApiOperation("查询角色信息列表")
+    @PostMapping("/findList")
     public ResponseEntity<List<SysRole>> selectRoles(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysRole searchSysRole){
         Page<Object> page = PageHelper.startPage(searchSysRole.getStartPage(),searchSysRole.getPageSize());
@@ -70,6 +69,16 @@ public class SysRoleController {
         return ControllerUtil.returnCRUD(sysRoleService.updateById(sysRole));
     }
 
+    @ApiOperation("角色详情")
+    @PostMapping("/detail")
+    public ResponseEntity<SysRole> getMenuDetail(@ApiParam(value = "角色ID",required = true)@RequestParam Long roleId){
+        if(StringUtils.isEmpty(roleId)){
+            return ControllerUtil.returnFailByParameError();
+        }
+        SysRole sysRole = sysRoleService.selectByKey(roleId);
+        return  ControllerUtil.returnDataSuccess(sysRole,StringUtils.isEmpty(sysRole)?0:1);
+    }
+
     @ApiOperation("删除角色信息")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "角色对象ID",required = true)@RequestBody List<Long> roleIds){
@@ -79,32 +88,7 @@ public class SysRoleController {
         return ControllerUtil.returnCRUD(sysRoleService.deleteByIds(roleIds));
     }
 
-    @ApiOperation("查询已绑定角色的用户列表")
-    @PostMapping("/searchbinduser")
-    public ResponseEntity<List<SysUser>> searchbinduser(@ApiParam(value ="输入查询条件 roleId必传 ",required = false)
-                                                        @RequestBody(required = false) SearchSysRole searchSysRole){
-        if(StringUtils.isEmpty(searchSysRole.getRoleId())){
-            return ControllerUtil.returnFailByParameError();
-        }
-        Page<Object> page = PageHelper.startPage(searchSysRole.getStartPage(),searchSysRole.getPageSize());
-        List<SysUser> bindUser = sysRoleService.findBindUser(searchSysRole.getSearchStr(),searchSysRole.getRoleId());
-        return ControllerUtil.returnDataSuccess(bindUser,(int)page.getTotal());
-    }
-
-    @ApiOperation("查询未绑定角色的用户列表")
-    @PostMapping("/searchunbinduser")
-    public ResponseEntity<List<SysUser>> searchunbinduser(@ApiParam(value ="输入查询条件 roleId必传 ",required = false)
-                                                          @RequestBody(required = false) SearchSysRole searchSysRole){
-        if(StringUtils.isEmpty(searchSysRole.getRoleId())){
-            return ControllerUtil.returnFailByParameError();
-        }
-        Page<Object> page = PageHelper.startPage(searchSysRole.getStartPage(),searchSysRole.getPageSize());
-        List<SysUser> unBindUser = sysRoleService.findUnBindUser(searchSysRole.getSearchStr(),searchSysRole.getRoleId());
-        return ControllerUtil.returnDataSuccess(unBindUser,(int)page.getTotal());
-    }
-
-
-    @ApiOperation("添加用户")
+    @ApiOperation("绑定用户")
     @PostMapping("/addUser")
     public ResponseEntity addUser(
             @ApiParam(value = "角色ID",required = true)@RequestParam Long roleId,
@@ -120,7 +104,7 @@ public class SysRoleController {
      * @return
      * @throws
      */
-    @PostMapping(value = "/exportRoles")
+    @PostMapping(value = "/export")
     @ApiOperation(value = "导出角色信息excel",notes = "导出角色信息excel")
     public void exportRoles(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSysRole searchSysRole){
@@ -134,7 +118,7 @@ public class SysRoleController {
     }
 
 
-    @PostMapping("/selectHtRoles")
+    @PostMapping("/findHtList")
     @ApiOperation(value = "根据条件查询角色履历信息",notes = "根据条件查询角色履历信息")
     public ResponseEntity<List<SysHtRole>> selectHtRoles(
             @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysRole searchSysRole)

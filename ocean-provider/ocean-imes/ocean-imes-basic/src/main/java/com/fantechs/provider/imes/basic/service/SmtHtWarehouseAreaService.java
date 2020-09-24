@@ -3,6 +3,9 @@ package com.fantechs.provider.imes.basic.service;
 import com.fantechs.common.base.entity.basic.history.SmtHtWarehouseArea;
 import com.fantechs.common.base.support.IService;
 
+import java.util.List;
+import java.util.Map;
+
 
 /**
  *
@@ -10,5 +13,7 @@ import com.fantechs.common.base.support.IService;
  */
 
 public interface SmtHtWarehouseAreaService extends IService<SmtHtWarehouseArea> {
+
+    List<SmtHtWarehouseArea> findHtList(Map<String,Object> map);
 
 }
