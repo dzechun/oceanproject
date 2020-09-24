@@ -20,10 +20,10 @@
   </resultMap>
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial" resultMap="BaseResultMap">
-    select  shsm.ht_storage_material_id,shsm.storage_material_id,shsm.storage_id,ss.storage_code,ss.storage_name,ss.storage_desc,shsm.material_id,
-    sm.material_code,sm.material_name,sm.version,sm.material_desc,shsm.warehouse_id,sw.warehouse_name as warehouseName, shsm.warehouse_area_id,
-    swa.warehouse_area_name as warehouseAreaName,shsm.status,shsm.create_user_id,u.user_name as createUserName,shsm.create_time,shsm.modified_user_id,
-    s.user_name as modifiedUserName,shsm.modified_time, shsm.is_delete
+    select  shsm.ht_storage_material_id,shsm.storage_material_id,shsm.storage_id,ss.storage_code as storageCode,ss.storage_name as storageName,
+    ss.storage_desc as storageDesc,shsm.material_id,sm.material_code as materialCode,sm.material_name as materialName,sm.version,sm.material_desc as materialDesc,
+    shsm.warehouse_id,sw.warehouse_name as warehouseName, shsm.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,shsm.status,shsm.create_user_id,
+    u.user_name as createUserName,shsm.create_time,shsm.modified_user_id,s.user_name as modifiedUserName,shsm.modified_time, shsm.is_delete
     from smt_ht_storage_material shsm
     left join smt_storage ss on shsm.storage_id=ss.storage_id
     left join smt_material sm on shsm.material_id=sm.material_id
