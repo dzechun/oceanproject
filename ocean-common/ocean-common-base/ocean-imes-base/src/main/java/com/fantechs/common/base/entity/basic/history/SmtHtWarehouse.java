@@ -55,7 +55,7 @@ public class SmtHtWarehouse implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
-    private Byte status;
+    private Integer status;
 
     /**
      * 创建人ID

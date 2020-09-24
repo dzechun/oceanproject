@@ -77,7 +77,7 @@ public class SmtStorage {
      */
     @ApiModelProperty(name = "status",value = "状态")
     @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
-    private Byte status;
+    private Integer status;
 
     /**
      * 创建人ID
