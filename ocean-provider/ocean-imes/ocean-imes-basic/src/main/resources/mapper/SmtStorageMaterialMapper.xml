@@ -21,9 +21,9 @@
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial" resultMap="BaseResultMap">
     select  ssm.storage_material_id,ssm.storage_id,ss.storage_code,ss.storage_name,ss.storage_desc,ssm.material_id,sm.material_code,sm.material_name,
     sm.material_desc,ssm.warehouse_id,sw.warehouse_name as warehouseName, ssm.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,
-    ss.status,ss.create_user_id,u.user_name as createUserName,ss.create_time,ss.modified_user_id, s.user_name as modifiedUserName,
-    ss.modified_time, ss.is_delete
-    from SmtStorageMaterial ssm
+    ssm.status,ssm.create_user_id,u.user_name as createUserName,ssm.create_time,ssm.modified_user_id, s.user_name as modifiedUserName,
+    ssm.modified_time, ssm.is_delete
+    from smt_storage_material ssm
     left join smt_storage ss on ssm.storage_id=ss.storage_id
     left join smt_material sm on ssm.material_id=sm.material_id
     left join smt_warehouse sw on ssm.warehouse_id=sw.warehouse_id

@@ -18,4 +18,42 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial" resultMap="BaseResultMap">
+    select  shsm.ht_storage_material_id,shsm.storage_material_id,shsm.storage_id,ss.storage_code,ss.storage_name,ss.storage_desc,shsm.material_id,
+    sm.material_code,sm.material_name,sm.material_desc,shsm.warehouse_id,sw.warehouse_name as warehouseName, shsm.warehouse_area_id,
+    swa.warehouse_area_name as warehouseAreaName,shsm.status,shsm.create_user_id,u.user_name as createUserName,shsm.create_time,shsm.modified_user_id,
+    s.user_name as modifiedUserName,shsm.modified_time, shsm.is_delete
+    from smt_ht_storage_material shsm
+    left join smt_storage ss on shsm.storage_id=ss.storage_id
+    left join smt_material sm on shsm.material_id=sm.material_id
+    left join smt_warehouse sw on shsm.warehouse_id=sw.warehouse_id
+    left join smt_warehouse_area swa on shsm.warehouse_area_id=swa.warehouse_area_id
+    left join smt_user u on shsm.create_user_id=u.user_id
+    left join smt_user s on shsm.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(shsm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="warehouseId!=null and warehouseId!=''">
+        and shsm.warehouse_id=#{warehouseId}
+      </if>
+      <if test="warehouseAreaId!=null and warehouseAreaId!=''">
+        and shsm.warehouse_area_id=#{warehouseAreaId}
+      </if>
+      <if test="storageId!=null and storageId!=''">
+        and shsm.storage_id=#{storageId}
+      </if>
+      <if test="storageName!=null and storageName!=''">
+        and ss.storage_name like CONCAT('%', #{storageName}, '%')
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and shsm.material_id=#{materialId}
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+    </where>
+  </select>
 </mapper>
