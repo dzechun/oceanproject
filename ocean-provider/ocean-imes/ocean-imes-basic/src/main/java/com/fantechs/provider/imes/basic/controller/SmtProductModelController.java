@@ -18,10 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -82,6 +79,16 @@ public class SmtProductModelController {
             return ControllerUtil.returnFailByParameError();
         }
         return ControllerUtil.returnCRUD(smtProductModelService.deleteByIds(productModelIds));
+    }
+
+    @ApiOperation("获取详情")
+    @PostMapping("/detail")
+    public ResponseEntity<SmtProductModel> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
+        if(StringUtils.isEmpty(id)){
+            return ControllerUtil.returnFailByParameError();
+        }
+        SmtProductModel smtProductModel = smtProductModelService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(smtProductModel,StringUtils.isEmpty(smtProductModel)?0:1);
     }
 
     /**

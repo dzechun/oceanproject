@@ -16,4 +16,6 @@ public interface SmtProLineService {
     int updateById(SmtProLine smtProLine);
 
     int deleteByIds(List<Long> proLineIds);
+
+    SmtProLine selectByKey(Long id);
 }

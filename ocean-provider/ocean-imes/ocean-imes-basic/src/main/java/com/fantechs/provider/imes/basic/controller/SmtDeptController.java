@@ -88,6 +88,16 @@ public class SmtDeptController {
         return ControllerUtil.returnCRUD(smtDeptService.deleteByIds(deptIds));
     }
 
+    @ApiOperation("获取详情")
+    @PostMapping("/detail")
+    public ResponseEntity<SmtDept> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
+        if(StringUtils.isEmpty(id)){
+            return ControllerUtil.returnFailByParameError();
+        }
+        SmtDept smtDept = smtDeptService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(smtDept,StringUtils.isEmpty(smtDept)?0:1);
+    }
+
     /**
      * 导出数据
      * @return

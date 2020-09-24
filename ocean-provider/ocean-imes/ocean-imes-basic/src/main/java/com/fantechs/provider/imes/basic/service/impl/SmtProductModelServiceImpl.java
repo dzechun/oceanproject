@@ -124,4 +124,9 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         return i;
     }
 
+    @Override
+    public SmtProductModel selectByKey(Long id) {
+        return smtProductModelMapper.selectByPrimaryKey(id);
+    }
+
 }

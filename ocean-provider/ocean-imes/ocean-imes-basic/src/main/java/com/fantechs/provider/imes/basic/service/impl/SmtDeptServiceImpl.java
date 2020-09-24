@@ -146,4 +146,9 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
         return smtDepts;
     }
+
+    @Override
+    public SmtDept selectByKey(Long id) {
+        return smtDeptMapper.selectByPrimaryKey(id);
+    }
 }

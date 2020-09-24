@@ -122,4 +122,9 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         i=smtHtProLineMapper.insertList(list);
         return i;
     }
+
+    @Override
+    public SmtProLine selectByKey(Long id) {
+        return smtProLineMapper.selectByPrimaryKey(id);
+    }
 }

@@ -17,4 +17,5 @@ public interface SmtProductModelService  {
 
     int deleteByIds(List<Long> productModelIds);
 
+    SmtProductModel selectByKey(Long id);
 }
