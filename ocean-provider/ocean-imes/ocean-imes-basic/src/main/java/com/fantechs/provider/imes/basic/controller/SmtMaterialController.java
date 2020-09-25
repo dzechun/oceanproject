@@ -58,7 +58,7 @@ public class SmtMaterialController {
                 smtMaterial.getMaterialCode())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtMaterialService.insert(smtMaterial));
+        return ControllerUtil.returnCRUD(smtMaterialService.save(smtMaterial));
 
     }
 
@@ -69,17 +69,17 @@ public class SmtMaterialController {
         if(StringUtils.isEmpty(smtMaterial.getMaterialCode())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtMaterialService.updateById(smtMaterial));
+        return ControllerUtil.returnCRUD(smtMaterialService.update(smtMaterial));
 
     }
 
     @ApiOperation("删除物料信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "物料对象ID",required = true) @RequestBody List<Long> materialIds){
-        if(StringUtils.isEmpty(materialIds)){
+    public ResponseEntity delete(@ApiParam(value = "物料对象ID",required = true) @RequestParam String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtMaterialService.deleteByIds(materialIds));
+        return ControllerUtil.returnCRUD(smtMaterialService.batchDelete(ids));
     }
 
     @ApiOperation("获取物料详情")
@@ -88,7 +88,7 @@ public class SmtMaterialController {
         if(StringUtils.isEmpty(materialId)){
             return ControllerUtil.returnFailByParameError();
         }
-        SmtMaterial smtMaterial = smtMaterialService.findById(materialId);
+        SmtMaterial smtMaterial = smtMaterialService.selectByKey(materialId);
         return  ControllerUtil.returnDataSuccess(smtMaterial,StringUtils.isEmpty(smtMaterial)?0:1);
     }
 

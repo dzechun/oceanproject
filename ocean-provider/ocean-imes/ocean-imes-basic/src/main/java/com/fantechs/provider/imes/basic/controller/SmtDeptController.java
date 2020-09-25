@@ -60,7 +60,7 @@ public class SmtDeptController {
                 smtDept.getFactoryId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtDeptService.insert(smtDept));
+        return ControllerUtil.returnCRUD(smtDeptService.save(smtDept));
     }
 
     @ApiOperation("修改部门")
@@ -69,16 +69,16 @@ public class SmtDeptController {
         if(StringUtils.isEmpty(smtDept.getDeptId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtDeptService.updateById(smtDept));
+        return ControllerUtil.returnCRUD(smtDeptService.update(smtDept));
     }
 
     @ApiOperation("删除部门")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "部门对象ID",required = true)@RequestBody List<Long> deptIds){
-        if(StringUtils.isEmpty(deptIds)){
+    public ResponseEntity delete(@ApiParam(value = "部门对象ID",required = true)@RequestParam String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtDeptService.deleteByIds(deptIds));
+        return ControllerUtil.returnCRUD(smtDeptService.batchDelete(ids));
     }
 
     @ApiOperation("获取详情")
@@ -100,7 +100,7 @@ public class SmtDeptController {
     @ApiOperation(value = "导出部门excel",notes = "导出部门excel")
     public void exportDepts(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtDept searchSmtDept){
-        List<SmtDept> list = smtDeptService.exportDepts(searchSmtDept);
+        List<SmtDept> list = smtDeptService.selectDepts(searchSmtDept);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "部门信息导出", "部门信息", SmtDept.class, "部门信息.xls", response);

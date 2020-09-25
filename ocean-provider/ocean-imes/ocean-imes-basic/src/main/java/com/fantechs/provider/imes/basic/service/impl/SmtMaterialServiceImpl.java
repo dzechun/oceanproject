@@ -40,7 +40,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtMaterial smtMaterial) {
+    public int save(SmtMaterial smtMaterial) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -65,7 +65,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtMaterial smtMaterial) {
+    public int update(SmtMaterial smtMaterial) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -93,15 +93,15 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<Long> materialIds) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtMaterial> list=new ArrayList<>();
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        for (Long  materialId : materialIds) {
+        String[] idsArr =  ids.split(",");
+        for (String  materialId : idsArr) {
             SmtMaterial smtMaterial = smtMaterialMapper.selectByPrimaryKey(materialId);
             if(StringUtils.isEmpty(smtMaterial)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -112,16 +112,10 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             smtHtMaterial.setModifiedUserId(currentUser.getUserId());
             smtHtMaterial.setModifiedTime(new Date());
             list.add(smtHtMaterial);
-
-            smtMaterialMapper.deleteByPrimaryKey(materialId);
         }
-
+        smtMaterialMapper.deleteByIds(ids);
         i=smtHtMaterialMapper.insertList(list);
         return i;
     }
 
-    @Override
-    public SmtMaterial findById(Long materialId) {
-        return smtMaterialMapper.selectByPrimaryKey(materialId);
-    }
 }

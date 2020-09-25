@@ -3,16 +3,17 @@ package com.fantechs.common.base.entity.security;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Table(name = "sys_user_role")
 @Data
-public class SysUserRole {
+public class SysUserRole implements Serializable {
+    private static final long serialVersionUID = -2265847625865832067L;
     /**
      * id
      */
     @Id
     @Column(name = "user_role_id")
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userRoleId;
 
     /**

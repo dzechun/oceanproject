@@ -41,7 +41,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtDept smtDept) {
+    public int save(SmtDept smtDept) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -77,7 +77,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtDept smtDept) {
+    public int update(SmtDept smtDept) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -130,25 +130,5 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
         smtHtDeptMapper.insertList(list);
         return i;
-    }
-
-    @Override
-    public List<SmtDept> exportDepts(SearchSmtDept searchSmtDept) {
-        List<SmtDept> smtDepts = this.selectDepts(searchSmtDept);
-        return smtDepts;
-    }
-
-    @Override
-    public List<SmtDept> selectDeptByFactoryId(String factoryId) {
-        Example example = new Example(SmtDept.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("factoryId",factoryId);
-        List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
-        return smtDepts;
-    }
-
-    @Override
-    public SmtDept selectByKey(Long id) {
-        return smtDeptMapper.selectByPrimaryKey(id);
     }
 }

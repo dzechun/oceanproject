@@ -11,12 +11,4 @@ import java.util.List;
 public interface SmtProductModelService extends IService<SmtProductModel> {
 
     List<SmtProductModel> selectProductModels(SearchSmtProductModel searchSmtProductModel);
-
-    int insert(SmtProductModel smtProductModel);
-
-    int updateById(SmtProductModel smtProductModel);
-
-    int deleteByIds(List<Long> productModelIds);
-
-    SmtProductModel selectByKey(Long id);
 }

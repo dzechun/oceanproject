@@ -58,7 +58,7 @@ public class SmtProLineController {
                 smtProLine.getWorkShopId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProLineService.insert(smtProLine));
+        return ControllerUtil.returnCRUD(smtProLineService.save(smtProLine));
     }
 
     @ApiOperation("修改生产线信息")
@@ -67,16 +67,16 @@ public class SmtProLineController {
         if(StringUtils.isEmpty(smtProLine.getProLineId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProLineService.updateById(smtProLine));
+        return ControllerUtil.returnCRUD(smtProLineService.update(smtProLine));
     }
 
     @ApiOperation("删除生产线信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "生产线对象ID",required = true)@RequestBody List<Long> proLineIds){
-        if(StringUtils.isEmpty(proLineIds)){
+    public ResponseEntity delete(@ApiParam(value = "生产线对象ID",required = true)@RequestParam String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-            return ControllerUtil.returnCRUD(smtProLineService.deleteByIds(proLineIds));
+            return ControllerUtil.returnCRUD(smtProLineService.batchDelete(ids));
     }
 
     @ApiOperation("获取详情")

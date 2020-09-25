@@ -7,7 +7,6 @@ import com.fantechs.common.base.entity.basic.history.SmtHtProLine;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProLine;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -40,7 +39,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtProLine smtProLine) {
+    public int save(SmtProLine smtProLine) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -67,7 +66,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtProLine smtProLine) {
+    public int update(SmtProLine smtProLine) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -96,15 +95,15 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<Long> proLineIds) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtProLine> list=new ArrayList<>();
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        for (Long proLineId : proLineIds) {
+        String[] idsArr = ids.split(",");
+        for (String proLineId : idsArr) {
             SmtProLine smtProLine = smtProLineMapper.selectByPrimaryKey(proLineId);
             if(StringUtils.isEmpty(smtProLine)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -116,15 +115,9 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
             smtHtProLine.setModifiedTime(new Date());
             list.add(smtHtProLine);
 
-            smtProLineMapper.deleteByPrimaryKey(proLineId);
         }
-
-        i=smtHtProLineMapper.insertList(list);
+         smtHtProLineMapper.insertList(list);
+        i=smtProLineMapper.deleteByIds(ids);
         return i;
-    }
-
-    @Override
-    public SmtProLine selectByKey(Long id) {
-        return smtProLineMapper.selectByPrimaryKey(id);
     }
 }

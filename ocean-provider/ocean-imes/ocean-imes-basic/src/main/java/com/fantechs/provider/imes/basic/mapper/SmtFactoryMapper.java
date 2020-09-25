@@ -11,5 +11,4 @@ import java.util.Map;
 
 public interface SmtFactoryMapper extends MyMapper<SmtFactory> {
     List<SmtFactoryDto> findList(Map<String, Object> map);
-    int delBatch(List<Long> list);
 }

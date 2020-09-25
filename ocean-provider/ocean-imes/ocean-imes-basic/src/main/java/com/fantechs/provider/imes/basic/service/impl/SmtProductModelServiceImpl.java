@@ -40,7 +40,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtProductModel smtProductModel) {
+    public int save(SmtProductModel smtProductModel) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -66,7 +66,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtProductModel smtProductModel) {
+    public int update(SmtProductModel smtProductModel) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -94,15 +94,15 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<Long> productModelIds) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtProductModel> list=new ArrayList<>();
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        for (Long  productModelId : productModelIds) {
+        String[] idsArr =  ids.split(",");
+        for (String  productModelId : idsArr) {
             SmtProductModel smtProductModel = smtProductModelMapper.selectByPrimaryKey(productModelId);
             if(StringUtils.isEmpty(smtProductModel)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -114,19 +114,10 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             smtHtProductModel.setModifiedTime(new Date());
             list.add(smtHtProductModel);
 
-            i+= smtProductModelMapper.deleteByPrimaryKey(productModelId);
         }
-
-        if(StringUtils.isNotEmpty(list)){
             smtHtProductModelMapper.insertList(list);
-        }
-
+           i=  smtProductModelMapper.deleteByIds(ids);
         return i;
-    }
-
-    @Override
-    public SmtProductModel selectByKey(Long id) {
-        return smtProductModelMapper.selectByPrimaryKey(id);
     }
 
 }

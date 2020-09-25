@@ -63,11 +63,32 @@ public class ${modelNameUpperCamel}Controller {
         return  ControllerUtil.returnDataSuccess(${modelNameLowerCamel},StringUtils.isEmpty(${modelNameLowerCamel})?0:1);
     }
 
-    @ApiOperation("根据条件查询信息列表")
+    @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<${modelNameUpperCamel}>> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
         Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
         List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<${modelNameUpperCamel}>> findHtList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
+        Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
+        List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(searchSmtStorage);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) Search${modelNameUpperCamel} search${modelNameUpperCamel}){
+    List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
+    try {
+        // 导出操作
+        EasyPoiUtils.exportExcel(list, "导出信息", "${modelNameUpperCamel}信息", SmtStorage.class, "${modelNameUpperCamel}.xls", response);
+        } catch (Exception e) {
+        throw new BizErrorException(e);
+        }
     }
 }

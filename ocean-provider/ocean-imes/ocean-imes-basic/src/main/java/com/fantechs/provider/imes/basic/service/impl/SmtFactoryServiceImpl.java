@@ -43,7 +43,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtFactory smtFactory) {
+    public int save(SmtFactory smtFactory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -74,36 +74,14 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteById(String id) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        SmtFactory smtFactory = smtFactoryMapper.selectByPrimaryKey(id);
-
-        if(StringUtils.isNotEmpty(smtFactory)){
-            SmtHtFactory smtHtFactory  = new SmtHtFactory();
-            BeanUtils.copyProperties(smtFactory,smtHtFactory);
-
-            smtHtFactory.setModifiedTime(new Date());
-            smtHtFactory.setModifiedUserId(user.getUserId());
-            smtHtFactory.setCreateTime(new Date());
-            smtHtFactory.setCreateUserId(user.getUserId());
-
-            smtHtFactoryMapper.insert(smtHtFactory);
-        }
-        return smtFactoryMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<Long> smtFactoryIds) {
+    public int batchDelete (String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         List<SmtHtFactory>  smtHtFactorys = new LinkedList<>();
-        for(Long id : smtFactoryIds){
+        String[] idsArr  = ids.split(",");
+        for(String  id : idsArr){
             SmtFactory smtFactory = smtFactoryMapper.selectByPrimaryKey(id);
             if(StringUtils.isNotEmpty(smtFactory)){
                 SmtHtFactory smtHtFactory  = new SmtHtFactory();
@@ -116,15 +94,13 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
                 smtHtFactorys.add(smtHtFactory);
             }
         }
-        if(StringUtils.isNotEmpty(smtHtFactorys)){
-            smtHtFactoryMapper.insertList(smtHtFactorys);
-        }
-        return smtFactoryMapper.delBatch(smtFactoryIds);
+        smtHtFactoryMapper.insertList(smtHtFactorys);
+        return smtFactoryMapper.deleteByIds(ids);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtFactory smtFactory) {
+    public int update(SmtFactory smtFactory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -150,10 +126,5 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         smtHtFactoryMapper.insert(smtHtFactory);
 
         return smtFactoryMapper.updateByPrimaryKeySelective(smtFactory);
-    }
-
-    @Override
-    public SmtFactory findById(Long id) {
-        return smtFactoryMapper.selectByPrimaryKey(id);
     }
 }

@@ -3,12 +3,14 @@ package com.fantechs.common.base.entity.security;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_role")
 @Data
-public class SysRole {
+public class SysRole implements Serializable {
+    private static final long serialVersionUID = -6986029074414768572L;
     /**
      * id
      */

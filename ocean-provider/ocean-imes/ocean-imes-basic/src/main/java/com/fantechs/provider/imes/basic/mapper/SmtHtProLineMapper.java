@@ -9,7 +9,6 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;
 
 public interface SmtHtProLineMapper extends MyMapper<SmtHtProLine> {
-    //int addBatchHtProLine(List<SmtHtProLine> list);
 
     List<SmtHtProLine> selectHtProLines(SearchSmtProLine searchSmtProLine);
 }

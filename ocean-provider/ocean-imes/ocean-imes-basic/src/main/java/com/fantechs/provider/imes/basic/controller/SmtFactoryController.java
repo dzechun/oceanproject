@@ -57,7 +57,7 @@ public class SmtFactoryController {
                 smtFactory.getFactoryName())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtFactoryService.insert(smtFactory));
+        return ControllerUtil.returnCRUD(smtFactoryService.save(smtFactory));
 
     }
 
@@ -78,17 +78,17 @@ public class SmtFactoryController {
                 )){
             return ControllerUtil.returnFailByParameError();
         }
-            return ControllerUtil.returnCRUD(smtFactoryService.updateById(smtFactory));
+            return ControllerUtil.returnCRUD(smtFactoryService.update(smtFactory));
 
     }
 
     @ApiOperation("删除厂别信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "厂别对象ID",required = true) @RequestBody List<Long> factoryIds){
-        if(StringUtils.isEmpty(factoryIds)){
+    public ResponseEntity delete(@ApiParam(value = "对象Id,多个逗号分隔",required = true) @RequestParam String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtFactoryService.deleteByIds(factoryIds));
+        return ControllerUtil.returnCRUD(smtFactoryService.batchDelete(ids));
     }
 
     @ApiOperation("获取厂别详情")
@@ -97,7 +97,7 @@ public class SmtFactoryController {
         if(StringUtils.isEmpty(factoryId)){
             return ControllerUtil.returnFailByParameError();
         }
-        SmtFactory smtFactory = smtFactoryService.findById(factoryId);
+        SmtFactory smtFactory = smtFactoryService.selectByKey(factoryId);
         return  ControllerUtil.returnDataSuccess(smtFactory,StringUtils.isEmpty(smtFactory)?0:1);
     }
 

@@ -3,10 +3,12 @@ package com.fantechs.common.base.entity.security;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Table(name = "sys_auth_role")
 @Data
-public class SysAuthRole {
+public class SysAuthRole  implements Serializable {
+    private static final long serialVersionUID = 6683391438060103280L;
     /**
      * id
      */

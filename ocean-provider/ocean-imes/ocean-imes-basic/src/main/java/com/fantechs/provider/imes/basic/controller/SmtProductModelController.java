@@ -60,7 +60,7 @@ public class SmtProductModelController {
                 smtProductModel.getProductModelCode())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProductModelService.insert(smtProductModel));
+        return ControllerUtil.returnCRUD(smtProductModelService.save(smtProductModel));
     }
 
     @ApiOperation("获取详情")
@@ -79,16 +79,16 @@ public class SmtProductModelController {
         if(StringUtils.isEmpty(smtProductModel.getProductModelId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProductModelService.updateById(smtProductModel));
+        return ControllerUtil.returnCRUD(smtProductModelService.update(smtProductModel));
     }
 
     @ApiOperation("删除产品型号")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "产品型号对象ID",required = true)@RequestBody List<Long> productModelIds){
-        if(StringUtils.isEmpty(productModelIds)){
+    public ResponseEntity delete(@ApiParam(value = "产品型号对象ID",required = true)@RequestParam String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProductModelService.deleteByIds(productModelIds));
+        return ControllerUtil.returnCRUD(smtProductModelService.batchDelete(ids));
     }
 
     /**

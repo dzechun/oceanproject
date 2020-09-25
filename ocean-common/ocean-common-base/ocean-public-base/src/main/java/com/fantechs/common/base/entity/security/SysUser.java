@@ -5,13 +5,15 @@ import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
 
 @Table(name = "sys_user")
 @Data
-public class SysUser {
+public class SysUser implements Serializable {
+    private static final long serialVersionUID = -3448406995774680062L;
     /**
      * 用户ID
      */

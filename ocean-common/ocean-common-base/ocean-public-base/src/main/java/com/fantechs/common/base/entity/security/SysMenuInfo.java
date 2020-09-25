@@ -3,12 +3,14 @@ package com.fantechs.common.base.entity.security;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "sys_menuinfo")
 @Data
-public class SysMenuInfo {
+public class SysMenuInfo implements Serializable {
+    private static final long serialVersionUID = 4102850805251035063L;
     /**
      * 菜单id
      */
