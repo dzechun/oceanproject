@@ -1,6 +1,8 @@
 package com.fantechs.provider.imes.basic.service;
 
+import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
+import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -11,4 +13,5 @@ import java.util.List;
 
 public interface SmtHtSignatureService extends IService<SmtHtSignature> {
 
+    List<SmtSignature> findHtList(SearchSmtSignature searchSmtSignature);
 }

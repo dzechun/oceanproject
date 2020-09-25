@@ -2,12 +2,14 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 import com.fantechs.common.base.entity.basic.SmtSignature;
+import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.imes.basic.service.SmtHtSignatureService;
 import com.fantechs.provider.imes.basic.service.SmtSignatureService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -31,6 +33,8 @@ public class SmtSignatureController {
 
     @Autowired
     private SmtSignatureService smtSignatureService;
+    @Autowired
+    private SmtHtSignatureService smtHtSignatureService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -67,7 +71,7 @@ public class SmtSignatureController {
         return  ControllerUtil.returnDataSuccess(smtSignature,StringUtils.isEmpty(smtSignature)?0:1);
     }
 
-    @ApiOperation("根据条件查询信息列表")
+    @ApiOperation("根据条件查询物料特征码信息列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SmtSignature>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSignature searchSmtSignature) {
         Page<Object> page = PageHelper.startPage(searchSmtSignature.getStartPage(),searchSmtSignature.getPageSize());
@@ -90,5 +94,13 @@ public class SmtSignatureController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("根据条件查询物料特征码历史信息列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<SmtSignature>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSignature searchSmtSignature) {
+        Page<Object> page = PageHelper.startPage(searchSmtSignature.getStartPage(),searchSmtSignature.getPageSize());
+        List<SmtSignature> list = smtHtSignatureService.findHtList(searchSmtSignature);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }
