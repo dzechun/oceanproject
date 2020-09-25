@@ -27,7 +27,7 @@ import java.util.List;
  * Created by wcz on 2020/09/25.
  */
 @RestController
-@Api(tags = "smtProcess控制器")
+@Api(tags = "工序信息")
 @RequestMapping("/smtProcess")
 public class SmtProcessController {
 

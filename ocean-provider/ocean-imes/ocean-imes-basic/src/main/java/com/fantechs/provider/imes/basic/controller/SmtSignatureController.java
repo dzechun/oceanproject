@@ -27,7 +27,7 @@ import java.util.List;
  * Created by wcz on 2020/09/24.
  */
 @RestController
-@Api(tags = "smtSignature控制器")
+@Api(tags = "物料特征码信息")
 @RequestMapping("/smtSignature")
 public class SmtSignatureController {
 
