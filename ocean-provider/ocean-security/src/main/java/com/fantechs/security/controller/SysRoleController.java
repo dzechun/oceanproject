@@ -57,7 +57,7 @@ public class SysRoleController {
                 sysRole.getRoleName())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysRoleService.insert(sysRole));
+        return ControllerUtil.returnCRUD(sysRoleService.save(sysRole));
     }
 
     @ApiOperation("修改角色信息")
@@ -66,7 +66,7 @@ public class SysRoleController {
         if(StringUtils.isEmpty(sysRole.getRoleId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysRoleService.updateById(sysRole));
+        return ControllerUtil.returnCRUD(sysRoleService.update(sysRole));
     }
 
     @ApiOperation("角色详情")
@@ -81,11 +81,11 @@ public class SysRoleController {
 
     @ApiOperation("删除角色信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "角色对象ID",required = true)@RequestBody List<Long> roleIds){
+    public ResponseEntity delete(@ApiParam(value = "角色对象ID",required = true)@RequestBody String roleIds){
         if(StringUtils.isEmpty(roleIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysRoleService.deleteByIds(roleIds));
+        return ControllerUtil.returnCRUD(sysRoleService.batchDelete(roleIds));
     }
 
     @ApiOperation("绑定用户")

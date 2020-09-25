@@ -46,7 +46,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SysRole sysRole) {
+    public int save(SysRole sysRole) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException( ErrorCodeEnum.UAC10011039);
@@ -73,7 +73,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SysRole sysRole) {
+    public int update(SysRole sysRole) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -102,7 +102,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<Long> roleIds) {
+    public int batchDelete(String roleIds) {
         int i=0;
         List<SysHtRole> list=new ArrayList<>();
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -110,7 +110,8 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        for (Long roleId : roleIds) {
+        String[] idsArr = roleIds.split(",");
+        for (String roleId : idsArr) {
             SysRole sysRole = sysRoleMapper.selectByPrimaryKey(roleId);
             if(StringUtils.isEmpty(sysRole)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
