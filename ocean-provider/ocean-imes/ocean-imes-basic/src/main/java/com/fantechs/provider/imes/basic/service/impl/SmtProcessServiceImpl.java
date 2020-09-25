@@ -46,7 +46,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
         Example example = new Example(SmtProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("processId",smtProcess.getProcessId());
+        criteria.andEqualTo("processCode",smtProcess.getProcessCode());
         List<SmtProcess> smtProcesses = smtProcessMapper.selectByExample(example);
         if(null!=smtProcesses&&smtProcesses.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -102,7 +102,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
         Example example = new Example(SmtProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("processId",smtProcess.getProcessId());
+        criteria.andEqualTo("processCode",smtProcess.getProcessCode());
 
         SmtProcess process = smtProcessMapper.selectOneByExample(example);
 
