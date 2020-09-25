@@ -12,11 +12,5 @@ import java.util.List;
 
 public interface SmtSignatureService extends IService<SmtSignature> {
 
-  int insert(SmtSignature smtSignature);
-
-  int batchDel(String ids);
-
-  int updateById(SmtSignature smtSignature);
-
   List<SmtSignature> findList(SearchSmtSignature searchSmtSignature);
 }

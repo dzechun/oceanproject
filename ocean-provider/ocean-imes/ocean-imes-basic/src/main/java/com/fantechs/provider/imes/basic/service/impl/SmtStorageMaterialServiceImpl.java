@@ -37,7 +37,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtStorageMaterial smtStorageMaterial) {
+    public int save(SmtStorageMaterial smtStorageMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -65,7 +65,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDel(String ids) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtStorageMaterial> list=new ArrayList<>();
 
@@ -94,7 +94,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtStorageMaterial smtStorageMaterial) {
+    public int update(SmtStorageMaterial smtStorageMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

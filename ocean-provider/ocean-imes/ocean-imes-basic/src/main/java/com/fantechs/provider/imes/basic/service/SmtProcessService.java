@@ -12,13 +12,5 @@ import java.util.List;
 
 public interface SmtProcessService extends IService<SmtProcess> {
 
-    int insert(SmtProcess smtProcess);
-
-    int batchDel(String ids);
-
-    int updateById(SmtProcess smtProcess);
-
-    SmtProcess selectById(Long id);
-
     List<SmtProcess> findList(SearchSmtProcess searchSmtProcess);
 }

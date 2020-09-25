@@ -40,7 +40,7 @@ public class SmtStorageMaterialController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStorageMaterial smtStorageMaterial) {
-        return ControllerUtil.returnCRUD(smtStorageMaterialService.insert(smtStorageMaterial));
+        return ControllerUtil.returnCRUD(smtStorageMaterialService.save(smtStorageMaterial));
     }
 
     @ApiOperation("删除")
@@ -49,7 +49,7 @@ public class SmtStorageMaterialController {
         if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtStorageMaterialService.batchDel(ids));
+        return ControllerUtil.returnCRUD(smtStorageMaterialService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
@@ -58,7 +58,7 @@ public class SmtStorageMaterialController {
         if(StringUtils.isEmpty(smtStorageMaterial.getStorageMaterialId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtStorageMaterialService.updateById(smtStorageMaterial));
+        return ControllerUtil.returnCRUD(smtStorageMaterialService.update(smtStorageMaterial));
     }
 
     @ApiOperation("获取详情")

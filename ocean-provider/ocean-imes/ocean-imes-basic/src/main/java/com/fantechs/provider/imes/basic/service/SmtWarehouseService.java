@@ -7,11 +7,5 @@ import com.fantechs.common.base.support.IService;
 import java.util.List;
 
 public interface SmtWarehouseService extends IService<SmtWarehouse>{
-    int insert(SmtWarehouse smtWarehouse);
-
-    int batchDel(String ids);
-
-    int updateById(SmtWarehouse smtWarehouse);
-
     List<SmtWarehouse> findList(SearchSmtWarehouse searchSmtWarehouse);
 }

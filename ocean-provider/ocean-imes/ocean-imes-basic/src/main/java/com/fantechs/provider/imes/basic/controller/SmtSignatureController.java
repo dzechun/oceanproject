@@ -38,7 +38,7 @@ public class SmtSignatureController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtSignature smtSignature) {
-        return ControllerUtil.returnCRUD(smtSignatureService.insert(smtSignature));
+        return ControllerUtil.returnCRUD(smtSignatureService.save(smtSignature));
     }
 
     @ApiOperation("删除")
@@ -47,7 +47,7 @@ public class SmtSignatureController {
         if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtSignatureService.batchDel(ids));
+        return ControllerUtil.returnCRUD(smtSignatureService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
@@ -57,7 +57,7 @@ public class SmtSignatureController {
         )){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtSignatureService.updateById(smtSignature));
+        return ControllerUtil.returnCRUD(smtSignatureService.update(smtSignature));
     }
 
     @ApiOperation("获取详情")
