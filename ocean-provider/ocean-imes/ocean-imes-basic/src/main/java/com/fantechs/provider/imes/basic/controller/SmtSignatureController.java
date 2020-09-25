@@ -86,7 +86,8 @@ public class SmtSignatureController {
     */
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出物料特征码信息excel",notes = "导出物料特征码信息excel")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtSignature searchSmtSignature){
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+                            @RequestBody(required = false) SearchSmtSignature searchSmtSignature){
     List<SmtSignature> list =smtSignatureService.findList(searchSmtSignature);
         try {
         // 导出操作

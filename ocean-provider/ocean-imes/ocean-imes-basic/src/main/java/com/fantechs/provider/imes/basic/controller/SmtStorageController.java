@@ -96,7 +96,8 @@ public class SmtStorageController {
      */
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出储位信息excel",notes = "导出储位信息excel")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtStorage searchSmtStorage){
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+                              @RequestBody(required = false) SearchSmtStorage searchSmtStorage){
         List<SmtStorage> list = smtStorageService.findList(searchSmtStorage);
         try {
             // 导出操作

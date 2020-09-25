@@ -74,7 +74,7 @@ public class SmtProcessController {
 
     @ApiOperation("根据条件查询工序信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtProcess>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProcess searchSmtProcess) {
+    public ResponseEntity<List<SmtProcess>> findList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtProcess searchSmtProcess) {
         Page<Object> page = PageHelper.startPage(searchSmtProcess.getStartPage(),searchSmtProcess.getPageSize());
         List<SmtProcess> list = smtProcessService.findList(searchSmtProcess);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
@@ -87,7 +87,7 @@ public class SmtProcessController {
     */
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出工序信息excel",notes = "导出工序信息excel")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtProcess searchSmtProcess){
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtProcess searchSmtProcess){
     List<SmtProcess> list =smtProcessService.findList(searchSmtProcess);
         try {
         // 导出操作
@@ -99,7 +99,7 @@ public class SmtProcessController {
 
     @ApiOperation("根据条件查询工序信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtHtProcess>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProcess searchSmtProcess) {
+    public ResponseEntity<List<SmtHtProcess>> findHtList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtProcess searchSmtProcess) {
         Page<Object> page = PageHelper.startPage(searchSmtProcess.getStartPage(),searchSmtProcess.getPageSize());
         List<SmtHtProcess> list = smtHtProcessService.findHtList(searchSmtProcess);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
