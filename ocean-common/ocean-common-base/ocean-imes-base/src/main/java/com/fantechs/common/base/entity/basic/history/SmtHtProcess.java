@@ -7,79 +7,60 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "smt_ht_signature")
+@Table(name = "smt_ht_process")
 @Data
-public class SmtHtSignature implements Serializable {
-    private static final long serialVersionUID = 1765283162890002040L;
+public class SmtHtProcess implements Serializable {
+    private static final long serialVersionUID = 2344980699615155962L;
     /**
-     * 特征码历史ID
+     * 工序历史ID
      */
     @Id
-    @Column(name = "ht_signature_id")
-    private Long htSignatureId;
+    @Column(name = "ht_process_id")
+    @ApiModelProperty(name="htProcessId" ,value="工序历史ID")
+    private Long htProcessId;
 
     /**
-     * 特征码ID
+     * 工序ID
      */
-    @Column(name = "signature_id")
-    @ApiModelProperty(name="signatureId" ,value="特征码ID")
-    private Long signatureId;
+    @Id
+    @Column(name = "process_id")
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long processId;
 
     /**
-     * 特征码
+     * 工序代码
      */
-    @Column(name = "signature_code")
-    @ApiModelProperty(name="signatureCode" ,value="特征码")
-    private String signatureCode;
+    @Column(name = "process_code")
+    @ApiModelProperty(name="processCode" ,value="工序代码")
+    private String processCode;
 
     /**
-     * 物料ID
+     * 工序名称
      */
-    @Column(name = "material_id")
-    @ApiModelProperty(name="materialId" ,value="物料ID")
-    private Long materialId;
+    @Column(name = "process_name")
+    @ApiModelProperty(name="processName" ,value="工序名称")
+    private String processName;
 
     /**
-     * 物料编码
+     * 工序描述
      */
-    @Transient
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
-    private String materialCode;
+    @Column(name = "process_desc")
+    @ApiModelProperty(name="processDesc" ,value="工序描述")
+    private String processDesc;
 
     /**
-     * 物料名称
+     * 工段ID
      */
-    @Transient
-    @ApiModelProperty(name="materialName" ,value="物料名称")
-    private String materialName;
+    @Column(name = "section_id")
+    @ApiModelProperty(name="sectionId" ,value="工段ID")
+    private Long sectionId;
 
     /**
-     * 版本
-     */
-    @Transient
-    @ApiModelProperty(name="version" ,value="版本")
-    private String version;
-
-    /**
-     * 物料描述
+     * 工段名称
      */
     @Transient
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    private String materialDesc;
-
-    /**
-     * 供应商ID
-     */
-    @Column(name = "supplier_id")
-    @ApiModelProperty(name="supplierId" ,value="供应商ID")
-    private Long supplierId;
-
-    /**
-     * 供应商名称
-     */
-    @Transient
-    @ApiModelProperty(name="supplierName" ,value="供应商名称")
-    private String supplierName;
+    @ApiModelProperty(name="sectionName" ,value="工段名称")
+    private Long sectionName;
 
     /**
      * 状态(0无效，1有效)

@@ -4,12 +4,14 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "smt_signature")
 @Data
-public class SmtSignature {
+public class SmtSignature implements Serializable {
+    private static final long serialVersionUID = 2443310438091476124L;
     /**
      * 特征码ID
      */
@@ -17,14 +19,6 @@ public class SmtSignature {
     @Column(name = "signature_id")
     @ApiModelProperty(name="signatureId" ,value="特征码ID")
     private Long signatureId;
-
-    /**
-     * 特征码
-     */
-    @Column(name = "signature_code")
-    @ApiModelProperty(name="signatureCode" ,value="特征码")
-    @Excel(name = "特征码", height = 20, width = 30)
-    private String signatureCode;
 
     /**
      * 物料ID
@@ -65,6 +59,14 @@ public class SmtSignature {
     private String materialDesc;
 
     /**
+     * 特征码
+     */
+    @Column(name = "signature_code")
+    @ApiModelProperty(name="signatureCode" ,value="特征码")
+    @Excel(name = "特征码", height = 20, width = 30)
+    private String signatureCode;
+
+    /**
      * 供应商ID
      */
     @Column(name = "supplier_id")
@@ -76,6 +78,7 @@ public class SmtSignature {
      */
     @Transient
     @ApiModelProperty(name="supplierName" ,value="供应商名称")
+    @Excel(name = "供应商名称", height = 20, width = 30)
     private String supplierName;
 
     /**
@@ -105,6 +108,7 @@ public class SmtSignature {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -127,6 +131,7 @@ public class SmtSignature {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

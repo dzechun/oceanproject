@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Data
 public class SearchSmtStorageMaterial extends BaseQuery implements Serializable {
 
+    private static final long serialVersionUID = 4672230387899893774L;
     /**
      * 仓库ID
      */

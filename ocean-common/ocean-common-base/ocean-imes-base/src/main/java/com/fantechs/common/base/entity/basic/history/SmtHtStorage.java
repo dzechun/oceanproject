@@ -1,15 +1,16 @@
 package com.fantechs.common.base.entity.basic.history;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "smt_ht_storage")
 @Data
-public class SmtHtStorage {
+public class SmtHtStorage implements Serializable {
+    private static final long serialVersionUID = 8010325835466668444L;
     /**
      * 储位历史ID
      */

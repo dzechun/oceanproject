@@ -19,7 +19,7 @@
   </resultMap>
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtSignature" resultMap="BaseResultMap">
-    select  shs.signature_id,shs.signature_code,shs.material_id,sm.material_code as materialCode,sm.material_name as materialName,
+    select  shs.ht_signature_id,shs.signature_id,shs.signature_code,shs.material_id,sm.material_code as materialCode,sm.material_name as materialName,
     sm.version,sm.material_desc as materialDesc,shs.supplier_id,shs.status,shs.create_user_id,u.user_name as createUserName,
     shs.create_time,shs.modified_user_id,s.user_name as modifiedUserName,shs.modified_time, shs.is_delete
     from smt_ht_signature shs

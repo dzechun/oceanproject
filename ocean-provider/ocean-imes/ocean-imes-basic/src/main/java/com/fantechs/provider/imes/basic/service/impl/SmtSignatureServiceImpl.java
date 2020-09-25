@@ -75,9 +75,9 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        String[] storageMaterialIds = ids.split(",");
-        for (String storageMaterialId : storageMaterialIds) {
-            SmtSignature smtSignature = smtSignatureMapper.selectByPrimaryKey(Long.parseLong(storageMaterialId));
+        String[] signatureIds = ids.split(",");
+        for (String signatureId : signatureIds) {
+            SmtSignature smtSignature = smtSignatureMapper.selectByPrimaryKey(Long.parseLong(signatureId));
             if(StringUtils.isEmpty(smtSignature)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }

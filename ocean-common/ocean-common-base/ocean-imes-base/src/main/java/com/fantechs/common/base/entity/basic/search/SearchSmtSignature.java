@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Data
 public class SearchSmtSignature extends BaseQuery implements Serializable {
 
+    private static final long serialVersionUID = -2677190668550208596L;
     /**
      * 特征码
      */

@@ -8,11 +8,13 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_warehouse_area")
 @Data
-public class SmtWarehouseArea {
+public class SmtWarehouseArea implements Serializable {
+    private static final long serialVersionUID = 6313098859931139882L;
     /**
      * 仓库区域ID
      */

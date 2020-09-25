@@ -1,6 +1,5 @@
 package com.fantechs.common.base.entity.basic.history;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,6 +13,7 @@ import java.util.Date;
 @Table(name = "smt_ht_dept")
 @Data
 public class SmtHtDept implements Serializable {
+    private static final long serialVersionUID = -6472312674013929076L;
     /**
      * 部门履历ID
      */

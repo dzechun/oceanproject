@@ -8,11 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_ht_warehouse_area")
 @Data
-public class SmtHtWarehouseArea {
+public class SmtHtWarehouseArea implements Serializable {
+    private static final long serialVersionUID = 529331700988362697L;
     /**
      * 仓库区域历史ID
      */

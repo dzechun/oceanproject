@@ -4,12 +4,14 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "smt_storage_material")
 @Data
-public class SmtStorageMaterial {
+public class SmtStorageMaterial implements Serializable {
+    private static final long serialVersionUID = -7270922822671637879L;
     /**
      * 储位物料ID
      */

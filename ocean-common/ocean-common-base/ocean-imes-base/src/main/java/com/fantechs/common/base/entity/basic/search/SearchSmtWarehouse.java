@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 @Data
 public class SearchSmtWarehouse extends BaseQuery implements Serializable {
+    private static final long serialVersionUID = -5805998375456169332L;
     /**
      * 仓库编码
      */

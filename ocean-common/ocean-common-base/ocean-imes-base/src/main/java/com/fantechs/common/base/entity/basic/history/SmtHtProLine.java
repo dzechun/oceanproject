@@ -13,6 +13,7 @@ import java.util.Date;
 @Table(name = "smt_ht_pro_line")
 @Data
 public class SmtHtProLine implements Serializable {
+    private static final long serialVersionUID = -4586576148757350763L;
     /**
      * 线别履历ID
      */
