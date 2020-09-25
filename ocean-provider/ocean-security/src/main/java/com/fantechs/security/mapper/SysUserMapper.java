@@ -8,7 +8,6 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;
 
 public interface SysUserMapper extends MyMapper<SysUser> {
-    List<SysUser> selectAllUsers();
 
     List<SysUser> selectUsers(SearchSysUser searchSysUser);
 }

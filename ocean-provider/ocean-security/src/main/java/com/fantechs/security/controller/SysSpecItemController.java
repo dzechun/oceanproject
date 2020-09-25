@@ -69,7 +69,7 @@ public class SysSpecItemController {
                 SysSpecItem.getPara())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysSpecItemService.insert(SysSpecItem));
+        return ControllerUtil.returnCRUD(sysSpecItemService.save(SysSpecItem));
     }
 
     @ApiOperation("修改程序配置项")
@@ -78,16 +78,16 @@ public class SysSpecItemController {
         if(StringUtils.isEmpty(SysSpecItem.getSpecId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysSpecItemService.updateById(SysSpecItem));
+        return ControllerUtil.returnCRUD(sysSpecItemService.update(SysSpecItem));
     }
 
     @ApiOperation("删除程序配置项")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "程序配置项对象ID",required = true)@RequestBody List<String> specIds){
+    public ResponseEntity delete(@ApiParam(value = "程序配置项对象ID",required = true)@RequestBody String specIds){
         if(StringUtils.isEmpty(specIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysSpecItemService.deleteByIds(specIds));
+        return ControllerUtil.returnCRUD(sysSpecItemService.batchDelete(specIds));
     }
 
     /**

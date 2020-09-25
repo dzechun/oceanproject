@@ -34,20 +34,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
 
     @Override
-    public List<SysUser> selectAllUsers() {
-        return sysUserMapper.selectAllUsers();
-    }
-
-    @Override
     public List<SysUser> selectUsers(SearchSysUser searchSysUser) {
         return sysUserMapper.selectUsers(searchSysUser);
     }
 
-    @Override
-    public SysUser selectById(String userId) {
-        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
-        return sysUser;
-    }
 
     @Override
     public SysUser selectByCode(String userCode) {
@@ -61,11 +51,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SysUser sysUser){
+    public int save(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
             sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
@@ -94,7 +83,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SysUser sysUser){
+    public int update(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -104,7 +93,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         SysUser user = sysUserMapper.selectByPrimaryKey(sysUser.getUserId());
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            //return ErrorCodeEnum.OPT20012003.getCode();
         }
 
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
@@ -135,7 +123,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delUser(List<String> userIds) {
+    public int batchDelete(String userIds) {
         int i=0;
         List<SysHtUser> list = new LinkedList<>();
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -143,7 +131,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
             return ErrorCodeEnum.UAC10011039.getCode();
         }
 
-        for (String userId : userIds) {
+        String[] idsArr = userIds.split(",");
+        for (String userId : idsArr) {
             SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
             if(StringUtils.isEmpty(sysUser)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);

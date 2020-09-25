@@ -38,7 +38,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SysSpecItem SysSpecItem) {
+    public int save(SysSpecItem SysSpecItem) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -65,7 +65,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SysSpecItem SysSpecItem) {
+    public int update(SysSpecItem SysSpecItem) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -93,7 +93,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<String> specIds) {
+    public int batchDelete(String specIds) {
         int i=0;
         List<SysHtSpecItem> list=new ArrayList<>();
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
@@ -101,7 +101,8 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        for (String specId : specIds) {
+        String[] idsArr = specIds.split(",");
+        for (String specId : idsArr) {
             SysSpecItem SysSpecItem = sysSpecItemMapper.selectByPrimaryKey(specId);
             if(StringUtils.isEmpty(SysSpecItem)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);

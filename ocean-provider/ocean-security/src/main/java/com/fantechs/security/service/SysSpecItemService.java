@@ -10,14 +10,4 @@ import java.util.List;
 public interface SysSpecItemService extends IService<SysSpecItem> {
     //通过条件查询配置项信息
     List<SysSpecItem> selectSpecItems(SearchSysSpecItem searchSysSpecItem);
-
-    //新增配置项信息
-    int insert(SysSpecItem SysSpecItem);
-
-    //修改配置项信息
-    int updateById(SysSpecItem SysSpecItem);
-
-    //删除配置项信息
-    int deleteByIds(List<String> specIds);
-
 }
