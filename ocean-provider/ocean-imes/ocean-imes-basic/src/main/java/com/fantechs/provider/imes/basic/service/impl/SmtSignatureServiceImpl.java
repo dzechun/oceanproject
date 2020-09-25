@@ -45,7 +45,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(SmtStorageMaterial.class);
+        Example example = new Example(SmtSignature.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("signatureId",smtSignature.getSignatureId());
         List<SmtSignature> smtSignatures = smtSignatureMapper.selectByExample(example);
@@ -101,7 +101,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(SmtStorageMaterial.class);
+        Example example = new Example(SmtSignature.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("signatureId",smtSignature.getSignatureId());
 
