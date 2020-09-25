@@ -2,9 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtSignature;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
-import com.fantechs.common.base.entity.basic.history.SmtHtStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
