@@ -18,7 +18,5 @@ public interface SmtStorageMaterialService extends IService<SmtStorageMaterial> 
 
     int updateById(SmtStorageMaterial smtStorageMaterial);
 
-    SmtStorageMaterial selectById(Long id);
-
     List<SmtStorageMaterial> findList(SearchSmtStorageMaterial searchSmtStorageMaterial);
 }

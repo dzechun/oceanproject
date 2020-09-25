@@ -18,7 +18,5 @@ public interface SmtSignatureService extends IService<SmtSignature> {
 
   int updateById(SmtSignature smtSignature);
 
-  SmtSignature selectByKey(Long id);
-
   List<SmtSignature> findList(SearchSmtSignature searchSmtSignature);
 }

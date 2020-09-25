@@ -126,10 +126,6 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         return i;
     }
 
-    @Override
-    public SmtStorageMaterial selectById(Long id) {
-        return smtStorageMaterialMapper.selectByPrimaryKey(id);
-    }
 
     @Override
     public List<SmtStorageMaterial> findList(SearchSmtStorageMaterial searchSmtStorageMaterial) {

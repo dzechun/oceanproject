@@ -125,11 +125,6 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
     }
 
     @Override
-    public SmtSignature selectByKey(Long id) {
-        return smtSignatureMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
     public List<SmtSignature> findList(SearchSmtSignature searchSmtSignature) {
         return smtSignatureMapper.findList(searchSmtSignature);
     }
