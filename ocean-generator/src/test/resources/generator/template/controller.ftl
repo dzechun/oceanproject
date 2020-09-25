@@ -86,7 +86,7 @@ public class ${modelNameUpperCamel}Controller {
     List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "${modelNameUpperCamel}信息", SmtStorage.class, "${modelNameUpperCamel}.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "${modelNameUpperCamel}信息", ${modelNameUpperCamel}.class, "${modelNameUpperCamel}.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
