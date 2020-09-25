@@ -13,7 +13,5 @@ public interface SmtWarehouseService extends IService<SmtWarehouse>{
 
     int updateById(SmtWarehouse smtWarehouse);
 
-    SmtWarehouse selectByKey(Long id);
-
     List<SmtWarehouse> findList(SearchSmtWarehouse searchSmtWarehouse);
 }

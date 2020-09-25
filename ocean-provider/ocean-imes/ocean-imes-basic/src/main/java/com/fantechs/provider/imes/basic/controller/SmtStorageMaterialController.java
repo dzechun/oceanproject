@@ -67,7 +67,7 @@ public class SmtStorageMaterialController {
         if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }
-        SmtStorageMaterial smtStorageMaterial = smtStorageMaterialService.selectById(id);
+        SmtStorageMaterial smtStorageMaterial = smtStorageMaterialService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(smtStorageMaterial,StringUtils.isEmpty(smtStorageMaterial)?0:1);
     }
 

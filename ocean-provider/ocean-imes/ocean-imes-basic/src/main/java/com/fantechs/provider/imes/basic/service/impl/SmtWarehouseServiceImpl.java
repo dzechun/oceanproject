@@ -124,10 +124,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         return i;
     }
 
-    @Override
-    public SmtWarehouse selectByKey(Long id) {
-        return smtWarehouseMapper.selectByPrimaryKey(id);
-    }
 
     @Override
     public List<SmtWarehouse> findList(SearchSmtWarehouse searchSmtWarehouse) {

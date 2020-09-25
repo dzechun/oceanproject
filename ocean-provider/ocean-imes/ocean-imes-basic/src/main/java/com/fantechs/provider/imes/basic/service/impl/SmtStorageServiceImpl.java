@@ -122,11 +122,6 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
     }
 
     @Override
-    public SmtStorage selectByKey(Long id) {
-        return smtStorageMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
     public List<SmtStorage> findList(SearchSmtStorage searchSmtStorage) {
         return smtStorageMapper.findList(searchSmtStorage);
     }

@@ -19,7 +19,5 @@ public interface SmtStorageService extends IService<SmtStorage> {
 
     int updateById(SmtStorage storage);
 
-    SmtStorage selectByKey(Long id);
-
     List<SmtStorage> findList(SearchSmtStorage searchSmtStorage);
 }
