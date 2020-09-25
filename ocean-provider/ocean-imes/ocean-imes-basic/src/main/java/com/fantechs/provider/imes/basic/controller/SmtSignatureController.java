@@ -2,7 +2,6 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 import com.fantechs.common.base.entity.basic.SmtSignature;
-import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;

@@ -3,7 +3,6 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
-import com.fantechs.common.base.entity.basic.SmtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -101,7 +100,7 @@ public class SmtStorageController {
         List<SmtStorage> list = smtStorageService.findList(searchSmtStorage);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出储位信息", "储位信息", SmtWarehouse.class, "储位信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "导出储位信息", "储位信息", SmtStorage.class, "储位信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
