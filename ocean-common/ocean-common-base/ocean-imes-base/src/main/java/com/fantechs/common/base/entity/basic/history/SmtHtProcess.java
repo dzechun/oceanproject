@@ -22,7 +22,6 @@ public class SmtHtProcess implements Serializable {
     /**
      * 工序ID
      */
-    @Id
     @Column(name = "process_id")
     @ApiModelProperty(name="processId" ,value="工序ID")
     private Long processId;
