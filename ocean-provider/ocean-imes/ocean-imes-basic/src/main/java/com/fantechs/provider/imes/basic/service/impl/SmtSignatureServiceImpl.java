@@ -45,7 +45,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
         Example example = new Example(SmtSignature.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("signatureId",smtSignature.getSignatureId());
+        criteria.andEqualTo("signatureCode",smtSignature.getSignatureCode());
         List<SmtSignature> smtSignatures = smtSignatureMapper.selectByExample(example);
         if(null!=smtSignatures&&smtSignatures.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -101,7 +101,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
         Example example = new Example(SmtSignature.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("signatureId",smtSignature.getSignatureId());
+        criteria.andEqualTo("signatureCode",smtSignature.getSignatureCode());
 
         SmtSignature signature = smtSignatureMapper.selectOneByExample(example);
 
