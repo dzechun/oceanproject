@@ -7,7 +7,6 @@ import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkShop;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtWorkShop smtWorkShop) {
+    public int save(SmtWorkShop smtWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -68,35 +68,28 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         return i;
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteById(String id) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+    public int batchDelete(String ids) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        SmtWorkShop smtWorkShop = smtWorkShopMapper.selectByPrimaryKey(id);
-
-        if(StringUtils.isNotEmpty(smtWorkShop)){
-            SmtHtWorkShop smtHtWorkShop  = new SmtHtWorkShop();
+        List<SmtHtWorkShop> list=new LinkedList<>();
+        String[] idsArr =  ids.split(",");
+        for(String id : idsArr){
+            SmtWorkShop smtWorkShop = smtWorkShopMapper.selectByPrimaryKey(id);
+            if(StringUtils.isEmpty(smtWorkShop)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            SmtHtWorkShop smtHtWorkShop = new SmtHtWorkShop();
             BeanUtils.copyProperties(smtWorkShop,smtHtWorkShop);
-
+            smtHtWorkShop.setModifiedUserId(currentUser.getUserId());
             smtHtWorkShop.setModifiedTime(new Date());
-            smtHtWorkShop.setModifiedUserId(user.getUserId());
-            smtHtWorkShop.setCreateTime(new Date());
-            smtHtWorkShop.setCreateUserId(user.getUserId());
-
-            smtHtWorkShopMapper.insert(smtHtWorkShop);
+            list.add(smtHtWorkShop);
         }
-        return smtWorkShopMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public int deleteByIds(List<String> workShopIds) {
-        int i=0;
-        for(String id :workShopIds){
-           i+= deleteById(id);
-        }
-        return i;
+         smtHtWorkShopMapper.insertList(list);
+        return smtWorkShopMapper.deleteByIds(ids);
     }
     @Transactional(rollbackFor = Exception.class)
     public int updateById(SmtWorkShop smtWorkShop) {

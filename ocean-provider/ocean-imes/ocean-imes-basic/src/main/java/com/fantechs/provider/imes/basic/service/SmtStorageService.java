@@ -13,11 +13,5 @@ import java.util.List;
 
 public interface SmtStorageService extends IService<SmtStorage> {
 
-    int insert(SmtStorage storage);
-
-    int batchDel(String ids);
-
-    int updateById(SmtStorage storage);
-
     List<SmtStorage> findList(SearchSmtStorage searchSmtStorage);
 }

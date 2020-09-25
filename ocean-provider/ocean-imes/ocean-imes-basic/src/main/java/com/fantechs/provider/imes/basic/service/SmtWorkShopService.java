@@ -14,7 +14,4 @@ import java.util.Map;
  */
 public interface SmtWorkShopService extends IService<SmtWorkShop> {
     List<SmtWorkShopDto> findList(Map<String, Object> map);
-    int insert(SmtWorkShop workShop);
-    int deleteByIds(List<String> workShopIds);
-    int updateById(SmtWorkShop smtFactory);
 }

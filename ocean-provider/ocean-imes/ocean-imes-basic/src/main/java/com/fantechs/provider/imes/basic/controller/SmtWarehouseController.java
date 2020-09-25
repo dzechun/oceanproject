@@ -39,7 +39,7 @@ public class SmtWarehouseController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtWarehouse smtWarehouse) {
-        return ControllerUtil.returnCRUD(smtWarehouseService.insert(smtWarehouse));
+        return ControllerUtil.returnCRUD(smtWarehouseService.save(smtWarehouse));
     }
 
     @ApiOperation("删除")
@@ -48,7 +48,7 @@ public class SmtWarehouseController {
         if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtWarehouseService.batchDel(ids));
+        return ControllerUtil.returnCRUD(smtWarehouseService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
@@ -58,7 +58,7 @@ public class SmtWarehouseController {
         )){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtWarehouseService.updateById(smtWarehouse));
+        return ControllerUtil.returnCRUD(smtWarehouseService.update(smtWarehouse));
     }
 
     @ApiOperation("获取详情")

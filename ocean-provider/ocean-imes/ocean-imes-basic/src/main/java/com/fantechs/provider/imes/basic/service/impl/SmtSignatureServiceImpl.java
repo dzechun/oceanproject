@@ -37,7 +37,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtSignature smtSignature) {
+    public int save(SmtSignature smtSignature) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -64,7 +64,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDel(String ids) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtSignature> list=new ArrayList<>();
 
@@ -93,7 +93,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtSignature smtSignature) {
+    public int update(SmtSignature smtSignature) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

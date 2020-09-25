@@ -38,7 +38,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtProcess smtProcess) {
+    public int save(SmtProcess smtProcess) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -65,7 +65,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDel(String ids) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtProcess> list=new ArrayList<>();
 
@@ -94,7 +94,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtProcess smtProcess) {
+    public int update(SmtProcess smtProcess) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -124,12 +124,6 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
         smtHtProcessMapper.insertSelective(smtHtProcess);
         return i;
     }
-
-    @Override
-    public SmtProcess selectById(Long id) {
-        return smtProcessMapper.selectByPrimaryKey(id);
-    }
-
     @Override
     public List<SmtProcess> findList(SearchSmtProcess searchSmtProcess) {
         return smtProcessMapper.findList(searchSmtProcess);

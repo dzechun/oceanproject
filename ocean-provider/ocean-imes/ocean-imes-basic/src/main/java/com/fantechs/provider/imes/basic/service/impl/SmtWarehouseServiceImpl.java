@@ -39,7 +39,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtWarehouse smtWarehouse) {
+    public int save(SmtWarehouse smtWarehouse) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -66,7 +66,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDel(String ids) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtWarehouse> list=new ArrayList<>();
 
@@ -95,7 +95,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtWarehouse smtWarehouse) {
+    public int update(SmtWarehouse smtWarehouse) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

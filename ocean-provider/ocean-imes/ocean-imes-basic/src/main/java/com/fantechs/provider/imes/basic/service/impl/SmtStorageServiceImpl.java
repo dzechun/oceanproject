@@ -36,7 +36,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SmtStorage smtStorage) {
+    public int save(SmtStorage smtStorage) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -63,7 +63,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDel(String ids) {
+    public int batchDelete(String ids) {
         int i=0;
         List<SmtHtStorage> list=new ArrayList<>();
 
@@ -92,7 +92,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtStorage storage) {
+    public int update(SmtStorage storage) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

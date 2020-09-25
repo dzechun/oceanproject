@@ -40,7 +40,7 @@ public class SmtProcessController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtProcess smtProcess) {
-        return ControllerUtil.returnCRUD(smtProcessService.insert(smtProcess));
+        return ControllerUtil.returnCRUD(smtProcessService.save(smtProcess));
     }
 
     @ApiOperation("删除")
@@ -49,7 +49,7 @@ public class SmtProcessController {
         if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProcessService.batchDel(ids));
+        return ControllerUtil.returnCRUD(smtProcessService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
@@ -59,7 +59,7 @@ public class SmtProcessController {
         )){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtProcessService.updateById(smtProcess));
+        return ControllerUtil.returnCRUD(smtProcessService.update(smtProcess));
     }
 
     @ApiOperation("获取详情")
@@ -68,7 +68,7 @@ public class SmtProcessController {
         if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }
-        SmtProcess smtProcess = smtProcessService.selectById(id);
+        SmtProcess smtProcess = smtProcessService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(smtProcess,StringUtils.isEmpty(smtProcess)?0:1);
     }
 

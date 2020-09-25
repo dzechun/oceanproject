@@ -57,7 +57,7 @@ public class SmtWorkShopController {
                 smtWorkShop.getFactoryId())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtWorkShopService.insert(smtWorkShop));
+        return ControllerUtil.returnCRUD(smtWorkShopService.save(smtWorkShop));
 
     }
 
@@ -86,11 +86,11 @@ public class SmtWorkShopController {
 
     @ApiOperation("删除车间")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "车间对象ID",required = true) @RequestBody List<String> workShopIds){
-        if(StringUtils.isEmpty(workShopIds)){
+    public ResponseEntity delete(@ApiParam(value = "车间对象ID",required = true) @RequestParam String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(smtWorkShopService.deleteByIds(workShopIds));
+        return ControllerUtil.returnCRUD(smtWorkShopService.batchDelete(ids));
     }
 
     @ApiOperation("获取车间详情")
