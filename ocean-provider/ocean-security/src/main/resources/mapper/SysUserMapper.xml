@@ -25,12 +25,6 @@
     is_delete
   </sql>
 
-  <select id="selectAllUsers" resultMap="BaseResultMap">
-    select  <include refid="Base_Column_List" />
-    from sys_user su
-    where su.status=1
-  </select>
-
   <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser" resultMap="BaseResultMap">
     select su.user_id, su.user_name, su.user_code, su.nick_name, su.password, su.status, su.factory_id,su.dept_id,
     su.telephone,su.mobile, su.email, su.create_user_id,u.user_name as createUserName,su.create_time, su.modified_user_id,
