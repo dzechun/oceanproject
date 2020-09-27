@@ -26,16 +26,7 @@ public interface SysMenuInfoService  extends IService<SysMenuInfo>{
     //ID查询对象
     SysMenuInfoDto findById(Long id);
 
-    //添加对象
-    int insert(SysMenuInfo sysMenuInfo);
-
     //ID删除对象
     int deleteById(Long id);
-
-    //ID删除对象
-    int deleteByIds(List<Long> ids);
-
-    //ID更新对象
-    int updateById(SysMenuInfo smtMenuinfo);
 
 }
