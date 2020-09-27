@@ -25,7 +25,7 @@
     left join smt_user s on ws.modified_user_id=s.user_id
     <where>
       1=1
-      <if test="startDate !=null and startDate !='' and endDate !=null and endDate !=''">
+      <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
         AND date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="sectionCode!=null and sectionCode!=''">

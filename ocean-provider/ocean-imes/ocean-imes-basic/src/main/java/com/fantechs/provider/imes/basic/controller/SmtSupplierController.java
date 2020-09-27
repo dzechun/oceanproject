@@ -25,7 +25,7 @@ import java.util.List;
  * Created by Mr.Lei on 2020/09/27.
  */
 @RestController
-@Api(tags = "smtSupplier控制器")
+@Api(tags = "供应商信息")
 @RequestMapping("/smtSupplier")
 public class SmtSupplierController {
 
@@ -35,6 +35,11 @@ public class SmtSupplierController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtSupplier smtSupplier) {
+        if(StringUtils.isEmpty(
+                smtSupplier.getSupplierCode(),
+                smtSupplier.getSupplierName())){
+            return ControllerUtil.returnFailByParameError();
+        }
         return ControllerUtil.returnCRUD(smtSupplierService.save(smtSupplier));
     }
 
@@ -82,7 +87,7 @@ public class SmtSupplierController {
     List<SmtSupplier> list = smtSupplierService.findList(searchSmtSupplier);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "供应商信息", SmtSupplier.class, "供应商.xls", response);
+        EasyPoiUtils.exportExcel(list, "供应商信息导出", "供应商信息", SmtSupplier.class, "供应商.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

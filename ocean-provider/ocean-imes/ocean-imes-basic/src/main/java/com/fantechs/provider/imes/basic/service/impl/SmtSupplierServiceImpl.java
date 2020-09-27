@@ -39,7 +39,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         Example example = new Example(SmtSupplier.class);
-        example.createCriteria().andEqualTo("supplier_code",record.getSupplierCode());
+        example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode());
         List<SmtSupplier> list = smtSupplierMapper.selectByExample(example);
         if(list!=null && list.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -57,7 +57,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         Example example = new Example(SmtSupplier.class);
-        example.createCriteria().andEqualTo("supplier_code",entity.getSupplierCode());
+        example.createCriteria().andEqualTo("supplierCode",entity.getSupplierCode());
         List<SmtSupplier> list = smtSupplierMapper.selectByExample(example);
         if(list!=null && list.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -83,6 +83,6 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             }
             i = smtSupplierMapper.deleteByPrimaryKey(item);
         }
-        return super.batchDelete(ids);
+        return i;
     }
 }
