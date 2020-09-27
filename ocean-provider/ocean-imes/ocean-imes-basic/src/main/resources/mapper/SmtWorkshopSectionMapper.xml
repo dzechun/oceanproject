@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.imes.basic.mapper.HtWorkshopSectionMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.HtWorkshopSection">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="ht_section_id" jdbcType="BIGINT" property="htSectionId" />
-    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtWorkshopSectionMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtWorkshopSection">
+    <id column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
     <result column="section_desc" jdbcType="VARCHAR" property="sectionDesc" />
@@ -20,26 +16,26 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
-  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchWorkshopSection" resultMap="BaseResultMap">
-    select wts.ht_section_id,wts.section_id, wts.section_code, wts.section_name, wts.section_desc,
-    wts.status, wts.create_user_id,u.user_name as createUserName,wts.create_time,wts.modified_user_id,
-    s.user_name as modifiedUserName, wts.modified_time,wts.is_delete
-    from smt_ht_workshop_section wts
-    left join smt_user u on wts.create_user_id=u.user_id
-    left join smt_user s on wts.modified_user_id=s.user_id
+  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection" resultMap="BaseResultMap">
+    select ws.section_id, ws.section_code, ws.section_name, ws.section_desc,
+    ws.status, ws.create_user_id,u.user_name as createUserName,ws.create_time,ws.modified_user_id,
+    s.user_name as modifiedUserName, ws.modified_time,ws.is_delete
+    from smt_workshop_section ws
+    left join smt_user u on ws.create_user_id=u.user_id
+    left join smt_user s on ws.modified_user_id=s.user_id
     <where>
       1=1
-      <if test="startDate !=null and startDate !='' and endDate !=null and endDate !=''">
-        AND date_format(wts.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
+        AND date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="sectionCode!=null and sectionCode!=''">
-        and wts.section_code like CONCAT('%', #{sectionCode}, '%')
+        and ws.section_code like CONCAT('%', #{sectionCode}, '%')
       </if>
       <if test="sectionName!=null and sectionName!=''">
-        and wts.sectionName like CONCAT('%', #{sectionName}, '%')
+        and ws.section_name like CONCAT('%', #{sectionName}, '%')
       </if>
       <if test="sectionDesc!=null and sectionDesc!=''">
-        and wts.sectionDesc like CONCAT('%', #{sectionDesc}, '%')
+        and ws.section_desc like CONCAT('%', #{sectionDesc}, '%')
       </if>
     </where>
   </select>
