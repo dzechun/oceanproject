@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @ApiModel
 @Data
-public class SearchWorkshopSection extends BaseQuery implements Serializable {
+public class SearchSmtWorkshopSection extends BaseQuery implements Serializable {
     private static final long serialVersionUID = 9081822012477093927L;
     /**
      * 工段代码
