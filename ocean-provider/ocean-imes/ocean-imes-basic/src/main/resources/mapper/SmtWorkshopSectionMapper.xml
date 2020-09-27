@@ -2,9 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtWorkshopSectionMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtWorkshopSection">
-    <!--
-      WARNING - @mbg.generated
-    -->
     <id column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
