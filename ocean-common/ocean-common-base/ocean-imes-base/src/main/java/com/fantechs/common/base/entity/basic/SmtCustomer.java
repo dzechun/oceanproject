@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -25,6 +26,7 @@ public class SmtCustomer implements Serializable {
      */
     @Column(name = "customer_code")
     @ApiModelProperty(name="customerCode" ,value="客户代码")
+    @Excel(name = "客户代码", height = 20, width = 30)
     private String customerCode;
 
     /**
@@ -32,6 +34,7 @@ public class SmtCustomer implements Serializable {
      */
     @Column(name = "customer_name")
     @ApiModelProperty(name="customerName" ,value="客户名称")
+    @Excel(name = "客户名称", height = 20, width = 30)
     private String customerName;
 
     /**
@@ -39,12 +42,14 @@ public class SmtCustomer implements Serializable {
      */
     @Column(name = "customer_desc")
     @ApiModelProperty(name="customerDesc" ,value="客户描述")
+    @Excel(name = "客户描述", height = 20, width = 30)
     private String customerDesc;
 
     /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="状态")
+    @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Integer status;
 
     /**
@@ -55,10 +60,19 @@ public class SmtCustomer implements Serializable {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -69,10 +83,19 @@ public class SmtCustomer implements Serializable {
     private Long modifiedUserId;
 
     /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
+    private String modifiedUserName;
+
+    /**
      * 修改时间
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
