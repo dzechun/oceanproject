@@ -6,6 +6,7 @@
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
     <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
     <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
@@ -21,7 +22,7 @@
   </resultMap>
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorage" resultMap="BaseResultMap">
-    select  shs.ht_storage_id,shs.storage_id,shs.storage_code,shs.storage_name,shs.storage_desc,shs.warehouse_id,sw.warehouse_name as warehouseName,
+    select  shs.ht_storage_id,shs.storage_id,shs.storage_code,shs.storage_name,shs.level,shs.storage_desc,shs.warehouse_id,sw.warehouse_name as warehouseName,
     shs.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,shs.status,shs.create_user_id,u.user_name as createUserName,
     shs.create_time,shs.modified_user_id, s.user_name as modifiedUserName,shs.modified_time, shs.is_delete
     from smt_ht_storage shs

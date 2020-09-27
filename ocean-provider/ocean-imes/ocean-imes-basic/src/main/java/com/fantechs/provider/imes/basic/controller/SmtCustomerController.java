@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -83,7 +84,7 @@ public class SmtCustomerController {
     List<SmtCustomer> list = smtCustomerService.findList(searchSmtCustomer);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "客户信息", SmtCustomer.class, "客户信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出客户信息", "客户信息", SmtCustomer.class, "客户信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

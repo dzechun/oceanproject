@@ -37,6 +37,14 @@ public class SmtStorage implements Serializable {
     private String storageName;
 
     /**
+     * 层级
+     */
+    @Column(name = "level")
+    @ApiModelProperty(name = "level",value = "层级")
+    @Excel(name = "层级", height = 20, width = 30)
+    private String level;
+
+    /**
      * 储位描述
      */
     @Column(name = "storage_desc")
