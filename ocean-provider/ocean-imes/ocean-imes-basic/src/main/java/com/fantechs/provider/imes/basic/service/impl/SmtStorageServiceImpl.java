@@ -104,7 +104,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
 
         SmtStorage smtStorage = smtStorageMapper.selectOneByExample(example);
 
-        if(StringUtils.isNotEmpty(smtStorage)&&!smtStorage.getWarehouseId().equals(storage.getWarehouseId())){
+        if(StringUtils.isNotEmpty(smtStorage)&&!smtStorage.getStorageId().equals(storage.getStorageId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
