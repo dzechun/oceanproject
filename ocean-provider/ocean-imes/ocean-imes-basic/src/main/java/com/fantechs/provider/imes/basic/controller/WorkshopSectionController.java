@@ -1,10 +1,12 @@
 package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.entity.basic.WorkshopSection;
+import com.fantechs.common.base.entity.basic.history.HtWorkshopSection;
 import com.fantechs.common.base.entity.basic.search.SearchWorkshopSection;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.imes.basic.service.HtWorkshopSectionService;
 import com.fantechs.provider.imes.basic.service.WorkshopSectionService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -27,6 +29,8 @@ public class WorkshopSectionController {
 
     @Autowired
     private WorkshopSectionService workshopSectionService;
+    @Autowired
+    private HtWorkshopSectionService htWorkshopSectionService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -73,6 +77,14 @@ public class WorkshopSectionController {
     public ResponseEntity<List<WorkshopSection>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWorkshopSection searchWorkshopSection) {
         Page<Object> page = PageHelper.startPage(searchWorkshopSection.getStartPage(),searchWorkshopSection.getPageSize());
         List<WorkshopSection> list = workshopSectionService.findList(searchWorkshopSection);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("/工段历史记录")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<HtWorkshopSection>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWorkshopSection searchWorkshopSection){
+        Page<Object> page = PageHelper.startPage(searchWorkshopSection.getStartPage(),searchWorkshopSection.getPageSize());
+        List<HtWorkshopSection> list = htWorkshopSectionService.findHtList(searchWorkshopSection);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }
