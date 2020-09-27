@@ -41,6 +41,13 @@ public class SmtHtStorage implements Serializable {
     private String storageName;
 
     /**
+     * 层级
+     */
+    @Column(name = "level")
+    @ApiModelProperty(name = "level",value = "层级")
+    private String level;
+
+    /**
      * 储位描述
      */
     @Column(name = "storage_desc")
