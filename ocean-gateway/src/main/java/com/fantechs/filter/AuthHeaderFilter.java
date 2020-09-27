@@ -123,13 +123,13 @@ public class AuthHeaderFilter extends ZuulFilter {
 					}
 					String url =sb.toString();
 					Set<String> authority = user.getAuthority();
-					/*if(authority.contains(url)){
+					if(authority.contains(url)){
 						flag = true;
-					}*/
+					}
 				}
 			}
 		}
-	/*	if(!flag){
+		if(!flag){
 			requestContext.setSendZuulResponse(false);
 			requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
 			result.setCode(ErrorCodeEnum.GL99990401.getCode());
@@ -142,7 +142,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			requestContext.setSendZuulResponse(true);// 对该请求进行路由
 			requestContext.setResponseStatusCode(HttpStatus.OK.value());
 
-		}*/
+		}
 		return null;
 	}
 
