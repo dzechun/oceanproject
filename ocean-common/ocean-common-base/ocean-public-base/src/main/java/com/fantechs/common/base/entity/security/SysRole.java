@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.security;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -59,6 +60,7 @@ public class SysRole implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -80,6 +82,7 @@ public class SysRole implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
