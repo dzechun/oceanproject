@@ -1,33 +1,46 @@
-package com.fantechs.model.workshop;
+package com.fantechs.common.base.entity.basic.history;
+
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import javax.persistence.*;
 
-@Table(name = "smt_workshop_section")
-public class WorkshopSection {
+@Table(name = "smt_ht_workshop_section")
+public class HtWorkshopSection {
+    /**
+     * 工段历史ID
+     */
+    @Id
+    @Column(name = "ht_section_id")
+    @ApiModelProperty("工段历史id")
+    private Long htSectionId;
+
     /**
      * 工段ID
      */
-    @Id
     @Column(name = "section_id")
+    @ApiModelProperty("工段ID")
     private Long sectionId;
 
     /**
      * 工段代码
      */
     @Column(name = "section_code")
+    @ApiModelProperty("工段代码")
     private String sectionCode;
 
     /**
      * 工段名称
      */
     @Column(name = "section_name")
+    @ApiModelProperty("工段名称")
     private String sectionName;
 
     /**
      * 工段描述
      */
     @Column(name = "section_desc")
+    @ApiModelProperty("工段描述")
     private String sectionDesc;
 
     /**
@@ -39,30 +52,35 @@ public class WorkshopSection {
      * 创建人ID
      */
     @Column(name = "create_user_id")
+    @ApiModelProperty("创建人ID")
     private Long createUserId;
 
     /**
      * 创建时间
      */
     @Column(name = "create_time")
+    @ApiModelProperty("创建时间")
     private Date createTime;
 
     /**
      * 修改人ID
      */
     @Column(name = "modified_user_id")
+    @ApiModelProperty("修改人ID")
     private Long modifiedUserId;
 
     /**
      * 修改时间
      */
     @Column(name = "modified_time")
+    @ApiModelProperty("修改时间")
     private Date modifiedTime;
 
     /**
      * 逻辑删除（0、删除 1、正常）
      */
     @Column(name = "is_delete")
+    @ApiModelProperty("逻辑删除（1、删除 1、正常）")
     private Byte isDelete;
 
     /**
@@ -79,6 +97,24 @@ public class WorkshopSection {
      * 扩展字段3
      */
     private String option3;
+
+    /**
+     * 获取工段历史ID
+     *
+     * @return ht_section_id - 工段历史ID
+     */
+    public Long getHtSectionId() {
+        return htSectionId;
+    }
+
+    /**
+     * 设置工段历史ID
+     *
+     * @param htSectionId 工段历史ID
+     */
+    public void setHtSectionId(Long htSectionId) {
+        this.htSectionId = htSectionId;
+    }
 
     /**
      * 获取工段ID
