@@ -7,5 +7,5 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;
 
 public interface HtWorkshopSectionMapper extends MyMapper<HtWorkshopSection> {
-    List<HtWorkshopSection> selectHtSection(SearchWorkshopSection searchWorkshopSection);
+    List<HtWorkshopSection> findList(SearchWorkshopSection searchWorkshopSection);
 }

@@ -7,5 +7,5 @@ import com.fantechs.common.base.support.IService;
 import java.util.List;
 
 public interface HtWorkshopSectionService extends IService<HtWorkshopSection> {
-    List<HtWorkshopSection> findHtList(SearchWorkshopSection searchWorkshopSection);
+    List<HtWorkshopSection> findList(SearchWorkshopSection searchWorkshopSection);
 }

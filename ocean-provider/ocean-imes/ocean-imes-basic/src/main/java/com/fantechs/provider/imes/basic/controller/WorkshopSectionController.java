@@ -84,7 +84,7 @@ public class WorkshopSectionController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<HtWorkshopSection>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWorkshopSection searchWorkshopSection){
         Page<Object> page = PageHelper.startPage(searchWorkshopSection.getStartPage(),searchWorkshopSection.getPageSize());
-        List<HtWorkshopSection> list = htWorkshopSectionService.findHtList(searchWorkshopSection);
+        List<HtWorkshopSection> list = htWorkshopSectionService.findList(searchWorkshopSection);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

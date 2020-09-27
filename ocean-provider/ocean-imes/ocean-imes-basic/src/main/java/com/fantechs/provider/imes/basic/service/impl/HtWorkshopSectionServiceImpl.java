@@ -23,7 +23,7 @@ public class HtWorkshopSectionServiceImpl extends BaseService<HtWorkshopSection>
     private HtWorkshopSectionMapper htWorkshopSectionMapper;
 
     @Override
-    public List<HtWorkshopSection> findHtList(SearchWorkshopSection searchWorkshopSection) {
-        return htWorkshopSectionMapper.selectHtSection(searchWorkshopSection);
+    public List<HtWorkshopSection> findList(SearchWorkshopSection searchWorkshopSection) {
+        return htWorkshopSectionMapper.findList(searchWorkshopSection);
     }
 }
