@@ -1,11 +1,14 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtCustomer;
 import com.fantechs.common.base.entity.basic.search.SearchSmtCustomer;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.service.SmtCustomerService;
@@ -18,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,6 +39,14 @@ public class SmtCustomerController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtCustomer smtCustomer) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        smtCustomer.setCreateUserId(currentUser.getUserId());
+        smtCustomer.setCreateTime(new Date());
+        smtCustomer.setModifiedUserId(currentUser.getUserId());
+        smtCustomer.setModifiedTime(new Date());
         return ControllerUtil.returnCRUD(smtCustomerService.save(smtCustomer));
     }
 
