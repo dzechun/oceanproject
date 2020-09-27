@@ -39,14 +39,6 @@ public class SmtCustomerController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtCustomer smtCustomer) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        smtCustomer.setCreateUserId(currentUser.getUserId());
-        smtCustomer.setCreateTime(new Date());
-        smtCustomer.setModifiedUserId(currentUser.getUserId());
-        smtCustomer.setModifiedTime(new Date());
         return ControllerUtil.returnCRUD(smtCustomerService.save(smtCustomer));
     }
 
