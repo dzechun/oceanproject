@@ -55,16 +55,16 @@ public class SysMenuInfoController {
                 sysMenuInfo.getMenuType())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysMenuInfoService.insert(sysMenuInfo));
+        return ControllerUtil.returnCRUD(sysMenuInfoService.save(sysMenuInfo));
     }
 
     @ApiOperation("删除菜单")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)@RequestBody List<Long> menuIds){
+    public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)@RequestBody String menuIds){
         if(StringUtils.isEmpty(menuIds)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysMenuInfoService.deleteByIds(menuIds));
+        return ControllerUtil.returnCRUD(sysMenuInfoService.batchDelete(menuIds));
     }
 
     @ApiOperation("修改菜单")
@@ -77,7 +77,7 @@ public class SysMenuInfoController {
         )) {
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysMenuInfoService.updateById(sysMenuInfo));
+        return ControllerUtil.returnCRUD(sysMenuInfoService.update(sysMenuInfo));
     }
 
     @ApiOperation(value = "菜单列表",notes = "返回数据包含菜单对应的角色权限")

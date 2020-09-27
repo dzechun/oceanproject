@@ -113,7 +113,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(SysMenuInfo sysMenuInfo){
+    public int save(SysMenuInfo sysMenuInfo){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -184,7 +184,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     }
 
     @Override
-    public int deleteByIds(List<Long> ids) {
+    public int batchDelete(String ids) {
         SysUser user = null;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -194,7 +194,8 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         List<Long> menuIds =  new LinkedList<>();
         List<SysHtMenuInfo> htList =  new LinkedList<>();
 
-        for(Long id : ids){
+        String[] idsArr = ids.split(",");
+        for(String id : idsArr){
             SysMenuInfo sysMenuInfo = sysMenuInfoMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(sysMenuInfo)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -227,7 +228,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SysMenuInfo sysMenuInfo) {
+    public int update(SysMenuInfo sysMenuInfo) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
