@@ -163,7 +163,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	protected String getDefModelName(String tableName) {
 		String[] strs = getTableNameSplit(tableName);
 		StringBuilder sb = new StringBuilder();
-		for (int i = 1; i < strs.length; i++) {
+		for (int i = 0; i < strs.length; i++) {
 			sb.append(StringUtils.toUpperCaseFirstOne(strs[i].toLowerCase()));
 		}
 		return sb.toString();
