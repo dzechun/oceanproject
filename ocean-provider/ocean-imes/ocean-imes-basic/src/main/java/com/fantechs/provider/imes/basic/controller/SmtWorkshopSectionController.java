@@ -100,7 +100,7 @@ public class SmtWorkshopSectionController {
         List<SmtWorkshopSection> list = smtWorkshopSectionService.findList(searchSmtWorkshopSection);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "工段信息导出", "工段信息", SmtSupplier.class, "工段信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "工段信息导出", "工段信息", SmtWorkshopSection.class, "工段信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

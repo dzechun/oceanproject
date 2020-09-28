@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class SmtWorkshopSection implements Serializable {
      */
     @Column(name = "section_code")
     @ApiModelProperty("工段代码")
+    @Excel(name = "工段代码", height = 20, width = 30)
     private String sectionCode;
 
     /**
@@ -31,6 +33,7 @@ public class SmtWorkshopSection implements Serializable {
      */
     @Column(name = "section_name")
     @ApiModelProperty("工段名称")
+    @Excel(name = "工段名称", height = 20, width = 30)
     private String sectionName;
 
     /**
@@ -38,12 +41,14 @@ public class SmtWorkshopSection implements Serializable {
      */
     @Column(name = "section_desc")
     @ApiModelProperty("工段描述")
+    @Excel(name = "工段描述", height = 20, width = 30)
     private String sectionDesc;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty("状态(0无效，1有效)")
+    @Excel(name = "状态", height = 20, width = 30,replace = "(0无效，1有效)")
     private Byte status;
 
     /**
@@ -52,6 +57,14 @@ public class SmtWorkshopSection implements Serializable {
     @Column(name = "create_user_id")
     @ApiModelProperty("创建人Id")
     private Long createUserId;
+
+    /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
+    private String createUserName;
 
     /**
      * 创建时间
@@ -66,6 +79,14 @@ public class SmtWorkshopSection implements Serializable {
     @Column(name = "modified_user_id")
     @ApiModelProperty("修改人ID")
     private Long modifiedUserId;
+
+    /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
+    private String modifiedUserName;
 
     /**
      * 修改时间
