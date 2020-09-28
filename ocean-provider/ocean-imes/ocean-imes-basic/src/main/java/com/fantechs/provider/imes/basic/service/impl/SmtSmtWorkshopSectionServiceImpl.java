@@ -73,8 +73,8 @@ public class SmtSmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSec
         }
         Example example = new Example(SmtWorkshopSection.class);
         example.createCriteria().andEqualTo("sectionCode", smtWorkshopSection.getSectionCode());
-        List<SmtWorkshopSection> list = workshopSectionMapper.selectByExample(example);
-        if(list !=null && list.size()>0){
+        SmtWorkshopSection workshopSection = workshopSectionMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(workshopSection)&&!workshopSection.getSectionId().equals(smtWorkshopSection.getSectionId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         smtWorkshopSection.setModifiedUserId(currentUser.getUserId());
