@@ -59,7 +59,7 @@ public class SmtHtProcess implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="sectionName" ,value="工段名称")
-    private Long sectionName;
+    private String sectionName;
 
     /**
      * 状态(0无效，1有效)
