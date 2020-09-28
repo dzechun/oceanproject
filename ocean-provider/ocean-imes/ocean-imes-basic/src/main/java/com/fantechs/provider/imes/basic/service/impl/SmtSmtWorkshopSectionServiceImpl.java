@@ -54,13 +54,13 @@ public class SmtSmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSec
         }
         smtWorkshopSection.setCreateUserId(currentUser.getUserId());
         smtWorkshopSection.setCreateTime(new Date());
-        int i = workshopSectionMapper.insertSelective(smtWorkshopSection);
+        workshopSectionMapper.insertUseGeneratedKeys(smtWorkshopSection);
 
         //添加工段历史信息
 
         SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
         BeanUtils.copyProperties(smtWorkshopSection, smtHtWorkshopSection);
-        smtHtWorkshopSectionMapper.insertSelective(smtHtWorkshopSection);
+        int i=  smtHtWorkshopSectionMapper.insertSelective(smtHtWorkshopSection);
 
         return i;
     }
