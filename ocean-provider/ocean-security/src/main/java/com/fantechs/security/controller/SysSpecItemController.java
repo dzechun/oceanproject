@@ -51,11 +51,11 @@ public class SysSpecItemController {
 
     @GetMapping("/detail")
     @ApiOperation(value = "程序配置项详情",notes = "程序配置项详情息")
-    public ResponseEntity<SysSpecItem> selectSpecItemById(@ApiParam(value = "传入主键specId",required = true) @RequestParam Long specId) {
-        if(StringUtils.isEmpty(specId)){
+    public ResponseEntity<SysSpecItem> selectSpecItemById(@ApiParam(value = "传入主键specId",required = true) @RequestParam Long id) {
+        if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFail("缺少必需参数", ErrorCodeEnum.GL99990100.getCode());
         }
-        SysSpecItem SysSpecItem=sysSpecItemService.selectByKey(specId);
+        SysSpecItem SysSpecItem=sysSpecItemService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(SysSpecItem,StringUtils.isEmpty(SysSpecItem)?0:1);
     }
 
@@ -83,11 +83,11 @@ public class SysSpecItemController {
 
     @ApiOperation("删除程序配置项")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "程序配置项对象ID",required = true)@RequestBody String specIds){
-        if(StringUtils.isEmpty(specIds)){
+    public ResponseEntity delete(@ApiParam(value = "程序配置项对象ID",required = true)@RequestBody String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysSpecItemService.batchDelete(specIds));
+        return ControllerUtil.returnCRUD(sysSpecItemService.batchDelete(ids));
     }
 
     /**

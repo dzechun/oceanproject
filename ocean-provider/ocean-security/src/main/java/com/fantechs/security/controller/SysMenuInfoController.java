@@ -60,11 +60,11 @@ public class SysMenuInfoController {
 
     @ApiOperation("删除菜单")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)@RequestBody String menuIds){
-        if(StringUtils.isEmpty(menuIds)){
+    public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)@RequestBody String ids){
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysMenuInfoService.batchDelete(menuIds));
+        return ControllerUtil.returnCRUD(sysMenuInfoService.batchDelete(ids));
     }
 
     @ApiOperation("修改菜单")
@@ -91,11 +91,11 @@ public class SysMenuInfoController {
 
     @ApiOperation("菜单详情")
     @PostMapping("/detail")
-    public ResponseEntity<SysMenuInfoDto> getMenuDetail(@ApiParam(value = "菜单ID",required = true)@RequestParam Long menuId){
-        if(StringUtils.isEmpty(menuId)){
+    public ResponseEntity<SysMenuInfoDto> getMenuDetail(@ApiParam(value = "菜单ID",required = true)@RequestParam Long id){
+        if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }
-        SysMenuInfoDto sysMenuInfoDto = sysMenuInfoService.findById(menuId);
+        SysMenuInfoDto sysMenuInfoDto = sysMenuInfoService.findById(id);
         return  ControllerUtil.returnDataSuccess(sysMenuInfoDto,StringUtils.isEmpty(sysMenuInfoDto)?0:1);
     }
 }

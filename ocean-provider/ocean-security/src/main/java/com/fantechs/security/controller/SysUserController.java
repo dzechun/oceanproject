@@ -57,8 +57,8 @@ public class SysUserController {
 
     @GetMapping("/detail")
     @ApiOperation(value = "通过ID获取单个用户信息",notes = "通过ID获取单个用户信息")
-    public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam String userId) {
-        SysUser sysUser = sysUserService.selectByKey(userId);
+    public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam String id) {
+        SysUser sysUser = sysUserService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(sysUser,StringUtils.isEmpty(sysUser)?0:1);
     }
 
@@ -88,11 +88,11 @@ public class SysUserController {
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除用户信息",notes = "删除用户信息")
-    public ResponseEntity delUser(@ApiParam(value = "传入主键userId",required = true) @RequestBody String userIds) {
-        if(StringUtils.isEmpty(userIds)){
+    public ResponseEntity delUser(@ApiParam(value = "传入主键userId",required = true) @RequestBody String ids) {
+        if(StringUtils.isEmpty(ids)){
             return ControllerUtil.returnFail("缺少必需参数", ErrorCodeEnum.OPT20012002.getCode());
         }
-        return ControllerUtil.returnCRUD(sysUserService.batchDelete(userIds));
+        return ControllerUtil.returnCRUD(sysUserService.batchDelete(ids));
     }
 
     @PostMapping(value = "/export")
