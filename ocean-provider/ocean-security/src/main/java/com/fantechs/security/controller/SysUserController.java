@@ -57,7 +57,7 @@ public class SysUserController {
 
     @GetMapping("/detail")
     @ApiOperation(value = "通过ID获取单个用户信息",notes = "通过ID获取单个用户信息")
-    public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam String id) {
+    public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam Long id) {
         SysUser sysUser = sysUserService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(sysUser,StringUtils.isEmpty(sysUser)?0:1);
     }
