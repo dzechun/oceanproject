@@ -47,7 +47,7 @@ public class SmtDeptController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtDept searchSmtDept
     ){
         Page<Object> page = PageHelper.startPage(searchSmtDept.getStartPage(),searchSmtDept.getPageSize());
-        List<SmtDept> smtDeptes = smtDeptService.selectDepts(searchSmtDept);
+        List<SmtDept> smtDeptes = smtDeptService.findList(searchSmtDept);
         return ControllerUtil.returnDataSuccess(smtDeptes,(int)page.getTotal());
     }
 
