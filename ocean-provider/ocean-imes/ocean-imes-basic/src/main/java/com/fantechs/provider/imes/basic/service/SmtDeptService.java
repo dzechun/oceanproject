@@ -12,8 +12,6 @@ import java.util.List;
 @Service
 public interface SmtDeptService extends IService<SmtDept> {
     //根据条件查询部门信息列表
-    List<SmtDept> selectDepts(SearchSmtDept searchSmtDept);
+    List<SmtDept> findList(SearchSmtDept searchSmtDept);
 
-    //删除部门信息
-    int deleteByIds(List<Long> deptIds);
 }

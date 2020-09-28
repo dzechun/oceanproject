@@ -9,5 +9,5 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;
 
 public interface SmtDeptMapper extends MyMapper<SmtDept> {
-    List<SmtDept> selectDepts(SearchSmtDept searchSmtDept);
+    List<SmtDept> findList(SearchSmtDept searchSmtDept);
 }

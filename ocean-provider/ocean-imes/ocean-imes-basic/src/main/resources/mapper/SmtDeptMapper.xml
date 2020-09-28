@@ -22,7 +22,7 @@
     modified_user_id, modified_time, is_delete, option1, option2, option3
   </sql>
 
-  <select id="selectDepts" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
+  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
     select sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id,f.factory_name as factoryName,
     sd.status, sd.create_user_id,u.user_name as createUserName,sd.create_time,sd.modified_user_id,
     s.user_name as modifiedUserName, sd.modified_time,sd.is_delete

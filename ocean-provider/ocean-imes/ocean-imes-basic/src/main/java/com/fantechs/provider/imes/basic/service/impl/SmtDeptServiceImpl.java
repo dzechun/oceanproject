@@ -6,7 +6,6 @@ import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -35,8 +34,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
     private SmtHtDeptMapper smtHtDeptMapper;
 
     @Override
-    public List<SmtDept> selectDepts(SearchSmtDept searchSmtDept) {
-        return smtDeptMapper.selectDepts(searchSmtDept);
+    public List<SmtDept> findList(SearchSmtDept searchSmtDept) {
+        return smtDeptMapper.findList(searchSmtDept);
     }
 
     @Override
@@ -105,15 +104,15 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteByIds(List<Long> deptIds) {
+    public int batchDelete(String ids) {
         int i=0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<SmtHtDept> list=new ArrayList<>();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        for (Long deptId : deptIds) {
+        String[] idsArr =  ids.split(",");
+        for (String deptId : idsArr) {
             SmtDept smtDept = smtDeptMapper.selectByPrimaryKey(deptId);
             if(StringUtils.isEmpty(smtDept)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -125,10 +124,10 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             smtHtDept.setModifiedTime(new Date());
             list.add(smtHtDept);
 
-            smtDeptMapper.deleteByPrimaryKey(deptId);
-        }
 
+        }
         smtHtDeptMapper.insertList(list);
+        i= smtDeptMapper.deleteByPrimaryKey(ids);
         return i;
     }
 }

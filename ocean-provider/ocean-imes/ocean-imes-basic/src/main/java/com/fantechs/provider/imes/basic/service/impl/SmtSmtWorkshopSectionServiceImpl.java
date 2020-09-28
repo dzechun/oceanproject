@@ -66,6 +66,7 @@ public class SmtSmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SmtWorkshopSection smtWorkshopSection) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -92,6 +93,7 @@ public class SmtSmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -109,8 +111,6 @@ public class SmtSmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSec
             smtHtWorkshopSection.setModifiedTime(new Date());
             smtHtWorkshopSection.setModifiedUserId(currentUser.getUserId());
             list.add(smtHtWorkshopSection);
-
-            workshopSectionMapper.deleteByPrimaryKey(item);
         }
         smtHtWorkshopSectionMapper.insertList(list);
         return workshopSectionMapper.deleteByIds(ids);

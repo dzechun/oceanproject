@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtSupplierMapper;
 import com.fantechs.provider.imes.basic.service.SmtSupplierService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SmtSupplier record) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -51,6 +53,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SmtSupplier entity) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -69,6 +72,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -81,8 +85,8 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             if(StringUtils.isEmpty(smtSupplier)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            i = smtSupplierMapper.deleteByPrimaryKey(item);
         }
+        i = smtSupplierMapper.deleteByIds(ids);
         return i;
     }
 }
