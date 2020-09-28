@@ -48,7 +48,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
         criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
         List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(example);
-        if(null!=smtStorageMaterials&&smtStorageMaterials.size()>0){
+        if(StringUtils.isNotEmpty(smtStorageMaterials)){
             throw new BizErrorException("该储位上的物料已存在。");
         }
 

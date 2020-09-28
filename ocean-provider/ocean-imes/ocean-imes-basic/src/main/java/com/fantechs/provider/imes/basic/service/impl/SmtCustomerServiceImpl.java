@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class SmtCustomerServiceImpl  extends BaseService<SmtCustomer> implements
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("customerCode",smtCustomer.getCustomerCode());
         List<SmtCustomer> smtCustomers = smtCustomerMapper.selectByExample(example);
-        if(null!=smtCustomers&&smtCustomers.size()>0){
+        if(StringUtils.isNotEmpty(smtCustomers)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

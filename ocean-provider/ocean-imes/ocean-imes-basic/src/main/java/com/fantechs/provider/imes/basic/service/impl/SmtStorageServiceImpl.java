@@ -46,7 +46,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageCode",smtStorage.getStorageCode());
         List<SmtStorage> smtStorages = smtStorageMapper.selectByExample(example);
-        if(null!=smtStorages&&smtStorages.size()>0){
+        if(StringUtils.isNotEmpty(smtStorages)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

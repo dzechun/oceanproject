@@ -48,7 +48,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("processCode",smtProcess.getProcessCode());
         List<SmtProcess> smtProcesses = smtProcessMapper.selectByExample(example);
-        if(null!=smtProcesses&&smtProcesses.size()>0){
+        if(StringUtils.isNotEmpty(smtProcesses)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

@@ -47,7 +47,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("signatureCode",smtSignature.getSignatureCode());
         List<SmtSignature> smtSignatures = smtSignatureMapper.selectByExample(example);
-        if(null!=smtSignatures&&smtSignatures.size()>0){
+        if(StringUtils.isNotEmpty(smtSignatures)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

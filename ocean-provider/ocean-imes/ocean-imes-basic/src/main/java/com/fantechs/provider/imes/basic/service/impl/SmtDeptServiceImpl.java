@@ -50,7 +50,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("deptCode",smtDept.getDeptCode());
         List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
-        if(null!=smtDepts&&smtDepts.size()>0){
+        if(StringUtils.isNotEmpty(smtDepts)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

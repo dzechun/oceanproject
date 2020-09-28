@@ -50,7 +50,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
         List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
-        if(null!=smtMaterials&&smtMaterials.size()>0){
+        if(StringUtils.isNotEmpty(smtMaterials)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());

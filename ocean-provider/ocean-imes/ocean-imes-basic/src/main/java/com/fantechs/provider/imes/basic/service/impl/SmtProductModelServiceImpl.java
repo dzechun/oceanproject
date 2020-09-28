@@ -50,7 +50,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("productModelCode",smtProductModel.getProductModelCode());
         List<SmtProductModel> smtProductModels = smtProductModelMapper.selectByExample(example);
-        if(null!=smtProductModels&&smtProductModels.size()>0){
+        if(StringUtils.isNotEmpty(smtProductModels)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         smtProductModel.setCreateUserId(currentUser.getUserId());

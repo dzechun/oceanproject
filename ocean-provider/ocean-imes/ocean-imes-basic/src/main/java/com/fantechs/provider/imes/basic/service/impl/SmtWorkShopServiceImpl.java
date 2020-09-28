@@ -48,9 +48,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         Example example = new Example(SmtWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workShopCode", smtWorkShop.getWorkShopCode());
-
         SmtWorkShop odlSmtWorkShop = smtWorkShopMapper.selectOneByExample(example);
-
         if(StringUtils.isNotEmpty(odlSmtWorkShop)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }

@@ -43,7 +43,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         Example example = new Example(SmtSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode());
         List<SmtSupplier> list = smtSupplierMapper.selectByExample(example);
-        if(list!=null && list.size()>0){
+        if(StringUtils.isNotEmpty(list)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         record.setCreateTime(new Date());
