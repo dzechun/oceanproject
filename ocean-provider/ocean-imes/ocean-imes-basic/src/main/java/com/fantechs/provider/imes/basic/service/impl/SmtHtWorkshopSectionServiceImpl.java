@@ -15,7 +15,7 @@ import java.util.List;
  * @create 2020/9/27
  */
 @Service
-public class SmtSmtHtWorkshopSectionServiceImpl extends BaseService<SmtHtWorkshopSection> implements SmtHtWorkshopSectionService {
+public class SmtHtWorkshopSectionServiceImpl extends BaseService<SmtHtWorkshopSection> implements SmtHtWorkshopSectionService {
 
     @Resource
     private SmtHtWorkshopSectionMapper smtHtWorkshopSectionMapper;
