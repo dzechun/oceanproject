@@ -58,8 +58,8 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         }
         Example example = new Example(SmtSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",entity.getSupplierCode());
-        List<SmtSupplier> list = smtSupplierMapper.selectByExample(example);
-        if(list!=null && list.size()>0){
+        SmtSupplier smtSupplier = smtSupplierMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(smtSupplier)&&!smtSupplier.getSupplierId().equals(entity.getSupplierId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         entity.setModifiedTime(new Date());
