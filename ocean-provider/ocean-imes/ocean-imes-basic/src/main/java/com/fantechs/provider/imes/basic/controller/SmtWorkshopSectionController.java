@@ -1,10 +1,14 @@
 package com.fantechs.provider.imes.basic.controller;
 
+import com.fantechs.common.base.entity.basic.SmtSupplier;
 import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkshopSection;
+import com.fantechs.common.base.entity.basic.search.SearchSmtSupplier;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.service.SmtHtWorkshopSectionService;
 import com.fantechs.provider.imes.basic.service.SmtWorkshopSectionService;
@@ -16,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -86,5 +91,18 @@ public class SmtWorkshopSectionController {
         Page<Object> page = PageHelper.startPage(searchSmtWorkshopSection.getStartPage(), searchSmtWorkshopSection.getPageSize());
         List<SmtHtWorkshopSection> list = smtHtWorkshopSectionService.findList(searchSmtWorkshopSection);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchSmtWorkshopSection searchSmtWorkshopSection){
+        List<SmtWorkshopSection> list = smtWorkshopSectionService.findList(searchSmtWorkshopSection);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "工段信息导出", "工段信息", SmtSupplier.class, "工段信息.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 }
