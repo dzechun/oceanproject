@@ -21,10 +21,10 @@
     select  ss.signature_id,ss.signature_code,ss.material_id,sm.material_code as materialCode,sm.material_name as materialName,
     sm.version,sm.material_desc as materialDesc,ss.supplier_id,ss.status,ss.create_user_id,u.user_name as createUserName,
     ss.create_time,ss.modified_user_id,s.user_name as modifiedUserName,ss.modified_time, ss.is_delete
-    from smt_signature ss
-    left join smt_material sm on ss.material_id=sm.material_id
-    left join smt_user u on ss.create_user_id=u.user_id
-    left join smt_user s on ss.modified_user_id=s.user_id
+    from fantech_imes.smt_signature ss
+    left join fantech_imes.smt_material sm on ss.material_id=sm.material_id
+    left join ocean.sys_user u on ss.create_user_id=u.user_id
+    left join ocean.sys_user s on ss.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

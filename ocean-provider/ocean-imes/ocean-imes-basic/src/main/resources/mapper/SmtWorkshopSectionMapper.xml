@@ -20,9 +20,9 @@
     select ws.section_id, ws.section_code, ws.section_name, ws.section_desc,
     ws.status, ws.create_user_id,u.user_name as createUserName,ws.create_time,ws.modified_user_id,
     s.user_name as modifiedUserName, ws.modified_time,ws.is_delete
-    from smt_workshop_section ws
-    left join smt_user u on ws.create_user_id=u.user_id
-    left join smt_user s on ws.modified_user_id=s.user_id
+    from fantech_imes.smt_workshop_section ws
+    left join ocean.sys_user u on ws.create_user_id=u.user_id
+    left join ocean.sys_user s on ws.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">

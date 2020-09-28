@@ -25,9 +25,9 @@
   <select id="selectHtDepts" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
     select shd.ht_dept_id, shd.dept_id,shd.dept_code, shd.dept_name, shd.dept_desc, shd.factory_id, shd.status, shd.create_user_id,
     u.user_name as createUserName,shd.create_time,shd.modified_user_id, s.user_name as modifiedUserName, shd.modified_time
-    from smt_ht_dept shd
-    left join smt_user u on shd.create_user_id=u.user_id
-    left join smt_user s on shd.modified_user_id=s.user_id
+    from fantech_imes.smt_ht_dept shd
+    left join ocean.sys_user u on shd.create_user_id=u.user_id
+    left join ocean.sys_user s on shd.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

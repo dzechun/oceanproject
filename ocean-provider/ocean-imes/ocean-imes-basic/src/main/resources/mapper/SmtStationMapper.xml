@@ -24,11 +24,11 @@
     select  ss.station_id,ss.station_code,ss.station_name,ss.station_desc,ss.process_id,sp.process_name as processName,ss.section_id,
     sws.section_name as sectionName,ss.status,ss.if_pass_station,ss.create_user_id,u.user_name as createUserName,ss.create_time,
     ss.modified_user_id, s.user_name as modifiedUserName,ss.modified_time, ss.is_delete
-    from smt_station ss
-    left join smt_process sp on ss.process_id=sp.process_id
-    left join smt_workshop_section sws on ss.section_id=sws.section_id
-    left join smt_user u on ss.create_user_id=u.user_id
-    left join smt_user s on ss.modified_user_id=s.user_id
+    from fantech_imes.smt_station ss
+    left join fantech_imes.smt_process sp on ss.process_id=sp.process_id
+    left join fantech_imes.smt_workshop_section sws on ss.section_id=sws.section_id
+    left join ocean.sys_user u on ss.create_user_id=u.user_id
+    left join ocean.sys_user s on ss.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

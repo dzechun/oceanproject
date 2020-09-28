@@ -23,13 +23,13 @@
     sm.material_code as materialCode,sm.material_name as materialName,sm.version,sm.material_desc as materialDesc,ssm.warehouse_id,sw.warehouse_name as warehouseName,
     ssm.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,ssm.status,ssm.create_user_id,u.user_name as createUserName,ssm.create_time,ssm.modified_user_id,
     s.user_name as modifiedUserName,ssm.modified_time, ssm.is_delete
-    from smt_storage_material ssm
-    left join smt_storage ss on ssm.storage_id=ss.storage_id
-    left join smt_material sm on ssm.material_id=sm.material_id
-    left join smt_warehouse sw on ssm.warehouse_id=sw.warehouse_id
-    left join smt_warehouse_area swa on ssm.warehouse_area_id=swa.warehouse_area_id
-    left join smt_user u on ss.create_user_id=u.user_id
-    left join smt_user s on ss.modified_user_id=s.user_id
+    from fantech_imes.smt_storage_material ssm
+    left join fantech_imes.smt_storage ss on ssm.storage_id=ss.storage_id
+    left join fantech_imes.smt_material sm on ssm.material_id=sm.material_id
+    left join fantech_imes.smt_warehouse sw on ssm.warehouse_id=sw.warehouse_id
+    left join fantech_imes.smt_warehouse_area swa on ssm.warehouse_area_id=swa.warehouse_area_id
+    left join ocean.sys_user u on ss.create_user_id=u.user_id
+    left join ocean.sys_user s on ss.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

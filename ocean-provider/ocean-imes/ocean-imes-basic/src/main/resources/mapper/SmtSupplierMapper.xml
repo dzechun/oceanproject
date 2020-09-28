@@ -20,9 +20,9 @@
     select su.supplier_id, su.supplier_code, su.supplier_name, su.supplier_desc,
     su.status, su.create_user_id,u.user_name as createUserName,su.create_time,su.modified_user_id,
     s.user_name as modifiedUserName, su.modified_time,su.is_delete
-    from smt_supplier su
-    left join smt_user u on su.create_user_id=u.user_id
-    left join smt_user s on su.modified_user_id=s.user_id
+    from fantech_imes.smt_supplier su
+    left join ocean.sys_user u on su.create_user_id=u.user_id
+    left join ocean.sys_user s on su.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">

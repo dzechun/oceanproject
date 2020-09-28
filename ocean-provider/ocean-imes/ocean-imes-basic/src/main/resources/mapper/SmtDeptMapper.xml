@@ -26,10 +26,10 @@
     select sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id,f.factory_name as factoryName,
     sd.status, sd.create_user_id,u.user_name as createUserName,sd.create_time,sd.modified_user_id,
     s.user_name as modifiedUserName, sd.modified_time,sd.is_delete
-    from smt_dept sd
-    left join smt_user u on sd.create_user_id=u.user_id
-    left join smt_user s on sd.modified_user_id=s.user_id
-    left join smt_factory f on sd.factory_id=f.factory_id
+    from fantech_imes.smt_dept sd
+    left join ocean.sys_user u on sd.create_user_id=u.user_id
+    left join ocean.sys_user s on sd.modified_user_id=s.user_id
+    left join fantech_imes.smt_factory f on sd.factory_id=f.factory_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

@@ -21,9 +21,9 @@
     select wts.ht_section_id,wts.section_id, wts.section_code, wts.section_name, wts.section_desc,
     wts.status, wts.create_user_id,u.user_name as createUserName,wts.create_time,wts.modified_user_id,
     s.user_name as modifiedUserName, wts.modified_time,wts.is_delete
-    from smt_ht_workshop_section wts
-    left join smt_user u on wts.create_user_id=u.user_id
-    left join smt_user s on wts.modified_user_id=s.user_id
+    from fantech_imes.smt_ht_workshop_section wts
+    left join ocean.sys_user u on wts.create_user_id=u.user_id
+    left join ocean.sys_user s on wts.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">

@@ -27,11 +27,11 @@
     select spl.pro_line_id,spl.pro_code, spl.pro_name, spl.pro_desc, spl.factory_id, f.factory_name as factoryName,
     spl.work_shop_id,ws.work_shop_name as workShopName, spl.status, spl.create_user_id,u.user_name as createUserName,
     spl.create_time, spl.modified_user_id,s.user_name as modifiedUserName,spl.modified_time,spl.is_delete
-    from smt_pro_line spl
-    left join smt_user u on spl.create_user_id=u.user_id
-    left join smt_user s on spl.modified_user_id=s.user_id
-    left join smt_factory f on spl.factory_id=f.factory_id
-    left join smt_work_shop ws on  spl.work_shop_id= ws.work_shop_id
+    from fantech_imes.smt_pro_line spl
+    left join ocean.sys_user u on spl.create_user_id=u.user_id
+    left join ocean.sys_user s on spl.modified_user_id=s.user_id
+    left join fantech_imes.smt_factory f on spl.factory_id=f.factory_id
+    left join fantech_imes.smt_work_shop ws on  spl.work_shop_id= ws.work_shop_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
