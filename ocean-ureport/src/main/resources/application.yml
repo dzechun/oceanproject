@@ -1,0 +1,17 @@
+server:
+  port: 8769
+  max-http-header-size: 10000000
+
+spring:
+  profiles:
+    include: dev
+  application:
+    name: @pom.artifactId@
+  type: com.alibaba.druid.pool.DruidDataSource
+  datasource:
+    url: jdbc:mysql://10.182.163.191:3306/ocean?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&tinyInt1isBit=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  main:
+    allow-bean-definition-overriding: true
