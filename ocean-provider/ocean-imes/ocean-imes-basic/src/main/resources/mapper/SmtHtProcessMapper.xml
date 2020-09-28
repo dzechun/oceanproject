@@ -23,10 +23,10 @@
     select  shp.ht_process_id,shp.process_id,shp.process_code,shp.process_name,shp.process_desc,shp.section_id,sws.section_name as sectionName,
     shp.status,shp.create_user_id,u.user_name as createUserName,shp.create_time,shp.modified_user_id,s.user_name as modifiedUserName,
     shp.modified_time, shp.is_delete
-    from smt_ht_process shp
+    from fantech_imes.smt_ht_process shp
     left join smt_workshop_section sws on shp.section_id=sws.section_id
-    left join smt_user u on shp.create_user_id=u.user_id
-    left join smt_user s on shp.modified_user_id=s.user_id
+    left join ocean.sys_user u on shp.create_user_id=u.user_id
+    left join ocean.sys_user s on shp.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

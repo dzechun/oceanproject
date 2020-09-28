@@ -26,9 +26,9 @@
     select shpm.ht_product_model_id, shpm.product_model_id,shpm.product_model_code, shpm.product_model_name, shpm.product_model_desc,
     shpm.status, shpm.create_user_id, u.user_name as createUserName,shpm.create_time, shpm.modified_user_id,
     s.user_name as modifiedUserName,shpm.modified_time
-    from smt_ht_product_model shpm
-    left join smt_user u on shpm.create_user_id=u.user_id
-    left join smt_user s on shpm.modified_user_id=s.user_id
+    from fantech_imes.smt_ht_product_model shpm
+    left join ocean.sys_user u on shpm.create_user_id=u.user_id
+    left join ocean.sys_user s on shpm.modified_user_id=s.user_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

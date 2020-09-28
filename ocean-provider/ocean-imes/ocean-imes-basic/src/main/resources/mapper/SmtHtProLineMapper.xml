@@ -28,11 +28,11 @@
     select shpl.ht_pro_line_id,shpl.pro_line_id,shpl.pro_code, shpl.pro_name, shpl.pro_desc, shpl.factory_id,f.factory_name as factoryName,
     shpl.work_shop_id, ws.work_shop_name as workShopName,shpl.status, shpl.create_user_id,
     u.user_name as createUserName,shpl.create_time, shpl.modified_user_id,s.user_name as modifiedUserName,shpl.modified_time
-    from smt_ht_pro_line shpl
-    left join smt_user u on shpl.create_user_id=u.user_id
-    left join smt_user s on shpl.modified_user_id=s.user_id
-    left join smt_factory f on shpl.factory_id=f.factory_id
-    left join smt_work_shop ws on  shpl.work_shop_id= ws.work_shop_id
+    from fantech_imes.smt_ht_pro_line shpl
+    left join ocean.sys_user u on shpl.create_user_id=u.user_id
+    left join ocean.sys_user s on shpl.modified_user_id=s.user_id
+    left join fantech_imes.smt_factory f on shpl.factory_id=f.factory_id
+    left join fantech_imes.smt_work_shop ws on  shpl.work_shop_id= ws.work_shop_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

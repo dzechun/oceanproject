@@ -40,10 +40,10 @@
     shm.if_linking_board, shm.linking_board_number,shm.status, shm.customer_material_code, shm.min_package_number,
     shm.create_user_id, u.user_name as createUserName,shm.create_time,shm.modified_user_id, s.user_name as modifiedUserName,
     shm.modified_time
-    from smt_ht_material shm
-    left join smt_user u on shm.create_user_id=u.user_id
-    left join smt_user s on shm.modified_user_id=s.user_id
-    left join smt_product_model spm on shm.product_model_id=spm.product_model_id
+    from fantech_imes.smt_ht_material shm
+    left join ocean.sys_user u on shm.create_user_id=u.user_id
+    left join ocean.sys_user s on shm.modified_user_id=s.user_id
+    left join fantech_imes.smt_product_model spm on shm.product_model_id=spm.product_model_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

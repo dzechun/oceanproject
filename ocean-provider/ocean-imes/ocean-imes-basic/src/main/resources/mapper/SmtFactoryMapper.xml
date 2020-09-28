@@ -30,9 +30,9 @@
   <select id="findList"  resultMap="BaseResultMapDto" parameterType="map">
     select
     <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    from smt_factory sf
-    LEFT JOIN smt_user su  ON sf.create_user_id = su.user_id
-    LEFT JOIN smt_user sus ON sf.modified_user_id = sus.user_id
+    from fantech_imes.smt_factory sf
+    LEFT JOIN ocean.sys_user su  ON sf.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON sf.modified_user_id = sus.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
