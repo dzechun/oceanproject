@@ -33,10 +33,10 @@
         and wts.section_code like CONCAT('%', #{sectionCode}, '%')
       </if>
       <if test="sectionName!=null and sectionName!=''">
-        and wts.sectionName like CONCAT('%', #{sectionName}, '%')
+        and wts.section_name like CONCAT('%', #{sectionName}, '%')
       </if>
       <if test="sectionDesc!=null and sectionDesc!=''">
-        and wts.sectionDesc like CONCAT('%', #{sectionDesc}, '%')
+        and wts.section_desc like CONCAT('%', #{sectionDesc}, '%')
       </if>
     </where>
   </select>
