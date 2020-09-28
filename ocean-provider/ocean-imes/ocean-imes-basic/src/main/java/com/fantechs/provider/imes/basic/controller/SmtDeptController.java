@@ -100,7 +100,7 @@ public class SmtDeptController {
     @ApiOperation(value = "导出部门excel",notes = "导出部门excel")
     public void exportDepts(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtDept searchSmtDept){
-        List<SmtDept> list = smtDeptService.selectDepts(searchSmtDept);
+        List<SmtDept> list = smtDeptService.findList(searchSmtDept);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "部门信息导出", "部门信息", SmtDept.class, "部门信息.xls", response);
