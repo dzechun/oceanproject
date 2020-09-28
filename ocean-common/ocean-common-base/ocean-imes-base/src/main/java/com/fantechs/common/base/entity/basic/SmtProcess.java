@@ -57,7 +57,7 @@ public class SmtProcess implements Serializable {
     @Transient
     @ApiModelProperty(name="sectionName" ,value="工段名称")
     @Excel(name = "工段名称", height = 20, width = 30)
-    private Long sectionName;
+    private String sectionName;
 
     /**
      * 状态(0无效，1有效)
