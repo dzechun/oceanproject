@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface SysSpecItemService extends IService<SysSpecItem> {
     //通过条件查询配置项信息
-    List<SysSpecItem> selectSpecItems(SearchSysSpecItem searchSysSpecItem);
+    List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem);
 }

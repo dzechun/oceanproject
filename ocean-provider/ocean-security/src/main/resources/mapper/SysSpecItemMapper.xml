@@ -21,7 +21,7 @@
     modified_time, is_delete, option1, option2, option3
   </sql>
 
-  <select id="selectSpecItems" parameterType="com.fantechs.common.base.entity.security.search.SearchSysSpecItem" resultMap="BaseResultMap">
+  <select id="findList" parameterType="com.fantechs.common.base.entity.security.search.SearchSysSpecItem" resultMap="BaseResultMap">
     select  si.spec_id, si.spec_code, si.spec_name, si.para, si.para_value, si.create_user_id, u.user_name as createUserName,
     si.create_time, si.modified_user_id,s.user_name as modifiedUserName,
     si.modified_time,si.is_delete

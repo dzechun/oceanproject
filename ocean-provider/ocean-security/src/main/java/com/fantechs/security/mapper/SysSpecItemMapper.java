@@ -10,5 +10,5 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;
 
 public interface SysSpecItemMapper extends MyMapper<SysSpecItem> {
-    List<SysSpecItem> selectSpecItems(SearchSysSpecItem searchSysSpecItem);
+    List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem);
 }

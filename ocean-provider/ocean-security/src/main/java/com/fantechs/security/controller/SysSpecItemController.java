@@ -42,10 +42,10 @@ public class SysSpecItemController {
 
     @ApiOperation("根据条件查询程序配置项列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SysSpecItem>> list(
+    public ResponseEntity<List<SysSpecItem>> findList(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
         Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
-        List<SysSpecItem> SysSpecItems = sysSpecItemService.selectSpecItems(searchSysSpecItem);
+        List<SysSpecItem> SysSpecItems = sysSpecItemService.findList(searchSysSpecItem);
         return ControllerUtil.returnDataSuccess(SysSpecItems,(int)page.getTotal());
     }
 
@@ -99,7 +99,7 @@ public class SysSpecItemController {
     @ApiOperation(value = "导出程序配置项excel",notes = "导出程序配置项excel")
     public void exportSpecItems(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                             @RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
-        List<SysSpecItem> list = sysSpecItemService.selectSpecItems(searchSysSpecItem);
+        List<SysSpecItem> list = sysSpecItemService.findList(searchSysSpecItem);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "程序配置项信息导出", "程序配置项信息", SysSpecItem.class, "程序配置项信息.xls", response);

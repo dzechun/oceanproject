@@ -32,8 +32,8 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     private SysHtSpecItemMapper SysHtSpecItemMapper;
 
     @Override
-    public List<SysSpecItem> selectSpecItems(SearchSysSpecItem searchSysSpecItem) {
-        return sysSpecItemMapper.selectSpecItems(searchSysSpecItem);
+    public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
+        return sysSpecItemMapper.findList(searchSysSpecItem);
     }
 
     @Override
