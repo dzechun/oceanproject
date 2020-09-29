@@ -49,7 +49,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("warehouseCode",smtWarehouse.getWarehouseCode());
         List<SmtWarehouse> smtWarehouses = smtWarehouseMapper.selectByExample(example);
-        if(null!=smtWarehouses&&smtWarehouses.size()>0){
+        if(StringUtils.isNotEmpty(smtWarehouses)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

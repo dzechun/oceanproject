@@ -52,7 +52,7 @@ public class SmtStationServiceImpl  extends BaseService<SmtStation> implements S
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("stationCode",smtStation.getStationCode());
         List<SmtStation> smtStations = smtStationMapper.selectByExample(example);
-        if(null!=smtStations&&smtStations.size()>0){
+        if(StringUtils.isNotEmpty(smtStations)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

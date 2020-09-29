@@ -49,7 +49,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("proCode",smtProLine.getProCode());
         List<SmtProLine> smtProLines = smtProLineMapper.selectByExample(example);
-        if(null!=smtProLines&&smtProLines.size()>0){
+        if(StringUtils.isNotEmpty(smtProLines)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
