@@ -75,7 +75,7 @@ public class ${modelNameUpperCamel}Controller {
     @PostMapping("/findHtList")
     public ResponseEntity<List<${modelNameUpperCamel}>> findHtList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
         Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
-        List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(searchSmtStorage);
+        List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(search${modelNameUpperCamel});
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
