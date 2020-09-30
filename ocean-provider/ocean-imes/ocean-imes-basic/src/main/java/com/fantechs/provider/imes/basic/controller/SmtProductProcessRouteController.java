@@ -91,6 +91,18 @@ public class SmtProductProcessRouteController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchSmtProductProcessRoute searchSmtProductProcessRoute){
     List<SmtProductProcessRoute> list = smtProductProcessRouteService.findList(searchSmtProductProcessRoute);
+        for (SmtProductProcessRoute smtProductProcessRoute : list) {
+            Integer productType = smtProductProcessRoute.getProductType();
+            if(productType==0){
+                smtProductProcessRoute.setProductName("*");
+            }else if (productType==1){
+                smtProductProcessRoute.setProductName(smtProductProcessRoute.getProName());
+            }else if (productType==2){
+                smtProductProcessRoute.setProductName(smtProductProcessRoute.getProductModelCode());
+            }else if (productType==3){
+                smtProductProcessRoute.setProductName(smtProductProcessRoute.getMaterialCode());
+            }
+        }
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出产品工艺路线信息", "产品工艺路线信息", SmtProductProcessRoute.class, "产品工艺路线信息.xls", response);

@@ -30,6 +30,14 @@ public class SmtProductProcessRoute {
     private Integer productType;
 
     /**
+     *  产品名称
+     */
+    @Transient
+    @ApiModelProperty(name="productName" ,value="产品名称")
+    @Excel(name = "产品名称", height = 20, width = 30)
+    private String productName;
+
+    /**
      * 线别ID
      */
     @Column(name = "pro_line_id")
