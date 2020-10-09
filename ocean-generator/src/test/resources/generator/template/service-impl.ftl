@@ -12,4 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ${modelNameUpperCamel}ServiceImpl  extends BaseService<${modelNameUpperCamel}> implements ${modelNameUpperCamel}Service {
 
+         @Resource
+         private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
 }
