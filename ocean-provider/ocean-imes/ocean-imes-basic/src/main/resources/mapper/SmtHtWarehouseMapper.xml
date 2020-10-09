@@ -40,5 +40,6 @@
         and shw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
       </if>
     </where>
+    order by shw.create_time desc
   </select>
 </mapper>

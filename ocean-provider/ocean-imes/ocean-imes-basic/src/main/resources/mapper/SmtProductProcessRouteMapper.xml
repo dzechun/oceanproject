@@ -61,6 +61,7 @@
         and sppr.route_id=#{routeId}
       </if>
     </where>
+    order by sppr.create_time desc
   </select>
 
 </mapper>

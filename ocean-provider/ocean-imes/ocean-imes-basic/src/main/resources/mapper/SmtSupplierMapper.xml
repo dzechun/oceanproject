@@ -38,5 +38,6 @@
         and su.supplier_desc like CONCAT('%', #{supplierDesc}, '%')
       </if>
     </where>
+    order by su.create_time desc
   </select>
 </mapper>

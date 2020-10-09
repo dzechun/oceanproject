@@ -44,5 +44,6 @@
         and sp.section_id=#{sectionId}
       </if>
     </where>
+    order by sp.create_time desc
   </select>
 </mapper>

@@ -59,5 +59,6 @@
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
     </where>
+    order by sm.create_time desc
   </select>
 </mapper>

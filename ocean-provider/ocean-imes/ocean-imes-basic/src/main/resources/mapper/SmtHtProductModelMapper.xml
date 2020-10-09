@@ -41,5 +41,6 @@
         and shpm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
       </if>
     </where>
+    order by shpm.create_time desc
   </select>
 </mapper>

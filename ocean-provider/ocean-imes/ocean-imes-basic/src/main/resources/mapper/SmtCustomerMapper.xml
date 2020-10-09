@@ -39,5 +39,6 @@
         and sc.customer_desc like CONCAT('%', #{customerDesc}, '%')
       </if>
     </where>
+    order by sc.create_time desc
   </select>
 </mapper>
