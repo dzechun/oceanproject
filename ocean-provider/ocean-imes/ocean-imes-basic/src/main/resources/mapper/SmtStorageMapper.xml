@@ -50,5 +50,6 @@
         and ss.warehouseAreaId=#{warehouseAreaId}
       </if>
     </where>
+    order by ss.create_time desc
   </select>
 </mapper>

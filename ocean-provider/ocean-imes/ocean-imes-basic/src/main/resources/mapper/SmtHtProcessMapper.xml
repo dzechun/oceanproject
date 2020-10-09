@@ -45,5 +45,6 @@
         and shp.section_id=#{sectionId}
       </if>
     </where>
+    order by shp.create_time desc
   </select>
 </mapper>

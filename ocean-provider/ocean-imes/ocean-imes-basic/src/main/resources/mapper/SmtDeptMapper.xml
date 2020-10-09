@@ -48,5 +48,6 @@
         and sd.factory_id=#{factoryId}
       </if>
     </where>
+    order by sd.create_time desc
   </select>
 </mapper>

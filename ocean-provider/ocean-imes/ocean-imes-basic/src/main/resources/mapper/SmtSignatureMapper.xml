@@ -37,5 +37,6 @@
         and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
       </if>
     </where>
+    order by ss.create_time desc
   </select>
 </mapper>

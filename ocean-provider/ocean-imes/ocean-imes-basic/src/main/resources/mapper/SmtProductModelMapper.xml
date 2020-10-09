@@ -40,5 +40,6 @@
         and spm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
       </if>
     </where>
+    order by spm.create_time desc
   </select>
 </mapper>

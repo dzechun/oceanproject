@@ -50,5 +50,6 @@
         and ss.section_id=#{sectionId}
       </if>
     </where>
+    order by ss.create_time desc
   </select>
 </mapper>

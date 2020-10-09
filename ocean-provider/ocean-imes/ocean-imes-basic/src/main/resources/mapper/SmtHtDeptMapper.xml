@@ -43,5 +43,6 @@
         and shd.dept_desc like CONCAT('%', #{deptDesc}, '%')
       </if>
     </where>
+    order by shd.create_time desc
   </select>
 </mapper>

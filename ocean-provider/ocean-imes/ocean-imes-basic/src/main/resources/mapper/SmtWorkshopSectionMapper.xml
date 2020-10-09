@@ -38,5 +38,6 @@
         and ws.section_desc like CONCAT('%', #{sectionDesc}, '%')
       </if>
     </where>
+    order by ws.create_time desc
   </select>
 </mapper>

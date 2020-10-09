@@ -48,5 +48,6 @@
         and shpl.pro_desc like CONCAT('%', #{proDesc}, '%')
       </if>
     </where>
+    order by shpl.create_time desc
   </select>
 </mapper>

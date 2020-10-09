@@ -47,5 +47,6 @@
         and spl.pro_desc like CONCAT('%', #{proDesc}, '%')
       </if>
     </where>
+    order by spl.create_time desc
   </select>
 </mapper>
