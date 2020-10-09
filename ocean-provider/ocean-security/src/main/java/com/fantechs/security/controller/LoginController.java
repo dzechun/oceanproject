@@ -45,10 +45,10 @@ public class LoginController {
         return  responseEntity;
     }
 
-    @ApiIgnore
     @GetMapping("/logout")
-    public String toLogin(HttpServletRequest request){
-        return "/logout";
+    public ResponseEntity logout(HttpServletRequest request){
+        ResponseEntity responseEntity = loginFeignApi.logout();
+        return responseEntity;
     }
 
     @ApiIgnore

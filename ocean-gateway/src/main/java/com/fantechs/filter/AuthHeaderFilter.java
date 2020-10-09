@@ -39,7 +39,8 @@ public class AuthHeaderFilter extends ZuulFilter {
 
 	//排除过滤的 uri 地址
 	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/refreshtoken," +
-			"/ocean-security/userinfo";
+			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
+			",/ocean-fileserver/file/upload,/ocean-fileserver/file/uploadToSVG";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
 	/**

@@ -20,3 +20,11 @@ fdfs:
     width: 150
     height: 150
   tracker-list: 10.182.163.91:22122
+
+
+baidubce:
+    grant_type: client_credentials
+    client_id: PdVKjgrCFE5wKDV2UaeO0CEO
+    client_secret: x9x1fIKVYorAUHdH1H4ffIZj59ecquqF
+    oauth_url: https://aip.baidubce.com/oauth/2.0/token
+    rimage_process_url: https://aip.baidubce.com/rest/2.0/image-process/v1/style_trans

@@ -20,8 +20,12 @@ public interface LoginFeignApi {
     @PostMapping(value = "/login")
     ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password);
 
+
+    @GetMapping(value = "/logout")
+    ResponseEntity logout();
+
     @GetMapping("/sysUser/detail")
     @ApiOperation(value = "通过ID获取单个用户信息",notes = "通过ID获取单个用户信息")
-    ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId", required = true) @RequestParam Long id);
+    ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId", required = true) @RequestParam(value="id") Long id);
 
 }
