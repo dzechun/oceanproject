@@ -9,7 +9,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
+import com.fantechs.common.base.utils.FileCheckUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.security.service.SysHtSpecItemService;
 import com.fantechs.security.service.SysSpecItemService;
 import com.github.pagehelper.Page;
@@ -19,10 +21,17 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: wcz
@@ -39,6 +48,8 @@ public class SysSpecItemController {
     private SysSpecItemService sysSpecItemService;
     @Autowired
     private SysHtSpecItemService sysHtSpecItemService;
+    @Autowired
+    private FileFeignApi fileFeignApi;
 
     @ApiOperation("根据条件查询程序配置项列表")
     @PostMapping("/findList")
@@ -114,6 +125,24 @@ public class SysSpecItemController {
         Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
         List<SysHtSpecItem> SysHtSpecItems = sysHtSpecItemService.findHtSpecItemList(ControllerUtil.dynamicConditionByEntity(searchSysSpecItem));
         return  ControllerUtil.returnDataSuccess(SysHtSpecItems, (int)page.getTotal());
+    }
+
+    /**
+     * 上传单个文件
+     * @param
+     * @return
+     * @throws IOException
+     */
+    @ApiOperation("文件上传")
+    @PostMapping(value="/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity uploadFile(@ApiParam(value = "文件必传",required = true) @RequestPart(value = "file") MultipartFile file,
+                                             @ApiParam(value = "传入主键specId",required = true) @RequestParam Long id) throws IOException {
+        ResponseEntity responseEntity = fileFeignApi.fileUpload(file);
+        Map data = (Map) responseEntity.getData();
+        Object url = data.get("url");
+        SysSpecItem sysSpecItem = sysSpecItemService.selectByKey(id);
+        sysSpecItem.setParaValue(url.toString());
+        return  ControllerUtil.returnCRUD(sysSpecItemService.update(sysSpecItem));
     }
 }
 
