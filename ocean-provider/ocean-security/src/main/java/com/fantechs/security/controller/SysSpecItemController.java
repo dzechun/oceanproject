@@ -9,7 +9,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
-import com.fantechs.common.base.utils.FileCheckUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.security.service.SysHtSpecItemService;
@@ -23,13 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
