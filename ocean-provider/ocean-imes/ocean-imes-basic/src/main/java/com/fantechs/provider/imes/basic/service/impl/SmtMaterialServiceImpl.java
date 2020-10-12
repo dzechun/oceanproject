@@ -49,6 +49,9 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         Example example = new Example(SmtMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
+        if(StringUtils.isNotEmpty(smtMaterial.getVersion())){
+            criteria.andEqualTo("version",smtMaterial.getVersion());
+        }
         List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(smtMaterials)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -73,6 +76,9 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         Example example = new Example(SmtMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
+        if(StringUtils.isNotEmpty(smtMaterial.getVersion())){
+            criteria.andEqualTo("version",smtMaterial.getVersion());
+        }
         SmtMaterial material = smtMaterialMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(material)&&!material.getMaterialId().equals(smtMaterial.getMaterialId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
