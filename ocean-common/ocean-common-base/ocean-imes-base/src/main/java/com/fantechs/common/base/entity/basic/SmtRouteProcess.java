@@ -7,10 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Table(name = "smt_route_process")
 @Data
-public class SmtRouteProcess {
+public class SmtRouteProcess implements Serializable {
+    private static final long serialVersionUID = 5370182907126666486L;
     /**
      * 工艺路线与工艺关系ID
      */

@@ -20,6 +20,7 @@ public class SmtHtRoute implements Serializable {
      */
     @Id
     @Column(name = "ht_route_id")
+    @ApiModelProperty(name="htRouteId" ,value="工艺路线历史ID")
     private Long htRouteId;
 
     /**
