@@ -132,6 +132,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int addUser(Long roleId, List<Long> userIds) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();

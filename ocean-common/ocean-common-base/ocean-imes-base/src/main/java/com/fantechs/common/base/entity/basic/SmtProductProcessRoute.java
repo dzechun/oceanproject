@@ -25,7 +25,7 @@ public class SmtProductProcessRoute {
      * 产品类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)
      */
     @Column(name = "product_type")
-    @ApiModelProperty(name="productType" ,value="产品类别")
+    @ApiModelProperty(name="productType" ,value="产品类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)")
     @Excel(name = "产品类别", height = 20, width = 30,replace = {"All(*)_0", "线别_1","产品型号_2","产品料号_3"})
     private Integer productType;
 

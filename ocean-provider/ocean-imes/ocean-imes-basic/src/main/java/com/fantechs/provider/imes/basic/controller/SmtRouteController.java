@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.entity.basic.SmtRoute;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -8,6 +9,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.service.SmtHtRouteService;
+import com.fantechs.provider.imes.basic.service.SmtRouteProcessService;
 import com.fantechs.provider.imes.basic.service.SmtRouteService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -33,6 +35,8 @@ public class SmtRouteController {
     private SmtRouteService smtRouteService;
     @Autowired
     private SmtHtRouteService smtHtRouteService;
+    @Autowired
+    private SmtRouteProcessService smtRouteProcessService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -95,5 +99,18 @@ public class SmtRouteController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @PostMapping(value = "/configureRout")
+    @ApiOperation(value = "配置工艺路线",notes = "配置工艺路线")
+    public ResponseEntity configureRout(@RequestBody List<SmtRouteProcess> list){
+        return ControllerUtil.returnCRUD(smtRouteProcessService.configureRout(list));
+    }
+
+    @PostMapping(value = "/findConfigureRout")
+    @ApiOperation(value = "查询配置的工艺路线信息",notes = "查询配置的工艺路线信息")
+    public ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@RequestParam Long routeId){
+        List<SmtRouteProcess> list = smtRouteProcessService.findConfigureRout(routeId);
+        return ControllerUtil.returnDataSuccess("查询成功",list);
     }
 }
