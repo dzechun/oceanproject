@@ -2,25 +2,29 @@ package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_factory")
 @Data
-public class SmtFactory implements Serializable {
+public class SmtFactory extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = -2911021021255393740L;
+
     /**
      * id
      */
     @Id
     @Column(name = "factory_id")
     @ApiModelProperty(name="factoryId" ,value="厂别id")
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(groups = update.class,message = "厂别id不能为空")
     private Long factoryId;
 
     /**
@@ -28,6 +32,7 @@ public class SmtFactory implements Serializable {
      */
     @Column(name = "factory_code")
     @Excel(name = "工厂编码",  height = 20, width = 30, orderNum="1")
+    @NotBlank(message = "厂别编码不能为空")
     @ApiModelProperty(name="factoryCode" ,value="厂别编码")
     private String factoryCode;
 
@@ -35,6 +40,7 @@ public class SmtFactory implements Serializable {
      * 工厂名称
      */
     @Column(name = "factory_name")
+    @NotBlank(message = "厂别名称不能为空")
     @Excel(name = "工厂名称", height = 20, width = 30 ,orderNum="2")
     @ApiModelProperty(name="factoryName" ,value="厂别名称")
     private String factoryName;

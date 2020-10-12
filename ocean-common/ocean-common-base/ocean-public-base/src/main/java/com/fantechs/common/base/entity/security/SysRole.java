@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.security;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "sys_role")
 @Data
-public class SysRole implements Serializable {
+public class SysRole extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -6986029074414768572L;
     /**
      * id
@@ -18,6 +21,7 @@ public class SysRole implements Serializable {
     @Id
     @Column(name = "role_id")
     @ApiModelProperty(name="roleId" ,value="角色id")
+    @NotNull(groups = update.class,message ="角色Id不能为空" )
     private Long roleId;
 
     /**
@@ -25,6 +29,7 @@ public class SysRole implements Serializable {
      */
     @Column(name = "role_code")
     @ApiModelProperty(name="roleCode" ,value="角色编码")
+    @NotBlank(message = "角色编码不能为空")
     private String roleCode;
 
     /**
@@ -32,6 +37,7 @@ public class SysRole implements Serializable {
      */
     @Column(name = "role_name")
     @ApiModelProperty(name="roleName" ,value="角色名称")
+    @NotBlank(message = "角色名称不能为空")
     private String roleName;
 
     /**

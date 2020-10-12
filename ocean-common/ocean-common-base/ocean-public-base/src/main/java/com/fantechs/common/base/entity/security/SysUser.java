@@ -2,6 +2,7 @@ package com.fantechs.common.base.entity.security;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,10 +10,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "sys_user")
 @Data
-public class SysUser implements Serializable {
+public class SysUser extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -3448406995774680062L;
     /**
      * 用户ID
@@ -20,7 +23,7 @@ public class SysUser implements Serializable {
     @Id
     @Column(name = "user_id")
     @ApiModelProperty(name="userId" ,value="用户id")
-    @GeneratedValue(strategy =GenerationType.IDENTITY)
+    @NotNull(groups= update.class,message = "用户Id不能为空")
     private Long userId;
 
     /**
@@ -29,6 +32,7 @@ public class SysUser implements Serializable {
     @Column(name = "user_name")
     @ApiModelProperty(name="userName" ,value="用户帐号")
     @Excel(name="用户帐号")
+    @NotBlank(message = "用户帐号不能为空")
     private String userName;
 
     /**
@@ -37,6 +41,7 @@ public class SysUser implements Serializable {
     @Column(name = "user_code")
     @ApiModelProperty(name="userCode" ,value="用户编码")
     @Excel(name="用户编码")
+    @NotBlank(message = "用户编码不能为空")
     private String userCode;
 
     /**
@@ -52,6 +57,7 @@ public class SysUser implements Serializable {
      */
     @ApiModelProperty(name="password" ,value="密码")
     @Excel(name="密码")
+    @NotBlank(message = "用户密码不能为空")
     private String password;
 
     /**
@@ -59,7 +65,6 @@ public class SysUser implements Serializable {
      */
     @ApiModelProperty(name="status" ,value="用户状态(0-无效 1-有效)")
     @Excel(name="状态",replace = {"无效_0", "有效_1"})
-    //@Excel(name="状态")
     private Integer status;
 
     /**

@@ -143,18 +143,14 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         Example example = new Example(SysUserRole.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("roleId",roleId);
-        int i = sysUserRoleMapper.deleteByExample(example);
+        sysUserRoleMapper.deleteByExample(example);
 
-        if(StringUtils.isNotEmpty(userIds)){
-            for (Long userId : userIds) {
-                SysUserRole sysUserRole=new SysUserRole();
-                sysUserRole.setUserId(userId);
-                sysUserRole.setRoleId(roleId);
-
-                list.add(sysUserRole);
-            }
-            sysUserRoleMapper.insertList(list);
+        for (Long userId : userIds) {
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUserId(userId);
+            sysUserRole.setRoleId(roleId);
+            list.add(sysUserRole);
         }
-        return i;
+        return sysUserRoleMapper.insertList(list);
     }
 }

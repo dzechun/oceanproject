@@ -20,10 +20,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -36,6 +39,7 @@ import java.util.List;
 @RequestMapping(value = "/sysUser")
 @Api(tags = "用户管理")
 @Slf4j
+@Validated
 public class SysUserController {
 
     @Autowired
@@ -57,41 +61,28 @@ public class SysUserController {
 
     @GetMapping("/detail")
     @ApiOperation(value = "通过ID获取单个用户信息",notes = "通过ID获取单个用户信息")
-    public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam Long id) {
+    public ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId",required = true) @RequestParam @NotNull(message = "id不能为空")Long id) {
         SysUser sysUser = sysUserService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(sysUser,StringUtils.isEmpty(sysUser)?0:1);
     }
 
     @ApiOperation("增加用户信息")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：account、userCode、userName、password、status",required = true)@RequestBody SysUser sysUser){
-        if(StringUtils.isEmpty(
-                sysUser.getUserCode(),
-                sysUser.getUserName(),
-                sysUser.getPassword(),
-                sysUser.getStatus())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity add(@ApiParam(value = "必传：account、userCode、userName、password、status",required = true)@RequestBody @Validated SysUser sysUser){
         return ControllerUtil.returnCRUD(sysUserService.save(sysUser));
     }
 
 
     @ApiOperation("修改用户信息")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "用户信息对象，用户信息Id必传",required = true)@RequestBody SysUser sysUser){
-        if(StringUtils.isEmpty(sysUser.getUserId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "用户信息对象，用户信息Id必传",required = true)@RequestBody @Validated(value = SysUser.update.class) SysUser sysUser){
         return ControllerUtil.returnCRUD(sysUserService.update(sysUser));
     }
 
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除用户信息",notes = "删除用户信息")
-    public ResponseEntity delUser(@ApiParam(value = "传入主键userId",required = true) @RequestBody String ids) {
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFail("缺少必需参数", ErrorCodeEnum.OPT20012002.getCode());
-        }
+    public ResponseEntity delUser(@ApiParam(value = "传入主键userId",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(sysUserService.batchDelete(ids));
     }
 

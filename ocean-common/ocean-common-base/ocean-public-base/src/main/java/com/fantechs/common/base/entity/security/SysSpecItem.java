@@ -2,6 +2,7 @@ package com.fantechs.common.base.entity.security;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,12 +10,14 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "sys_spec_item")
 @Data
-public class SysSpecItem implements Serializable {
+public class SysSpecItem extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = -4072661553411752786L;
     /**
@@ -23,6 +26,7 @@ public class SysSpecItem implements Serializable {
     @Id
     @Column(name = "spec_id")
     @ApiModelProperty(name="specId" ,value="配置项ID")
+    @NotNull(groups= update.class,message = "配置项Id不能为空")
     private Long specId;
 
     /**
@@ -31,6 +35,7 @@ public class SysSpecItem implements Serializable {
     @Column(name = "spec_code")
     @ApiModelProperty(name="specCode" ,value="配置项代码")
     @Excel(name = "配置项代码", height = 20, width = 30)
+    @NotBlank(message = "配置项代码不能为空")
     private String specCode;
 
     /**
@@ -39,6 +44,7 @@ public class SysSpecItem implements Serializable {
     @Column(name = "spec_name")
     @ApiModelProperty(name="specName" ,value="配置项名称")
     @Excel(name = "配置项名称", height = 20, width = 30)
+    @NotBlank(message = "配置项名称不能为空")
     private String specName;
 
     /**
@@ -47,6 +53,7 @@ public class SysSpecItem implements Serializable {
     @Column(name = "para")
     @ApiModelProperty(name="para" ,value="参数")
     @Excel(name = "参数", height = 20, width = 30)
+    @NotBlank(message = "配置项参数不能为空")
     private String para;
 
     /**

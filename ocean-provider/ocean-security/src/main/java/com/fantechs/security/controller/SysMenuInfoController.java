@@ -16,15 +16,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
 @Api(tags = "菜单管理（SysMenuinfo）",basePath = "menuinfo")
 @RequestMapping("/menuinfo")
 @Slf4j
+@Validated
 public class SysMenuInfoController {
 
     @Resource
@@ -35,7 +39,7 @@ public class SysMenuInfoController {
     @ApiOperation(value = "获取菜单列表",notes = "返回数据包含菜单对应的角色权限")
     @PostMapping("/findAllList")
     public ResponseEntity<List<SysMenuInListDTO>> getListAll(
-            @ApiParam(value = "菜单所属平台类型（1、WEB 2、Windos 3、PDA）")@RequestParam(required = true) Integer menuType){
+            @ApiParam(value = "菜单所属平台类型（1、WEB 2、Windos 3、PDA）")@RequestParam(required = true) @NotNull(message="菜单所属平台类型不能为空") Integer menuType){
         List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
                 "parentId","0",
                 "menuType",menuType
@@ -45,38 +49,19 @@ public class SysMenuInfoController {
 
     @ApiOperation("增加菜单")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：Ordernum、IsMenu、Menuname、MenuType、Parentid（如果没有父级传0）、Url、IsHide",required = true)@RequestBody SysMenuInfo sysMenuInfo){
-        if(StringUtils.isEmpty(
-                sysMenuInfo.getOrderNum(),
-                sysMenuInfo.getIsMenu(),
-                sysMenuInfo.getMenuName(),
-                sysMenuInfo.getParentId(),
-                sysMenuInfo.getUrl(),
-                sysMenuInfo.getMenuType())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity add(@ApiParam(value = "必传：orderNum、menuName、menuType、parentId（如果没有父级传0）",required = true)@RequestBody @Validated SysMenuInfo sysMenuInfo){
         return ControllerUtil.returnCRUD(sysMenuInfoService.save(sysMenuInfo));
     }
 
     @ApiOperation("删除菜单")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)@RequestBody String ids){
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "菜单ID",required = true)  @RequestParam  @NotBlank(message="ids不能为空")String ids){
         return ControllerUtil.returnCRUD(sysMenuInfoService.batchDelete(ids));
     }
 
     @ApiOperation("修改菜单")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "菜单对象，必传菜单对象ID",required = true)@RequestBody SysMenuInfo sysMenuInfo) {
-        if (StringUtils.isEmpty(sysMenuInfo.getMenuId(),
-                sysMenuInfo.getMenuCode(),
-                sysMenuInfo.getMenuType(),
-                sysMenuInfo.getParentId()
-        )) {
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "菜单对象，必传菜单对象ID",required = true)@RequestBody  @Validated(value =SysMenuInfo.update.class ) SysMenuInfo sysMenuInfo) {
         return ControllerUtil.returnCRUD(sysMenuInfoService.update(sysMenuInfo));
     }
 
@@ -91,10 +76,7 @@ public class SysMenuInfoController {
 
     @ApiOperation("菜单详情")
     @PostMapping("/detail")
-    public ResponseEntity<SysMenuInfoDto> getMenuDetail(@ApiParam(value = "菜单ID",required = true)@RequestParam Long id){
-        if(StringUtils.isEmpty(id)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity<SysMenuInfoDto> getMenuDetail(@ApiParam(value = "菜单ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id){
         SysMenuInfoDto sysMenuInfoDto = sysMenuInfoService.findById(id);
         return  ControllerUtil.returnDataSuccess(sysMenuInfoDto,StringUtils.isEmpty(sysMenuInfoDto)?0:1);
     }

@@ -1,16 +1,21 @@
 package com.fantechs.common.base.entity.security;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
 
 @Table(name = "sys_menuinfo")
 @Data
-public class SysMenuInfo implements Serializable {
+public class SysMenuInfo  extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 4102850805251035063L;
     /**
      * 菜单id
@@ -18,6 +23,7 @@ public class SysMenuInfo implements Serializable {
     @Id
     @Column(name = "menu_id")
     @ApiModelProperty(name = "menuId",value = "菜单id")
+    @NotNull(groups = update.class,message ="菜单Id不能为空" )
     private Long menuId;
 
     /**
@@ -25,6 +31,7 @@ public class SysMenuInfo implements Serializable {
      */
     @Column(name = "menu_code")
     @ApiModelProperty(name = "menuCode",value = "菜单编码")
+    @NotBlank(message = "菜单编码不能为空")
     private String menuCode;
 
     /**
@@ -32,6 +39,7 @@ public class SysMenuInfo implements Serializable {
      */
     @Column(name = "menu_name")
     @ApiModelProperty(name = "menuName",value = "菜单名称")
+    @NotBlank(message = "菜单名称不能为空")
     private String menuName;
 
     /**
@@ -39,6 +47,7 @@ public class SysMenuInfo implements Serializable {
      */
     @Column(name = "order_num")
     @ApiModelProperty(name = "orderNum",value = "菜单顺序")
+    @NotNull(message ="菜单顺序不能为空" )
     private Integer orderNum;
 
     /**
@@ -46,6 +55,7 @@ public class SysMenuInfo implements Serializable {
      */
     @Column(name = "parent_id")
     @ApiModelProperty(name = "parentId",value = "父级菜单id")
+    @NotNull(message ="父级菜单Id不能为空" )
     private Long parentId;
 
     /**
@@ -87,6 +97,7 @@ public class SysMenuInfo implements Serializable {
      */
     @Column(name = "menu_type")
     @ApiModelProperty(name = "menuType",value = "菜单所属平台类型（1、WEB 2、Windows 3、PDA）")
+    @NotNull(message = "菜单所属平台不能为空")
     private Byte menuType;
 
     /**

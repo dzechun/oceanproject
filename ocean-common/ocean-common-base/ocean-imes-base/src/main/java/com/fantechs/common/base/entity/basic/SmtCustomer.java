@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_customer")
 @Data
-public class SmtCustomer implements Serializable {
+public class SmtCustomer extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = 4936567779340297991L;
     /**
@@ -19,6 +22,7 @@ public class SmtCustomer implements Serializable {
     @Id
     @Column(name = "customer_id")
     @ApiModelProperty(name="customerId" ,value="客户ID")
+    @NotNull(groups = update.class,message = "客户ID不能为空")
     private Long customerId;
 
     /**
@@ -27,6 +31,7 @@ public class SmtCustomer implements Serializable {
     @Column(name = "customer_code")
     @ApiModelProperty(name="customerCode" ,value="客户代码")
     @Excel(name = "客户代码", height = 20, width = 30)
+    @NotBlank(message = "客户代码不能为空")
     private String customerCode;
 
     /**
@@ -35,6 +40,7 @@ public class SmtCustomer implements Serializable {
     @Column(name = "customer_name")
     @ApiModelProperty(name="customerName" ,value="客户名称")
     @Excel(name = "客户名称", height = 20, width = 30)
+    @NotBlank(message = "客户名称不能为空")
     private String customerName;
 
     /**
