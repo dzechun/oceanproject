@@ -109,7 +109,7 @@ public class SmtRouteController {
 
     @GetMapping(value = "/findConfigureRout")
     @ApiOperation(value = "查询配置的工艺路线信息",notes = "查询配置的工艺路线信息")
-    public ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@RequestParam Long routeId){
+    public ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId",required = true) @RequestParam Long routeId){
         List<SmtRouteProcess> list = smtRouteProcessService.findConfigureRout(routeId);
         return ControllerUtil.returnDataSuccess("查询成功",list);
     }
