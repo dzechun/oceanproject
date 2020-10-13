@@ -90,7 +90,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         return smtWorkShopMapper.deleteByIds(ids);
     }
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(SmtWorkShop smtWorkShop) {
+    public int update(SmtWorkShop smtWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
