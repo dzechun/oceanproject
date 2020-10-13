@@ -15,4 +15,7 @@
     <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
 
+    <modules>
+        <module>ocean-imes-basic-api</module>
+    </modules>
 </project>
