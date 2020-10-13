@@ -41,7 +41,6 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="productName" ,value="产品名称")
     @Excel(name = "产品名称", height = 20, width = 30)
-    @NotBlank(message = "产品名称不能为空")
     private String productName;
 
     /**
