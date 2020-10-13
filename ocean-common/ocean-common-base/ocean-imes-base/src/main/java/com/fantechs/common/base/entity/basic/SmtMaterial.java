@@ -40,7 +40,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "material_name")
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @NotBlank(message = "物料名称不能为空")
     private String materialName;
 
     /**
