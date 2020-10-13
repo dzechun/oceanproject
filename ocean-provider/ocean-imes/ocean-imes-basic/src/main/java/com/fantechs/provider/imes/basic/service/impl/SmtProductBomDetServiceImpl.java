@@ -45,7 +45,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
 
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("materialId",smtProductBomDet.getPartMaterialId());
+            criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
 
             List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtProductBomDets)){
@@ -73,12 +73,12 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
 
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("materialId",smtProductBomDet.getPartMaterialId());
+            criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
 
             SmtProductBomDet productBomDet = smtProductBomDetMapper.selectOneByExample(example);
 
             if(StringUtils.isNotEmpty(productBomDet)&&!productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())){
-                throw new BizErrorException("BOM ID或物料编码信息已存在");
+                throw new BizErrorException("零件料号已存在");
             }
 
             smtProductBomDet.setModifiedUserId(currentUser.getUserId());
