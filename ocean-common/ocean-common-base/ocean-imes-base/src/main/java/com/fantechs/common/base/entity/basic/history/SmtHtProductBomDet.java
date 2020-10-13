@@ -1,6 +1,5 @@
 package com.fantechs.common.base.entity.basic.history;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "smt_ht_product_bom_det")
@@ -104,7 +104,7 @@ public class SmtHtProductBomDet implements Serializable {
      * 用量
      */
     @ApiModelProperty(name="quantity" ,value="用量")
-    private Integer quantity;
+    private BigDecimal quantity;
 
     /**
      * 位置

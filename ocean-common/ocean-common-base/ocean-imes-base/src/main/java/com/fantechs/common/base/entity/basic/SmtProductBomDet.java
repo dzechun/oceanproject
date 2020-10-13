@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,7 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "smt_product_bom_det")
@@ -21,6 +24,7 @@ public class SmtProductBomDet implements Serializable {
     @Id
     @Column(name = "product_bom_det_id")
     @ApiModelProperty(name="productBomDetId" ,value="产品BOM详细ID")
+    @NotNull(groups = ValidGroup.update.class,message = "产品BOM详细ID不能为空")
     private Long productBomDetId;
 
     /**
@@ -28,6 +32,7 @@ public class SmtProductBomDet implements Serializable {
      */
     @Column(name = "product_bom_id")
     @ApiModelProperty(name="productBomId" ,value="产品BOM ID")
+    @NotNull(message = "产品BOM ID不能为空")
     private Long productBomId;
 
     /**
@@ -35,6 +40,7 @@ public class SmtProductBomDet implements Serializable {
      */
     @Column(name = "part_material_id")
     @ApiModelProperty(name="partMaterialId" ,value="物料ID")
+    @NotNull(message = "产品物料ID不能为空")
     private Long partMaterialId;
 
     /**
@@ -89,6 +95,7 @@ public class SmtProductBomDet implements Serializable {
      */
     @Column(name = "process_id")
     @ApiModelProperty(name="processId" ,value="工序ID")
+    @NotNull(message = "工序ID不能为空")
     private Long processId;
 
     /**
@@ -103,7 +110,7 @@ public class SmtProductBomDet implements Serializable {
      */
     @ApiModelProperty(name="quantity" ,value="用量")
     @Excel(name = "用量", height = 20, width = 30)
-    private Integer quantity;
+    private BigDecimal quantity;
 
     /**
      * 位置
