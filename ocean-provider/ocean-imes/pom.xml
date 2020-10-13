@@ -17,6 +17,7 @@
 
     <modules>
         <module>ocean-imes-basic</module>
+        <module>ocean-imes-apply</module>
     </modules>
 
 </project>
