@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,17 +9,21 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_product_process_route")
 @Data
-public class SmtProductProcessRoute {
+public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     /**
      * 产品工艺路线ID
      */
     @Id
     @Column(name = "product_process_route_id")
     @ApiModelProperty(name="proCode" ,value="线别代码")
+    @NotNull(groups = update.class,message = "id不能为空")
     private Long productProcessRouteId;
 
     /**
@@ -27,6 +32,7 @@ public class SmtProductProcessRoute {
     @Column(name = "product_type")
     @ApiModelProperty(name="productType" ,value="产品类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)")
     @Excel(name = "产品类别", height = 20, width = 30,replace = {"All(*)_0", "线别_1","产品型号_2","产品料号_3"})
+    @NotNull(message = "产品类别号不能为空")
     private Integer productType;
 
     /**
@@ -35,6 +41,7 @@ public class SmtProductProcessRoute {
     @Transient
     @ApiModelProperty(name="productName" ,value="产品名称")
     @Excel(name = "产品名称", height = 20, width = 30)
+    @NotBlank(message = "产品名称不能为空")
     private String productName;
 
     /**

@@ -18,9 +18,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -33,6 +36,7 @@ import java.util.List;
 @RequestMapping(value = "/smtDept")
 @Api(tags = "部门管理")
 @Slf4j
+@Validated
 public class SmtDeptController {
 
     @Autowired
@@ -53,40 +57,25 @@ public class SmtDeptController {
 
     @ApiOperation("增加部门")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：deptCode、deptName,factoryId",required = true)@RequestBody SmtDept smtDept){
-        if(StringUtils.isEmpty(
-                smtDept.getDeptCode(),
-                smtDept.getDeptName(),
-                smtDept.getFactoryId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity add(@ApiParam(value = "必传：deptCode、deptName,factoryId",required = true)@RequestBody @Validated SmtDept smtDept){
         return ControllerUtil.returnCRUD(smtDeptService.save(smtDept));
     }
 
     @ApiOperation("修改部门")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "部门信息对象，部门信息Id必传",required = true)@RequestBody SmtDept smtDept){
-        if(StringUtils.isEmpty(smtDept.getDeptId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "部门信息对象，部门信息Id必传",required = true)@RequestBody @Validated(value = SmtDept.update.class) SmtDept smtDept){
         return ControllerUtil.returnCRUD(smtDeptService.update(smtDept));
     }
 
     @ApiOperation("删除部门")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "部门对象ID",required = true)@RequestParam String ids){
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "部门对象ID",required = true)@RequestParam @NotBlank(message = "ids不能为空") String ids){
         return ControllerUtil.returnCRUD(smtDeptService.batchDelete(ids));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtDept> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
-        if(StringUtils.isEmpty(id)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity<SmtDept> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id) {
         SmtDept smtDept = smtDeptService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(smtDept,StringUtils.isEmpty(smtDept)?0:1);
     }

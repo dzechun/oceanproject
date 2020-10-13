@@ -2,18 +2,21 @@ package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_warehouse_area")
 @Data
-public class SmtWarehouseArea implements Serializable {
+public class SmtWarehouseArea extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 6313098859931139882L;
     /**
      * 仓库区域ID
@@ -21,6 +24,7 @@ public class SmtWarehouseArea implements Serializable {
     @Id
     @Column(name = "warehouse_area_id")
     @ApiModelProperty(name="warehouseAreaId" ,value="仓库区域ID")
+    @NotNull(groups = update.class,message = "仓库区域id不能为空")
     private Long warehouseAreaId;
 
     /**
@@ -29,6 +33,7 @@ public class SmtWarehouseArea implements Serializable {
     @Column(name = "warehouse_area_code")
     @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")
     @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum="1")
+    @NotBlank(message = "仓库区域编码不能为空")
     private String warehouseAreaCode;
 
     /**
@@ -37,6 +42,7 @@ public class SmtWarehouseArea implements Serializable {
     @Column(name = "warehouse_area_name")
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
     @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="2")
+    @NotBlank(message = "仓库区域名称不能为空")
     private String warehouseAreaName;
 
     /**
@@ -52,6 +58,7 @@ public class SmtWarehouseArea implements Serializable {
      */
     @Column(name = "warehouse_id")
     @ApiModelProperty(name="warehouseId" ,value="仓库ID")
+    @NotNull(message = "仓库id不能为空")
     private Long warehouseId;
 
     /**

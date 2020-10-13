@@ -15,9 +15,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -27,6 +30,7 @@ import java.util.List;
 @RestController
 @Api(tags = "产品BOM信息")
 @RequestMapping("/smtProductBom")
+@Validated
 public class SmtProductBomController {
 
     @Autowired
@@ -36,34 +40,25 @@ public class SmtProductBomController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtProductBom smtProductBom) {
+    public ResponseEntity add(@ApiParam(value = "必传：productBomCode",required = true)@RequestBody @Validated SmtProductBom smtProductBom) {
         return ControllerUtil.returnCRUD(smtProductBomService.save(smtProductBom));
     }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam String ids) {
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(smtProductBomService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtProductBom smtProductBom) {
-        if(StringUtils.isEmpty(smtProductBom.getProductBomId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value = SmtProductBom.update.class) SmtProductBom smtProductBom) {
         return ControllerUtil.returnCRUD(smtProductBomService.update(smtProductBom));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtProductBom> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
-        if(StringUtils.isEmpty(id)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity<SmtProductBom> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) {
         SmtProductBom  smtProductBom = smtProductBomService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(smtProductBom,StringUtils.isEmpty(smtProductBom)?0:1);
     }

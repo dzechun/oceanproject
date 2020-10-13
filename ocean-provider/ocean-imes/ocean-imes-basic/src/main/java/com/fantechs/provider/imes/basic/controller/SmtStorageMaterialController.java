@@ -17,9 +17,12 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -29,6 +32,7 @@ import java.util.List;
 @RestController
 @Api(tags = "储位物料信息")
 @RequestMapping("/smtStorageMaterial")
+@Validated
 public class SmtStorageMaterialController {
 
     @Autowired
@@ -39,31 +43,25 @@ public class SmtStorageMaterialController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStorageMaterial smtStorageMaterial) {
+    public ResponseEntity add(@ApiParam(value = "必传：storageId",required = true)@RequestBody @Validated SmtStorageMaterial smtStorageMaterial) {
         return ControllerUtil.returnCRUD(smtStorageMaterialService.save(smtStorageMaterial));
     }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam String ids) {
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(smtStorageMaterialService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtStorageMaterial smtStorageMaterial) {
-        if(StringUtils.isEmpty(smtStorageMaterial.getStorageMaterialId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value = SmtStorageMaterial.update.class) SmtStorageMaterial smtStorageMaterial) {
         return ControllerUtil.returnCRUD(smtStorageMaterialService.update(smtStorageMaterial));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtStorageMaterial> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
+    public ResponseEntity<SmtStorageMaterial> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) {
         if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }

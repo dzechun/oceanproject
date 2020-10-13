@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_workshop_section")
 @Data
-public class SmtWorkshopSection implements Serializable {
+public class SmtWorkshopSection extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 7715240650173103540L;
     /**
      * 工段ID
@@ -18,6 +21,7 @@ public class SmtWorkshopSection implements Serializable {
     @Id
     @Column(name = "section_id")
     @ApiModelProperty("工段Id")
+    @NotNull(groups = update.class,message = "工段id不能为空")
     private Long sectionId;
 
     /**
@@ -26,6 +30,7 @@ public class SmtWorkshopSection implements Serializable {
     @Column(name = "section_code")
     @ApiModelProperty("工段代码")
     @Excel(name = "工段代码", height = 20, width = 30)
+    @NotBlank(message = "工段代码不能为空")
     private String sectionCode;
 
     /**
@@ -34,6 +39,7 @@ public class SmtWorkshopSection implements Serializable {
     @Column(name = "section_name")
     @ApiModelProperty("工段名称")
     @Excel(name = "工段名称", height = 20, width = 30)
+    @NotBlank(message = "工段名称不能为空")
     private String sectionName;
 
     /**

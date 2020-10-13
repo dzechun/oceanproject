@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_pro_line")
 @Data
-public class SmtProLine implements Serializable {
+public class SmtProLine extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = -7775679129014320519L;
     /**
@@ -18,6 +21,7 @@ public class SmtProLine implements Serializable {
      */
     @Id
     @Column(name = "pro_line_id")
+    @NotNull(groups = update.class,message = "线别ID不能为空")
     private Long proLineId;
 
     /**
@@ -26,6 +30,7 @@ public class SmtProLine implements Serializable {
     @Column(name = "pro_code")
     @ApiModelProperty(name="proCode" ,value="线别代码")
     @Excel(name = "线别代码", height = 20, width = 30)
+    @NotBlank(message = "线别编码不能为空")
     private String proCode;
 
     /**
@@ -34,6 +39,7 @@ public class SmtProLine implements Serializable {
     @Column(name = "pro_name")
     @ApiModelProperty(name="proName" ,value="线别名称")
     @Excel(name = "线别名称", height = 20, width = 30)
+    @NotBlank(message = "线别名称不能为空")
     private String proName;
 
     /**
@@ -49,6 +55,7 @@ public class SmtProLine implements Serializable {
      */
     @Column(name = "factory_id")
     @ApiModelProperty(name="factoryId" ,value="厂别ID")
+    @NotNull(message = "厂别id不能为空")
     private Long factoryId;
 
     /**
@@ -64,6 +71,7 @@ public class SmtProLine implements Serializable {
      */
     @Column(name = "work_shop_id")
     @ApiModelProperty(name="workShopId" ,value="车间ID")
+    @NotBlank(message = "车间id不能为空")
     private String workShopId;
 
     /**

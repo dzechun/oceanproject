@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_storage")
 @Data
-public class SmtStorage implements Serializable {
+public class SmtStorage extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -3338572709820716313L;
     /**
      * 储位ID
@@ -18,6 +21,7 @@ public class SmtStorage implements Serializable {
     @Id
     @Column(name = "storage_id")
     @ApiModelProperty(name = "storageId",value = "储位ID")
+    @NotNull(groups = update.class,message = "储位id不能为空")
     private Long storageId;
 
     /**
@@ -26,6 +30,7 @@ public class SmtStorage implements Serializable {
     @Column(name = "storage_code")
     @ApiModelProperty(name = "storageCode",value = "储位编码")
     @Excel(name = "储位编码", height = 20, width = 30)
+    @NotBlank(message = "储位编码不能为空")
     private String storageCode;
 
     /**
@@ -34,6 +39,7 @@ public class SmtStorage implements Serializable {
     @Column(name = "storage_name")
     @ApiModelProperty(name = "storageName",value = "储位名称")
     @Excel(name = "储位名称", height = 20, width = 30)
+    @NotBlank(message = "储位名称不能为空")
     private String storageName;
 
     /**

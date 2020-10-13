@@ -18,9 +18,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -33,6 +36,7 @@ import java.util.List;
 @RequestMapping(value = "/smtProductModel")
 @Api(tags = "产品型号管理")
 @Slf4j
+@Validated
 public class SmtProductModelController {
 
     @Autowired
@@ -55,17 +59,13 @@ public class SmtProductModelController {
 
     @ApiOperation("新增产品型号")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：productModelCode",required = true)@RequestBody SmtProductModel smtProductModel){
-        if(StringUtils.isEmpty(
-                smtProductModel.getProductModelCode())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity add(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody @Validated SmtProductModel smtProductModel){
         return ControllerUtil.returnCRUD(smtProductModelService.save(smtProductModel));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtProductModel> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam Long id) {
+    public ResponseEntity<SmtProductModel> detail(@ApiParam(value = "工厂ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) {
         if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }
@@ -75,19 +75,13 @@ public class SmtProductModelController {
 
     @ApiOperation("修改产品型号")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "部门产品型号对象，产品型号信息Id必传",required = true)@RequestBody SmtProductModel smtProductModel){
-        if(StringUtils.isEmpty(smtProductModel.getProductModelId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "部门产品型号对象，产品型号信息Id必传",required = true)@RequestBody @Validated(value = SmtProductModel.update.class) SmtProductModel smtProductModel){
         return ControllerUtil.returnCRUD(smtProductModelService.update(smtProductModel));
     }
 
     @ApiOperation("删除产品型号")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "产品型号对象ID",required = true)@RequestParam String ids){
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "产品型号对象ID",required = true)@RequestParam @NotBlank(message = "ids不能为空") String ids){
         return ControllerUtil.returnCRUD(smtProductModelService.batchDelete(ids));
     }
 

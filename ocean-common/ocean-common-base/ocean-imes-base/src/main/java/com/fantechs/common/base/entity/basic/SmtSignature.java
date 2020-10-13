@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_signature")
 @Data
-public class SmtSignature implements Serializable {
+public class SmtSignature extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 2443310438091476124L;
     /**
      * 特征码ID
@@ -18,6 +21,7 @@ public class SmtSignature implements Serializable {
     @Id
     @Column(name = "signature_id")
     @ApiModelProperty(name="signatureId" ,value="特征码ID")
+    @NotNull(groups = update.class,message = "特征码id不能为空")
     private Long signatureId;
 
     /**
@@ -25,6 +29,7 @@ public class SmtSignature implements Serializable {
      */
     @Column(name = "material_id")
     @ApiModelProperty(name="materialId" ,value="物料ID")
+    @NotNull(message = "物料id不能为空")
     private Long materialId;
 
     /**
@@ -64,6 +69,7 @@ public class SmtSignature implements Serializable {
     @Column(name = "signature_code")
     @ApiModelProperty(name="signatureCode" ,value="特征码")
     @Excel(name = "特征码", height = 20, width = 30)
+    @NotBlank(message = "特征码编码不能为空")
     private String signatureCode;
 
     /**

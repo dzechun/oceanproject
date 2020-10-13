@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,12 +9,14 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_route")
 @Data
-public class SmtRoute implements Serializable {
+public class SmtRoute extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = -2385571776152019549L;
     /**
@@ -22,6 +25,7 @@ public class SmtRoute implements Serializable {
     @Id
     @Column(name = "route_id")
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    @NotNull(groups = update.class,message = "工艺路线id不能为空")
     private Long routeId;
 
     /**
@@ -29,6 +33,7 @@ public class SmtRoute implements Serializable {
      */
     @Column(name = "route_code")
     @ApiModelProperty(name="routeCode" ,value="工艺路线代码")
+    @NotBlank(message = "工艺路线代码不能为空")
     private String routeCode;
 
     /**
@@ -37,6 +42,7 @@ public class SmtRoute implements Serializable {
     @Column(name = "route_name")
     @ApiModelProperty(name="routeName" ,value="工艺路线名称")
     @Excel(name = "工艺路线名称", height = 20, width = 30)
+    @NotBlank(message = "工艺路线名称不能为空")
     private String routeName;
 
     /**

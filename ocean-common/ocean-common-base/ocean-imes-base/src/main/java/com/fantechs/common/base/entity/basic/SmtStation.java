@@ -1,16 +1,20 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_station")
 @Data
-public class SmtStation implements Serializable {
+public class SmtStation extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -5138905602576927928L;
     /**
      * 工位ID
@@ -18,6 +22,7 @@ public class SmtStation implements Serializable {
     @Id
     @Column(name = "station_id")
     @ApiModelProperty(name = "stationId",value = "工位ID")
+    @NotNull(groups = update.class,message = "工位id不能为空")
     private Long stationId;
 
     /**
@@ -26,6 +31,7 @@ public class SmtStation implements Serializable {
     @Column(name = "station_code")
     @ApiModelProperty(name = "stationCode",value = "工位代码")
     @Excel(name = "工位代码", height = 20, width = 30)
+    @NotBlank(message = "工位代码不能为空")
     private String stationCode;
 
     /**
@@ -34,6 +40,7 @@ public class SmtStation implements Serializable {
     @Column(name = "station_name")
     @ApiModelProperty(name = "stationName",value = "工位名称")
     @Excel(name = "工位名称", height = 20, width = 30)
+    @NotBlank(message = "工位名称不能为空")
     private String stationName;
 
     /**

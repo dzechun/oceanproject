@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,12 +9,14 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_product_model")
 @Data
-public class SmtProductModel implements Serializable {
+public class SmtProductModel extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = -3520314696299928511L;
     /**
@@ -22,6 +25,7 @@ public class SmtProductModel implements Serializable {
     @Id
     @Column(name = "product_model_id")
     @ApiModelProperty(name="productModelId" ,value="产品型号ID")
+    @NotNull(groups = update.class,message = "产品型号id不能为空")
     private Long productModelId;
 
     /**
@@ -30,6 +34,7 @@ public class SmtProductModel implements Serializable {
     @Column(name = "product_model_code")
     @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
     @Excel(name = "产品型号", height = 20, width = 30)
+    @NotBlank(message = "产品型号编码不能为空")
     private String productModelCode;
 
     /**
@@ -37,6 +42,7 @@ public class SmtProductModel implements Serializable {
      */
     @Column(name = "product_model_name")
     @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    @NotBlank(message = "产品型号名称不能为空")
     private String productModelName;
 
     /**

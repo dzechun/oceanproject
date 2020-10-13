@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,18 +9,21 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_material")
 @Data
-public class SmtMaterial implements Serializable {
+public class SmtMaterial extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 6879887744171421495L;
     /**
      * 物料ID
      */
     @Id
     @Column(name = "material_id")
+    @NotNull(groups = update.class,message = "物料id不能为空")
     private Long materialId;
 
     /**
@@ -28,6 +32,7 @@ public class SmtMaterial implements Serializable {
     @Column(name = "material_code")
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     @Excel(name = "物料编码", height = 20, width = 30)
+    @NotBlank(message = "物料编码不能为空")
     private String materialCode;
 
     /**
@@ -35,6 +40,7 @@ public class SmtMaterial implements Serializable {
      */
     @Column(name = "material_name")
     @ApiModelProperty(name="materialName" ,value="物料名称")
+    @NotBlank(message = "物料名称不能为空")
     private String materialName;
 
     /**

@@ -19,9 +19,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -34,6 +37,7 @@ import java.util.List;
 @RequestMapping(value = "/smtMaterial")
 @Api(tags = "物料信息管理")
 @Slf4j
+@Validated
 public class SmtMaterialController {
 
 
@@ -53,11 +57,7 @@ public class SmtMaterialController {
 
     @ApiOperation("增加物料信息")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：materialCode",required = true)@RequestBody SmtMaterial smtMaterial){
-        if(StringUtils.isEmpty(
-                smtMaterial.getMaterialCode())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity add(@ApiParam(value = "必传：materialCode、materialName",required = true)@RequestBody @Validated SmtMaterial smtMaterial){
         return ControllerUtil.returnCRUD(smtMaterialService.save(smtMaterial));
 
     }
@@ -65,29 +65,20 @@ public class SmtMaterialController {
 
     @ApiOperation("修改物料信息")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "物料信息对象，物料信息Id必传",required = true)@RequestBody SmtMaterial smtMaterial){
-        if(StringUtils.isEmpty(smtMaterial.getMaterialCode())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "物料信息对象，物料信息Id必传",required = true)@RequestBody @Validated(value = SmtMaterial.update.class) SmtMaterial smtMaterial){
         return ControllerUtil.returnCRUD(smtMaterialService.update(smtMaterial));
 
     }
 
     @ApiOperation("删除物料信息")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "物料对象ID",required = true) @RequestParam String ids){
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "物料对象ID",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids){
         return ControllerUtil.returnCRUD(smtMaterialService.batchDelete(ids));
     }
 
     @ApiOperation("获取物料详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtMaterial> detail(@ApiParam(value = "物料ID",required = true)@RequestParam Long materialId){
-        if(StringUtils.isEmpty(materialId)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity<SmtMaterial> detail(@ApiParam(value = "物料ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long materialId){
         SmtMaterial smtMaterial = smtMaterialService.selectByKey(materialId);
         return  ControllerUtil.returnDataSuccess(smtMaterial,StringUtils.isEmpty(smtMaterial)?0:1);
     }

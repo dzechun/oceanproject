@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_supplier")
 @Data
-public class SmtSupplier implements Serializable {
+public class SmtSupplier extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 379038968866477984L;
     /**
      * 供应商ID
@@ -18,6 +21,7 @@ public class SmtSupplier implements Serializable {
     @Id
     @Column(name = "supplier_id")
     @ApiModelProperty("供应商ID")
+    @NotNull(groups = update.class,message = "供应商id不能为空")
     private Long supplierId;
 
     /**
@@ -26,6 +30,7 @@ public class SmtSupplier implements Serializable {
     @Column(name = "supplier_code")
     @ApiModelProperty("供应商代码")
     @Excel(name = "供应商代码", height = 20, width = 30)
+    @NotBlank(message = "供应商编码不能为空")
     private String supplierCode;
 
     /**
@@ -34,6 +39,7 @@ public class SmtSupplier implements Serializable {
     @Column(name = "supplier_name")
     @ApiModelProperty("供应商名称")
     @Excel(name = "供应商名称", height = 20, width = 30)
+    @NotBlank(message = "供应商名称不能为空")
     private String supplierName;
 
     /**

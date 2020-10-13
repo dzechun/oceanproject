@@ -38,7 +38,7 @@ public class SmtCustomerController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtCustomer smtCustomer) {
+    public ResponseEntity add(@ApiParam(value = "必传：customerCode、customerName",required = true)@RequestBody @Validated SmtCustomer smtCustomer) {
         return ControllerUtil.returnCRUD(smtCustomerService.save(smtCustomer));
     }
 

@@ -15,9 +15,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -27,6 +30,7 @@ import java.util.List;
 @RestController
 @Api(tags = "产品工艺路线信息")
 @RequestMapping("/smtProductProcessRoute")
+@Validated
 public class SmtProductProcessRouteController {
 
     @Autowired
@@ -37,35 +41,25 @@ public class SmtProductProcessRouteController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtProductProcessRoute smtProductProcessRoute) {
+    public ResponseEntity add(@ApiParam(value = "必传：productType、productName",required = true)@RequestBody @Validated SmtProductProcessRoute smtProductProcessRoute) {
         return ControllerUtil.returnCRUD(smtProductProcessRouteService.save(smtProductProcessRoute));
     }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam String ids) {
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(smtProductProcessRouteService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtProductProcessRoute smtProductProcessRoute) {
-        if(StringUtils.isEmpty(smtProductProcessRoute.getProductProcessRouteId()
-        )){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value = SmtProductProcessRoute.update.class) SmtProductProcessRoute smtProductProcessRoute) {
         return ControllerUtil.returnCRUD(smtProductProcessRouteService.update(smtProductProcessRoute));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtProductProcessRoute> detail(@ApiParam(value = "ID",required = true)@RequestParam Long id) {
-        if(StringUtils.isEmpty(id)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity<SmtProductProcessRoute> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) {
         SmtProductProcessRoute  smtProductProcessRoute = smtProductProcessRouteService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(smtProductProcessRoute,StringUtils.isEmpty(smtProductProcessRoute)?0:1);
     }

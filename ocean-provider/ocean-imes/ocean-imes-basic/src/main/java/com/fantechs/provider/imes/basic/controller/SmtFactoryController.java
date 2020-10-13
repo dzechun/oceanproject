@@ -72,7 +72,6 @@ public class SmtFactoryController {
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "厂别信息对象，厂别信息Id必传",required = true)@RequestBody @Validated(value=SmtFactory.update.class) SmtFactory smtFactory){
             return ControllerUtil.returnCRUD(smtFactoryService.update(smtFactory));
-
     }
 
     @ApiOperation("删除厂别信息")

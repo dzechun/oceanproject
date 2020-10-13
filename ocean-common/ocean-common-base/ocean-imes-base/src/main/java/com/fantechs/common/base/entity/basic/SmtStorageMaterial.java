@@ -1,16 +1,18 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_storage_material")
 @Data
-public class SmtStorageMaterial implements Serializable {
+public class SmtStorageMaterial extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -7270922822671637879L;
     /**
      * 储位物料ID
@@ -18,6 +20,7 @@ public class SmtStorageMaterial implements Serializable {
     @Id
     @Column(name = "storage_material_id")
     @ApiModelProperty(name = "storageMaterialId",value = "储位物料ID")
+    @NotNull(groups = update.class,message = "储位物料id不能为空")
     private Long storageMaterialId;
 
     /**
@@ -25,6 +28,7 @@ public class SmtStorageMaterial implements Serializable {
      */
     @Column(name = "storage_id")
     @ApiModelProperty(name = "storageId",value = "储位ID")
+    @NotNull(message = "储位id不能为空")
     private Long storageId;
 
     /**

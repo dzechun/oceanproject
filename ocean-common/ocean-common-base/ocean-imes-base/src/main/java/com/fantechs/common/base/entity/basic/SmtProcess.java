@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_process")
 @Data
-public class SmtProcess implements Serializable {
+public class SmtProcess extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -7245414479951156391L;
     /**
      * 工序ID
@@ -18,6 +21,7 @@ public class SmtProcess implements Serializable {
     @Id
     @Column(name = "process_id")
     @ApiModelProperty(name="processId" ,value="工序ID")
+    @NotNull(groups = update.class,message = "工序ID不能为空")
     private Long processId;
 
     /**
@@ -26,6 +30,7 @@ public class SmtProcess implements Serializable {
     @Column(name = "process_code")
     @ApiModelProperty(name="processCode" ,value="工序代码")
     @Excel(name = "工序代码", height = 20, width = 30)
+    @NotBlank(message = "工序编码不能为空")
     private String processCode;
 
     /**
@@ -34,6 +39,7 @@ public class SmtProcess implements Serializable {
     @Column(name = "process_name")
     @ApiModelProperty(name="processName" ,value="工序名称")
     @Excel(name = "工序名称", height = 20, width = 30)
+    @NotBlank(message = "工序名称不能为空")
     private String processName;
 
     /**

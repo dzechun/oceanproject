@@ -19,9 +19,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -31,6 +33,7 @@ import java.util.List;
 @RequestMapping(value = "/smtWorkShop")
 @Api(tags = "车间管理")
 @Slf4j
+@Validated
 public class SmtWorkShopController {
     @Autowired
     private SmtWorkShopService smtWorkShopService;
@@ -50,13 +53,7 @@ public class SmtWorkShopController {
 
     @ApiOperation("新增车间")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：workShopCode、workShopName、factoryId",required = true)@RequestBody SmtWorkShop smtWorkShop){
-        if(StringUtils.isEmpty(
-                smtWorkShop.getWorkShopCode(),
-                smtWorkShop.getWorkShopName(),
-                smtWorkShop.getFactoryId())){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity add(@ApiParam(value = "必传：workShopCode、workShopName、factoryId",required = true)@RequestBody @Validated SmtWorkShop smtWorkShop){
         return ControllerUtil.returnCRUD(smtWorkShopService.save(smtWorkShop));
 
     }
@@ -72,33 +69,20 @@ public class SmtWorkShopController {
 
     @ApiOperation("修改车间")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "车间信息对象，workShopId、workShopCode、workShopName、factoryId必传",required = true)@RequestBody SmtWorkShop smtWorkShop){
-        if(StringUtils.isEmpty(smtWorkShop.getWorkShopId(),
-                smtWorkShop.getWorkShopCode(),
-                smtWorkShop.getWorkShopName(),
-                smtWorkShop.getFactoryId()
-        )){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity update(@ApiParam(value = "车间信息对象，workShopId、workShopCode、workShopName、factoryId必传",required = true)@RequestBody @Validated SmtWorkShop smtWorkShop){
         return ControllerUtil.returnCRUD(smtWorkShopService.update(smtWorkShop));
 
     }
 
     @ApiOperation("删除车间")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "车间对象ID",required = true) @RequestParam String ids){
-        if(StringUtils.isEmpty(ids)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity delete(@ApiParam(value = "车间对象ID",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids){
         return ControllerUtil.returnCRUD(smtWorkShopService.batchDelete(ids));
     }
 
     @ApiOperation("获取车间详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtWorkShop> detail(@ApiParam(value = "车间ID",required = true)@RequestParam String workShopId){
-        if(StringUtils.isEmpty(workShopId)){
-            return ControllerUtil.returnFailByParameError();
-        }
+    public ResponseEntity<SmtWorkShop> detail(@ApiParam(value = "车间ID",required = true)@RequestParam @NotBlank String workShopId){
         SmtWorkShop smtWorkShop = smtWorkShopService.selectByKey(workShopId);
         return  ControllerUtil.returnDataSuccess(smtWorkShop,StringUtils.isEmpty(smtWorkShop)?0:1);
     }

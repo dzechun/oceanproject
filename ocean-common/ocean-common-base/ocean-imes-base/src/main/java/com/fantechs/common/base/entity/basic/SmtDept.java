@@ -1,16 +1,19 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "smt_dept")
 @Data
-public class SmtDept implements Serializable {
+public class SmtDept extends ValidGroup implements Serializable  {
 
     private static final long serialVersionUID = -9208178506642851416L;
     /**
@@ -19,6 +22,7 @@ public class SmtDept implements Serializable {
     @Id
     @Column(name = "dept_id")
     @GeneratedValue(strategy =GenerationType.IDENTITY)
+    @NotNull(groups = update.class,message = "部门id不能为空")
     private Long deptId;
 
     /**
@@ -27,6 +31,7 @@ public class SmtDept implements Serializable {
     @Column(name = "dept_code")
     @ApiModelProperty(name="deptCode" ,value="部门代码")
     @Excel(name = "部门代码", height = 20, width = 30)
+    @NotBlank(message = "部门代码不能为空")
     private String deptCode;
 
     /**
@@ -35,6 +40,7 @@ public class SmtDept implements Serializable {
     @Column(name = "dept_name")
     @ApiModelProperty(name="deptName" ,value="部门名称")
     @Excel(name = "部门名称", height = 20, width = 30)
+    @NotBlank(message = "部门名称不能为空")
     private String deptName;
 
     /**
@@ -50,6 +56,7 @@ public class SmtDept implements Serializable {
      */
     @Column(name = "factory_id")
     @ApiModelProperty(name="factoryId" ,value="厂别ID")
+    @NotNull(message = "厂别id不能为空")
     private Long factoryId;
 
     /**
