@@ -30,9 +30,9 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductBomDet" resultMap="BaseResultMap">
-    select  shpbd.product_bom_det_id,shpbd.product_bom_id,shpbd.part_material_id,sm.material_code as partMaterialCode,sm.material_name as materialName,
-    sm.version,sm.material_desc as materialDesc,shpbd.sub_material_id,sml.material_code as subMaterialCode,shpbd.process_id,sp.process_name as processName,
-    shpbd.quantity,shpbd.position,shpbd.create_user_id, u.user_name as createUserName,shpbd.create_time,shpbd.modified_user_id,s.user_name as modifiedUserName,
+    select  shpbd.product_bom_det_id,shpbd.product_bom_id,shpbd.part_material_id,sm.material_code as part_material_code,sm.material_name ,
+    sm.version,sm.material_desc,shpbd.sub_material_id,sml.material_code as sub_material_code,shpbd.process_id,sp.process_name,
+    shpbd.quantity,shpbd.position,shpbd.create_user_id, u.user_name as create_user_name,shpbd.create_time,shpbd.modified_user_id,s.user_name as modified_user_name,
     shpbd.modified_time, shpbd.is_delete
     from fantech_imes.smt_ht_product_bom_det shpbd
     left join fantech_imes.smt_material sm on shpbd.material_id=sm.material_id
