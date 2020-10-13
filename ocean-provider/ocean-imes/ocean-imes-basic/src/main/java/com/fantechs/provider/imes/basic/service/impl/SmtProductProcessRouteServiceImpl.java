@@ -61,7 +61,7 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         criteria.andEqualTo("routeId",smtProductProcessRoute.getRouteId());
         List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(smtProductProcessRoutes)){
-            throw new BizErrorException("该线别或产品型号或产品料号的工艺路线已存在。");
+            throw new BizErrorException("该线别或产品型号或产品料号的工艺路线已存在");
         }
         smtProductProcessRoute.setCreateUserId(currentUser.getUserId());
         smtProductProcessRoute.setCreateTime(new Date());
@@ -93,7 +93,7 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         criteria.andEqualTo("routeId",smtProductProcessRoute.getRouteId());
         SmtProductProcessRoute productProcessRoute = smtProductProcessRouteMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(productProcessRoute)&&!productProcessRoute.getProductProcessRouteId().equals(smtProductProcessRoute.getProductProcessRouteId())){
-            throw new BizErrorException("该线别或产品型号或产品料号的工艺路线已存在。");
+            throw new BizErrorException("该线别或产品型号或产品料号的工艺路线已存在");
         }
 
         smtProductProcessRoute.setModifiedUserId(currentUser.getUserId());
