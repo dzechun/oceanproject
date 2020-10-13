@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProductBom;
+import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProductBomMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductBomMapper;
 import com.fantechs.provider.imes.basic.service.SmtProductBomService;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +36,8 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
     private SmtProductBomMapper smtProductBomMapper;
     @Resource
     private SmtHtProductBomMapper smtHtProductBomMapper;
+    @Resource
+    private SmtProductBomDetMapper smtProductBomDetMapper;
 
 
     @Override
@@ -47,7 +51,7 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
-        criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
+        criteria1.andEqualTo("materialId",smtProductBom.getMaterialId());
         example.or(criteria1);
         criteria.andEqualTo("productBomCode",smtProductBom.getProductBomCode());
 
@@ -78,7 +82,7 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
-        criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
+        criteria1.andEqualTo("materialId",smtProductBom.getMaterialId());
         example.or(criteria1);
         criteria.andEqualTo("productBomCode",smtProductBom.getProductBomCode());
 
@@ -123,6 +127,14 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
             smtHtProductBom.setModifiedUserId(currentUser.getUserId());
             smtHtProductBom.setModifiedTime(new Date());
             list.add(smtHtProductBom);
+
+            Example example = new Example(SmtProductBomDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productBomId",productBomId);
+            List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProductBomDets)){
+                throw new BizErrorException("产品BOM被引用，不能删除");
+            }
         }
         smtHtProductBomMapper.insertList(list);
 

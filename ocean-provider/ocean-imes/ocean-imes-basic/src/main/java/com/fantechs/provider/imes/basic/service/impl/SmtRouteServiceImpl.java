@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtRoute;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtRouteMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtRouteMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtRouteProcessMapper;
 import com.fantechs.provider.imes.basic.service.SmtRouteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
       private SmtRouteMapper smtRouteMapper;
       @Resource
       private SmtHtRouteMapper smtHtRouteMapper;
+      @Resource
+      private SmtRouteProcessMapper smtRouteProcessMapper;
 
       @Override
       @Transactional(rollbackFor = Exception.class)
@@ -116,6 +120,14 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
              smtHtRoute.setModifiedUserId(currentUser.getUserId());
              smtHtRoute.setModifiedTime(new Date());
              list.add(smtHtRoute);
+
+             Example example = new Example(SmtRouteProcess.class);
+             Example.Criteria criteria = example.createCriteria();
+             criteria.andEqualTo("routeId",routeId);
+             List<SmtRouteProcess> smtRouteProcesses = smtRouteProcessMapper.selectByExample(example);
+             if(StringUtils.isNotEmpty(smtRouteProcesses)){
+                 throw new BizErrorException("工艺路线被引用，不能删除");
+             }
          }
          smtHtRouteMapper.insertList(list);
 

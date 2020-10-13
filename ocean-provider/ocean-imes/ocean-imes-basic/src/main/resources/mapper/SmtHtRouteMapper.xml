@@ -22,8 +22,8 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtRoute" resultMap="BaseResultMap">
-    select shr.route_id,shr.route_code,shr.route_name,shr.route_desc, shr.status, shr.create_user_id,u.user_name as createUserName,
-    shr.create_time, shr.modified_user_id,s.user_name as modifiedUserName,shr.modified_time,shr.is_delete
+    select shr.ht_route_id,shr.route_id,shr.route_code,shr.route_name,shr.route_desc, shr.status, shr.create_user_id,u.user_name as create_user_name,
+    shr.create_time, shr.modified_user_id,s.user_name as modified_user_name,shr.modified_time,shr.is_delete
     from fantech_imes.smt_ht_route shr
     left join ocean.sys_user u on shr.create_user_id=u.user_id
     left join ocean.sys_user s on shr.modified_user_id=s.user_id

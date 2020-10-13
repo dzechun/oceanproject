@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBomDet">
+    <id column="product_bom_det_id" jdbcType="BIGINT" property="productBomDetId" />
+    <result column="product_bom_id" jdbcType="BIGINT" property="productBomId" />
+    <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId" />
+    <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductBomDet" resultMap="BaseResultMap">
+    select  spbd.product_bom_det_id,spbd.product_bom_id,spbd.part_material_id,sm.material_code as part_material_code,sm.material_name,
+    sm.version,sm.material_desc,spbd.sub_material_id,sml.material_code as sub_material_code,spbd.process_id,sp.process_name,
+    spbd.quantity,spbd.position,spbd.create_user_id, u.user_name as create_user_name,spbd.create_time,spbd.modified_user_id,s.user_name as modified_user_name,
+    spbd.modified_time, spbd.is_delete
+    from fantech_imes.smt_product_bom_det spbd
+    left join fantech_imes.smt_material sm on spbd.part_material_id=sm.material_id
+    left join fantech_imes.smt_material sml on spbd.sub_material_id=sml.material_id
+    left join fantech_imes.smt_process sp on spbd.process_id=sp.process_id
+    left join ocean.sys_user u on spbd.create_user_id=u.user_id
+    left join ocean.sys_user s on spbd.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(spbd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="productBomId!=null and productBomId!=''">
+        and spbd.product_bom_id=#{productBomId}
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and spbd.part_material_id=#{materialId}
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+    </where>
+    order by spbd.create_time desc
+  </select>
+</mapper>
