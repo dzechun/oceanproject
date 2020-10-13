@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 
 /**
@@ -79,7 +78,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 		if (request.getRequestURI().contains(SWAGGER_URI)|| LOGIN_URI.contains(request.getRequestURI())) {
 			return false;
 		}
-			return false;
+			return true;
 	}
 
 	/**
@@ -102,6 +101,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			result.setMessage(ErrorCodeEnum.UAC10010002.getMsg());
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
+			return null;
 
 		}
 		SysUser user = TokenUtil.load(token);
@@ -112,6 +112,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			result.setMessage(ErrorCodeEnum.UAC10011039.getMsg());
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
+			return null;
 		}else{
 			if(StringUtils.isNotEmpty(user.getAuthority())){
 				StringBuffer sb = new StringBuffer();
