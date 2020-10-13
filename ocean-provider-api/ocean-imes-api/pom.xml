@@ -8,28 +8,11 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fantechs.provider.api.imes.basic</groupId>
+    <groupId>com.fantechs.provider.api.imes</groupId>
     <artifactId>ocean-imes-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-imes-api</name>
+    <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
-
-
-    <dependencies>
-        <dependency>
-            <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
