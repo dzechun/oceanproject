@@ -34,8 +34,8 @@
     spbd.quantity,spbd.position,spbd.create_user_id, u.user_name as create_user_name,spbd.create_time,spbd.modified_user_id,s.user_name as modified_user_name,
     spbd.modified_time, spbd.is_delete
     from fantech_imes.smt_product_bom_det spbd
-    left join fantech_imes.smt_material sm on spbd.material_id=sm.material_id
-    left join fantech_imes.smt_material sml on spbd.material_id=sml.material_id
+    left join fantech_imes.smt_material sm on spbd.part_material_id=sm.material_id
+    left join fantech_imes.smt_material sml on spbd.sub_material_id=sml.material_id
     left join fantech_imes.smt_process sp on spbd.process_id=sp.process_id
     left join ocean.sys_user u on spbd.create_user_id=u.user_id
     left join ocean.sys_user s on spbd.modified_user_id=s.user_id
