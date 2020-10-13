@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtProductBom;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBomDet;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBomDet;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProductBomDetMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtProductBomMapper;
 import com.fantechs.provider.imes.basic.service.SmtProductBomDetService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
          private SmtProductBomDetMapper smtProductBomDetMapper;
          @Resource
          private SmtHtProductBomDetMapper smtHtProductBomDetMapper;
+         @Resource
+         private SmtProductBomMapper smtProductBomMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
@@ -43,13 +47,15 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
 
+
+            SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
-
+            criteria.andNotEqualTo("partMaterialId",smtProductBom.getMaterialId());
             List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtProductBomDets)){
-                throw new BizErrorException("零件料号已存在");
+                throw new BizErrorException("零件料号不能是产品料号或已存在");
             }
 
             smtProductBomDet.setCreateUserId(currentUser.getUserId());
@@ -71,14 +77,15 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
 
+            SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
-
+            criteria.andNotEqualTo("partMaterialId",smtProductBom.getMaterialId());
             SmtProductBomDet productBomDet = smtProductBomDetMapper.selectOneByExample(example);
 
             if(StringUtils.isNotEmpty(productBomDet)&&!productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())){
-                throw new BizErrorException("零件料号已存在");
+                throw new BizErrorException("零件料号不能是产品料号或已存在");
             }
 
             smtProductBomDet.setModifiedUserId(currentUser.getUserId());
