@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.imes.apply","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.imes.basic.mapper"})
+@MapperScan({"com.fantechs.provider.imes.apply.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
 public class OceanImesApplyApplication {
 
