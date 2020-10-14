@@ -25,7 +25,6 @@ public class SmtHtWorkOrder implements Serializable {
     /**
      * 工单ID
      */
-    @Id
     @Column(name = "work_order_id")
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
     private Long workOrderId;

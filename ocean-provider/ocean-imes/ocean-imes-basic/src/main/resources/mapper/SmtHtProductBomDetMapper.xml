@@ -8,7 +8,7 @@
     <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId" />
     <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
-    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
     <result column="position" jdbcType="VARCHAR" property="position" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
