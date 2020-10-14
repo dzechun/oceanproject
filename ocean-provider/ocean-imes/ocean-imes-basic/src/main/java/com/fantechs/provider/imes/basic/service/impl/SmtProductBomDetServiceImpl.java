@@ -51,6 +51,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
             SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productBomId",smtProductBomDet.getProductBomId());
             criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
             criteria.andNotEqualTo("partMaterialId",smtProductBom.getMaterialId());
             List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
@@ -80,6 +81,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
             SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productBomId",smtProductBomDet.getProductBomId());
             criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
             criteria.andNotEqualTo("partMaterialId",smtProductBom.getMaterialId());
             SmtProductBomDet productBomDet = smtProductBomDetMapper.selectOneByExample(example);
