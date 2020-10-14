@@ -2,17 +2,16 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
+import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
-import com.fantechs.common.base.entity.basic.SmtProductBom;
-import com.fantechs.common.base.entity.basic.SmtProductBomDet;
-import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtHtWorkOrderMapper;
+import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBomMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +35,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         private SmtWorkOrderMapper smtWorkOrderMapper;
         @Resource
         private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
+        @Resource
+        private SmtWorkOrderBomMapper smtWorkOrderBomMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
@@ -118,6 +119,14 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
                 smtHtWorkOrder.setModifiedTime(new Date());
                 list.add(smtHtWorkOrder);
+
+                Example example = new Example(SmtWorkOrderBom.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("workOrderId",workOrderId);
+                List<SmtWorkOrderBom> smtWorkOrderBoms = smtWorkOrderBomMapper.selectByExample(example);
+                if(StringUtils.isNotEmpty(smtWorkOrderBoms)){
+                    throw new BizErrorException("工单被引用，不能删除");
+                }
 
             }
             smtHtWorkOrderMapper.insertList(list);
