@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBomMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrderBom">
+    <id column="work_order_bom_id" jdbcType="BIGINT" property="workOrderBomId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId" />
+    <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtWorkOrderBomDto">
+    <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode" />
+    <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+
+  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom" resultMap="BaseResultMap">
+    select  swob.work_order_bom_id,swob.work_order_id,swo.work_order_code,swob.part_material_id,sm.material_code as part_material_code,sm.material_name,
+    sm.version,sm.material_desc,swob.sub_material_id,sml.material_code as sub_material_code,swob.process_id,sp.process_name,swob.quantity,swob.position,
+    swob.create_user_id, u.user_name as create_user_name,swob.create_time,swob.modified_user_id,s.user_name as modified_user_name,swob.modified_time,
+    swob.is_delete
+    from fantech_imes.smt_work_order_bom swob
+    left join fantech_imes.smt_work_order swo on swob.work_order_id=swo.work_order_id
+    left join fantech_imes.smt_material sm on swob.part_material_id=sm.material_id
+    left join fantech_imes.smt_material sml on swob.sub_material_id=sml.material_id
+    left join fantech_imes.smt_process sp on swob.process_id=sp.process_id
+    left join ocean.sys_user u on swob.create_user_id=u.user_id
+    left join ocean.sys_user s on swob.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(swob.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="workOrderId!=null and workOrderId!=''">
+        and swob.work_order_id=#{workOrderId}
+      </if>
+      <if test="partMaterialId!=null and partMaterialId!=''">
+        and swob.part_material_id=#{partMaterialId}
+      </if>
+    </where>
+    order by swob.create_time desc
+  </select>
+</mapper>

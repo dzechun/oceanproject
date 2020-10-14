@@ -32,10 +32,10 @@ import java.util.List;
 @Service
 public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implements SmtWorkOrderService {
 
-         @Resource
-         private SmtWorkOrderMapper smtWorkOrderMapper;
-         @Resource
-         private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
+        @Resource
+        private SmtWorkOrderMapper smtWorkOrderMapper;
+        @Resource
+        private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)

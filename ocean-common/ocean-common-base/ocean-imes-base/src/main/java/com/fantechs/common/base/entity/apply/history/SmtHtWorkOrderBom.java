@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -117,4 +118,67 @@ public class SmtHtWorkOrderBom implements Serializable {
      * 扩展字段3
      */
     private String option3;
+
+
+    /**
+     * 工单号
+     */
+    @Transient
+    @ApiModelProperty(name="workOrderCode" ,value="工单号")
+    private String workOrderCode;
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(name="partMaterialCode" ,value="零件料号")
+    private String partMaterialCode;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    /**
+     * 版本
+     */
+    @Transient
+    @ApiModelProperty(name="version" ,value="版本")
+    private String version;
+
+    /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    private String materialDesc;
+
+    /**
+     * 零件替代料号
+     */
+    @Transient
+    @ApiModelProperty(name="subMaterialCode" ,value="零件替代料号")
+    private String subMaterialCode;
+
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name="processName" ,value="工序名称")
+    private String processName;
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    private String modifiedUserName;
 }
