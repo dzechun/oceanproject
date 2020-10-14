@@ -122,7 +122,7 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         for (String productProcessRouteId : idsArr) {
             SmtProductProcessRoute smtProductProcessRoute = smtProductProcessRouteMapper.selectByPrimaryKey(productProcessRouteId);
             if(StringUtils.isEmpty(smtProductProcessRoute)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+                throw new BizErrorException(ErrorCodeEnum.OPT20012000,productProcessRouteId);
             }
             //新增产品工艺路线历史信息
             SmtHtProductProcessRoute smtHtProductProcessRoute=new SmtHtProductProcessRoute();

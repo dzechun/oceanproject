@@ -9,6 +9,7 @@ import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.fileserver.common.BASE64DecodedMultipartFile;
 import com.fantechs.provider.fileserver.common.FastDFSClient;
 import com.fantechs.provider.fileserver.config.BaidubceConfig;
+import com.fantechs.provider.fileserver.entity.ImageData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -99,11 +100,11 @@ public class FileUploadController {
 	 */
 	@PostMapping(value="multipleFileBase64")
 	@ApiOperation("Baes64图片上传")
-	public ResponseEntity<?> uploadMultipleFileBASE64(@ApiParam(value = "图片Baes64",required = true) @RequestParam(value = "imgData",required=true) String imgData) throws IOException {
+	public ResponseEntity<?> uploadMultipleFileBASE64(@ApiParam(value = "图片Baes64",required = true) @RequestBody ImageData imageData) throws IOException {
 		Map<String, Object> data = new HashMap<String, Object>();
 		String path = "";
-		if (StringUtils.isNotEmpty(imgData)) {
-			path = getVoiceBase64(imgData.replace(" ",""));
+		if (StringUtils.isNotEmpty(imageData.getImaData())) {
+			path = getVoiceBase64(imageData.getImaData().replace(" ",""));
 		}
 		if(StringUtils.isEmpty(path)){
 			return ControllerUtil.returnFail("上传失败", ErrorCodeEnum.GL99990100.getCode());
