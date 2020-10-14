@@ -1,7 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;

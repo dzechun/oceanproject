@@ -50,7 +50,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
 
             SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
             if(smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())){
-                throw new BizErrorException("零件料号不能是产品料号");
+                throw new BizErrorException("零件料号不能选择产品料号");
             }
 
             Example example = new Example(SmtProductBomDet.class);
@@ -83,7 +83,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
 
             SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
             if(smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())){
-                throw new BizErrorException("零件料号不能是产品料号");
+                throw new BizErrorException("零件料号不能选择产品料号");
             }
 
             Example example = new Example(SmtProductBomDet.class);
