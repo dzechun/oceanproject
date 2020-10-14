@@ -4,12 +4,15 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
+import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.imes.apply.mapper.SmtHtWorkOrderBomMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtHtWorkOrderMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBomMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +41,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
         @Resource
         private SmtWorkOrderBomMapper smtWorkOrderBomMapper;
+        @Resource
+        private SmtHtWorkOrderBomMapper smtHtWorkOrderBomMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
@@ -63,37 +69,87 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             SmtHtWorkOrder smtHtWorkOrder=new SmtHtWorkOrder();
             BeanUtils.copyProperties(smtWorkOrder,smtHtWorkOrder);
             int i = smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
+
+            //根据产品BOM生成工单BOM
+            genWorkOrder(smtWorkOrder);
             return i;
+        }
+
+        /**
+         * 根据产品BOM明细生成工单BOM信息
+         * @param smtWorkOrder
+         */
+        @Transactional(rollbackFor = Exception.class)
+        public void genWorkOrder(SmtWorkOrder smtWorkOrder) {
+            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+            List<SmtWorkOrderBom> list=new ArrayList<>();
+            List<SmtHtWorkOrderBom> htList=new ArrayList<>();
+
+            //根据物料ID查询产品BOM信息
+            List<SmtProductBomDet> smtProductBomDets=smtWorkOrderMapper.selectProductBomDet(smtWorkOrder.getMaterialId());
+            if(StringUtils.isNotEmpty(smtProductBomDets)){
+                for (SmtProductBomDet smtProductBomDet : smtProductBomDets) {
+                    SmtWorkOrderBom smtWorkOrderBom=new SmtWorkOrderBom();
+                    BeanUtils.copyProperties(smtProductBomDet,smtWorkOrderBom);
+                    Integer workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
+                    BigDecimal quantity = smtProductBomDet.getQuantity();
+                    smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity));
+                    smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
+                    smtWorkOrderBom.setCreateTime(new Date());
+                    list.add(smtWorkOrderBom);
+
+                    //新增工单BOM历史信息
+                    SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                    BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                    htList.add(smtHtWorkOrderBom);
+                }
+                //批量新增工单BOM信息
+                smtWorkOrderBomMapper.insertList(list);
+                //批量新增工单BOM历史信息
+                smtHtWorkOrderBomMapper.insertList(htList);
+            }
+
         }
 
         @Override
         @Transactional(rollbackFor = Exception.class)
         public int update(SmtWorkOrder smtWorkOrder) {
+            int i=0;
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
 
-            Example example = new Example(SmtWorkOrder.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workOrderCode",smtWorkOrder.getWorkOrderCode());
+            SmtWorkOrder order = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrder.getWorkOrderId());
+            //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
+            Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+            if(workOrderStatus!=3){
+                Example example = new Example(SmtWorkOrder.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("workOrderCode",smtWorkOrder.getWorkOrderCode());
 
-            SmtWorkOrder workOrder = smtWorkOrderMapper.selectOneByExample(example);
+                SmtWorkOrder workOrder = smtWorkOrderMapper.selectOneByExample(example);
 
-            if(StringUtils.isNotEmpty(workOrder)&&!workOrder.getWorkOrderId().equals(smtWorkOrder.getWorkOrderId())){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                if(StringUtils.isNotEmpty(workOrder)&&!workOrder.getWorkOrderId().equals(smtWorkOrder.getWorkOrderId())){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                }
+
+                if(!order.getMaterialId().equals(smtWorkOrder.getMaterialId())){
+                    throw new BizErrorException("工单不能修改产品料号信息");
+                }
+
+                smtWorkOrder.setModifiedUserId(currentUser.getUserId());
+                smtWorkOrder.setModifiedTime(new Date());
+                i= smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
+
+                //新增工单历史信息
+                SmtHtWorkOrder smtHtWorkOrder=new SmtHtWorkOrder();
+                BeanUtils.copyProperties(smtWorkOrder,smtHtWorkOrder);
+                smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
+                smtHtWorkOrder.setModifiedTime(new Date());
+                smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
             }
 
-            smtWorkOrder.setModifiedUserId(currentUser.getUserId());
-            smtWorkOrder.setModifiedTime(new Date());
-            int i= smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
-
-            //新增工单历史信息
-            SmtHtWorkOrder smtHtWorkOrder=new SmtHtWorkOrder();
-            BeanUtils.copyProperties(smtWorkOrder,smtHtWorkOrder);
-            smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
-            smtHtWorkOrder.setModifiedTime(new Date());
-            smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
             return i;
         }
 

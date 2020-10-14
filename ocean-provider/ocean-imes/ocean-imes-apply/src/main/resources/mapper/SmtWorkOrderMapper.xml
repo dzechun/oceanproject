@@ -65,4 +65,13 @@
     </where>
     order by swo.create_time desc
   </select>
+
+
+  <select id="selectProductBomDet" parameterType="java.lang.Long" resultType="com.fantechs.common.base.entity.basic.SmtProductBomDet">
+    select  shpbd.product_bom_det_id,shpbd.product_bom_id,shpbd.part_material_id,shpbd.sub_material_id,shpbd.process_id,shpbd.quantity,
+    shpbd.position,shpbd.create_user_id, shpbd.create_time,shpbd.modified_user_id,shpbd.modified_time, shpbd.is_delete,spb.material_id
+    from fantech_imes.smt_product_bom_det shpbd
+    left join fantech_imes.smt_product_bom spb on shpbd.product_bom_id=spb.product_bom_id
+    where spb.material_id=#{materialId}
+  </select>
 </mapper>
