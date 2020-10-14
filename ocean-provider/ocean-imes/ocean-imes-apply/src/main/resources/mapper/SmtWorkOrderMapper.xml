@@ -38,6 +38,21 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
 
+  <resultMap id="BomResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBomDet">
+    <result column="product_bom_det_id" jdbcType="BIGINT" property="productBomDetId" />
+    <result column="product_bom_id" jdbcType="BIGINT" property="productBomId" />
+    <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId" />
+    <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMap">
     select  swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
     swo.work_order_quantity,swo.production_quantity,swo.output_quantity,swo.work_order_status,swo.route_id,sr.route_name,swo.barcode_rule_id,
@@ -67,11 +82,11 @@
   </select>
 
 
-  <select id="selectProductBomDet" parameterType="java.lang.Long" resultType="com.fantechs.common.base.entity.basic.SmtProductBomDet">
-    select  shpbd.product_bom_det_id,shpbd.product_bom_id,shpbd.part_material_id,shpbd.sub_material_id,shpbd.process_id,shpbd.quantity,
-    shpbd.position,shpbd.create_user_id, shpbd.create_time,shpbd.modified_user_id,shpbd.modified_time, shpbd.is_delete,spb.material_id
-    from fantech_imes.smt_product_bom_det shpbd
-    left join fantech_imes.smt_product_bom spb on shpbd.product_bom_id=spb.product_bom_id
+  <select id="selectProductBomDet" parameterType="java.lang.Long" resultMap="BomResultMap">
+    select  spbd.product_bom_det_id,spbd.product_bom_id,spbd.part_material_id,spbd.sub_material_id,spbd.process_id,spbd.quantity,
+    spbd.position,spbd.create_user_id, spbd.create_time,spbd.modified_user_id,spbd.modified_time, spbd.is_delete,spb.material_id
+    from fantech_imes.smt_product_bom_det spbd
+    left join fantech_imes.smt_product_bom spb on spbd.product_bom_id=spb.product_bom_id
     where spb.material_id=#{materialId}
   </select>
 </mapper>
