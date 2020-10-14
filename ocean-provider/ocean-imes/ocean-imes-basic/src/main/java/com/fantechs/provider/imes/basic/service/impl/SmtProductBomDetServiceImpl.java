@@ -49,14 +49,17 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
 
 
             SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
+            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())){
+                throw new BizErrorException("零件料号不能是产品料号");
+            }
+
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("productBomId",smtProductBomDet.getProductBomId());
             criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
-            criteria.andNotEqualTo("partMaterialId",smtProductBom.getMaterialId());
             List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtProductBomDets)){
-                throw new BizErrorException("零件料号不能是产品料号或已存在");
+                throw new BizErrorException("零件料号已存在");
             }
 
             smtProductBomDet.setCreateUserId(currentUser.getUserId());
@@ -79,15 +82,18 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
             }
 
             SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
+            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())){
+                throw new BizErrorException("零件料号不能是产品料号");
+            }
+
             Example example = new Example(SmtProductBomDet.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("productBomId",smtProductBomDet.getProductBomId());
             criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
-            criteria.andNotEqualTo("partMaterialId",smtProductBom.getMaterialId());
             SmtProductBomDet productBomDet = smtProductBomDetMapper.selectOneByExample(example);
 
             if(StringUtils.isNotEmpty(productBomDet)&&!productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())){
-                throw new BizErrorException("零件料号不能是产品料号或已存在");
+                throw new BizErrorException("零件料号已存在");
             }
 
             smtProductBomDet.setModifiedUserId(currentUser.getUserId());
