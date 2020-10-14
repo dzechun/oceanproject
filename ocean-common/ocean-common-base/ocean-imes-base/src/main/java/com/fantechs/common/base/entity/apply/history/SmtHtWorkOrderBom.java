@@ -24,7 +24,6 @@ public class SmtHtWorkOrderBom implements Serializable {
     /**
      * 工单BOM ID
      */
-    @Id
     @Column(name = "work_order_bom_id")
     @ApiModelProperty(name="workOrderBomId" ,value="工单BOM ID")
     private Long workOrderBomId;
