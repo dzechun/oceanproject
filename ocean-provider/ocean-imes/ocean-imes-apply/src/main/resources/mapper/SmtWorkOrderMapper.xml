@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrder">
+    <id column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="work_order_quantity" jdbcType="INTEGER" property="workOrderQuantity" />
+    <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity" />
+    <result column="output_quantity" jdbcType="INTEGER" property="outputQuantity" />
+    <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus" />
+    <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
+    <result column="work_order_type" jdbcType="TINYINT" property="workOrderType" />
+    <result column="planned_start_time" jdbcType="TIMESTAMP" property="plannedStartTime" />
+    <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime" />
+    <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime" />
+    <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtWorkOrderDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMap">
+    select  swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
+    swo.work_order_quantity,swo.production_quantity,swo.output_quantity,swo.work_order_status,swo.route_id,sr.route_name,swo.barcode_rule_id,
+    swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
+    u.user_name as create_user_name,swo.create_time,swo.modified_user_id,s.user_name as modified_user_name,swo.modified_time, swo.is_delete
+    from fantech_imes.smt_work_order swo
+    left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
+    left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
+    left join ocean.sys_user u on swo.create_user_id=u.user_id
+    left join ocean.sys_user s on swo.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="workOrderCode!=null and workOrderCode!=''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and swo.material_id=#{materialId}
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+    </where>
+    order by swo.create_time desc
+  </select>
+</mapper>
