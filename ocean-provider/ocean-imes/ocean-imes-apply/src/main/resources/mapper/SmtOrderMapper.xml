@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtOrder">
+  <id column="order_id" jdbcType="BIGINT" property="orderId" />
+  <result column="order_code" jdbcType="VARCHAR" property="orderCode" />
+  <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+  <result column="material_id" jdbcType="BIGINT" property="materialId" />
+  <result column="order_quantity" jdbcType="INTEGER" property="orderQuantity" />
+  <result column="delivered_quantity" jdbcType="INTEGER" property="deliveredQuantity" />
+  <result column="inkjet_paint" jdbcType="VARCHAR" property="inkjetPaint" />
+  <result column="radium_carving" jdbcType="VARCHAR" property="radiumCarving" />
+  <result column="status" jdbcType="TINYINT" property="status" />
+  <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate" />
+  <result column="photo_url" jdbcType="VARCHAR" property="photoUrl" />
+  <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+  <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+  <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  <result column="option1" jdbcType="VARCHAR" property="option1" />
+  <result column="option2" jdbcType="VARCHAR" property="option2" />
+  <result column="option3" jdbcType="VARCHAR" property="option3" />
+</resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtOrderDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select so.order_id, so.order_code, so.customer_id, so.material_id, so.order_quantity, so.delivered_quantity, so.Inkjet_paint,
+    so.radium_carving, so.status, so.delivery_date, so.photo_url, so.create_user_id, so.create_time, so.modified_user_id,
+    so.modified_time, so.is_delete, so.option1, so.option2, so.option3 ,sc.customer_name ,sm.version ,sm.material_desc, u.user_name, s.user_name
+    from smt_order so
+    left join ocean.sys_user u on so.create_user_id = u.user_id
+    left join ocean.sys_user s on so.modified_user_id = s.user_id
+    left join fantech_imes.smt_material sm on so.material_id = sm.material_id
+    left join fantech_imes.smt_customer sc on so.customer_id = sc.customer_id 
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+
+      <if test="orderCode != null and orderCode != ''">
+        and so.order_code like CONCAT('%', #{OrderCode}, '%')
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and swo.material_id=#{materialId}
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+
+      <if test="customerName != null and customerName != ''">
+        and sc.customer_name like CONCAT('%', #{customerName}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>
