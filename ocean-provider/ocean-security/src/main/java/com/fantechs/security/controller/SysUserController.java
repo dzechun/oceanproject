@@ -99,13 +99,6 @@ public class SysUserController {
         }
     }
 
-    @GetMapping("/downloadTemplate")
-    @ApiOperation(value = "下载模板", notes = "下载模板")
-    public void downloadTemplate(HttpServletResponse response){
-        String fileName ="SysUser.xlsx";
-        TemplateFileUtil.downloadTemplate(TemplateFileUtil.OCEAN_SECURITY_EXCEL, fileName, response);
-    }
-
     /**
      * 从excel导入数据
      * @return
