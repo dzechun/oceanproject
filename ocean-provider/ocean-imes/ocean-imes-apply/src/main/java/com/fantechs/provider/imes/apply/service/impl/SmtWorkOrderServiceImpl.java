@@ -93,18 +93,24 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     BeanUtils.copyProperties(smtProductBomDet,smtWorkOrderBom);
                     Integer workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
                     BigDecimal quantity = smtProductBomDet.getQuantity();
+                    smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
                     smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity));
                     smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                     smtWorkOrderBom.setCreateTime(new Date());
                     list.add(smtWorkOrderBom);
 
-                    //新增工单BOM历史信息
-                    SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
-                    BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-                    htList.add(smtHtWorkOrderBom);
                 }
                 //批量新增工单BOM信息
                 smtWorkOrderBomMapper.insertList(list);
+
+                 if(StringUtils.isNotEmpty(list)){
+                     for (SmtWorkOrderBom smtWorkOrderBom : list) {
+                         //新增工单BOM历史信息
+                         SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                         BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                         htList.add(smtHtWorkOrderBom);
+                     }
+                 }
                 //批量新增工单BOM历史信息
                 smtHtWorkOrderBomMapper.insertList(htList);
             }

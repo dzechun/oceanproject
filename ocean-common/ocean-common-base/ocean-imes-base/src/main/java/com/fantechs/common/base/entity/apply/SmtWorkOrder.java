@@ -5,10 +5,7 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +20,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Id
     @Column(name = "work_order_id")
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
-    @NotNull(groups = ValidGroup.update.class,message = "工单ID不能为空")
+    @NotNull(groups = update.class,message = "工单ID不能为空")
     private Long workOrderId;
 
     /**
