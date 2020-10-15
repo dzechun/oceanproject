@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtProcessCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_process_category_id" jdbcType="BIGINT" property="htProcessCategoryId" />
+    <result column="process_category_id" jdbcType="BIGINT" property="processCategoryId" />
+    <result column="process_category_code" jdbcType="VARCHAR" property="processCategoryCode" />
+    <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName" />
+    <result column="process_category_desc" jdbcType="VARCHAR" property="processCategoryDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    shpc.ht_process_category_id, shpc.process_category_id, shpc.process_category_code, shpc.process_category_name, shpc.process_category_desc,
+    shpc.status, shpc.create_user_id, shpc.create_time, shpc.modified_user_id, shpc.modified_time, shpc.is_delete, shpc.option1, shpc.option2, shpc.option3
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"/>,  su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from smt_ht_process_category shpc
+      LEFT JOIN ocean.sys_user su  ON shpc.create_user_id = su.user_id
+      LEFT JOIN ocean.sys_user sus ON shpc.modified_user_id = sus.user_id
+      <where>
+          <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+              and date_format(spc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+          </if>
+          <if test="processCategoryCode != null and processCategoryCode != ''">
+              and spc.process_category_code like CONCAT('%',#{processCategoryCode},'%')
+          </if>
+          <if test="processCategoryName != null and processCategoryName != ''">
+              and spc.process_category_name like CONCAT('%',#{processCategoryName},'%')
+          </if>
+      </where>
+      order by create_time desc
+  </select>
+
+</mapper>

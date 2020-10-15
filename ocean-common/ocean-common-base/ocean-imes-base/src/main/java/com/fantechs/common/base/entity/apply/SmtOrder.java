@@ -1,6 +1,8 @@
 package com.fantechs.common.base.entity.apply;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -20,6 +22,7 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Id
     @Column(name = "order_id")
     @NotNull(groups = update.class,message = "订单id不能为空")
+    @ApiModelProperty(name="orderId" ,value="订单ID")
     private Long orderId;
 
     /**
@@ -27,12 +30,15 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "order_code")
     @NotBlank(message = "订单号不能为空")
+    @ApiModelProperty(name="orderCode" ,value="订单号")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="1")
     private String orderCode;
 
     /**
      * 客户ID
      */
     @Column(name = "customer_id")
+    @ApiModelProperty(name="customerId" ,value="客户id")
     private Long customerId;
 
     /**
@@ -40,6 +46,7 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "material_id")
     @NotNull(message = "产品料号id不能为空")
+    @ApiModelProperty(name="materialId" ,value="产品料号id")
     private Long materialId;
 
     /**
@@ -47,71 +54,91 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "order_quantity")
     @NotNull(message = "订单数量不能为空")
+    @ApiModelProperty(name="orderQuantity" ,value="订单数量")
+    @Excel(name = "订单数量", height = 20, width = 30,orderNum="6")
     private Integer orderQuantity;
 
     /**
      * 已交付数量
      */
     @Column(name = "delivered_quantity")
+    @ApiModelProperty(name="deliveredQuantity" ,value="已交付数量")
+    @Excel(name = "已交付数量", height = 20, width = 30,orderNum="7")
     private Integer deliveredQuantity;
 
     /**
      * 喷绘信息
      */
     @Column(name = "inkjet_paint")
+    @ApiModelProperty(name="inkjetPaint" ,value="喷绘信息")
+    @Excel(name = "喷绘信息", height = 20, width = 30,orderNum="8")
     private String inkjetPaint;
 
     /**
      * 镭雕信息
      */
     @Column(name = "radium_carving")
+    @ApiModelProperty(name="radiumCarving" ,value="镭雕信息")
+    @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="9")
     private String radiumCarving;
 
     /**
      * 状态（0、无效 1、有效）
      */
+    @ApiModelProperty(name="status" ,value="状态（0、无效 1、有效）")
+    @Excel(name = "状态", height = 20, width = 30,orderNum="10",replace = {"无效_0","有效_1"})
     private Byte status;
 
     /**
      * 交货日期
      */
     @Column(name = "delivery_date")
+    @ApiModelProperty(name="deliveryDate" ,value="交货日期")
+    @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="11")
     private Date deliveryDate;
 
     /**
      * 照片链接
      */
     @Column(name = "photo_url")
+    @ApiModelProperty(name="photoUrl" ,value="照片链接")
     private String photoUrl;
 
     /**
      * 创建人ID
      */
     @Column(name = "create_user_id")
+    @ApiModelProperty(name="createUserId" ,value="创建人ID")
     private Long createUserId;
 
     /**
      * 创建时间
      */
     @Column(name = "create_time")
+    @ApiModelProperty(name="createTime" ,value="创建时间")
+    @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="13")
     private Date createTime;
 
     /**
      * 修改人ID
      */
     @Column(name = "modified_user_id")
+    @ApiModelProperty(name="modifiedUserId" ,value="修改人ID")
     private Long modifiedUserId;
 
     /**
      * 修改时间
      */
     @Column(name = "modified_time")
+    @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="15")
     private Date modifiedTime;
 
     /**
      * 逻辑删除（0、删除 1、正常）
      */
     @Column(name = "is_delete")
+    @ApiModelProperty(name="isDelete" ,value="逻辑删除")
     private Byte isDelete;
 
     /**
