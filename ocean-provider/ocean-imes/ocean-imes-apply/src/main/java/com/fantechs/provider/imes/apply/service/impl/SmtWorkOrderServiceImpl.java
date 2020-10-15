@@ -152,7 +152,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
                 if(workOrderStatus==0||workOrderStatus==2){
                     //工单的工单数量改变
-                    if(order.getWorkOrderQuantity()!=smtWorkOrder.getWorkOrderQuantity()){
+                    if(!order.getWorkOrderQuantity().equals(smtWorkOrder.getWorkOrderQuantity())){
                         Example example1 = new Example(SmtWorkOrderBom.class);
                         Example.Criteria criteria1 = example1.createCriteria();
                         criteria1.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());

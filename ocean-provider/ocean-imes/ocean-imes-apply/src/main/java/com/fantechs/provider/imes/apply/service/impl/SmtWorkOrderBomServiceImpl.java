@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -81,6 +82,8 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         @Transactional(rollbackFor = Exception.class)
         public int update(SmtWorkOrderBom smtWorkOrderBom) {
             int i=0;
+            SmtWorkOrderBom orderBom = smtWorkOrderBomMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderBomId());
+            BigDecimal singleQuantity = orderBom.getSingleQuantity();
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -100,6 +103,9 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                     throw new BizErrorException("零件料号已存在");
                 }
 
+                if(singleQuantity.compareTo(smtWorkOrderBom.getSingleQuantity())!=0){
+                    smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+                }
                 smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
                 smtWorkOrderBom.setModifiedTime(new Date());
                 i= smtWorkOrderBomMapper.updateByPrimaryKeySelective(smtWorkOrderBom);
