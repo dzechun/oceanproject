@@ -60,7 +60,7 @@ public class SmtWorkShopController {
 
     @ApiOperation(value = "履历列表",notes = "履历列表")
     @PostMapping("/findHtList")
-    public ResponseEntity< List<SmtHtWorkShop>> findHtList(
+    public ResponseEntity<List<SmtHtWorkShop>> findHtList(
             @ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop){
         Page<Object> page = PageHelper.startPage(searchSmtWorkShop.getStartPage(),searchSmtWorkShop.getPageSize());
         List<SmtHtWorkShop> menuList = smtHtWorkShopService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtWorkShop));

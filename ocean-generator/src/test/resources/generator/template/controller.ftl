@@ -1,10 +1,12 @@
 package ${basePackage}.controller.${sign};
 
+import com.fantechs.common.base.exception.BizErrorException;
 import ${basePackage}.entity.${modelNameUpperCamel};
 import ${basePackage}.service.${modelNameUpperCamel}Service;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -62,7 +64,7 @@ public class ${modelNameUpperCamel}Controller {
     @PostMapping("/findList")
     public ResponseEntity<List<${modelNameUpperCamel}>> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
         Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
-        List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
+        List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(search${modelNameUpperCamel});
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -78,7 +80,7 @@ public class ${modelNameUpperCamel}Controller {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) Search${modelNameUpperCamel} search${modelNameUpperCamel}){
-    List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
+    List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(search${modelNameUpperCamel});
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "${modelNameUpperCamel}信息", ${modelNameUpperCamel}.class, "${modelNameUpperCamel}.xls", response);
