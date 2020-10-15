@@ -62,6 +62,10 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                     throw new BizErrorException("零件料号已存在");
                 }
 
+                if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())){
+                    throw new BizErrorException("零件料号不能选择产品料号");
+                }
+
                 smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                 smtWorkOrderBom.setCreateTime(new Date());
                 smtWorkOrderBomMapper.insertUseGeneratedKeys(smtWorkOrderBom);
@@ -101,6 +105,10 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
 
                 if(StringUtils.isNotEmpty(workOrderBom)&&!workOrderBom.getWorkOrderBomId().equals(smtWorkOrderBom.getWorkOrderBomId())){
                     throw new BizErrorException("零件料号已存在");
+                }
+
+                if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())){
+                    throw new BizErrorException("零件料号不能选择产品料号");
                 }
 
                 if(singleQuantity.compareTo(smtWorkOrderBom.getSingleQuantity())!=0){
