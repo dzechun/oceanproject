@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "work_order_code")
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
+    @NotBlank(message = "工单号不能为空")
     @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
 
@@ -51,6 +53,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "work_order_quantity")
     @ApiModelProperty(name="workOrderQuantity" ,value="工单数量")
+    @NotNull(message = "工单数量不能为空")
     @Excel(name = "工单数量", height = 20, width = 30,orderNum="5")
     private Integer workOrderQuantity;
 
