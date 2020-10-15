@@ -56,7 +56,7 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
-    @Excel(name = "条码规则集合", height = 20, width = 30,orderNum="9")
+    @Excel(name = "条码规则集合", height = 20, width = 30,orderNum="10")
     private String barcodeRuleName;
 
     /**
@@ -64,7 +64,7 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建账号", height = 20, width = 30,orderNum="15")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="16")
     private String createUserName;
 
     /**
@@ -72,6 +72,6 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改账号", height = 20, width = 30,orderNum="17")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="18")
     private String modifiedUserName;
 }

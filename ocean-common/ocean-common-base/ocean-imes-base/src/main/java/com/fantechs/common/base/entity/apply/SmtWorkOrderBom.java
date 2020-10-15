@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.apply;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -60,18 +61,21 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="singleQuantity" ,value="单个用量")
     @NotNull(message = "单个用量为空")
+    @Excel(name = "单个用量", height = 20, width = 30,orderNum="5")
     private BigDecimal singleQuantity;
 
     /**
      * 使用数量
      */
     @ApiModelProperty(name="quantity" ,value="使用数量")
+    @Excel(name = "使用数量", height = 20, width = 30,orderNum="6")
     private BigDecimal quantity;
 
     /**
      * 位置
      */
     @ApiModelProperty(name="position" ,value="位置")
+    @Excel(name = "零件位置", height = 20, width = 30,orderNum="8")
     private String position;
 
     /**
@@ -86,6 +90,7 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="10",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -100,6 +105,7 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="12",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

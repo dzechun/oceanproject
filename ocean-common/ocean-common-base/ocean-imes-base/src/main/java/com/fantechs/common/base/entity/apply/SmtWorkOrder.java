@@ -98,7 +98,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "work_order_type")
     @ApiModelProperty(name="workOrderType" ,value="工单类型")
-    @Excel(name = "工单类型", height = 20, width = 30,orderNum="10",replace = {"量产_0", "试产_1","返工_2","维修_3"})
+    @Excel(name = "工单类型", height = 20, width = 30,orderNum="11",replace = {"量产_0", "试产_1","返工_2","维修_3"})
     private Integer workOrderType;
 
     /**
@@ -106,7 +106,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "planned_start_time")
     @ApiModelProperty(name="plannedStartTime" ,value="计划开始时间")
-    @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="11")
+    @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="12")
     private Date plannedStartTime;
 
     /**
@@ -114,7 +114,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "planned_end_time")
     @ApiModelProperty(name="plannedEndTime" ,value="计划结束时间")
-    @Excel(name = "计划结束时间", height = 20, width = 30,orderNum="12")
+    @Excel(name = "计划结束时间", height = 20, width = 30,orderNum="13")
     private Date plannedEndTime;
 
     /**
@@ -122,7 +122,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "actual_start_time")
     @ApiModelProperty(name="actualStartTime" ,value="实际开始时间")
-    @Excel(name = "实际开始时间", height = 20, width = 30,orderNum="13")
+    @Excel(name = "实际开始时间", height = 20, width = 30,orderNum="14")
     private Date actualStartTime;
 
     /**
@@ -130,7 +130,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "actual_end_time")
     @ApiModelProperty(name="actualEndTime" ,value="实际结束时间")
-    @Excel(name = "实际结束时间", height = 20, width = 30,orderNum="14")
+    @Excel(name = "实际结束时间", height = 20, width = 30,orderNum="15")
     private Date actualEndTime;
 
     /**
@@ -145,7 +145,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="16",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="17",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -160,7 +160,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="18",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="19",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
