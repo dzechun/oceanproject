@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -54,7 +55,7 @@ public class SmtWorkshopSection extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty("状态(0无效，1有效)")
-    @Excel(name = "状态", height = 20, width = 30,replace = "(0无效，1有效)")
+    @Excel(name = "状态", height = 20, width = 30,replace = "(0_无效，1_有效)")
     private Byte status;
 
     /**
@@ -77,6 +78,8 @@ public class SmtWorkshopSection extends ValidGroup implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty("创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -99,6 +102,8 @@ public class SmtWorkshopSection extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty("修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

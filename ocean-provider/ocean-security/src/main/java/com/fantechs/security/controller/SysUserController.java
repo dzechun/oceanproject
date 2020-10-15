@@ -87,7 +87,7 @@ public class SysUserController {
     }
 
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出用户信息excel",notes = "导出用户信息excel")
+    @ApiOperation(value = "导出用户信息excel",notes = "导出用户信息excel",produces = "application/octet-stream")
     public void exportUsers(HttpServletResponse response, @ApiParam(value ="输入查询条件")
     @RequestBody(required = false) SearchSysUser searchSysUser){
         List<SysUserExcelDTO> list = sysUserService.selectUsersExcelDto(searchSysUser);

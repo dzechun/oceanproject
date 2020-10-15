@@ -83,7 +83,7 @@ public class SmtProLineController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出生产线信息excel",notes = "导出生产线信息excel")
+    @ApiOperation(value = "导出生产线信息excel",notes = "导出生产线信息excel",produces = "application/octet-stream")
     public void exportProLines(HttpServletResponse response, @ApiParam(value = "查询对象")
                                @RequestBody(required = false) SearchSmtProLine searchSmtProLine){
         List<SmtProLine> list = smtProLineService.findList(searchSmtProLine);

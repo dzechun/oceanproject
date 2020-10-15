@@ -94,7 +94,7 @@ public class SmtFactoryController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出工厂excel",notes = "导出工厂excel")
+    @ApiOperation(value = "导出工厂excel",notes = "导出工厂excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtFactory searchSmtFactory){
         List<SmtFactoryDto> smtFactoryDtos = smtFactoryService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtFactory));
         try {

@@ -87,7 +87,7 @@ public class SmtWarehouseAreaController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出仓库区域excel")
+    @ApiOperation(value = "导出excel",notes = "导出仓库区域excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtWarehouseArea searchSmtWarehouseArea){
         List<SmtWarehouseAreaDto> list = smtWarehouseAreaService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtWarehouseArea));
         try {

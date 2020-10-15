@@ -80,7 +80,7 @@ public class SmtWorkOrderBomController {
     }
 
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchSmtWorkOrderBom searchSmtWorkOrderBom){
     List<SmtWorkOrderBom> list = smtWorkOrderBomService.findList(searchSmtWorkOrderBom);

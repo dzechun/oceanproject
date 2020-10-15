@@ -90,7 +90,7 @@ public class SmtMaterialController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出物料excel",notes = "导出物料excel")
+    @ApiOperation(value = "导出物料excel",notes = "导出物料excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                               @RequestBody(required = false)SearchSmtMaterial searchSmtMaterial){
         List<SmtMaterial> list = smtMaterialService.findList(searchSmtMaterial);

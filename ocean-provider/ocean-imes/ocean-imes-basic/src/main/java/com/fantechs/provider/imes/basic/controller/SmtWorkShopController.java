@@ -94,7 +94,7 @@ public class SmtWorkShopController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出车间excel")
+    @ApiOperation(value = "导出excel",notes = "导出车间excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop){
         List<SmtWorkShopDto> smtWorkShopDtos = smtWorkShopService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtWorkShop));
         try {

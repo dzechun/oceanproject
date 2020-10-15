@@ -87,7 +87,7 @@ public class SmtWarehouseController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出仓库信息excel",notes = "导出仓库信息excel")
+    @ApiOperation(value = "导出仓库信息excel",notes = "导出仓库信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                               @RequestBody(required = false) SearchSmtWarehouse searchSmtWarehouse){
         List<SmtWarehouse> list = smtWarehouseService.findList(searchSmtWarehouse);

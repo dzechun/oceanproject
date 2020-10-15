@@ -91,7 +91,7 @@ public class SmtStorageMaterialController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出储位物料信息excel",notes = "导出储位物料信息excel")
+    @ApiOperation(value = "导出储位物料信息excel",notes = "导出储位物料信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtStorageMaterial searchSmtStorageMaterial){
         List<SmtStorageMaterial> list =smtStorageMaterialService.findList(searchSmtStorageMaterial);
         try {

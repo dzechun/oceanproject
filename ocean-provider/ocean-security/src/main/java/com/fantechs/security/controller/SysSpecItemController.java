@@ -91,7 +91,7 @@ public class SysSpecItemController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出程序配置项excel",notes = "导出程序配置项excel")
+    @ApiOperation(value = "导出程序配置项excel",notes = "导出程序配置项excel",produces = "application/octet-stream")
     public void exportSpecItems(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                             @RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
         List<SysSpecItem> list = sysSpecItemService.findList(searchSysSpecItem);

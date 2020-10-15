@@ -70,7 +70,7 @@ public class SmtOrderController {
     }
 
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSmtOrder searchSmtOrder){
     List<SmtOrderDto> list = smtOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtOrder));

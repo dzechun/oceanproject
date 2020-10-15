@@ -91,7 +91,7 @@ public class SmtProductModelController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出产品型号excel")
+    @ApiOperation(value = "导出excel",notes = "导出产品型号excel",produces = "application/octet-stream")
     public void exportProductModels(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                                    @RequestBody(required = false) SearchSmtProductModel searchSmtProductModel){
         List<SmtProductModel> list = smtProductModelService.selectProductModels(searchSmtProductModel);

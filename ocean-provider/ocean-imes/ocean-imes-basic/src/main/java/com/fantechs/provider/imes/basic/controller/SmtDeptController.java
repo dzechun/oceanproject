@@ -86,7 +86,7 @@ public class SmtDeptController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出部门excel",notes = "导出部门excel")
+    @ApiOperation(value = "导出部门excel",notes = "导出部门excel",produces = "application/octet-stream")
     public void exportDepts(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSmtDept searchSmtDept){
         List<SmtDept> list = smtDeptService.findList(searchSmtDept);

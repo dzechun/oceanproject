@@ -91,7 +91,7 @@ public class SysRoleController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出角色信息excel",notes = "导出角色信息excel")
+    @ApiOperation(value = "导出角色信息excel",notes = "导出角色信息excel",produces = "application/octet-stream")
     public void exportRoles(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSysRole searchSysRole){
         List<SysRole> list = sysRoleService.selectRoles(searchSysRole);
