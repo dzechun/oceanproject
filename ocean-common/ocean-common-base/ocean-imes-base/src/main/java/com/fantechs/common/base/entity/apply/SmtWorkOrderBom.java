@@ -56,6 +56,13 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
     private Long processId;
 
     /**
+     * 单个用量
+     */
+    @ApiModelProperty(name="singleQuantity" ,value="单个用量")
+    @NotNull(message = "单个用量为空")
+    private BigDecimal singleQuantity;
+
+    /**
      * 使用数量
      */
     @ApiModelProperty(name="quantity" ,value="使用数量")

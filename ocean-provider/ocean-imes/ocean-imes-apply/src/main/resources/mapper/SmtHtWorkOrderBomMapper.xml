@@ -8,6 +8,7 @@
     <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId" />
     <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="single_quantity" jdbcType="DECIMAL" property="singleQuantity" />
     <result column="quantity" jdbcType="DECIMAL" property="quantity" />
     <result column="position" jdbcType="VARCHAR" property="position" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -32,7 +33,7 @@
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom" resultMap="BaseResultMap">
     select  shwob.ht_work_order_bom_id,shwob.work_order_id,swo.work_order_code,shwob.part_material_id,sm.material_code as part_material_code,sm.material_name,
-    sm.version,sm.material_desc,shwob.sub_material_id,sml.material_code as sub_material_code,shwob.process_id,sp.process_name,
+    sm.version,sm.material_desc,shwob.sub_material_id,sml.material_code as sub_material_code,shwob.process_id,sp.process_name,shwob.single_quantity,
     shwob.quantity,shwob.position,shwob.create_user_id, u.user_name as create_user_name,shwob.create_time,shwob.modified_user_id,s.user_name as modified_user_name,
     shwob.modified_time, shwob.is_delete
     from fantech_imes.smt_ht_work_order_bom shwob

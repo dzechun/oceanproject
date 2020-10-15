@@ -57,6 +57,12 @@ public class SmtHtWorkOrderBom implements Serializable {
     private Long processId;
 
     /**
+     * 单个用量
+     */
+    @ApiModelProperty(name="singleQuantity" ,value="单个用量")
+    private BigDecimal singleQuantity;
+
+    /**
      * 使用数量
      */
     @ApiModelProperty(name="quantity" ,value="使用数量")

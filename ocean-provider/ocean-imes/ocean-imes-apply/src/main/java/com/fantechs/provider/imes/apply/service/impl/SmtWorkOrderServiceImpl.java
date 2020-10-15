@@ -24,9 +24,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -68,6 +66,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             //新增工单历史信息
             SmtHtWorkOrder smtHtWorkOrder=new SmtHtWorkOrder();
             BeanUtils.copyProperties(smtWorkOrder,smtHtWorkOrder);
+            smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
+            smtHtWorkOrder.setModifiedTime(new Date());
             int i = smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
 
             //根据产品BOM生成工单BOM
@@ -94,6 +94,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     Integer workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
                     BigDecimal quantity = smtProductBomDet.getQuantity();
                     smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                    smtWorkOrderBom.setSingleQuantity(smtProductBomDet.getQuantity());
                     smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity));
                     smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                     smtWorkOrderBom.setCreateTime(new Date());
@@ -108,6 +109,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                          //新增工单BOM历史信息
                          SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
                          BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                         smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                         smtHtWorkOrderBom.setModifiedTime(new Date());
                          htList.add(smtHtWorkOrderBom);
                      }
                  }
@@ -121,6 +124,9 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         @Transactional(rollbackFor = Exception.class)
         public int update(SmtWorkOrder smtWorkOrder) {
             int i=0;
+            List<SmtWorkOrderBom> list=new ArrayList();
+            List<SmtHtWorkOrderBom> htList=new ArrayList<>();
+
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -128,7 +134,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
             SmtWorkOrder order = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrder.getWorkOrderId());
             //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
-            Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+            Integer workOrderStatus = order.getWorkOrderStatus();
             if(workOrderStatus!=3){
                 Example example = new Example(SmtWorkOrder.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -144,9 +150,39 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     throw new BizErrorException("工单不能修改产品料号信息");
                 }
 
+                if(workOrderStatus==0||workOrderStatus==2){
+                    //工单的工单数量改变
+                    if(order.getWorkOrderQuantity()!=smtWorkOrder.getWorkOrderQuantity()){
+                        Example example1 = new Example(SmtWorkOrderBom.class);
+                        Example.Criteria criteria1 = example1.createCriteria();
+                        criteria1.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
+                        List<SmtWorkOrderBom> workOrderBoms = smtWorkOrderBomMapper.selectByExample(example1);
+                        if(StringUtils.isNotEmpty(workOrderBoms)){
+                            for (SmtWorkOrderBom smtWorkOrderBom : workOrderBoms) {
+                                //工单BOM的单个用量
+                                BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
+                                smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+                                list.add(smtWorkOrderBom);
+
+                                //新增工单BOM历史信息
+                                SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                                BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                                smtHtWorkOrderBom.setModifiedTime(new Date());
+                                htList.add(smtHtWorkOrderBom);
+                            }
+                            //批量修改工单BOM的用量
+                            smtWorkOrderBomMapper.updateBatch(list);
+
+                            //批量新增工单BOM历史信息
+                            smtHtWorkOrderBomMapper.insertList(htList);
+                        }
+                    }
+                }
                 smtWorkOrder.setModifiedUserId(currentUser.getUserId());
                 smtWorkOrder.setModifiedTime(new Date());
                 i= smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
+
 
                 //新增工单历史信息
                 SmtHtWorkOrder smtHtWorkOrder=new SmtHtWorkOrder();
@@ -154,6 +190,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
                 smtHtWorkOrder.setModifiedTime(new Date());
                 smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
+            }else {
+                throw new BizErrorException("生产完成的工单不允许修改");
             }
 
             return i;

@@ -68,6 +68,8 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 //新增工单BOM历史信息
                 SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
                 BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                smtHtWorkOrderBom.setModifiedTime(new Date());
                 i = smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
             }else {
                 throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能新增工单BOM");
