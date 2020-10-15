@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtHtWorkOrderBomMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBomMapper;
+import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderBomService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,63 +36,81 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         private SmtWorkOrderBomMapper smtWorkOrderBomMapper;
         @Resource
         private SmtHtWorkOrderBomMapper smtHtWorkOrderBomMapper;
+        @Resource
+        private SmtWorkOrderMapper smtWorkOrderMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
         public int save(SmtWorkOrderBom smtWorkOrderBom) {
+            int i=0;
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
 
-            Example example = new Example(SmtWorkOrderBom.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("partMaterialId",smtWorkOrderBom.getPartMaterialId());
+            SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+            //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
+            Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+            if(workOrderStatus==0||workOrderStatus==2){
+                Example example = new Example(SmtWorkOrderBom.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("partMaterialId",smtWorkOrderBom.getPartMaterialId());
 
-            List<SmtWorkOrderBom> smtWorkOrderBoms = smtWorkOrderBomMapper.selectByExample(example);
-            if(StringUtils.isNotEmpty(smtWorkOrderBoms)){
-                throw new BizErrorException("零件料号已存在");
+                List<SmtWorkOrderBom> smtWorkOrderBoms = smtWorkOrderBomMapper.selectByExample(example);
+                if(StringUtils.isNotEmpty(smtWorkOrderBoms)){
+                    throw new BizErrorException("零件料号已存在");
+                }
+
+                smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
+                smtWorkOrderBom.setCreateTime(new Date());
+                smtWorkOrderBomMapper.insertUseGeneratedKeys(smtWorkOrderBom);
+
+                //新增工单BOM历史信息
+                SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                i = smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
+            }else {
+                throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能新增工单BOM");
             }
-
-            smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
-            smtWorkOrderBom.setCreateTime(new Date());
-            smtWorkOrderBomMapper.insertUseGeneratedKeys(smtWorkOrderBom);
-
-            //新增工单BOM历史信息
-            SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
-            BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-            int i = smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
             return i;
         }
 
         @Override
         @Transactional(rollbackFor = Exception.class)
         public int update(SmtWorkOrderBom smtWorkOrderBom) {
+            int i=0;
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
 
-            Example example = new Example(SmtWorkOrderBom.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("partMaterialId",smtWorkOrderBom.getPartMaterialId());
+            SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+            //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
+            Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+            if(workOrderStatus==0||workOrderStatus==2){
+                Example example = new Example(SmtWorkOrderBom.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("partMaterialId",smtWorkOrderBom.getPartMaterialId());
 
-            SmtWorkOrderBom workOrderBom = smtWorkOrderBomMapper.selectOneByExample(example);
+                SmtWorkOrderBom workOrderBom = smtWorkOrderBomMapper.selectOneByExample(example);
 
-            if(StringUtils.isNotEmpty(workOrderBom)&&!workOrderBom.getWorkOrderBomId().equals(smtWorkOrderBom.getWorkOrderBomId())){
-                throw new BizErrorException("零件料号已存在");
+                if(StringUtils.isNotEmpty(workOrderBom)&&!workOrderBom.getWorkOrderBomId().equals(smtWorkOrderBom.getWorkOrderBomId())){
+                    throw new BizErrorException("零件料号已存在");
+                }
+
+                smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                smtWorkOrderBom.setModifiedTime(new Date());
+                i= smtWorkOrderBomMapper.updateByPrimaryKeySelective(smtWorkOrderBom);
+
+                //新增工单BOM历史信息
+                SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                smtHtWorkOrderBom.setModifiedTime(new Date());
+                smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
+            }else {
+                throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能修改工单BOM");
             }
-
-            smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-            smtWorkOrderBom.setModifiedTime(new Date());
-            int i= smtWorkOrderBomMapper.updateByPrimaryKeySelective(smtWorkOrderBom);
-
-            //新增工单BOM历史信息
-            SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
-            BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-            smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-            smtHtWorkOrderBom.setModifiedTime(new Date());
-            smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
             return i;
         }
 
@@ -107,16 +127,22 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
             String[] workOrderBomIds = ids.split(",");
             for (String workOrderBomId : workOrderBomIds) {
                 SmtWorkOrderBom smtWorkOrderBom = smtWorkOrderBomMapper.selectByPrimaryKey(workOrderBomId);
-                if(StringUtils.isEmpty(smtWorkOrderBom)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+                //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
+                Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+                if(workOrderStatus==0||workOrderStatus==2){
+                    if(StringUtils.isEmpty(smtWorkOrderBom)){
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                    }
+                    //新增工单BOM历史信息
+                    SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                    BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                    smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                    smtHtWorkOrderBom.setModifiedTime(new Date());
+                    list.add(smtHtWorkOrderBom);
+                }else {
+                    throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能删除工单BOM");
                 }
-                //新增工单BOM历史信息
-                SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
-                BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-                smtHtWorkOrderBom.setModifiedTime(new Date());
-                list.add(smtHtWorkOrderBom);
-
             }
             smtHtWorkOrderBomMapper.insertList(list);
 
