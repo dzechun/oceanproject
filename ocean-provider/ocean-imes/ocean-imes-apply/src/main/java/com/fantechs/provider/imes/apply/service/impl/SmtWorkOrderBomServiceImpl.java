@@ -56,7 +56,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 Example example = new Example(SmtWorkOrderBom.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("partMaterialId",smtWorkOrderBom.getPartMaterialId());
-
+                criteria.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
                 List<SmtWorkOrderBom> smtWorkOrderBoms = smtWorkOrderBomMapper.selectByExample(example);
                 if(StringUtils.isNotEmpty(smtWorkOrderBoms)){
                     throw new BizErrorException("零件料号已存在");
@@ -100,7 +100,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 Example example = new Example(SmtWorkOrderBom.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("partMaterialId",smtWorkOrderBom.getPartMaterialId());
-
+                criteria.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
                 SmtWorkOrderBom workOrderBom = smtWorkOrderBomMapper.selectOneByExample(example);
 
                 if(StringUtils.isNotEmpty(workOrderBom)&&!workOrderBom.getWorkOrderBomId().equals(smtWorkOrderBom.getWorkOrderBomId())){
