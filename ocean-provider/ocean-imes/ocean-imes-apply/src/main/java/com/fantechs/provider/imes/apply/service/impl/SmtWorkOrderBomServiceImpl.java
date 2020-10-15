@@ -65,7 +65,8 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())){
                     throw new BizErrorException("零件料号不能选择产品料号");
                 }
-
+                BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
+                smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
                 smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                 smtWorkOrderBom.setCreateTime(new Date());
                 smtWorkOrderBomMapper.insertUseGeneratedKeys(smtWorkOrderBom);
