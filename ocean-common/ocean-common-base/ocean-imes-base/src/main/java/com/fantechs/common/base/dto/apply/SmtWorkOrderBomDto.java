@@ -1,7 +1,7 @@
 package com.fantechs.common.base.dto.apply;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
+import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
-public class SmtWorkOrderBomDto extends SmtWorkOrder implements Serializable {
+public class SmtWorkOrderBomDto extends SmtWorkOrderBom implements Serializable {
 
     private static final long serialVersionUID = 9163386553195751648L;
 
