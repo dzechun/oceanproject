@@ -1,7 +1,6 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.support.BaseService;
@@ -23,7 +22,7 @@ public class SmtHtWorkOrderBomServiceImpl extends BaseService<SmtHtWorkOrderBom>
          private SmtHtWorkOrderBomMapper smtHtWorkOrderBomMapper;
 
         @Override
-        public List<SmtWorkOrderBom> findList(SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
+        public List<SmtHtWorkOrderBom> findList(SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
             return smtHtWorkOrderBomMapper.findList(searchSmtWorkOrderBom);
         }
 }

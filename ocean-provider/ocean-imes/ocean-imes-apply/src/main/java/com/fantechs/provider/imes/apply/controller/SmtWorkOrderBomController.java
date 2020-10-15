@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
+import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -73,9 +74,9 @@ public class SmtWorkOrderBomController {
 
     @ApiOperation("工单BOM信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtWorkOrderBom>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
+    public ResponseEntity<List<SmtHtWorkOrderBom>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderBom.getStartPage(),searchSmtWorkOrderBom.getPageSize());
-        List<SmtWorkOrderBom> list = smtHtWorkOrderBomService.findList(searchSmtWorkOrderBom);
+        List<SmtHtWorkOrderBom> list = smtHtWorkOrderBomService.findList(searchSmtWorkOrderBom);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
