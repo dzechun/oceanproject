@@ -113,7 +113,9 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 }
 
                 if(singleQuantity.compareTo(smtWorkOrderBom.getSingleQuantity())!=0){
-                    smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+                    smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(smtWorkOrderBom.getSingleQuantity()));
+                }else {
+                    smtWorkOrderBom.setQuantity(orderBom.getQuantity());
                 }
                 smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
                 smtWorkOrderBom.setModifiedTime(new Date());
