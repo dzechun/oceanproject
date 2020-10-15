@@ -1,7 +1,6 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 
-import com.fantechs.common.base.entity.basic.SmtStation;
 import com.fantechs.common.base.entity.basic.history.SmtHtStation;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStation;
 import com.fantechs.common.base.support.BaseService;
@@ -23,7 +22,7 @@ public class SmtHtStationServiceImpl  extends BaseService<SmtHtStation> implemen
     private SmtHtStationMapper smtHtStationMapper;
 
     @Override
-    public List<SmtStation> findList(SearchSmtStation searchSmtStation) {
+    public List<SmtHtStation> findList(SearchSmtStation searchSmtStation) {
         return smtHtStationMapper.findList(searchSmtStation);
     }
 }

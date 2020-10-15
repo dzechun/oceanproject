@@ -23,7 +23,7 @@ public class SmtHtProductBomDetServiceImpl extends BaseService<SmtHtProductBomDe
          private SmtHtProductBomDetMapper smtHtProductBomDetMapper;
 
         @Override
-        public List<SmtProductBomDet> findList(SearchSmtProductBomDet searchSmtProductBomDet) {
+        public List<SmtHtProductBomDet> findList(SearchSmtProductBomDet searchSmtProductBomDet) {
             return smtHtProductBomDetMapper.findList(searchSmtProductBomDet);
         }
 }

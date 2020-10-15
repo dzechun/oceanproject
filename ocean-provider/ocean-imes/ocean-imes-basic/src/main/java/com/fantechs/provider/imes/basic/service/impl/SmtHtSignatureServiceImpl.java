@@ -1,7 +1,6 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 
-import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
 import com.fantechs.common.base.support.BaseService;
@@ -23,7 +22,7 @@ public class SmtHtSignatureServiceImpl  extends BaseService<SmtHtSignature> impl
     private SmtHtSignatureMapper smtHtSignatureMapper;
 
     @Override
-    public List<SmtSignature> findHtList(SearchSmtSignature searchSmtSignature) {
+    public List<SmtHtSignature> findHtList(SearchSmtSignature searchSmtSignature) {
         return smtHtSignatureMapper.findHtList(searchSmtSignature);
     }
 }

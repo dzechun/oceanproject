@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.support.BaseService;
@@ -22,7 +21,7 @@ public class SmtHtRouteServiceImpl extends BaseService<SmtHtRoute> implements Sm
     private SmtHtRouteMapper smtHtRouteMapper;
 
     @Override
-    public List<SmtRoute> findList(SearchSmtRoute searchSmtRoute) {
+    public List<SmtHtRoute> findList(SearchSmtRoute searchSmtRoute) {
         return smtHtRouteMapper.findList(searchSmtRoute);
     }
 }

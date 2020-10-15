@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.basic.service;
 
-import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.support.IService;
@@ -14,5 +13,5 @@ import java.util.List;
 
 public interface SmtHtRouteService extends IService<SmtHtRoute> {
 
-    List<SmtRoute> findList(SearchSmtRoute searchSmtRoute);
+    List<SmtHtRoute> findList(SearchSmtRoute searchSmtRoute);
 }

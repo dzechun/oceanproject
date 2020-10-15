@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 import com.fantechs.common.base.entity.basic.SmtSignature;
+import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -95,9 +96,9 @@ public class SmtSignatureController {
 
     @ApiOperation("根据条件查询物料特征码历史信息列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtSignature>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSignature searchSmtSignature) {
+    public ResponseEntity<List<SmtHtSignature>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSignature searchSmtSignature) {
         Page<Object> page = PageHelper.startPage(searchSmtSignature.getStartPage(),searchSmtSignature.getPageSize());
-        List<SmtSignature> list = smtHtSignatureService.findHtList(searchSmtSignature);
+        List<SmtHtSignature> list = smtHtSignatureService.findHtList(searchSmtSignature);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

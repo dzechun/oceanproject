@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -77,9 +78,9 @@ public class SmtRouteController {
 
     @ApiOperation("工艺路线信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtRoute>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtRoute searchSmtRoute) {
+    public ResponseEntity<List<SmtHtRoute>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtRoute searchSmtRoute) {
         Page<Object> page = PageHelper.startPage(searchSmtRoute.getStartPage(),searchSmtRoute.getPageSize());
-        List<SmtRoute> list = smtHtRouteService.findList(searchSmtRoute);
+        List<SmtHtRoute> list = smtHtRouteService.findList(searchSmtRoute);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

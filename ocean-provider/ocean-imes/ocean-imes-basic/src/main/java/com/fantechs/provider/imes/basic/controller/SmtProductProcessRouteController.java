@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
+import com.fantechs.common.base.entity.basic.history.SmtHtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -74,9 +75,9 @@ public class SmtProductProcessRouteController {
 
     @ApiOperation("产品工艺路线信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtProductProcessRoute>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductProcessRoute searchSmtProductProcessRoute) {
+    public ResponseEntity<List<SmtHtProductProcessRoute>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductProcessRoute searchSmtProductProcessRoute) {
         Page<Object> page = PageHelper.startPage(searchSmtProductProcessRoute.getStartPage(),searchSmtProductProcessRoute.getPageSize());
-        List<SmtProductProcessRoute> list = smtHtProductProcessRouteService.findList(searchSmtProductProcessRoute);
+        List<SmtHtProductProcessRoute> list = smtHtProductProcessRouteService.findList(searchSmtProductProcessRoute);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

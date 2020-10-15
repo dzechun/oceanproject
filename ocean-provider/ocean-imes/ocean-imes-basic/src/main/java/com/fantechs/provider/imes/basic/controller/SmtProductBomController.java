@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.entity.basic.SmtProductBom;
+import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -73,9 +74,9 @@ public class SmtProductBomController {
 
     @ApiOperation("产品BOM信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtProductBom>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBom searchSmtProductBom) {
+    public ResponseEntity<List<SmtHtProductBom>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBom searchSmtProductBom) {
         Page<Object> page = PageHelper.startPage(searchSmtProductBom.getStartPage(),searchSmtProductBom.getPageSize());
-        List<SmtProductBom> list = smtHtProductBomService.findList(searchSmtProductBom);
+        List<SmtHtProductBom> list = smtHtProductBomService.findList(searchSmtProductBom);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

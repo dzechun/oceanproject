@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.basic.service;
 
-import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute;
 import com.fantechs.common.base.support.IService;
@@ -14,5 +13,5 @@ import java.util.List;
 
 public interface SmtHtProductProcessRouteService extends IService<SmtHtProductProcessRoute> {
 
-    List<SmtProductProcessRoute> findList(SearchSmtProductProcessRoute searchSmtProductProcessRoute);
+    List<SmtHtProductProcessRoute> findList(SearchSmtProductProcessRoute searchSmtProductProcessRoute);
 }

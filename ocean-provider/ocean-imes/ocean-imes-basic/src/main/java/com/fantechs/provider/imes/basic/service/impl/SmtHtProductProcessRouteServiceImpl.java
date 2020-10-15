@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute;
 import com.fantechs.common.base.support.BaseService;
@@ -22,7 +21,7 @@ public class SmtHtProductProcessRouteServiceImpl extends BaseService<SmtHtProduc
     private SmtHtProductProcessRouteMapper smtHtProductProcessRouteMapper;
 
     @Override
-    public List<SmtProductProcessRoute> findList(SearchSmtProductProcessRoute searchSmtProductProcessRoute) {
+    public List<SmtHtProductProcessRoute> findList(SearchSmtProductProcessRoute searchSmtProductProcessRoute) {
         return smtHtProductProcessRouteMapper.findList(searchSmtProductProcessRoute);
     }
 }

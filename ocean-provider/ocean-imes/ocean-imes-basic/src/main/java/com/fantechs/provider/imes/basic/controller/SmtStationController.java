@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 import com.fantechs.common.base.entity.basic.SmtStation;
+import com.fantechs.common.base.entity.basic.history.SmtHtStation;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStation;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -75,9 +76,9 @@ public class SmtStationController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtStation>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStation searchSmtStation) {
+    public ResponseEntity<List<SmtHtStation>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStation searchSmtStation) {
         Page<Object> page = PageHelper.startPage(searchSmtStation.getStartPage(),searchSmtStation.getPageSize());
-        List<SmtStation> list = smtHtStationService.findList(searchSmtStation);
+        List<SmtHtStation> list = smtHtStationService.findList(searchSmtStation);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
