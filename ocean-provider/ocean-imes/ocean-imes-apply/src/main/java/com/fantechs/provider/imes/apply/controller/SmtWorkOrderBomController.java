@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderBomDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
@@ -66,9 +67,9 @@ public class SmtWorkOrderBomController {
 
     @ApiOperation("工单BOM信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtWorkOrderBom>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
+    public ResponseEntity<List<SmtWorkOrderBomDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderBom.getStartPage(),searchSmtWorkOrderBom.getPageSize());
-        List<SmtWorkOrderBom> list = smtWorkOrderBomService.findList(searchSmtWorkOrderBom);
+        List<SmtWorkOrderBomDto> list = smtWorkOrderBomService.findList(searchSmtWorkOrderBom);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -84,10 +85,10 @@ public class SmtWorkOrderBomController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchSmtWorkOrderBom searchSmtWorkOrderBom){
-    List<SmtWorkOrderBom> list = smtWorkOrderBomService.findList(searchSmtWorkOrderBom);
+    List<SmtWorkOrderBomDto> list = smtWorkOrderBomService.findList(searchSmtWorkOrderBom);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出工单BOM信息", "工单BOM信息", SmtWorkOrderBom.class, "工单BOM信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出工单BOM信息", "工单BOM信息", SmtWorkOrderBomDto.class, "工单BOM信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

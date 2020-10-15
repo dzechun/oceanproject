@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SmtWorkOrderBomDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
@@ -169,7 +170,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         }
 
         @Override
-        public List<SmtWorkOrderBom> findList(SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
+        public List<SmtWorkOrderBomDto> findList(SearchSmtWorkOrderBom searchSmtWorkOrderBom) {
             return smtWorkOrderBomMapper.findList(searchSmtWorkOrderBom);
         }
 }

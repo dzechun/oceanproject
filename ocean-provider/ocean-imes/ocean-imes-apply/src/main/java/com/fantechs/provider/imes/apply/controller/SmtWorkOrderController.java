@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
@@ -66,9 +67,9 @@ public class SmtWorkOrderController {
 
     @ApiOperation("工单列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtWorkOrder>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrder searchSmtWorkOrder) {
+    public ResponseEntity<List<SmtWorkOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrder searchSmtWorkOrder) {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrder.getStartPage(),searchSmtWorkOrder.getPageSize());
-        List<SmtWorkOrder> list = smtWorkOrderService.findList(searchSmtWorkOrder);
+        List<SmtWorkOrderDto> list = smtWorkOrderService.findList(searchSmtWorkOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -84,10 +85,10 @@ public class SmtWorkOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchSmtWorkOrder searchSmtWorkOrder){
-    List<SmtWorkOrder> list = smtWorkOrderService.findList(searchSmtWorkOrder);
+    List<SmtWorkOrderDto> list = smtWorkOrderService.findList(searchSmtWorkOrder);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出工单信息", "工单信息", SmtWorkOrder.class, "工单信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出工单信息", "工单信息", SmtWorkOrderDto.class, "工单信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

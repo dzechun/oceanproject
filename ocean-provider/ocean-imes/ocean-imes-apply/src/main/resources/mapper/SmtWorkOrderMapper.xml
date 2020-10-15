@@ -53,7 +53,7 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMap">
+  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMapDto">
     select  swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
     swo.work_order_quantity,swo.production_quantity,swo.output_quantity,swo.work_order_status,swo.route_id,sr.route_name,swo.barcode_rule_id,
     swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,

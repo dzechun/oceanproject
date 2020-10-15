@@ -33,7 +33,7 @@
   </resultMap>
 
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom" resultMap="BaseResultMap">
+  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom" resultMap="BaseResultMapDto">
     select  swob.work_order_bom_id,swob.work_order_id,swo.work_order_code,swob.part_material_id,sm.material_code as part_material_code,sm.material_name,
     sm.version,sm.material_desc,swob.sub_material_id,sml.material_code as sub_material_code,swob.process_id,sp.process_name,swob.single_quantity,swob.quantity,
     swob.position,swob.create_user_id, u.user_name as create_user_name,swob.create_time,swob.modified_user_id,s.user_name as modified_user_name,swob.modified_time,
