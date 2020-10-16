@@ -18,5 +18,6 @@
         <module>ocean-fileserver</module>  <!-- 文件服务 -->
         <module>ocean-security</module>    <!-- 用户认证中心 -->
         <module>ocean-imes</module>    <!-- imes服务 -->
+        <module>ocean-quartz</module>    <!-- 定时任务调度器 -->
     </modules>
 </project>
