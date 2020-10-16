@@ -129,6 +129,20 @@ public class ControllerUtil {
     public static Map<String,Object> dynamicConditionByEntity(Object o){
         Map<String, Object> map = new HashMap<>();
         Class<?> clazz = o.getClass();
+        for (Field field : clazz.getFields()) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            String value = null;
+            try {
+                Object o1 = field.get(o);
+                value = o1==null?null:o1.toString();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if(value != null){
+                map.put(fieldName, value);
+            }
+        }
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             String fieldName = field.getName();
@@ -143,6 +157,7 @@ public class ControllerUtil {
                 map.put(fieldName, value);
             }
         }
+
         return map;
     }
 
