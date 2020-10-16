@@ -2,10 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtProcessCategoryMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtProcessCategory">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="process_category_id" jdbcType="BIGINT" property="processCategoryId" />
+     <id column="process_category_id" jdbcType="BIGINT" property="processCategoryId" />
     <result column="process_category_code" jdbcType="VARCHAR" property="processCategoryCode" />
     <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -25,7 +22,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    spc.process_category_code, spc.process_category_name, spc.process_category_desc,
+    spc.process_category_id, spc.process_category_code, spc.process_category_name, spc.process_category_desc,
     spc.status, spc.create_user_id, spc.create_time, spc.modified_user_id, spc.modified_time, spc.is_delete, spc.option1,
     spc.option2, spc.option3
   </sql>
