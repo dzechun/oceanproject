@@ -83,10 +83,10 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     private String radiumCarving;
 
     /**
-     * 状态（0、无效 1、有效）
+     * 状态（0、创建 1、下载完成 2、已完工 3、做废）
      */
-    @ApiModelProperty(name="status" ,value="状态（0、无效 1、有效）")
-    @Excel(name = "状态", height = 20, width = 30,orderNum="10",replace = {"无效_0","有效_1"})
+    @ApiModelProperty(name="status" ,value="状态（0、创建 1、下载完成 2、已完工 3、做废）")
+    @Excel(name = "状态", height = 20, width = 30,orderNum="10",replace = {"创建_0","下载完成_1","已完工_2","作废_3"})
     private Byte status;
 
     /**

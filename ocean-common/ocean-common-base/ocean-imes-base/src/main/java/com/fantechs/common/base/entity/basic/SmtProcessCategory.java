@@ -53,7 +53,7 @@ public class SmtProcessCategory extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="状态（0、无效 1、有效）")
-    @Excel(name = "工厂类别状态", height = 20, width = 30 ,orderNum="4",replace = {"有效_0", "无效_1"})
+    @Excel(name = "工厂类别状态", height = 20, width = 30 ,orderNum="4",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

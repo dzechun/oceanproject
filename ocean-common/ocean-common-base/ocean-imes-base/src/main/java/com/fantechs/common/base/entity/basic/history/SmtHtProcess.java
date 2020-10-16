@@ -62,6 +62,20 @@ public class SmtHtProcess implements Serializable {
     private String sectionName;
 
     /**
+     * 工序类别ID
+     */
+    @Column(name = "process_category_id")
+    @ApiModelProperty(name="processCategoryId" ,value="工序类别ID")
+    private Long processCategoryId;
+
+    /**
+     * 工序类别名称
+     */
+    @Transient
+    @ApiModelProperty(name="processCategoryName" ,value="工序类别名称")
+    private String processCategoryName;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status" ,value="状态")
