@@ -16,24 +16,24 @@ public class BaseQuery implements Serializable {
      * 开始时间
      */
     @ApiModelProperty(name="startTime" ,value="开始时间(YYYY-MM-DD)")
-    public String startTime;
+    private String startTime;
 
     /**
      * 结束时间
      */
     @ApiModelProperty(name="endTime" ,value="结束时间(YYYY-MM-DD)")
-    public String endTime;
+    private String endTime;
 
     /**
      * 当前页数
      */
     @ApiModelProperty(name="startPage" ,value="当前页")
-    public Integer startPage=1;
+    private Integer startPage=1;
 
     /**
      * 当前页数
      */
     @ApiModelProperty(name="pageSize" ,value="显示数量")
-    public Integer pageSize=10;
+    private Integer pageSize=10;
 
 }

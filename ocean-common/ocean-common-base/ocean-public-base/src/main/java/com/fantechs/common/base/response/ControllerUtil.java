@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -129,32 +131,26 @@ public class ControllerUtil {
     public static Map<String,Object> dynamicConditionByEntity(Object o){
         Map<String, Object> map = new HashMap<>();
         Class<?> clazz = o.getClass();
-        for (Field field : clazz.getFields()) {
-            field.setAccessible(true);
-            String fieldName = field.getName();
-            String value = null;
-            try {
-                Object o1 = field.get(o);
-                value = o1==null?null:o1.toString();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            if(value != null){
-                map.put(fieldName, value);
-            }
+        List<Class<?> > List = new LinkedList<>();
+        Class<?> suCl = o.getClass().getSuperclass();
+        if(StringUtils.isNotEmpty(suCl)){
+            List.add(suCl);
         }
-        for (Field field : clazz.getDeclaredFields()) {
-            field.setAccessible(true);
-            String fieldName = field.getName();
-            String value = null;
-            try {
-                Object o1 = field.get(o);
-                value = o1==null?null:o1.toString();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            if(value != null){
-                map.put(fieldName, value);
+        List.add(clazz);
+        for(Class<?> clazz1 : List){
+            for (Field field : clazz1.getDeclaredFields()) {
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                String value = null;
+                try {
+                    Object o1 = field.get(o);
+                    value = o1==null?null:o1.toString();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if(value != null){
+                    map.put(fieldName, value);
+                }
             }
         }
 
