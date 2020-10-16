@@ -1,0 +1,9 @@
+server:
+  port: 8799
+  max-http-header-size: 10000000
+
+spring:
+  profiles:
+    include: dev
+  application:
+    name: @pom.artifactId@
