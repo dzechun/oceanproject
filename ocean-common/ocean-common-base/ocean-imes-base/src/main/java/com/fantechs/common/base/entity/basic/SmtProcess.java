@@ -69,7 +69,6 @@ public class SmtProcess extends ValidGroup implements Serializable {
      * 工序类别ID
      */
     @Column(name = "process_category_id")
-    @NotNull(message = "工序类别id不能为空")
     @ApiModelProperty(name="processCategoryId" ,value="工序类别ID")
     private Long processCategoryId;
 
