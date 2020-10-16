@@ -74,8 +74,8 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
         Example example = new Example(SmtProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("processCategoryCode",smtProcessCategory.getProcessCategoryCode());
-        List<SmtProcessCategory> smtProcessCategories = smtProcessCategoryMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(smtProcessCategories)){
+        SmtProcessCategory processCategory = smtProcessCategoryMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(processCategory)&&!processCategory.getProcessCategoryId().equals(smtProcessCategory.getProcessCategoryId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
