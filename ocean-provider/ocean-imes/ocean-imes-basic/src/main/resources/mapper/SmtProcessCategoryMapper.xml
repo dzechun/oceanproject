@@ -24,10 +24,14 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select spc.process_category_code, spc.process_category_name, spc.process_category_desc,
+  <sql id="Base_Column_List">
+    spc.process_category_code, spc.process_category_name, spc.process_category_desc,
     spc.status, spc.create_user_id, spc.create_time, spc.modified_user_id, spc.modified_time, spc.is_delete, spc.option1,
-    spc.option2, spc.option3, u.user_name as create_user_name, s.user_name as modified_user_name 
+    spc.option2, spc.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"/>, u.user_name as create_user_name, s.user_name as modified_user_name
     from smt_process_category spc
     left join ocean.sys_user u on spc.create_user_id = u.user_id
     left join ocean.sys_user s on spc.modified_user_id = s.user_id 
