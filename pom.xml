@@ -86,6 +86,12 @@
             <version>${druid.version}</version>
         </dependency>
 
+        <!-- 整合quartz -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
+
         <!-- mybatis的启动器 -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
