@@ -43,7 +43,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-       /* Example example = new Example(SmtStorageMaterial.class);
+        Example example = new Example(SmtStorageMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
         criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
@@ -52,7 +52,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(smtStorageMaterials)){
             throw new BizErrorException("该仓库区域的仓库的储位上的物料已存在");
-        }*/
+        }
 
         smtStorageMaterial.setCreateUserId(currentUser.getUserId());
         smtStorageMaterial.setCreateTime(new Date());
@@ -102,7 +102,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-       /* Example example = new Example(SmtStorageMaterial.class);
+        Example example = new Example(SmtStorageMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
         criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
@@ -113,7 +113,7 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
 
         if(StringUtils.isNotEmpty(storageMaterial)&&!storageMaterial.getStorageMaterialId().equals(smtStorageMaterial.getStorageMaterialId())){
             throw new BizErrorException("该仓库区域的仓库的储位上的物料已存在");
-        }*/
+        }
 
         smtStorageMaterial.setModifiedUserId(currentUser.getUserId());
         smtStorageMaterial.setModifiedTime(new Date());
