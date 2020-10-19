@@ -11,6 +11,7 @@ import freemarker.template.TemplateExceptionHandler;
 import org.mybatis.generator.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,9 +54,20 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		Context context = new Context(ModelType.FLAT);
 		context.setId("Potato");
 		context.setTargetRuntime("MyBatis3Simple");
+//		context.setTargetRuntime("MyBatis3");
 		context.addProperty(PropertyRegistry.CONTEXT_BEGINNING_DELIMITER, "`");
         context.addProperty(PropertyRegistry.CONTEXT_ENDING_DELIMITER, "`");
-        
+
+
+		PluginConfiguration pluginConfiguration = new PluginConfiguration();
+		pluginConfiguration.setConfigurationType("org.mybatis.generator.plugins.SerializablePlugin");
+		context.addPluginConfiguration(pluginConfiguration);
+
+		pluginConfiguration =   new PluginConfiguration();
+		pluginConfiguration.setConfigurationType("com.fantechs.service.impl.MyBatisPlugin");
+		pluginConfiguration.addProperty("hasLombok","false");
+		context.addPluginConfiguration(pluginConfiguration);
+
         JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
         jdbcConnectionConfiguration.setConnectionURL(JDBC_URL);
         jdbcConnectionConfiguration.setUserId(JDBC_USERNAME);
@@ -67,7 +79,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
         sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + RESOURCES_PATH);
         sqlMapGeneratorConfiguration.setTargetPackage("mapper." + sign);
         context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
-        
+
         // 增加 mapper 插件
         addMapperPlugin(context);
         
@@ -239,6 +251,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		PluginConfiguration pluginConfiguration = new PluginConfiguration();
         pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
         pluginConfiguration.addProperty("mappers", MAPPER_INTERFACE_REFERENCE);
+		pluginConfiguration.addProperty("caseSensitive", "true");
         context.addPluginConfiguration(pluginConfiguration);
 	}
 	

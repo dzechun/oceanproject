@@ -20,6 +20,7 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 	@Override
 	public void genCode(String tableName, String modelName, String sign) {
 		Context initConfig = initConfig(tableName, modelName, sign);
+
 		List<String> warnings = null;
 		MyBatisGenerator generator = null;
 		try {
@@ -68,7 +69,7 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 	        javaClientGeneratorConfiguration.setTargetPackage(MAPPER_PACKAGE + "." + sign);
 	        javaClientGeneratorConfiguration.setConfigurationType("XMLMAPPER");
 	        context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
-	        
+
 	        TableConfiguration tableConfiguration = new TableConfiguration(context);
 	        tableConfiguration.setTableName(tableName);
 	        tableConfiguration.setDomainObjectName(modelName);
