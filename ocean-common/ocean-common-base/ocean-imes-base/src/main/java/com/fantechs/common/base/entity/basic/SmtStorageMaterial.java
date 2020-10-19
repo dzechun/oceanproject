@@ -99,6 +99,7 @@ public class SmtStorageMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "warehouse_id")
     @ApiModelProperty(name = "warehouseId",value = "仓库ID")
+    @NotNull(message = "仓库ID不能为空")
     private Long warehouseId;
 
     /**
@@ -114,6 +115,7 @@ public class SmtStorageMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "warehouse_area_id")
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
+    @NotNull(message = "仓库区域ID不能为空")
     private Long warehouseAreaId;
 
     /**
