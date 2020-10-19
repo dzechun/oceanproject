@@ -50,10 +50,8 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
 
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("materialId",smtProductBom.getMaterialId());
-        example.or(criteria1);
-        criteria.andEqualTo("productBomCode",smtProductBom.getProductBomCode());
+        criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
+        criteria.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
 
         List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(smtProductBoms)){
@@ -82,9 +80,8 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("materialId",smtProductBom.getMaterialId());
-        example.or(criteria1);
-        criteria.andEqualTo("productBomCode",smtProductBom.getProductBomCode());
+        criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
+        criteria.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
 
         SmtProductBom productBom = smtProductBomMapper.selectOneByExample(example);
 
