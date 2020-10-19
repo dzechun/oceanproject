@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.quartz.SchedulerException;
+import org.springframework.scheduling.SchedulingException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

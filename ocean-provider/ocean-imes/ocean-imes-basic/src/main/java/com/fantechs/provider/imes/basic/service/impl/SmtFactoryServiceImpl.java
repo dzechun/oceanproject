@@ -83,7 +83,9 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         String[] idsArr  = ids.split(",");
         for(String  id : idsArr){
             SmtFactory smtFactory = smtFactoryMapper.selectByPrimaryKey(id);
-            if(StringUtils.isNotEmpty(smtFactory)){
+            if (StringUtils.isEmpty(smtFactory)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
                 SmtHtFactory smtHtFactory  = new SmtHtFactory();
                 BeanUtils.copyProperties(smtFactory,smtHtFactory);
 
@@ -92,7 +94,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
                 smtHtFactory.setCreateTime(new Date());
                 smtHtFactory.setCreateUserId(user.getUserId());
                 smtHtFactorys.add(smtHtFactory);
-            }
+
         }
         smtHtFactoryMapper.insertList(smtHtFactorys);
         return smtFactoryMapper.deleteByIds(ids);

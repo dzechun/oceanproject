@@ -57,6 +57,7 @@ public class SmtWarehouseAreaServiceImpl  extends BaseService<SmtWarehouseArea> 
              throw new BizErrorException (ErrorCodeEnum.OPT20012001);
         }
         smtWarehouseArea.setCreateUserId(currentUser.getUserId());
+        smtWarehouseArea.setCreateTime(new Date());
         smtWarehouseAreaMapper.insertUseGeneratedKeys(smtWarehouseArea);
 
         //新增历史记录

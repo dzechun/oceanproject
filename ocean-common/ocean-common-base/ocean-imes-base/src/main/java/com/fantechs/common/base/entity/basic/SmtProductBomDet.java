@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Table(name = "smt_product_bom_det")
 @Data
-public class SmtProductBomDet implements Serializable {
+public class SmtProductBomDet extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -8895517961127531303L;
     /**
      * 产品BOM详细ID
@@ -24,7 +24,7 @@ public class SmtProductBomDet implements Serializable {
     @Id
     @Column(name = "product_bom_det_id")
     @ApiModelProperty(name="productBomDetId" ,value="产品BOM详细ID")
-    @NotNull(groups = ValidGroup.update.class,message = "产品BOM详细ID不能为空")
+    @NotNull(groups = update.class,message = "产品BOM详细ID不能为空")
     private Long productBomDetId;
 
     /**
