@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,19 +50,30 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Integer productType = smtProductProcessRoute.getProductType();
         Long proLineId = smtProductProcessRoute.getProLineId();
         Long productModelId = smtProductProcessRoute.getProductModelId();
         Long materialId = smtProductProcessRoute.getMaterialId();
-        Example example = new Example(SmtProductProcessRoute.class);
-        Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("proLineId",proLineId).orEqualTo("productModelId",productModelId).orEqualTo("materialId",materialId);
-        example.and(criteria1);
-        criteria.andEqualTo("productType",smtProductProcessRoute.getProductType());
-        criteria.andEqualTo("routeId",smtProductProcessRoute.getRouteId());
-        List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(smtProductProcessRoutes)){
-            throw new BizErrorException("该线别或产品型号或产品料号的工艺路线已存在");
+        if(productType==0){
+            Example example = new Example(SmtProductProcessRoute.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productType",productType);
+            List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProductProcessRoutes)){
+                throw new BizErrorException("产品类别为All(*)的工艺路线只能有一条");
+            }
+        }else {
+            Example example = new Example(SmtProductProcessRoute.class);
+            Example.Criteria criteria = example.createCriteria();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("proLineId",proLineId).orEqualTo("productModelId",productModelId).orEqualTo("materialId",materialId);
+            example.and(criteria1);
+            criteria.andEqualTo("productType",productType);
+            criteria.andEqualTo("routeId",smtProductProcessRoute.getRouteId());
+            List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProductProcessRoutes)){
+                throw new BizErrorException("该产品名称的工艺路线已存在");
+            }
         }
         smtProductProcessRoute.setCreateUserId(currentUser.getUserId());
         smtProductProcessRoute.setCreateTime(new Date());
@@ -81,19 +93,31 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        Integer productType = smtProductProcessRoute.getProductType();
         Long proLineId = smtProductProcessRoute.getProLineId();
         Long productModelId = smtProductProcessRoute.getProductModelId();
         Long materialId = smtProductProcessRoute.getMaterialId();
-        Example example = new Example(SmtProductProcessRoute.class);
-        Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("proLineId",proLineId).orEqualTo("productModelId",productModelId).orEqualTo("materialId",materialId);
-        example.and(criteria1);
-        criteria.andEqualTo("productType",smtProductProcessRoute.getProductType());
-        criteria.andEqualTo("routeId",smtProductProcessRoute.getRouteId());
-        SmtProductProcessRoute productProcessRoute = smtProductProcessRouteMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(productProcessRoute)&&!productProcessRoute.getProductProcessRouteId().equals(smtProductProcessRoute.getProductProcessRouteId())){
-            throw new BizErrorException("该线别或产品型号或产品料号的工艺路线已存在");
+        if(productType==0){
+            Example example = new Example(SmtProductProcessRoute.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productType",productType);
+            SmtProductProcessRoute productProcessRoute = smtProductProcessRouteMapper.selectOneByExample(example);
+            if(StringUtils.isNotEmpty(productProcessRoute)&&!productProcessRoute.getProductProcessRouteId().equals(smtProductProcessRoute.getProductProcessRouteId())){
+                throw new BizErrorException("产品类别为All(*)的工艺路线只能有一条");
+            }
+        }else {
+            Example example = new Example(SmtProductProcessRoute.class);
+            Example.Criteria criteria = example.createCriteria();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("proLineId",proLineId).orEqualTo("productModelId",productModelId).orEqualTo("materialId",materialId);
+            example.and(criteria1);
+            criteria.andEqualTo("productType",productType);
+            criteria.andEqualTo("routeId",smtProductProcessRoute.getRouteId());
+            SmtProductProcessRoute productProcessRoute = smtProductProcessRouteMapper.selectOneByExample(example);
+            if(StringUtils.isNotEmpty(productProcessRoute)&&!productProcessRoute.getProductProcessRouteId().equals(smtProductProcessRoute.getProductProcessRouteId())){
+                throw new BizErrorException("该产品名称的工艺路线已存在");
+            }
         }
 
         smtProductProcessRoute.setModifiedUserId(currentUser.getUserId());
