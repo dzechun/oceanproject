@@ -47,8 +47,8 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
         criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
-        criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
-        criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());
+       /* criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
+        criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());*/
         List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(smtStorageMaterials)){
             throw new BizErrorException("该仓库区域的仓库的储位上的物料已存在");
@@ -106,8 +106,8 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtStorageMaterial.getStorageId());
         criteria.andEqualTo("materialId",smtStorageMaterial.getMaterialId());
-        criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
-        criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());
+        /*criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
+        criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());*/
 
         SmtStorageMaterial storageMaterial = smtStorageMaterialMapper.selectOneByExample(example);
 
