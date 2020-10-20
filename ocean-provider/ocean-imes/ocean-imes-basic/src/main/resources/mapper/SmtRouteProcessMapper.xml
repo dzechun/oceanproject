@@ -33,4 +33,10 @@
     left join fantech_imes.smt_process p on srp.next_process_id=p.process_id
     where srp.route_id=#{routeId}
   </select>
+
+  <update id="configureProcess" parameterType="map">
+      update smt_route_process
+      set is_must_pass = #{isMustPass},inspection_time = #{inspectionTime},qualification_id = #{qualificationId}
+      where route_id = ${routeId} and process_id = ${processId}
+  </update>
 </mapper>

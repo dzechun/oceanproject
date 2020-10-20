@@ -103,6 +103,21 @@ public class SmtRouteController {
         return ControllerUtil.returnCRUD(smtRouteProcessService.configureRout(list));
     }
 
+    @PostMapping(value = "/configureProcess")
+    @ApiOperation(value = "配置工序属性",notes = "配置工序属性")
+    public ResponseEntity configureProcess(@ApiParam(value = "routeId",required = true) @RequestParam Long routeId,
+                                           @ApiParam(value = "processId",required = true) @RequestParam Long processId,
+                                           @ApiParam(value = "isMustPass",required = false) @RequestParam Integer isMustPass,
+                                           @ApiParam(value = "inspectionTime",required = false) @RequestParam Integer inspectionTime,
+                                           @ApiParam(value = "qualificationId",required = false) @RequestParam Long qualificationId){
+        return ControllerUtil.returnCRUD(smtRouteProcessService.configureProcess(ControllerUtil.dynamicCondition(
+                "routeId",routeId,
+                "processId",processId,
+                "isMustPass",isMustPass,
+                "inspectionTime",inspectionTime,
+                "qualificationId",qualificationId)));
+    }
+
     @GetMapping(value = "/findConfigureRout")
     @ApiOperation(value = "查询配置的工艺路线信息",notes = "查询配置的工艺路线信息")
     public ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId",required = true) @RequestParam Long routeId){

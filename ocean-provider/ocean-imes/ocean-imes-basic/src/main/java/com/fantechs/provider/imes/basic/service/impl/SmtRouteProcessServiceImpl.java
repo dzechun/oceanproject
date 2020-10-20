@@ -15,6 +15,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -81,8 +82,17 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
             return smtRouteProcessMapper.insertList(list);
         }
 
+
+        @Override
+        @Transactional(rollbackFor = Exception.class)
+        public int configureProcess(Map<String, Object> map) {
+            return smtRouteProcessMapper.configureProcess(map);
+        }
+
         @Override
         public List<SmtRouteProcess> findConfigureRout(Long routeId) {
             return smtRouteProcessMapper.findList(routeId);
         }
+
+
 }
