@@ -2,6 +2,7 @@ package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
+import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
@@ -203,31 +204,17 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
             }
 
             String factoryName = sysUser.getFactoryName();
-          /*  if(StringUtils.isNotEmpty(factoryName)){
-                Example example = new Example(SmtFactory.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("factoryName",factoryName);
-                SmtFactory smtFactory = smtFactoryMapper.selectOneByExample(example);
+            String deptName = sysUser.getDeptName();
+            if(StringUtils.isNotEmpty(factoryName)&&StringUtils.isNotEmpty(deptName)){
+                SmtDept smtDept = sysUserMapper.selectDept(factoryName,deptName);
 
-                if(StringUtils.isNotEmpty(smtFactory)){
+                if(StringUtils.isNotEmpty(smtDept)){
                     //导入厂别
-                    smtUser.setOrgId(smtFactory.getFactoryId());
-
-                    String deptName = smtUser.getDeptName();
-                    if(StringUtils.isNotEmpty(deptName)){
-                        Example example1 = new Example(SmtDept.class);
-                        Example.Criteria criteria1= example1.createCriteria();
-                        criteria1.andEqualTo("factoryId",smtFactory.getFactoryId());
-                        criteria1.andEqualTo("deptName",deptName);
-                        SmtDept smtDept = smtDeptMapper.selectOneByExample(example1);
-
-                        if(StringUtils.isNotEmpty(smtDept)){
-                            //导入部门
-                            smtUser.setDeptId(smtDept.getDeptId());
-                        }
-                    }
+                    sysUser.setFactoryId(smtDept.getFactoryId());
+                    //导入部门
+                    sysUser.setDeptId(smtDept.getDeptId());
                 }
-            }*/
+            }
 
             sysUser.setCreateUserId(currentUser.getUserId());
             sysUser.setCreateTime(new Date());

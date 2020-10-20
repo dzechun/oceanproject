@@ -22,6 +22,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.fantechs.common.base</groupId>
+            <artifactId>ocean-imes-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-base-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>

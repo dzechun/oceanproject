@@ -19,6 +19,22 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
   </resultMap>
+
+  <resultMap id="DeptResultMap" type="com.fantechs.common.base.entity.basic.SmtDept">
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="dept_code" jdbcType="VARCHAR" property="deptCode" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
+    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     user_id, user_name, user_code, nick_name, password, status, factory_id, dept_id, 
     telephone, mobile, email, create_user_id, create_time, modified_user_id, modified_time, 
@@ -52,5 +68,13 @@
         AND  su.status=1
       </if>
     </where>
+  </select>
+
+  <select id="selectDept" parameterType="java.lang.String" resultMap="DeptResultMap">
+    select sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id,f.factory_name as factoryName,
+    sd.status, sd.create_user_id,sd.create_time,sd.modified_user_id, sd.modified_time,sd.is_delete
+    from fantech_imes.smt_dept sd
+    left join fantech_imes.smt_factory f on sd.factory_id=f.factory_id
+    where f.factory_name=#{factoryName} and sd.dept_name=#{deptName}
   </select>
 </mapper>
