@@ -1,5 +1,6 @@
 package com.fantechs.service.impl;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -28,7 +29,9 @@ public class MyBatisPlugin extends PluginAdapter {
     private static final String LOMBOK_DATA = "lombok.Data";
     private static final String EXAMPLE_SUFFIX = "Example";
     private static final String API_MODEL_PROPERTY_FULL_CLASS_NAME = "io.swagger.annotations.ApiModelProperty";
-    private static final String MODEL_VALIDATION_FULL_CLASS_NAME = "javax.validation.constraints.NotNull";
+    private static final String MODEL_EXCEL_FULL_CLASS_NAME = "cn.afterturn.easypoi.excel.annotation.Excel";
+    private static final String MODEL_JSONFIEL_FULL_CLASS_NAME = "com.alibaba.fastjson.annotation.JSONField;";
+
 
 
     @Override
@@ -70,6 +73,8 @@ public class MyBatisPlugin extends PluginAdapter {
         if (addSwaggerUi) {
             //只在model中添加swagger注解类的导入
             topLevelClass.addImportedType(new FullyQualifiedJavaType(API_MODEL_PROPERTY_FULL_CLASS_NAME));
+            topLevelClass.addImportedType(new FullyQualifiedJavaType(MODEL_EXCEL_FULL_CLASS_NAME));
+            topLevelClass.addImportedType(new FullyQualifiedJavaType(MODEL_JSONFIEL_FULL_CLASS_NAME));
         }
         if (addLombok) {
                 topLevelClass.addImportedType(new FullyQualifiedJavaType(LOMBOK_DATA));
@@ -87,6 +92,12 @@ public class MyBatisPlugin extends PluginAdapter {
             for (String remarkLine : remarkLines) {
                 if (addSwaggerUi) {
                     field.addJavaDocLine("@ApiModelProperty(name=\""+field.getName()+"\",value = \"" + remarks + "\")");
+                    if(remarks.indexOf("时间")>0){
+                        field.addJavaDocLine("@Excel(name = \""+remarks+"\", height = 20, width = 30,orderNum=\"\",exportFormat =\"yyyy-MM-dd HH:mm:ss\") ");
+                        field.addJavaDocLine("@JSONField(format =\"yyyy-MM-dd HH:mm:ss\")");
+                    }else{
+                        field.addJavaDocLine("@Excel(name = \""+remarks+"\", height = 20, width = 30,orderNum=\"\") ");
+                    }
                 }
             }
         }
