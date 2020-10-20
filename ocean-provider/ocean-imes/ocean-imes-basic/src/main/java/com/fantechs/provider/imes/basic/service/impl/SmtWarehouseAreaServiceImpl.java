@@ -3,6 +3,8 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtWarehouseAreaDto;
+import com.fantechs.common.base.entity.basic.SmtStorage;
+import com.fantechs.common.base.entity.basic.SmtWarehouse;
 import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
 import com.fantechs.common.base.entity.basic.history.SmtHtWarehouseArea;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -11,7 +13,9 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtWarehouseAreaMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtStorageMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWarehouseAreaMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtWarehouseMapper;
 import com.fantechs.provider.imes.basic.service.SmtWarehouseAreaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,8 @@ public class SmtWarehouseAreaServiceImpl  extends BaseService<SmtWarehouseArea> 
     private SmtWarehouseAreaMapper  smtWarehouseAreaMapper;
     @Autowired
     private SmtHtWarehouseAreaMapper smtHtWarehouseAreaMapper;
+    @Autowired
+    private SmtStorageMapper smtStorageMapper;
 
 
     @Override
@@ -101,6 +107,16 @@ public class SmtWarehouseAreaServiceImpl  extends BaseService<SmtWarehouseArea> 
             if(StringUtils.isEmpty(smtWarehouseArea)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012000,id);
             }
+
+
+            Example example = new Example(SmtStorage.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("warehouseAreaId",smtWarehouseArea.getWarehouseAreaId());
+            List<SmtStorage> smtStorages = smtStorageMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtStorages)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             SmtHtWarehouseArea smtHtWarehouseArea =  new SmtHtWarehouseArea();
             BeanUtils.copyProperties(smtWarehouseArea,smtHtWarehouseArea);
             smtHtWarehouseArea.setModifiedTime(new Date());

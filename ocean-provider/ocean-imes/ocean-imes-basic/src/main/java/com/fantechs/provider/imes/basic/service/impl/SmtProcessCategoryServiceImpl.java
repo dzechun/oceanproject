@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
+import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.entity.basic.SmtProcessCategory;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProcessCategoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProcessCategoryMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtProcessMapper;
 import com.fantechs.provider.imes.basic.service.SmtProcessCategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
     @Resource
     private SmtHtProcessCategoryMapper smtHtProcessCategoryMapper;
 
+    @Resource
+    private SmtProcessMapper smtProcessMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -108,6 +112,15 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
             if (StringUtils.isEmpty(smtProcessCategory)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtProcess.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("processCategoryId",smtProcessCategory.getProcessCategoryId());
+            List<SmtProcess> smtProcesses = smtProcessMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProcesses)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             //新增工序历史信息
             SmtHtProcessCategory smtHtProcessCategory = new SmtHtProcessCategory();
             BeanUtils.copyProperties(smtProcessCategory,smtHtProcessCategory);

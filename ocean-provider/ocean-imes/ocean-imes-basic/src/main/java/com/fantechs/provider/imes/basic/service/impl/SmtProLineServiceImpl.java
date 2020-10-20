@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProLine;
+import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.history.SmtHtProLine;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProLine;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProLineMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProLineMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
 import com.fantechs.provider.imes.basic.service.SmtProLineService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,9 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
     @Resource
     private SmtHtProLineMapper smtHtProLineMapper;
+
+    @Resource
+    private SmtWorkShopMapper smtWorkShopMapper;
 
     @Override
     public List<SmtProLine> findList(SearchSmtProLine searchSmtProLine) {
@@ -108,6 +113,16 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
             if(StringUtils.isEmpty(smtProLine)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtWorkShop.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workShopId",smtProLine.getWorkShopId());
+            List<SmtWorkShop> smtWorkShops = smtWorkShopMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtWorkShops)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
+
             //新增生产线历史信息
             SmtHtProLine smtHtProLine=new SmtHtProLine();
             BeanUtils.copyProperties(smtProLine,smtHtProLine);

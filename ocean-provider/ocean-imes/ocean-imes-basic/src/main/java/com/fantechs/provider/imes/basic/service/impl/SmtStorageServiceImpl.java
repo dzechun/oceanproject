@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtStorageMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtStorageMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtStorageMaterialMapper;
 import com.fantechs.provider.imes.basic.service.SmtStorageService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
     private SmtStorageMapper smtStorageMapper;
     @Resource
     private SmtHtStorageMapper smtHtStorageMapper;
+    @Resource
+    private SmtStorageMaterialMapper smtStorageMaterialMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -78,6 +82,15 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
             if(StringUtils.isEmpty(smtStorage)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtStorageMaterial.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("storageId",storageId);
+            List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtStorageMaterials)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             //新增储位历史信息
             SmtHtStorage smtHtStorage=new SmtHtStorage();
             BeanUtils.copyProperties(smtStorage,smtHtStorage);

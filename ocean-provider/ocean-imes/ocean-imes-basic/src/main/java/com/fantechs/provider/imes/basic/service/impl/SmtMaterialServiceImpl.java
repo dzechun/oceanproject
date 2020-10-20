@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -13,6 +14,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtMaterialMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtMaterialMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtSignatureMapper;
 import com.fantechs.provider.imes.basic.service.SmtMaterialService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
     @Resource
     private SmtHtMaterialMapper smtHtMaterialMapper;
+
+    @Resource
+    private SmtSignatureMapper smtSignatureMapper;
 
     @Override
     public List<SmtMaterial> findList(SearchSmtMaterial searchSmtMaterial) {
@@ -112,6 +117,17 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             if(StringUtils.isEmpty(smtMaterial)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
+
+
+            Example example = new Example(SmtSignature.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("materialId",smtMaterial.getMaterialId());
+            List<SmtSignature> smtSignatures = smtSignatureMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtSignatures)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
+
             //新增物料历史信息
             SmtHtMaterial smtHtMaterial=new SmtHtMaterial();
             BeanUtils.copyProperties(smtMaterial,smtHtMaterial);

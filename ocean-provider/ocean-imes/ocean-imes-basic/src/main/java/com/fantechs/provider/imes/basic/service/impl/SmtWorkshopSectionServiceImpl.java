@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkshopSection;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection;
@@ -10,6 +11,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtWorkshopSectionMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtProcessMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkshopSectionMapper;
 import com.fantechs.provider.imes.basic.service.SmtWorkshopSectionService;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +35,8 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
     private SmtWorkshopSectionMapper workshopSectionMapper;
     @Resource
     private SmtHtWorkshopSectionMapper smtHtWorkshopSectionMapper;
+    @Resource
+    private SmtProcessMapper smtProcessMapper;
 
     @Override
     public List<SmtWorkshopSection> findList(SearchSmtWorkshopSection searchSmtWorkshopSection) {
@@ -106,6 +110,15 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
             if(StringUtils.isEmpty(smtWorkshopSection)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtProcess.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("sectionId",smtWorkshopSection.getSectionId());
+            List<SmtProcess> smtProcesses = smtProcessMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProcesses)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
             BeanUtils.copyProperties(smtWorkshopSection, smtHtWorkshopSection);
             smtHtWorkshopSection.setModifiedTime(new Date());

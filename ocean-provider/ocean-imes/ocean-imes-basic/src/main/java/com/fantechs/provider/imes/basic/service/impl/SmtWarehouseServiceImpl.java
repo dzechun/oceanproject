@@ -2,7 +2,9 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.SmtWarehouse;
+import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
 import com.fantechs.common.base.entity.basic.history.SmtHtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -11,6 +13,8 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtWarehouseMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtStorageMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtWarehouseAreaMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWarehouseMapper;
 import com.fantechs.provider.imes.basic.service.SmtWarehouseService;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +39,9 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Resource
     private SmtHtWarehouseMapper smtHtWarehouseMapper;
+
+    @Resource
+    private SmtWarehouseAreaMapper smtWarehouseAreaMapper;
 
 
     @Override
@@ -81,6 +88,15 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
             if(StringUtils.isEmpty(smtWarehouse)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtWarehouseArea.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("warehouseId",warehouseId);
+            List<SmtWarehouseArea> smtWarehouseAreas = smtWarehouseAreaMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtWarehouseAreas)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             //新增仓库历史信息
             SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
             BeanUtils.copyProperties(smtWarehouse,smtHtWarehouse);

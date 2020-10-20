@@ -2,7 +2,9 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtProductModel;
+import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductModel;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductModel;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -12,7 +14,9 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProductModelMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtMaterialMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductModelMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtProductProcessRouteMapper;
 import com.fantechs.provider.imes.basic.service.SmtProductModelService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,12 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Resource
     private SmtHtProductModelMapper smtHtProductModelMapper;
+
+    @Resource
+    private SmtMaterialMapper smtMaterialMapper;
+
+    @Resource
+    private SmtProductProcessRouteMapper smtProductProcessRouteMapper;
 
     @Override
     public List<SmtProductModel> selectProductModels(SearchSmtProductModel searchSmtProductModel) {
@@ -102,11 +112,27 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         String[] idsArr =  ids.split(",");
-        for (String  productModelId : idsArr) {
+        for (String productModelId : idsArr) {
             SmtProductModel smtProductModel = smtProductModelMapper.selectByPrimaryKey(productModelId);
             if(StringUtils.isEmpty(smtProductModel)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
+
+            //被物料引用
+            Example example = new Example(SmtMaterial.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productModelId",productModelId);
+            List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
+
+            //被产品工艺路线引用
+            Example example1 = new Example(SmtProductProcessRoute.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("productModelId",productModelId);
+            List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example1);
+            if(StringUtils.isNotEmpty(smtMaterials)||StringUtils.isNotEmpty(smtProductProcessRoutes)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             //新增产品型号历史信息
             SmtHtProductModel smtHtProductModel=new SmtHtProductModel();
             BeanUtils.copyProperties(smtProductModel,smtHtProductModel);

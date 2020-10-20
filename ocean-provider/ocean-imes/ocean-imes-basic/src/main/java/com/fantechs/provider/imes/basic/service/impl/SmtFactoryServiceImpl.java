@@ -3,16 +3,19 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.SmtFactory;
+import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.imes.basic.mapper.SmtDeptMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtFactoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtHtFactoryMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
 import com.fantechs.provider.imes.basic.service.SmtFactoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +39,12 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     private SmtFactoryMapper smtFactoryMapper;
     @Autowired
     private SmtHtFactoryMapper smtHtFactoryMapper;
+    @Autowired
+    private SmtDeptMapper smtDeptMapper;
+    @Autowired
+    private SmtWorkShopMapper smtWorkShopMapper;
+
+
     @Override
     public List<SmtFactoryDto> findList(Map<String, Object> map) {
         return smtFactoryMapper.findList(map);
@@ -86,14 +95,31 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
             if (StringUtils.isEmpty(smtFactory)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-                SmtHtFactory smtHtFactory  = new SmtHtFactory();
-                BeanUtils.copyProperties(smtFactory,smtHtFactory);
 
-                smtHtFactory.setModifiedTime(new Date());
-                smtHtFactory.setModifiedUserId(user.getUserId());
-                smtHtFactory.setCreateTime(new Date());
-                smtHtFactory.setCreateUserId(user.getUserId());
-                smtHtFactorys.add(smtHtFactory);
+            //被部门应用
+            Long factoryId = smtFactory.getFactoryId();
+            Example example = new Example(SmtDept.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("factoryId",factoryId);
+            List<SmtDept> smtDepts = smtDeptMapper.selectByExample(example);
+
+            //被车间引用
+            Example example1 = new Example(SmtWorkShop.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("factoryId",factoryId);
+            List<SmtWorkShop> smtWorkShops = smtWorkShopMapper.selectByExample(example1);
+            if(StringUtils.isNotEmpty(smtDepts)||StringUtils.isNotEmpty(smtWorkShops)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
+            SmtHtFactory smtHtFactory  = new SmtHtFactory();
+            BeanUtils.copyProperties(smtFactory,smtHtFactory);
+
+            smtHtFactory.setModifiedTime(new Date());
+            smtHtFactory.setModifiedUserId(user.getUserId());
+            smtHtFactory.setCreateTime(new Date());
+            smtHtFactory.setCreateUserId(user.getUserId());
+            smtHtFactorys.add(smtHtFactory);
 
         }
         smtHtFactoryMapper.insertList(smtHtFactorys);

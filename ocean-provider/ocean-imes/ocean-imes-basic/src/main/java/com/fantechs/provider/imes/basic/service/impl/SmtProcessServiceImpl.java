@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.entity.basic.SmtStation;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProcess;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProcessMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProcessMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtStationMapper;
 import com.fantechs.provider.imes.basic.service.SmtProcessService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,9 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
     @Resource
     private SmtHtProcessMapper smtHtProcessMapper;
+
+    @Resource
+    private SmtStationMapper smtStationMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -80,6 +85,15 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
             if(StringUtils.isEmpty(smtProcess)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtStation.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("processId",smtProcess.getProcessId());
+            List<SmtStation> smtStations = smtStationMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtStations)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             //新增工序历史信息
             SmtHtProcess smtHtProcess=new SmtHtProcess();
             BeanUtils.copyProperties(smtProcess,smtHtProcess);

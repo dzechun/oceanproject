@@ -247,6 +247,8 @@ public enum ErrorCodeEnum {
     OPT20012002(20012002,"未知错误"),
 
     OPT20012003(20012003,"数据不存在"),
+
+    OPT20012004(20012004,"数据被引用，不能删除"),
     ;
 
     private Integer code;
