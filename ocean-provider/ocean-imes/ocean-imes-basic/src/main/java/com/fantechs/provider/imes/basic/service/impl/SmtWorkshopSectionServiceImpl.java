@@ -111,6 +111,7 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被工序引用
             Example example = new Example(SmtProcess.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("sectionId",smtWorkshopSection.getSectionId());

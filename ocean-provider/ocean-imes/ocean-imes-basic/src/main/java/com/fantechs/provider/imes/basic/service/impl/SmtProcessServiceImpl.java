@@ -86,6 +86,7 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被工位引用
             Example example = new Example(SmtStation.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("processId",smtProcess.getProcessId());
