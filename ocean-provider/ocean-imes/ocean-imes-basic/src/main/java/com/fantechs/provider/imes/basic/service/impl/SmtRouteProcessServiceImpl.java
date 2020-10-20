@@ -65,16 +65,16 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                     criteria1.andEqualTo("processId",nextProcessId);
                     SmtRouteProcess routeProcess = smtRouteProcessMapper.selectOneByExample(example1);
                     if(StringUtils.isNotEmpty(routeProcess)){
-                          //该出现故障工序对应的维修工序的下一道工序
-                            Example example2 = new Example(SmtRouteProcess.class);
-                            Example.Criteria criteria2 = example2.createCriteria();
-                            criteria2.andEqualTo("routeId",routeId);
-                            criteria2.andEqualTo("previousProcessId",routeProcess.getProcessId());
-                            criteria2.andEqualTo("processId",routeProcess.getNextProcessId());
-                            SmtRouteProcess process = smtRouteProcessMapper.selectOneByExample(example2);
-                            if(process.getOrderNum()>orderNum){
-                                throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
-                            }
+                        //该出现故障工序对应的维修工序的下一道工序
+                        Example example2 = new Example(SmtRouteProcess.class);
+                        Example.Criteria criteria2 = example2.createCriteria();
+                        criteria2.andEqualTo("routeId",routeId);
+                        criteria2.andEqualTo("previousProcessId",routeProcess.getProcessId());
+                        criteria2.andEqualTo("processId",routeProcess.getNextProcessId());
+                        SmtRouteProcess process = smtRouteProcessMapper.selectOneByExample(example2);
+                        if(process.getOrderNum()>orderNum){
+                            throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
+                        }
                     }
                 }
             }
