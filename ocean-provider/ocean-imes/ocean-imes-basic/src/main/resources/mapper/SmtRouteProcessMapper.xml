@@ -29,6 +29,5 @@
     left join fantech_imes.smt_process sp on srp.process_id=sp.process_id
      left join fantech_imes.smt_process sps on srp.next_process_id=sps.process_id
     where srp.route_id=#{routeId}
-    order by srp.order_num
   </select>
 </mapper>

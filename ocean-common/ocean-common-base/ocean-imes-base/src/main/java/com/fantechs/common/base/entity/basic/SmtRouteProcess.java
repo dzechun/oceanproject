@@ -73,7 +73,6 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
      */
     @Column(name = "next_process_id")
     @ApiModelProperty(name="nextProcessId" ,value="下一道工序ID")
-    @NotNull(message = "工序id不能为空")
     private Long nextProcessId;
 
     /**
@@ -95,14 +94,14 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
      */
     @Column(name = "is_pass")
     @ApiModelProperty(name="isPass" ,value="是否通过(0.否 1.是)")
-    private Byte isPass;
+    private Integer isPass;
 
     /**
      * 是否必过工序(0.否/N 1.是/Y)
      */
     @Column(name = "is_must_pass")
     @ApiModelProperty(name="isMustPass" ,value="是否必过工序(0.否/N 1.是/Y)")
-    private Byte isMustPass;
+    private Integer isMustPass;
 
     /**
      * 检验时间(秒)
