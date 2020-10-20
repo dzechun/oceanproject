@@ -54,7 +54,7 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty("状态(0无效，1有效)")
-    @Excel(name = "状态", height = 20, width = 30,replace = "(0无效，1有效)")
+    @Excel(name = "状态", height = 20, width = 30,replace = "(0_无效，1_有效)")
     private Byte status;
 
     /**

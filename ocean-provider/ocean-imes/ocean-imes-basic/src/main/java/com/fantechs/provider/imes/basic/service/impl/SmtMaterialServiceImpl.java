@@ -68,6 +68,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
+        smtMaterial.setCreateTime(new Date());
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
 
         //新增物料历史信息
