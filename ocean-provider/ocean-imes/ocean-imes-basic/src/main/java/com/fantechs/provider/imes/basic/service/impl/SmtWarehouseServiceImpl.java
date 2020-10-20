@@ -89,6 +89,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被仓库区域引用
             Example example = new Example(SmtWarehouseArea.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("warehouseId",warehouseId);

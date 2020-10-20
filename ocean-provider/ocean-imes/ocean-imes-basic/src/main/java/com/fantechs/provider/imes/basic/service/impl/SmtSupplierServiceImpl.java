@@ -90,6 +90,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被物料特征码引用
             Example example = new Example(SmtSignature.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("supplierId",smtSupplier.getSupplierId());

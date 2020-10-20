@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
+import com.fantechs.common.base.entity.basic.SmtProLine;
 import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkShop;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtWorkShopMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtProLineMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
 import com.fantechs.provider.imes.basic.service.SmtWorkShopService;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +36,9 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
     private SmtWorkShopMapper smtWorkShopMapper;
     @Autowired
     private SmtHtWorkShopMapper smtHtWorkShopMapper;
+    @Autowired
+    private SmtProLineMapper smtProLineMapper;
+
     @Override
     public List<SmtWorkShopDto> findList(Map<String, Object> map) {
         return smtWorkShopMapper.findList(map);
@@ -80,6 +85,16 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
             if(StringUtils.isEmpty(smtWorkShop)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            //被生产线引用
+            Example example = new Example(SmtProLine.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workShopId",smtWorkShop.getWorkShopId());
+            List<SmtProLine> smtProLines = smtProLineMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProLines)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
             SmtHtWorkShop smtHtWorkShop = new SmtHtWorkShop();
             BeanUtils.copyProperties(smtWorkShop,smtHtWorkShop);
             smtHtWorkShop.setModifiedUserId(currentUser.getUserId());

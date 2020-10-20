@@ -83,6 +83,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被储位物料引用
             Example example = new Example(SmtStorageMaterial.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("storageId",storageId);
