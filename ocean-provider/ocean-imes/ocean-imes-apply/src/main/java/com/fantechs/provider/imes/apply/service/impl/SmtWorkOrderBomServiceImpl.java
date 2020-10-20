@@ -44,13 +44,15 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         @Override
         @Transactional(rollbackFor = Exception.class)
         public int save(SmtWorkOrderBom smtWorkOrderBom) {
-            int i=0;
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
 
             SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+            if (StringUtils.isEmpty(smtWorkOrder)){
+                throw new BizErrorException("该工单不存在");
+            }
             //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
             Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
             if(workOrderStatus==0||workOrderStatus==2){
@@ -77,11 +79,11 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
                 smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
                 smtHtWorkOrderBom.setModifiedTime(new Date());
-                i = smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
+                return smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
             }else {
                 throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能新增工单BOM");
             }
-            return i;
+
         }
 
         @Override

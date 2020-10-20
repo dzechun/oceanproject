@@ -42,7 +42,7 @@ public class SmtWorkOrderBomController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtWorkOrderBom smtWorkOrderBom) {
+    public ResponseEntity add(@ApiParam(value = "必传：workOrderId、partMaterialId、processId、singleQuantity",required = true)@RequestBody @Validated SmtWorkOrderBom smtWorkOrderBom) {
         return ControllerUtil.returnCRUD(smtWorkOrderBomService.save(smtWorkOrderBom));
     }
 
