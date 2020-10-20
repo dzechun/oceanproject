@@ -65,7 +65,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         }
         smtProductModel.setCreateUserId(currentUser.getUserId());
         smtProductModel.setCreateTime(new Date());
-        smtProductModel.setStatus(1);
         int i = smtProductModelMapper.insertUseGeneratedKeys(smtProductModel);
 
         //新增产品型号历史信息

@@ -56,7 +56,6 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
 
         smtStorageMaterial.setCreateUserId(currentUser.getUserId());
         smtStorageMaterial.setCreateTime(new Date());
-        smtStorageMaterial.setStatus(1);
         smtStorageMaterialMapper.insertUseGeneratedKeys(smtStorageMaterial);
 
         //新增储位物料历史信息

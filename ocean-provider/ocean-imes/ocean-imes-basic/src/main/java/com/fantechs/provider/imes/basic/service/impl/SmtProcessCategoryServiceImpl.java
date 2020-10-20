@@ -58,7 +58,6 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
 
         smtProcessCategory.setCreateUserId(currentUserInfo.getUserId());
         smtProcessCategory.setCreateTime(new Date());
-        smtProcessCategory.setStatus((byte) 1);
         smtProcessCategoryMapper.insertUseGeneratedKeys(smtProcessCategory);
 
         //新增工序类别历史信息

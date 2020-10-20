@@ -59,7 +59,6 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
         smtProcess.setCreateUserId(currentUser.getUserId());
         smtProcess.setCreateTime(new Date());
-        smtProcess.setStatus(1);
         smtProcessMapper.insertUseGeneratedKeys(smtProcess);
 
         //新增工序历史信息

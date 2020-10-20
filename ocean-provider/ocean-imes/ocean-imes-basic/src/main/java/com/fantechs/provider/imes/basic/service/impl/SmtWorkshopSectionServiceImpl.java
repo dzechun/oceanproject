@@ -58,7 +58,6 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
         }
         smtWorkshopSection.setCreateUserId(currentUser.getUserId());
         smtWorkshopSection.setCreateTime(new Date());
-        smtWorkshopSection.setStatus((byte) 1);
         workshopSectionMapper.insertUseGeneratedKeys(smtWorkshopSection);
 
         //添加工段历史信息

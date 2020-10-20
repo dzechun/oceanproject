@@ -69,7 +69,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
         smtMaterial.setCreateTime(new Date());
-        smtMaterial.setStatus(1);
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
 
         //新增物料历史信息

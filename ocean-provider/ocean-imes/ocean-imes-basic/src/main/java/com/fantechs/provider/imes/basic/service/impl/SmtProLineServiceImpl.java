@@ -62,7 +62,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
         smtProLine.setCreateUserId(currentUser.getUserId());
         smtProLine.setCreateTime(new Date());
-        smtProLine.setStatus(1);
         smtProLineMapper.insertUseGeneratedKeys(smtProLine);
 
         //新增生产线历史信息
