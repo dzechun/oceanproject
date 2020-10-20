@@ -7,6 +7,7 @@
     <result column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId" />
+    <result column="previous_process_id" jdbcType="BIGINT" property="previousProcessId" />
     <result column="order_num" jdbcType="INTEGER" property="orderNum" />
     <result column="is_pass" jdbcType="TINYINT" property="isPass" />
     <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass" />
@@ -15,19 +16,21 @@
 
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
     <result column="next_route_name" jdbcType="VARCHAR" property="nextProcessName" />
+    <result column="previous_process_name" jdbcType="BIGINT" property="previousProcessName" />
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
     <result column="process_name" jdbcType="VARCHAR" property="processName" />
   </resultMap>
 
   <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select srp.route_process_id, srp.route_id,sr.route_name,srp.section_id,ws.section_name,srp.process_id,sp.process_name,
-    srp.next_process_id,sps.process_name as next_route_name,srp.order_num,srp.is_pass,srp.is_must_pass,srp.inspection_time,
-    srp.qualification_id
+    select srp.route_process_id, srp.route_id,sr.route_name,srp.section_id,ws.section_name,srp.process_id,sp.process_name,srp.next_process_id,
+    sps.process_name as next_route_name,srp.previous_process_id,p.process_name as previous_process_name,srp.order_num,srp.is_pass,srp.is_must_pass,
+    srp.inspection_time,srp.qualification_id
     from fantech_imes.smt_route_process srp
     left join fantech_imes.smt_route sr on srp.route_id=sr.route_id
     left join fantech_imes.smt_workshop_section ws on srp.section_id=ws.section_id
     left join fantech_imes.smt_process sp on srp.process_id=sp.process_id
-     left join fantech_imes.smt_process sps on srp.next_process_id=sps.process_id
+    left join fantech_imes.smt_process sps on srp.next_process_id=sps.process_id
+    left join fantech_imes.smt_process p on srp.next_process_id=p.process_id
     where srp.route_id=#{routeId}
   </select>
 </mapper>
