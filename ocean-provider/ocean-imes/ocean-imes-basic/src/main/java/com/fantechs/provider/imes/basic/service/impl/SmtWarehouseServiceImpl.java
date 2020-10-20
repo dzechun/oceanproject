@@ -62,6 +62,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
         smtWarehouse.setCreateUserId(currentUser.getUserId());
         smtWarehouse.setCreateTime(new Date());
+        smtWarehouse.setStatus(1);
          smtWarehouseMapper.insertUseGeneratedKeys(smtWarehouse);
 
         //新增仓库历史信息

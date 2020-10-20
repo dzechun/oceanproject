@@ -72,6 +72,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         smtFactory.setModifiedUserId(user.getUserId());
         smtFactory.setModifiedTime(new Date());
         smtFactory.setStatus(StringUtils.isEmpty(smtFactory.getStatus())?1:smtFactory.getStatus());
+        smtFactory.setStatus(1);
         int i = smtFactoryMapper.insertUseGeneratedKeys(smtFactory);
 
         SmtHtFactory smtHtFactory  = new SmtHtFactory();

@@ -58,6 +58,7 @@ public class SmtStationServiceImpl  extends BaseService<SmtStation> implements S
 
         smtStation.setCreateUserId(currentUser.getUserId());
         smtStation.setCreateTime(new Date());
+        smtStation.setStatus(1);
         smtStationMapper.insertUseGeneratedKeys(smtStation);
 
         //新增工位历史信息

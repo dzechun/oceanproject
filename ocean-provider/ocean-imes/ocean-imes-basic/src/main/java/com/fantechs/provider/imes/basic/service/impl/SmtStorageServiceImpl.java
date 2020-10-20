@@ -56,6 +56,7 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
 
         smtStorage.setCreateUserId(currentUser.getUserId());
         smtStorage.setCreateTime(new Date());
+        smtStorage.setStatus(1);
         smtStorageMapper.insertUseGeneratedKeys(smtStorage);
 
         //新增储位历史信息
