@@ -106,6 +106,7 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
      */
     @Column(name = "route_id")
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    @NotNull(message = "工艺路线id不能为空")
     private Long routeId;
 
     /**

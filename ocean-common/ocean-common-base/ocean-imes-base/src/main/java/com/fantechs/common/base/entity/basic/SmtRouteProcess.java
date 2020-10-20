@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -7,11 +8,12 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Table(name = "smt_route_process")
 @Data
-public class SmtRouteProcess implements Serializable {
+public class SmtRouteProcess extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 5370182907126666486L;
     /**
      * 工艺路线与工艺关系ID
@@ -19,6 +21,7 @@ public class SmtRouteProcess implements Serializable {
     @Id
     @Column(name = "route_process_id")
     @ApiModelProperty(name="routeProcessId" ,value="工艺路线与工艺关系ID")
+    @NotNull(groups = update.class,message = "工艺路线与工艺关系ID不能为空")
     private Long routeProcessId;
 
     /**
@@ -26,6 +29,7 @@ public class SmtRouteProcess implements Serializable {
      */
     @Column(name = "route_id")
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    @NotNull(message = "工艺路线id不能为空")
     private Long routeId;
 
     /**
@@ -39,6 +43,7 @@ public class SmtRouteProcess implements Serializable {
      */
     @Column(name = "section_id")
     @ApiModelProperty(name="sectionId" ,value="工段ID")
+    @NotNull(message = "工段id不能为空")
     private Long sectionId;
 
     /**
@@ -53,6 +58,7 @@ public class SmtRouteProcess implements Serializable {
      */
     @Column(name = "process_id")
     @ApiModelProperty(name="processId" ,value="工序ID")
+    @NotNull(message = "工序id不能为空")
     private Long processId;
 
     /**
@@ -95,6 +101,7 @@ public class SmtRouteProcess implements Serializable {
      */
     @Column(name = "qualification_id")
     @ApiModelProperty(name="qualificationId" ,value="资质ID")
+    @NotNull(message = "资质id不能为空")
     private Long qualificationId;
 
 }

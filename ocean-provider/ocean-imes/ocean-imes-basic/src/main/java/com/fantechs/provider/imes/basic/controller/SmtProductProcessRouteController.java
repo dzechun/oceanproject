@@ -42,7 +42,7 @@ public class SmtProductProcessRouteController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：productType、productName",required = true)@RequestBody @Validated SmtProductProcessRoute smtProductProcessRoute) {
+    public ResponseEntity add(@ApiParam(value = "必传：productType、productName、routeId",required = true)@RequestBody @Validated SmtProductProcessRoute smtProductProcessRoute) {
         return ControllerUtil.returnCRUD(smtProductProcessRouteService.save(smtProductProcessRoute));
     }
 

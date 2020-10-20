@@ -43,7 +43,7 @@ public class SmtProcessController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：processCode、processName",required = true)@RequestBody @Validated SmtProcess smtProcess) {
+    public ResponseEntity add(@ApiParam(value = "必传：processCode、processName、processCategoryId",required = true)@RequestBody @Validated SmtProcess smtProcess) {
         return ControllerUtil.returnCRUD(smtProcessService.save(smtProcess));
     }
 
