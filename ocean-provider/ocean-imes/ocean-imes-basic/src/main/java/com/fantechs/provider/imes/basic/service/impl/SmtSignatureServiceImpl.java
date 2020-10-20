@@ -53,6 +53,7 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
         smtSignature.setCreateUserId(currentUser.getUserId());
         smtSignature.setCreateTime(new Date());
+        smtSignature.setStatus(1);
         smtSignatureMapper.insertUseGeneratedKeys(smtSignature);
 
         //新增物料特征码历史信息

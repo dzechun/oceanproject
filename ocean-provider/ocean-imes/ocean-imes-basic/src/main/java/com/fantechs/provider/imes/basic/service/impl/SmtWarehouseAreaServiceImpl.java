@@ -64,6 +64,7 @@ public class SmtWarehouseAreaServiceImpl  extends BaseService<SmtWarehouseArea> 
         }
         smtWarehouseArea.setCreateUserId(currentUser.getUserId());
         smtWarehouseArea.setCreateTime(new Date());
+        smtWarehouseArea.setStatus((byte) 1);
         smtWarehouseAreaMapper.insertUseGeneratedKeys(smtWarehouseArea);
 
         //新增历史记录

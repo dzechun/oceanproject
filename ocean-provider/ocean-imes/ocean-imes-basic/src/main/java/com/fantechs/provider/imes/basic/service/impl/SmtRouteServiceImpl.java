@@ -57,6 +57,7 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
 
           smtRoute.setCreateUserId(currentUser.getUserId());
           smtRoute.setCreateTime(new Date());
+          smtRoute.setStatus(1);
           smtRouteMapper.insertUseGeneratedKeys(smtRoute);
 
           //新增工艺路线历史信息

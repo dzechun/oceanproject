@@ -62,6 +62,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
         sysRole.setCreateUserId(currentUser.getUserId());
         sysRole.setCreateTime(new Date());
+        sysRole.setStatus((byte) 1);
         sysRoleMapper.insertUseGeneratedKeys(sysRole);
 
         //新增角色历史信息

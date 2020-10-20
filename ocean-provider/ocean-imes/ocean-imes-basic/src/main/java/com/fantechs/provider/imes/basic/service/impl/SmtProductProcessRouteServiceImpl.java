@@ -77,6 +77,7 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         }
         smtProductProcessRoute.setCreateUserId(currentUser.getUserId());
         smtProductProcessRoute.setCreateTime(new Date());
+        smtProductProcessRoute.setStatus(1);
         int i = smtProductProcessRouteMapper.insertUseGeneratedKeys(smtProductProcessRoute);
 
         //新增产品工艺路线历史信息

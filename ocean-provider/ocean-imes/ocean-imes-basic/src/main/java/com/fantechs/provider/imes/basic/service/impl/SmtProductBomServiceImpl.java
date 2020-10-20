@@ -60,6 +60,7 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
 
         smtProductBom.setCreateUserId(currentUser.getUserId());
         smtProductBom.setCreateTime(new Date());
+        smtProductBom.setStatus(1);
         smtProductBomMapper.insertUseGeneratedKeys(smtProductBom);
 
         //新增产品BOM历史信息
