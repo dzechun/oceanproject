@@ -69,6 +69,21 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
     private String processName;
 
     /**
+     * 下一道工序ID
+     */
+    @Column(name = "next_process_id")
+    @ApiModelProperty(name="nextProcessId" ,value="下一道工序ID")
+    @NotNull(message = "工序id不能为空")
+    private Long nextProcessId;
+
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name="nextProcessName" ,value="工序名称")
+    private String nextProcessName;
+
+    /**
      * 工序顺序
      */
     @Column(name = "order_num")
