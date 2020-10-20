@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.SmtSupplier;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSupplier;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -8,6 +9,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.imes.basic.mapper.SmtSignatureMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtSupplierMapper;
 import com.fantechs.provider.imes.basic.service.SmtSupplierService;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
 
     @Resource
     private SmtSupplierMapper smtSupplierMapper;
+    @Resource
+    private SmtSignatureMapper smtSignatureMapper;
 
     @Override
     public List<SmtSupplier> findList(SearchSmtSupplier searchSmtSupplier) {
@@ -84,6 +88,14 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             SmtSupplier smtSupplier = smtSupplierMapper.selectByPrimaryKey(item);
             if(StringUtils.isEmpty(smtSupplier)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            Example example = new Example(SmtSignature.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("supplierId",smtSupplier.getSupplierId());
+            List<SmtSignature> smtSignatures = smtSignatureMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtSignatures)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
         }
         i = smtSupplierMapper.deleteByIds(ids);
