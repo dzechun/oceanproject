@@ -2,8 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtSignature;
+import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -12,9 +11,7 @@ import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.mapper.SmtHtMaterialMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtMaterialMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtSignatureMapper;
+import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtMaterialService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -37,6 +34,15 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
     @Resource
     private SmtSignatureMapper smtSignatureMapper;
+
+    @Resource
+    private SmtProductProcessRouteMapper smtProductProcessRouteMapper;
+
+    @Resource
+    private SmtProductBomMapper smtProductBomMapper;
+
+    @Resource
+    private SmtProductBomDetMapper smtProductBomDetMapper;
 
     @Override
     public List<SmtMaterial> findList(SearchSmtMaterial searchSmtMaterial) {
@@ -118,12 +124,31 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
 
-
+            //被物料特征码引用
             Example example = new Example(SmtSignature.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("materialId",smtMaterial.getMaterialId());
             List<SmtSignature> smtSignatures = smtSignatureMapper.selectByExample(example);
-            if(StringUtils.isNotEmpty(smtSignatures)){
+
+            //被产品工艺路线引用
+            Example example1 = new Example(SmtProductProcessRoute.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("materialId",materialId);
+            List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example1);
+
+            //被产品BOM引用
+            Example example2 = new Example(SmtProductBom.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("materialId",materialId);
+            List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example2);
+
+            //被产品BOM详细引用
+            Example example3 = new Example(SmtProductBomDet.class);
+            Example.Criteria criteria3 = example3.createCriteria();
+            criteria3.andEqualTo("partMaterialId",materialId);
+            List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example3);
+
+            if(StringUtils.isNotEmpty(smtSignatures)||StringUtils.isNotEmpty(smtProductProcessRoutes)||StringUtils.isNotEmpty(smtProductBoms)||StringUtils.isNotEmpty(smtProductBomDets)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 

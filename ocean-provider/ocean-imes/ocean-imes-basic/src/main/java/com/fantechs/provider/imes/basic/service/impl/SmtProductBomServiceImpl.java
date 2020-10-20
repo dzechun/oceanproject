@@ -79,7 +79,6 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
 
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
         criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
         criteria.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
 
