@@ -43,7 +43,7 @@ public class SmtStationController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：stationCode、stationName",required = true)@RequestBody @Validated SmtStation smtStation) {
+    public ResponseEntity add(@ApiParam(value = "必传：stationCode、stationName、processId、sectionId",required = true)@RequestBody @Validated SmtStation smtStation) {
         return ControllerUtil.returnCRUD(smtStationService.save(smtStation));
     }
 

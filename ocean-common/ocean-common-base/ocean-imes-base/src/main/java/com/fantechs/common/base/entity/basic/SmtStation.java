@@ -56,6 +56,7 @@ public class SmtStation extends ValidGroup implements Serializable {
      */
     @Column(name = "process_id")
     @ApiModelProperty(name = "processId",value = "工序ID")
+    @NotNull(message = "工序Id不能为空")
     private Long processId;
 
     /**
@@ -71,6 +72,7 @@ public class SmtStation extends ValidGroup implements Serializable {
      */
     @Column(name = "section_id")
     @ApiModelProperty(name = "sectionId",value = "工段ID")
+    @NotNull(message = "工段Id不能为空")
     private Long sectionId;
 
     /**
@@ -79,6 +81,7 @@ public class SmtStation extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "sectionName",value = "工段名称")
     @Excel(name = "工段名称", height = 20, width = 30)
+    @NotBlank(message = "工段Id不能为空")
     private String sectionName;
 
     /**

@@ -43,7 +43,7 @@ public class SmtStorageMaterialController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：storageId",required = true)@RequestBody @Validated SmtStorageMaterial smtStorageMaterial) {
+    public ResponseEntity add(@ApiParam(value = "必传：storageId、materialId",required = true)@RequestBody @Validated SmtStorageMaterial smtStorageMaterial) {
         return ControllerUtil.returnCRUD(smtStorageMaterialService.save(smtStorageMaterial));
     }
 
