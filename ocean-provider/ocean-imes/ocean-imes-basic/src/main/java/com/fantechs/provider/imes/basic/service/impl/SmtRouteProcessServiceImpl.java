@@ -32,6 +32,9 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
         @Override
         @Transactional(rollbackFor = Exception.class)
         public int configureRout(List<SmtRouteProcess> list) {
+            if(StringUtils.isEmpty(list)){
+                throw new BizErrorException("没有配置工艺路线，请去配置");
+            }
             Long routeId = list.get(0).getRouteId();
 
             /**
@@ -44,7 +47,9 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
 
             for (SmtRouteProcess smtRouteProcess : list) {
                 if(smtRouteProcess.getIsPass()==0){
+                    Long processId = smtRouteProcess.getProcessId();
                     Long nextProcessId = smtRouteProcess.getNextProcessId();
+                    Integer orderNum = smtRouteProcess.getOrderNum();
                     if(StringUtils.isNotEmpty(nextProcessId)){
                         SmtProcess nextProcess = smtProcessMapper.selectByPrimaryKey(nextProcessId);
                         if(StringUtils.isNotEmpty(nextProcess)&&!nextProcess.getProcessName().equals("维修工序")){
@@ -52,6 +57,25 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                         }
                     }
 
+                    //该出现故障工序对应的维修工序
+                    Example example1 = new Example(SmtRouteProcess.class);
+                    Example.Criteria criteria1 = example1.createCriteria();
+                    criteria1.andEqualTo("routeId",routeId);
+                    criteria1.andEqualTo("previousProcessId",processId);
+                    criteria1.andEqualTo("processId",nextProcessId);
+                    SmtRouteProcess routeProcess = smtRouteProcessMapper.selectOneByExample(example1);
+                    if(StringUtils.isNotEmpty(routeProcess)){
+                          //该出现故障工序对应的维修工序的下一道工序
+                            Example example2 = new Example(SmtRouteProcess.class);
+                            Example.Criteria criteria2 = example2.createCriteria();
+                            criteria2.andEqualTo("routeId",routeId);
+                            criteria2.andEqualTo("previousProcessId",routeProcess.getProcessId());
+                            criteria2.andEqualTo("processId",routeProcess.getNextProcessId());
+                            SmtRouteProcess process = smtRouteProcessMapper.selectOneByExample(example2);
+                            if(process.getOrderNum()>orderNum){
+                                throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
+                            }
+                    }
                 }
             }
 
