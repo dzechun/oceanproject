@@ -78,8 +78,10 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                         criteria2.andEqualTo("previousProcessId",routeProcess.getProcessId());
                         criteria2.andEqualTo("processId",routeProcess.getNextProcessId());
                         SmtRouteProcess process = smtRouteProcessMapper.selectOneByExample(example2);
-                        if(process.getOrderNum()>orderNum){
-                            throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
+                        if(StringUtils.isNotEmpty(process)){
+                            if(process.getOrderNum()>orderNum){
+                                throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
+                            }
                         }
                     }
                 }
