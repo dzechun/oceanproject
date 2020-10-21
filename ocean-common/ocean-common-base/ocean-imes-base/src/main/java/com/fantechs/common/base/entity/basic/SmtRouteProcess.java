@@ -129,7 +129,6 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
      */
     @Column(name = "qualification_id")
     @ApiModelProperty(name="qualificationId" ,value="资质ID")
-    @NotNull(message = "资质id不能为空")
     private Long qualificationId;
 
 }
