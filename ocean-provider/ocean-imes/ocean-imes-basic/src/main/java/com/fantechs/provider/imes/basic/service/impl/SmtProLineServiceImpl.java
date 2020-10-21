@@ -67,7 +67,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         //新增生产线历史信息
         SmtHtProLine smtHtProLine=new SmtHtProLine();
         BeanUtils.copyProperties(smtProLine,smtHtProLine);
-       i =  smtHtProLineMapper.insertSelective(smtHtProLine);
+        i = smtHtProLineMapper.insertSelective(smtHtProLine);
         return i;
     }
 
@@ -135,7 +135,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
         }
          smtHtProLineMapper.insertList(list);
-        i=smtProLineMapper.deleteByIds(ids);
+         i=smtProLineMapper.deleteByIds(ids);
         return i;
     }
 }
