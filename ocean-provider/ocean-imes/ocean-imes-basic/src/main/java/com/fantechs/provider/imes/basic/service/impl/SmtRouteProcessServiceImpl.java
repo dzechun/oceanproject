@@ -24,10 +24,10 @@ import java.util.Map;
 @Service
 public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> implements SmtRouteProcessService {
 
-         @Resource
-         private SmtRouteProcessMapper smtRouteProcessMapper;
-         @Resource
-         private SmtProcessMapper smtProcessMapper;
+        @Resource
+        private SmtRouteProcessMapper smtRouteProcessMapper;
+        @Resource
+        private SmtProcessMapper smtProcessMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
