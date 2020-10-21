@@ -152,7 +152,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 }
 
                 if(workOrderStatus==0||workOrderStatus==2){
-                    //工单的工单数量改变
+                    //工单的工单数量改变,重新计算零件的工单用量
                     if(!order.getWorkOrderQuantity().equals(smtWorkOrder.getWorkOrderQuantity())){
                         Example example1 = new Example(SmtWorkOrderBom.class);
                         Example.Criteria criteria1 = example1.createCriteria();
@@ -162,6 +162,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                             for (SmtWorkOrderBom smtWorkOrderBom : workOrderBoms) {
                                 //工单BOM的单个用量
                                 BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
+                                //重新计算后的零件工单用量
                                 smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
                                 list.add(smtWorkOrderBom);
 
