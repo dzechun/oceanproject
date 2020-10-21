@@ -18,6 +18,9 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
+
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
   </resultMap>
 
   <resultMap id="DeptResultMap" type="com.fantechs.common.base.entity.basic.SmtDept">
@@ -42,12 +45,14 @@
   </sql>
 
   <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser" resultMap="BaseResultMap">
-    select su.user_id, su.user_name, su.user_code, su.nick_name, su.password, su.status, su.factory_id,su.dept_id,
-    su.telephone,su.mobile, su.email, su.create_user_id,u.user_name as createUserName,su.create_time, su.modified_user_id,
+    select su.user_id, su.user_name, su.user_code, su.nick_name, su.password, su.status, su.factory_id,f.factory_name,su.dept_id,
+    d.dept_name,su.telephone,su.mobile, su.email, su.create_user_id,u.user_name as createUserName,su.create_time, su.modified_user_id,
     s.user_name as modifiedUserName, su.modified_time
-    from sys_user su
-    left join sys_user u on su.create_user_id=u.user_id
-    left join sys_user s on su.modified_user_id=s.user_id
+    from ocean.sys_user su
+    left join ocean.sys_user u on su.create_user_id=u.user_id
+    left join ocean.sys_user s on su.modified_user_id=s.user_id
+    left join fantech_imes.smt_factory f on su.org_id=f.factory_id
+    left join fantech_imes.smt_dept d on su.dept_id=d.dept_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
