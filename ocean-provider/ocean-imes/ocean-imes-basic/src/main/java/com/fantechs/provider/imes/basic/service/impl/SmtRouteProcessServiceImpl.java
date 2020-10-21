@@ -46,10 +46,16 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
             smtRouteProcessMapper.deleteByExample(example);
 
             for (SmtRouteProcess smtRouteProcess : list) {
+                Long processId = smtRouteProcess.getProcessId();
+                Long nextProcessId = smtRouteProcess.getNextProcessId();
+                Integer orderNum = smtRouteProcess.getOrderNum();
+                SmtProcess smtProcess = smtProcessMapper.selectByPrimaryKey(processId);
+                if(StringUtils.isNotEmpty(smtProcess)&&!smtProcess.getProcessName().equals("维修工序")){
+                    if(StringUtils.isEmpty(orderNum)){
+                        throw new BizErrorException("非维修工序工序顺序不能为空");
+                    }
+                }
                 if(smtRouteProcess.getIsPass()==0){
-                    Long processId = smtRouteProcess.getProcessId();
-                    Long nextProcessId = smtRouteProcess.getNextProcessId();
-                    Integer orderNum = smtRouteProcess.getOrderNum();
                     if(StringUtils.isNotEmpty(nextProcessId)){
                         SmtProcess nextProcess = smtProcessMapper.selectByPrimaryKey(nextProcessId);
                         if(StringUtils.isNotEmpty(nextProcess)&&!nextProcess.getProcessName().equals("维修工序")){
