@@ -93,7 +93,7 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
      * 上一道工序名称
      */
     @Transient
-    @ApiModelProperty(name="previousProcessName" ,value="上一道工序ID")
+    @ApiModelProperty(name="previousProcessName" ,value="上一道工序名称")
     private String previousProcessName;
 
     /**
