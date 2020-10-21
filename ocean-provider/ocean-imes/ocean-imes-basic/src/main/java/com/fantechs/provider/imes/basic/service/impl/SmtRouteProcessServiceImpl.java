@@ -52,7 +52,7 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                 SmtProcess smtProcess = smtProcessMapper.selectByPrimaryKey(processId);
                 if(StringUtils.isNotEmpty(smtProcess)&&!smtProcess.getProcessName().equals("维修工序")){
                     if(StringUtils.isEmpty(orderNum)){
-                        throw new BizErrorException("非维修工序工序顺序不能为空");
+                        throw new BizErrorException("非维修工序的工序顺序不能为空");
                     }
                 }
                 if(smtRouteProcess.getIsPass()==0){
