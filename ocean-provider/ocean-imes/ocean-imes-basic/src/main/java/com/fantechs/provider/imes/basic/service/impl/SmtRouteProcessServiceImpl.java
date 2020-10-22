@@ -62,39 +62,10 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                             throw new BizErrorException("该工序出故障，需要到维修工序去维修");
                         }
                     }
-
-                    //查找该出现故障工序对应的维修工序的下一道工序
-                    SmtRouteProcess nextRouteProcess = findNextProcess(processId, nextProcessId, list);
-                    if(StringUtils.isNotEmpty(nextRouteProcess)){
-                        if(nextRouteProcess.getOrderNum()>orderNum){
-                            throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
-                        }
-                    }
                 }
             }
 
             return smtRouteProcessMapper.insertList(list);
-        }
-
-        @Transactional(rollbackFor = Exception.class)
-        public SmtRouteProcess findNextProcess(Long processId, Long nextProcessId, List<SmtRouteProcess> list) {
-            //存放故障工序
-            SmtRouteProcess routeProcess=new SmtRouteProcess();
-            for (SmtRouteProcess smtRouteProcess : list) {
-                if(smtRouteProcess.getPreviousProcessId().equals(processId)&&smtRouteProcess.getProcessId().equals(nextProcessId)){
-                    //查找到该故障工序对应的维修工序
-                    routeProcess.setProcessId(smtRouteProcess.getProcessId());
-                    routeProcess.setNextProcessId(smtRouteProcess.getNextProcessId());
-                }
-            }
-
-            for (SmtRouteProcess process : list) {
-                //查找该出现故障工序对应的维修工序的下一道工序
-                if(routeProcess.getProcessId().equals(process.getPreviousProcessId())&&routeProcess.getNextProcessId().equals(process.getPreviousProcessId())){
-                    return process;
-                }
-            }
-            return null;
         }
 
         @Override
