@@ -39,6 +39,9 @@
       <if test="para!=null and para!=''">
         and si.para like CONCAT('%', #{para}, '%')
       </if>
+      <if test="paraValue!=null and paraValue!=''">
+        and si.para_value like CONCAT('%', #{paraValue}, '%')
+      </if>
     </where>
   </select>
 </mapper>
