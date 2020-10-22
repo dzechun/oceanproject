@@ -62,7 +62,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
                 throw new BizErrorException("零件料号已存在");
             }
 
-            if(smtProductBomDet.getSubMaterialId().equals(smtProductBom.getMaterialId())||smtProductBomDet.getSubMaterialId().equals(smtProductBomDet.getPartMaterialId())){
+            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getSubMaterialId())||smtProductBomDet.getPartMaterialId().equals(smtProductBomDet.getSubMaterialId())){
                 throw new BizErrorException("代用料号不能选择产品料号或零件料号");
             }
             smtProductBomDet.setCreateUserId(currentUser.getUserId());
@@ -99,7 +99,7 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
                 throw new BizErrorException("零件料号已存在");
             }
 
-            if(smtProductBomDet.getSubMaterialId().equals(smtProductBom.getMaterialId())||smtProductBomDet.getSubMaterialId().equals(smtProductBomDet.getPartMaterialId())){
+            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getSubMaterialId())||smtProductBomDet.getPartMaterialId().equals(smtProductBomDet.getSubMaterialId())){
                 throw new BizErrorException("代用料号不能选择产品料号或零件料号");
             }
 
