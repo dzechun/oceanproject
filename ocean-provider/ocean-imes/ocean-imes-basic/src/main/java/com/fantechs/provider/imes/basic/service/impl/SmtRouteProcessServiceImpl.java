@@ -68,7 +68,6 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
             return smtRouteProcessMapper.insertList(list);
         }
 
-
         @Override
         @Transactional(rollbackFor = Exception.class)
         public int configureProcess(Map<String, Object> map) {

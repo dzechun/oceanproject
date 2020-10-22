@@ -47,7 +47,7 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
      * 零件料号
      */
     @Transient
-    @ApiModelProperty(name="materialCode" ,value="零件料号")
+    @ApiModelProperty(name="partMaterialCode" ,value="零件料号")
     @Excel(name = "零件料号", height = 20, width = 30)
     private String partMaterialCode;
 

@@ -50,6 +50,9 @@
       <if test="materialId!=null and materialId!=''">
         and shpbd.part_material_id=#{materialId}
       </if>
+      <if test="partMaterialCode!=null and partMaterialCode!=''">
+        and sm.material_code like CONCAT('%', #{partMaterialCode}, '%')
+      </if>
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
