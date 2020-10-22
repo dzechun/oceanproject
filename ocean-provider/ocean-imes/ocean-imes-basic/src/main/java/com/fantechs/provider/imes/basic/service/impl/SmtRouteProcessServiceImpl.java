@@ -62,13 +62,13 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                             throw new BizErrorException("该工序出故障，需要到维修工序去维修");
                         }
                     }
-                }
 
-                //查找该出现故障工序对应的维修工序的下一道工序
-                SmtRouteProcess nextRouteProcess = findNextProcess(processId, nextProcessId, list);
-                if(StringUtils.isNotEmpty(nextRouteProcess)){
-                    if(nextRouteProcess.getOrderNum()>orderNum){
-                        throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
+                    //查找该出现故障工序对应的维修工序的下一道工序
+                    SmtRouteProcess nextRouteProcess = findNextProcess(processId, nextProcessId, list);
+                    if(StringUtils.isNotEmpty(nextRouteProcess)){
+                        if(nextRouteProcess.getOrderNum()>orderNum){
+                            throw new BizErrorException("该工序维修后，不能返回该工序的后续工序");
+                        }
                     }
                 }
             }
