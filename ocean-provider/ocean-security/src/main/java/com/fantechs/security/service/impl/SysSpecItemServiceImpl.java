@@ -29,7 +29,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     private SysSpecItemMapper sysSpecItemMapper;
 
     @Resource
-    private SysHtSpecItemMapper SysHtSpecItemMapper;
+    private SysHtSpecItemMapper sysHtSpecItemMapper;
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
@@ -38,7 +38,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int save(SysSpecItem SysSpecItem) {
+    public int save(SysSpecItem sysSpecItem) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -46,47 +46,47 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
         Example example = new Example(SysSpecItem.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("specCode",SysSpecItem.getSpecCode());
-        List<SysSpecItem> SysSpecItems = sysSpecItemMapper.selectByExample(example);
-        if(null!=SysSpecItems&&SysSpecItems.size()>0){
-            return ErrorCodeEnum.OPT20012001.getCode();
+        criteria.andEqualTo("specCode",sysSpecItem.getSpecCode());
+        List<SysSpecItem> sysSpecItems = sysSpecItemMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(sysSpecItems)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        SysSpecItem.setCreateUserId(currentUser.getUserId());
-        SysSpecItem.setCreateTime(new Date());
-        sysSpecItemMapper.insertUseGeneratedKeys(SysSpecItem);
+        sysSpecItem.setCreateUserId(currentUser.getUserId());
+        sysSpecItem.setCreateTime(new Date());
+        sysSpecItemMapper.insertUseGeneratedKeys(sysSpecItem);
 
         //新增配置项历史信息
-        SysHtSpecItem SysHtSpecItem=new SysHtSpecItem();
-        BeanUtils.copyProperties(SysSpecItem,SysHtSpecItem);
-        int i = SysHtSpecItemMapper.insertSelective(SysHtSpecItem);
+        SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
+        BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
+        int i = sysHtSpecItemMapper.insertSelective(sysHtSpecItem);
         return i;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int update(SysSpecItem SysSpecItem) {
+    public int update(SysSpecItem sysSpecItem) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         Example example = new Example(SysSpecItem.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("specCode",SysSpecItem.getSpecCode());
+        criteria.andEqualTo("specCode",sysSpecItem.getSpecCode());
         SysSpecItem specItem = sysSpecItemMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(SysSpecItem)&&!specItem.getSpecId().equals(SysSpecItem.getSpecId())){
+        if(StringUtils.isNotEmpty(sysSpecItem)&&!specItem.getSpecId().equals(sysSpecItem.getSpecId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        SysSpecItem.setModifiedUserId(currentUser.getUserId());
-        SysSpecItem.setModifiedTime(new Date());
-        int i = sysSpecItemMapper.updateByPrimaryKeySelective(SysSpecItem);
+        sysSpecItem.setModifiedUserId(currentUser.getUserId());
+        sysSpecItem.setModifiedTime(new Date());
+        int i = sysSpecItemMapper.updateByPrimaryKeySelective(sysSpecItem);
 
-        SysHtSpecItem SysHtSpecItem=new SysHtSpecItem();
-        BeanUtils.copyProperties(SysSpecItem,SysHtSpecItem);
-        SysHtSpecItem.setModifiedUserId(currentUser.getUserId());
-        SysHtSpecItem.setModifiedTime(new Date());
-        SysHtSpecItemMapper.insertSelective(SysHtSpecItem);
+        SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
+        BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
+        sysHtSpecItem.setModifiedUserId(currentUser.getUserId());
+        sysHtSpecItem.setModifiedTime(new Date());
+        sysHtSpecItemMapper.insertSelective(sysHtSpecItem);
         return i;
     }
 
@@ -94,7 +94,6 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String specIds) {
-        int i=0;
         List<SysHtSpecItem> list=new ArrayList<>();
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -103,20 +102,38 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
         String[] idsArr = specIds.split(",");
         for (String specId : idsArr) {
-            SysSpecItem SysSpecItem = sysSpecItemMapper.selectByPrimaryKey(specId);
-            if(StringUtils.isEmpty(SysSpecItem)){
+            SysSpecItem sysSpecItem = sysSpecItemMapper.selectByPrimaryKey(specId);
+            if(StringUtils.isEmpty(sysSpecItem)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            SysHtSpecItem SysHtSpecItem=new SysHtSpecItem();
-            BeanUtils.copyProperties(SysSpecItem,SysHtSpecItem);
-            SysHtSpecItem.setModifiedUserId(currentUser.getUserId());
-            SysHtSpecItem.setModifiedTime(new Date());
-            list.add(SysHtSpecItem);
-            sysSpecItemMapper.deleteByPrimaryKey(specId);
+            SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
+            BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
+            sysHtSpecItem.setModifiedUserId(currentUser.getUserId());
+            sysHtSpecItem.setModifiedTime(new Date());
+            list.add(sysHtSpecItem);
 
         }
-        i=SysHtSpecItemMapper.insertList(list);
-        return i;
+        sysHtSpecItemMapper.insertList(list);
+        return sysSpecItemMapper.deleteByIds(specIds);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchSave(List<SysSpecItem> list){
+        List<SysHtSpecItem> htList=new ArrayList<>();
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        for (SysSpecItem sysSpecItem : list) {
+            SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
+            BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
+            sysHtSpecItem.setModifiedUserId(currentUser.getUserId());
+            sysHtSpecItem.setModifiedTime(new Date());
+            htList.add(sysHtSpecItem);
+        }
+        sysSpecItemMapper.insertList(list);
+        return sysHtSpecItemMapper.insertList(htList);
     }
 
 }

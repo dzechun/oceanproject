@@ -56,27 +56,27 @@ public class SysSpecItemController {
     @GetMapping("/detail")
     @ApiOperation(value = "程序配置项详情",notes = "程序配置项详情息")
     public ResponseEntity<SysSpecItem> selectSpecItemById(@ApiParam(value = "传入主键specId",required = true) @RequestParam @NotNull(message = "id不能为空") Long id) {
-        SysSpecItem SysSpecItem=sysSpecItemService.selectByKey(id);
-        return ControllerUtil.returnDataSuccess(SysSpecItem,StringUtils.isEmpty(SysSpecItem)?0:1);
+        SysSpecItem sysSpecItem=sysSpecItemService.selectByKey(id);
+        return ControllerUtil.returnDataSuccess(sysSpecItem,StringUtils.isEmpty(sysSpecItem)?0:1);
     }
 
 
     @ApiOperation("增加程序配置项")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：specCode、specName,para",required = true)@RequestBody @Validated SysSpecItem SysSpecItem){
+    public ResponseEntity add(@ApiParam(value = "必传：specCode、specName,para",required = true)@RequestBody @Validated SysSpecItem sysSpecItem){
         if(StringUtils.isEmpty(
-                SysSpecItem.getSpecCode(),
-                SysSpecItem.getSpecName(),
-                SysSpecItem.getPara())){
+                sysSpecItem.getSpecCode(),
+                sysSpecItem.getSpecName(),
+                sysSpecItem.getPara())){
             return ControllerUtil.returnFailByParameError();
         }
-        return ControllerUtil.returnCRUD(sysSpecItemService.save(SysSpecItem));
+        return ControllerUtil.returnCRUD(sysSpecItemService.save(sysSpecItem));
     }
 
     @ApiOperation("修改程序配置项")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "程序配置项对象，程序配置项Id必传",required = true)@RequestBody @Validated(value =SysSpecItem.update.class ) SysSpecItem SysSpecItem){
-        return ControllerUtil.returnCRUD(sysSpecItemService.update(SysSpecItem));
+    public ResponseEntity update(@ApiParam(value = "程序配置项对象，程序配置项Id必传",required = true)@RequestBody @Validated(value =SysSpecItem.update.class ) SysSpecItem sysSpecItem){
+        return ControllerUtil.returnCRUD(sysSpecItemService.update(sysSpecItem));
     }
 
     @ApiOperation("删除程序配置项")

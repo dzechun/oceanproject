@@ -6,10 +6,7 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -26,6 +23,7 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     @Id
     @Column(name = "spec_id")
     @ApiModelProperty(name="specId" ,value="配置项ID")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @NotNull(groups= update.class,message = "配置项Id不能为空")
     private Long specId;
 
