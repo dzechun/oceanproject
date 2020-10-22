@@ -51,7 +51,7 @@
     from ocean.sys_user su
     left join ocean.sys_user u on su.create_user_id=u.user_id
     left join ocean.sys_user s on su.modified_user_id=s.user_id
-    left join fantech_imes.smt_factory f on su.org_id=f.factory_id
+    left join fantech_imes.smt_factory f on su.factory_id=f.factory_id
     left join fantech_imes.smt_dept d on su.dept_id=d.dept_id
     <where>
       1=1
