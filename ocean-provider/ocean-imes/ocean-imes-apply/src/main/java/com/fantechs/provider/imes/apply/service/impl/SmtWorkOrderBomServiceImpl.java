@@ -68,6 +68,10 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())){
                     throw new BizErrorException("零件料号不能选择产品料号");
                 }
+
+                if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId())||smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())){
+                    throw new BizErrorException("代用料号不能选择产品料号或零件料号");
+                }
                 BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
                 smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
                 smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
@@ -113,6 +117,9 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
 
                 if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())){
                     throw new BizErrorException("零件料号不能选择产品料号");
+                }
+                if(smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId())||smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())){
+                    throw new BizErrorException("代用料号不能选择产品料号或零件料号");
                 }
 
                 if(singleQuantity.compareTo(smtWorkOrderBom.getSingleQuantity())!=0){
