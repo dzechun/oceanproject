@@ -56,6 +56,12 @@
       <if test="partMaterialId!=null and partMaterialId!=''">
         and swob.part_material_id=#{partMaterialId}
       </if>
+      <if test="partMaterialCode!=null and partMaterialCode!=''">
+        and sm.material_code like CONCAT('%', #{partMaterialCode}, '%')
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
     </where>
     order by swob.create_time desc
   </select>

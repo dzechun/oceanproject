@@ -74,6 +74,9 @@
       <if test="materialId!=null and materialId!=''">
         and swo.material_id=#{materialId}
       </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>

@@ -23,6 +23,12 @@ public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
     private Long materialId;
 
     /**
+     * 产品料号
+     */
+    @ApiModelProperty(name="materialCode" ,value="产品料号")
+    private String materialCode;
+
+    /**
      * 物料描述
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
