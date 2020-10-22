@@ -82,11 +82,14 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
         criteria.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
 
-        SmtProductBom productBom = smtProductBomMapper.selectOneByExample(example);
+        List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
 
-        if(StringUtils.isNotEmpty(productBom)&&!productBom.getProductBomId().equals(smtProductBom.getProductBomId())){
-            throw new BizErrorException("BOM ID或物料编码信息已存在");
+        for (SmtProductBom productBom : smtProductBoms) {
+            if(StringUtils.isNotEmpty(productBom)&&!productBom.getProductBomId().equals(smtProductBom.getProductBomId())){
+                throw new BizErrorException("BOM ID或物料编码信息已存在");
+            }
         }
+
 
         smtProductBom.setModifiedUserId(currentUser.getUserId());
         smtProductBom.setModifiedTime(new Date());
