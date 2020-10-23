@@ -50,14 +50,12 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
             criteria.andEqualTo("routeId",routeId);
             smtRouteProcessMapper.deleteByExample(example);
 
-            List<Long> processIds=new ArrayList<>();
             for (SmtRouteProcess smtRouteProcess : list) {
                 Long processId = smtRouteProcess.getProcessId();
                 Long nextProcessId = smtRouteProcess.getNextProcessId();
                 Integer orderNum = smtRouteProcess.getOrderNum();
                 SmtProcess smtProcess = smtProcessMapper.selectByPrimaryKey(processId);
 
-                processIds.add(processId);
                 if(StringUtils.isNotEmpty(smtProcess)){
                     //查询当前工序的工序类别
                     SmtProcessCategory smtProcessCategory = smtProcessCategoryMapper.selectByPrimaryKey(smtProcess.getProcessCategoryId());
@@ -71,22 +69,6 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                         }
                     }
 
-                    if(smtRouteProcess.getIsPass()==0){
-                        if(StringUtils.isNotEmpty(nextProcessId)){
-                            SmtProcess nextProcess = smtProcessMapper.selectByPrimaryKey(nextProcessId);
-                            if(StringUtils.isNotEmpty(nextProcess)){
-                                //查询下一道工序的工序类别
-                                SmtProcessCategory rocessCategory = smtProcessCategoryMapper.selectByPrimaryKey(nextProcess.getProcessCategoryId());
-                                if(!rocessCategory.getProcessCategoryCode().equalsIgnoreCase("repair")){
-                                    throw new BizErrorException("该工序出故障，需要到维修工序去维修");
-                                }
-                            }
-                        }
-                    }else {
-                        if(processIds.contains(smtRouteProcess.getNextProcessId())){
-                            throw new BizErrorException("非维修工序的工序的下一道工序不能是它前面的工序");
-                        }
-                    }
                 }
             }
 
