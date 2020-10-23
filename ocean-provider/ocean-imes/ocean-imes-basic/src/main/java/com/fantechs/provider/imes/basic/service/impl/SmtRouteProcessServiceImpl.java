@@ -98,7 +98,13 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                             }else {
                                 //当前数据的工序和上一条数据的下一道工序相同并且当前工序顺序大于上一条数据的工序顺序才能通过
                                 if(processId.equals(list.get(i-1).getNextProcessId())){
-                                    continue;
+                                    if(!smtProcessCategory.getProcessCategoryCode().equalsIgnoreCase("repair")){
+                                        if(orderNum>list.get(i-1).getOrderNum()){
+                                            continue;
+                                        }else {
+                                            throw new BizErrorException("工艺路线配置错误");
+                                        }
+                                    }
                                 }else {
                                     throw new BizErrorException("工艺路线配置错误");
                                 }
