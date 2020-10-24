@@ -83,8 +83,12 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                                         SmtProcessCategory nextProcessCategory = smtProcessCategoryMapper.selectByPrimaryKey(nextProcess.getProcessCategoryId());
                                         //判断当前数据的下一道工序是否是维修工序
                                         if(StringUtils.isNotEmpty(nextProcessCategory)&&nextProcessCategory.getProcessCategoryCode().equalsIgnoreCase("repair")){
-                                            if(!processIds.contains(list.get(i+1).getNextProcessId())){
-                                                throw new BizErrorException("维修后，不能执行当前工序以后的工序");
+                                            if(list.size()>i+1){
+                                                if(!processIds.contains(list.get(i+1).getNextProcessId())){
+                                                    throw new BizErrorException("维修后，不能执行当前工序以后的工序");
+                                                }
+                                            }else {
+                                                throw new BizErrorException("工艺路线配置错误");
                                             }
                                         }else {
                                             if(previousProcessId.equals(list.get(i-1).getPreviousProcessId())&StringUtils.isNotEmpty(orderNum)){
