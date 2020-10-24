@@ -87,7 +87,7 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                                                 throw new BizErrorException("维修后，不能执行当前工序以后的工序");
                                             }
                                         }else {
-                                            if(previousProcessId.equals(list.get(i-1).getPreviousProcessId())){
+                                            if(previousProcessId.equals(list.get(i-1).getPreviousProcessId())&StringUtils.isNotEmpty(orderNum)){
                                                 continue;
                                             }else {
                                                 throw new BizErrorException("工艺路线配置错误");
