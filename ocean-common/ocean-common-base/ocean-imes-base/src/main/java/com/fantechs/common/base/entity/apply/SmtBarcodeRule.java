@@ -39,7 +39,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 条码规则代码
      */
     @ApiModelProperty(name="barcodeRuleCode",value = "条码规则代码")
-    @Excel(name = "条码规则代码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "条码规则代码", height = 20, width = 30,orderNum="1")
     @Column(name = "barcode_rule_code")
     @NotBlank(message = "条码规则代码不能为空")
     private String barcodeRuleCode;
@@ -48,7 +48,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 条码规则名称
      */
     @ApiModelProperty(name="barcodeRuleName",value = "条码规则名称")
-    @Excel(name = "条码规则名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "条码规则名称", height = 20, width = 30,orderNum="2")
     @Column(name = "barcode_rule_name")
     @NotBlank(message = "条码规则名称不能为空")
     private String barcodeRuleName;
@@ -57,7 +57,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 条码规则描述
      */
     @ApiModelProperty(name="barcodeRuleDesc",value = "条码规则描述")
-    @Excel(name = "条码规则描述", height = 20, width = 30,orderNum="") 
+    @Excel(name = "条码规则描述", height = 20, width = 30,orderNum="3")
     @Column(name = "barcode_rule_desc")
     private String barcodeRuleDesc;
 
@@ -65,7 +65,6 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 条码规则类别
      */
     @ApiModelProperty(name="barcodeRuleCategory",value = "条码规则类别")
-    @Excel(name = "条码规则类别", height = 20, width = 30,orderNum="") 
     @Column(name = "barcode_rule_category")
     @NotBlank(message = "条码规则类别不能为空")
     private String barcodeRuleCategory;
@@ -74,7 +73,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 条码规则
      */
     @ApiModelProperty(name="barcodeRule",value = "条码规则")
-    @Excel(name = "条码规则", height = 20, width = 30,orderNum="") 
+    @Excel(name = "条码规则", height = 20, width = 30,orderNum="5")
     @Column(name = "barcode_rule")
     @NotBlank(message = "条码规则不能为空")
     private String barcodeRule;
@@ -83,7 +82,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="6",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
@@ -139,7 +138,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -155,7 +154,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

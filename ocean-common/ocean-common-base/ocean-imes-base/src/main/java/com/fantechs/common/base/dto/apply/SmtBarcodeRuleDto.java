@@ -18,7 +18,7 @@ public class SmtBarcodeRuleDto extends SmtBarcodeRule implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "barcodeRuleCategoryName",value = "条码规则类别名称")
-    @Excel(name = "条码规则类别", height = 20, width = 30,orderNum="")
+    @Excel(name = "条码规则类别", height = 20, width = 30,orderNum="4")
     private String barcodeRuleCategoryName;
 
     /**
@@ -26,7 +26,7 @@ public class SmtBarcodeRuleDto extends SmtBarcodeRule implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建账号", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -34,6 +34,6 @@ public class SmtBarcodeRuleDto extends SmtBarcodeRule implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改账号", height = 20, width = 30,orderNum="")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 }
