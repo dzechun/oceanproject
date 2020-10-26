@@ -1,0 +1,188 @@
+package com.fantechs.common.base.entity.apply;
+
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
+
+
+/**
+ * 条码规则表
+ * smt_barcode_rule
+ * @author wcz
+ * @date 2020-10-26 14:09:43
+ */
+@Data
+@Table(name = "smt_barcode_rule")
+public class SmtBarcodeRule extends ValidGroup implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    /**
+     * 条码规则集合ID
+     */
+    @ApiModelProperty(name="barcodeRuleId",value = "条码规则集合ID")
+    @Id
+    @Column(name = "barcode_rule_id")
+    @NotNull(groups =update.class,message = "条码规则集合ID不能为空")
+    private Long barcodeRuleId;
+
+    /**
+     * 条码规则代码
+     */
+    @ApiModelProperty(name="barcodeRuleCode",value = "条码规则代码")
+    @Excel(name = "条码规则代码", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_rule_code")
+    @NotBlank(message = "条码规则代码不能为空")
+    private String barcodeRuleCode;
+
+    /**
+     * 条码规则名称
+     */
+    @ApiModelProperty(name="barcodeRuleName",value = "条码规则名称")
+    @Excel(name = "条码规则名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_rule_name")
+    @NotBlank(message = "条码规则名称不能为空")
+    private String barcodeRuleName;
+
+    /**
+     * 条码规则描述
+     */
+    @ApiModelProperty(name="barcodeRuleDesc",value = "条码规则描述")
+    @Excel(name = "条码规则描述", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_rule_desc")
+    private String barcodeRuleDesc;
+
+    /**
+     * 条码规则类别
+     */
+    @ApiModelProperty(name="barcodeRuleCategory",value = "条码规则类别")
+    @Excel(name = "条码规则类别", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_rule_category")
+    @NotBlank(message = "条码规则类别不能为空")
+    private String barcodeRuleCategory;
+
+    /**
+     * 条码规则
+     */
+    @ApiModelProperty(name="barcodeRule",value = "条码规则")
+    @Excel(name = "条码规则", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_rule")
+    @NotBlank(message = "条码规则不能为空")
+    private String barcodeRule;
+
+    /**
+     * 状态（0、无效 1、有效）
+     */
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    private Byte status;
+
+    /**
+     * 自定义年代码
+     */
+    @ApiModelProperty(name="customizeYear",value = "自定义年代码")
+    @Column(name = "customize_year")
+    private String customizeYear;
+
+    /**
+     * 自定义月代码
+     */
+    @ApiModelProperty(name="customizeMonth",value = "自定义月代码")
+    @Column(name = "customize_month")
+    private String customizeMonth;
+
+    /**
+     * 自定义日代码
+     */
+    @ApiModelProperty(name="customizeDay",value = "自定义日代码")
+    @Column(name = "customize_day")
+    private String customizeDay;
+
+    /**
+     * 自定义周代码
+     */
+    @ApiModelProperty(name="customizeWeek",value = "自定义周代码")
+    @Column(name = "customize_week")
+    private String customizeWeek;
+
+    /**
+     * 自定义33进制流水码
+     */
+    @ApiModelProperty(name="customizeThirtyThreeBaseCode",value = "自定义33进制流水码")
+    @Column(name = "customize_thirty_three_base_code")
+    private String customizeThirtyThreeBaseCode;
+
+    /**
+     * 自定义36进制流水码
+     */
+    @ApiModelProperty(name="customizeThirtySixBaseCode",value = "自定义36进制流水码")
+    @Column(name = "customize_thirty_six_base_code")
+    private String customizeThirtySixBaseCode;
+
+    /**
+     * 创建人ID
+     */
+    @ApiModelProperty(name="createUserId",value = "创建人ID")
+    @Column(name = "create_user_id")
+    private Long createUserId;
+
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty(name="createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_time")
+    private Date createTime;
+
+    /**
+     * 修改人ID
+     */
+    @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
+    @Column(name = "modified_user_id")
+    private Long modifiedUserId;
+
+    /**
+     * 修改时间
+     */
+    @ApiModelProperty(name="modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "modified_time")
+    private Date modifiedTime;
+
+    /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Column(name = "is_delete")
+    private Byte isDelete;
+
+    /**
+     * 扩展字段1
+     */
+    @ApiModelProperty(name="option1",value = "扩展字段1")
+    private String option1;
+
+    /**
+     * 扩展字段2
+     */
+    @ApiModelProperty(name="option2",value = "扩展字段2")
+    private String option2;
+
+    /**
+     * 扩展字段3
+     */
+    @ApiModelProperty(name="option3",value = "扩展字段3")
+    private String option3;
+
+}
