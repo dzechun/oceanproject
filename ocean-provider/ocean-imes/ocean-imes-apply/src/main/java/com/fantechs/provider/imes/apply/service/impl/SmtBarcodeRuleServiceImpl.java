@@ -22,6 +22,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -73,73 +75,92 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         public void judgeBarcodeRule(SmtBarcodeRule smtBarcodeRule) {
             String barcodeRule = smtBarcodeRule.getBarcodeRule();
             if(StringUtils.isNotEmpty(barcodeRule)){
-                //判断Y和y、M和m、D和d、W和w不能同时使用
-                boolean yFlag = barcodeRule.contains("Y") && barcodeRule.contains("y");
-                boolean mFlag = barcodeRule.contains("M") && barcodeRule.contains("m");
-                boolean dFlag = barcodeRule.contains("D") && barcodeRule.contains("d");
-                boolean wFlag = barcodeRule.contains("W") && barcodeRule.contains("w");
-                if(yFlag||mFlag||dFlag||wFlag){
-                    throw new BizErrorException("条码规则配置错误");
-                }
+                List<String> list = getVariable(barcodeRule);
+                StringBuilder sb=new StringBuilder();
+                for (String variable : list) {
+                    sb.append(variable);
+                    //判断Y和y、M和m、D和d、W和w不能同时使用
+                    boolean yFlag = variable.contains("Y") && variable.contains("y");
+                    boolean mFlag = variable.contains("M") && variable.contains("m");
+                    boolean dFlag = variable.contains("D") && variable.contains("d");
+                    boolean wFlag = variable.contains("W") && variable.contains("w");
+                    if(yFlag||mFlag||dFlag||wFlag){
+                        throw new BizErrorException("条码规则配置错误");
+                    }
 
+
+                    //自定义的年月日周的位数是否与条码规则中y、m、d、w的个数相等
+                    String customizeYear = smtBarcodeRule.getCustomizeYear();
+                    if(StringUtils.isNotEmpty(customizeYear)){
+                        int yearLength = customizeLength(customizeYear);
+                        int yCount = countStr(variable, 'y');
+                        if(yearLength!=yCount){
+                            throw new BizErrorException("条码规则配置错误");
+                        }
+                    }
+                    String customizeMonth = smtBarcodeRule.getCustomizeMonth();
+                    if(StringUtils.isNotEmpty(customizeMonth)){
+                        int mouthLength = customizeLength(customizeMonth);
+                        int mCount = countStr(variable, 'm');
+                        if(mouthLength!=mCount){
+                            throw new BizErrorException("条码规则配置错误");
+                        }
+                    }
+                    String customizeDay = smtBarcodeRule.getCustomizeDay();
+                    if(StringUtils.isNotEmpty(customizeDay)){
+                        int dayLength = customizeLength(customizeDay);
+                        int dCount = countStr(variable, 'd');
+                        if(dayLength!=dCount){
+                            throw new BizErrorException("条码规则配置错误");
+                        }
+                    }
+                    String customizeWeek = smtBarcodeRule.getCustomizeWeek();
+                    if(StringUtils.isNotEmpty(customizeWeek)){
+                        int weekLength = customizeLength(customizeWeek);
+                        int wCount = countStr(variable, 'w');
+                        if(weekLength!=wCount){
+                            throw new BizErrorException("条码规则配置错误");
+                        }
+                    }
+                }
                 //判断S、F、b、c只能使用一个
-                boolean sCode = barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
-                boolean fCode = !barcodeRule.contains("S") && barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
-                boolean bCode = !barcodeRule.contains("S") && !barcodeRule.contains("F") && barcodeRule.contains("b") && !barcodeRule.contains("c");
-                boolean cCode = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && barcodeRule.contains("c");
-                boolean baseCode = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
+                boolean sCode = sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+                boolean fCode = !sb.toString().contains("S") && sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+                boolean bCode = !sb.toString().contains("S") && !sb.toString().contains("F") && sb.toString().contains("b") && !sb.toString().contains("c");
+                boolean cCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && sb.toString().contains("c");
+                boolean baseCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
                 if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
                     throw new BizErrorException("条码规则配置错误");
                 }
 
-                if(barcodeRule.contains("D")||barcodeRule.contains("d")){
-                    if(barcodeRule.contains("W")||barcodeRule.contains("w")||barcodeRule.contains("K")||barcodeRule.contains("A")){
+                if(sb.toString().contains("D")||sb.toString().contains("d")){
+                    if(sb.toString().contains("W")||sb.toString().contains("w")||sb.toString().contains("K")||sb.toString().contains("A")){
                         throw new BizErrorException("条码规则配置错误");
                     }
                 }
-
-
-                //自定义的年月日周的位数是否与条码规则中y、m、d、w的个数相等
-                String customizeYear = smtBarcodeRule.getCustomizeYear();
-                if(StringUtils.isNotEmpty(customizeYear)){
-                    int yearLength = customizeLength(customizeYear);
-                    int yCount = countStr(barcodeRule, 'y');
-                    if(yearLength!=yCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-                String customizeMonth = smtBarcodeRule.getCustomizeMonth();
-                if(StringUtils.isNotEmpty(customizeMonth)){
-                    int mouthLength = customizeLength(customizeMonth);
-                    int mCount = countStr(barcodeRule, 'm');
-                    if(mouthLength!=mCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-                String customizeDay = smtBarcodeRule.getCustomizeDay();
-                if(StringUtils.isNotEmpty(customizeDay)){
-                    int dayLength = customizeLength(customizeDay);
-                    int dCount = countStr(barcodeRule, 'd');
-                    if(dayLength!=dCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-                String customizeWeek = smtBarcodeRule.getCustomizeWeek();
-                if(StringUtils.isNotEmpty(customizeWeek)){
-                    int weekLength = customizeLength(customizeWeek);
-                    int wCount = countStr(barcodeRule, 'w');
-                    if(weekLength!=wCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-
             }
         }
 
+        /**
+         * 获取条码规则中的变量
+         * @param barcodeRule
+         * @return
+         */
         @Transactional(rollbackFor = Exception.class)
-        public int countStr(String barcodeRule, char str) {
+        public List<String> getVariable(String barcodeRule){
+            List<String> list=new ArrayList<>();
+            Pattern pattern = Pattern.compile("\\[(.*?)]");
+            Matcher matcher = pattern.matcher(barcodeRule);
+            while((matcher.find())){
+                list.add(matcher.group(1));
+            }
+            return list;
+        }
+
+        @Transactional(rollbackFor = Exception.class)
+        public int countStr(String variable, char str) {
             int count=0;
-            char[] charArray = barcodeRule.toCharArray();
+            char[] charArray = variable.toCharArray();
             for (int i=0;i<charArray.length;i++){
                 if(charArray[i]==str){
                    count++;
