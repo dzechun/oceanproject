@@ -151,6 +151,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         @Transactional(rollbackFor = Exception.class)
         public int customizeLength(String field) {
             int length = 0;
+            field = field.substring(0, field.length() - 1);
             if(StringUtils.isNotEmpty(field)){
                 String[] fieldJson = field.split(",");
                 String[] fields = fieldJson[0].split(":");
