@@ -130,7 +130,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
         }
         smtHtDeptMapper.insertList(list);
-        i= smtDeptMapper.deleteByPrimaryKey(ids);
+        i= smtDeptMapper.deleteByIds(ids);
         return i;
     }
 }
