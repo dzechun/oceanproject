@@ -83,12 +83,12 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                 }
 
                 //判断S、F、b、c只能使用一个
-                boolean baseCode1 = barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
-                boolean baseCode2 = !barcodeRule.contains("S") && barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
-                boolean baseCode3 = !barcodeRule.contains("S") && !barcodeRule.contains("F") && barcodeRule.contains("b") && !barcodeRule.contains("c");
-                boolean baseCode4 = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && barcodeRule.contains("c");
-                boolean baseCode5 = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
-                if(!baseCode1&&!baseCode2&&!baseCode3&&!baseCode4&&!baseCode5){
+                boolean sCode = barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
+                boolean fCode = !barcodeRule.contains("S") && barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
+                boolean bCode = !barcodeRule.contains("S") && !barcodeRule.contains("F") && barcodeRule.contains("b") && !barcodeRule.contains("c");
+                boolean cCode = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && barcodeRule.contains("c");
+                boolean baseCode = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
+                if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
                     throw new BizErrorException("条码规则配置错误");
                 }
 
