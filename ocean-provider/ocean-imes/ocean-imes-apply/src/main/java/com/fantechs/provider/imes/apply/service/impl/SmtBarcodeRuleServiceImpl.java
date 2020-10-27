@@ -153,10 +153,8 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             int length = 0;
             if(StringUtils.isNotEmpty(field)){
                 String[] fieldJson = field.split(",");
-                for (String yjson : fieldJson) {
-                    String[] fields = yjson.split(":");
-                    length = fields[1].length();
-                }
+                String[] fields = fieldJson[0].split(":");
+                length = fields[1].length();
             }
             return length;
         }
