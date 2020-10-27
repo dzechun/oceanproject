@@ -88,7 +88,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                 boolean baseCode3 = !barcodeRule.contains("S") && !barcodeRule.contains("F") && barcodeRule.contains("b") && !barcodeRule.contains("c");
                 boolean baseCode4 = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && barcodeRule.contains("c");
                 boolean baseCode5 = !barcodeRule.contains("S") && !barcodeRule.contains("F") && !barcodeRule.contains("b") && !barcodeRule.contains("c");
-                if(!baseCode1||!baseCode2||!baseCode3||!baseCode4||!baseCode5){
+                if(!baseCode1&&!baseCode2&&!baseCode3&&!baseCode4&&!baseCode5){
                     throw new BizErrorException("条码规则配置错误");
                 }
 
