@@ -252,4 +252,5 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         return smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
     }
 
+
 }
