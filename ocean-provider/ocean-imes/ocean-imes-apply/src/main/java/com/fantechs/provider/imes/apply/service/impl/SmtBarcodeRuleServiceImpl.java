@@ -32,50 +32,53 @@ import java.util.regex.Pattern;
 @Service
 public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> implements SmtBarcodeRuleService {
 
-        @Resource
-        private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
-        @Resource
-        private SmtHtBarcodeRuleMapper smtHtBarcodeRuleMapper;
+    @Resource
+    private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
+    @Resource
+    private SmtHtBarcodeRuleMapper smtHtBarcodeRuleMapper;
 
-        @Override
-        @Transactional(rollbackFor = Exception.class)
-        public int save(SmtBarcodeRule smtBarcodeRule) {
-            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
-
-            Example example = new Example(SmtBarcodeRule.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcodeRuleCode",smtBarcodeRule.getBarcodeRuleCode());
-
-            List<SmtBarcodeRule> smtBarcodeRules = smtBarcodeRuleMapper.selectByExample(example);
-            if(StringUtils.isNotEmpty(smtBarcodeRules)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            }
-
-            //判断条码规则是否符合规定
-            judgeBarcodeRule(smtBarcodeRule);
-
-            smtBarcodeRule.setCreateUserId(currentUser.getUserId());
-            smtBarcodeRule.setCreateTime(new Date());
-            smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
-
-            //新增条码规则历史信息
-            SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
-            BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
-            smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
-            smtHtBarcodeRule.setModifiedTime(new Date());
-            int i = smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
-
-            return i;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int save(SmtBarcodeRule smtBarcodeRule) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        @Transactional(rollbackFor = Exception.class)
-        public void judgeBarcodeRule(SmtBarcodeRule smtBarcodeRule) {
-            String barcodeRule = smtBarcodeRule.getBarcodeRule();
-            if(StringUtils.isNotEmpty(barcodeRule)){
-                String variable = getVariable(barcodeRule);
+        Example example = new Example(SmtBarcodeRule.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("barcodeRuleCode",smtBarcodeRule.getBarcodeRuleCode());
+
+        List<SmtBarcodeRule> smtBarcodeRules = smtBarcodeRuleMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(smtBarcodeRules)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        //判断条码规则是否符合规定
+        judgeBarcodeRule(smtBarcodeRule);
+
+        smtBarcodeRule.setCreateUserId(currentUser.getUserId());
+        smtBarcodeRule.setCreateTime(new Date());
+        smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
+
+        //新增条码规则历史信息
+        SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
+        BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
+        smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
+        smtHtBarcodeRule.setModifiedTime(new Date());
+        int i = smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
+
+        return i;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void judgeBarcodeRule(SmtBarcodeRule smtBarcodeRule) {
+        String barcodeRule = smtBarcodeRule.getBarcodeRule();
+        if(StringUtils.isNotEmpty(barcodeRule)){
+            List<String> list = getVariable(barcodeRule);
+            StringBuilder sb=new StringBuilder();
+            for (String variable : list) {
+                sb.append(variable);
                 //判断Y和y、M和m、D和d、W和w不能同时使用
                 boolean yFlag = variable.contains("Y") && variable.contains("y");
                 boolean mFlag = variable.contains("M") && variable.contains("m");
@@ -119,133 +122,134 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                         throw new BizErrorException("条码规则配置错误");
                     }
                 }
-                //判断S、F、b、c只能使用一个
-                boolean sCode = variable.contains("S") && !variable.contains("F") && !variable.contains("b") && !variable.contains("c");
-                boolean fCode = !variable.contains("S") && variable.contains("F") && !variable.contains("b") && !variable.contains("c");
-                boolean bCode = !variable.contains("S") && !variable.contains("F") && variable.contains("b") && !variable.contains("c");
-                boolean cCode = !variable.contains("S") && !variable.contains("F") && !variable.contains("b") && variable.contains("c");
-                boolean baseCode = !variable.contains("S") && !variable.contains("F") && !variable.contains("b") && !variable.contains("c");
-                if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
+            }
+            //判断S、F、b、c只能使用一个
+            boolean sCode = sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+            boolean fCode = !sb.toString().contains("S") && sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+            boolean bCode = !sb.toString().contains("S") && !sb.toString().contains("F") && sb.toString().contains("b") && !sb.toString().contains("c");
+            boolean cCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && sb.toString().contains("c");
+            boolean baseCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+            if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
+                throw new BizErrorException("条码规则配置错误");
+            }
+
+            if(sb.toString().contains("D")||sb.toString().contains("d")){
+                if(sb.toString().contains("W")||sb.toString().contains("w")||sb.toString().contains("K")||sb.toString().contains("A")){
                     throw new BizErrorException("条码规则配置错误");
                 }
-
-                if(variable.contains("D")||variable.contains("d")){
-                    if(variable.contains("W")||variable.contains("w")||variable.contains("K")||variable.contains("A")){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
             }
         }
+    }
 
-        /**
-         * 获取条码规则中的变量
-         * @param barcodeRule
-         * @return
-         */
-        @Transactional(rollbackFor = Exception.class)
-        public String getVariable(String barcodeRule){
-            StringBuilder sb=new StringBuilder();
-            Pattern pattern = Pattern.compile("\\[(.*?)]");
-            Matcher matcher = pattern.matcher(barcodeRule);
-            while((matcher.find())){
-                sb.append(matcher.group(1));
+    /**
+     * 获取条码规则中的变量
+     * @param barcodeRule
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public List<String> getVariable(String barcodeRule){
+        List<String> list=new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\[(.*?)]");
+        Matcher matcher = pattern.matcher(barcodeRule);
+        while((matcher.find())){
+            list.add(matcher.group(1));
+        }
+        return list;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int countStr(String variable, char str) {
+        int count=0;
+        char[] charArray = variable.toCharArray();
+        for (int i=0;i<charArray.length;i++){
+            if(charArray[i]==str){
+                count++;
             }
-            return sb.toString();
+        }
+        return count;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int customizeLength(String field) {
+        int length = 0;
+        field = field.substring(1, field.length() - 1);
+        if(StringUtils.isNotEmpty(field)){
+            String[] fieldJson = field.split(",");
+            String[] fields = fieldJson[0].split(":");
+            length = fields[1].length();
+        }
+        return length;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(SmtBarcodeRule smtBarcodeRule) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        @Transactional(rollbackFor = Exception.class)
-        public int countStr(String variable, char str) {
-            int count=0;
-            char[] charArray = variable.toCharArray();
-            for (int i=0;i<charArray.length;i++){
-                if(charArray[i]==str){
-                   count++;
-                }
-            }
-            return count;
+        Example example = new Example(SmtBarcodeRule.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("barcodeRuleCode",smtBarcodeRule.getBarcodeRuleCode());
+
+        SmtBarcodeRule barcodeRule = smtBarcodeRuleMapper.selectOneByExample(example);
+
+        if(StringUtils.isNotEmpty(barcodeRule)&&!barcodeRule.getBarcodeRuleId().equals(smtBarcodeRule.getBarcodeRuleId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        @Transactional(rollbackFor = Exception.class)
-        public int customizeLength(String field) {
-            int length = 0;
-            field = field.substring(1, field.length() - 1);
-            if(StringUtils.isNotEmpty(field)){
-                String[] fieldJson = field.split(",");
-                String[] fields = fieldJson[0].split(":");
-                length = fields[1].length();
-            }
-            return length;
+        //判断条码规则是否符合规定
+        judgeBarcodeRule(smtBarcodeRule);
+
+        smtBarcodeRule.setModifiedUserId(currentUser.getUserId());
+        smtBarcodeRule.setModifiedTime(new Date());
+        int i = smtBarcodeRuleMapper.updateByPrimaryKeySelective(smtBarcodeRule);
+
+
+        //新增条码规则历史信息
+        SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
+        BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
+        smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
+        smtHtBarcodeRule.setModifiedTime(new Date());
+        smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        List<SmtHtBarcodeRule> list=new ArrayList<>();
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-
-        @Override
-        @Transactional(rollbackFor = Exception.class)
-        public int update(SmtBarcodeRule smtBarcodeRule) {
-            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        String[] barcodeRuleIds = ids.split(",");
+        for (String barcodeRuleId : barcodeRuleIds) {
+            SmtBarcodeRule smtBarcodeRule = smtBarcodeRuleMapper.selectByPrimaryKey(barcodeRuleId);
+            if(StringUtils.isEmpty(smtBarcodeRule)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-
-            Example example = new Example(SmtBarcodeRule.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcodeRuleCode",smtBarcodeRule.getBarcodeRuleCode());
-
-            SmtBarcodeRule barcodeRule = smtBarcodeRuleMapper.selectOneByExample(example);
-
-            if(StringUtils.isNotEmpty(barcodeRule)&&!barcodeRule.getBarcodeRuleId().equals(smtBarcodeRule.getBarcodeRuleId())){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            }
-
-            //判断条码规则是否符合规定
-            judgeBarcodeRule(smtBarcodeRule);
-
-            smtBarcodeRule.setModifiedUserId(currentUser.getUserId());
-            smtBarcodeRule.setModifiedTime(new Date());
-            int i = smtBarcodeRuleMapper.updateByPrimaryKeySelective(smtBarcodeRule);
-
-
             //新增条码规则历史信息
             SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
             BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
             smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
             smtHtBarcodeRule.setModifiedTime(new Date());
-            smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
+            list.add(smtHtBarcodeRule);
 
-            return i;
         }
+        smtHtBarcodeRuleMapper.insertList(list);
 
-        @Override
-        @Transactional(rollbackFor = Exception.class)
-        public int batchDelete(String ids) {
-            List<SmtHtBarcodeRule> list=new ArrayList<>();
+        return smtBarcodeRuleMapper.deleteByIds(ids);
+    }
 
-            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
-
-            String[] barcodeRuleIds = ids.split(",");
-            for (String barcodeRuleId : barcodeRuleIds) {
-                SmtBarcodeRule smtBarcodeRule = smtBarcodeRuleMapper.selectByPrimaryKey(barcodeRuleId);
-                if(StringUtils.isEmpty(smtBarcodeRule)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                }
-                //新增条码规则历史信息
-                SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
-                BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
-                smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
-                smtHtBarcodeRule.setModifiedTime(new Date());
-                list.add(smtHtBarcodeRule);
-
-            }
-            smtHtBarcodeRuleMapper.insertList(list);
-
-            return smtBarcodeRuleMapper.deleteByIds(ids);
-        }
-
-        @Override
-        public List<SmtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
-            return smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
-        }
+    @Override
+    public List<SmtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
+        return smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
+    }
 
 }
