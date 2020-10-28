@@ -45,6 +45,7 @@ public class SmtSignature extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30)
     private String materialName;
 
     /**

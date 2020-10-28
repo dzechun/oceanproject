@@ -46,6 +46,9 @@
       <if test="sectionId!=null and sectionId!=''">
         and shp.section_id=#{sectionId}
       </if>
+      <if test="processCategoryId！=null and processCategoryId!=''">
+        and shp.process_category_id=#{processCategoryId}
+      </if>
     </where>
     order by shp.create_time desc
   </select>
