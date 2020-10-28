@@ -75,8 +75,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         public void judgeBarcodeRule(SmtBarcodeRule smtBarcodeRule) {
             String barcodeRule = smtBarcodeRule.getBarcodeRule();
             if(StringUtils.isNotEmpty(barcodeRule)){
-                StringBuilder sb = getVariable(barcodeRule);
-                String variable = sb.toString();
+                String variable = getVariable(barcodeRule);
                 //判断Y和y、M和m、D和d、W和w不能同时使用
                 boolean yFlag = variable.contains("Y") && variable.contains("y");
                 boolean mFlag = variable.contains("M") && variable.contains("m");
@@ -144,14 +143,14 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
          * @return
          */
         @Transactional(rollbackFor = Exception.class)
-        public StringBuilder getVariable(String barcodeRule){
+        public String getVariable(String barcodeRule){
             StringBuilder sb=new StringBuilder();
             Pattern pattern = Pattern.compile("\\[(.*?)]");
             Matcher matcher = pattern.matcher(barcodeRule);
             while((matcher.find())){
                 sb.append(matcher.group(1));
             }
-            return sb;
+            return sb.toString();
         }
 
         @Transactional(rollbackFor = Exception.class)
