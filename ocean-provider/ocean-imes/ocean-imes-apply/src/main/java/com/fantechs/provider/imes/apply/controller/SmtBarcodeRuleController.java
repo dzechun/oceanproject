@@ -40,7 +40,7 @@ public class SmtBarcodeRuleController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：barcodeRuleId,barcodeRuleCode,barcodeRuleName",required = true)@RequestBody @Validated SmtBarcodeRule smtBarcodeRule) {
+    public ResponseEntity add(@ApiParam(value = "必传：barcodeRuleId,barcodeRuleCode,barcodeRuleName,barcodeRule",required = true)@RequestBody @Validated SmtBarcodeRule smtBarcodeRule) {
         return ControllerUtil.returnCRUD(smtBarcodeRuleService.save(smtBarcodeRule));
     }
 
