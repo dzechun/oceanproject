@@ -48,7 +48,7 @@ public class SmtDept extends ValidGroup implements Serializable  {
      */
     @Column(name = "dept_desc")
     @ApiModelProperty(name="deptDesc" ,value="部门描述")
-    @Excel(name = "部门代码", height = 20, width = 30)
+    @Excel(name = "部门描述", height = 20, width = 30)
     private String deptDesc;
 
     /**

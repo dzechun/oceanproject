@@ -48,7 +48,7 @@
         and wha.warehouse_area_desc like CONCAT('%', #{warehouseAreaDesc}, '%')
       </if>
       <if test="warehouseId != null">
-        and wha.warehouse_id like CONCAT('%', #{warehouseId}, '%')
+        and wha.warehouse_id = #{warehouseId}
       </if>
     </where>
     order by  create_time desc

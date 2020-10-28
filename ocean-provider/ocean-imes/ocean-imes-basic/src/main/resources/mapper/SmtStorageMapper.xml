@@ -47,7 +47,7 @@
         and ss.warehouse_id=#{warehouseId}
       </if>
       <if test="warehouseAreaId!=null and warehouseAreaId!=''">
-        and ss.warehouseAreaId=#{warehouseAreaId}
+        and ss.warehouse_area_Id=#{warehouseAreaId}
       </if>
     </where>
     order by ss.create_time desc
