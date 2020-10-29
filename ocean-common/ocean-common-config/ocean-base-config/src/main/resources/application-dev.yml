@@ -64,3 +64,12 @@ zuul:
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
