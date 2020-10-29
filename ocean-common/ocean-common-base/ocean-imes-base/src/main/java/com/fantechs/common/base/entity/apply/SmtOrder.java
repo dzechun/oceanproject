@@ -31,7 +31,7 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "order_code")
     @NotBlank(message = "订单号不能为空")
     @ApiModelProperty(name="orderCode" ,value="订单号")
-    @Excel(name = "产品料号", height = 20, width = 30,orderNum="1")
+    @Excel(name = "订单号", height = 20, width = 30,orderNum="1")
     private String orderCode;
 
     /**
