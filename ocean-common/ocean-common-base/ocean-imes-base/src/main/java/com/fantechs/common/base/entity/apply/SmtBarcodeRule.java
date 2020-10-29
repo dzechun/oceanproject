@@ -82,7 +82,7 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="6",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态", height = 20, width = 30,orderNum="6",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

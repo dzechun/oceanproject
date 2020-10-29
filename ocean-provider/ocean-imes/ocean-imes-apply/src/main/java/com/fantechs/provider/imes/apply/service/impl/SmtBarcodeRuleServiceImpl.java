@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
 import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
@@ -248,7 +249,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
     }
 
     @Override
-    public List<SmtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
+    public List<SmtBarcodeRuleDto> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
         return smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
     }
 
