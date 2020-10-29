@@ -7,3 +7,5 @@ spring:
     include: dev
   application:
     name: @pom.artifactId@
+logging:
+  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

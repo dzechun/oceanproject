@@ -2,11 +2,10 @@ package com.fantechs.controller;
 
 import com.bstek.ureport.export.ExportManager;
 import com.bstek.ureport.export.html.HtmlReport;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -21,10 +20,8 @@ public class UreportController {
     @Autowired
     private ExportManager exportManager;
 
-    @GetMapping("/exportHtml")
-    public HtmlReport exportHtml(HttpServletRequest request){
-        Map<String,Object> parameters=new HashMap<String,Object>();
-        parameters.put("userId","1");
-        return exportManager.exportHtml("file:user.ureport.xml",request.getContextPath(),parameters);
+    @PostMapping("/exportHtml")
+    public HtmlReport exportHtml(@ApiParam(value = "必传：fileName",required = true) @RequestBody  Map<String,Object> param, HttpServletRequest request){
+        return exportManager.exportHtml(param.get("fileName").toString(),request.getContextPath(),param);
     }
 }

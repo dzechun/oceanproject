@@ -8,7 +8,7 @@
   <!--<jmxConfigurator/>-->
 
   <springProperty scope="context" name="springAppName" source="spring.application.name"/>
-  <property name="LOG_PATH" value="/data/logs/newenergy/${springAppName}"/>
+  <property name="LOG_PATH" value="/data/logs/ocean/${springAppName}"/>
   <property name="LOG_FILE" value="${springAppName}"/>
 
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">

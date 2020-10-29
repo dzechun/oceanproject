@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class CodeUtils {
@@ -78,6 +80,73 @@ public class CodeUtils {
         todayEnd.set(Calendar.SECOND, 59);
         todayEnd.set(Calendar.MILLISECOND, 999);
         return todayEnd.getTimeInMillis()-new Date().getTime();
+    }
+
+
+    /**
+     * 根据编码规则生成编码
+     * @param codeRule
+     * @return
+     */
+    public static  String patternCode(String codeRule){
+        String code=null;
+        if(StringUtils.isNotEmpty(codeRule)){
+            StringBuffer sb = new StringBuffer();
+            Pattern pattern = Pattern.compile("\\[(.*?)]");
+            Matcher matcher = pattern.matcher(codeRule);
+            while (matcher.find()){
+                String re = matcher.group(0);
+                String s =matcher.group(1);
+                sb.append(s);
+                char[] rules = s.toCharArray();
+                for(char q :rules){
+                    String ruleType = getTypeCode(q+"");
+                }
+
+            }
+        }
+
+        return code;
+    }
+
+
+    public static  String getTypeCode(String str){
+        String ruleType=null;
+        Calendar cal = Calendar.getInstance();
+        switch(str){
+            //年
+            case "Y" :
+                ruleType = DateUtils.getDateString(new Date(),"yyyyMMdd");
+                break;
+            //月
+            case "M" :
+                ruleType =  cal.get(Calendar.MONTH) + 1+"";
+                break;
+            //周
+            case "W" :
+                ruleType =  cal.get(Calendar.WEEK_OF_YEAR)+"";
+                break;
+            //日
+            case "D" :
+                ruleType =  cal.get(Calendar.DATE)+"";
+                break;
+            //周的日
+            case "K" :
+                ruleType =  cal.get(Calendar.DAY_OF_WEEK)+"";
+                break;
+            //年的日
+            case "A" :
+                ruleType =  cal.get(Calendar.DAY_OF_YEAR)+"";
+                break;
+            default :
+        }
+        return  ruleType;
+    }
+
+    public static void main(String[] args) {
+        String ss = "smt[YMDW][yymd]???";
+        System.out.println(ss.split("Y").length-1 );
+       // patternCode(ss);
     }
 
 }

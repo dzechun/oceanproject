@@ -47,3 +47,4 @@ hystrix:
 logging:
   level:
     org.springframework.cloud.gateway: debug
+  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

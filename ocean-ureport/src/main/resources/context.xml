@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <import resource="classpath:ureport-console-context.xml" />
+    <!-- 第七步，修改目录文件位置。这里多说几句，官方文档默认是在/WEB-INF/config.properties下面，
+    WEB-INF每次运行的时候都会动态生成一个临时目录，我们是找不到的，所以我们将位置修改成绝对路径，自己可以找到。
+    由于config.properties是在resouces配置下，所以使用classpath: -->
+
+    <bean id="propertyConfigurer" parent="ureport.props">
+    <property name="location">
+        <value>classpath:config.properties</value>
+    </property>
+    </bean>
+</beans>

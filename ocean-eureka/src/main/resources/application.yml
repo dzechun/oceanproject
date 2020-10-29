@@ -27,3 +27,6 @@ eureka:
   client:
      register-with-eureka: false #禁止自己当做服务注册
      fetch-registry: false       #屏蔽注册信息
+
+logging:
+  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

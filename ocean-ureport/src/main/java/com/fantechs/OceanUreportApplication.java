@@ -4,11 +4,13 @@ import com.bstek.ureport.console.UReportServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
-@ImportResource("classpath:ureport-console-context.xml") // 加载ureport对应的xml配置文件
+@EnableDiscoveryClient
+@ImportResource("classpath:context.xml") // 加载ureport对应的xml配置文件
 public class OceanUreportApplication {
 
     public static void main(String[] args) {
