@@ -39,10 +39,13 @@
               and date_format(spc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
           </if>
           <if test="processCategoryCode != null and processCategoryCode != ''">
-              and spc.process_category_code like CONCAT('%',#{processCategoryCode},'%')
+              and shpc.process_category_code like CONCAT('%',#{processCategoryCode},'%')
           </if>
           <if test="processCategoryName != null and processCategoryName != ''">
-              and spc.process_category_name like CONCAT('%',#{processCategoryName},'%')
+              and shpc.process_category_name like CONCAT('%',#{processCategoryName},'%')
+          </if>
+          <if test="processCategoryDesc != null and processCategoryDesc != ''">
+              and shpc.process_category_desc like CONCAT('%',#{processCategoryDesc},'%')
           </if>
       </where>
       order by create_time desc

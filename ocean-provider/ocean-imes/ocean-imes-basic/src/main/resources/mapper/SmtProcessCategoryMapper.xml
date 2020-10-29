@@ -5,6 +5,7 @@
      <id column="process_category_id" jdbcType="BIGINT" property="processCategoryId" />
     <result column="process_category_code" jdbcType="VARCHAR" property="processCategoryCode" />
     <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName" />
+    <result column="process_category_desc" jdbcType="VARCHAR" property="processCategoryDesc" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -41,6 +42,9 @@
       </if>
       <if test="processCategoryName != null and processCategoryName != ''">
         and spc.process_category_name like CONCAT('%',#{processCategoryName},'%')
+      </if>
+      <if test="processCategoryDesc != null and processCategoryDesc != ''">
+        and spc.process_category_desc like CONCAT('%',#{processCategoryDesc},'%')
       </if>
     </where>
     order by create_time desc
