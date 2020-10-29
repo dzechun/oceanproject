@@ -27,20 +27,20 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     private Long productProcessRouteId;
 
     /**
-     * 产品类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)
+     * 类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)
      */
     @Column(name = "product_type")
-    @ApiModelProperty(name="productType" ,value="产品类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)")
+    @ApiModelProperty(name="productType" ,value="类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)")
     @Excel(name = "产品类别", height = 20, width = 30,replace = {"All(*)_0", "线别_1","产品型号_2","产品料号_3"})
-    @NotNull(message = "产品类别号不能为空")
+    @NotNull(message = "类别号不能为空")
     private Integer productType;
 
     /**
-     *  产品名称
+     *  名称
      */
     @Transient
-    @ApiModelProperty(name="productName" ,value="产品名称")
-    @Excel(name = "产品名称", height = 20, width = 30)
+    @ApiModelProperty(name="productName" ,value="名称")
+    @Excel(name = "名称", height = 20, width = 30)
     private String productName;
 
     /**

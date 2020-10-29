@@ -45,6 +45,9 @@
       <if test="sectionId!=null and sectionId!=''">
         and sp.section_id=#{sectionId}
       </if>
+      <if test="processCategoryId!=null and processCategoryId!=''">
+        and sp.process_category_id=#{processCategoryId}
+      </if>
     </where>
     order by sp.create_time desc
   </select>

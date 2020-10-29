@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
 import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
@@ -157,6 +158,12 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         return list;
     }
 
+    /**
+     * 统计某一个字符出现的次数
+     * @param variable
+     * @param str
+     * @return
+     */
     @Transactional(rollbackFor = Exception.class)
     public int countStr(String variable, char str) {
         int count=0;
@@ -169,6 +176,11 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         return count;
     }
 
+    /**
+     * 统计自定义属性value的长度
+     * @param field
+     * @return
+     */
     @Transactional(rollbackFor = Exception.class)
     public int customizeLength(String field) {
         int length = 0;
@@ -248,7 +260,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
     }
 
     @Override
-    public List<SmtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
+    public List<SmtBarcodeRuleDto> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
         return smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
     }
 

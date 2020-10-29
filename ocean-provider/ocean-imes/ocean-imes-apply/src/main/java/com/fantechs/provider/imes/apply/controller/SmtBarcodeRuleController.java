@@ -1,6 +1,8 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
+import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -65,17 +67,17 @@ public class SmtBarcodeRuleController {
 
     @ApiOperation("条码规则列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtBarcodeRule>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule) {
+    public ResponseEntity<List<SmtBarcodeRuleDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule) {
         Page<Object> page = PageHelper.startPage(searchSmtBarcodeRule.getStartPage(),searchSmtBarcodeRule.getPageSize());
-        List<SmtBarcodeRule> list = smtBarcodeRuleService.findList(searchSmtBarcodeRule);
+        List<SmtBarcodeRuleDto> list = smtBarcodeRuleService.findList(searchSmtBarcodeRule);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("条码规则历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtBarcodeRule>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule) {
+    public ResponseEntity<List<SmtHtBarcodeRule>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule) {
         Page<Object> page = PageHelper.startPage(searchSmtBarcodeRule.getStartPage(),searchSmtBarcodeRule.getPageSize());
-        List<SmtBarcodeRule> list = smtHtBarcodeRuleService.findList(searchSmtBarcodeRule);
+        List<SmtHtBarcodeRule> list = smtHtBarcodeRuleService.findList(searchSmtBarcodeRule);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -83,10 +85,10 @@ public class SmtBarcodeRuleController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchSmtBarcodeRule searchSmtBarcodeRule){
-    List<SmtBarcodeRule> list = smtBarcodeRuleService.findList(searchSmtBarcodeRule);
+    List<SmtBarcodeRuleDto> list = smtBarcodeRuleService.findList(searchSmtBarcodeRule);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出条码规则信息", "条码规则信息", SmtBarcodeRule.class, "条码规则信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出条码规则信息", "条码规则信息", SmtBarcodeRuleDto.class, "条码规则信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

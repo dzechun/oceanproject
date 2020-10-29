@@ -22,6 +22,19 @@ public class SmtHtProductProcessRouteServiceImpl extends BaseService<SmtHtProduc
 
     @Override
     public List<SmtHtProductProcessRoute> findList(SearchSmtProductProcessRoute searchSmtProductProcessRoute) {
-        return smtHtProductProcessRouteMapper.findList(searchSmtProductProcessRoute);
+        List<SmtHtProductProcessRoute> list = smtHtProductProcessRouteMapper.findList(searchSmtProductProcessRoute);
+        for (SmtHtProductProcessRoute smtHtProductProcessRoute : list) {
+            Integer productType = smtHtProductProcessRoute.getProductType();
+            if(productType==0){
+                smtHtProductProcessRoute.setProductName("*");
+            }else if (productType==1){
+                smtHtProductProcessRoute.setProductName(smtHtProductProcessRoute.getProName());
+            }else if (productType==2){
+                smtHtProductProcessRoute.setProductName(smtHtProductProcessRoute.getProductModelCode());
+            }else if (productType==3){
+                smtHtProductProcessRoute.setProductName(smtHtProductProcessRoute.getMaterialCode());
+            }
+        }
+        return list;
     }
 }

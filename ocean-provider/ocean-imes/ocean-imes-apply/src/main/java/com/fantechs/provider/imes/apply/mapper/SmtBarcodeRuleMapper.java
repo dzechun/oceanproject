@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.mapper;
 
+import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.mybatis.MyMapper;
@@ -9,5 +10,5 @@ import java.util.List;
 
 @Mapper
 public interface SmtBarcodeRuleMapper extends MyMapper<SmtBarcodeRule> {
-    List<SmtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule);
+    List<SmtBarcodeRuleDto> findList(SearchSmtBarcodeRule searchSmtBarcodeRule);
 }

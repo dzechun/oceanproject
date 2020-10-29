@@ -81,7 +81,6 @@ public class SmtStation extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "sectionName",value = "工段名称")
     @Excel(name = "工段名称", height = 20, width = 30)
-    @NotBlank(message = "工段Id不能为空")
     private String sectionName;
 
     /**

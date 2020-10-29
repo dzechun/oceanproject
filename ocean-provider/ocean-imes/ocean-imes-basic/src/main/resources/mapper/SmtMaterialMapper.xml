@@ -58,6 +58,12 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="productBomId!=null and productBomId!=''">
+        and sm.material_id!=(select material_id from fantech_imes.smt_product_bom where product_bom_id=#{productBomId})
+      </if>
+      <if test="workOrderId!=null and workOrderId!=''">
+        and sm.material_id!=(select material_id from fantech_imes.smt_work_order where work_order_id=#{workOrderId})
+      </if>
     </where>
     order by sm.create_time desc
   </select>

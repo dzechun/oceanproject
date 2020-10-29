@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
-import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
 import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.support.BaseService;
@@ -22,7 +21,7 @@ public class SmtHtBarcodeRuleServiceImpl extends BaseService<SmtHtBarcodeRule> i
      private SmtHtBarcodeRuleMapper smtHtBarcodeRuleMapper;
 
      @Override
-     public List<SmtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
+     public List<SmtHtBarcodeRule> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
         return smtHtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
      }
 }
