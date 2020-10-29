@@ -1,6 +1,5 @@
 package com.fantechs.common.base.entity.basic.history;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -28,11 +27,19 @@ public class SmtHtProductProcessRoute {
     private Long productProcessRouteId;
 
     /**
-     * 产品类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)
+     * 类别(0.All(*) 1.线别名称 2.产品型号 3.产品料号)
      */
     @Column(name = "product_type")
-    @ApiModelProperty(name="productType" ,value="产品类别")
+    @ApiModelProperty(name="productType" ,value="类别")
     private Integer productType;
+
+    /**
+     *  名称
+     */
+    @Transient
+    @ApiModelProperty(name="productName" ,value="名称")
+    private String productName;
+
 
     /**
      * 线别ID
@@ -101,7 +108,6 @@ public class SmtHtProductProcessRoute {
      */
     @Transient
     @ApiModelProperty(name="routeName" ,value="工艺路线名称")
-    @Excel(name = "工艺路线名称", height = 20, width = 30)
     private String routeName;
 
     /**
