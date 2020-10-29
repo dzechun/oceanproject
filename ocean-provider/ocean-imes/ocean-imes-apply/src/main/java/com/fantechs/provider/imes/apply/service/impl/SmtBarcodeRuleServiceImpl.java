@@ -158,6 +158,12 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         return list;
     }
 
+    /**
+     * 统计某一个字符出现的次数
+     * @param variable
+     * @param str
+     * @return
+     */
     @Transactional(rollbackFor = Exception.class)
     public int countStr(String variable, char str) {
         int count=0;
@@ -170,6 +176,11 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         return count;
     }
 
+    /**
+     * 统计自定义属性value的长度
+     * @param field
+     * @return
+     */
     @Transactional(rollbackFor = Exception.class)
     public int customizeLength(String field) {
         int length = 0;
@@ -252,6 +263,5 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
     public List<SmtBarcodeRuleDto> findList(SearchSmtBarcodeRule searchSmtBarcodeRule) {
         return smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
     }
-
 
 }
