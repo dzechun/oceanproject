@@ -60,6 +60,8 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
 
         smtProductBom.setCreateUserId(currentUser.getUserId());
         smtProductBom.setCreateTime(new Date());
+        smtProductBom.setModifiedUserId(currentUser.getUserId());
+        smtProductBom.setModifiedTime(new Date());
         smtProductBomMapper.insertUseGeneratedKeys(smtProductBom);
 
         //新增产品BOM历史信息
@@ -98,8 +100,6 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         //新增产品BOM历史信息
         SmtHtProductBom smtHtProductBom=new SmtHtProductBom();
         BeanUtils.copyProperties(smtProductBom,smtHtProductBom);
-        smtHtProductBom.setModifiedUserId(currentUser.getUserId());
-        smtHtProductBom.setModifiedTime(new Date());
         smtHtProductBomMapper.insertSelective(smtHtProductBom);
         return i;
     }

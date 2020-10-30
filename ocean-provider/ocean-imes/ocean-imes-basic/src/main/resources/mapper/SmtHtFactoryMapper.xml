@@ -44,6 +44,6 @@
         and  hf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
       </if>
     </where>
-    order by  create_time desc
+    order by  hf.modified_time desc
   </select>
 </mapper>

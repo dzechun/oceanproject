@@ -59,6 +59,8 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
         smtProcess.setCreateUserId(currentUser.getUserId());
         smtProcess.setCreateTime(new Date());
+        smtProcess.setModifiedUserId(currentUser.getUserId());
+        smtProcess.setModifiedTime(new Date());
         smtProcessMapper.insertUseGeneratedKeys(smtProcess);
 
         //新增工序历史信息
@@ -132,10 +134,6 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
         //新增工序历史信息
         SmtHtProcess smtHtProcess=new SmtHtProcess();
         BeanUtils.copyProperties(smtProcess,smtHtProcess);
-        smtHtProcess.setCreateUserId(smtProcess.getCreateUserId());
-        smtHtProcess.setCreateTime(smtProcess.getCreateTime());
-        smtHtProcess.setModifiedUserId(currentUser.getUserId());
-        smtHtProcess.setModifiedTime(new Date());
         smtHtProcessMapper.insertSelective(smtHtProcess);
         return i;
     }

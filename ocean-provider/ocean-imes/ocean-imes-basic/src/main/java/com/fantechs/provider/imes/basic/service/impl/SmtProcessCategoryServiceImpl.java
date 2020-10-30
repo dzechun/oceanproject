@@ -58,6 +58,8 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
 
         smtProcessCategory.setCreateUserId(currentUserInfo.getUserId());
         smtProcessCategory.setCreateTime(new Date());
+        smtProcessCategory.setModifiedTime(new Date());
+        smtProcessCategory.setModifiedUserId(currentUserInfo.getUserId());
         smtProcessCategoryMapper.insertUseGeneratedKeys(smtProcessCategory);
 
         //新增工序类别历史信息
@@ -90,8 +92,6 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
         //新增工序列表历史信息
         SmtHtProcessCategory smtHtProcessCategory = new SmtHtProcessCategory();
         BeanUtils.copyProperties(smtProcessCategory,smtHtProcessCategory);
-        smtHtProcessCategory.setModifiedTime(new Date());
-        smtHtProcessCategory.setModifiedUserId(currentUserInfo.getUserId());
         return smtHtProcessCategoryMapper.insertSelective(smtHtProcessCategory);
 
     }

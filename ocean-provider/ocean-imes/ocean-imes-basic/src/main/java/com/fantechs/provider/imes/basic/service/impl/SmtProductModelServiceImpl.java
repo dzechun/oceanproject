@@ -65,6 +65,8 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         }
         smtProductModel.setCreateUserId(currentUser.getUserId());
         smtProductModel.setCreateTime(new Date());
+        smtProductModel.setModifiedUserId(currentUser.getUserId());
+        smtProductModel.setModifiedTime(new Date());
         int i = smtProductModelMapper.insertUseGeneratedKeys(smtProductModel);
 
         //新增产品型号历史信息
@@ -96,8 +98,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         //新增产品型号历史信息
         SmtHtProductModel smtHtProductModel=new SmtHtProductModel();
         BeanUtils.copyProperties(smtProductModel,smtHtProductModel);
-        smtHtProductModel.setModifiedUserId(currentUser.getUserId());
-        smtHtProductModel.setModifiedTime(new Date());
         smtHtProductModelMapper.insertSelective(smtHtProductModel);
         return i;
     }

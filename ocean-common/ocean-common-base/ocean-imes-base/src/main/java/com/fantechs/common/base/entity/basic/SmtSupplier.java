@@ -58,6 +58,14 @@ public class SmtSupplier extends ValidGroup implements Serializable {
     private Byte status;
 
     /**
+     * 身份标识（1、供应商 2、客户）
+     */
+    @Column(name = "supplier_type")
+    @ApiModelProperty("身份标识（1、供应商 2、客户）")
+    @Excel(name = "身份标识", height = 20, width = 30,replace = "(1_供应商，2_客户)")
+    private Byte supplierType;
+
+    /**
      * 创建人ID
      */
     @Column(name = "create_user_id")

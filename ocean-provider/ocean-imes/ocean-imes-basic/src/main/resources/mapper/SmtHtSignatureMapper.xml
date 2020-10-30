@@ -39,6 +39,6 @@
         and shs.signature_code like CONCAT('%', #{signatureCode}, '%')
       </if>
     </where>
-    order by shs.create_time desc
+    order by shs.modified_time desc
   </select>
 </mapper>

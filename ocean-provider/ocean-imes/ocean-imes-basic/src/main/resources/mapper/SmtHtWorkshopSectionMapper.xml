@@ -39,6 +39,6 @@
         and wts.section_desc like CONCAT('%', #{sectionDesc}, '%')
       </if>
     </where>
-    order by wts.create_time desc
+    order by wts.modified_time desc
   </select>
 </mapper>

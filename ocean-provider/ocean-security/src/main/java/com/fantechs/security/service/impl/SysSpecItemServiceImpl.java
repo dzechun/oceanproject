@@ -54,6 +54,8 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
         sysSpecItem.setCreateUserId(currentUser.getUserId());
         sysSpecItem.setCreateTime(new Date());
+        sysSpecItem.setModifiedTime(new Date());
+        sysSpecItem.setModifiedUserId(currentUser.getUserId());
         sysSpecItemMapper.insertUseGeneratedKeys(sysSpecItem);
 
         //新增配置项历史信息
@@ -74,7 +76,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("specCode",sysSpecItem.getSpecCode());
         SysSpecItem specItem = sysSpecItemMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(sysSpecItem)&&!specItem.getSpecId().equals(sysSpecItem.getSpecId())){
+        if(StringUtils.isNotEmpty(specItem)&&!specItem.getSpecId().equals(sysSpecItem.getSpecId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
@@ -84,8 +86,6 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
         SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
         BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
-        sysHtSpecItem.setModifiedUserId(currentUser.getUserId());
-        sysHtSpecItem.setModifiedTime(new Date());
         sysHtSpecItemMapper.insertSelective(sysHtSpecItem);
         return i;
     }

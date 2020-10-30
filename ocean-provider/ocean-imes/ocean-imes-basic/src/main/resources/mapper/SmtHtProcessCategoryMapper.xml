@@ -48,7 +48,7 @@
               and shpc.process_category_desc like CONCAT('%',#{processCategoryDesc},'%')
           </if>
       </where>
-      order by create_time desc
+      order by shpc.modified_time desc
   </select>
 
 </mapper>

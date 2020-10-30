@@ -49,5 +49,6 @@
         and shu.user_name like CONCAT('%', #{userName}, '%')
       </if>
     </where>
+    order by shu.modified_time desc
   </select>
 </mapper>

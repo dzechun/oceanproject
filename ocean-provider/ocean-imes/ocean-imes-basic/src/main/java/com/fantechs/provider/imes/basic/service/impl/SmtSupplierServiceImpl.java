@@ -52,6 +52,8 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         }
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUser.getUserId());
+        record.setModifiedUserId(currentUser.getUserId());
+        record.setModifiedTime(new Date());
         int i = smtSupplierMapper.insertSelective(record);
         return i;
     }

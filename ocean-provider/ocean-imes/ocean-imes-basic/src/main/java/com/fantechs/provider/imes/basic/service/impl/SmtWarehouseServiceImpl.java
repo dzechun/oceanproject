@@ -62,6 +62,8 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
         smtWarehouse.setCreateUserId(currentUser.getUserId());
         smtWarehouse.setCreateTime(new Date());
+        smtWarehouse.setModifiedUserId(currentUser.getUserId());
+        smtWarehouse.setModifiedTime(new Date());
          smtWarehouseMapper.insertUseGeneratedKeys(smtWarehouse);
 
         //新增仓库历史信息
@@ -135,8 +137,6 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         //新增仓库历史信息
         SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
         BeanUtils.copyProperties(smtWarehouse,smtHtWarehouse);
-        smtHtWarehouse.setModifiedUserId(currentUser.getUserId());
-        smtHtWarehouse.setModifiedTime(new Date());
         smtHtWarehouseMapper.insertSelective(smtHtWarehouse);
         return i;
     }

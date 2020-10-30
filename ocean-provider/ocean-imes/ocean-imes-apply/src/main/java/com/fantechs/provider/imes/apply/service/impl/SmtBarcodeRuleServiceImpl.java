@@ -60,13 +60,13 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
 
         smtBarcodeRule.setCreateUserId(currentUser.getUserId());
         smtBarcodeRule.setCreateTime(new Date());
+        smtBarcodeRule.setModifiedUserId(currentUser.getUserId());
+        smtBarcodeRule.setModifiedTime(new Date());
         smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
 
         //新增条码规则历史信息
         SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
         BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
-        smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
-        smtHtBarcodeRule.setModifiedTime(new Date());
         int i = smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
 
         return i;
@@ -223,8 +223,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         //新增条码规则历史信息
         SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
         BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
-        smtHtBarcodeRule.setModifiedUserId(currentUser.getUserId());
-        smtHtBarcodeRule.setModifiedTime(new Date());
         smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
 
         return i;

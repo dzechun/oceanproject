@@ -45,6 +45,6 @@
         and date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
-    order by create_time desc
+    order by ws.modified_time desc
   </select>
 </mapper>

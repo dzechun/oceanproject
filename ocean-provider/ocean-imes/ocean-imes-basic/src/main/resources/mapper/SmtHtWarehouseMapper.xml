@@ -40,6 +40,6 @@
         and shw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
       </if>
     </where>
-    order by shw.create_time desc
+    order by shw.modified_time desc
   </select>
 </mapper>

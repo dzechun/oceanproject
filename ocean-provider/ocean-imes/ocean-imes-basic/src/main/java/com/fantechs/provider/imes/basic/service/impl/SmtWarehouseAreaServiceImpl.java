@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,11 +36,11 @@ import java.util.Map;
 @Service
 public class SmtWarehouseAreaServiceImpl  extends BaseService<SmtWarehouseArea> implements SmtWarehouseAreaService {
 
-    @Autowired
+    @Resource
     private SmtWarehouseAreaMapper  smtWarehouseAreaMapper;
-    @Autowired
+    @Resource
     private SmtHtWarehouseAreaMapper smtHtWarehouseAreaMapper;
-    @Autowired
+    @Resource
     private SmtStorageMapper smtStorageMapper;
 
 
@@ -64,6 +65,8 @@ public class SmtWarehouseAreaServiceImpl  extends BaseService<SmtWarehouseArea> 
         }
         smtWarehouseArea.setCreateUserId(currentUser.getUserId());
         smtWarehouseArea.setCreateTime(new Date());
+        smtWarehouseArea.setModifiedUserId(currentUser.getUserId());
+        smtWarehouseArea.setModifiedTime(new Date());
         smtWarehouseAreaMapper.insertUseGeneratedKeys(smtWarehouseArea);
 
         //新增历史记录

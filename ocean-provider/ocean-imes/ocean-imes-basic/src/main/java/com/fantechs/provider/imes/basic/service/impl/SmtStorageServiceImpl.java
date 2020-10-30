@@ -56,6 +56,8 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
 
         smtStorage.setCreateUserId(currentUser.getUserId());
         smtStorage.setCreateTime(new Date());
+        smtStorage.setModifiedUserId(currentUser.getUserId());
+        smtStorage.setModifiedTime(new Date());
         smtStorageMapper.insertUseGeneratedKeys(smtStorage);
 
         //新增储位历史信息
@@ -129,8 +131,6 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
         //新增储位历史信息
         SmtHtStorage smtHtStorage=new SmtHtStorage();
         BeanUtils.copyProperties(storage,smtHtStorage);
-        smtHtStorage.setModifiedUserId(currentUser.getUserId());
-        smtHtStorage.setModifiedTime(new Date());
         smtHtStorageMapper.insertSelective(smtHtStorage);
         return i;
     }

@@ -40,5 +40,6 @@
         and shsi.para like CONCAT('%', #{para}, '%')
       </if>
     </where>
+    order by  shsi.modified_time desc
   </select>
 </mapper>

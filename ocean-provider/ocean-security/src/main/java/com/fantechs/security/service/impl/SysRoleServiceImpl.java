@@ -62,6 +62,8 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
         sysRole.setCreateUserId(currentUser.getUserId());
         sysRole.setCreateTime(new Date());
+        sysRole.setModifiedTime(new Date());
+        sysRole.setModifiedUserId(currentUser.getUserId());
         sysRoleMapper.insertUseGeneratedKeys(sysRole);
 
         //新增角色历史信息
@@ -93,8 +95,6 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         //新增角色历史信息
         SysHtRole sysHtRole=new SysHtRole();
         BeanUtils.copyProperties(sysRole,sysHtRole);
-        sysHtRole.setModifiedUserId(currentUser.getUserId());
-        sysHtRole.setModifiedTime(new Date());
         sysHtRoleMapper.insertSelective(sysHtRole);
         return i;
     }

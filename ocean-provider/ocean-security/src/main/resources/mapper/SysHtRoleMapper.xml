@@ -34,5 +34,6 @@
         and shr.role_desc like CONCAT('%', #{roleDesc}, '%')
       </if>
     </where>
+    order by shr.modified_time desc
   </select>
 </mapper>

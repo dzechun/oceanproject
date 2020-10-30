@@ -124,8 +124,6 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
 
         SmtHtWorkShop smtHtWorkShop  = new SmtHtWorkShop();
         BeanUtils.copyProperties(smtWorkShop,smtHtWorkShop);
-        smtHtWorkShop.setCreateUserId(user.getUserId());
-        smtHtWorkShop.setCreateTime(new Date());
 
         smtHtWorkShopMapper.insert(smtHtWorkShop);
 

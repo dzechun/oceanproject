@@ -67,6 +67,8 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
             }
             smtProductBomDet.setCreateUserId(currentUser.getUserId());
             smtProductBomDet.setCreateTime(new Date());
+            smtProductBomDet.setModifiedUserId(currentUser.getUserId());
+            smtProductBomDet.setModifiedTime(new Date());
             smtProductBomDetMapper.insertUseGeneratedKeys(smtProductBomDet);
 
             //新增产品BOM详细历史信息
@@ -110,8 +112,6 @@ public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> i
             //新增产品BOM详细历史信息
             SmtHtProductBomDet smtHtProductBomDet=new SmtHtProductBomDet();
             BeanUtils.copyProperties(smtProductBomDet,smtHtProductBomDet);
-            smtHtProductBomDet.setModifiedUserId(currentUser.getUserId());
-            smtHtProductBomDet.setModifiedTime(new Date());
             smtHtProductBomDetMapper.insertSelective(smtHtProductBomDet);
             return i;
         }
