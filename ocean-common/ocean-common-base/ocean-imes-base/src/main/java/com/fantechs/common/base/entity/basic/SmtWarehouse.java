@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 @Table(name = "smt_warehouse")
 @Data
+@Validated
 public class SmtWarehouse extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 3791280545481754788L;
     /**
