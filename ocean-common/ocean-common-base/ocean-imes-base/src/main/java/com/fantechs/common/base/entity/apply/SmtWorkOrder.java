@@ -101,7 +101,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "work_order_type")
     @ApiModelProperty(name="workOrderType" ,value="工单类型")
-    @Excel(name = "工单类型", height = 20, width = 30,orderNum="11",replace = {"量产_0", "试产_1","返工_2","维修_3"})
+    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30,orderNum="11",replace = {"量产_0", "试产_1","返工_2","维修_3"})
     private Integer workOrderType;
 
     /**
