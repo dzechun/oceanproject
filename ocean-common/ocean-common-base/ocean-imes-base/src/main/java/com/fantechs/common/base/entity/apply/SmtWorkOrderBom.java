@@ -68,7 +68,7 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
      * 使用数量
      */
     @ApiModelProperty(name="quantity" ,value="使用数量")
-    @Excel(name = "使用数量", height = 20, width = 30,orderNum="6")
+    @Excel(name = "工单数量", height = 20, width = 30,orderNum="6")
     private BigDecimal quantity;
 
     /**
