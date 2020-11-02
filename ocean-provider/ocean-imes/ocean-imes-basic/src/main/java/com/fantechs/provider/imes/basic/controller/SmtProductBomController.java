@@ -94,13 +94,5 @@ public class SmtProductBomController {
         }
     }
 
-    @ApiOperation("查询产品BOM信息及其子BOM")
-    @PostMapping("/findProductBomList")
-    public ResponseEntity<List<SmtProductBomListDto>> findProductBomList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBom searchSmtProductBom) {
-        Page<Object> page = PageHelper.startPage(searchSmtProductBom.getStartPage(),searchSmtProductBom.getPageSize());
-        List<SmtProductBomListDto> productBomList = smtProductBomService.findProductBomList(searchSmtProductBom);
-        return ControllerUtil.returnDataSuccess(productBomList,(int)page.getTotal());
-    }
-
 
 }

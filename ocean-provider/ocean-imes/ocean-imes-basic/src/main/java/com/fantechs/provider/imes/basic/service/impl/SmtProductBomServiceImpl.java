@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -146,36 +147,4 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         return smtProductBomMapper.findList(searchSmtProductBom);
     }
 
-    @Override
-    public List<SmtProductBomListDto> findProductBomList(SearchSmtProductBom searchSmtProductBom) {
-        //查询所有的父BOM
-        List<SmtProductBom> smtProductBomList = smtProductBomMapper.findList(searchSmtProductBom);
-        List<SmtProductBomListDto> smtProductBomListDtoList = null;
-        if (StringUtils.isNotEmpty(smtProductBomList)){
-            smtProductBomListDtoList = new ArrayList<>();
-            for (SmtProductBom smtProductBom : smtProductBomList) {
-                SmtProductBomListDto smtProductBomListDto = new SmtProductBomListDto();
-                smtProductBomListDto.setSmtProductBom(smtProductBom);
-                smtProductBomListDtoList.add(smtProductBomListDto);
-                searchSmtProductBom.setParentBomId(smtProductBom.getProductBomId());
-                traverseFolder(searchSmtProductBom,smtProductBomListDto);
-            }
-        }
-        return smtProductBomListDtoList;
-    }
-
-    private void traverseFolder(SearchSmtProductBom searchSmtProductBom,SmtProductBomListDto smtProductBomListDto){
-        List<SmtProductBom> smtProductBomList = smtProductBomMapper.findList(searchSmtProductBom);
-        if (StringUtils.isNotEmpty(smtProductBomList)){
-            List<SmtProductBomListDto> smtProductBomListDtoList = new ArrayList<>();
-            for (SmtProductBom smtProductBom : smtProductBomList) {
-                SmtProductBomListDto smtProductBomListDto1 = new SmtProductBomListDto();
-                smtProductBomListDto1.setSmtProductBom(smtProductBom);
-                smtProductBomListDtoList.add(smtProductBomListDto1);
-                smtProductBomListDto.setSmtProductBomList(smtProductBomListDtoList);
-                searchSmtProductBom.setParentBomId(smtProductBom.getProductBomId());
-                traverseFolder(searchSmtProductBom,smtProductBomListDto1);
-            }
-        }
-    }
 }

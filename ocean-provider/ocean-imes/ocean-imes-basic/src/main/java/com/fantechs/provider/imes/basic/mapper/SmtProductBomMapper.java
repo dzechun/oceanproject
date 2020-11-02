@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SmtProductBomMapper extends MyMapper<SmtProductBom> {
     List<SmtProductBom> findList(SearchSmtProductBom searchSmtProductBom);
+
 }

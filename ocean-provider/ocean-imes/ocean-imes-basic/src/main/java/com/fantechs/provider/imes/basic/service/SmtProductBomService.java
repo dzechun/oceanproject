@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -15,6 +16,4 @@ import java.util.List;
 public interface SmtProductBomService extends IService<SmtProductBom> {
 
     List<SmtProductBom> findList(SearchSmtProductBom searchSmtProductBom);
-
-    List<SmtProductBomListDto> findProductBomList(SearchSmtProductBom searchSmtProductBom);
 }
