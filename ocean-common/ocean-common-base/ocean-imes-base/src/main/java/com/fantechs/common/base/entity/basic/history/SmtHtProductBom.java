@@ -98,6 +98,13 @@ public class SmtHtProductBom implements Serializable {
     private Integer status;
 
     /**
+     * 父BOM ID
+     */
+    @Column(name = "parent_bom_id")
+    @ApiModelProperty(name="materialId" ,value="父BOM ID")
+    private Long parentBomId;
+
+    /**
      * 创建人ID
      */
     @Column(name = "create_user_id")

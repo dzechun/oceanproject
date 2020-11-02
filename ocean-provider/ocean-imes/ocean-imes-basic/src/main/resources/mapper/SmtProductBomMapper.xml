@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBom">
     <id column="product_bom_id" jdbcType="BIGINT" property="productBomId" />
     <result column="product_bom_code" jdbcType="VARCHAR" property="productBomCode" />
+    <result column="parent_bom_id" jdbcType="BIGINT" property="parentBomId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="takt" jdbcType="INTEGER" property="takt" />
     <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />

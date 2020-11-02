@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "smt_product_bom")
 @Data
@@ -102,6 +103,13 @@ public class SmtProductBom extends ValidGroup implements Serializable {
     private Integer status;
 
     /**
+     * 父BOM ID
+     */
+    @Column(name = "parent_bom_id")
+    @ApiModelProperty(name="materialId" ,value="父BOM ID")
+    private Long parentBomId;
+
+    /**
      * 创建人ID
      */
     @Column(name = "create_user_id")
@@ -169,4 +177,7 @@ public class SmtProductBom extends ValidGroup implements Serializable {
      */
     private String option3;
 
+
+    @Transient
+    private List<SmtProductBom> children;
 }
