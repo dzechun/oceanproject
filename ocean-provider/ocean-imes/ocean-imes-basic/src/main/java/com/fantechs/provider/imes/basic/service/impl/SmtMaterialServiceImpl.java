@@ -69,6 +69,8 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         }
         smtMaterial.setCreateUserId(currentUser.getUserId());
         smtMaterial.setCreateTime(new Date());
+        smtMaterial.setModifiedUserId(currentUser.getUserId());
+        smtMaterial.setModifiedTime(new Date());
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
 
         //新增物料历史信息
@@ -103,8 +105,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         //新增物料历史信息
         SmtHtMaterial smtHtMaterial=new SmtHtMaterial();
         BeanUtils.copyProperties(smtMaterial,smtHtMaterial);
-        smtHtMaterial.setModifiedUserId(currentUser.getUserId());
-        smtHtMaterial.setModifiedTime(new Date());
         smtHtMaterialMapper.insertSelective(smtHtMaterial);
         return i;
     }

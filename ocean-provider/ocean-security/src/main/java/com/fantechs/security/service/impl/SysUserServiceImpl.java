@@ -62,7 +62,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         }
         sysUser.setCreateUserId(currentUser.getUserId());
         sysUser.setCreateTime(new Date());
-
+        sysUser.setModifiedUserId(currentUser.getUserId());
+        sysUser.setModifiedTime(new Date());
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -116,8 +117,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
         BeanUtils.copyProperties(sysUser, sysHtUser);
-        sysHtUser.setModifiedUserId(currentUser.getUserId());
-        sysHtUser.setModifiedTime(new Date());
         int i = sysHtUserMapper.insertSelective(sysHtUser);
         return i;
     }

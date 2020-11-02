@@ -58,6 +58,8 @@ public class SmtStationServiceImpl  extends BaseService<SmtStation> implements S
 
         smtStation.setCreateUserId(currentUser.getUserId());
         smtStation.setCreateTime(new Date());
+        smtStation.setModifiedUserId(currentUser.getUserId());
+        smtStation.setModifiedTime(new Date());
         smtStationMapper.insertUseGeneratedKeys(smtStation);
 
         //新增工位历史信息
@@ -121,8 +123,6 @@ public class SmtStationServiceImpl  extends BaseService<SmtStation> implements S
         //新增工位历史信息
         SmtHtStation smtHtStation=new SmtHtStation();
         BeanUtils.copyProperties(smtStation,smtHtStation);
-        smtHtStation.setModifiedUserId(currentUser.getUserId());
-        smtHtStation.setModifiedTime(new Date());
         smtHtStationMapper.insertSelective(smtHtStation);
         return i;
     }

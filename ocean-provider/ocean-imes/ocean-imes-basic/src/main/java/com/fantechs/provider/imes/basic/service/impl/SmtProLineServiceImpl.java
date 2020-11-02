@@ -62,6 +62,8 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
         smtProLine.setCreateUserId(currentUser.getUserId());
         smtProLine.setCreateTime(new Date());
+        smtProLine.setModifiedUserId(currentUser.getUserId());
+        smtProLine.setModifiedTime(new Date());
         smtProLineMapper.insertUseGeneratedKeys(smtProLine);
 
         //新增生产线历史信息
@@ -94,8 +96,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
         //新增生产线历史信息
         SmtHtProLine smtHtProLine=new SmtHtProLine();
         BeanUtils.copyProperties(smtProLine,smtHtProLine);
-        smtHtProLine.setModifiedUserId(currentUser.getUserId());
-        smtHtProLine.setModifiedTime(new Date());
         smtHtProLineMapper.insertSelective(smtHtProLine);
         return i;
     }

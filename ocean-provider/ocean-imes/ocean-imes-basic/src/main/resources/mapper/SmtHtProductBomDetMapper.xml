@@ -57,6 +57,6 @@
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
     </where>
-    order by shpbd.create_time desc
+    order by shpbd.modified_time desc
   </select>
 </mapper>

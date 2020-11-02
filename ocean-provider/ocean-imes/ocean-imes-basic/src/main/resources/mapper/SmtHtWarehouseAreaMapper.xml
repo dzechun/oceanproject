@@ -48,6 +48,6 @@
         and wha.warehouse_id like CONCAT('%', #{warehouseId}, '%')
       </if>
     </where>
-    order by  create_time desc
+    order by  wha.modified_time desc
   </select>
 </mapper>

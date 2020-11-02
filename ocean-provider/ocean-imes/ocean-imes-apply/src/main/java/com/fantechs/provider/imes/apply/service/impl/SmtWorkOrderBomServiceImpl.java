@@ -76,13 +76,13 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
                 smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                 smtWorkOrderBom.setCreateTime(new Date());
+                smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                smtWorkOrderBom.setModifiedTime(new Date());
                 smtWorkOrderBomMapper.insertUseGeneratedKeys(smtWorkOrderBom);
 
                 //新增工单BOM历史信息
                 SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
                 BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-                smtHtWorkOrderBom.setModifiedTime(new Date());
                 return smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
             }else {
                 throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能新增工单BOM");
@@ -134,8 +134,6 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 //新增工单BOM历史信息
                 SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
                 BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-                smtHtWorkOrderBom.setModifiedTime(new Date());
                 smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
             }else {
                 throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能修改工单BOM");

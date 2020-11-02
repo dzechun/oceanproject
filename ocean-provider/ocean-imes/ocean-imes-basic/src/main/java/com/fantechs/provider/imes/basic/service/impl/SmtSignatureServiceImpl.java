@@ -53,6 +53,8 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
 
         smtSignature.setCreateUserId(currentUser.getUserId());
         smtSignature.setCreateTime(new Date());
+        smtSignature.setModifiedUserId(currentUser.getUserId());
+        smtSignature.setModifiedTime(new Date());
         smtSignatureMapper.insertUseGeneratedKeys(smtSignature);
 
         //新增物料特征码历史信息
@@ -116,10 +118,6 @@ public class SmtSignatureServiceImpl  extends BaseService<SmtSignature> implemen
         //新增物料特征码历史信息
         SmtHtSignature smtHtSignature=new SmtHtSignature();
         BeanUtils.copyProperties(smtSignature,smtHtSignature);
-        smtHtSignature.setCreateUserId(smtSignature.getCreateUserId());
-        smtHtSignature.setCreateTime(smtSignature.getCreateTime());
-        smtHtSignature.setModifiedUserId(currentUser.getUserId());
-        smtHtSignature.setModifiedTime(new Date());
         smtHtSignatureMapper.insertSelective(smtHtSignature);
         return i;
     }

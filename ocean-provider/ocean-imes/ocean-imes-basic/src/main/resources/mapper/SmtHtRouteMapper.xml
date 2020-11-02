@@ -42,6 +42,6 @@
         and shr.route_desc like CONCAT('%', #{routeDesc}, '%')
       </if>
     </where>
-    order by shr.create_time desc
+    order by shr.modified_time desc
   </select>
 </mapper>

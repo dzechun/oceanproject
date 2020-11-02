@@ -51,6 +51,6 @@
         and shs.section_id=#{sectionId}
       </if>
     </where>
-    order by shs.create_time desc
+    order by shs.modified_time desc
   </select>
 </mapper>

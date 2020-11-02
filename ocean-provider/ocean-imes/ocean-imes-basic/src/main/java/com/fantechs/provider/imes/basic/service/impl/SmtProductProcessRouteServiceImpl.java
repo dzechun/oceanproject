@@ -90,6 +90,8 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         }
         smtProductProcessRoute.setCreateUserId(currentUser.getUserId());
         smtProductProcessRoute.setCreateTime(new Date());
+        smtProductProcessRoute.setModifiedUserId(currentUser.getUserId());
+        smtProductProcessRoute.setModifiedTime(new Date());
         int i = smtProductProcessRouteMapper.insertUseGeneratedKeys(smtProductProcessRoute);
 
         //新增产品工艺路线历史信息
@@ -140,8 +142,6 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
         //新增产品工艺路线历史信息
         SmtHtProductProcessRoute smtHtProductProcessRoute=new SmtHtProductProcessRoute();
         BeanUtils.copyProperties(smtProductProcessRoute,smtHtProductProcessRoute);
-        smtHtProductProcessRoute.setModifiedUserId(currentUser.getUserId());
-        smtHtProductProcessRoute.setModifiedTime(new Date());
         smtHtProductProcessRouteMapper.insertSelective(smtHtProductProcessRoute);
         return i;
     }

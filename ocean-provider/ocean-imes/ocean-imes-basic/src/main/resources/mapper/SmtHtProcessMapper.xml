@@ -50,6 +50,6 @@
         and shp.process_category_id=#{processCategoryId}
       </if>
     </where>
-    order by shp.create_time desc
+    order by shp.modified_time desc
   </select>
 </mapper>

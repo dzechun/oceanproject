@@ -56,6 +56,8 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
 
         smtStorageMaterial.setCreateUserId(currentUser.getUserId());
         smtStorageMaterial.setCreateTime(new Date());
+        smtStorageMaterial.setModifiedUserId(currentUser.getUserId());
+        smtStorageMaterial.setModifiedTime(new Date());
         smtStorageMaterialMapper.insertUseGeneratedKeys(smtStorageMaterial);
 
         //新增储位物料历史信息
@@ -122,10 +124,6 @@ public class SmtStorageMaterialServiceImpl  extends BaseService<SmtStorageMateri
         //新增储位物料历史信息
         SmtHtStorageMaterial smtHtStorageMaterial=new SmtHtStorageMaterial();
         BeanUtils.copyProperties(smtStorageMaterial,smtHtStorageMaterial);
-        smtHtStorageMaterial.setCreateUserId(smtStorageMaterial.getCreateUserId());
-        smtHtStorageMaterial.setCreateTime(smtStorageMaterial.getCreateTime());
-        smtHtStorageMaterial.setModifiedUserId(currentUser.getUserId());
-        smtHtStorageMaterial.setModifiedTime(new Date());
         smtHtStorageMaterialMapper.insertSelective(smtHtStorageMaterial);
         return i;
     }

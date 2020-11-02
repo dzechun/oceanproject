@@ -61,6 +61,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
         smtDept.setCreateUserId(currentUser.getUserId());
         smtDept.setCreateTime(new Date());
+        smtDept.setModifiedUserId(currentUser.getUserId());
+        smtDept.setModifiedTime(new Date());
         int i = smtDeptMapper.insertSelective(smtDept);
 
         //新增部门历史信息
@@ -99,8 +101,6 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         //新增部门历史信息
         SmtHtDept smtHtDept=new SmtHtDept();
         BeanUtils.copyProperties(smtDept,smtHtDept);
-        smtHtDept.setModifiedUserId(currentUser.getUserId());
-        smtHtDept.setModifiedTime(new Date());
         smtHtDeptMapper.insertSelective(smtHtDept);
         return i;
     }

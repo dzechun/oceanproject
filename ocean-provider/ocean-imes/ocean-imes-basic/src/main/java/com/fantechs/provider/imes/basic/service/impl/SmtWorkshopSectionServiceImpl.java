@@ -58,6 +58,8 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
         }
         smtWorkshopSection.setCreateUserId(currentUser.getUserId());
         smtWorkshopSection.setCreateTime(new Date());
+        smtWorkshopSection.setModifiedTime(new Date());
+        smtWorkshopSection.setModifiedUserId(currentUser.getUserId());
         workshopSectionMapper.insertUseGeneratedKeys(smtWorkshopSection);
 
         //添加工段历史信息
@@ -90,8 +92,6 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
 
         SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
         BeanUtils.copyProperties(smtWorkshopSection, smtHtWorkshopSection);
-        smtHtWorkshopSection.setModifiedTime(new Date());
-        smtHtWorkshopSection.setModifiedUserId(currentUser.getUserId());
         smtHtWorkshopSectionMapper.insertSelective(smtHtWorkshopSection);
         return i;
     }
