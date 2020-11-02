@@ -177,7 +177,4 @@ public class SmtProductBom extends ValidGroup implements Serializable {
      */
     private String option3;
 
-
-    @Transient
-    private List<SmtProductBom> children;
 }
