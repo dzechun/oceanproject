@@ -29,7 +29,7 @@
 
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductBom" resultMap="BaseResultMap">
-    select  spb.product_bom_id,spb.product_bom_code,spb.parent_bom_id,spb.material_id,sm.material_code,sm.material_name,
+    select  spb.product_bom_id,spb.product_bom_code,spb.material_id,sm.material_code,sm.material_name,spb.parent_bom_id,
     sm.version,sm.material_desc,spb.takt,spb.transfer_quantity,spb.bom_status,spb.status,spb.create_user_id,
     u.user_name as create_user_name,spb.create_time,spb.modified_user_id,s.user_name as modified_user_name,spb.modified_time, spb.is_delete
     from fantech_imes.smt_product_bom spb
@@ -54,7 +54,7 @@
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
       <if test="parentBomId!=null and parentBomId!=''">
-        and spb.parent_bom_id=#{parentBomId}
+        and spb.parent_bom_id =#{parentBomId}
       </if>
     </where>
     order by spb.create_time desc
