@@ -6,7 +6,7 @@
     <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
     <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc" />
-    <result column="supplier_type" jdbcType="tinyint" property="supplierType" />
+    <result column="supplier_type" jdbcType="TINYINT" property="supplierType" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

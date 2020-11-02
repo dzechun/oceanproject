@@ -92,4 +92,13 @@ public class SmtProductBomController {
          throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("查询子BOM")
+    @PostMapping("/findByParentBomId")
+    public ResponseEntity<List<SmtProductBom>> findByParentBomId(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBom searchSmtProductBom) {
+        Page<Object> page = PageHelper.startPage(searchSmtProductBom.getStartPage(),searchSmtProductBom.getPageSize());
+        List<SmtProductBom> list = smtProductBomService.findByParentBomId(searchSmtProductBom.getProductBomId());
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
 }

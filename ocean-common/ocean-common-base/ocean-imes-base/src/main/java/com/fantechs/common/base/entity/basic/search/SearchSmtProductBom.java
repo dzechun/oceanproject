@@ -36,4 +36,10 @@ public class SearchSmtProductBom extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 产品BOM ID
+     */
+    @ApiModelProperty(name="productBomId" ,value="产品BOM ID")
+    private Long productBomId;
 }
