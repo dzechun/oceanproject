@@ -145,12 +145,4 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         return smtProductBomMapper.findList(searchSmtProductBom);
     }
 
-    @Override
-    public List<SmtProductBom> findByParentBomId(Long productBomId) {
-        Example example = new Example(SmtProductBom.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("parentBomId",productBomId);
-        List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
-        return smtProductBoms;
-    }
 }

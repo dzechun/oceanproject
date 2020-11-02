@@ -38,6 +38,9 @@
       <if test="supplierDesc!=null and supplierDesc!=''">
         and su.supplier_desc like CONCAT('%', #{supplierDesc}, '%')
       </if>
+      <if test="supplierType!=null and supplierType!=''">
+        and su.supplier_type=#{supplierType}
+      </if>
     </where>
     order by su.create_time desc
   </select>
