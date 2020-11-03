@@ -76,7 +76,7 @@ public class SmtMaterialSupplierController {
     List<SmtMaterialSupplierDto> list = smtMaterialSupplierService.findList(searchSmtMaterialSupplier);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出物料编码关联客户料号信息", "物料编码关联客户料号信息", SmtMaterialSupplier.class, "物料编码关联客户料号.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出物料编码关联客户料号信息", "物料编码关联客户料号信息", SmtMaterialSupplierDto.class, "物料编码关联客户料号.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

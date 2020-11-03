@@ -4,8 +4,6 @@ package com.fantechs.provider.imes.basic.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto;
 import com.fantechs.common.base.entity.basic.SmtMaterialSupplier;
-import com.fantechs.common.base.entity.basic.SmtSignature;
-import com.fantechs.common.base.entity.basic.SmtSupplier;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
