@@ -2,7 +2,6 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtProductBomListDto;
 import com.fantechs.common.base.entity.basic.SmtProductBom;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;

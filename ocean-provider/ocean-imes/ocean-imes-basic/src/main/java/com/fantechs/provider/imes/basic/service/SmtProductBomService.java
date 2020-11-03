@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.basic.service;
 
-import com.fantechs.common.base.dto.basic.SmtProductBomListDto;
 import com.fantechs.common.base.entity.basic.SmtProductBom;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.support.IService;
