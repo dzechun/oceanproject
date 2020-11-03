@@ -44,6 +44,9 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     @Resource
     private SmtProductBomDetMapper smtProductBomDetMapper;
 
+    @Resource
+    private SmtMaterialSupplierMapper smtMaterialSupplierMapper;
+
     @Override
     public List<SmtMaterial> findList(SearchSmtMaterial searchSmtMaterial) {
         return smtMaterialMapper.findList(searchSmtMaterial);
@@ -149,7 +152,15 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             criteria3.andEqualTo("partMaterialId",materialId);
             List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example3);
 
-            if(StringUtils.isNotEmpty(smtSignatures)||StringUtils.isNotEmpty(smtProductProcessRoutes)||StringUtils.isNotEmpty(smtProductBoms)||StringUtils.isNotEmpty(smtProductBomDets)){
+            //被物料编码关联客户料号引用
+            Example example4 = new Example(SmtMaterialSupplier.class);
+            Example.Criteria criteria4 = example4.createCriteria();
+            criteria4.andEqualTo("materialId",materialId);
+            List<SmtMaterialSupplier> smtMaterialSuppliers = smtMaterialSupplierMapper.selectByExample(example4);
+
+            if(StringUtils.isNotEmpty(smtSignatures)||StringUtils.isNotEmpty(smtProductProcessRoutes)
+                    ||StringUtils.isNotEmpty(smtProductBoms)||StringUtils.isNotEmpty(smtProductBomDets)
+                    ||StringUtils.isNotEmpty(smtMaterialSuppliers)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 
