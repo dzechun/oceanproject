@@ -63,7 +63,7 @@ public class SmtMaterialSupplierServiceImpl extends BaseService<SmtMaterialSuppl
             if(StringUtils.isEmpty(currentUser)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
-            Example example = new Example(SmtSupplier.class);
+            Example example = new Example(SmtMaterialSupplier.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("materialId",smtMaterialSupplier.getMaterialId());
             criteria.andEqualTo("materialSupplierCode",smtMaterialSupplier.getMaterialSupplierCode());
