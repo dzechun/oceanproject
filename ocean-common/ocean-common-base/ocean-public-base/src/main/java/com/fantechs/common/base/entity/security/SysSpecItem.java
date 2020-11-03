@@ -63,6 +63,13 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     private String paraValue;
 
     /**
+     * 是否隐藏(0、是 1、否 )
+     */
+    @Column(name = "is_hide")
+    @ApiModelProperty(name="isHide" ,value="是否隐藏(0、是 1、否 )")
+    private Byte isHide;
+
+    /**
      * 创建账号
      */
     @Column(name = "create_user_id")
