@@ -45,8 +45,8 @@
       <if test="userCode!=null and userCode!=''">
         and shu.user_code like CONCAT('%', #{userCode}, '%')
       </if>
-      <if test="userName!=null and userName!=''">
-        and shu.user_name like CONCAT('%', #{userName}, '%')
+      <if test="nickName!=null and nickName!=''">
+        and shu.nick_name like CONCAT('%', #{nickName}, '%')
       </if>
     </where>
     order by shu.modified_time desc
