@@ -98,10 +98,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         }
 
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
-            String password = new BCryptPasswordEncoder().encode(sysUser.getPassword());
-            if(!user.getPassword().equalsIgnoreCase(password)){
-                sysUser.setPassword(password);
-            }
+            sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
         }
         sysUser.setModifiedUserId(currentUser.getUserId());
         sysUser.setModifiedTime(new Date());
