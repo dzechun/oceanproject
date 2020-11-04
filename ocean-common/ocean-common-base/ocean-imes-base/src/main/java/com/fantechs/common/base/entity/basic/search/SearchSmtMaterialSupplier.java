@@ -34,4 +34,16 @@ public class SearchSmtMaterialSupplier extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name="materialSupplierCode",value = "客户料号")
     private String materialSupplierCode;
+
+    /**
+     * 客户ID
+     */
+    @ApiModelProperty(name="supplierId",value = "客户ID")
+    private Long supplierId;
+
+    /**
+     * 客户名称
+     */
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
 }
