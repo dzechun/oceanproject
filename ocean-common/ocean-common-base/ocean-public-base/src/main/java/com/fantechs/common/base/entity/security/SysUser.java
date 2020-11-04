@@ -57,7 +57,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="password" ,value="密码")
     @Excel(name="密码")
-    @NotBlank(message = "用户密码不能为空")
+    @NotBlank(groups = add.class,message = "用户密码不能为空")
     private String password;
 
     /**
