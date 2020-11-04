@@ -21,7 +21,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="version" jdbcType="VARCHAR" property="version" />
-    <result column="supplier_name" jdbcType="BIGINT" property="supplierName" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
