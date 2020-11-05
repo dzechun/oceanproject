@@ -75,6 +75,12 @@
       <if test="packingUnitDesc != null">
         and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
       </if>
+      <if test="materialCode != null">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialDesc != null">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
     </where>
     order by  shps.modified_time desc
   </select>

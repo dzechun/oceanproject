@@ -93,6 +93,13 @@ public class SmtHtPackageSpecification implements Serializable {
     private String materialDesc;
 
     /**
+     * 版本
+     */
+    @ApiModelProperty(name="version" ,value="版本")
+    @Transient
+    private String version;
+
+    /**
      * 条码规则集合ID
      */
     @ApiModelProperty(name="barcodeRuleId",value = "条码规则集合ID")
