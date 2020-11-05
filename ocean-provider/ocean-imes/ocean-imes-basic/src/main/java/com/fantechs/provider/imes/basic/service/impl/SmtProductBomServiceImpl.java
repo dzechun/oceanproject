@@ -82,17 +82,16 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
 
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
-        criteria.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
-
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("materialId",smtProductBom.getMaterialId());
+        criteria1.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
+        example.and(criteria1);
+        criteria.andNotEqualTo("productBomId",smtProductBom.getProductBomId());
         List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
 
-        for (SmtProductBom productBom : smtProductBoms) {
-            if(StringUtils.isNotEmpty(productBom)&&!productBom.getProductBomId().equals(smtProductBom.getProductBomId())){
-                throw new BizErrorException("BOM ID或物料编码信息已存在");
-            }
+        if(StringUtils.isNotEmpty(smtProductBoms)){
+            throw new BizErrorException("BOM ID或物料编码信息已存在");
         }
-
 
         smtProductBom.setModifiedUserId(currentUser.getUserId());
         smtProductBom.setModifiedTime(new Date());
