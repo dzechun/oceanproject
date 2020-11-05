@@ -134,11 +134,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                 throw new BizErrorException("条码规则配置错误");
             }
 
-            if(sb.toString().contains("D")||sb.toString().contains("d")){
-                if(sb.toString().contains("W")||sb.toString().contains("w")||sb.toString().contains("K")||sb.toString().contains("A")){
-                    throw new BizErrorException("条码规则配置错误");
-                }
-            }
         }
     }
 
