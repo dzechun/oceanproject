@@ -27,10 +27,18 @@ public class SmtPackageSpecificationDto extends SmtPackageSpecification implemen
     private String materialDesc;
 
     /**
+     * 版本
+     */
+    @ApiModelProperty(name="version" ,value="版本")
+    @Transient
+    @Excel(name = "版本", height = 20, width = 30,orderNum="7")
+    private String version;
+
+    /**
      * 条码规则
      */
     @ApiModelProperty(name="barcodeRule",value = "条码规则")
-    @Excel(name = "条码规则", height = 20, width = 30,orderNum="7")
+    @Excel(name = "条码规则", height = 20, width = 30,orderNum="8")
     @Transient
     private String barcodeRule;
 
@@ -38,7 +46,7 @@ public class SmtPackageSpecificationDto extends SmtPackageSpecification implemen
      * 包装单位名称
      */
     @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
-    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="9")
     @Transient
     private String packingUnitName;
 
@@ -46,7 +54,7 @@ public class SmtPackageSpecificationDto extends SmtPackageSpecification implemen
      * 包装单位描述
      */
     @ApiModelProperty(name="packingUnitDesc",value = "包装单位描述")
-    @Excel(name = "包装单位描述", height = 20, width = 30,orderNum="9")
+    @Excel(name = "包装单位描述", height = 20, width = 30,orderNum="10")
     @Transient
     private String packingUnitDesc;
 
@@ -55,7 +63,7 @@ public class SmtPackageSpecificationDto extends SmtPackageSpecification implemen
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
     private String createUserName;
 
     /**
@@ -63,7 +71,7 @@ public class SmtPackageSpecificationDto extends SmtPackageSpecification implemen
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
     private String modifiedUserName;
 
 

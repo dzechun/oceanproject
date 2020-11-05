@@ -29,7 +29,6 @@ import java.util.Map;
  * Created by leifengzhi on 2020/11/04.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSpecification> implements SmtPackageSpecificationService {
 
     @Resource
@@ -38,6 +37,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
     private SmtHtPackageSpecificationMapper smtHtPackageSpecificationMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SmtPackageSpecification smtPackageSpecification) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -50,7 +50,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
                 .orEqualTo("materialId", smtPackageSpecification.getMaterialId());
         List<SmtPackageSpecification> smtPackageSpecifications = smtPackageSpecificationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtPackageSpecifications)) {
-            throw new BizErrorException("包装规格编码或物料ID重复");
+            throw new BizErrorException("包装规格编码或物料ID已存在");
         }
 
         smtPackageSpecification.setCreateUserId(user.getUserId());
@@ -66,6 +66,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SmtPackageSpecification smtPackageSpecification) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -74,12 +75,14 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
         Example example = new Example(SmtPackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
+        Example.Criteria criteria1 = example.createCriteria();
         criteria.andEqualTo("packageSpecificationCode", smtPackageSpecification.getPackageSpecificationCode())
-                .orEqualTo("materialId", smtPackageSpecification.getMaterialId())
-                .andNotEqualTo("packageSpecificationId", smtPackageSpecification.getPackageSpecificationId());
+                .orEqualTo("materialId", smtPackageSpecification.getMaterialId());
+        criteria1.andNotEqualTo("packageSpecificationId",smtPackageSpecification.getPackageSpecificationId());
+        example.and(criteria1);
         List<SmtPackageSpecification> smtPackageSpecifications = smtPackageSpecificationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtPackageSpecifications)) {
-            throw new BizErrorException("包装规格编码或物料ID重复");
+            throw new BizErrorException("包装规格编码或物料ID已存在");
         }
 
         smtPackageSpecification.setModifiedUserId(user.getUserId());
@@ -93,6 +96,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {

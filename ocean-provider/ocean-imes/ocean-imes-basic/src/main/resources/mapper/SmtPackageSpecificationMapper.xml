@@ -29,6 +29,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc" />
@@ -44,7 +45,9 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List" />,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    spu.packing_unit_name, spu.packing_unit_desc, sm.material_code, sm.material_desc,sbr.barcode_rule
+    spu.packing_unit_name, spu.packing_unit_desc,
+    sm.material_code, sm.material_desc, sm.version,
+    sbr.barcode_rule
     from fantech_imes.smt_package_specification sps
     LEFT JOIN fantech_imes.smt_packing_unit spu ON sps.packing_unit_id = spu.packing_unit_id
     LEFT JOIN fantech_imes.smt_material sm ON sps.material_id = sm.material_id
