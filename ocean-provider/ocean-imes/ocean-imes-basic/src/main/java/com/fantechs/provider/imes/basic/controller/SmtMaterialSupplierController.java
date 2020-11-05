@@ -38,7 +38,7 @@ public class SmtMaterialSupplierController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtMaterialSupplier smtMaterialSupplier) {
+    public ResponseEntity add(@ApiParam(value = "必传：materialSupplierId,materialId,materialSupplierCode,supplierId",required = true)@RequestBody @Validated SmtMaterialSupplier smtMaterialSupplier) {
         return ControllerUtil.returnCRUD(smtMaterialSupplierService.save(smtMaterialSupplier));
     }
 
