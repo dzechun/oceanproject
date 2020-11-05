@@ -34,7 +34,7 @@
     sms.modified_time, sms.is_delete
     from fantech_imes.smt_material_supplier sms
     left join fantech_imes.smt_material sm on sms.material_id=sm.material_id
-    left join fantech_imes.smt_supplier ss on sms.
+    left join fantech_imes.smt_supplier ss on sms.supplier_id=ss.supplier_id
     left join ocean.sys_user u on sms.create_user_id=u.user_id
     left join ocean.sys_user s on sms.modified_user_id=s.user_id
     <where>
