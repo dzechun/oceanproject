@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtPackageSpecificationMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtPackageSpecification">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
+    <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode" />
+    <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
+    <result column="package_specification_desc" jdbcType="VARCHAR" property="packageSpecificationDesc" />
+    <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
+    <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
+    <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+    <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtPackageSpecificationDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    sps.package_specification_id, sps.package_specification_code, sps.package_specification_name,
+    sps.package_specification_desc, sps.package_specification_quantity, sps.material_id, sps.barcode_rule_id,
+    sps.packing_unit_id, sps.status, sps.create_user_id, sps.create_time, sps.modified_user_id, sps.modified_time,
+    sps.is_delete, sps.option1, sps.option2, sps.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List" />,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    spu.packing_unit_name, spu.packing_unit_desc, sm.material_code, sm.material_desc,sbr.barcode_rule
+    from fantech_imes.smt_package_specification sps
+    LEFT JOIN fantech_imes.smt_packing_unit spu ON sps.packing_unit_id = spu.packing_unit_id
+    LEFT JOIN fantech_imes.smt_material sm ON sps.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_barcode_rule sbr ON sps.barcode_rule_id = sbr.barcode_rule_id
+    LEFT JOIN ocean.sys_user su  ON sps.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON sps.modified_user_id = sus.user_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="packageSpecificationCode != null">
+        and sps.package_specification_code like CONCAT('%', #{packageSpecificationCode}, '%')
+      </if>
+      <if test="packageSpecificationName != null">
+        and  sps.package_specification_name like CONCAT('%', #{packageSpecificationName}, '%')
+      </if>
+      <if test="packageSpecificationDesc != null">
+        and sps.package_specification_desc like CONCAT('%', #{packageSpecificationDesc}, '%')
+      </if>
+      <if test="packingUnitId != null">
+        and sps.packing_unit_id=#{packingUnitId}
+      </if>
+      <if test="packingUnitName != null">
+        and spu.packing_unit_name like CONCAT('%', #{packingUnitName}, '%')
+      </if>
+      <if test="packingUnitDesc != null">
+        and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
+      </if>
+    </where>
+    order by  sps.create_time desc
+  </select>
+</mapper>
