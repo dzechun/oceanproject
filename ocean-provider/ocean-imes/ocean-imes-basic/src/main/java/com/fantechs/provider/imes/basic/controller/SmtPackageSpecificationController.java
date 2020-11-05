@@ -89,7 +89,7 @@ public class SmtPackageSpecificationController {
     List<SmtPackageSpecificationDto> list = smtPackageSpecificationService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtPackageSpecification));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtPackageSpecification信息", SmtPackageSpecification.class, "SmtPackageSpecification.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "SmtPackageSpecification信息", SmtPackageSpecificationDto.class, "SmtPackageSpecification.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
