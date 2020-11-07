@@ -55,8 +55,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        //判断条码规则是否符合规定
-        judgeBarcodeRule(smtBarcodeRule);
 
         smtBarcodeRule.setCreateUserId(currentUser.getUserId());
         smtBarcodeRule.setCreateTime(new Date());
@@ -70,122 +68,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         int i = smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
 
         return i;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void judgeBarcodeRule(SmtBarcodeRule smtBarcodeRule) {
-        String barcodeRule = smtBarcodeRule.getBarcodeRule();
-        if(StringUtils.isNotEmpty(barcodeRule)){
-            List<String> list = getVariable(barcodeRule);
-            StringBuilder sb=new StringBuilder();
-            for (String variable : list) {
-                sb.append(variable);
-                //判断Y和y、M和m、D和d、W和w不能同时使用
-                boolean yFlag = variable.contains("Y") && variable.contains("y");
-                boolean mFlag = variable.contains("M") && variable.contains("m");
-                boolean dFlag = variable.contains("D") && variable.contains("d");
-                boolean wFlag = variable.contains("W") && variable.contains("w");
-                if(yFlag||mFlag||dFlag||wFlag){
-                    throw new BizErrorException("条码规则配置错误");
-                }
-
-
-                //自定义的年月日周的位数是否与条码规则中y、m、d、w的个数相等
-                String customizeYear = smtBarcodeRule.getCustomizeYear();
-                if(StringUtils.isNotEmpty(customizeYear)){
-                    int yearLength = customizeLength(customizeYear);
-                    int yCount = countStr(variable, 'y');
-                    if(yearLength!=yCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-                String customizeMonth = smtBarcodeRule.getCustomizeMonth();
-                if(StringUtils.isNotEmpty(customizeMonth)){
-                    int mouthLength = customizeLength(customizeMonth);
-                    int mCount = countStr(variable, 'm');
-                    if(mouthLength!=mCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-                String customizeDay = smtBarcodeRule.getCustomizeDay();
-                if(StringUtils.isNotEmpty(customizeDay)){
-                    int dayLength = customizeLength(customizeDay);
-                    int dCount = countStr(variable, 'd');
-                    if(dayLength!=dCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-                String customizeWeek = smtBarcodeRule.getCustomizeWeek();
-                if(StringUtils.isNotEmpty(customizeWeek)){
-                    int weekLength = customizeLength(customizeWeek);
-                    int wCount = countStr(variable, 'w');
-                    if(weekLength!=wCount){
-                        throw new BizErrorException("条码规则配置错误");
-                    }
-                }
-            }
-            //判断S、F、b、c只能使用一个
-            boolean sCode = sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
-            boolean fCode = !sb.toString().contains("S") && sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
-            boolean bCode = !sb.toString().contains("S") && !sb.toString().contains("F") && sb.toString().contains("b") && !sb.toString().contains("c");
-            boolean cCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && sb.toString().contains("c");
-            boolean baseCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
-            if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
-                throw new BizErrorException("条码规则配置错误");
-            }
-
-        }
-    }
-
-    /**
-     * 获取条码规则中的变量
-     * @param barcodeRule
-     * @return
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public List<String> getVariable(String barcodeRule){
-        List<String> list=new ArrayList<>();
-        Pattern pattern = Pattern.compile("\\[(.*?)]");
-        Matcher matcher = pattern.matcher(barcodeRule);
-        while((matcher.find())){
-            list.add(matcher.group(1));
-        }
-        return list;
-    }
-
-    /**
-     * 统计某一个字符出现的次数
-     * @param variable
-     * @param str
-     * @return
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public int countStr(String variable, char str) {
-        int count=0;
-        char[] charArray = variable.toCharArray();
-        for (int i=0;i<charArray.length;i++){
-            if(charArray[i]==str){
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * 统计自定义属性value的长度
-     * @param field
-     * @return
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public int customizeLength(String field) {
-        int length = 0;
-        field = field.substring(1, field.length() - 1);
-        if(StringUtils.isNotEmpty(field)){
-            String[] fieldJson = field.split(",");
-            String[] fields = fieldJson[0].split(":");
-            length = fields[1].length();
-        }
-        return length;
     }
 
 
@@ -206,9 +88,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         if(StringUtils.isNotEmpty(barcodeRule)&&!barcodeRule.getBarcodeRuleId().equals(smtBarcodeRule.getBarcodeRuleId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-
-        //判断条码规则是否符合规定
-        judgeBarcodeRule(smtBarcodeRule);
 
         smtBarcodeRule.setModifiedUserId(currentUser.getUserId());
         smtBarcodeRule.setModifiedTime(new Date());
