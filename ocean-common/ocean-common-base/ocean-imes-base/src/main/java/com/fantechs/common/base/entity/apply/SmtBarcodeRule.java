@@ -86,48 +86,6 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
     private Byte status;
 
     /**
-     * 自定义年代码
-     */
-    @ApiModelProperty(name="customizeYear",value = "自定义年代码")
-    @Column(name = "customize_year")
-    private String customizeYear;
-
-    /**
-     * 自定义月代码
-     */
-    @ApiModelProperty(name="customizeMonth",value = "自定义月代码")
-    @Column(name = "customize_month")
-    private String customizeMonth;
-
-    /**
-     * 自定义日代码
-     */
-    @ApiModelProperty(name="customizeDay",value = "自定义日代码")
-    @Column(name = "customize_day")
-    private String customizeDay;
-
-    /**
-     * 自定义周代码
-     */
-    @ApiModelProperty(name="customizeWeek",value = "自定义周代码")
-    @Column(name = "customize_week")
-    private String customizeWeek;
-
-    /**
-     * 自定义33进制流水码
-     */
-    @ApiModelProperty(name="customizeThirtyThreeBaseCode",value = "自定义33进制流水码")
-    @Column(name = "customize_thirty_three_base_code")
-    private String customizeThirtyThreeBaseCode;
-
-    /**
-     * 自定义36进制流水码
-     */
-    @ApiModelProperty(name="customizeThirtySixBaseCode",value = "自定义36进制流水码")
-    @Column(name = "customize_thirty_six_base_code")
-    private String customizeThirtySixBaseCode;
-
-    /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")

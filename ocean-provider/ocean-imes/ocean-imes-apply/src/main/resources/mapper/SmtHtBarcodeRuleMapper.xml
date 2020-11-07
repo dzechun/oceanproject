@@ -18,12 +18,6 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="customize_year" jdbcType="LONGVARCHAR" property="customizeYear" />
-    <result column="customize_month" jdbcType="LONGVARCHAR" property="customizeMonth" />
-    <result column="customize_day" jdbcType="LONGVARCHAR" property="customizeDay" />
-    <result column="customize_week" jdbcType="LONGVARCHAR" property="customizeWeek" />
-    <result column="customize_thirty_three_base_code" jdbcType="LONGVARCHAR" property="customizeThirtyThreeBaseCode" />
-    <result column="customize_thirty_six_base_code" jdbcType="LONGVARCHAR" property="customizeThirtySixBaseCode" />
 
     <result column="barcode_rule_category_name" jdbcType="VARCHAR" property="barcodeRuleCategoryName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
@@ -32,7 +26,6 @@
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule" resultMap="BaseResultMap">
     select shbr.ht_barcode_rule_id,shbr.barcode_rule_id,shbr.barcode_rule_code,shbr.barcode_rule_name,shbr.barcode_rule_desc,shbr.barcode_rule_category,shbr.barcode_rule,
-    shbr.customize_year,shbr.customize_month,shbr.customize_day,shbr.customize_week,shbr.customize_thirty_three_base_code,shbr.customize_thirty_six_base_code,
     shbr.status,shbr.create_user_id, u.user_name as create_user_name,shbr.create_time,shbr.modified_user_id,s.user_name as modified_user_name,shbr.modified_time,
     shbr.is_delete
     from fantech_imes.smt_ht_barcode_rule shbr
