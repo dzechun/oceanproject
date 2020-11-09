@@ -98,9 +98,13 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
                 throw new BizErrorException("条码规则配置错误");
             }
 
+            //specs 包含多少个[P]属性
             long materialNum = specs.stream().filter("[P]"::equals).count();
+            //specs 包含多少个[L]属性
             long lineNum = specs.stream().filter("[L]"::equals).count();
+            //specs 包含多少个[C]属性
             long customerNum = specs.stream().filter("[C]"::equals).count();
+
             if(materialNum>1||lineNum>1||customerNum>1){
                 throw new BizErrorException("条码规则配置错误");
             }
