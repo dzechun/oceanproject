@@ -77,7 +77,7 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
 
                 String specification = smtBarcodeRuleSpec.getSpecification();
                 Integer step = smtBarcodeRuleSpec.getStep();
-                if(specification.contains("\\[")){
+                if(specification.contains("]")){
                     //例如：将[Y][Y][Y][Y]转成[YYYY]
                     String spec = getRuleSpec(specification, step);
                     sb.append(spec);
