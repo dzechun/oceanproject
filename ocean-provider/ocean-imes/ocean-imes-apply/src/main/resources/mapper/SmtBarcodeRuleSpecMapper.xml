@@ -42,7 +42,7 @@
     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
       update smt_barcode_rule_spec
       <set>
-        barcode_rule_id = #{item.barcodeRuleId},spec_id = #{item.spec_id}, specification = #{item.specification}, initial_value = #{item.initialValue}, step = #{item.step},
+        barcode_rule_id = #{item.barcodeRuleId},spec_id = #{item.specId}, specification = #{item.specification}, initial_value = #{item.initialValue}, step = #{item.step},
         fill_operator = #{item.fillOperator},fill_direction = #{item.fillDirection},customize_name = #{item.customizeName},intercept_length = #{item.interceptLength},
         intercept_position = #{item.interceptPosition},intercept_direction = #{item.interceptDirection},customize_value = #{item.customizeValue}
       </set>
