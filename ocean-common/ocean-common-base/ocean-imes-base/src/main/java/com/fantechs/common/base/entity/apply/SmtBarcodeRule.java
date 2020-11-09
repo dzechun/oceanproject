@@ -75,7 +75,6 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
     @ApiModelProperty(name="barcodeRule",value = "条码规则")
     @Excel(name = "条码规则", height = 20, width = 30,orderNum="5")
     @Column(name = "barcode_rule")
-    @NotBlank(message = "条码规则不能为空")
     private String barcodeRule;
 
     /**
