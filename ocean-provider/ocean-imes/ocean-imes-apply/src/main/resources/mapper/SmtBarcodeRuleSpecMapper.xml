@@ -6,6 +6,7 @@
     <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
     <result column="spec_id" jdbcType="BIGINT" property="specId" />
     <result column="specification" jdbcType="VARCHAR" property="specification" />
+    <result column="barcode_length" jdbcType="INTEGER" property="barcodeLength" />
     <result column="initial_value" jdbcType="INTEGER" property="initialValue" />
     <result column="step" jdbcType="INTEGER" property="step" />
     <result column="fill_operator" jdbcType="VARCHAR" property="fillOperator" />
@@ -23,7 +24,7 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSpec" resultMap="BaseResultMapDto">
-    select sbrs.barcode_rule_spec_id,sbrs.barcode_rule_id,sbrs.barcode_rule,sbrs.spec_id,ssi.spec_name,sbrs.specification,sbrs.initial_value,
+    select sbrs.barcode_rule_spec_id,sbrs.barcode_rule_id,sbr.barcode_rule,sbrs.spec_id,ssi.spec_name,sbrs.specification,sbrs.barcode_length,sbrs.initial_value,
     sbrs.step,sbrs.fill_operator,sbrs.fill_direction,sbrs.customize_name,sbrs.intercept_length,sbrs.intercept_position,sbrs.intercept_direction,
     sbrs.customize_value
     from fantech_imes.smt_barcode_rule_spec sbrs
@@ -42,7 +43,7 @@
     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
       update smt_barcode_rule_spec
       <set>
-        barcode_rule_id = #{item.barcodeRuleId},spec_id = #{item.spec_id}, specification = #{item.specification}, initial_value = #{item.initialValue}, step = #{item.step},
+        barcode_rule_id = #{item.barcodeRuleId},spec_id = #{item.specId}, specification = #{item.specification}, initial_value = #{item.initialValue}, step = #{item.step},
         fill_operator = #{item.fillOperator},fill_direction = #{item.fillDirection},customize_name = #{item.customizeName},intercept_length = #{item.interceptLength},
         intercept_position = #{item.interceptPosition},intercept_direction = #{item.interceptDirection},customize_value = #{item.customizeValue}
       </set>

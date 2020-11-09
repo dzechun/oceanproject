@@ -51,6 +51,12 @@ public class SmtBarcodeRuleSpec extends ValidGroup implements Serializable {
     private String specification;
 
     /**
+     * 长度
+     */
+    @ApiModelProperty(name="barcodeLength",value = "长度")
+    private Integer barcodeLength;
+
+    /**
      * 初始值
      */
     @ApiModelProperty(name="initialValue",value = "初始值")

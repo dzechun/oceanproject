@@ -39,7 +39,7 @@ public class SmtBarcodeRuleSpecController {
     }
 
 
-    @ApiOperation("修改")
+    @ApiOperation("批量修改")
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "对象，Ids必传",required = true)@RequestBody
                                           @Validated(value=SmtBarcodeRuleSpec.update.class) List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecs) {

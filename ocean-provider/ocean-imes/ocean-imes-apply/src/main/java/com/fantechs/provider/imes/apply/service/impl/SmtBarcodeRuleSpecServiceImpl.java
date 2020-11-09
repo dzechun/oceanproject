@@ -76,10 +76,10 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
                 SmtBarcodeRuleSpec smtBarcodeRuleSpec = list.get(i);
 
                 String specification = smtBarcodeRuleSpec.getSpecification();
-                Integer step = smtBarcodeRuleSpec.getStep();
-                if(specification.contains("\\[")){
+                Integer barcodeLength = smtBarcodeRuleSpec.getBarcodeLength();
+                if(specification.contains("]")){
                     //例如：将[Y][Y][Y][Y]转成[YYYY]
-                    String spec = getRuleSpec(specification, step);
+                    String spec = getRuleSpec(specification, barcodeLength);
                     sb.append(spec);
                 }else {
                     sb.append(specification);
@@ -113,9 +113,9 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
 
 
         @Transactional(rollbackFor = Exception.class)
-        public String getRuleSpec(String specification, Integer step) {
+        public String getRuleSpec(String specification, Integer barcodeLength) {
             StringBuilder sb=new StringBuilder();
-            for (int j=0;j<step;j++){
+            for (int j=0;j<barcodeLength;j++){
                 sb.append(specification);
             }
 
