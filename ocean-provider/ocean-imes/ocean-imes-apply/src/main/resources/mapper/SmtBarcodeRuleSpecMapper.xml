@@ -23,7 +23,7 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSpec" resultMap="BaseResultMapDto">
-    select sbrs.barcode_rule_spec_id,sbrs.barcode_rule_id,sbrs.barcode_rule,sbrs.spec_id,ssi.spec_name,sbrs.specification,sbrs.initial_value,
+    select sbrs.barcode_rule_spec_id,sbrs.barcode_rule_id,sbr.barcode_rule,sbrs.spec_id,ssi.spec_name,sbrs.specification,sbrs.initial_value,
     sbrs.step,sbrs.fill_operator,sbrs.fill_direction,sbrs.customize_name,sbrs.intercept_length,sbrs.intercept_position,sbrs.intercept_direction,
     sbrs.customize_value
     from fantech_imes.smt_barcode_rule_spec sbrs
