@@ -1,5 +1,6 @@
 package com.fantechs.security.mapper;
 
+import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
@@ -13,7 +14,7 @@ import java.util.Map;
 public interface SysRoleMapper extends MyMapper<SysRole> {
     List<SysRole> findRolesByUserId(@Param(value = "userId") Long userId);
 
-    List<SysRole> selectRoles(SearchSysRole searchSysRole);
+    List<SysRoleDto> selectRoles(SearchSysRole searchSysRole);
 
     List<SysUser> findBindUser(Map<String,Object> map);
 }

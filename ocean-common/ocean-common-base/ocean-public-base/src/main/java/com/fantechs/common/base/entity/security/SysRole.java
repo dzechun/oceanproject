@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.security;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -30,6 +31,7 @@ public class SysRole extends ValidGroup implements Serializable {
     @Column(name = "role_code")
     @ApiModelProperty(name="roleCode" ,value="角色编码")
     @NotBlank(message = "角色编码不能为空")
+    @Excel(name = "角色编码", height = 20, width = 30,orderNum = "1")
     private String roleCode;
 
     /**
@@ -38,6 +40,7 @@ public class SysRole extends ValidGroup implements Serializable {
     @Column(name = "role_name")
     @ApiModelProperty(name="roleName" ,value="角色名称")
     @NotBlank(message = "角色名称不能为空")
+    @Excel(name = "角色名称", height = 20, width = 30,orderNum = "2")
     private String roleName;
 
     /**
@@ -45,6 +48,7 @@ public class SysRole extends ValidGroup implements Serializable {
      */
     @Column(name = "role_desc")
     @ApiModelProperty(name="roleDesc" ,value="角色描述")
+    @Excel(name = "角色描述", height = 20, width = 30,orderNum = "3")
     private String roleDesc;
 
     /**
@@ -54,12 +58,6 @@ public class SysRole extends ValidGroup implements Serializable {
     @ApiModelProperty(name="createUserId" ,value="创建人id")
     private Long createUserId;
 
-    /**
-     * 创建人名称
-     */
-    @ApiModelProperty(name="createUserName" ,value="创建人名称")
-    @Transient
-    private String createUserName;
 
     /**
      * 创建时间
@@ -67,6 +65,7 @@ public class SysRole extends ValidGroup implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum = "5")
     private Date createTime;
 
     /**
@@ -76,12 +75,6 @@ public class SysRole extends ValidGroup implements Serializable {
     @ApiModelProperty(name="modifiedUserId" ,value="修改人id")
     private Long modifiedUserId;
 
-    /**
-     * 修改人名称
-     */
-    @ApiModelProperty(name="modifiedUserName" ,value="修改人名称")
-    @Transient
-    private String modifiedUserName;
 
     /**
      * 修改时间
@@ -89,6 +82,7 @@ public class SysRole extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum = "7")
     private Date modifiedTime;
 
     /**

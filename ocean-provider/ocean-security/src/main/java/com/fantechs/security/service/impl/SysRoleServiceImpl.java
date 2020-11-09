@@ -1,7 +1,7 @@
 package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.security.SysRoleExcelDTO;
+import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.SysUserRole;
@@ -24,7 +24,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleService {
@@ -40,7 +39,7 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
 
     @Override
-    public List<SysRole> selectRoles(SearchSysRole searchSysRole) {
+    public List<SysRoleDto> selectRoles(SearchSysRole searchSysRole) {
         return sysRoleMapper.selectRoles(searchSysRole);
     }
 

@@ -8,11 +8,14 @@
     <result column="role_name" jdbcType="VARCHAR" property="roleName" />
     <result column="role_desc" jdbcType="VARCHAR" property="roleDesc" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="status" jdbcType="BIT" property="status" />
   </resultMap>
+
   <sql id="Base_Column_List">
     ht_role_id, role_id, role_code, role_name, role_desc, create_user_id, create_time, 
     modified_user_id, modified_time, status

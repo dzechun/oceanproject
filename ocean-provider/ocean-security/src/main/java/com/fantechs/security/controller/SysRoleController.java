@@ -1,6 +1,6 @@
 package com.fantechs.security.controller;
 
-import com.fantechs.common.base.dto.security.SysRoleExcelDTO;
+import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.history.SysHtRole;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
@@ -46,9 +46,9 @@ public class SysRoleController {
 
     @ApiOperation("查询角色信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SysRole>> selectRoles(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysRole searchSysRole){
+    public ResponseEntity<List<SysRoleDto>> selectRoles(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysRole searchSysRole){
         Page<Object> page = PageHelper.startPage(searchSysRole.getStartPage(),searchSysRole.getPageSize());
-        List<SysRole> sysRoles = sysRoleService.selectRoles(searchSysRole);
+        List<SysRoleDto> sysRoles = sysRoleService.selectRoles(searchSysRole);
         return ControllerUtil.returnDataSuccess(sysRoles,(int)page.getTotal());
     }
 
@@ -94,10 +94,10 @@ public class SysRoleController {
     @ApiOperation(value = "导出角色信息excel",notes = "导出角色信息excel",produces = "application/octet-stream")
     public void exportRoles(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchSysRole searchSysRole){
-        List<SysRole> list = sysRoleService.selectRoles(searchSysRole);
+        List<SysRoleDto> list = sysRoleService.selectRoles(searchSysRole);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "角色信息导出", "角色信息", SysRoleExcelDTO.class, "角色信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "角色信息导出", "角色信息", SysRoleDto.class, "角色信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

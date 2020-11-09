@@ -13,18 +13,25 @@
     <result column="status" jdbcType="BIT" property="status" />
     <result column="is_delete" jdbcType="BIT" property="isDelete" />
   </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.security.SysRoleDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     role_id, role_code, role_name, role_desc, create_user_id, create_time, modified_user_id, 
     modified_time, status, is_delete
   </sql>
+
   <select id="findRolesByUserId" parameterType="java.lang.Long" resultType="com.fantechs.common.base.entity.security.SysRole">
     SELECT r.role_id AS roleId FROM `sys_role` r
     INNER JOIN `sys_user_role` ur ON r.`role_id`=ur.`role_id` AND ur.`user_id`=#{userId}
   </select>
 
-  <select id="selectRoles" parameterType="com.fantechs.common.base.entity.security.search.SearchSysRole" resultMap="BaseResultMap">
-    select sr.role_id, sr.role_code, sr.role_name, sr.role_desc, sr.create_user_id, u.user_name as createUserName,
-    sr.create_time, sr.modified_user_id, s.user_name as modifiedUserName,
+  <select id="selectRoles" parameterType="com.fantechs.common.base.entity.security.search.SearchSysRole" resultMap="BaseResultMapDto">
+    select sr.role_id, sr.role_code, sr.role_name, sr.role_desc, sr.create_user_id, u.user_name as create_user_name,
+    sr.create_time, sr.modified_user_id, s.user_name as modified_user_name,
     sr.modified_time
     from sys_role sr
     left join sys_user u on sr.create_user_id=u.user_id

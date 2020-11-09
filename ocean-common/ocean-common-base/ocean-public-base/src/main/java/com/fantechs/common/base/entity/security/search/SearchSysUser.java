@@ -20,7 +20,7 @@ public class SearchSysUser extends BaseQuery implements Serializable {
     /**
      * 用户名称
      */
-    @ApiModelProperty(name="userName" ,value="用户名称")
+    @ApiModelProperty(name="nickName" ,value="用户名称")
     private String nickName;
 
     /**
