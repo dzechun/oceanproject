@@ -60,10 +60,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
             sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
         }
-        sysUser.setCreateUserId(currentUser.getUserId());
-        sysUser.setCreateTime(new Date());
-        sysUser.setModifiedUserId(currentUser.getUserId());
-        sysUser.setModifiedTime(new Date());
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -74,13 +70,20 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
             throw new BizErrorException("该用户的帐号/工号已存在。");
         }
 
-        int i =sysUserMapper.insertUseGeneratedKeys(sysUser);
+        sysUser.setCreateUserId(currentUser.getUserId());
+        sysUser.setCreateTime(new Date());
+        sysUser.setModifiedUserId(currentUser.getUserId());
+        sysUser.setModifiedTime(new Date());
+        sysUser.setIsDelete(StringUtils.isEmpty(sysUser.getIsDelete())?(byte)0:sysUser.getIsDelete());
+        sysUser.setStatus(StringUtils.isEmpty(sysUser.getStatus())?1:sysUser.getStatus());
+
+        sysUserMapper.insertUseGeneratedKeys(sysUser);
 
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
         BeanUtils.copyProperties(sysUser,sysHtUser);
-        sysHtUserMapper.insertSelective(sysHtUser);
-        return i;
+
+        return  sysHtUserMapper.insertSelective(sysHtUser);
     }
 
     @Override

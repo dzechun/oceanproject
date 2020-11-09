@@ -185,8 +185,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
     @Override
     public int batchDelete(String ids) {
-        SysUser user = null;
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }

@@ -52,7 +52,7 @@ public enum ErrorCodeEnum {
     /**
      * Uac 10010003 error code enum.
      */
-    UAC10010003(10010003, "操作频率过快, 您的帐号已被冻结"),
+    UAC10010003(10010003, "您的帐号已被冻结"),
     /**
      * Uac 10011001 error code enum.
      */
