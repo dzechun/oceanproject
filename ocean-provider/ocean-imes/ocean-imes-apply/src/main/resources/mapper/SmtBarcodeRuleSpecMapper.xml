@@ -32,7 +32,7 @@
     <where>
       1=1
       <if test="barcodeRuleId!=null and barcodeRuleId!=''">
-        and sbrs.barcode_rule_id like CONCAT('%', #{barcodeRuleId}, '%')
+        and sbrs.barcode_rule_id= #{barcodeRuleId}
       </if>
     </where>
   </select>
