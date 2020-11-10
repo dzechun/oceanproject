@@ -88,7 +88,7 @@ public class SmtWorkOrderBomController {
     List<SmtWorkOrderBomDto> list = smtWorkOrderBomService.findList(searchSmtWorkOrderBom);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出工单BOM信息", "工单BOM信息", SmtWorkOrderBomDto.class, "工单BOM信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出工单BOM信息", "工单BOM信息", SmtWorkOrderBomDto.class, "SmtWorkOrderBom.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

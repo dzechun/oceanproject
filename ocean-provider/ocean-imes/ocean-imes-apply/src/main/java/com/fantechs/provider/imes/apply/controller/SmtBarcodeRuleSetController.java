@@ -88,7 +88,7 @@ public class SmtBarcodeRuleSetController {
     List<SmtBarcodeRuleSetDto> list = smtBarcodeRuleSetService.findList(searchSmtBarcodeRuleSet);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "条码规则集合", SmtBarcodeRuleSet.class, "SmtBarcodeRuleSet.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "条码规则集合", SmtBarcodeRuleSetDto.class, "SmtBarcodeRuleSet.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
