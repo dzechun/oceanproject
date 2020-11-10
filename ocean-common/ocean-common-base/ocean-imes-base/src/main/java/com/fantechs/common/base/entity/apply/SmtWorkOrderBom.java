@@ -72,10 +72,17 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
     private BigDecimal quantity;
 
     /**
+     * 基准数量
+     */
+    @ApiModelProperty(name="baseQuantity" ,value="基准数量")
+    @Excel(name = "基准数量", height = 20, width = 30,orderNum="7")
+    private BigDecimal baseQuantity;
+
+    /**
      * 位置
      */
     @ApiModelProperty(name="position" ,value="位置")
-    @Excel(name = "零件位置", height = 20, width = 30,orderNum="8")
+    @Excel(name = "零件位置", height = 20, width = 30,orderNum="9")
     private String position;
 
     /**
@@ -90,7 +97,7 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="10",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="11",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -105,7 +112,7 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="12",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="13",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

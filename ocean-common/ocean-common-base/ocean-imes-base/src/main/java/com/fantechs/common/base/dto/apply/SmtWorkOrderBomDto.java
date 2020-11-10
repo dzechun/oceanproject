@@ -63,7 +63,7 @@ public class SmtWorkOrderBomDto extends SmtWorkOrderBom implements Serializable 
      */
     @Transient
     @ApiModelProperty(name="processName" ,value="工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "工序名称", height = 20, width = 30,orderNum="8")
     private String processName;
 
     /**
@@ -71,7 +71,7 @@ public class SmtWorkOrderBomDto extends SmtWorkOrderBom implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建账号", height = 20, width = 30,orderNum="9")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="10")
     private String createUserName;
 
     /**
@@ -79,6 +79,6 @@ public class SmtWorkOrderBomDto extends SmtWorkOrderBom implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改账号", height = 20, width = 30,orderNum="11")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="12")
     private String modifiedUserName;
 }

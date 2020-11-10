@@ -69,6 +69,12 @@ public class SmtHtWorkOrderBom implements Serializable {
     private BigDecimal quantity;
 
     /**
+     * 基准数量
+     */
+    @ApiModelProperty(name="baseQuantity" ,value="基准数量")
+    private BigDecimal baseQuantity;
+
+    /**
      * 位置
      */
     @ApiModelProperty(name="position" ,value="位置")
