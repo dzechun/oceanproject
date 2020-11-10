@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtBarcodeRuleSet">
+    <id column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId" />
+    <result column="barcode_rule_set_code" jdbcType="VARCHAR" property="barcodeRuleSetCode" />
+    <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName" />
+    <result column="barcode_rule_set_desc" jdbcType="VARCHAR" property="barcodeRuleSetDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtBarcodeRuleSetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSet" resultMap="BaseResultMapDto">
+    select sbrs.barcode_rule_set_id,sbrs.barcode_rule_set_code,sbrs.barcode_rule_set_name,sbrs.barcode_rule_set_desc,sbrs.status,sbrs.create_user_id,
+    u.user_name as create_user_name,sbrs.create_time,sbrs.modified_user_id,s.user_name as modified_user_name,sbrs.modified_time,sbrs.is_delete
+    from fantech_imes.smt_barcode_rule_set sbrs
+    left join ocean.sys_user u on sbrs.create_user_id=u.user_id
+    left join ocean.sys_user s on sbrs.modified_user_id=s.user_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sbrs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="barcodeRuleSetCode!=null and barcodeRuleSetCode!=''">
+        and sbrs.barcode_rule_set_code like CONCAT('%', #{barcodeRuleSetCode}, '%')
+      </if>
+      <if test="barcodeRuleSetName!=null and barcodeRuleSetName!=''">
+        and sbrs.barcode_rule_set_name like CONCAT('%', #{barcodeRuleSetName}, '%')
+      </if>
+      <if test="barcodeRuleSetDesc!=null and barcodeRuleSetDesc!=''">
+        and sbrs.barcode_rule_set_desc like CONCAT('%', #{barcodeRuleSetDesc}, '%')
+      </if>
+    </where>
+    order by sbrs.create_time desc
+  </select>
+</mapper>
