@@ -61,11 +61,11 @@ public class SmtHtBarcodeRule implements Serializable {
     private String barcodeRuleDesc;
 
     /**
-     * 条码规则类别
+     * 条码规则类别ID
      */
-    @ApiModelProperty(name="barcodeRuleCategory",value = "条码规则类别")
-    @Column(name = "barcode_rule_category")
-    private String barcodeRuleCategory;
+    @ApiModelProperty(name="barcodeRuleCategoryId",value = "条码规则类别ID")
+    @Column(name = "barcode_rule_category_id")
+    private Long barcodeRuleCategoryId;
 
     /**
      * 条码规则类别名称
