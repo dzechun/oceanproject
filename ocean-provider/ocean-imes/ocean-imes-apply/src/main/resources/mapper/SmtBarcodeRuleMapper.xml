@@ -31,7 +31,7 @@
     sbr.barcode_rule,sbr.status,sbr.create_user_id, u.user_name as create_user_name,sbr.create_time,sbr.modified_user_id,s.user_name as modified_user_name,sbr.modified_time,
     sbr.is_delete
     from fantech_imes.smt_barcode_rule sbr
-    left join ocean.sys_spec_item ssi on sbrs.spec_id=ssi.spec_id
+    left join ocean.sys_spec_item ssi on sbr.barcode_rule_category_id=ssi.spec_id
     left join ocean.sys_user u on sbr.create_user_id=u.user_id
     left join ocean.sys_user s on sbr.modified_user_id=s.user_id
     <where>
