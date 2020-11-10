@@ -25,7 +25,7 @@ import java.util.List;
  * Created by wcz on 2020/11/10.
  */
 @RestController
-@Api(tags = "smtBarcodeRuleSetDet控制器")
+@Api(tags = "条码规则关联集合")
 @RequestMapping("/smtBarcodeRuleSetDet")
 @Validated
 public class SmtBarcodeRuleSetDetController {
