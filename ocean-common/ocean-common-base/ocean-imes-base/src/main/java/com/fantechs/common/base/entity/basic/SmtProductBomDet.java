@@ -113,6 +113,13 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
     private BigDecimal quantity;
 
     /**
+     * 基准数量
+     */
+    @ApiModelProperty(name="baseQuantity" ,value="基准数量")
+    @Excel(name = "基准数量", height = 20, width = 30)
+    private BigDecimal baseQuantity;
+
+    /**
      * 位置
      */
     @ApiModelProperty(name="position" ,value="位置")

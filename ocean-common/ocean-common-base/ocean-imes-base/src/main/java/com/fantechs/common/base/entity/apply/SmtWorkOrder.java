@@ -81,6 +81,14 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Excel(name = "工单状态", height = 20, width = 30 ,orderNum="8",replace = {"待生产_0", "生产中_1","暂停生产_2","生产完成_3"})
     private Integer workOrderStatus;
 
+
+    /**
+     * 线别ID
+     */
+    @Column(name = "pro_line_id")
+    @NotNull(message = "线别ID不能为空")
+    private Long proLineId;
+
     /**
      * 工艺路线ID
      */
