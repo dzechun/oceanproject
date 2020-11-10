@@ -1,6 +1,5 @@
 package com.fantechs.common.base.dto.apply;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
