@@ -9,10 +9,12 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -141,4 +143,6 @@ public class SmtBarcodeRule extends ValidGroup implements Serializable {
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
 
+    @Transient
+    private List<SmtBarcodeRuleSpec> barcodeRuleSpecs;
 }

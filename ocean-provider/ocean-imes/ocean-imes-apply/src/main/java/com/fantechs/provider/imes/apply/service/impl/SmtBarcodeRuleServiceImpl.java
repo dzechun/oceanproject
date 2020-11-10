@@ -4,6 +4,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleMapper;
+import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtHtBarcodeRuleMapper;
 import com.fantechs.provider.imes.apply.service.SmtBarcodeRuleService;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +25,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -35,6 +39,8 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
     private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
     @Resource
     private SmtHtBarcodeRuleMapper smtHtBarcodeRuleMapper;
+    @Resource
+    private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -58,16 +64,89 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         smtBarcodeRule.setCreateTime(new Date());
         smtBarcodeRule.setModifiedUserId(currentUser.getUserId());
         smtBarcodeRule.setModifiedTime(new Date());
-        smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
+        int i = smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
 
         //新增条码规则历史信息
         SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
         BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
-        int i = smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
+        smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
+
+        List<SmtBarcodeRuleSpec> list = smtBarcodeRule.getBarcodeRuleSpecs();
+        if(StringUtils.isEmpty(list)){
+            throw new BizErrorException("条码规则没有配置");
+        }
+
+        //校验设置的条码规则是否符合
+        String barcodeRule = checkBarcodeRule(list);
+
+        //配置好条码规则后，设置进条码规则中
+        smtBarcodeRule.setBarcodeRule(barcodeRule);
+        smtBarcodeRuleMapper.updateByPrimaryKey(smtBarcodeRule);
+
+        //配置条码规则
+        smtBarcodeRuleSpecMapper.insertList(list);
 
         return i;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public String checkBarcodeRule(List<SmtBarcodeRuleSpec> list) {
+        List<String> specs=new ArrayList<>();
+        StringBuilder sb=new StringBuilder();
+        for (int i=0;i<list.size();i++){
+            if(i>0&&list.get(i-1).getSpecId().equals(list.get(i).getSpecId())){
+                throw new BizErrorException("相邻的属性类别不能相同");
+            }
+            SmtBarcodeRuleSpec smtBarcodeRuleSpec = list.get(i);
+
+            String specification = smtBarcodeRuleSpec.getSpecification();
+            Integer barcodeLength = smtBarcodeRuleSpec.getBarcodeLength();
+            if(specification.contains("]")){
+                //例如：将[Y][Y][Y][Y]转成[YYYY]
+                String spec = getRuleSpec(specification, barcodeLength);
+                sb.append(spec);
+            }else {
+                sb.append(specification);
+            }
+
+            specs.add(specification);
+        }
+
+        //判断S、F、b、c只能使用一个
+        boolean sCode = sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+        boolean fCode = !sb.toString().contains("S") && sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+        boolean bCode = !sb.toString().contains("S") && !sb.toString().contains("F") && sb.toString().contains("b") && !sb.toString().contains("c");
+        boolean cCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && sb.toString().contains("c");
+        boolean baseCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+        if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
+            throw new BizErrorException("条码规则配置错误");
+        }
+
+        //specs 包含多少个[P]属性
+        long materialNum = specs.stream().filter("[P]"::equals).count();
+        //specs 包含多少个[L]属性
+        long lineNum = specs.stream().filter("[L]"::equals).count();
+        //specs 包含多少个[C]属性
+        long customerNum = specs.stream().filter("[C]"::equals).count();
+
+        if(materialNum>1||lineNum>1||customerNum>1){
+            throw new BizErrorException("条码规则配置错误");
+        }
+        return sb.toString();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public String getRuleSpec(String specification, Integer barcodeLength) {
+        StringBuilder sb=new StringBuilder();
+        for (int j=0;j<barcodeLength;j++){
+            sb.append(specification);
+        }
+
+        Pattern pattern = Pattern.compile("](.*?)\\[");
+        Matcher matcher = pattern.matcher(sb.toString());
+        String spec = matcher.replaceAll("");
+        return spec;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -81,9 +160,9 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("barcodeRuleCode",smtBarcodeRule.getBarcodeRuleCode());
 
-        SmtBarcodeRule barcodeRule = smtBarcodeRuleMapper.selectOneByExample(example);
+        SmtBarcodeRule rule = smtBarcodeRuleMapper.selectOneByExample(example);
 
-        if(StringUtils.isNotEmpty(barcodeRule)&&!barcodeRule.getBarcodeRuleId().equals(smtBarcodeRule.getBarcodeRuleId())){
+        if(StringUtils.isNotEmpty(rule)&&!rule.getBarcodeRuleId().equals(smtBarcodeRule.getBarcodeRuleId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
@@ -96,6 +175,17 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         SmtHtBarcodeRule smtHtBarcodeRule=new SmtHtBarcodeRule();
         BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
         smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
+
+        List<SmtBarcodeRuleSpec> list = smtBarcodeRule.getBarcodeRuleSpecs();
+        if(StringUtils.isEmpty(list)){
+            throw new BizErrorException("条码规则没有配置");
+        }
+        //校验设置的条码规则是否符合
+        String barcodeRule = checkBarcodeRule(list);
+        //配置好条码规则后，设置进条码规则中
+        smtBarcodeRule.setBarcodeRule(barcodeRule);
+        smtBarcodeRuleMapper.updateByPrimaryKey(smtBarcodeRule);
+        smtBarcodeRuleSpecMapper.updateBatch(list);
 
         return i;
     }
