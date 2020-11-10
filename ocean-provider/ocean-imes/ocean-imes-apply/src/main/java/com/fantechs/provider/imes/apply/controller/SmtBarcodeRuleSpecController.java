@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtBarcodeRuleSpecDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSpec;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -62,9 +63,9 @@ public class SmtBarcodeRuleSpecController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtBarcodeRuleSpec>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec) {
+    public ResponseEntity<List<SmtBarcodeRuleSpecDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec) {
         Page<Object> page = PageHelper.startPage(searchSmtBarcodeRuleSpec.getStartPage(),searchSmtBarcodeRuleSpec.getPageSize());
-        List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecService.findList(searchSmtBarcodeRuleSpec);
+        List<SmtBarcodeRuleSpecDto> list = smtBarcodeRuleSpecService.findList(searchSmtBarcodeRuleSpec);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
