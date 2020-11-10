@@ -93,4 +93,10 @@ public class SmtBarcodeRuleController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation(value = "保存",notes = "保存")
+    @PostMapping("/preserve")
+    public ResponseEntity preserve(@RequestBody @Validated SmtBarcodeRule smtBarcodeRule) {
+        return ControllerUtil.returnCRUD(smtBarcodeRuleService.preserve(smtBarcodeRule));
+    }
 }

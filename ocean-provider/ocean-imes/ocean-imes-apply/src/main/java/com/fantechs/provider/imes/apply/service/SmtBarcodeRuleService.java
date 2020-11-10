@@ -15,4 +15,6 @@ import java.util.List;
 public interface SmtBarcodeRuleService extends IService<SmtBarcodeRule> {
 
     List<SmtBarcodeRuleDto> findList(SearchSmtBarcodeRule searchSmtBarcodeRule);
+
+    int preserve(SmtBarcodeRule smtBarcodeRule);
 }
