@@ -94,9 +94,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     BeanUtils.copyProperties(smtProductBomDet,smtWorkOrderBom,new String[]{"createUserId","createTime","modifiedUserId","modifiedTime"});
                     Integer workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
                     BigDecimal quantity = smtProductBomDet.getQuantity();
+                    BigDecimal baseQuantity = smtProductBomDet.getBaseQuantity();
                     smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
                     smtWorkOrderBom.setSingleQuantity(quantity);
-                    smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity));
+                    smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity).multiply(baseQuantity));
                     smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                     smtWorkOrderBom.setCreateTime(new Date());
                     list.add(smtWorkOrderBom);
@@ -149,38 +150,40 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
                 if(!order.getMaterialId().equals(smtWorkOrder.getMaterialId())){
                     throw new BizErrorException("工单不能修改产品料号信息");
-                }
+                }else {
+                    if(workOrderStatus==0||workOrderStatus==2){
+                        //工单的工单数量改变,重新计算零件的工单用量
+                        if(!order.getWorkOrderQuantity().equals(smtWorkOrder.getWorkOrderQuantity())){
+                            Example example1 = new Example(SmtWorkOrderBom.class);
+                            Example.Criteria criteria1 = example1.createCriteria();
+                            criteria1.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
+                            List<SmtWorkOrderBom> workOrderBoms = smtWorkOrderBomMapper.selectByExample(example1);
+                            if(StringUtils.isNotEmpty(workOrderBoms)){
+                                for (SmtWorkOrderBom smtWorkOrderBom : workOrderBoms) {
+                                    //工单BOM的单个用量
+                                    BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
+                                    BigDecimal baseQuantity = smtWorkOrderBom.getBaseQuantity();
+                                    //重新计算后的零件工单用量
+                                    smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity).multiply(baseQuantity));
+                                    list.add(smtWorkOrderBom);
 
-                if(workOrderStatus==0||workOrderStatus==2){
-                    //工单的工单数量改变,重新计算零件的工单用量
-                    if(!order.getWorkOrderQuantity().equals(smtWorkOrder.getWorkOrderQuantity())){
-                        Example example1 = new Example(SmtWorkOrderBom.class);
-                        Example.Criteria criteria1 = example1.createCriteria();
-                        criteria1.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
-                        List<SmtWorkOrderBom> workOrderBoms = smtWorkOrderBomMapper.selectByExample(example1);
-                        if(StringUtils.isNotEmpty(workOrderBoms)){
-                            for (SmtWorkOrderBom smtWorkOrderBom : workOrderBoms) {
-                                //工单BOM的单个用量
-                                BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
-                                //重新计算后的零件工单用量
-                                smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
-                                list.add(smtWorkOrderBom);
+                                    //新增工单BOM历史信息
+                                    SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
+                                    BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
+                                    smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+                                    smtHtWorkOrderBom.setModifiedTime(new Date());
+                                    htList.add(smtHtWorkOrderBom);
+                                }
+                                //批量修改工单BOM的用量
+                                smtWorkOrderBomMapper.updateBatch(list);
 
-                                //新增工单BOM历史信息
-                                SmtHtWorkOrderBom smtHtWorkOrderBom=new SmtHtWorkOrderBom();
-                                BeanUtils.copyProperties(smtWorkOrderBom,smtHtWorkOrderBom);
-                                smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-                                smtHtWorkOrderBom.setModifiedTime(new Date());
-                                htList.add(smtHtWorkOrderBom);
+                                //批量新增工单BOM历史信息
+                                smtHtWorkOrderBomMapper.insertList(htList);
                             }
-                            //批量修改工单BOM的用量
-                            smtWorkOrderBomMapper.updateBatch(list);
-
-                            //批量新增工单BOM历史信息
-                            smtHtWorkOrderBomMapper.insertList(htList);
                         }
                     }
                 }
+
                 smtWorkOrder.setModifiedUserId(currentUser.getUserId());
                 smtWorkOrder.setModifiedTime(new Date());
                 i= smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
