@@ -71,6 +71,9 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
         smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
 
+        /**
+         * 条码规则配置
+         */
         List<SmtBarcodeRuleSpec> list = smtBarcodeRule.getBarcodeRuleSpecs();
         if(StringUtils.isEmpty(list)){
             throw new BizErrorException("条码规则没有配置");
@@ -176,6 +179,9 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         BeanUtils.copyProperties(smtBarcodeRule,smtHtBarcodeRule);
         smtHtBarcodeRuleMapper.insertSelective(smtHtBarcodeRule);
 
+        /**
+         * 条码规则配置
+         */
         List<SmtBarcodeRuleSpec> list = smtBarcodeRule.getBarcodeRuleSpecs();
         if(StringUtils.isEmpty(list)){
             throw new BizErrorException("条码规则没有配置");
@@ -215,6 +221,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
 
         }
         smtHtBarcodeRuleMapper.insertList(list);
+
 
         return smtBarcodeRuleMapper.deleteByIds(ids);
     }
