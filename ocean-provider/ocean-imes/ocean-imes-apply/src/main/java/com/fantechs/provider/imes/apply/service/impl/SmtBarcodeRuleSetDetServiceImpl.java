@@ -75,7 +75,7 @@ public class SmtBarcodeRuleSetDetServiceImpl extends BaseService<SmtBarcodeRuleS
                 criteria.andEqualTo("barcodeRuleId",smtBarcodeRuleSetDet.getBarcodeRuleId());
                 SmtBarcodeRuleSetDet ruleSetDet = smtBarcodeRuleSetDetMapper.selectOneByExample(example);
 
-                if(StringUtils.isNotEmpty(ruleSetDet)&&!ruleSetDet.getBarcodeRuleId().equals(smtBarcodeRuleSetDet.getBarcodeRuleId())){
+                if(StringUtils.isNotEmpty(ruleSetDet)&&!ruleSetDet.getBarcodeRuleSetDetId().equals(smtBarcodeRuleSetDet.getBarcodeRuleSetDetId())){
                         throw new BizErrorException("该条码集合下的条码规则已存在");
                 }
 
