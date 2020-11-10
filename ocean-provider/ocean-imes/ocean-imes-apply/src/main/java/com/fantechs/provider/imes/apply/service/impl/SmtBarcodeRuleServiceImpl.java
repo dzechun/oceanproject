@@ -130,6 +130,13 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             smtHtBarcodeRule.setModifiedTime(new Date());
             list.add(smtHtBarcodeRule);
 
+            /**
+             * 同时删除该条码规则的配置
+             */
+            Example example = new Example(SmtBarcodeRuleSpec.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("barcodeRuleId",smtBarcodeRule.getBarcodeRuleId());
+            smtBarcodeRuleSpecMapper.deleteByExample(example);
         }
         smtHtBarcodeRuleMapper.insertList(list);
 
