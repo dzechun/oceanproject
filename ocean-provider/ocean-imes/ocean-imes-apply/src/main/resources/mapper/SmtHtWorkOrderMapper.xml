@@ -11,6 +11,7 @@
     <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity" />
     <result column="output_quantity" jdbcType="INTEGER" property="outputQuantity" />
     <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
     <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
     <result column="work_order_type" jdbcType="TINYINT" property="workOrderType" />
@@ -31,6 +32,7 @@
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
     <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
@@ -40,12 +42,13 @@
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMap">
     select  shwo.ht_work_order_id,shwo.work_order_id,shwo.work_order_code,shwo.order_id,shwo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
-    shwo.work_order_quantity,shwo.production_quantity,shwo.output_quantity,shwo.work_order_status,shwo.route_id,sr.route_name,shwo.barcode_rule_id,
+    shwo.work_order_quantity,shwo.production_quantity,shwo.output_quantity,shwo.work_order_status,shwo.pro_line_id,spl.pro_name,shwo.route_id,sr.route_name,shwo.barcode_rule_id,
     shwo.work_order_type,shwo.planned_start_time,shwo.planned_end_time,shwo.actual_start_time,shwo.actual_end_time,shwo.create_user_id,
     u.user_name as create_user_name,shwo.create_time,shwo.modified_user_id,s.user_name as modified_user_name,shwo.modified_time, shwo.is_delete
     from fantech_imes.smt_ht_work_order shwo
     left join fantech_imes.smt_material sm on shwo.material_id=sm.material_id
     left join fantech_imes.smt_route sr on shwo.route_id=sr.route_id
+    left join fantech_imes.smt_pro_line spl on shwo.pro_line_id=spl.pro_line_id
     left join ocean.sys_user u on shwo.create_user_id=u.user_id
     left join ocean.sys_user s on shwo.modified_user_id=s.user_id
     <where>

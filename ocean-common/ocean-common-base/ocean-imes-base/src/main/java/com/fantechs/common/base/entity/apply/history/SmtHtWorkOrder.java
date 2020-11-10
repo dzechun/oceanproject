@@ -79,6 +79,13 @@ public class SmtHtWorkOrder implements Serializable {
     private Integer workOrderStatus;
 
     /**
+     * 线别ID
+     */
+    @Column(name = "pro_line_id")
+    @ApiModelProperty(name="proLineId" ,value="线别ID")
+    private Long proLineId;
+
+    /**
      * 工艺路线ID
      */
     @Column(name = "route_id")
@@ -205,6 +212,13 @@ public class SmtHtWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 线别名称
+     */
+    @Transient
+    @ApiModelProperty(name="proName" ,value="线别名称")
+    private String proName;
 
     /**
      * 工艺路线名称
