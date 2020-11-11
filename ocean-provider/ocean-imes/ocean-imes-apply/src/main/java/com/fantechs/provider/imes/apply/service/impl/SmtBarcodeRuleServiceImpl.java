@@ -156,7 +156,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         Long barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
         if(StringUtils.isEmpty(barcodeRuleId)){
             //新增条码规则
-            i = smtBarcodeRuleMapper.insert(smtBarcodeRule);
+            i = smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
 
             /**
              * 保存条码规则配置
