@@ -33,27 +33,6 @@ public class SmtBarcodeRuleSpecController {
     @Autowired
     private SmtBarcodeRuleSpecService smtBarcodeRuleSpecService;
 
-    @ApiOperation(value = "批量新增",notes = "批量新增")
-    @PostMapping("/batchSave")
-    public ResponseEntity batchSave(@ApiParam(value = "必传：",required = true)@RequestBody List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecs) {
-        return ControllerUtil.returnCRUD(smtBarcodeRuleSpecService.batchSave(smtBarcodeRuleSpecs));
-    }
-
-
-    @ApiOperation("批量修改")
-    @PostMapping("/batchUpdate")
-    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Ids必传",required = true)@RequestBody
-                                          @Validated(value=SmtBarcodeRuleSpec.update.class) List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecs) {
-        return ControllerUtil.returnCRUD(smtBarcodeRuleSpecService.batchUpdate(smtBarcodeRuleSpecs));
-    }
-
-    @ApiOperation("删除")
-    @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
-        return ControllerUtil.returnCRUD(smtBarcodeRuleSpecService.batchDelete(ids));
-    }
-
-
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<SmtBarcodeRuleSpec> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
