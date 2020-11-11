@@ -31,10 +31,10 @@ import java.util.regex.Pattern;
 @Service
 public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpec> implements SmtBarcodeRuleSpecService {
 
-         @Resource
-         private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
-         @Resource
-         private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
+        @Resource
+        private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+        @Resource
+        private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
 
         @Override
         public List<SmtBarcodeRuleSpecDto> findList(SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec) {
