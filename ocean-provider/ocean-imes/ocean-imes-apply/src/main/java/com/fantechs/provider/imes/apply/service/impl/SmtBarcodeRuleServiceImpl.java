@@ -166,7 +166,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             }
 
             //校验设置的条码规则是否符合
-            String barcodeRule = checkBarcodeRule(list);
+            String barcodeRule = checkBarcodeRule(list,smtBarcodeRule);
 
             //配置好条码规则后，设置进条码规则中
             smtBarcodeRule.setBarcodeRule(barcodeRule);
@@ -190,7 +190,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             }
 
             //校验设置的条码规则是否符合
-            String barcodeRule = checkBarcodeRule(list);
+            String barcodeRule = checkBarcodeRule(list,smtBarcodeRule);
 
             //配置好条码规则后，设置进条码规则中
             smtBarcodeRule.setBarcodeRule(barcodeRule);
@@ -202,7 +202,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
 
 
     @Transactional(rollbackFor = Exception.class)
-    public String checkBarcodeRule(List<SmtBarcodeRuleSpec> list) {
+    public String checkBarcodeRule(List<SmtBarcodeRuleSpec> list,SmtBarcodeRule smtBarcodeRule) {
         List<String> specs=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
         for (int i=0;i<list.size();i++){
@@ -220,7 +220,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             }else {
                 sb.append(specification);
             }
-
+            smtBarcodeRuleSpec.setBarcodeRuleId(smtBarcodeRule.getBarcodeRuleId());
             specs.add(specification);
         }
 
