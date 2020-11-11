@@ -171,7 +171,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
 
             //配置好条码规则后，设置进条码规则中
             smtBarcodeRule.setBarcodeRule(barcodeRule);
-            smtBarcodeRuleMapper.updateByPrimaryKey(smtBarcodeRule);
+            this.update(smtBarcodeRule);
             smtBarcodeRuleSpecMapper.insertList(list);
         }else {
 
