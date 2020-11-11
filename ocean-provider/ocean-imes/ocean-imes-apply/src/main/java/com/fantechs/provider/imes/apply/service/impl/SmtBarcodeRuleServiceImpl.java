@@ -173,7 +173,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             this.update(smtBarcodeRule);
             smtBarcodeRuleSpecMapper.insertList(list);
         }else {
-
+            String barcodeRule =null;
             /**
              * 删除原有配置，保存现在的条码规则配置
              */
@@ -183,12 +183,11 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             smtBarcodeRuleSpecMapper.deleteByExample(example);
 
             List<SmtBarcodeRuleSpec> list = smtBarcodeRule.getBarcodeRuleSpecs();
-            if(StringUtils.isEmpty(list)){
-                throw new BizErrorException("条码规则没有配置");
+            if(StringUtils.isNotEmpty(list)){
+                //校验设置的条码规则是否符合
+                barcodeRule = checkBarcodeRule(list,smtBarcodeRule);
             }
 
-            //校验设置的条码规则是否符合
-            String barcodeRule = checkBarcodeRule(list,smtBarcodeRule);
 
             //配置好条码规则后，设置进条码规则中
             smtBarcodeRule.setBarcodeRule(barcodeRule);
