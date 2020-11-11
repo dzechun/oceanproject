@@ -150,6 +150,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int preserve(SmtBarcodeRule smtBarcodeRule) {
         int i=0;
         Long barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
@@ -173,8 +174,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             smtBarcodeRuleMapper.updateByPrimaryKey(smtBarcodeRule);
             smtBarcodeRuleSpecMapper.insertList(list);
         }else {
-            //新增条码规则
-            i = this.update(smtBarcodeRule);
 
             /**
              * 删除原有配置，保存现在的条码规则配置
@@ -194,7 +193,7 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
 
             //配置好条码规则后，设置进条码规则中
             smtBarcodeRule.setBarcodeRule(barcodeRule);
-            smtBarcodeRuleMapper.updateByPrimaryKey(smtBarcodeRule);
+            i = this.update(smtBarcodeRule);
             smtBarcodeRuleSpecMapper.insertList(list);
         }
         return i;
@@ -206,19 +205,17 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         List<String> specs=new ArrayList<>();
         StringBuilder sb=new StringBuilder();
         for (int i=0;i<list.size();i++){
-            if(i>0&&list.get(i-1).getSpecId().equals(list.get(i).getSpecId())){
-                throw new BizErrorException("相邻的属性类别不能相同");
-            }
             SmtBarcodeRuleSpec smtBarcodeRuleSpec = list.get(i);
 
             String specification = smtBarcodeRuleSpec.getSpecification();
             Integer barcodeLength = smtBarcodeRuleSpec.getBarcodeLength();
+            String customizeValue = smtBarcodeRuleSpec.getCustomizeValue();
             if(specification.contains("]")){
                 //例如：将[Y][Y][Y][Y]转成[YYYY]
                 String spec = getRuleSpec(specification, barcodeLength);
                 sb.append(spec);
             }else {
-                sb.append(specification);
+                sb.append(customizeValue);
             }
             smtBarcodeRuleSpec.setBarcodeRuleId(smtBarcodeRule.getBarcodeRuleId());
             specs.add(specification);
