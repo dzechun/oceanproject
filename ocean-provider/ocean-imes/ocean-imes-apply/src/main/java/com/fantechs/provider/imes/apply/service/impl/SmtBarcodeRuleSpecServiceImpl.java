@@ -42,7 +42,7 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
         }
 
 
-        @Override
+       /* @Override
         @Transactional(rollbackFor = Exception.class)
         public int batchSave(List<SmtBarcodeRuleSpec> list) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -168,9 +168,9 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
             //删除条码规则配置
             int i = smtBarcodeRuleSpecMapper.deleteByIds(ids);
 
-            /**
+            *//**
              *  删除条码规则配置后的条码规则
-             */
+             *//*
             //查询条码规则
             SmtBarcodeRule smtBarcodeRule = smtBarcodeRuleMapper.selectByPrimaryKey(barcodeRuleId);
 
@@ -188,6 +188,6 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
             smtBarcodeRule.setBarcodeRule(barcodeRule);
             smtBarcodeRuleMapper.updateByPrimaryKey(smtBarcodeRule);
             return i;
-        }
+        }*/
 
 }

@@ -16,5 +16,4 @@ public interface SmtBarcodeRuleSpecService extends IService<SmtBarcodeRuleSpec> 
 
     List<SmtBarcodeRuleSpecDto> findList(SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec);
 
-    int batchUpdate(List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecs);
 }
