@@ -15,4 +15,7 @@ import java.util.List;
 public interface SmtBarcodeRuleSetDetService extends IService<SmtBarcodeRuleSetDet> {
 
     List<SmtBarcodeRuleSetDetDto> findList(SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet);
+
+    //绑定条码规则
+    int bindBarcodeRule(Long barcodeRuleSetId, List<Long> barcodeRuleIds);
 }

@@ -58,6 +58,13 @@ public class SmtBarcodeRuleSetDetController {
         return  ControllerUtil.returnDataSuccess(smtBarcodeRuleSetDet,StringUtils.isEmpty(smtBarcodeRuleSetDet)?0:1);
     }
 
+    @ApiOperation("绑定条码规则")
+    @PostMapping("/bindBarcodeRule")
+    public ResponseEntity bindBarcodeRule(@ApiParam(value = "条码规则集合ID",required = true)@RequestParam @NotNull(message = "条码规则集合ID不能为空") Long barcodeRuleSetId,
+                                         @ApiParam(value = "条码规则ID",required = true)@RequestBody @NotNull(message = "barcodeRuleIds不能为空") List<Long> barcodeRuleIds) {
+        return ControllerUtil.returnCRUD(smtBarcodeRuleSetDetService.bindBarcodeRule(barcodeRuleSetId,barcodeRuleIds));
+    }
+
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SmtBarcodeRuleSetDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet) {

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,29 @@ public class SmtBarcodeRuleSetDetServiceImpl extends BaseService<SmtBarcodeRuleS
         @Override
         public List<SmtBarcodeRuleSetDetDto> findList(SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet) {
             return smtBarcodeRuleSetDetMapper.findList(searchSmtBarcodeRuleSetDet);
+        }
+
+        @Override
+        @Transactional(rollbackFor = Exception.class)
+        public int bindBarcodeRule(Long barcodeRuleSetId, List<Long> barcodeRuleIds) {
+                SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+                if(StringUtils.isEmpty(currentUser)){
+                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+                }
+                List<SmtBarcodeRuleSetDet> list=new ArrayList<>();
+                Example example = new Example(SmtBarcodeRuleSetDet.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("barcodeRuleSetId",barcodeRuleSetId);
+                smtBarcodeRuleSetDetMapper.deleteByExample(example);
+
+                for (Long barcodeRuleId : barcodeRuleIds) {
+                        SmtBarcodeRuleSetDet smtBarcodeRuleSetDet = new SmtBarcodeRuleSetDet();
+                        smtBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
+                        smtBarcodeRuleSetDet.setBarcodeRuleId(barcodeRuleId);
+                        smtBarcodeRuleSetDet.setIsDelete((byte) 1);
+                        list.add(smtBarcodeRuleSetDet);
+                }
+                return smtBarcodeRuleSetDetMapper.insertList(list);
         }
 
         @Override
