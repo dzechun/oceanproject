@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,6 +149,66 @@ public class CodeUtils {
         String ss = "smt[YMDW][yymd]???";
         System.out.println(ss.split("Y").length-1 );
        // patternCode(ss);
+    }
+
+
+    /**
+     *
+     * @param str1  当前最大流水号
+     * @param str2  步长
+     * @return
+     */
+    private static String generateSerialNumber(String str1, String str2) {
+        Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
+        List<Character> list = Arrays.asList(nums);
+        char[] s1 = str1.toCharArray();
+        char[] s2 = str2.toCharArray();
+        int i = s1.length - 1;
+        int j = s2.length - 1;
+        int temp = 0;// 进位
+        StringBuilder sb = new StringBuilder();
+        while (i >= 0 && j >= 0) {
+            char c1 = s1[i];
+            char c2 = s2[j];
+            int index1 = list.indexOf(c1);
+            int index2 = list.indexOf(c2);
+            int sum = index1 + index2 + temp;
+            if (sum >= 36) {
+                temp = 1;
+                sb.append(list.get(sum % 36));
+            } else {
+                temp=0;
+                sb.append(list.get(sum));
+            }
+            i--;
+            j--;
+        }
+        while (i >= 0) {
+            int sum = list.indexOf(s1[i]) + temp;
+            if (sum >=36) {
+                temp = 1;
+                sb.append(list.get(sum % 36));
+            } else {
+                temp=0;
+                sb.append(list.get(sum));
+            }
+            i--;
+        }
+        while (j >= 0) {
+            int sum = list.indexOf(s2[j]) + temp;
+            if (sum >=36) {
+                temp = 1;
+                sb.append(list.get(sum % 36));
+            } else {
+                temp=0;
+                sb.append(list.get(sum));
+            }
+            j--;
+        }
+        if(temp!=0){
+            sb.append('1');
+        }
+        return sb.reverse().toString();
     }
 
 }
