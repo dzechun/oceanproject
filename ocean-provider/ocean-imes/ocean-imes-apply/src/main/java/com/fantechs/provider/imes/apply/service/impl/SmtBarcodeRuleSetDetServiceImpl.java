@@ -49,11 +49,15 @@ public class SmtBarcodeRuleSetDetServiceImpl extends BaseService<SmtBarcodeRuleS
                 smtBarcodeRuleSetDetMapper.deleteByExample(example);
 
                 for (Long barcodeRuleId : barcodeRuleIds) {
-                        SmtBarcodeRuleSetDet smtBarcodeRuleSetDet = new SmtBarcodeRuleSetDet();
-                        smtBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
-                        smtBarcodeRuleSetDet.setBarcodeRuleId(barcodeRuleId);
-                        smtBarcodeRuleSetDet.setIsDelete((byte) 1);
-                        list.add(smtBarcodeRuleSetDet);
+                      SmtBarcodeRuleSetDet smtBarcodeRuleSetDet = new SmtBarcodeRuleSetDet();
+                      smtBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
+                      smtBarcodeRuleSetDet.setBarcodeRuleId(barcodeRuleId);
+                      smtBarcodeRuleSetDet.setIsDelete((byte) 1);
+                      smtBarcodeRuleSetDet.setCreateUserId(currentUser.getUserId());
+                      smtBarcodeRuleSetDet.setCreateTime(new Date());
+                      smtBarcodeRuleSetDet.setModifiedUserId(currentUser.getUserId());
+                      smtBarcodeRuleSetDet.setModifiedTime(new Date());
+                      list.add(smtBarcodeRuleSetDet);
                 }
                 return smtBarcodeRuleSetDetMapper.insertList(list);
         }
