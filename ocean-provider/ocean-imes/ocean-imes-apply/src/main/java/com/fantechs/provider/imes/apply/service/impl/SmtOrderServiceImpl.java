@@ -43,6 +43,8 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         }
         smtOrder.setCreateTime(new Date());
         smtOrder.setCreateUserId(currentUserInfo.getUserId());
+        smtOrder.setModifiedTime(new Date());
+        smtOrder.setModifiedUserId(currentUserInfo.getUserId());
 
         return smtOrderMapper.insertSelective(smtOrder);
     }
