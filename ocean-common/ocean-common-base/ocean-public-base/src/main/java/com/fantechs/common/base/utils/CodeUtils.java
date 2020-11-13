@@ -118,27 +118,27 @@ public class CodeUtils {
         Calendar cal = Calendar.getInstance();
         switch(str){
             //年
-            case "Y" :
+            case "[Y]" :
                 ruleType = DateUtils.getDateString(new Date(),"yyyyMMdd");
                 break;
             //月
-            case "M" :
+            case "[M]" :
                 ruleType =  cal.get(Calendar.MONTH) + 1+"";
                 break;
             //周
-            case "W" :
+            case "[W]" :
                 ruleType =  cal.get(Calendar.WEEK_OF_YEAR)+"";
                 break;
             //日
-            case "D" :
+            case "[D]" :
                 ruleType =  cal.get(Calendar.DATE)+"";
                 break;
             //周的日
-            case "K" :
+            case "[K]" :
                 ruleType =  cal.get(Calendar.DAY_OF_WEEK)+"";
                 break;
             //年的日
-            case "A" :
+            case "[A]" :
                 ruleType =  cal.get(Calendar.DAY_OF_YEAR)+"";
                 break;
             default :
@@ -153,28 +153,29 @@ public class CodeUtils {
     }*/
 
     public static void main(String[] args) {
+        String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String str1 = "0X0Z";
-        int num=8;
+        int num=5;
         String str2 = String.valueOf(num);
-        String r=generateSerialNumber(str1,str2);
+        String r=generateSerialNumber(str1,str2,code);
         System.out.println(r);
+
+        String a="[K]";
+        String typeCode = getTypeCode(a);
+        System.out.println(typeCode);
     }
 
-    private static Character[] getChar(){
-        String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Character[] split= ArrayUtils.toObject(code.toCharArray());
-        return split;
-    }
 
     /**
      *
      * @param str1  当前最大流水号
      * @param str2  步长
+     * @param code  自定义流水号
      * @return
      */
-    private static String generateSerialNumber(String str1, String str2) {
+    private static String generateSerialNumber(String str1, String str2,String code) {
         //Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
-        Character[] nums = getChar();
+        Character[] nums= ArrayUtils.toObject(code.toCharArray());
         List<Character> list = Arrays.asList(nums);
         char[] s1 = str1.toCharArray();
         char[] s2 = str2.toCharArray();
