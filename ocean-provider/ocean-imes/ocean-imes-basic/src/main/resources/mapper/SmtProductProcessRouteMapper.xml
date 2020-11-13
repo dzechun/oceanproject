@@ -60,6 +60,9 @@
       <if test="routeId!=null and routeId!=''">
         and sppr.route_id=#{routeId}
       </if>
+      <if test="status!=null and status!=''">
+        and sppr.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sppr.create_time desc
   </select>

@@ -68,6 +68,9 @@
         AND   su.user_id  IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
         AND    su.status=1
       </if>
+      <if test="status!=null and status!=''">
+        and su.status like CONCAT('%', #{status}, '%')
+      </if>
       <if test="searchType==0 and roleId!=null and roleId!=''">
         AND   su.user_id NOT IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
         AND  su.status=1

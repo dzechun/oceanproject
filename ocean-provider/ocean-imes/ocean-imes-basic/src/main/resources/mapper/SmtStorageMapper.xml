@@ -49,6 +49,9 @@
       <if test="warehouseAreaId!=null and warehouseAreaId!=''">
         and ss.warehouse_area_Id=#{warehouseAreaId}
       </if>
+      <if test="status!=null and status!=''">
+        and ss.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by ss.create_time desc
   </select>

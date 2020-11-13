@@ -41,6 +41,9 @@
       <if test="supplierType!=null and supplierType!=''">
         and su.supplier_type=#{supplierType}
       </if>
+      <if test="status!=null and status!=''">
+        and su.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by su.create_time desc
   </select>

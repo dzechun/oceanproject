@@ -84,6 +84,9 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and swo.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by swo.create_time desc
   </select>
@@ -94,6 +97,13 @@
     spbd.position,spbd.create_user_id, spbd.create_time,spbd.modified_user_id,spbd.modified_time, spbd.is_delete,spb.material_id
     from fantech_imes.smt_product_bom_det spbd
     left join fantech_imes.smt_product_bom spb on spbd.product_bom_id=spb.product_bom_id
-    where spb.material_id=#{materialId}
+    <where>
+      <if test="status!=null and status!=''">
+        and swo.status like CONCAT('%', #{status}, '%')
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and spb.material_id=#{materialId}
+      </if>
+    </where>
   </select>
 </mapper>

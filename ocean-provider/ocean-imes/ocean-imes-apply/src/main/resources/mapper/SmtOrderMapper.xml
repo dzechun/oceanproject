@@ -60,9 +60,11 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
-
       <if test="customerName != null and customerName != ''">
         and sc.customer_name like CONCAT('%', #{customerName}, '%')
+      </if>
+      <if test="status!=null and status!=''">
+        and so.status like CONCAT('%', #{status}, '%')
       </if>
     </where>
     order by create_time desc

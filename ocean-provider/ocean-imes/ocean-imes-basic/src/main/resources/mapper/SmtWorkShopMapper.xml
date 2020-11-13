@@ -50,6 +50,9 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="status!=null and status!=''">
+        and ws.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by create_time desc
   </select>

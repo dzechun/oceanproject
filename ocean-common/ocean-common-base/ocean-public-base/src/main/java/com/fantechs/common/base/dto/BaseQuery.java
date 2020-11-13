@@ -36,4 +36,9 @@ public class BaseQuery implements Serializable {
     @ApiModelProperty(name="pageSize" ,value="显示数量")
     private Integer pageSize=10;
 
+    /**
+     * 状态（0、无效 1、有效）
+     */
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    private Byte status;
 }

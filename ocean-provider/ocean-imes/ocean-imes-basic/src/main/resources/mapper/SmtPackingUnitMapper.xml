@@ -45,6 +45,9 @@
       <if test="packingUnitDesc != null">
         and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and spu.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by spu.create_time desc
   </select>
