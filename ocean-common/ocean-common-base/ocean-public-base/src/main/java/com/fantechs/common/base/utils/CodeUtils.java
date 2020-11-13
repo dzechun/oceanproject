@@ -1,5 +1,6 @@
 package com.fantechs.common.base.utils;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -145,12 +146,25 @@ public class CodeUtils {
         return  ruleType;
     }
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         String ss = "smt[YMDW][yymd]???";
         System.out.println(ss.split("Y").length-1 );
        // patternCode(ss);
+    }*/
+
+    public static void main(String[] args) {
+        String str1 = "0X0Z";
+        int num=8;
+        String str2 = String.valueOf(num);
+        String r=generateSerialNumber(str1,str2);
+        System.out.println(r);
     }
 
+    private static Character[] getChar(){
+        String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Character[] split= ArrayUtils.toObject(code.toCharArray());
+        return split;
+    }
 
     /**
      *
@@ -159,7 +173,8 @@ public class CodeUtils {
      * @return
      */
     private static String generateSerialNumber(String str1, String str2) {
-        Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
+        //Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
+        Character[] nums = getChar();
         List<Character> list = Arrays.asList(nums);
         char[] s1 = str1.toCharArray();
         char[] s2 = str2.toCharArray();
