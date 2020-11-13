@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtAddressMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtAddress">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="address_id" jdbcType="BIGINT" property="addressId" />
+    <result column="province_code" jdbcType="VARCHAR" property="provinceCode" />
+    <result column="city_code" jdbcType="VARCHAR" property="cityCode" />
+    <result column="classify_code" jdbcType="VARCHAR" property="classifyCode" />
+    <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+    <result column="post_code" jdbcType="VARCHAR" property="postCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtAddressDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    sa.address_id, sa.province_code, sa.city_code, sa.classify_code, sa.address_detail, sa.post_code, sa.status, sa.create_user_id,
+    sa.create_time, sa.modified_user_id, sa.modified_time, sa.is_delete, sa.option1, sa.option2, sa.option3
+  </sql>
+
+  <select id="findList"  resultMap="BaseResultMapDto" parameterType="map">
+    SELECT <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    FROM smt_address sa
+    LEFT JOIN ocean.sys_user su  ON sa.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON sa.modified_user_id = sus.user_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="provinceCode != null">
+        and sa.province_code like CONCAT('%', #{provinceCode}, '%')
+      </if>
+      <if test="cityCode != null">
+        and  sa.city_code like CONCAT('%', #{cityCode}, '%')
+      </if>
+      <if test="classifyCode!=null">
+        and sa.classify_code like CONCAT('%', #{classifyCode}, '%')
+      </if>
+      <if test="addressDetail != null">
+        and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
+      </if>
+      <if test="postCode != null">
+        and sa.post_code like CONCAT('%', #{postCode}, '%')
+      </if>
+    </where>
+    order by  sa.create_time desc
+  </select>
+</mapper>
