@@ -8,7 +8,6 @@ import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
 import org.springframework.stereotype.Component;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.io.IOException;
