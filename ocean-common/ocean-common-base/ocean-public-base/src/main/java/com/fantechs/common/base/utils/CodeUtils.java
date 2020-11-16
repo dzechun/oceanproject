@@ -173,7 +173,7 @@ public class CodeUtils {
      * @param code  自定义流水号
      * @return
      */
-    private static String generateSerialNumber(String str1, String str2,String code) {
+    public static String generateSerialNumber(String str1, String str2, String code) {
         //Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
         Character[] nums= ArrayUtils.toObject(code.toCharArray());
         List<Character> list = Arrays.asList(nums);
