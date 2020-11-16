@@ -55,7 +55,7 @@ public class BarcodeRuleUtils {
      * @param code 产品料号、生产线别、客户料号
      * @return
      */
-    public String analysisCode(List<SmtBarcodeRuleSpec> list,String maxCode,String code) throws IOException {
+    public static String analysisCode(List<SmtBarcodeRuleSpec> list,String maxCode,String code) throws IOException {
         StringBuilder sb=new StringBuilder();
         Calendar cal= Calendar.getInstance();
         if(StringUtils.isNotEmpty(list)){
@@ -79,9 +79,6 @@ public class BarcodeRuleUtils {
                 //初始值
                 Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
 
-                if(StringUtils.isEmpty(maxCode)){
-                    maxCode=changeCode(barcodeLength,initialValue);
-                }
 
                 if("[G]".equals(specification)){
                      sb.append(customizeValue);
@@ -165,6 +162,9 @@ public class BarcodeRuleUtils {
                         sb.append(code);
                     }
                 }else if("[S]".equals(specification)){
+                    if(StringUtils.isEmpty(maxCode)){
+                        maxCode=changeCode(barcodeLength,initialValue);
+                    }
                     String customizeCode="0123456789";
                     String stepLength = String.valueOf(step);
                     String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
@@ -174,6 +174,9 @@ public class BarcodeRuleUtils {
                         throw new BizErrorException("流水号已经超出定义的范围");
                     }
                 }else if("[F]".equals(specification)){
+                    if(StringUtils.isEmpty(maxCode)){
+                        maxCode=changeCode(barcodeLength,initialValue);
+                    }
                     String customizeCode="0123456789ABCDEF";
                     String stepLength = String.valueOf(step);
                     String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
@@ -183,6 +186,9 @@ public class BarcodeRuleUtils {
                         throw new BizErrorException("流水号已经超出定义的范围");
                     }
                 }else if("[b]".equals(specification)||"[c]".equals(specification)){
+                    if(StringUtils.isEmpty(maxCode)){
+                        maxCode=changeCode(barcodeLength,initialValue);
+                    }
                    // String customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                     //step小于10
                     String stepLength = String.valueOf(step);
@@ -249,13 +255,19 @@ public class BarcodeRuleUtils {
      * @param initialValue
      * @return
      */
-    private String changeCode(Integer barcodeLength, Integer initialValue) {
+    private static String changeCode(Integer barcodeLength, Integer initialValue) {
+        int initialLength=0;
         StringBuilder sb=new StringBuilder();
-        int initialLength = String.valueOf(initialValue).length();
+        if(StringUtils.isNotEmpty(initialValue)){
+            initialLength = String.valueOf(initialValue).length();
+        }
         for (int i=0;i<barcodeLength-initialLength;i++){
             sb.append("0");
         }
-        sb.append(initialValue);
+
+        if(StringUtils.isNotEmpty(initialValue)){
+            sb.append(initialValue);
+        }
         return sb.toString();
     }
 
@@ -296,6 +308,104 @@ public class BarcodeRuleUtils {
         }
         System.out.println(value);
 
+
+        String rule="[\n" +
+                "    {\n" +
+                "      \"barcodeRuleSpecId\": 61,\n" +
+                "      \"barcodeRuleId\": 2,\n" +
+                "      \"specId\": 1,\n" +
+                "      \"specification\": \"[G]\",\n" +
+                "      \"barcodeLength\": null,\n" +
+                "      \"initialValue\": null,\n" +
+                "      \"step\": null,\n" +
+                "      \"fillOperator\": null,\n" +
+                "      \"fillDirection\": null,\n" +
+                "      \"customizeName\": null,\n" +
+                "      \"interceptLength\": null,\n" +
+                "      \"interceptPosition\": null,\n" +
+                "      \"interceptDirection\": null,\n" +
+                "      \"customizeValue\": \"ABC\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"barcodeRuleSpecId\": 62,\n" +
+                "      \"barcodeRuleId\": 2,\n" +
+                "      \"specId\": 2,\n" +
+                "      \"specification\": \"[Y]\",\n" +
+                "      \"barcodeLength\": 2,\n" +
+                "      \"initialValue\": null,\n" +
+                "      \"step\": null,\n" +
+                "      \"fillOperator\": null,\n" +
+                "      \"fillDirection\": null,\n" +
+                "      \"customizeName\": null,\n" +
+                "      \"interceptLength\": null,\n" +
+                "      \"interceptPosition\": null,\n" +
+                "      \"interceptDirection\": null,\n" +
+                "      \"customizeValue\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"barcodeRuleSpecId\": 63,\n" +
+                "      \"barcodeRuleId\": 2,\n" +
+                "      \"specId\": 3,\n" +
+                "      \"specification\": \"[M]\",\n" +
+                "      \"barcodeLength\": 2,\n" +
+                "      \"initialValue\": null,\n" +
+                "      \"step\": null,\n" +
+                "      \"fillOperator\": null,\n" +
+                "      \"fillDirection\": null,\n" +
+                "      \"customizeName\": null,\n" +
+                "      \"interceptLength\": null,\n" +
+                "      \"interceptPosition\": null,\n" +
+                "      \"interceptDirection\": null,\n" +
+                "      \"customizeValue\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"barcodeRuleSpecId\": 64,\n" +
+                "      \"barcodeRuleId\": 2,\n" +
+                "      \"specId\": 4,\n" +
+                "      \"specification\": \"[D]\",\n" +
+                "      \"barcodeLength\": 2,\n" +
+                "      \"initialValue\": null,\n" +
+                "      \"step\": null,\n" +
+                "      \"fillOperator\": null,\n" +
+                "      \"fillDirection\": null,\n" +
+                "      \"customizeName\": null,\n" +
+                "      \"interceptLength\": null,\n" +
+                "      \"interceptPosition\": null,\n" +
+                "      \"interceptDirection\": null,\n" +
+                "      \"customizeValue\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"barcodeRuleSpecId\": 65,\n" +
+                "      \"barcodeRuleId\": 2,\n" +
+                "      \"specId\": 1,\n" +
+                "      \"specification\": \"[b]\",\n" +
+                "      \"barcodeLength\": 4,\n" +
+                "      \"initialValue\": null,\n" +
+                "      \"step\": 1,\n" +
+                "      \"fillOperator\": null,\n" +
+                "      \"fillDirection\": null,\n" +
+                "      \"customizeName\": null,\n" +
+                "      \"interceptLength\": null,\n" +
+                "      \"interceptPosition\": null,\n" +
+                "      \"interceptDirection\": null,\n" +
+                "      \"customizeValue\": \"0123456789ABCDEFGHJKLMNPRSTUVWXYZ\"\n" +
+                "    }\n" +
+                "  ]";
+
+        List<SmtBarcodeRuleSpec> list = JsonUtils.jsonToList(rule, SmtBarcodeRuleSpec.class);
+        String code=null;
+        String maxCode=null;
+        int step=1;
+        String customizeCode="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+        Integer barcodeLength=4;
+        if(StringUtils.isEmpty(maxCode)){
+            maxCode=changeCode(barcodeLength,null);
+        }
+        for (int i=0;i<=100;i++){
+           code= analysisCode(list, maxCode, null);
+           maxCode = CodeUtils.generateSerialNumber(maxCode, String.valueOf(step), customizeCode);
+           System.out.println(code);
+        }
     }
 }
 
