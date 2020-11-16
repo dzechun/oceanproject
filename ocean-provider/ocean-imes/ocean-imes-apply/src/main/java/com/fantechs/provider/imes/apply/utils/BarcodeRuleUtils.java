@@ -6,11 +6,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -20,8 +18,6 @@ import java.util.*;
 
 @Component
 public class BarcodeRuleUtils {
-    @Resource
-    private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
 
     private static BarcodeRuleUtils barcodeRuleUtils = null;
 
