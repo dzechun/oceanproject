@@ -55,7 +55,7 @@ public class BarcodeRuleUtils {
      * @param code 产品料号、生产线别、客户料号
      * @return
      */
-    private String analysisCode(Long barcodeRuleId,String maxCode,String code) throws IOException {
+    public String analysisCode(Long barcodeRuleId,String maxCode,String code) throws IOException {
         //查询该条码规则对应的条码配置
         Example example = new Example(SmtBarcodeRuleSpec.class);
         Example.Criteria criteria = example.createCriteria();
