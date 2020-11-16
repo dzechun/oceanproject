@@ -82,9 +82,11 @@ public class BarcodeRuleUtils {
                 Byte interceptDirection = smtBarcodeRuleSpec.getInterceptDirection();
                 //截取位置
                 Integer interceptPosition = smtBarcodeRuleSpec.getInterceptPosition();
+                //初始值
+                Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
 
                 if(StringUtils.isEmpty(maxCode)){
-                    maxCode=changeCode(barcodeLength);
+                    maxCode=changeCode(barcodeLength,initialValue);
                 }
 
                 if("[G]".equals(specification)){
@@ -247,11 +249,13 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
-    private String changeCode(Integer barcodeLength) {
+    private String changeCode(Integer barcodeLength, Integer initialValue) {
         StringBuilder sb=new StringBuilder();
-        for (int i=0;i<barcodeLength;i++){
+        int initialLength = String.valueOf(initialValue).length();
+        for (int i=0;i<barcodeLength-initialLength;i++){
             sb.append("0");
         }
+        sb.append(initialValue);
         return sb.toString();
     }
 
@@ -291,6 +295,7 @@ public class BarcodeRuleUtils {
             }
         }
         System.out.println(value);
+
     }
 }
 
