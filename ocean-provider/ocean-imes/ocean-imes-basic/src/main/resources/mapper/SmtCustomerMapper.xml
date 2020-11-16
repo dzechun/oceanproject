@@ -38,6 +38,9 @@
       <if test="customerDesc!=null and customerDesc!=''">
         and sc.customer_desc like CONCAT('%', #{customerDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and sc.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sc.create_time desc
   </select>

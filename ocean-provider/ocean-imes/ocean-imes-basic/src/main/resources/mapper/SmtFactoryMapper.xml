@@ -46,6 +46,9 @@
       <if test="factoryDesc != null">
         and sf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and sf.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by  create_time desc
   </select>

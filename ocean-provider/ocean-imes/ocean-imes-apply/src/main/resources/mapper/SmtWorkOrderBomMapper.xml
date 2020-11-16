@@ -63,6 +63,9 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and swob.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by swob.create_time desc
   </select>

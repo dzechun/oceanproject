@@ -35,6 +35,9 @@
       <if test="barcodeRuleId!=null and barcodeRuleId!=''">
         and sbrs.barcode_rule_id= #{barcodeRuleId}
       </if>
+      <if test="status!=null and status!=''">
+        and sbrs.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
   </select>
 
@@ -47,7 +50,14 @@
         fill_operator = #{item.fillOperator},fill_direction = #{item.fillDirection},customize_name = #{item.customizeName},intercept_length = #{item.interceptLength},
         intercept_position = #{item.interceptPosition},intercept_direction = #{item.interceptDirection},customize_value = #{item.customizeValue}
       </set>
-      where barcode_rule_spec_id = ${item.barcodeRuleSpecId}
+      <where>
+        <if test="status!=null and status!=''">
+          and sbrs.status like CONCAT('%', #{status}, '%')
+        </if>
+        <if test="barcodeRuleSpecId!=null and barcodeRuleSpecId!=''">
+          and sbrs.barcode_rule_spec_id = ${item.barcodeRuleSpecId}
+        </if>
+      </where>
     </foreach>
   </update>
 </mapper>

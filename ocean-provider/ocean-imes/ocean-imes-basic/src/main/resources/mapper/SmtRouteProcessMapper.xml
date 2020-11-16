@@ -31,6 +31,14 @@
     left join fantech_imes.smt_process sp on srp.process_id=sp.process_id
     left join fantech_imes.smt_process sps on srp.next_process_id=sps.process_id
     left join fantech_imes.smt_process p on srp.next_process_id=p.process_id
+    <where>
+      <if test="status!=null and status!=''">
+        and swo.status like CONCAT('%', #{status}, '%')
+      </if>
+      <if test="routeId!=null and routeId!=''">
+        and srp.route_id=#{routeId}
+      </if>
+    </where>
     where srp.route_id=#{routeId}
   </select>
 

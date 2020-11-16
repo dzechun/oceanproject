@@ -44,6 +44,9 @@
       <if test="roleDesc!=null and roleDesc!=''">
         and sr.role_desc like CONCAT('%', #{roleDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and sr.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
   </select>
 

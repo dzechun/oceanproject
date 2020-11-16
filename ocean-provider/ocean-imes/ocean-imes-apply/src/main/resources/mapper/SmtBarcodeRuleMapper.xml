@@ -56,6 +56,9 @@
         AND  sbr.barcode_rule_id NOT IN (SELECT sbrsd.barcode_rule_id FROM smt_barcode_rule_set_det sbrsd WHERE sbrsd.barcode_rule_set_id=#{barcodeRuleSetId})
         AND  sbr.status=1
       </if>
+      <if test="status!=null and status!=''">
+        and sbr.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sbr.create_time desc
   </select>

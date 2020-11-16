@@ -64,6 +64,9 @@
       <if test="workOrderId!=null and workOrderId!=''">
         and sm.material_id!=(select material_id from fantech_imes.smt_work_order where work_order_id=#{workOrderId})
       </if>
+      <if test="status!=null and status!=''">
+        and sm.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sm.create_time desc
   </select>

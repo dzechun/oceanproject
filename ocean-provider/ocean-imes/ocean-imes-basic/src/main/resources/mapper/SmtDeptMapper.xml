@@ -47,6 +47,9 @@
       <if test="factoryId!=null and factoryId!=''">
         and sd.factory_id=#{factoryId}
       </if>
+      <if test="status!=null and status!=''">
+        and sd.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sd.create_time desc
   </select>

@@ -40,6 +40,9 @@
       <if test="routeDesc!=null and routeDesc!=''">
         and sr.route_desc like CONCAT('%', #{routeDesc}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and sr.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sr.create_time desc
   </select>

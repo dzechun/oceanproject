@@ -48,6 +48,9 @@
       <if test="processCategoryId!=null and processCategoryId!=''">
         and sp.process_category_id=#{processCategoryId}
       </if>
+      <if test="status!=null and status!=''">
+        and sp.status like CONCAT('%', #{status}, '%')
+      </if>
     </where>
     order by sp.create_time desc
   </select>
