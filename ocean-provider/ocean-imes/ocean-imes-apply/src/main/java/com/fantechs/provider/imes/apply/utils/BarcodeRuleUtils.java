@@ -50,18 +50,12 @@ public class BarcodeRuleUtils {
 
     /**
      *
-     * @param barcodeRuleId 条码规则ID
+     * @param list 条码规则配置
      * @param maxCode  已生成的最大流水号
      * @param code 产品料号、生产线别、客户料号
      * @return
      */
-    public String analysisCode(Long barcodeRuleId,String maxCode,String code) throws IOException {
-        //查询该条码规则对应的条码配置
-        Example example = new Example(SmtBarcodeRuleSpec.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("barcodeRuleId",barcodeRuleId);
-        List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecMapper.selectByExample(example);
-
+    public String analysisCode(List<SmtBarcodeRuleSpec> list,String maxCode,String code) throws IOException {
         StringBuilder sb=new StringBuilder();
         Calendar cal= Calendar.getInstance();
         if(StringUtils.isNotEmpty(list)){
