@@ -153,9 +153,10 @@ public class CodeUtils {
     }*/
 
     public static void main(String[] args) {
-        String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String str1 = "0X0Z";
-        int num=5;
+        //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+        String str1 = "0HJ";
+        int num=6;
         String str2 = String.valueOf(num);
         String r=generateSerialNumber(str1,str2,code);
         System.out.println(r);
@@ -163,6 +164,7 @@ public class CodeUtils {
         String a="[K]";
         String typeCode = getTypeCode(a);
         System.out.println(typeCode);
+
     }
 
 
@@ -177,6 +179,7 @@ public class CodeUtils {
         //Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
         Character[] nums= ArrayUtils.toObject(code.toCharArray());
         List<Character> list = Arrays.asList(nums);
+        int length = code.length();
         char[] s1 = str1.toCharArray();
         char[] s2 = str2.toCharArray();
         int i = s1.length - 1;
@@ -189,9 +192,9 @@ public class CodeUtils {
             int index1 = list.indexOf(c1);
             int index2 = list.indexOf(c2);
             int sum = index1 + index2 + temp;
-            if (sum >= 36) {
+            if (sum >= length) {
                 temp = 1;
-                sb.append(list.get(sum % 36));
+                sb.append(list.get(sum % length));
             } else {
                 temp=0;
                 sb.append(list.get(sum));
@@ -201,9 +204,9 @@ public class CodeUtils {
         }
         while (i >= 0) {
             int sum = list.indexOf(s1[i]) + temp;
-            if (sum >=36) {
+            if (sum >=length) {
                 temp = 1;
-                sb.append(list.get(sum % 36));
+                sb.append(list.get(sum % length));
             } else {
                 temp=0;
                 sb.append(list.get(sum));
@@ -212,9 +215,9 @@ public class CodeUtils {
         }
         while (j >= 0) {
             int sum = list.indexOf(s2[j]) + temp;
-            if (sum >=36) {
+            if (sum >=length) {
                 temp = 1;
-                sb.append(list.get(sum % 36));
+                sb.append(list.get(sum % length));
             } else {
                 temp=0;
                 sb.append(list.get(sum));
