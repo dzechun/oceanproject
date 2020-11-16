@@ -157,40 +157,46 @@ public class BarcodeRuleUtils {
                 }else if("[S]".equals(specification)){
                     if(StringUtils.isEmpty(maxCode)){
                         maxCode=changeCode(barcodeLength,initialValue);
-                    }
-                    String customizeCode="0123456789";
-                    String stepLength = String.valueOf(step);
-                    String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
-                    if(streamCode.length()<=barcodeLength){
-                        sb.append(streamCode);
+                        sb.append(maxCode);
                     }else {
-                        throw new BizErrorException("流水号已经超出定义的范围");
+                        String customizeCode="0123456789";
+                        String stepLength = String.valueOf(step);
+                        String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
+                        if(streamCode.length()<=barcodeLength){
+                            sb.append(streamCode);
+                        }else {
+                            throw new BizErrorException("流水号已经超出定义的范围");
+                        }
                     }
                 }else if("[F]".equals(specification)){
                     if(StringUtils.isEmpty(maxCode)){
                         maxCode=changeCode(barcodeLength,initialValue);
-                    }
-                    String customizeCode="0123456789ABCDEF";
-                    //将步长转成对应的字符
-                    String stepLength = getStep(step, customizeValue);
-                    String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
-                    if(streamCode.length()<=barcodeLength){
-                        sb.append(streamCode);
+                        sb.append(maxCode);
                     }else {
-                        throw new BizErrorException("流水号已经超出定义的范围");
+                        String customizeCode="0123456789ABCDEF";
+                        //将步长转成对应的字符
+                        String stepLength = getStep(step, customizeValue);
+                        String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
+                        if(streamCode.length()<=barcodeLength){
+                            sb.append(streamCode);
+                        }else {
+                            throw new BizErrorException("流水号已经超出定义的范围");
+                        }
                     }
                 }else if("[b]".equals(specification)||"[c]".equals(specification)){
                     if(StringUtils.isEmpty(maxCode)){
                         maxCode=changeCode(barcodeLength,initialValue);
-                    }
-                   // String customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                    //将步长转成对应的字符
-                    String stepLength = getStep(step, customizeValue);
-                    String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeValue);
-                    if(streamCode.length()<=barcodeLength){
-                        sb.append(streamCode);
+                        sb.append(maxCode);
                     }else {
-                        throw new BizErrorException("流水号已经超出定义的范围");
+                        // String customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        //将步长转成对应的字符
+                        String stepLength = getStep(step, customizeValue);
+                        String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeValue);
+                        if(streamCode.length()<=barcodeLength){
+                            sb.append(streamCode);
+                        }else {
+                            throw new BizErrorException("流水号已经超出定义的范围");
+                        }
                     }
                 }else if("[y]".equals(specification)){
                     String value=null;
@@ -260,14 +266,17 @@ public class BarcodeRuleUtils {
         StringBuilder sb=new StringBuilder();
         if(StringUtils.isNotEmpty(initialValue)){
             initialLength = String.valueOf(initialValue).length();
-        }
-        for (int i=0;i<barcodeLength-initialLength;i++){
-            sb.append("0");
+            for (int i=0;i<barcodeLength-initialLength;i++){
+                sb.append("0");
+            }
+            sb.append(initialValue);
+        }else {
+            for (int i=0;i<barcodeLength-1;i++){
+                sb.append("0");
+            }
+            sb.append("1");
         }
 
-        if(StringUtils.isNotEmpty(initialValue)){
-            sb.append(initialValue);
-        }
         return sb.toString();
     }
 
