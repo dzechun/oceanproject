@@ -39,7 +39,7 @@
         and sw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and sw.status like CONCAT('%', #{status}, '%')
+        and sw.status=#{status}
       </if>
     </where>
     order by sw.create_time desc

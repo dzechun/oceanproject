@@ -40,7 +40,7 @@
         and spm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and spm.status like CONCAT('%', #{status}, '%')
+        and spm.status=#{status}
       </if>
     </where>
     order by spm.create_time desc

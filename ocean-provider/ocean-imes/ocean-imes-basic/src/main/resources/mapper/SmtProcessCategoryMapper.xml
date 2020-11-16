@@ -47,7 +47,7 @@
         and spc.process_category_desc like CONCAT('%',#{processCategoryDesc},'%')
       </if>
       <if test="status!=null and status!=''">
-        and spc.status like CONCAT('%', #{status}, '%')
+        and spc.status=#{status}
       </if>
     </where>
     order by create_time desc

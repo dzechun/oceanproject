@@ -47,7 +47,7 @@
         and sf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and sf.status like CONCAT('%', #{status}, '%')
+        and sf.status=#{status}
       </if>
     </where>
     order by  create_time desc

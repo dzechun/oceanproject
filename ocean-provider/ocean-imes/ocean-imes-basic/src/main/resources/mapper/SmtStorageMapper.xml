@@ -50,7 +50,7 @@
         and ss.warehouse_area_Id=#{warehouseAreaId}
       </if>
       <if test="status!=null and status!=''">
-        and ss.status like CONCAT('%', #{status}, '%')
+        and ss.status=#{status}
       </if>
     </where>
     order by ss.create_time desc

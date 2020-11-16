@@ -38,7 +38,7 @@
         and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and ss.status like CONCAT('%', #{status}, '%')
+        and ss.status=#{status}
       </if>
     </where>
     order by ss.create_time desc

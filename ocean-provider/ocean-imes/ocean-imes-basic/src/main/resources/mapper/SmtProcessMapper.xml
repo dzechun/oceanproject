@@ -49,7 +49,7 @@
         and sp.process_category_id=#{processCategoryId}
       </if>
       <if test="status!=null and status!=''">
-        and sp.status like CONCAT('%', #{status}, '%')
+        and sp.status=#{status}
       </if>
     </where>
     order by sp.create_time desc

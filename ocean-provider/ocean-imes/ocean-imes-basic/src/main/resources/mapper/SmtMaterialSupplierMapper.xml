@@ -61,7 +61,7 @@
         and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and sms.status like CONCAT('%', #{status}, '%')
+        and sms.status=#{status}
       </if>
     </where>
     order by sms.create_time desc

@@ -51,7 +51,7 @@
         and wha.warehouse_id = #{warehouseId}
       </if>
       <if test="status!=null and status!=''">
-        and wha.status like CONCAT('%', #{status}, '%')
+        and wha.status=#{status}
       </if>
     </where>
     order by  create_time desc

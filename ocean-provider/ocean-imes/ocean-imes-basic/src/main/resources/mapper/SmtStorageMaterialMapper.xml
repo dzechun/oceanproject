@@ -54,7 +54,7 @@
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and ssm.status like CONCAT('%', #{status}, '%')
+        and ssm.status=#{status}
       </if>
     </where>
     order by ssm.create_time desc

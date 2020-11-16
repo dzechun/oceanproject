@@ -67,9 +67,6 @@
     LEFT JOIN sys_user su  ON sm.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON sm.modified_user_id = sus.user_id
     <where>
-      <if test="status!=null and status!=''">
-        and sm.status like CONCAT('%', #{status}, '%')
-      </if>
       <if test="menuId!=null and menuId!=''">
         and sm.menu_id = #{menuId,jdbcType=BIGINT}
       </if>

@@ -47,7 +47,7 @@
         and spl.pro_desc like CONCAT('%', #{proDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and spl.status like CONCAT('%', #{status}, '%')
+        and spl.status=#{status}
       </if>
     </where>
     order by spl.create_time desc

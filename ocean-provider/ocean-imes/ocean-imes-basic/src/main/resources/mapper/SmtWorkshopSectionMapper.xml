@@ -38,7 +38,7 @@
         and ws.section_desc like CONCAT('%', #{sectionDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and ws.status like CONCAT('%', #{status}, '%')
+        and ws.status=#{status}
       </if>
     </where>
     order by ws.create_time desc
