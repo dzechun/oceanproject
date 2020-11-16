@@ -82,6 +82,11 @@ public class BarcodeRuleUtils {
                 Byte interceptDirection = smtBarcodeRuleSpec.getInterceptDirection();
                 //截取位置
                 Integer interceptPosition = smtBarcodeRuleSpec.getInterceptPosition();
+
+                if(StringUtils.isEmpty(maxCode)){
+                    maxCode=changeCode(barcodeLength);
+                }
+
                 if("[G]".equals(specification)){
                      sb.append(customizeValue);
                 }else if("[Y]".equals(specification)){
@@ -242,6 +247,14 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
+    private String changeCode(Integer barcodeLength) {
+        StringBuilder sb=new StringBuilder();
+        for (int i=0;i<barcodeLength;i++){
+            sb.append("0");
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) throws ParseException, IOException {
        /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String str = "2020-01-03";
@@ -278,9 +291,6 @@ public class BarcodeRuleUtils {
             }
         }
         System.out.println(value);
-
-        String code="0123456789ABCDEF";
-        System.out.println(code.length());
     }
 }
 
