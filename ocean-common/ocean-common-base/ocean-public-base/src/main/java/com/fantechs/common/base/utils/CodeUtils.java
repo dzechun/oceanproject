@@ -156,8 +156,10 @@ public class CodeUtils {
         //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         String str1 = "0HJ";
-        int num=6;
-        String str2 = String.valueOf(num);
+        int num=16;
+        Character[] nums= ArrayUtils.toObject(code.toCharArray());
+        List<Character> list = Arrays.asList(nums);
+        String str2 = list.get(num).toString();
         String r=generateSerialNumber(str1,str2,code);
         System.out.println(r);
 

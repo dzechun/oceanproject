@@ -7,6 +7,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -15,10 +16,7 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class BarcodeRuleUtils {
@@ -177,7 +175,8 @@ public class BarcodeRuleUtils {
                         maxCode=changeCode(barcodeLength,initialValue);
                     }
                     String customizeCode="0123456789ABCDEF";
-                    String stepLength = String.valueOf(step);
+                    //将步长转成对应的字符
+                    String stepLength = getStep(step, customizeValue);
                     String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
                     if(streamCode.length()<=barcodeLength){
                         sb.append(streamCode);
@@ -189,8 +188,8 @@ public class BarcodeRuleUtils {
                         maxCode=changeCode(barcodeLength,initialValue);
                     }
                    // String customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                    //step小于10
-                    String stepLength = String.valueOf(step);
+                    //将步长转成对应的字符
+                    String stepLength = getStep(step, customizeValue);
                     String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeValue);
                     if(streamCode.length()<=barcodeLength){
                         sb.append(streamCode);
@@ -246,6 +245,12 @@ public class BarcodeRuleUtils {
         }
 
         return sb.toString();
+    }
+
+    public static String getStep(Integer step, String customizeValue) {
+        Character[] nums = ArrayUtils.toObject(customizeValue.toCharArray());
+        List<Character> numbers = Arrays.asList(nums);
+        return numbers.get(step).toString();
     }
 
     /**
@@ -400,7 +405,7 @@ public class BarcodeRuleUtils {
         if(StringUtils.isEmpty(maxCode)){
             maxCode=changeCode(barcodeLength,null);
         }
-        for (int i=0;i<=100;i++){
+        for (int i=0;i<=1000;i++){
            code= analysisCode(list, maxCode, null);
            maxCode = CodeUtils.generateSerialNumber(maxCode, String.valueOf(step), customizeCode);
            System.out.println(code);
