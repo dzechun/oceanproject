@@ -249,6 +249,12 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
+    /**
+     * 初始的流水号
+     * @param barcodeLength
+     * @param initialValue
+     * @return
+     */
     private String changeCode(Integer barcodeLength, Integer initialValue) {
         StringBuilder sb=new StringBuilder();
         int initialLength = String.valueOf(initialValue).length();
