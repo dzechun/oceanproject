@@ -24,8 +24,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
+            <groupId>com.fantechs.common.base.electronic</groupId>
+            <artifactId>ocean-electronic-tag-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
