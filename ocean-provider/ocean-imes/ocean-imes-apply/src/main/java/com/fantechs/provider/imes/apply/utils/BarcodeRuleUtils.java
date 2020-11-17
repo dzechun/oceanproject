@@ -83,7 +83,7 @@ public class BarcodeRuleUtils {
                     String value = CodeUtils.getTypeCode(specification);
                     sb.append(value);
                 }else if("[A]".equals(specification)){
-                    int value = cal.get(Calendar.DAY_OF_YEAR);
+                    String value = CodeUtils.getTypeCode(specification);
                     //年的日固定3位
                     Format format=new DecimalFormat("000");
                     String dayOfYear =format.format(value);
