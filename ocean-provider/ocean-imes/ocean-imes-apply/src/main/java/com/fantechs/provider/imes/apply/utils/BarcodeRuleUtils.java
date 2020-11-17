@@ -390,7 +390,7 @@ public class BarcodeRuleUtils {
                 "      \"specification\": \"[b]\",\n" +
                 "      \"barcodeLength\": 4,\n" +
                 "      \"initialValue\": null,\n" +
-                "      \"step\": 1,\n" +
+                "      \"step\": 2,\n" +
                 "      \"fillOperator\": null,\n" +
                 "      \"fillDirection\": null,\n" +
                 "      \"customizeName\": null,\n" +
@@ -404,15 +404,17 @@ public class BarcodeRuleUtils {
         List<SmtBarcodeRuleSpec> list = JsonUtils.jsonToList(rule, SmtBarcodeRuleSpec.class);
         String code=null;
         String maxCode=null;
-        int step=1;
+        int step=2;
         String customizeCode="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         Integer barcodeLength=4;
-        if(StringUtils.isEmpty(maxCode)){
-            maxCode=changeCode(barcodeLength,null);
-        }
+
         for (int i=0;i<=1000;i++){
            code= analysisCode(list, maxCode, null);
-           maxCode = CodeUtils.generateSerialNumber(maxCode, String.valueOf(step), customizeCode);
+            if(StringUtils.isEmpty(maxCode)){
+                maxCode=changeCode(barcodeLength,null);
+            }else {
+                maxCode = CodeUtils.generateSerialNumber(maxCode, String.valueOf(step), customizeCode);
+            }
            System.out.println(code);
         }
     }
