@@ -18,28 +18,6 @@ import java.util.*;
 @Component
 public class BarcodeRuleUtils {
 
-    private static BarcodeRuleUtils barcodeRuleUtils = null;
-
-    private BarcodeRuleUtils(){
-
-    }
-
-    /**
-     * 取得BarcodeRuleUtils的单例实现
-     *
-     * @return
-     */
-    public static BarcodeRuleUtils getInstance() {
-        if (barcodeRuleUtils == null) {
-            synchronized (BarcodeRuleUtils.class) {
-                if (barcodeRuleUtils == null) {
-                    barcodeRuleUtils = new BarcodeRuleUtils();
-                }
-            }
-        }
-        return barcodeRuleUtils;
-    }
-
     /**
      *
      * @param list 条码规则配置
@@ -90,23 +68,23 @@ public class BarcodeRuleUtils {
                         sb.append(year);
                     }
                 }else if("[M]".equals(specification)){
-                    SimpleDateFormat sdf=new SimpleDateFormat("MM");
-                    String month = sdf.format(new Date());
+                    String month = CodeUtils.getTypeCode(specification);
                     sb.append(month);
                 }else if("[D]".equals(specification)){
-                    SimpleDateFormat sdf=new SimpleDateFormat("dd");
-                    String day = sdf.format(new Date());
+                    String day =  CodeUtils.getTypeCode(specification);
                     sb.append(day);
                 }else if("[W]".equals(specification)){
-                    int value = cal.get(Calendar.WEEK_OF_YEAR);
+                    String value = CodeUtils.getTypeCode(specification);
+                    //周固定2位
                     Format format=new DecimalFormat("00");
                     String week =format.format(value);
                     sb.append(week);
                 }else if("[K]".equals(specification)){
-                    int value = cal.get(Calendar.DAY_OF_WEEK);
+                    String value = CodeUtils.getTypeCode(specification);
                     sb.append(value);
                 }else if("[A]".equals(specification)){
                     int value = cal.get(Calendar.DAY_OF_YEAR);
+                    //年的日固定3位
                     Format format=new DecimalFormat("000");
                     String dayOfYear =format.format(value);
                     sb.append(dayOfYear);
