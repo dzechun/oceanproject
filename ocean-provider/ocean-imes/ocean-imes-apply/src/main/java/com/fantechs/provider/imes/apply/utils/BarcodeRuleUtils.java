@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -280,31 +279,7 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
-    public static void main(String[] args) throws ParseException, IOException {
-       /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String str = "2020-01-03";
-        Date date = sdf.parse(str);
-        Calendar cal= Calendar.getInstance();
-        cal.setTime(date);
-
-        int Y = cal.get(Calendar.YEAR);
-        int M = cal.get(Calendar.MONTH)+1;
-        int D = cal.get(Calendar.DAY_OF_MONTH);
-        int W = cal.get(Calendar.WEEK_OF_YEAR);
-        int K = cal.get(Calendar.DAY_OF_WEEK);
-        int A = cal.get(Calendar.DAY_OF_YEAR);
-
-        Format f1=new DecimalFormat("000");
-        String  count =f1.format(A);
-        System.out.println("Y="+Y);
-        System.out.println("M="+M);
-        System.out.println("D="+D);
-        System.out.println("W="+W);
-        System.out.println("K="+K);
-        System.out.println("A="+A);
-        System.out.println("count="+count);*/
-
-
+    public static void main(String[] args) throws IOException {
         String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
         String value=null;
         Map<String, Object> map = JsonUtils.jsonToMap(str);

@@ -209,13 +209,14 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             String specification = smtBarcodeRuleSpec.getSpecification();
             Integer barcodeLength = smtBarcodeRuleSpec.getBarcodeLength();
             String customizeValue = smtBarcodeRuleSpec.getCustomizeValue();
-            if(specification.contains("]")){
+            if(specification.contains("G")){
+                sb.append(customizeValue);
+            }else {
                 //例如：将[Y][Y][Y][Y]转成[YYYY]
                 String spec = getRuleSpec(specification, barcodeLength);
                 sb.append(spec);
-            }else {
-                sb.append(customizeValue);
             }
+
             smtBarcodeRuleSpec.setBarcodeRuleId(smtBarcodeRule.getBarcodeRuleId());
             specs.add(specification);
         }
