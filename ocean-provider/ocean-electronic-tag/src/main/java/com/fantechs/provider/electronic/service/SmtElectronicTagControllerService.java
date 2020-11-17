@@ -1,7 +1,7 @@
 package com.fantechs.provider.electronic.service;
 
-import com.fantechs.common.base.dto.SmtElectronicTagControllerDto;
-import com.fantechs.common.base.entity.SmtElectronicTagController;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

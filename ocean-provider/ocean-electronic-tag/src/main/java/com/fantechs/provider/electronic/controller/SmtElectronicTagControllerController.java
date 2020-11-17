@@ -1,9 +1,9 @@
 package com.fantechs.provider.electronic.controller;
 
-import com.fantechs.common.base.dto.SmtElectronicTagControllerDto;
-import com.fantechs.common.base.entity.SmtElectronicTagController;
-import com.fantechs.common.base.entity.history.SmtHtElectronicTagController;
-import com.fantechs.common.base.entity.search.SearchSmtElectronicTagController;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
+import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagController;
+import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagController;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -55,7 +55,7 @@ public class SmtElectronicTagControllerController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtElectronicTagController.update.class) SmtElectronicTagController smtElectronicTagController) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= SmtElectronicTagController.update.class) SmtElectronicTagController smtElectronicTagController) {
         return ControllerUtil.returnCRUD(smtElectronicTagControllerService.update(smtElectronicTagController));
     }
 

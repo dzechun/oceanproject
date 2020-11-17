@@ -1,7 +1,7 @@
 package com.fantechs.common.base.electronic.dto;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.entity.SmtElectronicTagController;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

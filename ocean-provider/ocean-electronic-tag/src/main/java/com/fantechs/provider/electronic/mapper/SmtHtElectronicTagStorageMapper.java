@@ -1,6 +1,6 @@
 package com.fantechs.provider.electronic.mapper;
 
-import com.fantechs.common.base.entity.history.SmtHtElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

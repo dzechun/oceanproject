@@ -1,16 +1,15 @@
 package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.SmtElectronicTagStorageDto;
-import com.fantechs.common.base.entity.SmtElectronicTagStorage;
-import com.fantechs.common.base.entity.history.SmtHtElectronicTagStorage;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper;
-import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagControllerMapper;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
 import org.springframework.beans.BeanUtils;

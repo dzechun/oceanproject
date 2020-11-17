@@ -1,6 +1,6 @@
 package com.fantechs.provider.electronic.mapper;
 
-import com.fantechs.common.base.entity.history.SmtHtElectronicTagController;
+import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagController;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

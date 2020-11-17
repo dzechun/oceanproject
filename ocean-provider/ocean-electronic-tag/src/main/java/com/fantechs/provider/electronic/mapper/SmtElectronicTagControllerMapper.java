@@ -1,7 +1,7 @@
 package com.fantechs.provider.electronic.mapper;
 
-import com.fantechs.common.base.dto.SmtElectronicTagControllerDto;
-import com.fantechs.common.base.entity.SmtElectronicTagController;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

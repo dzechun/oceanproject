@@ -1,6 +1,6 @@
 package com.fantechs.provider.electronic.service.Impl;
 
-import com.fantechs.common.base.entity.history.SmtHtElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtHtElectronicTagStorageService;

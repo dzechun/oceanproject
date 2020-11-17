@@ -1,9 +1,9 @@
 package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.SmtElectronicTagControllerDto;
-import com.fantechs.common.base.entity.SmtElectronicTagController;
-import com.fantechs.common.base.entity.history.SmtHtElectronicTagController;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
+import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagController;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
