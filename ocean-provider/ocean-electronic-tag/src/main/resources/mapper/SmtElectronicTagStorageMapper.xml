@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.SmtElectronicTagStorage">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="electronic_tag_storage_id" jdbcType="BIGINT" property="electronicTagStorageId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="electronic_tag_controller_id" jdbcType="BIGINT" property="electronicTagControllerId"/>
+        <result column="electronic_tag_id" jdbcType="VARCHAR" property="electronicTagId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.SmtElectronicTagStorageDto"
+               extends="BaseResultMap">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
+        <result column="electronic_tag_controller_name" jdbcType="VARCHAR" property="electronicTagControllerName"/>
+        <result column="electronic_tag_controller_ip" jdbcType="VARCHAR" property="electronicTagControllerIp"/>
+        <result column="electronic_tag_controller_port" jdbcType="VARCHAR" property="electronicTagControllerPort"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    </resultMap>
+
+    <sql id="Base_column_List">
+    sets.electronic_tag_storage_id,
+	sets.storage_id,
+	sets.electronic_tag_controller_id,
+	sets.electronic_tag_id,
+	sets.`status`,
+	sets.create_user_id,
+	sets.create_time,
+	sets.modified_user_id,
+	sets.modified_time,
+	sets.is_delete,
+	sets.option1,
+	sets.option2,
+	sets.option3
+    </sql>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        ss.storage_name AS storage_name, ss.storage_desc AS storage_desc,
+        setc.electronic_tag_controller_name AS electronic_tag_controller_name,
+        setc.electronic_tag_controller_ip AS electronic_tag_controller_ip,
+        setc.electronic_tag_controller_port AS electronic_tag_controller_port,
+        sw.warehouse_name AS warehouse_name,
+        swa.warehouse_area_name AS warehouse_area_name
+        FROM smt_electronic_tag_storage sets
+        LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
+        LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
+        LEFT JOIN smt_electronic_tag_controller setc ON sets.electronic_tag_controller_id = setc.electronic_tag_controller_id
+        LEFT JOIN smt_warehouse sw ON ss.warehouse_id = sw.warehouse_id
+        LEFT JOIN smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="storageName != null">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="warehouseName != null">
+                and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="warehouseAreaName != null">
+                and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+            </if>
+            <if test="electronicTagControllerName != null">
+                and setc.electronic_tag_controller_name like CONCAT('%', #{electronicTagControllerName}, '%')
+            </if>
+            <if test="electronicTagControllerIp != null">
+                and setc.electronic_tag_controller_ip like CONCAT('%', #{electronicTagControllerIp}, '%')
+            </if>
+            <if test="electronicTagId != null">
+                and sets.electronic_tag_id like CONCAT('%', #{electronicTagId}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and sets.status=#{status}
+            </if>
+        </where>
+        order by  sets.create_time desc
+    </select>
+</mapper>

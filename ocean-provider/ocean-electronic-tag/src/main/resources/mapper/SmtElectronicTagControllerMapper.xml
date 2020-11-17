@@ -30,7 +30,8 @@
   <sql id="Base_Column_List">
     setc.electronic_tag_controller_id, setc.electronic_tag_controller_code, setc.electronic_tag_controller_name,
     setc.electronic_tag_controller_desc, setc.electronic_tag_controller_ip, setc.electronic_tag_controller_port, setc.status,
-    setc.create_user_id, setc.create_time, setc.modified_user_id, setc.modified_time, setc.is_delete, setc.option1, setc.option2, setc.option3
+    setc.create_user_id, setc.create_time, setc.modified_user_id, setc.modified_time, setc.is_delete, setc.option1,
+    setc.option2, setc.option3
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
