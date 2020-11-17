@@ -19,5 +19,6 @@
         <module>ocean-security</module>    <!-- 用户认证中心 -->
         <module>ocean-imes</module>    <!-- imes服务 -->
         <module>ocean-quartz</module>    <!-- 定时任务调度器 -->
+        <module>ocean-electronic-tag</module> <!-- 电子标签 -->
     </modules>
 </project>
