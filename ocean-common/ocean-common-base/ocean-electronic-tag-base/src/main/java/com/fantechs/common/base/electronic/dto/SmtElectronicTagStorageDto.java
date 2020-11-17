@@ -1,4 +1,4 @@
-package com.fantechs.common.base.dto;
+package com.fantechs.common.base.electronic.dto;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.entity.SmtElectronicTagStorage;
