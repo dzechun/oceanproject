@@ -200,7 +200,7 @@ public class BarcodeRuleUtils {
                 }else if("[d]".equals(specification)){
                     String value=null;
                     Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    int d = cal.get(Calendar.DAY_OF_MONTH) + 1;
+                    int d = cal.get(Calendar.DAY_OF_MONTH);
                     String day = String.valueOf(d);
                     for(String key : map.keySet()){
                         if(key.equals(day)){
