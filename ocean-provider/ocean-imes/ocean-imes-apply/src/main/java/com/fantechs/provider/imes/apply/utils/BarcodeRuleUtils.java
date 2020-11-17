@@ -257,6 +257,25 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
+    /**
+     * @param s 要倒转的字符串
+     * @return
+     */
+    public static String spiltRtoL(String s) {
+
+        StringBuffer sb = new StringBuffer();
+        int length = s.length();
+        char[] c = new char[length];
+        for (int i = 0; i < length; i++) {
+            c[i] = s.charAt(i);
+        }
+        for (int i = length - 1; i >= 0; i--) {
+            sb.append(c[i]);
+        }
+
+        return sb.toString();
+    }
+
     public static void main(String[] args) throws IOException {
         String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
         String value=null;
@@ -361,7 +380,7 @@ public class BarcodeRuleUtils {
         String customizeCode="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         Integer barcodeLength=4;
 
-        for (int i=0;i<=1000;i++){
+        for (int i=0;i<=100;i++){
            code= analysisCode(list, maxCode, null);
             if(StringUtils.isEmpty(maxCode)){
                 maxCode=changeCode(barcodeLength,null);
@@ -370,6 +389,11 @@ public class BarcodeRuleUtils {
             }
            System.out.println(code);
         }
+
+        //获取最大流水号
+        String s = spiltRtoL(code);
+        String s1 = s.substring(0, barcodeLength);
+        System.out.println(spiltRtoL(s1));
     }
 }
 
