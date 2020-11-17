@@ -18,28 +18,6 @@ import java.util.*;
 @Component
 public class BarcodeRuleUtils {
 
-    private static BarcodeRuleUtils barcodeRuleUtils = null;
-
-    private BarcodeRuleUtils(){
-
-    }
-
-    /**
-     * 取得BarcodeRuleUtils的单例实现
-     *
-     * @return
-     */
-    public static BarcodeRuleUtils getInstance() {
-        if (barcodeRuleUtils == null) {
-            synchronized (BarcodeRuleUtils.class) {
-                if (barcodeRuleUtils == null) {
-                    barcodeRuleUtils = new BarcodeRuleUtils();
-                }
-            }
-        }
-        return barcodeRuleUtils;
-    }
-
     /**
      *
      * @param list 条码规则配置
@@ -90,23 +68,23 @@ public class BarcodeRuleUtils {
                         sb.append(year);
                     }
                 }else if("[M]".equals(specification)){
-                    SimpleDateFormat sdf=new SimpleDateFormat("MM");
-                    String month = sdf.format(new Date());
+                    String month = CodeUtils.getTypeCode(specification);
                     sb.append(month);
                 }else if("[D]".equals(specification)){
-                    SimpleDateFormat sdf=new SimpleDateFormat("dd");
-                    String day = sdf.format(new Date());
+                    String day =  CodeUtils.getTypeCode(specification);
                     sb.append(day);
                 }else if("[W]".equals(specification)){
-                    int value = cal.get(Calendar.WEEK_OF_YEAR);
+                    String value = CodeUtils.getTypeCode(specification);
+                    //周固定2位
                     Format format=new DecimalFormat("00");
                     String week =format.format(value);
                     sb.append(week);
                 }else if("[K]".equals(specification)){
-                    int value = cal.get(Calendar.DAY_OF_WEEK);
+                    String value = CodeUtils.getTypeCode(specification);
                     sb.append(value);
                 }else if("[A]".equals(specification)){
-                    int value = cal.get(Calendar.DAY_OF_YEAR);
+                    String value = CodeUtils.getTypeCode(specification);
+                    //年的日固定3位
                     Format format=new DecimalFormat("000");
                     String dayOfYear =format.format(value);
                     sb.append(dayOfYear);
@@ -173,7 +151,7 @@ public class BarcodeRuleUtils {
                         sb.append(maxCode);
                     }else {
                         String customizeCode="0123456789ABCDEF";
-                        //将步长转成对应的字符
+                        //将步长转成对应的字符,例如：10转成A
                         String stepLength = getStep(step, customizeValue);
                         String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
                         if(streamCode.length()<=barcodeLength){
@@ -233,7 +211,7 @@ public class BarcodeRuleUtils {
                 }else if("[w]".equals(specification)){
                     String value=null;
                     Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    int w = cal.get(Calendar.WEEK_OF_YEAR) + 1;
+                    int w = cal.get(Calendar.WEEK_OF_YEAR);
                     String day = String.valueOf(w);
                     for(String key : map.keySet()){
                         if(key.equals(day)){
@@ -274,6 +252,25 @@ public class BarcodeRuleUtils {
                 sb.append("0");
             }
             sb.append("1");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * @param s 要倒转的字符串
+     * @return
+     */
+    public static String spiltRtoL(String s) {
+
+        StringBuffer sb = new StringBuffer();
+        int length = s.length();
+        char[] c = new char[length];
+        for (int i = 0; i < length; i++) {
+            c[i] = s.charAt(i);
+        }
+        for (int i = length - 1; i >= 0; i--) {
+            sb.append(c[i]);
         }
 
         return sb.toString();
@@ -383,7 +380,7 @@ public class BarcodeRuleUtils {
         String customizeCode="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         Integer barcodeLength=4;
 
-        for (int i=0;i<=1000;i++){
+        for (int i=0;i<=100;i++){
            code= analysisCode(list, maxCode, null);
             if(StringUtils.isEmpty(maxCode)){
                 maxCode=changeCode(barcodeLength,null);
@@ -392,6 +389,11 @@ public class BarcodeRuleUtils {
             }
            System.out.println(code);
         }
+
+        //获取最大流水号
+        String s = spiltRtoL(code);
+        String s1 = s.substring(0, barcodeLength);
+        System.out.println(spiltRtoL(s1));
     }
 }
 

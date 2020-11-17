@@ -123,7 +123,8 @@ public class CodeUtils {
                 break;
             //月
             case "[M]" :
-                ruleType =  cal.get(Calendar.MONTH) + 1+"";
+                //ruleType =  cal.get(Calendar.MONTH) + 1+"";
+                ruleType =new SimpleDateFormat("MM").format(new Date());
                 break;
             //周
             case "[W]" :
@@ -131,7 +132,8 @@ public class CodeUtils {
                 break;
             //日
             case "[D]" :
-                ruleType =  cal.get(Calendar.DATE)+"";
+                //ruleType =  cal.get(Calendar.DATE)+"";
+                ruleType =new SimpleDateFormat("dd").format(new Date());
                 break;
             //周的日
             case "[K]" :
@@ -167,6 +169,9 @@ public class CodeUtils {
         String typeCode = getTypeCode(a);
         System.out.println(typeCode);
 
+        Calendar cal= Calendar.getInstance();
+        int week = cal.get(Calendar.WEEK_OF_YEAR);
+        System.out.println(week);
     }
 
 
