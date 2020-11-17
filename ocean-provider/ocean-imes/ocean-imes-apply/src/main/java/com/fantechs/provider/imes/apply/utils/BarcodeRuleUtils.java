@@ -233,7 +233,7 @@ public class BarcodeRuleUtils {
                 }else if("[w]".equals(specification)){
                     String value=null;
                     Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    int w = cal.get(Calendar.WEEK_OF_YEAR) + 1;
+                    int w = cal.get(Calendar.WEEK_OF_YEAR);
                     String day = String.valueOf(w);
                     for(String key : map.keySet()){
                         if(key.equals(day)){

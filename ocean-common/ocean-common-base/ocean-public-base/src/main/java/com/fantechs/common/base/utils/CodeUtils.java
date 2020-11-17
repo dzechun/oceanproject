@@ -167,6 +167,9 @@ public class CodeUtils {
         String typeCode = getTypeCode(a);
         System.out.println(typeCode);
 
+        Calendar cal= Calendar.getInstance();
+        int week = cal.get(Calendar.WEEK_OF_YEAR);
+        System.out.println(week);
     }
 
 
