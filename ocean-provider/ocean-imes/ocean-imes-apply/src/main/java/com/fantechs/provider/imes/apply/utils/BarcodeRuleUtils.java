@@ -226,6 +226,12 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
+    /**
+     * 将步长转成对应流水号的字符,例如：16进制的10转成A
+     * @param step             步长
+     * @param customizeValue   进制数 例如：36进制 customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+     * @return
+     */
     public static String getStep(Integer step, String customizeValue) {
         Character[] nums = ArrayUtils.toObject(customizeValue.toCharArray());
         List<Character> numbers = Arrays.asList(nums);
@@ -234,8 +240,8 @@ public class BarcodeRuleUtils {
 
     /**
      * 初始的流水号
-     * @param barcodeLength
-     * @param initialValue
+     * @param barcodeLength   长度
+     * @param initialValue   初始值
      * @return
      */
     private static String changeCode(Integer barcodeLength, Integer initialValue) {
