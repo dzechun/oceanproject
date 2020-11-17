@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -155,7 +156,7 @@ public class CodeUtils {
        // patternCode(ss);
     }*/
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         String str1 = "0HJ";
@@ -171,6 +172,10 @@ public class CodeUtils {
         System.out.println(typeCode);
 
         Calendar cal= Calendar.getInstance();
+        String date="2020-01-03";
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd");
+        cal.setTime(sdf.parse(date));
+
         int week = cal.get(Calendar.WEEK_OF_YEAR);
         System.out.println(week);
 
