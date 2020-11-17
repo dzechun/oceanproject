@@ -154,7 +154,7 @@ public class BarcodeRuleUtils {
                             throw new BizErrorException("流水号已经超出定义的范围");
                         }
                     }
-                }else {  //月、周、日、周的日、年的日、
+                }else {  //月、周、日、周的日、年的日、自定义年月日周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
                     sb.append(typeCode);
                 }
