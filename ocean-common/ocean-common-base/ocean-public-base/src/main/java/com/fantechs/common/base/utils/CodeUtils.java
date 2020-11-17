@@ -6,14 +6,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,7 +103,7 @@ public class CodeUtils {
                 sb.append(s);
                 char[] rules = s.toCharArray();
                 for(char q :rules){
-                    String ruleType = getTypeCode(q+"");
+                    //String ruleType = getTypeCode(q+"");
                 }
 
             }
@@ -115,9 +113,13 @@ public class CodeUtils {
     }
 
 
-    public static  String getTypeCode(String str){
+    public static  String getTypeCode(String str,String customizeValue) throws IOException {
         String ruleType=null;
+        Map<String, Object> map=null;
         Calendar cal = Calendar.getInstance();
+        if(StringUtils.isNotEmpty(customizeValue)){
+               map= JsonUtils.jsonToMap(customizeValue);
+        }
         switch(str){
             //月
             case "[M]" :
@@ -145,6 +147,46 @@ public class CodeUtils {
                 Format decimalFormat=new DecimalFormat("000");
                 ruleType =  decimalFormat.format(cal.get(Calendar.DAY_OF_YEAR));
                 break;
+            //自定义年
+            case "[y]" :
+                SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
+                String year = sdf.format(new Date());
+                for(String key : map.keySet()){
+                    if(key.equals(year)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            //自定义月
+            case "[m]" :
+                int m = cal.get(Calendar.MONTH) + 1;
+                String month = String.valueOf(m);
+                for(String key : map.keySet()){
+                    if(key.equals(month)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            //自定义日
+            case "[d]" :
+                int d = cal.get(Calendar.DAY_OF_MONTH);
+                String day = String.valueOf(d);
+                for(String key : map.keySet()){
+                    if(key.equals(day)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            //自定义周
+            case "[w]" :
+                int w = cal.get(Calendar.WEEK_OF_YEAR);
+                String week = String.valueOf(w);
+                for(String key : map.keySet()){
+                    if(key.equals(week)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
             default :
         }
         return  ruleType;
@@ -156,7 +198,7 @@ public class CodeUtils {
        // patternCode(ss);
     }*/
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         String str1 = "0HJ";
@@ -167,9 +209,6 @@ public class CodeUtils {
         String r=generateSerialNumber(str1,str2,code);
         System.out.println(r);
 
-        String a="[K]";
-        String typeCode = getTypeCode(a);
-        System.out.println(typeCode);
 
         Calendar cal= Calendar.getInstance();
         String date="2020-01-03";
@@ -179,7 +218,10 @@ public class CodeUtils {
         int week = cal.get(Calendar.WEEK_OF_YEAR);
         System.out.println(week);
 
-
+        String customizeValue="{\"10\": \"A\",\"11\": \"B\",\"12\": \"C\"}";
+        String a="[m]";
+        String typeCode = getTypeCode(a,customizeValue);
+        System.out.println(typeCode);
     }
 
 

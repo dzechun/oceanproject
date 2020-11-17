@@ -154,52 +154,8 @@ public class BarcodeRuleUtils {
                             throw new BizErrorException("流水号已经超出定义的范围");
                         }
                     }
-                }else if("[y]".equals(specification)){
-                    String value=null;
-                    Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
-                    String year = sdf.format(new Date());
-                    for(String key : map.keySet()){
-                        if(key.equals(year)){
-                            value = (String) map.get(key);
-                        }
-                    }
-                    sb.append(value);
-                }else if("[m]".equals(specification)){
-                    String value=null;
-                    Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    int m = cal.get(Calendar.MONTH) + 1;
-                    String month = String.valueOf(m);
-                    for(String key : map.keySet()){
-                        if(key.equals(month)){
-                            value = (String) map.get(key);
-                        }
-                    }
-                    sb.append(value);
-                }else if("[d]".equals(specification)){
-                    String value=null;
-                    Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    int d = cal.get(Calendar.DAY_OF_MONTH);
-                    String day = String.valueOf(d);
-                    for(String key : map.keySet()){
-                        if(key.equals(day)){
-                            value = (String) map.get(key);
-                        }
-                    }
-                    sb.append(value);
-                }else if("[w]".equals(specification)){
-                    String value=null;
-                    Map<String, Object> map = JsonUtils.jsonToMap(customizeValue);
-                    int w = cal.get(Calendar.WEEK_OF_YEAR);
-                    String day = String.valueOf(w);
-                    for(String key : map.keySet()){
-                        if(key.equals(day)){
-                            value = (String) map.get(key);
-                        }
-                    }
-                    sb.append(value);
-                }else {  //月、周、日、周的日、年的日
-                    String typeCode = CodeUtils.getTypeCode(specification);
+                }else {  //月、周、日、周的日、年的日、
+                    String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
                     sb.append(typeCode);
                 }
             }
