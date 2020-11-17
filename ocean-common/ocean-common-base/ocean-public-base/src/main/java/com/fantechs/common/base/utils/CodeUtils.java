@@ -7,6 +7,7 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -117,10 +118,6 @@ public class CodeUtils {
         String ruleType=null;
         Calendar cal = Calendar.getInstance();
         switch(str){
-            //年
-            case "[Y]" :
-                ruleType = DateUtils.getDateString(new Date(),"yyyyMMdd");
-                break;
             //月
             case "[M]" :
                 //ruleType =  cal.get(Calendar.MONTH) + 1+"";
@@ -128,7 +125,9 @@ public class CodeUtils {
                 break;
             //周
             case "[W]" :
-                ruleType =  cal.get(Calendar.WEEK_OF_YEAR)+"";
+                //周固定2位
+                Format format=new DecimalFormat("00");
+                ruleType =  format.format(cal.get(Calendar.WEEK_OF_YEAR));
                 break;
             //日
             case "[D]" :
@@ -141,7 +140,9 @@ public class CodeUtils {
                 break;
             //年的日
             case "[A]" :
-                ruleType =  cal.get(Calendar.DAY_OF_YEAR)+"";
+                //年的日固定3位
+                Format decimalFormat=new DecimalFormat("000");
+                ruleType =  decimalFormat.format(cal.get(Calendar.DAY_OF_YEAR));
                 break;
             default :
         }
@@ -172,6 +173,8 @@ public class CodeUtils {
         Calendar cal= Calendar.getInstance();
         int week = cal.get(Calendar.WEEK_OF_YEAR);
         System.out.println(week);
+
+
     }
 
 

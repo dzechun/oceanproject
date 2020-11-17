@@ -67,27 +67,6 @@ public class BarcodeRuleUtils {
                         String year = sdf.format(new Date());
                         sb.append(year);
                     }
-                }else if("[M]".equals(specification)){
-                    String month = CodeUtils.getTypeCode(specification);
-                    sb.append(month);
-                }else if("[D]".equals(specification)){
-                    String day =  CodeUtils.getTypeCode(specification);
-                    sb.append(day);
-                }else if("[W]".equals(specification)){
-                    String value = CodeUtils.getTypeCode(specification);
-                    //周固定2位
-                    Format format=new DecimalFormat("00");
-                    String week =format.format(value);
-                    sb.append(week);
-                }else if("[K]".equals(specification)){
-                    String value = CodeUtils.getTypeCode(specification);
-                    sb.append(value);
-                }else if("[A]".equals(specification)){
-                    String value = CodeUtils.getTypeCode(specification);
-                    //年的日固定3位
-                    Format format=new DecimalFormat("000");
-                    String dayOfYear =format.format(value);
-                    sb.append(dayOfYear);
                 }else if("[P]".equals(specification)||"[L]".equals(specification)||"[C]".equals(specification)){
                     //产品料号的长度
                     int length = code.length();
@@ -219,6 +198,9 @@ public class BarcodeRuleUtils {
                         }
                     }
                     sb.append(value);
+                }else {  //月、周、日、周的日、年的日
+                    String typeCode = CodeUtils.getTypeCode(specification);
+                    sb.append(typeCode);
                 }
             }
         }
