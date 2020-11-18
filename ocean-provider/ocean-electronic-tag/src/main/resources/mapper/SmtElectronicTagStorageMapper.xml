@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.SmtElectronicTagStorage">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage">
         <!--
           WARNING - @mbg.generated
         -->
@@ -20,7 +20,7 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.SmtElectronicTagStorageDto"
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto"
                extends="BaseResultMap">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>

@@ -97,8 +97,8 @@ public final class EasyPoiUtils {
         }
 
         ImportParams params = new ImportParams();
-       // params.setTitleRows(0);  //导入数据的时候排除标题行  默认0
-       // params.setHeadRows(1);  //导入数据的时候排除表头 默认1
+        params.setTitleRows(1);  //导入数据的时候排除标题行  默认0
+        params.setHeadRows(1);  //导入数据的时候排除表头 默认1
         InputStream inputStream = file.getInputStream();
         try {
             return ExcelImportUtil.importExcel(inputStream, clz, params);

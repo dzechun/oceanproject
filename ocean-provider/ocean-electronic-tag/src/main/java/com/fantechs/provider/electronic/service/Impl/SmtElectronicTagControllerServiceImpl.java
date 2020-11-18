@@ -1,6 +1,7 @@
 package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.electronic.dto.ImportSmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagController;
@@ -14,6 +15,7 @@ import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagControllerMappe
 import com.fantechs.provider.electronic.service.SmtElectronicTagControllerService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -34,6 +36,7 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
     private SmtHtElectronicTagControllerMapper smtHtElectronicTagControllerMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SmtElectronicTagController smtElectronicTagController) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -63,6 +66,7 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SmtElectronicTagController smtElectronicTagController) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -89,6 +93,7 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -114,5 +119,49 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
     @Override
     public List<SmtElectronicTagControllerDto> findList(Map<String, Object> map) {
         return smtElectronicTagControllerMapper.findList(map);
+    }
+
+    @Override
+    public int importElectronicTagController(List<ImportSmtElectronicTagControllerDto> importSmtElectronicTagControllerDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        int i=0;
+        LinkedList<SmtElectronicTagController> list = new LinkedList<>();
+        LinkedList<SmtHtElectronicTagController> htList = new LinkedList<>();
+        for (ImportSmtElectronicTagControllerDto importSmtElectronicTagControllerDto : importSmtElectronicTagControllerDtos) {
+            if (StringUtils.isEmpty(importSmtElectronicTagControllerDto.getElectronicTagControllerCode(),
+                    importSmtElectronicTagControllerDto.getElectronicTagControllerIp(),
+                    importSmtElectronicTagControllerDto.getElectronicTagControllerPort())){
+                continue;
+            }
+            Example example = new Example(SmtElectronicTagController.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("electronicTagControllerCode",importSmtElectronicTagControllerDto.getElectronicTagControllerCode());
+            SmtElectronicTagController electronicTagController = smtElectronicTagControllerMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(electronicTagController)){
+                continue;
+            }
+            SmtElectronicTagController smtElectronicTagController = new SmtElectronicTagController();
+            BeanUtils.copyProperties(importSmtElectronicTagControllerDto,smtElectronicTagController);
+            smtElectronicTagController.setCreateTime(new Date());
+            smtElectronicTagController.setCreateUserId(currentUser.getUserId());
+            smtElectronicTagController.setModifiedTime(new Date());
+            smtElectronicTagController.setModifiedUserId(currentUser.getUserId());
+            list.add(smtElectronicTagController);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            i = smtElectronicTagControllerMapper.insertList(list);
+        }
+        for (SmtElectronicTagController smtElectronicTagController : list) {
+            SmtHtElectronicTagController smtHtElectronicTagController = new SmtHtElectronicTagController();
+            BeanUtils.copyProperties(smtElectronicTagController,smtHtElectronicTagController);
+            htList.add(smtHtElectronicTagController);
+            smtHtElectronicTagControllerMapper.insertList(htList);
+        }
+        return i;
     }
 }

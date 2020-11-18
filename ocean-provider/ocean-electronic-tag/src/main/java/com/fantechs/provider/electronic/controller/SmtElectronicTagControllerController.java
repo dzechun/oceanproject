@@ -1,5 +1,7 @@
 package com.fantechs.provider.electronic.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.electronic.dto.ImportSmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagController;
@@ -16,9 +18,11 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
@@ -33,6 +37,7 @@ import java.util.List;
 @Api(tags = "电子标签控制器")
 @RequestMapping("/smtElectronicTagController")
 @Validated
+@Slf4j
 public class SmtElectronicTagControllerController {
 
     @Autowired
@@ -93,5 +98,27 @@ public class SmtElectronicTagControllerController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
+                                          @RequestPart(value="file") MultipartFile file){
+        int i=0;
+        try {
+            // 导入操作
+            List<ImportSmtElectronicTagControllerDto> importSmtElectronicTagControllerDtos = EasyPoiUtils.importExcel(file,ImportSmtElectronicTagControllerDto.class);
+            i= smtElectronicTagControllerService.importElectronicTagController(importSmtElectronicTagControllerDtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+        return ControllerUtil.returnCRUD(i);
     }
 }

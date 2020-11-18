@@ -14,6 +14,7 @@ import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -34,6 +35,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     private SmtHtElectronicTagStorageMapper smtHtElectronicTagStorageMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SmtElectronicTagStorage smtElectronicTagStorage) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -64,6 +66,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SmtElectronicTagStorage smtElectronicTagStorage) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -92,6 +95,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

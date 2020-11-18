@@ -1,5 +1,6 @@
 package com.fantechs.provider.electronic.service;
 
+import com.fantechs.common.base.electronic.dto.ImportSmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.support.IService;
@@ -15,4 +16,6 @@ import java.util.Map;
 public interface SmtElectronicTagControllerService extends IService<SmtElectronicTagController> {
 
     List<SmtElectronicTagControllerDto> findList(Map<String, Object> map);
+
+    int importElectronicTagController(List<ImportSmtElectronicTagControllerDto> smtElectronicTagControllers);
 }
