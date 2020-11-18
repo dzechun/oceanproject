@@ -111,49 +111,13 @@ public class BarcodeRuleUtils {
                         sb.append(code);
                     }
                 }else if("[S]".equals(specification)){
-                    if(StringUtils.isEmpty(maxCode)){
-                        maxCode=changeCode(barcodeLength,initialValue);
-                        sb.append(maxCode);
-                    }else {
-                        String customizeCode="0123456789";
-                        String stepLength = String.valueOf(step);
-                        String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
-                        if(streamCode.length()<=barcodeLength){
-                            sb.append(streamCode);
-                        }else {
-                            throw new BizErrorException("流水号已经超出定义的范围");
-                        }
-                    }
+                    String customizeCode="0123456789";
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, String.valueOf(step));
                 }else if("[F]".equals(specification)){
-                    if(StringUtils.isEmpty(maxCode)){
-                        maxCode=changeCode(barcodeLength,initialValue);
-                        sb.append(maxCode);
-                    }else {
-                        String customizeCode="0123456789ABCDEF";
-                        //将步长转成对应的字符,例如：10转成A
-                        String stepLength = getStep(step, customizeValue);
-                        String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeCode);
-                        if(streamCode.length()<=barcodeLength){
-                            sb.append(streamCode);
-                        }else {
-                            throw new BizErrorException("流水号已经超出定义的范围");
-                        }
-                    }
+                    String customizeCode="0123456789ABCDEF";
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeValue));
                 }else if("[b]".equals(specification)||"[c]".equals(specification)){
-                    if(StringUtils.isEmpty(maxCode)){
-                        maxCode=changeCode(barcodeLength,initialValue);
-                        sb.append(maxCode);
-                    }else {
-                        // String customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                        //将步长转成对应的字符
-                        String stepLength = getStep(step, customizeValue);
-                        String streamCode= CodeUtils.generateSerialNumber(maxCode,stepLength,customizeValue);
-                        if(streamCode.length()<=barcodeLength){
-                            sb.append(streamCode);
-                        }else {
-                            throw new BizErrorException("流水号已经超出定义的范围");
-                        }
-                    }
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
                     sb.append(typeCode);
@@ -162,6 +126,23 @@ public class BarcodeRuleUtils {
         }
 
         return sb.toString();
+    }
+
+    public static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
+        if (StringUtils.isEmpty(maxCode)) {
+            maxCode = changeCode(barcodeLength, initialValue);
+            sb.append(maxCode);
+        } else {
+            //将步长转成对应的字符,例如：10转成A
+            String stepLength = step;
+            String streamCode = CodeUtils.generateSerialNumber(maxCode, stepLength, customizeCode);
+            if (streamCode.length() <= barcodeLength) {
+                sb.append(streamCode);
+            } else {
+                throw new BizErrorException("流水号已经超出定义的范围");
+            }
+        }
+        return maxCode;
     }
 
     /**
@@ -234,6 +215,12 @@ public class BarcodeRuleUtils {
         System.out.println(value);
 
 
+        for (int i=0;i<10;i++){
+           new Thread(getStreamCode()).start();
+        }
+    }
+
+    public static synchronized String getStreamCode() throws IOException {
         String rule="[\n" +
                 "    {\n" +
                 "      \"barcodeRuleSpecId\": 61,\n" +
@@ -323,7 +310,6 @@ public class BarcodeRuleUtils {
         int step=2;
         String customizeCode="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
         Integer barcodeLength=4;
-
         for (int i=0;i<=100;i++){
            code= analysisCode(list, maxCode, null);
             if(StringUtils.isEmpty(maxCode)){
@@ -333,11 +319,7 @@ public class BarcodeRuleUtils {
             }
            System.out.println(code);
         }
-
-        //获取最大流水号
-        String s = spiltRtoL(code);
-        String s1 = s.substring(0, barcodeLength);
-        System.out.println(spiltRtoL(s1));
+        return code;
     }
 }
 
