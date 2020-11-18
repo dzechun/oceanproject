@@ -158,24 +158,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     }
 
     @Override
-    public List<SysUserExcelDTO> selectUsersExcelDto(SearchSysUser searchSysUser) {
-        List<SysUser> smtUsers = this.selectUsers(searchSysUser);
-        List<SysUserExcelDTO> dtoList=new ArrayList<>();
-        for (SysUser sysUser : smtUsers) {
-            SysUserExcelDTO smtUserExcelDTO =new SysUserExcelDTO();
-            try {
-                BeanUtils.copyProperties(sysUser, smtUserExcelDTO);
-                dtoList.add(smtUserExcelDTO);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        return dtoList;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
-    public int importUsers(List<SysUser> sysUsers) {
+    public int importUsers(List<SysUserExcelDTO> sysUsers) {
         int i = 0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -184,25 +168,28 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         List<SysUser> list = new LinkedList<>();
         List<SysHtUser> htUsers = new LinkedList<>();
-        for (SysUser sysUser : sysUsers) {
-            if (StringUtils.isEmpty(sysUser.getUserCode(), sysUser.getUserName(),
-                    sysUser.getNickName(), sysUser.getPassword())) {
+        for (SysUserExcelDTO sysUserExcelDTO : sysUsers) {
+            if (StringUtils.isEmpty(sysUserExcelDTO.getUserCode(), sysUserExcelDTO.getUserName(),
+                    sysUserExcelDTO.getNickName(), sysUserExcelDTO.getPassword())) {
                 continue;
             }
 
             Example example = new Example(SysUser.class);
             Example.Criteria criteria = example.createCriteria();
             Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andNotEqualTo("userId",sysUser.getUserId());
+            criteria1.andNotEqualTo("userId",sysUserExcelDTO.getUserId());
             criteria1.andEqualTo("status",1).orIsNull("status");
             example.and(criteria1);
-            criteria.andEqualTo("userName", sysUser.getUserName()).orEqualTo("userCode",sysUser.getUserCode());
+            criteria.andEqualTo("userName", sysUserExcelDTO.getUserName()).orEqualTo("userCode",sysUserExcelDTO.getUserCode());
             SysUser oneByUser = sysUserMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(oneByUser)) {
                 continue;
             }
-            if(StringUtils.isNotEmpty(sysUser.getPassword())){
-                sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
+
+            SysUser sysUser=new SysUser();
+            BeanUtils.copyProperties(sysUserExcelDTO,sysUser);
+            if(StringUtils.isNotEmpty(sysUserExcelDTO.getPassword())){
+                sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUserExcelDTO.getPassword()));
             }
 
             String factoryName = sysUser.getFactoryName();

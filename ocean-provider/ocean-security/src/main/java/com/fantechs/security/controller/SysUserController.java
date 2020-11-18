@@ -90,10 +90,10 @@ public class SysUserController {
     @ApiOperation(value = "导出用户信息excel",notes = "导出用户信息excel",produces = "application/octet-stream")
     public void exportUsers(HttpServletResponse response, @ApiParam(value ="输入查询条件")
     @RequestBody(required = false) SearchSysUser searchSysUser){
-        List<SysUserExcelDTO> list = sysUserService.selectUsersExcelDto(searchSysUser);
+        List<SysUser> list = sysUserService.selectUsers(searchSysUser);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "用户信息导出", "用户信息", SysUserExcelDTO.class, "用户信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "用户信息导出", "用户信息", SysUser.class, "用户信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
@@ -107,11 +107,11 @@ public class SysUserController {
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入用户信息",notes = "从excel导入用户信息")
     public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
-                                      @RequestBody(required = true) MultipartFile file){
+                                      @RequestPart(value="file") MultipartFile file){
         int i=0;
         try {
             // 导入操作
-            List<SysUser> sysUsers = EasyPoiUtils.importExcel(file,SysUser.class);
+            List<SysUserExcelDTO> sysUsers = EasyPoiUtils.importExcel(file,SysUserExcelDTO.class);
             i= sysUserService.importUsers(sysUsers);
         } catch (Exception e) {
             e.printStackTrace();

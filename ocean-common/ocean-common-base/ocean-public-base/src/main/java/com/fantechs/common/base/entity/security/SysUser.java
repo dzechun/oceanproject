@@ -31,7 +31,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @Column(name = "user_name")
     @ApiModelProperty(name="userName" ,value="用户帐号")
-    @Excel(name="用户帐号")
+    @Excel(name="用户帐号", height = 20, width = 30)
     @NotBlank(message = "用户帐号不能为空")
     private String userName;
 
@@ -40,7 +40,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @Column(name = "user_code")
     @ApiModelProperty(name="userCode" ,value="用户编码")
-    @Excel(name="用户编码")
+    @Excel(name="用户编码", height = 20, width = 30)
     @NotBlank(message = "用户编码不能为空")
     private String userCode;
 
@@ -49,14 +49,13 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @Column(name = "nick_name")
     @ApiModelProperty(name="nickName" ,value="用户名称")
-    @Excel(name="用户名称")
+    @Excel(name="用户名称", height = 20, width = 30)
     private String nickName;
 
     /**
      * 密码
      */
     @ApiModelProperty(name="password" ,value="密码")
-    @Excel(name="密码")
     @NotBlank(groups = add.class,message = "用户密码不能为空")
     private String password;
 
@@ -64,7 +63,7 @@ public class SysUser extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="用户状态(0-无效 1-有效)")
-    @Excel(name="状态",replace = {"无效_0", "有效_1"})
+    @Excel(name="状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Integer status;
 
     /**
@@ -78,7 +77,7 @@ public class SysUser extends ValidGroup implements Serializable {
      * 厂别名称
      */
     @Transient
-    @Excel(name = "厂别")
+    @Excel(name = "厂别",height = 20, width = 30)
     private String factoryName;
 
     /**
@@ -92,7 +91,7 @@ public class SysUser extends ValidGroup implements Serializable {
      * 部门名称
      */
     @Transient
-    @Excel(name = "部门")
+    @Excel(name = "部门",height = 20, width = 30)
     private String deptName;
 
 
@@ -100,14 +99,14 @@ public class SysUser extends ValidGroup implements Serializable {
      * 电话
      */
     @ApiModelProperty(name="telephone" ,value="电话")
-    @Excel(name="分机")
+    @Excel(name="分机",height = 20, width = 30)
     private String telephone;
 
     /**
      * 手机
      */
     @ApiModelProperty(name="mobile" ,value="手机")
-    @Excel(name="手机")
+    @Excel(name="手机",height = 20, width = 30)
     private String mobile;
 
     /**
@@ -115,7 +114,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
 
     @ApiModelProperty(name="email" ,value="email")
-    @Excel(name="邮件地址")
+    @Excel(name="邮件地址",height = 20, width = 30)
     private String email;
 
     /**
@@ -130,6 +129,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createUserName" ,value="创建人")
     @Transient
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String createUserName;
 
 
@@ -139,6 +139,7 @@ public class SysUser extends ValidGroup implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -153,6 +154,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedUserName" ,value="修改人")
     @Transient
+    @Excel(name = "修改账号", height = 20, width = 30)
     private String modifiedUserName;
 
     /**
@@ -161,6 +163,7 @@ public class SysUser extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

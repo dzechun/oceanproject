@@ -16,10 +16,7 @@ public interface SysUserService extends IService<SysUser> {
     SysUser selectByCode(String userCode);
 
 
-    //通过查询条件导出用户信息
-    List<SysUserExcelDTO> selectUsersExcelDto(SearchSysUser searchSysUser);
-
     //用excel导入用户信息
-    int importUsers(List<SysUser> smtUser);
+    int importUsers(List<SysUserExcelDTO> smtUser);
 
 }
