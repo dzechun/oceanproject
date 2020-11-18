@@ -93,7 +93,7 @@ public class SysUserController {
         List<SysUser> list = sysUserService.selectUsers(searchSysUser);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "用户信息导出", "用户信息", SysUser.class, "用户信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "用户信息导出", "用户信息", SysUser.class, "SysUser.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
