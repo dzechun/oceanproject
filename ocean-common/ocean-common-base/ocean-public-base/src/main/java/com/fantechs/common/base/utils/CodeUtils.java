@@ -229,7 +229,7 @@ public class CodeUtils {
      *
      * @param str1  当前最大流水号
      * @param str2  步长
-     * @param code  自定义流水号
+     * @param code  自定义流水号规则
      * @return
      */
     public static String generateSerialNumber(String str1, String str2, String code) {
