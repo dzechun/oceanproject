@@ -40,9 +40,6 @@
       <if test="barcodeRuleSetId!=null and barcodeRuleCode!=''">
         and sbrsd.barcode_rule_set_id= #{barcodeRuleCode}
       </if>
-      <if test="status!=null and status!=''">
-        and sbrsd.status like CONCAT('%', #{status}, '%')
-      </if>
     </where>
     order by sbrsd.create_time desc
   </select>

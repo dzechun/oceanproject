@@ -35,9 +35,6 @@
       <if test="barcodeRuleId!=null and barcodeRuleId!=''">
         and sbrs.barcode_rule_id= #{barcodeRuleId}
       </if>
-      <if test="status!=null and status!=''">
-        and sbrs.status like CONCAT('%', #{status}, '%')
-      </if>
     </where>
   </select>
 

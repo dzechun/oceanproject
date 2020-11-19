@@ -64,7 +64,7 @@
         and sc.customer_name like CONCAT('%', #{customerName}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and so.status like CONCAT('%', #{status}, '%')
+        and so.status=#{status}
       </if>
     </where>
     order by create_time desc
