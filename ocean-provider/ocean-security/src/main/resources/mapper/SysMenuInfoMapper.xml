@@ -52,9 +52,6 @@
       <if test="menuType != null">
         and sm.menu_type = #{menuType}
       </if>
-      <if test="status!=null and status!=''">
-        and sm.status like CONCAT('%', #{status}, '%')
-      </if>
     </where>
     order by order_num asc
 
