@@ -91,13 +91,13 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
                                                 }else {
                                                     throw new BizErrorException("工艺路线配置错误");
                                                 }
-                                            }else {
-                                                if(previousProcessId.equals(list.get(i-1).getPreviousProcessId())&StringUtils.isNotEmpty(orderNum)){
-                                                    continue;
-                                                }else {
-                                                    throw new BizErrorException("工艺路线配置错误");
-                                                }
                                             }
+                                        }
+                                    }else {
+                                        if(previousProcessId.equals(list.get(i-1).getPreviousProcessId())&StringUtils.isNotEmpty(orderNum)){
+                                            continue;
+                                        }else {
+                                            throw new BizErrorException("工艺路线配置错误");
                                         }
                                     }
                                 }
