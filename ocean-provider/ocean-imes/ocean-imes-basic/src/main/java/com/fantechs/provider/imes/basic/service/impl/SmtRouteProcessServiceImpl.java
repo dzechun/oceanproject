@@ -6,7 +6,6 @@ import com.fantechs.common.base.entity.basic.SmtProcessCategory;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtProcessCategoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProcessMapper;
@@ -83,4 +82,6 @@ public class SmtRouteProcessServiceImpl extends BaseService<SmtRouteProcess> imp
         public List<SmtRouteProcess> findConfigureRout(Long routeId) {
             return smtRouteProcessMapper.findList(routeId);
         }
+
+
 }

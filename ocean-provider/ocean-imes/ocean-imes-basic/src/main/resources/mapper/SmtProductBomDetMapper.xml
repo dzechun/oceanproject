@@ -57,9 +57,6 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
-        and spbd.status=#{status}
-      </if>
     </where>
     order by spbd.create_time desc
   </select>

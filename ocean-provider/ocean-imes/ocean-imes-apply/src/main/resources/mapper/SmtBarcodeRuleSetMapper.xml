@@ -43,7 +43,7 @@
         and sbrs.barcode_rule_set_desc like CONCAT('%', #{barcodeRuleSetDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
-        and sbrs.status like CONCAT('%', #{status}, '%')
+        and sbrs.status= #{status}
       </if>
     </where>
     order by sbrs.create_time desc

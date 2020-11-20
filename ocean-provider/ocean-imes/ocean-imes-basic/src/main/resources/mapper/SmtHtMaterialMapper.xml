@@ -16,6 +16,8 @@
     <result column="if_compoboard" jdbcType="INTEGER" property="ifCompoboard" />
     <result column="if_linking_board" jdbcType="INTEGER" property="ifLinkingBoard" />
     <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber" />
+    <result column="takt" jdbcType="INTEGER" property="takt" />
+    <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
     <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber" />

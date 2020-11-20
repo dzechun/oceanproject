@@ -104,7 +104,7 @@ public class SmtMaterialController {
 
     @ApiOperation(value = "获取物料履历列表",notes = "获取物料履历列表")
     @PostMapping("/findHtList")
-    public ResponseEntity< List<SmtHtMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial){
+    public ResponseEntity<List<SmtHtMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial){
         Page<Object> page = PageHelper.startPage(searchSmtMaterial.getStartPage(),searchSmtMaterial.getPageSize());
         List<SmtHtMaterial> htMaterials = smtHtMaterialService.findHtList(searchSmtMaterial);
         return ControllerUtil.returnDataSuccess(htMaterials,(int)page.getTotal());
