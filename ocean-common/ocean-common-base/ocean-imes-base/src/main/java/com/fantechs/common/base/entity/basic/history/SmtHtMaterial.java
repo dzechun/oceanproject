@@ -125,6 +125,19 @@ public class SmtHtMaterial implements Serializable {
     private Integer linkingBoardNumber;
 
     /**
+     * 节拍数量(秒)
+     */
+    @ApiModelProperty(name="takt" ,value="节拍数量(秒)")
+    private Integer takt;
+
+    /**
+     * 移转数量
+     */
+    @Column(name = "transfer_quantity")
+    @ApiModelProperty(name="transferQuantity" ,value="移转数量")
+    private Integer transferQuantity;
+
+    /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="状态")
