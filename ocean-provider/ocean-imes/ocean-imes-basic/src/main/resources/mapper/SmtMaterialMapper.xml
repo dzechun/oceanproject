@@ -32,14 +32,14 @@
   <sql id="Base_Column_List">
     material_id, material_code, material_name, material_desc, unit, version, product_model_id, 
     material_type, material_source, barcode_rule_id, if_compoboard, if_linking_board, 
-    linking_board_number, status, customer_material_code, min_package_number, create_user_id, 
+    linking_board_number, takt,transfer_quantitystatus, customer_material_code, min_package_number, create_user_id,
     create_time, modified_user_id, modified_time, is_delete, option1, option2, option3
   </sql>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterial" resultMap="BaseResultMap">
     select  sm.material_id, sm.material_code, sm.material_name, sm.material_desc, sm.unit, sm.version,sm.product_model_id,
     spm.product_model_code as productModelCode, sm.material_type,sm.material_source, sm.barcode_rule_id, sm.if_compoboard,
-    sm.if_linking_board, sm.linking_board_number,sm.status, sm.customer_material_code, sm.min_package_number,
+    sm.if_linking_board, sm.linking_board_number,sm.takt,sm.transfer_quantity,sm.status, sm.customer_material_code, sm.min_package_number,
     sm.create_user_id, u.user_name as createUserName,sm.create_time,sm.modified_user_id, s.user_name as modifiedUserName,
     sm.modified_time, sm.is_delete
     from fantech_imes.smt_material sm
