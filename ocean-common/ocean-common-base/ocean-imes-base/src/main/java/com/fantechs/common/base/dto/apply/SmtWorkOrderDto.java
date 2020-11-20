@@ -44,6 +44,13 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     private String materialDesc;
 
     /**
+     * 转移批量
+     */
+    @Transient
+    @ApiModelProperty(name="transferQuantity" ,value="转移批量")
+    private String transferQuantity;
+
+    /**
      * 线别名称
      */
     @Transient

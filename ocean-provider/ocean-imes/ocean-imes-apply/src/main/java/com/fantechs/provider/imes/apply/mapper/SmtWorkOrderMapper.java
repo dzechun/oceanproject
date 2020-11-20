@@ -12,4 +12,6 @@ public interface SmtWorkOrderMapper extends MyMapper<SmtWorkOrder> {
     List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder);
 
     List<SmtProductBomDet> selectProductBomDet(Long materialId);
+
+    SmtWorkOrderDto selectByWorkOrderId(Long workOrderId);
 }
