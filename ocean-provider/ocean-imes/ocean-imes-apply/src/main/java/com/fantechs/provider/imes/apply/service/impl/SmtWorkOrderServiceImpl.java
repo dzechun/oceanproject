@@ -275,7 +275,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     if(StringUtils.isNotEmpty(cardCollocations)){
                         Integer generatedQuantity = cardCollocations.get(0).getGeneratedQuantity();
 
-                        int code = transferQuantity * generatedQuantity + 1;
+                        int code = transferQuantity * generatedQuantity;
                         String analysisCode = BarcodeRuleUtils.analysisCode(barcodeRuleSpecs, String.valueOf(code), null);
                         smtWorkOrderDto.setAnalysisCode(analysisCode);
                     }else {
