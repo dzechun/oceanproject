@@ -66,7 +66,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             smtWorkOrderCardCollocation.setModifiedUserId(currentUser.getUserId());
             smtWorkOrderCardCollocation.setModifiedTime(new Date());
 
-            return smtWorkOrderCardCollocationMapper.insertUseGeneratedKeys(smtWorkOrderCardCollocation);
+            return smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
         }
 
         @Override
