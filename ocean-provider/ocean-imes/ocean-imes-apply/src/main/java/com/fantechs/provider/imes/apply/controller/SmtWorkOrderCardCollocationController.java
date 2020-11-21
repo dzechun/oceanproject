@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -56,9 +57,9 @@ public class SmtWorkOrderCardCollocationController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtWorkOrderCardCollocation>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
+    public ResponseEntity<List<SmtWorkOrderCardCollocationDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderCardCollocation.getStartPage(),searchSmtWorkOrderCardCollocation.getPageSize());
-        List<SmtWorkOrderCardCollocation> list = smtWorkOrderCardCollocationService.findList(searchSmtWorkOrderCardCollocation);
+        List<SmtWorkOrderCardCollocationDto> list = smtWorkOrderCardCollocationService.findList(searchSmtWorkOrderCardCollocation);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

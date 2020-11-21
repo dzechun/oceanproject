@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
@@ -70,7 +71,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         }
 
         @Override
-        public List<SmtWorkOrderCardCollocation> findList(SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
-            return smtWorkOrderCardCollocationMapper.findList(searchSmtWorkOrderCardCollocation);
+        public List<SmtWorkOrderCardCollocationDto> findList(SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
+            List<SmtWorkOrderCardCollocationDto> list = smtWorkOrderCardCollocationMapper.findList(searchSmtWorkOrderCardCollocation);
+            return list;
         }
 }
