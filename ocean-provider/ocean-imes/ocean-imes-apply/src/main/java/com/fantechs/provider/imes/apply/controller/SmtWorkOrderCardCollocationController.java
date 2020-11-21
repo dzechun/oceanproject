@@ -3,10 +3,8 @@ package com.fantechs.provider.imes.apply.controller;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderCardCollocationService;
 import com.github.pagehelper.Page;
@@ -18,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 

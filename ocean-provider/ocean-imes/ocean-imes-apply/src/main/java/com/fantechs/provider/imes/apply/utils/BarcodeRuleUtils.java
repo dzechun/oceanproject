@@ -23,7 +23,7 @@ public class BarcodeRuleUtils {
      * @param code 产品料号、生产线别、客户料号
      * @return
      */
-    public static String analysisCode(List<SmtBarcodeRuleSpec> list,String maxCode,String code) throws IOException {
+    public static String analysisCode(List<SmtBarcodeRuleSpec> list,String maxCode,String code){
         StringBuilder sb=new StringBuilder();
         Calendar cal= Calendar.getInstance();
         if(StringUtils.isNotEmpty(list)){

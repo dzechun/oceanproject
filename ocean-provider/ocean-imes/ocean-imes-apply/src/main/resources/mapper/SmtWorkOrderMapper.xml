@@ -36,7 +36,7 @@
     <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
     <result column="pro_name" jdbcType="VARCHAR" property="proName" />
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
-    <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
+    <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
@@ -57,15 +57,33 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
+  <resultMap id="RouteResultMapDto" type="com.fantechs.common.base.entity.basic.SmtRouteProcess">
+    <result column="route_process_id" jdbcType="BIGINT" property="routeProcessId" />
+    <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId" />
+    <result column="previous_process_id" jdbcType="BIGINT" property="previousProcessId" />
+    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="is_pass" jdbcType="TINYINT" property="isPass" />
+    <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass" />
+    <result column="inspection_time" jdbcType="INTEGER" property="inspectionTime" />
+    <result column="qualification_id" jdbcType="BIGINT" property="qualificationId" />
+
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+  </resultMap>
+
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMapDto">
-    select  swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
+    select  swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,sm.transfer_quantity,
     swo.work_order_quantity,swo.production_quantity,swo.output_quantity,swo.work_order_status,swo.pro_line_id,spl.pro_name,swo.route_id,sr.route_name,
-    swo.barcode_rule_id,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
+    swo.barcode_rule_id,sbr.barcode_rule,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
     u.user_name as create_user_name,swo.create_time,swo.modified_user_id,s.user_name as modified_user_name,swo.modified_time, swo.is_delete
     from fantech_imes.smt_work_order swo
     left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
     left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
     left join fantech_imes.smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
+    left join fantech_imes.smt_barcode_rule sbr on swo.barcode_rule_id=sbr.barcode_rule_id
     left join ocean.sys_user u on swo.create_user_id=u.user_id
     left join ocean.sys_user s on swo.modified_user_id=s.user_id
     <where>
@@ -113,5 +131,16 @@
     left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
     left join fantech_imes.smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
     where swo.work_order_id=#{workOrderId}
+  </select>
+
+
+  <select id="selectRouteProcessByRouteId" parameterType="java.lang.Long" resultMap="RouteResultMapDto">
+    select srp.route_process_id, srp.route_id,sr.route_name,srp.section_id,srp.process_id,sp.process_name,srp.next_process_id,
+    srp.previous_process_id,srp.order_num,srp.is_pass,srp.is_must_pass,srp.inspection_time,srp.qualification_id
+    from fantech_imes.smt_route_process srp
+    left join fantech_imes.smt_route sr on srp.route_id=sr.route_id
+    left join fantech_imes.smt_process sp on srp.process_id=sp.process_id
+    where srp.route_id=#{routeId}
+    order by srp.order_num
   </select>
 </mapper>
