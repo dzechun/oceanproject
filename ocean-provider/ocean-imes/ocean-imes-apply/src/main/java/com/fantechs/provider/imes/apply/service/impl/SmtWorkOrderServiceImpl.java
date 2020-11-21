@@ -259,31 +259,6 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     //产出工序
                     smtWorkOrderDto.setProductionProcessName(routeProcesses.get(routeProcesses.size()-1).getProcessName());
                 }
-                //转移批量
-                Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
-
-                Example example = new Example(SmtBarcodeRuleSpec.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("barcodeRuleId",smtWorkOrderDto.getBarcodeRuleId());
-                List<SmtBarcodeRuleSpec> barcodeRuleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example);
-                if(StringUtils.isNotEmpty(barcodeRuleSpecs)){
-                    Example example1 = new Example(SmtWorkOrderCardCollocation.class);
-                    Example.Criteria criteria1 = example1.createCriteria();
-                    criteria1.andEqualTo("workOrderId",smtWorkOrderDto.getWorkOrderId());
-                    example1.setOrderByClause("`modified_time` DESC");
-                    List<SmtWorkOrderCardCollocation> cardCollocations = smtWorkOrderCardCollocationMapper.selectByExample(example1);
-                    if(StringUtils.isNotEmpty(cardCollocations)){
-                        Integer generatedQuantity = cardCollocations.get(0).getGeneratedQuantity();
-
-                        int code = transferQuantity * generatedQuantity;
-                        String analysisCode = BarcodeRuleUtils.analysisCode(barcodeRuleSpecs, String.valueOf(code), null);
-                        smtWorkOrderDto.setAnalysisCode(analysisCode);
-                    }else {
-                        String analysisCode = BarcodeRuleUtils.analysisCode(barcodeRuleSpecs, null, null);
-                        smtWorkOrderDto.setAnalysisCode(analysisCode);
-                    }
-                }
-
             }
             return list;
         }
