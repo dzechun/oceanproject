@@ -1,22 +1,11 @@
 package com.fantechs.provider.imes.apply.utils;
 
-import java.util.HashMap;
+import org.apache.commons.lang.ArrayUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class BinaryConversionUtils {
-
-    // 定义其他进制数字
-    private static final String customizeValue = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
-    // 拿到10进制转换其他进制的值键对
-    private static HashMap<Integer, Character> baseConversion = createMapBaseConversion();
-
-
-    private static HashMap<Integer, Character> createMapBaseConversion() {
-        HashMap<Integer, Character> map = new HashMap<>();
-        for (int i = 0; i < customizeValue.length(); i++) {
-            map.put(i, customizeValue.charAt(i));
-        }
-        return map;
-    }
 
     /**
      * 用递归来实现10转成其他进制
@@ -24,25 +13,28 @@ public class BinaryConversionUtils {
      * @param iSrc
      * @return
      */
-    public static String DeciamlToBaseConversion(int iSrc) {
+    public static String DeciamlToBaseConversion(int iSrc,String customizeValue) {
         String result = "";
         int key;
         int value;
 
+        Character[] nums= ArrayUtils.toObject(customizeValue.toCharArray());
+        List<Character> list = Arrays.asList(nums);
+
         key = iSrc / customizeValue.length();
         value = iSrc - key * customizeValue.length();
         if (key != 0) {
-            result = result + DeciamlToBaseConversion(key);
+            result = result + DeciamlToBaseConversion(key,customizeValue);
         }
 
-        result = result + baseConversion.get(value).toString();
+        result = result + list.get(value);
 
         return result;
     }
 
     public static void main(String[] args) {
-
-        String s = DeciamlToBaseConversion(10220);
+        String customizeValue = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+        String s = DeciamlToBaseConversion(10220,customizeValue);
         System.out.println(s);
     }
 
