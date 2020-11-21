@@ -24,7 +24,7 @@ public class BinaryConversionUtils {
      * @param iSrc
      * @return
      */
-    public static String DeciamlToThirtySix(int iSrc) {
+    public static String DeciamlToBaseConversion(int iSrc) {
         String result = "";
         int key;
         int value;
@@ -32,12 +32,18 @@ public class BinaryConversionUtils {
         key = iSrc / customizeValue.length();
         value = iSrc - key * customizeValue.length();
         if (key != 0) {
-            result = result + DeciamlToThirtySix(key);
+            result = result + DeciamlToBaseConversion(key);
         }
 
         result = result + baseConversion.get(value).toString();
 
         return result;
+    }
+
+    public static void main(String[] args) {
+
+        String s = DeciamlToBaseConversion(10220);
+        System.out.println(s);
     }
 
 }
