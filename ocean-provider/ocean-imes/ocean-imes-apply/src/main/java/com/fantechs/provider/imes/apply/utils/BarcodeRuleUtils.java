@@ -131,6 +131,15 @@ public class BarcodeRuleUtils {
             maxCode = changeCode(barcodeLength, initialValue);
             sb.append(maxCode);
         } else {
+            StringBuilder builder=new StringBuilder();
+            int codeLength = maxCode.length();
+            if(codeLength<barcodeLength){
+                for (int i=0;i<barcodeLength-codeLength;i++){
+                    builder.append("0");
+                }
+                builder.append(maxCode);
+            }
+            maxCode=builder.toString();
             //将步长转成对应的字符,例如：10转成A
             String streamCode = CodeUtils.generateSerialNumber(maxCode, step, customizeCode);
             if (streamCode.length() <= barcodeLength) {

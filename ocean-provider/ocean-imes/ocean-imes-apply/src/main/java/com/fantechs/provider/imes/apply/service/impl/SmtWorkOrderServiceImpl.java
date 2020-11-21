@@ -270,7 +270,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     Example example1 = new Example(SmtWorkOrderCardCollocation.class);
                     Example.Criteria criteria1 = example1.createCriteria();
                     criteria1.andEqualTo("workOrderId",smtWorkOrderDto.getWorkOrderId());
-                    example1.orderBy("modifiedTime");
+                    example1.setOrderByClause("`modified_time` DESC");
                     List<SmtWorkOrderCardCollocation> cardCollocations = smtWorkOrderCardCollocationMapper.selectByExample(example1);
                     if(StringUtils.isNotEmpty(cardCollocations)){
                         Integer generatedQuantity = cardCollocations.get(0).getGeneratedQuantity();
