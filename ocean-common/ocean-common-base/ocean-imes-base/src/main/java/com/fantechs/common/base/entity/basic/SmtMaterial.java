@@ -145,6 +145,7 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "transfer_quantity")
     @ApiModelProperty(name="transferQuantity" ,value="移转数量")
+    @NotNull(message = "移转数量不能为空")
     private Integer transferQuantity;
 
     /**
