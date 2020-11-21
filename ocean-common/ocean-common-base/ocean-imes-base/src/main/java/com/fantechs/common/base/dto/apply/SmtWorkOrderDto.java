@@ -48,7 +48,7 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="transferQuantity" ,value="转移批量")
-    private String transferQuantity;
+    private Integer transferQuantity;
 
     /**
      * 线别名称

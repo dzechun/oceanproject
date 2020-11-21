@@ -35,9 +35,14 @@ public class SmtWorkOrderCardCollocationController {
     @Autowired
     private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
 
-    @ApiOperation(value = "新增",notes = "新增")
-    @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtWorkOrderCardCollocation smtWorkOrderCardCollocation) {
+    /**
+     * 产生工单流转卡
+     * @param smtWorkOrderCardCollocation
+     * @return
+     */
+    @ApiOperation(value = "产生工单流转卡",notes = "产生工单流转卡")
+    @PostMapping("/generateWorkOrderCardCollocation")
+    public ResponseEntity generateWorkOrderCardCollocation(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtWorkOrderCardCollocation smtWorkOrderCardCollocation) {
         return ControllerUtil.returnCRUD(smtWorkOrderCardCollocationService.save(smtWorkOrderCardCollocation));
     }
 
