@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -109,16 +110,15 @@ public class SmtElectronicTagControllerController {
     @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
     public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
                                           @RequestPart(value="file") MultipartFile file){
-        int i=0;
         try {
             // 导入操作
             List<ImportSmtElectronicTagControllerDto> importSmtElectronicTagControllerDtos = EasyPoiUtils.importExcel(file,ImportSmtElectronicTagControllerDto.class);
-            i= smtElectronicTagControllerService.importElectronicTagController(importSmtElectronicTagControllerDtos);
+            Map<String, Object> resultMap = smtElectronicTagControllerService.importElectronicTagController(importSmtElectronicTagControllerDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
-        return ControllerUtil.returnCRUD(i);
     }
 }

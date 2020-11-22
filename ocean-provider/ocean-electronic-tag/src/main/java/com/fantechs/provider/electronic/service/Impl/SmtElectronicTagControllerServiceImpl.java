@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2020/11/16.
@@ -122,19 +119,22 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
     }
 
     @Override
-    public int importElectronicTagController(List<ImportSmtElectronicTagControllerDto> importSmtElectronicTagControllerDtos) {
+    public Map<String, Object> importElectronicTagController(List<ImportSmtElectronicTagControllerDto> importSmtElectronicTagControllerDtos) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        int i=0;
+        Map<String, Object> resutlMap = new HashMap<>();  //返回操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败数
         LinkedList<SmtElectronicTagController> list = new LinkedList<>();
         LinkedList<SmtHtElectronicTagController> htList = new LinkedList<>();
-        for (ImportSmtElectronicTagControllerDto importSmtElectronicTagControllerDto : importSmtElectronicTagControllerDtos) {
+        for (int i = 0; i < importSmtElectronicTagControllerDtos.size(); i++) {
+            ImportSmtElectronicTagControllerDto importSmtElectronicTagControllerDto = importSmtElectronicTagControllerDtos.get(i);
             if (StringUtils.isEmpty(importSmtElectronicTagControllerDto.getElectronicTagControllerCode(),
                     importSmtElectronicTagControllerDto.getElectronicTagControllerIp(),
                     importSmtElectronicTagControllerDto.getElectronicTagControllerPort())){
+                fail.add(i+3);
                 continue;
             }
             Example example = new Example(SmtElectronicTagController.class);
@@ -142,6 +142,7 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
             criteria.andEqualTo("electronicTagControllerCode",importSmtElectronicTagControllerDto.getElectronicTagControllerCode());
             SmtElectronicTagController electronicTagController = smtElectronicTagControllerMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(electronicTagController)){
+                fail.add(i+3);
                 continue;
             }
             SmtElectronicTagController smtElectronicTagController = new SmtElectronicTagController();
@@ -154,7 +155,7 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
         }
 
         if (StringUtils.isNotEmpty(list)){
-            i = smtElectronicTagControllerMapper.insertList(list);
+             success = smtElectronicTagControllerMapper.insertList(list);
         }
         for (SmtElectronicTagController smtElectronicTagController : list) {
             SmtHtElectronicTagController smtHtElectronicTagController = new SmtHtElectronicTagController();
@@ -162,6 +163,8 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
             htList.add(smtHtElectronicTagController);
             smtHtElectronicTagControllerMapper.insertList(htList);
         }
-        return i;
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }
