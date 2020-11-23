@@ -129,7 +129,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                         Integer step = smtBarcodeRuleSpec.getStep();
                         Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
                         if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
-                            maxLength=i*step+initialValue;
+                            maxLength=(maxLength+i)*step+initialValue;
                         }
                     }
                 }
@@ -181,7 +181,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                         Integer step = smtBarcodeRuleSpec.getStep();
                         Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
                         if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
-                            maxLength=i*step+initialValue;
+                            maxLength=(maxLength+i)*step+initialValue;
                         }
                     }
                 }
