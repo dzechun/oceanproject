@@ -122,7 +122,6 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
             List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
             if(StringUtils.isNotEmpty(ruleSpecs)){
-                workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
                 for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
                     String specification = smtBarcodeRuleSpec.getSpecification();
                     Integer step = smtBarcodeRuleSpec.getStep();
@@ -131,6 +130,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
                         maxLength=(maxLength+i)*step+initialValue;
                     }
                 }
+                workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
             }
             SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
             smtWorkOrderBarcodePool.setTaskCode(UUIDUtils.getUUID());

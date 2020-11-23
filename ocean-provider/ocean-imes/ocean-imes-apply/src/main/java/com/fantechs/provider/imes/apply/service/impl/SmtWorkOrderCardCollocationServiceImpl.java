@@ -123,7 +123,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
                 List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
                 if(StringUtils.isNotEmpty(ruleSpecs)){
-                    workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
                     for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
                         String specification = smtBarcodeRuleSpec.getSpecification();
                         Integer step = smtBarcodeRuleSpec.getStep();
@@ -132,6 +131,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                             maxLength=(maxLength+i)*step+initialValue;
                         }
                     }
+                    workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
                 }
                 SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
                 smtWorkOrderBarcodePool.setTaskCode(UUIDUtils.getUUID());
@@ -175,7 +175,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
                 List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecMapper.selectByExample(example1);
                 if(StringUtils.isNotEmpty(list)){
-                    workOrderCardCode= BarcodeRuleUtils.analysisSerialNumber(list, maxLength, null);
                     for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : list) {
                         String specification = smtBarcodeRuleSpec.getSpecification();
                         Integer step = smtBarcodeRuleSpec.getStep();
@@ -184,6 +183,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                             maxLength=(maxLength+i)*step+initialValue;
                         }
                     }
+                    workOrderCardCode= BarcodeRuleUtils.analysisSerialNumber(list, maxLength, null);
                 }
 
                 SmtWorkOrderCardPool smtWorkOrderCardPool=new SmtWorkOrderCardPool();
