@@ -1,7 +1,9 @@
 package com.fantechs.provider.electronic.mapper;
 
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
+import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,4 +13,6 @@ import java.util.Map;
 @Mapper
 public interface SmtElectronicTagStorageMapper extends MyMapper<SmtElectronicTagStorage> {
     List<SmtElectronicTagStorageDto> findList(Map<String, Object> map);
+    SmtStorage findStorageByCode(String storageCode);
+    SmtElectronicTagController findElectronicTagControllerByCode(String storageCode);
 }
