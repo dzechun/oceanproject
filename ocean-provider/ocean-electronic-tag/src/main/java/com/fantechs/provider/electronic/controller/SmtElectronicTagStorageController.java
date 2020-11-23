@@ -1,5 +1,6 @@
 package com.fantechs.provider.electronic.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
@@ -16,15 +17,18 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by leifengzhi on 2020/11/17.
@@ -33,6 +37,7 @@ import java.util.List;
 @Api(tags = "电子标签绑定储位")
 @RequestMapping("/smtElectronicTagStorage")
 @Validated
+@Slf4j
 public class SmtElectronicTagStorageController {
 
     @Autowired
@@ -91,6 +96,27 @@ public class SmtElectronicTagStorageController {
             EasyPoiUtils.exportExcel(list, "导出信息", "SmtElectronicTagStorage信息", SmtElectronicTagStorageDto.class, "SmtElectronicTagStorage.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtos = EasyPoiUtils.importExcel(file,SmtElectronicTagStorageDto.class);
+            Map<String, Object> resultMap = smtElectronicTagStorageService.importElectronicTagController(smtElectronicTagStorageDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

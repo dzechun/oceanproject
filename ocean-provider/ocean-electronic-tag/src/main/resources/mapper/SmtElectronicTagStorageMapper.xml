@@ -25,12 +25,56 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
         <result column="electronic_tag_controller_name" jdbcType="VARCHAR" property="electronicTagControllerName"/>
+        <result column="electronic_tag_controller_code" jdbcType="VARCHAR" property="electronicTagControllerCode"/>
         <result column="electronic_tag_controller_ip" jdbcType="VARCHAR" property="electronicTagControllerIp"/>
         <result column="electronic_tag_controller_port" jdbcType="VARCHAR" property="electronicTagControllerPort"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
+    </resultMap>
+
+    <resultMap id="SmtStorageMap" type="com.fantechs.common.base.entity.basic.SmtStorage">
+        <id column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="SmtElectronicTagControllerMap" type="com.fantechs.common.base.electronic.entity.SmtElectronicTagController">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="electronic_tag_controller_id" jdbcType="BIGINT" property="electronicTagControllerId" />
+        <result column="electronic_tag_controller_code" jdbcType="VARCHAR" property="electronicTagControllerCode" />
+        <result column="electronic_tag_controller_name" jdbcType="VARCHAR" property="electronicTagControllerName" />
+        <result column="electronic_tag_controller_desc" jdbcType="VARCHAR" property="electronicTagControllerDesc" />
+        <result column="electronic_tag_controller_ip" jdbcType="VARCHAR" property="electronicTagControllerIp" />
+        <result column="electronic_tag_controller_port" jdbcType="VARCHAR" property="electronicTagControllerPort" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
     </resultMap>
 
     <sql id="Base_column_List">
@@ -52,17 +96,19 @@
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        ss.storage_name AS storage_name, ss.storage_desc AS storage_desc,
+        ss.storage_name AS storage_name, ss.storage_desc AS storage_desc, ss.storage_code AS storage_code,
         setc.electronic_tag_controller_name AS electronic_tag_controller_name,
+        setc.electronic_tag_controller_code AS electronic_tag_controller_code,
         setc.electronic_tag_controller_ip AS electronic_tag_controller_ip,
         setc.electronic_tag_controller_port AS electronic_tag_controller_port,
-        sw.warehouse_name AS warehouse_name,
-        swa.warehouse_area_name AS warehouse_area_name
+        sw.warehouse_name AS warehouse_name, sw.warehouse_code AS warehouse_code,
+        swa.warehouse_area_name AS warehouse_area_name, swa.warehouse_area_code AS warehouse_area_code
         FROM smt_electronic_tag_storage sets
         LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
         LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
-        LEFT JOIN smt_electronic_tag_controller setc ON sets.electronic_tag_controller_id = setc.electronic_tag_controller_id
+        LEFT JOIN smt_electronic_tag_controller setc ON sets.electronic_tag_controller_id =
+        setc.electronic_tag_controller_id
         LEFT JOIN smt_warehouse sw ON ss.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
         <where>
@@ -91,6 +137,24 @@
                 and sets.status=#{status}
             </if>
         </where>
-        order by  sets.create_time desc
+        order by sets.create_time desc
+    </select>
+
+    <select id="findStorageByCode" parameterType="java.lang.String"
+            resultMap="SmtStorageMap">
+        SELECT *
+        FROM smt_storage ss
+        <where>
+            ss.storage_code =#{storageCode}
+        </where>
+    </select>
+
+    <select id="findElectronicTagControllerByCode" parameterType="java.lang.String"
+            resultMap="SmtElectronicTagControllerMap">
+        SELECT *
+        FROM smt_electronic_tag_controller setc
+        <where>
+            setc.electronic_tag_controller_code =#{electronicTagControllerCode}
+        </where>
     </select>
 </mapper>
