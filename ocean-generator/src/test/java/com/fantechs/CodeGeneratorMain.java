@@ -4,7 +4,7 @@ import com.fantechs.service.CodeGeneratorManager;
 
 class CodeGeneratorMain {
 
-    private static final String TABLE = "smt_address";
+    private static final String TABLE = "table_test";
 
     private static final String MODEL_NAME = "ITest";
 
@@ -27,7 +27,7 @@ class CodeGeneratorMain {
     public static void main(String[] args) {
         CodeGeneratorManager cgm = new CodeGeneratorManager();
 
-        cgm.genCodeWithSimpleName(TABLES);
+        cgm.genCodeWithSimpleName(TABLE);
 
 //		cgm.genCodeWithDetailName(TABLES);
 
