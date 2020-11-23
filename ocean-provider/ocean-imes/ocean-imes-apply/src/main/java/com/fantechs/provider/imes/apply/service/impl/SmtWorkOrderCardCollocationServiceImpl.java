@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
@@ -15,6 +16,7 @@ import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderCardCollocationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -51,7 +53,16 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             //产生数量
             Integer produceQuantity = smtWorkOrderCardCollocation.getProduceQuantity();
             //已产生数量
-            Integer generatedQuantity = smtWorkOrderCardCollocation.getGeneratedQuantity()==null?0:smtWorkOrderCardCollocation.getGeneratedQuantity();
+            Integer generatedQuantity = 0;
+            Example example = new Example(SmtWorkOrderCardCollocation.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workOrderId",smtWorkOrderCardCollocation.getWorkOrderId());
+            List<SmtWorkOrderCardCollocation> cardCollocations = smtWorkOrderCardCollocationMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(cardCollocations)){
+                for (SmtWorkOrderCardCollocation cardCollocation : cardCollocations) {
+                    generatedQuantity+=cardCollocation.getProduceQuantity();
+                }
+            }
             if(produceQuantity+generatedQuantity>sumBatchQuantity){
                    throw new BizErrorException("工单产生条码总数量不能大于工单数量");
             }else if(produceQuantity+generatedQuantity==sumBatchQuantity){
@@ -70,7 +81,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         }
 
         @Override
-        public List<SmtWorkOrderCardCollocation> findList(SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
-            return smtWorkOrderCardCollocationMapper.findList(searchSmtWorkOrderCardCollocation);
+        public List<SmtWorkOrderCardCollocationDto> findList(SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
+            List<SmtWorkOrderCardCollocationDto> list = smtWorkOrderCardCollocationMapper.findList(searchSmtWorkOrderCardCollocation);
+            return list;
         }
 }

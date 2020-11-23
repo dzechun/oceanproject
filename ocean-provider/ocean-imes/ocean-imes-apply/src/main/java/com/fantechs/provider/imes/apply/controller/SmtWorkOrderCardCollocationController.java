@@ -1,11 +1,10 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderCardCollocationService;
 import com.github.pagehelper.Page;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -56,9 +53,9 @@ public class SmtWorkOrderCardCollocationController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtWorkOrderCardCollocation>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
+    public ResponseEntity<List<SmtWorkOrderCardCollocationDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation) {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderCardCollocation.getStartPage(),searchSmtWorkOrderCardCollocation.getPageSize());
-        List<SmtWorkOrderCardCollocation> list = smtWorkOrderCardCollocationService.findList(searchSmtWorkOrderCardCollocation);
+        List<SmtWorkOrderCardCollocationDto> list = smtWorkOrderCardCollocationService.findList(searchSmtWorkOrderCardCollocation);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

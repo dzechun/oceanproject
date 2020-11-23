@@ -113,12 +113,16 @@ public class CodeUtils {
     }
 
 
-    public static  String getTypeCode(String str,String customizeValue) throws IOException {
+    public static  String getTypeCode(String str,String customizeValue){
         String ruleType=null;
         Map<String, Object> map=null;
         Calendar cal = Calendar.getInstance();
         if(StringUtils.isNotEmpty(customizeValue)){
-               map= JsonUtils.jsonToMap(customizeValue);
+            try {
+                map= JsonUtils.jsonToMap(customizeValue);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         switch(str){
             //月

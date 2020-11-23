@@ -17,5 +17,5 @@ public interface SmtElectronicTagControllerService extends IService<SmtElectroni
 
     List<SmtElectronicTagControllerDto> findList(Map<String, Object> map);
 
-    int importElectronicTagController(List<ImportSmtElectronicTagControllerDto> smtElectronicTagControllers);
+    Map<String,Object> importElectronicTagController(List<ImportSmtElectronicTagControllerDto> smtElectronicTagControllers);
 }

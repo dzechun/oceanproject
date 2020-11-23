@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.service;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
 import com.fantechs.common.base.support.IService;
@@ -13,5 +14,5 @@ import java.util.List;
 
 public interface SmtWorkOrderCardCollocationService extends IService<SmtWorkOrderCardCollocation> {
 
-    List<SmtWorkOrderCardCollocation> findList(SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation);
+    List<SmtWorkOrderCardCollocationDto> findList(SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation);
 }

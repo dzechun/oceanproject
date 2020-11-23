@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtWorkOrderCardCollocationMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation">
-    <id column="work_order_card_collocation_id" jdbcType="BIGINT" property="workOrderCardCollocationId" />
+<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodeCollocationMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodeCollocation">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_order_barcode_collocation_id" jdbcType="BIGINT" property="workOrderBarcodeCollocationId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="produce_quantity" jdbcType="INTEGER" property="produceQuantity" />
     <result column="generated_quantity" jdbcType="INTEGER" property="generatedQuantity" />
@@ -18,7 +21,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodeCollocationDto">
     <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode" />
     <result column="work_order_type" jdbcType="TINYINT" property="workOrderType" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
@@ -36,24 +39,30 @@
     <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
     <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime" />
     <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
+    <result column="process_name" jdbcType="VARCHAR" property="productionProcess"/>
   </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation" resultMap="BaseResultMapDto">
-    select swocc.work_order_card_collocation_id,swocc.work_order_id,swo.work_order_code,swo.work_order_type,swo.material_id,sm.material_code,sm.version,sm.transfer_quantity,
-    swo.work_order_quantity,swo.production_quantity,swo.route_id,sr.route_name,swo.order_id, so.order_code, so.customer_id,sp.supplier_name,swo.barcode_rule_id,sbr.barcode_rule,
-    swo.planned_end_time,swocc.produce_quantity,swocc.generated_quantity,swocc.print_id,swocc.status,swocc.create_time,swocc.modified_user_id,swocc.modified_time, swocc.is_delete
-    from fantech_imes.smt_work_order_card_collocation swocc
-    left join fantech_imes.smt_work_order swo on swocc.work_order_id=swo.work_order_id
-    left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
-    left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
-    left join fantech_imes.smt_barcode_rule sbr on swo.barcode_rule_id=sbr.barcode_rule_id
-    left join smt_order so on swo.order_id=so.order_id
-    left join fantech_imes.smt_supplier sp on so.customer_id = sp.supplier_id
+  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodeCollocation" resultMap="BaseResultMapDto">
+    select swobc.work_order_barcode_collocation_id,swobc.work_order_id,wo.work_order_code,wo.work_order_type,wo.material_id,sm.material_code,sm.version,sm.transfer_quantity,
+    wo.work_order_quantity,wo.production_quantity,wo.route_id,sr.route_name,wo.order_id, so.order_code, so.customer_id,sp.customer_name,wo.barcode_rule_id,wo.planned_end_time,
+    swobc.produce_quantity,swobc.generated_quantity,sp.process_name,swobc.print_id,swobc.status,swobc.create_time,swobc.modified_user_id,swobc.modified_time, swobc.is_delete
+    from fantech_imes.smt_work_order_barcode_collocation swobc
+    LEFT JOIN smt_work_order wo on wo.work_order_id = swobc.work_order_id
+    LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
+    left join fantech_imes.smt_route sr on wo.route_id=sr.route_id
+    left join smt_order so on wo.order_id=so.order_id
+    left join fantech_imes.smt_customer sp on so.customer_id = sp.customer_id
+    LEFT JOIN smt_route_process srp ON srp.route_id = sr.route_id
+    LEFT JOIN smt_process sp ON srp.process_id = sp.process_id
     <where>
+    1=1
       <if test="workOrderId!= null and workOrderId!= ''">
-        and swocc.work_order_id=#{workOrderId}
+        and swobc.work_order_id=#{workOrderId}
+      </if>
+      <if test="workOrderCode!=null and workOrderCode!=''">
+        and wo.work_order_code=#{workOrderCode}
       </if>
     </where>
-   order by swocc.create_time desc
-   </select>
+    order by swobc.create_time desc
+  </select>
 </mapper>

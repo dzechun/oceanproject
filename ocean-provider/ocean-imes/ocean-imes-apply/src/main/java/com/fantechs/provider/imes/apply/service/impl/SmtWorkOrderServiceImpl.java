@@ -2,28 +2,30 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
+import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.apply.mapper.SmtHtWorkOrderBomMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtHtWorkOrderMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBomMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.imes.apply.mapper.*;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
+import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -42,6 +44,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         private SmtWorkOrderBomMapper smtWorkOrderBomMapper;
         @Resource
         private SmtHtWorkOrderBomMapper smtHtWorkOrderBomMapper;
+        @Resource
+        private SmtWorkOrderCardCollocationMapper smtWorkOrderCardCollocationMapper;
+        @Resource
+        private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
@@ -242,6 +248,18 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         @Override
         public List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder) {
-            return smtWorkOrderMapper.findList(searchSmtWorkOrder);
+            List<SmtWorkOrderDto> list = smtWorkOrderMapper.findList(searchSmtWorkOrder);
+            for (SmtWorkOrderDto smtWorkOrderDto : list) {
+               Long routeId = smtWorkOrderDto.getRouteId();
+                //查询工艺路线配置
+                List<SmtRouteProcess> routeProcesses=smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                if(StringUtils.isNotEmpty(routeProcesses)){
+                    //投入工序
+                    smtWorkOrderDto.setPutIntoProcessName(routeProcesses.get(0).getProcessName());
+                    //产出工序
+                    smtWorkOrderDto.setProductionProcessName(routeProcesses.get(routeProcesses.size()-1).getProcessName());
+                }
+            }
+            return list;
         }
 }
