@@ -131,15 +131,6 @@ public class BarcodeRuleUtils {
             maxCode = changeCode(barcodeLength, initialValue);
             sb.append(maxCode);
         } else {
-            StringBuilder builder=new StringBuilder();
-            int codeLength = maxCode.length();
-            if(codeLength<barcodeLength){
-                for (int i=0;i<barcodeLength-codeLength;i++){
-                    builder.append("0");
-                }
-                builder.append(maxCode);
-            }
-            maxCode=builder.toString();
             //将步长转成对应的字符,例如：10转成A
             String streamCode = CodeUtils.generateSerialNumber(maxCode, step, customizeCode);
             if (streamCode.length() <= barcodeLength) {
@@ -183,6 +174,161 @@ public class BarcodeRuleUtils {
                 sb.append("0");
             }
             sb.append("1");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 用递归来实现10转成其他进制
+     *
+     * @param iSrc
+     * @return
+     */
+    public static String DeciamlToBaseConversion(int iSrc,String customizeValue,int barcodeLength) {
+        String result = "";
+        int key;
+        int value;
+
+        Character[] nums = ArrayUtils.toObject(customizeValue.toCharArray());
+        List<Character> list = Arrays.asList(nums);
+
+        key = iSrc / customizeValue.length();
+        value = iSrc - key * customizeValue.length();
+        if (key != 0) {
+            result = result + DeciamlToBaseConversion(key, customizeValue,barcodeLength);
+        }
+        result = result + list.get(value);
+
+        StringBuilder sb=new StringBuilder();
+        int codeLength = result.length();
+        if(codeLength<barcodeLength){
+            for (int i=0;i<barcodeLength-codeLength;i++){
+                sb.append("0");
+            }
+            sb.append(result);
+        }
+        return sb.toString();
+    }
+
+    /**
+     *
+     * @param list 条码规则配置
+     * @param maxLength  该条码规则已生成的编码个数
+     * @param code 产品料号、生产线别、客户料号
+     * @return
+     */
+    public static String analysisSerialNumber(List<SmtBarcodeRuleSpec> list,int maxLength,String code){
+        String maxCode=null;
+        StringBuilder sb=new StringBuilder();
+        Calendar cal= Calendar.getInstance();
+        if(StringUtils.isNotEmpty(list)){
+            for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : list) {
+                //格式
+                String specification = smtBarcodeRuleSpec.getSpecification();
+                //长度
+                Integer barcodeLength = smtBarcodeRuleSpec.getBarcodeLength();
+                //步长
+                Integer step = smtBarcodeRuleSpec.getStep();
+                //自定义参数值
+                String customizeValue = smtBarcodeRuleSpec.getCustomizeValue();
+                //补位方向(0.前  1.后)
+                Byte fillDirection = smtBarcodeRuleSpec.getFillDirection();
+                //补位符
+                String fillOperator = smtBarcodeRuleSpec.getFillOperator();
+                //截取方向(0.前  1.后)
+                Byte interceptDirection = smtBarcodeRuleSpec.getInterceptDirection();
+                //截取位置
+                Integer interceptPosition = smtBarcodeRuleSpec.getInterceptPosition();
+                //初始值
+                Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
+
+
+                if("[G]".equals(specification)){
+                    sb.append(customizeValue);
+                }else if("[Y]".equals(specification)){
+                    if(barcodeLength==1){
+                        int value= cal.get(Calendar.YEAR);
+                        String str = String.valueOf(value);
+                        String year = str.substring(str.length() - 1);
+                        sb.append(year);
+                    }else if(barcodeLength==2){
+                        SimpleDateFormat sdf=new SimpleDateFormat("yy");
+                        String year = sdf.format(new Date());
+                        sb.append(year);
+                    }else {
+                        SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
+                        String year = sdf.format(new Date());
+                        sb.append(year);
+                    }
+                }else if("[P]".equals(specification)||"[L]".equals(specification)||"[C]".equals(specification)){
+                    //产品料号的长度
+                    int length = code.length();
+                    //长度不足需要补位
+                    if(barcodeLength>length){
+                        if(StringUtils.isNotEmpty(fillOperator)){
+                            if("0".equals(fillDirection)){
+                                for (int i=0;i<barcodeLength-length;i++){
+                                    sb.append(fillOperator);
+                                }
+                                sb.append(code);
+                            }else {
+                                sb.append(code);
+                                for (int i=0;i<barcodeLength-length;i++){
+                                    sb.append(fillOperator);
+                                }
+                            }
+                        }else {
+                            throw new BizErrorException("产品料号/生产线别/客户料号的长度不够，不能没有补位符");
+                        }
+                        //需要截取
+                    }else if(barcodeLength<length){
+                        //截取位置从0开始
+                        if(StringUtils.isNotEmpty(interceptPosition)){
+                            if("0".equals(interceptDirection)){
+                                if(interceptPosition+1>=barcodeLength){
+                                    code.substring(interceptPosition+1-barcodeLength,interceptPosition);
+                                }else {
+                                    throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
+                                }
+                            }else {
+                                if(interceptDirection+barcodeLength<=length){
+                                    code.substring(interceptPosition,interceptDirection+barcodeLength-1);
+                                }else {
+                                    throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
+                                }
+                            }
+                        }else {
+                            throw new BizErrorException("产品料号/生产线别/客户料号需要截取是必须有截取位置");
+                        }
+                    }else {
+                        sb.append(code);
+                    }
+                }else if("[S]".equals(specification)){
+                    String customizeCode="0123456789";
+                    StringBuilder builder=new StringBuilder();
+                    if(maxLength>0){
+                        int codeLength = String.valueOf(maxLength).length();
+                        if(codeLength<barcodeLength){
+                            for (int i=0;i<barcodeLength-codeLength;i++){
+                                builder.append("0");
+                            }
+                            builder.append(maxLength);
+                        }
+                    }
+                    maxCode = generateStreamCode(builder.toString(), sb, barcodeLength, initialValue, customizeCode, String.valueOf(step));
+                }else if("[F]".equals(specification)){
+                    String customizeCode="0123456789ABCDEF";
+                    maxCode=DeciamlToBaseConversion(maxLength,customizeCode,barcodeLength);
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeValue));
+                }else if("[b]".equals(specification)||"[c]".equals(specification)){
+                    maxCode=DeciamlToBaseConversion(maxLength,customizeValue,barcodeLength);
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
+                }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
+                    String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
+                    sb.append(typeCode);
+                }
+            }
         }
 
         return sb.toString();
