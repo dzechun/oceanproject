@@ -200,15 +200,7 @@ public class BarcodeRuleUtils {
         }
         result = result + list.get(value);
 
-        StringBuilder sb=new StringBuilder();
-        int codeLength = result.length();
-        if(codeLength<barcodeLength){
-            for (int i=0;i<barcodeLength-codeLength;i++){
-                sb.append("0");
-            }
-            sb.append(result);
-        }
-        return sb.toString();
+        return result;
     }
 
     /**
@@ -319,10 +311,11 @@ public class BarcodeRuleUtils {
                     maxCode = generateStreamCode(builder.toString(), sb, barcodeLength, initialValue, customizeCode, String.valueOf(step));
                 }else if("[F]".equals(specification)){
                     String customizeCode="0123456789ABCDEF";
-                    maxCode=DeciamlToBaseConversion(maxLength,customizeCode,barcodeLength);
+                    //将最大数转成最大编码
+                    maxCode = getMaxCode(maxLength, maxCode, barcodeLength, customizeCode);
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeValue));
                 }else if("[b]".equals(specification)||"[c]".equals(specification)){
-                    maxCode=DeciamlToBaseConversion(maxLength,customizeValue,barcodeLength);
+                    maxCode= getMaxCode(maxLength, maxCode, barcodeLength, customizeValue);
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
@@ -331,6 +324,21 @@ public class BarcodeRuleUtils {
             }
         }
 
+        return sb.toString();
+    }
+
+    public static String getMaxCode(int maxLength, String maxCode, Integer barcodeLength, String customizeCode) {
+        StringBuilder sb = new StringBuilder();
+        if (maxLength > 0) {
+            maxCode = DeciamlToBaseConversion(maxLength, customizeCode, barcodeLength);
+            int codeLength = maxCode.length();
+            if (codeLength < barcodeLength) {
+                for (int i = 0; i < barcodeLength - codeLength; i++) {
+                    sb.append("0");
+                }
+                sb.append(maxCode);
+            }
+        }
         return sb.toString();
     }
 
@@ -354,7 +362,7 @@ public class BarcodeRuleUtils {
     }
 
     public static void main(String[] args) throws IOException {
-        String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
+        /*String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
         String value=null;
         Map<String, Object> map = JsonUtils.jsonToMap(str);
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
@@ -369,7 +377,12 @@ public class BarcodeRuleUtils {
 
         for (int i=0;i<10;i++){
            new Thread(getStreamCode()).start();
-        }
+        }*/
+
+
+        String customizeValue = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+        String s = DeciamlToBaseConversion(60,customizeValue,4);
+        System.out.println("s="+s);
     }
 
     public static synchronized String getStreamCode() throws IOException {

@@ -3,21 +3,29 @@ package com.fantechs.provider.imes.apply.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodeCollocationDto;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodeCollocation;
+import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
+import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.UUIDUtils;
+import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodeCollocationMapper;
+import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodePoolMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderBarcodeCollocationService;
+import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +40,10 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
     private SmtWorkOrderBarcodeCollocationMapper smtWorkOrderBarcodeCollocationMapper;
     @Resource
     private SmtWorkOrderMapper smtWorkOrderMapper;
+    @Resource
+    private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
+    @Resource
+    private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
 
     @Override
     public List<SmtWorkOrderBarcodeCollocationDto> findList(SearchSmtWorkOrderBarcodeCollocation searchSmtWorkOrderBarcodeCollocation) {
@@ -47,6 +59,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         }
         Long workOrderId = record.getWorkOrderId();
         SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+        Long barcodeRuleId = smtWorkOrderDto.getBarcodeRuleId();
         Integer workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
         Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
         //工单的转移批次
@@ -54,7 +67,16 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         //产生数量
         Integer produceQuantity = record.getProduceQuantity();
         //已产生数量
-        Integer generatedQuantity = record.getGeneratedQuantity()==null?0:record.getGeneratedQuantity();
+        Integer generatedQuantity = 0;
+        Example example = new Example(SmtWorkOrderCardCollocation.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("workOrderId",record.getWorkOrderId());
+        List<SmtWorkOrderBarcodeCollocation> barcodeCollocations = smtWorkOrderBarcodeCollocationMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(barcodeCollocations)){
+            for (SmtWorkOrderBarcodeCollocation barcodeCollocation : barcodeCollocations) {
+                generatedQuantity+=barcodeCollocation.getProduceQuantity();
+            }
+        }
         if(produceQuantity+generatedQuantity>sumBatchQuantity){
             throw new BizErrorException("工单产生条码总数量不能大于工单数量");
         }else if(produceQuantity+generatedQuantity==sumBatchQuantity){
@@ -63,12 +85,67 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             record.setStatus((byte) 1);
         }
 
+        record.setGeneratedQuantity(produceQuantity+generatedQuantity);
         record.setCreateUserId(currentUser.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(currentUser.getUserId());
         record.setModifiedTime(new Date());
 
+        //生成工单规则解析码
+        generateBarcode(record, barcodeRuleId, produceQuantity);
         return smtWorkOrderBarcodeCollocationMapper.insertSelective(record);
+    }
+
+    /**
+     * 生成工单规则解析码
+     * @param smtWorkOrderBarcodeCollocation
+     * @param barcodeRuleId
+     * @param quantity
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void generateBarcode(SmtWorkOrderBarcodeCollocation smtWorkOrderBarcodeCollocation, Long barcodeRuleId, Integer quantity) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        List<SmtWorkOrderBarcodePool> workOrderBarcodePools=new ArrayList<>();
+        String workOrderBarcode=null;
+        int maxLength=0;
+        //查询该规则生成的条码规则解析码条数
+        Example example= new Example(SmtWorkOrderBarcodePool.class);
+        example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+        List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
+
+        for (int i=0;i<quantity;i++){
+            if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
+                maxLength=smtWorkOrderBarcodePools.size();
+            }
+
+            Example example1= new Example(SmtBarcodeRuleSpec.class);
+            example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+            List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
+            if(StringUtils.isNotEmpty(ruleSpecs)){
+                workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
+                for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
+                    String specification = smtBarcodeRuleSpec.getSpecification();
+                    Integer step = smtBarcodeRuleSpec.getStep();
+                    Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
+                    if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
+                        maxLength=i*step+initialValue;
+                    }
+                }
+            }
+            SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
+            smtWorkOrderBarcodePool.setTaskCode(UUIDUtils.getUUID());
+            smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderBarcodeCollocation.getWorkOrderId());
+            smtWorkOrderBarcodePool.setBarcodeRuleId(barcodeRuleId);
+            smtWorkOrderBarcodePool.setBarcode(workOrderBarcode);
+            smtWorkOrderBarcodePool.setTaskStatus((byte) 0);
+            smtWorkOrderBarcodePool.setStatus((byte) 1);
+            smtWorkOrderBarcodePool.setCreateUserId(currentUser.getUserId());
+            smtWorkOrderBarcodePool.setCreateTime(new Date());
+            smtWorkOrderBarcodePool.setModifiedUserId(currentUser.getUserId());
+            smtWorkOrderBarcodePool.setModifiedTime(new Date());
+            workOrderBarcodePools.add(smtWorkOrderBarcodePool);
+        }
+        smtWorkOrderBarcodePoolMapper.insertList(workOrderBarcodePools);
     }
 
     @Override
