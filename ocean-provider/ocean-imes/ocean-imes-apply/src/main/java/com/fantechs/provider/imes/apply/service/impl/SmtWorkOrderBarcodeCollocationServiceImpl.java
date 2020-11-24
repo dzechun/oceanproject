@@ -122,8 +122,8 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
             List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
             if(StringUtils.isNotEmpty(ruleSpecs)){
+                workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
                 for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
-                    workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
                     String specification = smtBarcodeRuleSpec.getSpecification();
                     Integer step = smtBarcodeRuleSpec.getStep();
                     Integer initialValue = smtBarcodeRuleSpec.getInitialValue();

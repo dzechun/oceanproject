@@ -92,7 +92,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             //生成工单流转卡解析码
             List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, barcodeRuleId, produceQuantity);
             //生成工单规则解析码
-           // generateBarcode(smtWorkOrderCardCollocation, barcodeRuleId, produceQuantity*transferQuantity);
+            generateBarcode(smtWorkOrderCardCollocation, barcodeRuleId, produceQuantity*transferQuantity);
 
             return smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
         }
