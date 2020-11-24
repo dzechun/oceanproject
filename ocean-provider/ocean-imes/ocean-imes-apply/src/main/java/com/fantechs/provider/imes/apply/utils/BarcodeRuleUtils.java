@@ -207,6 +207,30 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
+    /**
+     * 用递归来实现10转成其他进制
+     *
+     * @param iSrc
+     * @return
+     */
+    public static String DeciamlToBaseConversion(int iSrc,String customizeValue,int barcodeLength) {
+        String result = "";
+        int key;
+        int value;
+
+        Character[] nums = ArrayUtils.toObject(customizeValue.toCharArray());
+        List<Character> list = Arrays.asList(nums);
+
+        key = iSrc / customizeValue.length();
+        value = iSrc - key * customizeValue.length();
+        if (key != 0) {
+            result = result + DeciamlToBaseConversion(key, customizeValue,barcodeLength);
+        }
+        result = result + list.get(value);
+
+        return result;
+    }
+
     public static void main(String[] args) throws IOException {
         String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
         String value=null;
