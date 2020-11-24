@@ -143,7 +143,7 @@ public class SmtWorkOrderCardCollocationDto extends SmtWorkOrderCardCollocation 
      * 条码规则集合
      */
     @Transient
-    @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
-    private String barcodeRuleName;
+    @ApiModelProperty(name="barcodeRule" ,value="条码规则集合")
+    private String barcodeRule;
 
 }
