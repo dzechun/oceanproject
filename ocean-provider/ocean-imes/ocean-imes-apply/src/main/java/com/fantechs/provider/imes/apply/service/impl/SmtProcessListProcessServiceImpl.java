@@ -1,11 +1,9 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.ProcessListDto;
 import com.fantechs.common.base.dto.apply.SmtProcessListProcessDto;
-import com.fantechs.common.base.entity.apply.SmtProcessListProcess;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderCardPool;
+import com.fantechs.common.base.entity.apply.*;
 import com.fantechs.common.base.entity.apply.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
@@ -14,11 +12,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.apply.mapper.SmtProcessListProcessMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodePoolMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderCardPoolMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.imes.apply.mapper.*;
 import com.fantechs.provider.imes.apply.service.SmtProcessListProcessService;
+import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -35,16 +31,60 @@ import java.util.List;
 @Service
 public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessListProcess> implements SmtProcessListProcessService {
 
-         @Resource
-         private SmtProcessListProcessMapper smtProcessListProcessMapper;
-         @Resource
-         private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
-         @Resource
-         private SmtWorkOrderMapper smtWorkOrderMapper;
+     @Resource
+     private SmtProcessListProcessMapper smtProcessListProcessMapper;
+     @Resource
+     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
+     @Resource
+     private SmtWorkOrderMapper smtWorkOrderMapper;
+     @Resource
+     private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
 
     @Override
     public List<SmtProcessListProcessDto> findList(SearchSmtProcessListProcess searchSmtProcessListProcess) {
         return smtProcessListProcessMapper.findList(searchSmtProcessListProcess);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool) {
+        List<SmtProcessListProcess> list=new ArrayList<>();
+        Long workOrderId = smtWorkOrderBarcodePool.getWorkOrderId();
+        Long barcodeRuleId = smtWorkOrderBarcodePool.getBarcodeRuleId();
+        //查询该工单对应工艺路线下的工序
+        List<ProcessListDto> processListDtos=smtProcessListProcessMapper.findProcess(workOrderId);
+        if(StringUtils.isNotEmpty(processListDtos)){
+            for (ProcessListDto processListDto : processListDtos) {
+                SmtProcessListProcess smtProcessListProcess=new SmtProcessListProcess();
+                Long processId = processListDto.getProcessId();
+                smtProcessListProcess.setWorkOrderCardPooId(smtWorkOrderBarcodePool.getWorkOrderCardPoolId());
+                smtProcessListProcess.setWorkOrderBarcodePoolId(smtWorkOrderBarcodePool.getWorkOrderBarcodePoolId());
+                smtProcessListProcess.setProcessId(processId);
+                smtProcessListProcess.setStatus((byte) 0);
+                smtProcessListProcess.setIsHold((byte) 0);
+                //彩盒号
+                String packageNum=generateCode(barcodeRuleId);
+                smtProcessListProcess.setPackageNum(packageNum);
+                //箱号
+                //栈板号
+                smtProcessListProcess.setIsDelete((byte) 1);
+            }
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        return smtProcessListProcessMapper.insertList(list);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public String generateCode(Long barcodeRuleId) {
+        String packageNum=null;
+        Example example= new Example(SmtBarcodeRuleSpec.class);
+        example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+        List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(ruleSpecs)){
+           // packageNum= BarcodeRuleUtils.analysisCode(ruleSpecs, maxCode, null);
+        }
+       return packageNum;
     }
 
     @Override
