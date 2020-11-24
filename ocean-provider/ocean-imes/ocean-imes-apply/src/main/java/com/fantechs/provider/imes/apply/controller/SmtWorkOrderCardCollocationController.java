@@ -24,7 +24,7 @@ import java.util.List;
  * Created by wcz on 2020/11/20.
  */
 @RestController
-@Api(tags = "smtWorkOrderCardCollocation控制器")
+@Api(tags = "工单流转卡配置")
 @RequestMapping("/smtWorkOrderCardCollocation")
 @Validated
 public class SmtWorkOrderCardCollocationController {
