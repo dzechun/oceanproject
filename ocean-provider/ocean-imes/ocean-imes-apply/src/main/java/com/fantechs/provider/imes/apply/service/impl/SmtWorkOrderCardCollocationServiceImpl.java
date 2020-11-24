@@ -124,6 +124,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 if(StringUtils.isNotEmpty(ruleSpecs)){
                     workOrderBarcode = BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, workOrderBarcode);
                     workOrderBarcode=BarcodeRuleUtils.analysisCode(ruleSpecs,workOrderBarcode,null);
+                }else {
+                    throw new BizErrorException("该工单条码规则没有配置");
                 }
 
                 SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
@@ -169,6 +171,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 if(StringUtils.isNotEmpty(list)){
                     workOrderCardCode=BarcodeRuleUtils.getMaxSerialNumber(list, workOrderCardCode);
                     workOrderCardCode=BarcodeRuleUtils.analysisCode(list,workOrderCardCode,null);
+                }else {
+                    throw new BizErrorException("该工单流转卡规则没有配置");
                 }
 
                 SmtWorkOrderCardPool smtWorkOrderCardPool=new SmtWorkOrderCardPool();
