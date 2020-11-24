@@ -122,7 +122,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         for (int i=0;i<quantity;i++){
             if(StringUtils.isNotEmpty(ruleSpecs)){
                 workOrderBarcode= BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, workOrderBarcode);
-                BarcodeRuleUtils.analysisCode(ruleSpecs,workOrderBarcode,null);
+                workOrderBarcode= BarcodeRuleUtils.analysisCode(ruleSpecs,workOrderBarcode,null);
             }
 
             SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
