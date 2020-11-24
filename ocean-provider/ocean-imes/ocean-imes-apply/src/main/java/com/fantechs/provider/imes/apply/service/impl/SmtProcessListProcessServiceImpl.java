@@ -77,14 +77,15 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
     @Transactional(rollbackFor = Exception.class)
     public String generateCode(Long barcodeRuleId) {
-        String packageNum=null;
+        String maxCode=null;
         Example example= new Example(SmtBarcodeRuleSpec.class);
         example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
         List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(ruleSpecs)){
-           // packageNum= BarcodeRuleUtils.analysisCode(ruleSpecs, maxCode, null);
+            maxCode= BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, maxCode);
+            maxCode= BarcodeRuleUtils.analysisCode(ruleSpecs, maxCode, null);
         }
-       return packageNum;
+       return maxCode;
     }
 
     @Override
