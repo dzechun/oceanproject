@@ -207,27 +207,8 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
-    /**
-     * @param s 要倒转的字符串
-     * @return
-     */
-    public static String spiltRtoL(String s) {
-
-        StringBuffer sb = new StringBuffer();
-        int length = s.length();
-        char[] c = new char[length];
-        for (int i = 0; i < length; i++) {
-            c[i] = s.charAt(i);
-        }
-        for (int i = length - 1; i >= 0; i--) {
-            sb.append(c[i]);
-        }
-
-        return sb.toString();
-    }
-
     public static void main(String[] args) throws IOException {
-        /*String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
+        String str="{\"2020\": \"H\",\"2021\": \"I\",\"2022\": \"J\",\"2023\": \"K\",\"2024\": \"L\"}";
         String value=null;
         Map<String, Object> map = JsonUtils.jsonToMap(str);
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
@@ -242,127 +223,10 @@ public class BarcodeRuleUtils {
 
         for (int i=0;i<10;i++){
            new Thread(getStreamCode()).start();
-        }*/
-
-        String rule="[\n" +
-                "    {\n" +
-                "      \"barcodeRuleSpecId\": 61,\n" +
-                "      \"barcodeRuleId\": 2,\n" +
-                "      \"specId\": 1,\n" +
-                "      \"specification\": \"[G]\",\n" +
-                "      \"barcodeLength\": null,\n" +
-                "      \"initialValue\": null,\n" +
-                "      \"step\": null,\n" +
-                "      \"fillOperator\": null,\n" +
-                "      \"fillDirection\": null,\n" +
-                "      \"customizeName\": null,\n" +
-                "      \"interceptLength\": null,\n" +
-                "      \"interceptPosition\": null,\n" +
-                "      \"interceptDirection\": null,\n" +
-                "      \"customizeValue\": \"ABC\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"barcodeRuleSpecId\": 62,\n" +
-                "      \"barcodeRuleId\": 2,\n" +
-                "      \"specId\": 2,\n" +
-                "      \"specification\": \"[Y]\",\n" +
-                "      \"barcodeLength\": 2,\n" +
-                "      \"initialValue\": null,\n" +
-                "      \"step\": null,\n" +
-                "      \"fillOperator\": null,\n" +
-                "      \"fillDirection\": null,\n" +
-                "      \"customizeName\": null,\n" +
-                "      \"interceptLength\": null,\n" +
-                "      \"interceptPosition\": null,\n" +
-                "      \"interceptDirection\": null,\n" +
-                "      \"customizeValue\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"barcodeRuleSpecId\": 63,\n" +
-                "      \"barcodeRuleId\": 2,\n" +
-                "      \"specId\": 3,\n" +
-                "      \"specification\": \"[M]\",\n" +
-                "      \"barcodeLength\": 2,\n" +
-                "      \"initialValue\": null,\n" +
-                "      \"step\": null,\n" +
-                "      \"fillOperator\": null,\n" +
-                "      \"fillDirection\": null,\n" +
-                "      \"customizeName\": null,\n" +
-                "      \"interceptLength\": null,\n" +
-                "      \"interceptPosition\": null,\n" +
-                "      \"interceptDirection\": null,\n" +
-                "      \"customizeValue\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"barcodeRuleSpecId\": 64,\n" +
-                "      \"barcodeRuleId\": 2,\n" +
-                "      \"specId\": 4,\n" +
-                "      \"specification\": \"[D]\",\n" +
-                "      \"barcodeLength\": 2,\n" +
-                "      \"initialValue\": null,\n" +
-                "      \"step\": null,\n" +
-                "      \"fillOperator\": null,\n" +
-                "      \"fillDirection\": null,\n" +
-                "      \"customizeName\": null,\n" +
-                "      \"interceptLength\": null,\n" +
-                "      \"interceptPosition\": null,\n" +
-                "      \"interceptDirection\": null,\n" +
-                "      \"customizeValue\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"barcodeRuleSpecId\": 65,\n" +
-                "      \"barcodeRuleId\": 2,\n" +
-                "      \"specId\": 1,\n" +
-                "      \"specification\": \"[b]\",\n" +
-                "      \"barcodeLength\": 4,\n" +
-                "      \"initialValue\": null,\n" +
-                "      \"step\": 2,\n" +
-                "      \"fillOperator\": null,\n" +
-                "      \"fillDirection\": null,\n" +
-                "      \"customizeName\": null,\n" +
-                "      \"interceptLength\": null,\n" +
-                "      \"interceptPosition\": null,\n" +
-                "      \"interceptDirection\": null,\n" +
-                "      \"customizeValue\": \"0123456789ABCDEFGHJKLMNPRSTUVWXYZ\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"barcodeRuleSpecId\": 61,\n" +
-                "      \"barcodeRuleId\": 2,\n" +
-                "      \"specId\": 1,\n" +
-                "      \"specification\": \"[G]\",\n" +
-                "      \"barcodeLength\": null,\n" +
-                "      \"initialValue\": null,\n" +
-                "      \"step\": null,\n" +
-                "      \"fillOperator\": null,\n" +
-                "      \"fillDirection\": null,\n" +
-                "      \"customizeName\": null,\n" +
-                "      \"interceptLength\": null,\n" +
-                "      \"interceptPosition\": null,\n" +
-                "      \"interceptDirection\": null,\n" +
-                "      \"customizeValue\": \"DC\"\n" +
-                "    }\n" +
-                "  ]";
-
-        List<SmtBarcodeRuleSpec> list = JsonUtils.jsonToList(rule, SmtBarcodeRuleSpec.class);
-        String code=null;
-        String maxCode=null;
-        int step=2;
-        String customizeCode="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
-        Integer barcodeLength=4;
-        for (int i=0;i<=20;i++){
-            code= analysisCode(list, maxCode, null);
-            if(StringUtils.isEmpty(maxCode)){
-                maxCode=changeCode(barcodeLength,null);
-            }else {
-                maxCode = CodeUtils.generateSerialNumber(maxCode, String.valueOf(step), customizeCode);
-            }
-            System.out.println(code);
         }
-        String number = getMaxSerialNumber(list, code);
-        System.out.println("number="+number);
     }
 
-    public static synchronized String getStreamCode() throws IOException {
+    public static synchronized String getStreamCode() {
         String rule="[\n" +
                 "    {\n" +
                 "      \"barcodeRuleSpecId\": 61,\n" +
