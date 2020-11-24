@@ -113,22 +113,31 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
         List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
 
+        Example example1= new Example(SmtBarcodeRuleSpec.class);
+        example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+        List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
         for (int i=0;i<quantity;i++){
-            if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
-                maxLength=smtWorkOrderBarcodePools.size();
-            }
-
-            Example example1= new Example(SmtBarcodeRuleSpec.class);
-            example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
-            List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
             if(StringUtils.isNotEmpty(ruleSpecs)){
-                workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
-                for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
-                    String specification = smtBarcodeRuleSpec.getSpecification();
-                    Integer step = smtBarcodeRuleSpec.getStep();
-                    Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
-                    if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
-                        maxLength=i*step+initialValue;
+                if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
+                    maxLength=smtWorkOrderBarcodePools.size();
+                    for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
+                        String specification = smtBarcodeRuleSpec.getSpecification();
+                        Integer step = smtBarcodeRuleSpec.getStep();
+                        Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
+                        if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
+                            maxLength=(maxLength+i-1)*step+initialValue;
+                        }
+                    }
+                    workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
+                }else {
+                    workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
+                    for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
+                        String specification = smtBarcodeRuleSpec.getSpecification();
+                        Integer step = smtBarcodeRuleSpec.getStep();
+                        Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
+                        if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
+                            maxLength=i*step+initialValue;
+                        }
                     }
                 }
             }
