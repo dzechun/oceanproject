@@ -10,8 +10,8 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
+import com.fantechs.provider.electronic.service.SmtHtElectronicTagStorageService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -43,7 +43,7 @@ public class SmtElectronicTagStorageController {
     @Autowired
     private SmtElectronicTagStorageService smtElectronicTagStorageService;
     @Resource
-    private SmtHtElectronicTagStorageMapper smtHtElectronicTagStorageMapper;
+    private SmtHtElectronicTagStorageService smtHtElectronicTagStorageService;
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
@@ -82,7 +82,7 @@ public class SmtElectronicTagStorageController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<SmtHtElectronicTagStorage>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchSmtElectronicTagStorage searchSmtElectronicTagStorage) {
         Page<Object> page = PageHelper.startPage(searchSmtElectronicTagStorage.getStartPage(), searchSmtElectronicTagStorage.getPageSize());
-        List<SmtHtElectronicTagStorage> list = smtHtElectronicTagStorageMapper.findHtList(ControllerUtil.dynamicConditionByEntity(searchSmtElectronicTagStorage));
+        List<SmtHtElectronicTagStorage> list = smtHtElectronicTagStorageService.findHtList(ControllerUtil.dynamicConditionByEntity(searchSmtElectronicTagStorage));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
