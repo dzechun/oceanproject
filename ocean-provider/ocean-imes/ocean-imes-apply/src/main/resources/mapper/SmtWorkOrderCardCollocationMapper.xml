@@ -33,7 +33,7 @@
     <result column="customer_id" jdbcType="BIGINT" property="customerId" />
     <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
     <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
-    <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
+    <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
     <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime" />
     <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
   </resultMap>
