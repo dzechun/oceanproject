@@ -2,10 +2,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.entity.apply.*;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
@@ -28,6 +25,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -48,6 +46,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         private SmtWorkOrderCardCollocationMapper smtWorkOrderCardCollocationMapper;
         @Resource
         private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+        @Resource
+        private SmtStockMapper smtStockMapper;
+        @Resource
+        private SmtStockDetMapper smtStockDetMapper;
 
         @Override
         @Transactional(rollbackFor = Exception.class)
@@ -77,8 +79,23 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             smtHtWorkOrder.setModifiedTime(new Date());
             int i = smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
 
+
+            //生成备料单
+            SmtStock smtStock = new SmtStock();
+            smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            smtStock.setDeliveryMode(new Byte("0"));
+            smtStock.setStatus(new Byte("1"));
+            Date date = smtWorkOrder.getPlannedStartTime();
+            Date afterDate = new Date(date.getTime()+ 600000);
+            BeanUtils.copyProperties(smtWorkOrder,smtStock,new String[]{"createUserId","createTime","modifiedUserId","modifiedTime"});
+            smtStockMapper.insertUseGeneratedKeys(smtStock);
+
+
             //根据产品BOM生成工单BOM
-            genWorkOrder(smtWorkOrder);
+            genWorkOrder(smtWorkOrder,smtStock);
+
+
+
             return i;
         }
 
@@ -87,11 +104,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
          * @param smtWorkOrder
          */
         @Transactional(rollbackFor = Exception.class)
-        public void genWorkOrder(SmtWorkOrder smtWorkOrder) {
+        public void genWorkOrder(SmtWorkOrder smtWorkOrder,SmtStock smtStock) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             List<SmtWorkOrderBom> list=new ArrayList<>();
             List<SmtHtWorkOrderBom> htList=new ArrayList<>();
 
+            List<SmtStockDet> stockDetList = new ArrayList<>();
             //根据物料ID查询产品BOM信息
             List<SmtProductBomDet> smtProductBomDets=smtWorkOrderMapper.selectProductBomDet(smtWorkOrder.getMaterialId());
             if(StringUtils.isNotEmpty(smtProductBomDets)){
@@ -108,9 +126,21 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     smtWorkOrderBom.setCreateTime(new Date());
                     list.add(smtWorkOrderBom);
 
+                    //备料单明细
+                    SmtStockDet smtStockDet = new SmtStockDet();
+                    smtStockDet.setStockId(smtStock.getStockId());
+                    smtStockDet.setMaterialId(smtWorkOrderBom.getPartMaterialId());
+                    smtStockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
+                    smtStockDet.setStockQuantity(smtWorkOrderBom.getBaseQuantity());
+                    smtStockDet.setStatus(new Byte("1"));
+                    BeanUtils.copyProperties(smtWorkOrderBom,smtStockDet,new String[]{"createUserId","createTime","modifiedUserId","modifiedTime"});
+                    stockDetList.add(smtStockDet);
                 }
                 //批量新增工单BOM信息
                 smtWorkOrderBomMapper.insertList(list);
+
+                //批量新增备料明细
+                smtStockDetMapper.insertList(stockDetList);
 
                  if(StringUtils.isNotEmpty(list)){
                      for (SmtWorkOrderBom smtWorkOrderBom : list) {
@@ -133,7 +163,11 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         public int update(SmtWorkOrder smtWorkOrder) {
             int i=0;
             List<SmtWorkOrderBom> list=new ArrayList();
+
+            //备料明细
             List<SmtHtWorkOrderBom> htList=new ArrayList<>();
+
+            List<SmtStockDet> smtStockDetList = new ArrayList<>();
 
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             if(StringUtils.isEmpty(currentUser)){
@@ -141,6 +175,11 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
 
             SmtWorkOrder order = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrder.getWorkOrderId());
+
+            Example stockExample = new Example(SmtStock.class);
+            stockExample.createCriteria().andEqualTo("workOrderId");
+            SmtStock smtStock = smtStockMapper.selectOneByExample(stockExample);
+
             //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
             Integer workOrderStatus = order.getWorkOrderStatus();
             if(workOrderStatus!=3){
@@ -164,6 +203,11 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                             Example.Criteria criteria1 = example1.createCriteria();
                             criteria1.andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
                             List<SmtWorkOrderBom> workOrderBoms = smtWorkOrderBomMapper.selectByExample(example1);
+
+                            Example example2 = new Example(SmtStockDet.class);
+                            example2.createCriteria().andEqualTo("stockId",smtStock.getStockId());
+                            List<SmtStockDet> smtStockDets = smtStockDetMapper.selectByExample(example2);
+
                             if(StringUtils.isNotEmpty(workOrderBoms)){
                                 for (SmtWorkOrderBom smtWorkOrderBom : workOrderBoms) {
                                     //工单BOM的单个用量
@@ -179,16 +223,33 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                                     smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
                                     smtHtWorkOrderBom.setModifiedTime(new Date());
                                     htList.add(smtHtWorkOrderBom);
+
+                                    //修改备料数量
+                                    List<SmtStockDet>  smtStockDet = smtStockDets.stream().filter(st->st.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())).collect(Collectors.toList());
+                                    if(StringUtils.isNotEmpty(smtStockDet)){
+                                        for (SmtStockDet stockDet : smtStockDet) {
+                                            stockDet.setStockId(smtStock.getStockId());
+                                            stockDet.setMaterialId(smtWorkOrderBom.getPartMaterialId());
+                                            stockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
+                                            stockDet.setStockQuantity(smtWorkOrderBom.getBaseQuantity());
+                                            smtStockDetList.add(stockDet);
+                                        }
+                                    }
                                 }
+
                                 //批量修改工单BOM的用量
                                 smtWorkOrderBomMapper.updateBatch(list);
 
                                 //批量新增工单BOM历史信息
                                 smtHtWorkOrderBomMapper.insertList(htList);
+
+                                //批量修改备料明细
+                                smtStockDetMapper.updateBatch(smtStockDetList);
                             }
                         }
                     }
                 }
+
 
                 smtWorkOrder.setModifiedUserId(currentUser.getUserId());
                 smtWorkOrder.setModifiedTime(new Date());

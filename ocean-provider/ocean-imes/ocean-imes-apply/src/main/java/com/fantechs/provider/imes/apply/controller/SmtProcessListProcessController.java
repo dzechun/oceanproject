@@ -29,7 +29,7 @@ import java.util.List;
 * @create 2020/11/23
 */
 @RestController
-@Api(tags = "smtProcessListProcess控制器")
+@Api(tags = "过站信息")
 @RequestMapping("/smtProcessListProcess")
 @Validated
 public class SmtProcessListProcessController {
