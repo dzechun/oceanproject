@@ -213,7 +213,7 @@ public class BarcodeRuleUtils {
      * @param iSrc
      * @return
      */
-    public static String DeciamlToBaseConversion(int iSrc,String customizeValue,int barcodeLength) {
+    public static String DeciamlToBaseConversion(int iSrc,String customizeValue) {
         String result = "";
         int key;
         int value;
@@ -224,7 +224,7 @@ public class BarcodeRuleUtils {
         key = iSrc / customizeValue.length();
         value = iSrc - key * customizeValue.length();
         if (key != 0) {
-            result = result + DeciamlToBaseConversion(key, customizeValue,barcodeLength);
+            result = result + DeciamlToBaseConversion(key, customizeValue);
         }
         result = result + list.get(value);
 
@@ -248,6 +248,11 @@ public class BarcodeRuleUtils {
         for (int i=0;i<10;i++){
            new Thread(getStreamCode()).start();
         }
+
+        String customizeValue="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+        String code = DeciamlToBaseConversion(10220, customizeValue);
+        System.out.println("code="+code);
+
     }
 
     public static synchronized String getStreamCode() {
