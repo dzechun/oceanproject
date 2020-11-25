@@ -25,7 +25,7 @@ import java.util.List;
  * Created by wcz on 2020/11/25.
  */
 @RestController
-@Api(tags = "smtWorkOrderBarcodePool控制器")
+@Api(tags = "工单任务池表")
 @RequestMapping("/smtWorkOrderBarcodePool")
 @Validated
 public class SmtWorkOrderBarcodePoolController {
