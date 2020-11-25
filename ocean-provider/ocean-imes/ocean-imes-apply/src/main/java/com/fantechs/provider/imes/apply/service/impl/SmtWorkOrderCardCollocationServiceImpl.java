@@ -161,6 +161,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
          */
         @Transactional(rollbackFor = Exception.class)
         public List<SmtWorkOrderCardPool> generateCardCode(SmtWorkOrderCardCollocation smtWorkOrderCardCollocation, Long barcodeRuleId, Integer produceQuantity) {
+            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
             List<SmtWorkOrderCardPool> workOrderCardPools=new ArrayList<>();
             String workOrderCardCode=null;
             //查询该规则生成的工单流转卡解析码条数
@@ -190,6 +191,10 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 smtWorkOrderCardPool.setWorkOrderCardId(workOrderCardCode);
                 smtWorkOrderCardPool.setCardStatus((byte) 0);
                 smtWorkOrderCardPool.setStatus((byte) 1);
+                smtWorkOrderCardPool.setCreateUserId(currentUser.getUserId());
+                smtWorkOrderCardPool.setCreateTime(new Date());
+                smtWorkOrderCardPool.setModifiedUserId(currentUser.getUserId());
+                smtWorkOrderCardPool.setModifiedTime(new Date());
 
                 workOrderCardPools.add(smtWorkOrderCardPool);
             }
