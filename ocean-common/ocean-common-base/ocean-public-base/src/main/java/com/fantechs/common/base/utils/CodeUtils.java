@@ -118,11 +118,7 @@ public class CodeUtils {
         Map<String, Object> map=null;
         Calendar cal = Calendar.getInstance();
         if(StringUtils.isNotEmpty(customizeValue)){
-            try {
-                map= JsonUtils.jsonToMap(customizeValue);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            map= JsonUtils.jsonToMap(customizeValue);
         }
         switch(str){
             //月

@@ -84,7 +84,7 @@ public class JsonUtils {
      * @return 
      * @throws IOException 
      */  
-    public static Map<String, Object> jsonToMap(String jsonStr) throws IOException {  
+    public static Map<String, Object> jsonToMap(String jsonStr) {
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> map = MAPPER.readValue(jsonStr, Map.class);
