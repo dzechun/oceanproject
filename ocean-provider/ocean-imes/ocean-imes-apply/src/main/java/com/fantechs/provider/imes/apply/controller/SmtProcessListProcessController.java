@@ -1,7 +1,9 @@
 package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.dto.apply.SmtProcessListProcessDto;
+import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodeCollocationDto;
 import com.fantechs.common.base.entity.apply.SmtProcessListProcess;
+import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.entity.apply.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -75,4 +77,14 @@ public class SmtProcessListProcessController {
         throw new BizErrorException(e);
         }
     }
+
+    /**  开始作业
+     *  把任务池任务分解，按照工艺流程，生成过站工序列表
+     */
+    @ApiOperation("开始作业")
+    @PostMapping("/startJob")
+    public ResponseEntity startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool){
+        return ControllerUtil.returnCRUD(smtProcessListProcessService.startJob(smtWorkOrderBarcodePool));
+    }
+
 }

@@ -107,31 +107,26 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<SmtWorkOrderBarcodePool> workOrderBarcodePools=new ArrayList<>();
         String workOrderBarcode=null;
-        int maxLength=0;
         //查询该规则生成的条码规则解析码条数
         Example example= new Example(SmtWorkOrderBarcodePool.class);
         example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+        example.setOrderByClause("`barcode` desc");
         List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
 
+        Example example1= new Example(SmtBarcodeRuleSpec.class);
+        example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+        List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
+        if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
+            workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
+        }
         for (int i=0;i<quantity;i++){
-            if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
-                maxLength=smtWorkOrderBarcodePools.size();
+            if(StringUtils.isNotEmpty(ruleSpecs)){
+                workOrderBarcode= BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, workOrderBarcode);
+                workOrderBarcode= BarcodeRuleUtils.analysisCode(ruleSpecs,workOrderBarcode,null);
+            }else {
+                throw new BizErrorException("该工单条码规则没有配置");
             }
 
-            Example example1= new Example(SmtBarcodeRuleSpec.class);
-            example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
-            List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
-            if(StringUtils.isNotEmpty(ruleSpecs)){
-                workOrderBarcode= BarcodeRuleUtils.analysisSerialNumber(ruleSpecs, maxLength, null);
-                for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : ruleSpecs) {
-                    String specification = smtBarcodeRuleSpec.getSpecification();
-                    Integer step = smtBarcodeRuleSpec.getStep();
-                    Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
-                    if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
-                        maxLength=i*step+initialValue;
-                    }
-                }
-            }
             SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
             smtWorkOrderBarcodePool.setTaskCode(UUIDUtils.getUUID());
             smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderBarcodeCollocation.getWorkOrderId());
