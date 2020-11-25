@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -42,9 +43,9 @@ public class SmtWorkOrderBarcodePoolController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtWorkOrderBarcodePool>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool) {
+    public ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool) {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderBarcodePool.getStartPage(),searchSmtWorkOrderBarcodePool.getPageSize());
-        List<SmtWorkOrderBarcodePool> list = smtWorkOrderBarcodePoolService.findList(searchSmtWorkOrderBarcodePool);
+        List<SmtWorkOrderBarcodePoolDto> list = smtWorkOrderBarcodePoolService.findList(searchSmtWorkOrderBarcodePool);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

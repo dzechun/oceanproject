@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.support.BaseService;
@@ -21,7 +22,7 @@ public class SmtWorkOrderBarcodePoolServiceImpl extends BaseService<SmtWorkOrder
     private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
 
     @Override
-    public List<SmtWorkOrderBarcodePool> findList(SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool) {
+    public List<SmtWorkOrderBarcodePoolDto> findList(SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool) {
         return smtWorkOrderBarcodePoolMapper.findList(searchSmtWorkOrderBarcodePool);
     }
 }

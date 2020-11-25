@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.service;
 
+import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.support.IService;
@@ -13,5 +14,5 @@ import java.util.List;
 
 public interface SmtWorkOrderBarcodePoolService extends IService<SmtWorkOrderBarcodePool> {
 
-    List<SmtWorkOrderBarcodePool> findList(SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
+    List<SmtWorkOrderBarcodePoolDto> findList(SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
 }
