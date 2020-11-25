@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtKeyMaterialMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtKeyMaterial">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_key_material_id" jdbcType="BIGINT" property="htKeyMaterialId"/>
+        <result column="key_material_id" jdbcType="BIGINT" property="keyMaterialId"/>
+        <result column="product_type" jdbcType="TINYINT" property="productType"/>
+        <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId"/>
+        <result column="scanning_gun_quantity" jdbcType="INTEGER" property="scanningGunQuantity"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="station_id" jdbcType="BIGINT" property="stationId"/>
+        <result column="consumption" jdbcType="DECIMAL" property="consumption"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
+        <result column="part_material_desc" jdbcType="VARCHAR" property="partMaterialDesc"/>
+        <result column="part_material_version" jdbcType="VARCHAR" property="partMaterialVersion"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    shkm.ht_key_material_id, shkm.key_material_id, shkm.product_type, shkm.product_model_id, shkm.material_id, shkm.part_material_id,
+    shkm.scanning_gun_quantity, shkm.process_id, shkm.station_id, shkm.consumption, shkm.status, shkm.create_user_id,
+    shkm.create_time, shkm.modified_user_id, shkm.modified_time, shkm.is_delete, shkm.option1, shkm.option2, shkm.option3
+  </sql>
+
+    <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+        SELECT<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        spm.product_model_code AS product_model_code,
+        sm1.material_code AS material_code, sm1.material_desc AS material_desc, sm1.version AS version,
+        sm2.material_code AS part_material_code, sm2.material_desc AS part_material_desc, sm2.version AS
+        part_material_version,
+        sp.process_name AS process_name, ss.station_name AS station_name
+        FROM fantech_imes.smt_ht_key_material shkm
+        LEFT JOIN ocean.sys_user su ON shkm.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON shkm.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.smt_product_model spm ON shkm.product_model_id = spm.product_model_id
+        LEFT JOIN fantech_imes.smt_material sm1 ON shkm.material_id = sm1.material_id
+        LEFT JOIN fantech_imes.smt_material sm2 ON shkm.part_material_id = sm2.material_id
+        LEFT JOIN fantech_imes.smt_process sp ON shkm.process_id = sp.process_id
+        LEFT JOIN fantech_imes.smt_station ss ON shkm.station_id = ss.station_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(shkm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="productType != null">
+                and shkm.product_type = #{productType}
+            </if>
+            <if test="productModelCode != null">
+                and spm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+            </if>
+            <if test="processName != null">
+                and sp.process_name like CONCAT('%', #{processName}, '%')
+            </if>
+            <if test="stationName != null">
+                and ss.station_name like CONCAT('%', #{stationName}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and shkm.status=#{status}
+            </if>
+        </where>
+        order by shkm.modified_time desc
+    </select>
+</mapper>

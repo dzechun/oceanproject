@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.mapper;
 
+import com.fantechs.common.base.dto.apply.ProcessListDto;
 import com.fantechs.common.base.dto.apply.SmtProcessListProcessDto;
 import com.fantechs.common.base.entity.apply.SmtProcessListProcess;
 import com.fantechs.common.base.entity.apply.search.SearchSmtProcessListProcess;
@@ -14,4 +15,6 @@ public interface SmtProcessListProcessMapper extends MyMapper<SmtProcessListProc
     List<SmtProcessListProcessDto> findList(SearchSmtProcessListProcess searchSmtProcessListProcess);
 
     List<SmtRouteProcess> select_smt_route_process(SmtRouteProcess smtRouteProcess);
+
+    List<ProcessListDto> findProcess(Long workOrderId);
 }
