@@ -213,7 +213,7 @@ public class CodeUtils {
         int week = cal.get(Calendar.WEEK_OF_YEAR);
         System.out.println(week);
 
-        String customizeValue="{\"10\": \"A\",\"11\": \"B\",\"12\": \"C\"}";
+        String customizeValue="{\"1\": \"1\",\"2\": \"2\",\"3\": \"3\",\"4\": \"4\",\"5\": \"5\",\"6\": \"6\",\"7\": \"7\",\"8\": \"8\",\"9\": \"9\",\"10\": \"A\",\"11\": \"B\",\"12\": \"C\"}";
         String a="[m]";
         String typeCode = getTypeCode(a,customizeValue);
         System.out.println(typeCode);
