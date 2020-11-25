@@ -85,19 +85,19 @@ public class BarcodeRuleUtils {
                         }else {
                             throw new BizErrorException("产品料号/生产线别/客户料号的长度不够，不能没有补位符");
                         }
-                        //需要截取
+                        //长度超过需要截取
                     }else if(barcodeLength<length){
-                         //截取位置从0开始
+                         //截取位置从1开始
                          if(StringUtils.isNotEmpty(interceptPosition)){
                              if("0".equals(interceptDirection)){
-                                 if(interceptPosition+1>=barcodeLength){
-                                     code.substring(interceptPosition+1-barcodeLength,interceptPosition);
+                                 if(interceptPosition>=barcodeLength){
+                                     code.substring(interceptPosition-barcodeLength,interceptPosition);
                                  }else {
                                      throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
                                  }
                              }else {
-                                 if(interceptDirection+barcodeLength<=length){
-                                      code.substring(interceptPosition,interceptDirection+barcodeLength-1);
+                                 if(interceptDirection+barcodeLength-1<=length){
+                                      code.substring(interceptPosition-1,interceptDirection+barcodeLength-1);
                                  }else {
                                      throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
                                  }
