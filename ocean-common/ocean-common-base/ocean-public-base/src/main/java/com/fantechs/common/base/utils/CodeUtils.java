@@ -196,11 +196,6 @@ public class CodeUtils {
         return  ruleType;
     }
 
-   /* public static void main(String[] args) {
-        String ss = "smt[YMDW][yymd]???";
-        System.out.println(ss.split("Y").length-1 );
-       // patternCode(ss);
-    }*/
 
     public static void main(String[] args) throws ParseException, IOException {
         //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";

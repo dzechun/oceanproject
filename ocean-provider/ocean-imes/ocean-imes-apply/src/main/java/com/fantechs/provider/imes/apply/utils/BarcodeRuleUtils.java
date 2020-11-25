@@ -209,7 +209,7 @@ public class BarcodeRuleUtils {
 
     /**
      * 用递归来实现10转成其他进制
-     *
+     * 将步长转成对应进制流水号
      * @param iSrc
      * @return
      */
