@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * @author wcz
+ */
 @Component
 public class BarcodeRuleUtils {
 
@@ -170,8 +173,8 @@ public class BarcodeRuleUtils {
     }
 
     /**
-     * 将步长转成对应流水号的字符,例如：16进制的10转成A
-     * @param step             步长
+     * 将步长转成对应进制流水号的字符,例如：36进制的10转成A
+     * @param step             步长(步长不大于进制数长度)
      * @param customizeValue   进制数 例如：36进制 customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
      * @return
      */
@@ -209,7 +212,8 @@ public class BarcodeRuleUtils {
     /**
      * 用递归来实现10转成其他进制
      * 将步长转成对应进制流水号
-     * @param iSrc
+     * @param iSrc             需要转换的10进制数
+     * @param customizeValue   需要转换的其他进制
      * @return
      */
     public static String DeciamlToBaseConversion(int iSrc,String customizeValue) {
