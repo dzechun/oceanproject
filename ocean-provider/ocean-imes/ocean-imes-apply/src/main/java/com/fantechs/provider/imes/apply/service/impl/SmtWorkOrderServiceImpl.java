@@ -194,7 +194,13 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 }
 
                 if(!order.getMaterialId().equals(smtWorkOrder.getMaterialId())){
-                    throw new BizErrorException("工单不能修改产品料号信息");
+                    //throw new BizErrorException("工单不能修改产品料号信息");
+                    Example example1 = new Example(SmtWorkOrderBom.class);
+                    example1.createCriteria().andEqualTo("workOrderId",smtWorkOrder.getWorkOrderId());
+                    smtWorkOrderBomMapper.deleteByExample(example1);
+
+                    //根据产品BOM生成工单BOM
+                    genWorkOrder(smtWorkOrder,smtStock);
                 }else {
                     if(workOrderStatus==0||workOrderStatus==2){
                         //工单的工单数量改变,重新计算零件的工单用量
