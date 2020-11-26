@@ -131,7 +131,6 @@ public class BarcodeRuleUtils {
             maxCode = changeCode(barcodeLength, initialValue);
             sb.append(maxCode);
         } else {
-            //将步长转成对应的字符,例如：10转成A
             String streamCode = CodeUtils.generateSerialNumber(maxCode, step, customizeCode);
             if (streamCode.length() <= barcodeLength) {
                 sb.append(streamCode);
