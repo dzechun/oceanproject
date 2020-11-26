@@ -126,7 +126,7 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
-    public static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
+    private static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
         if (StringUtils.isEmpty(maxCode)) {
             maxCode = changeCode(barcodeLength, initialValue);
             sb.append(maxCode);
