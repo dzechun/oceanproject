@@ -71,7 +71,7 @@ public class BarcodeRuleUtils {
                     //长度不足需要补位
                     if(barcodeLength>length){
                         if(StringUtils.isNotEmpty(fillOperator)){
-                             if(0==interceptDirection){
+                             if(0==fillDirection){
                                  for (int i=0;i<barcodeLength-length;i++){
                                      sb.append(fillOperator);
                                  }
