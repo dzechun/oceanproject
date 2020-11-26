@@ -71,7 +71,7 @@ public class BarcodeRuleUtils {
                     //长度不足需要补位
                     if(barcodeLength>length){
                         if(StringUtils.isNotEmpty(fillOperator)){
-                             if("0".equals(fillDirection)){
+                             if(0==fillDirection){
                                  for (int i=0;i<barcodeLength-length;i++){
                                      sb.append(fillOperator);
                                  }
@@ -85,19 +85,19 @@ public class BarcodeRuleUtils {
                         }else {
                             throw new BizErrorException("产品料号/生产线别/客户料号的长度不够，不能没有补位符");
                         }
-                        //需要截取
+                        //长度超过需要截取
                     }else if(barcodeLength<length){
-                         //截取位置从0开始
+                         //截取位置从1开始
                          if(StringUtils.isNotEmpty(interceptPosition)){
-                             if("0".equals(interceptDirection)){
-                                 if(interceptPosition+1>=barcodeLength){
-                                     code.substring(interceptPosition+1-barcodeLength,interceptPosition);
+                             if(0==interceptDirection){
+                                 if(interceptPosition>=barcodeLength){
+                                     code.substring(interceptPosition-barcodeLength,interceptPosition);
                                  }else {
                                      throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
                                  }
                              }else {
-                                 if(interceptDirection+barcodeLength<=length){
-                                      code.substring(interceptPosition,interceptDirection+barcodeLength-1);
+                                 if(interceptDirection+barcodeLength-1<=length){
+                                      code.substring(interceptPosition-1,interceptDirection+barcodeLength-1);
                                  }else {
                                      throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
                                  }
@@ -113,7 +113,7 @@ public class BarcodeRuleUtils {
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, String.valueOf(step));
                 }else if("[F]".equals(specification)){
                     String customizeCode="0123456789ABCDEF";
-                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeValue));
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeCode));
                 }else if("[b]".equals(specification)||"[c]".equals(specification)){
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
@@ -126,12 +126,11 @@ public class BarcodeRuleUtils {
         return sb.toString();
     }
 
-    public static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
+    private static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
         if (StringUtils.isEmpty(maxCode)) {
             maxCode = changeCode(barcodeLength, initialValue);
             sb.append(maxCode);
         } else {
-            //将步长转成对应的字符,例如：10转成A
             String streamCode = CodeUtils.generateSerialNumber(maxCode, step, customizeCode);
             if (streamCode.length() <= barcodeLength) {
                 sb.append(streamCode);
@@ -209,7 +208,7 @@ public class BarcodeRuleUtils {
 
     /**
      * 用递归来实现10转成其他进制
-     *
+     * 将步长转成对应进制流水号
      * @param iSrc
      * @return
      */

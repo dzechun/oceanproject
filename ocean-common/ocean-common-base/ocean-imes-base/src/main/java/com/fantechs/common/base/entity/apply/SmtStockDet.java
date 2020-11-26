@@ -1,78 +1,69 @@
 package com.fantechs.common.base.entity.apply;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONField;;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import javax.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
-
-
 /**
- * 工单流转卡任务池表
- * smt_work_order_card_pool
- * @author 18358
- * @date 2020-11-21 16:51:43
+ * 备料详情表
+ * smt_stock_det
+ * @author mr.lei
+ * @date 2020-11-24 14:52:59
  */
 @Data
-@Table(name = "smt_work_order_card_pool")
-public class SmtWorkOrderCardPool  implements Serializable {
+@Table(name = "smt_stock_det")
+public class SmtStockDet implements Serializable {
     /**
-     * 工单流转卡任务池ID
+     * 备料详情表
      */
-    @ApiModelProperty(name="workOrderCardPoolId",value = "工单流转卡任务池ID")
-    @Excel(name = "工单流转卡任务池ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="stockDetId",value = "备料详情表")
+    @Excel(name = "备料详情表", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "work_order_card_pool_id")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long workOrderCardPoolId;
+    @Column(name = "stock_det_id")
+    private Long stockDetId;
 
     /**
-     * 任务单号
+     * 备料id
      */
-    @ApiModelProperty(name="taskCode",value = "任务单号")
-    @Excel(name = "任务单号", height = 20, width = 30,orderNum="") 
-    @Column(name = "task_code")
-    private String taskCode;
+    @ApiModelProperty(name="stockId",value = "备料id")
+    @Excel(name = "备料id", height = 20, width = 30,orderNum="") 
+    @Column(name = "stock_id")
+    private Long stockId;
 
     /**
-     * 工单ID
+     * 零件料号Id
      */
-    @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_id")
-    private Long workOrderId;
+    @ApiModelProperty(name="materialId",value = "零件料号Id")
+    @Excel(name = "零件料号Id", height = 20, width = 30,orderNum="") 
+    @Column(name = "material_id")
+    private Long materialId;
 
     /**
-     * 条码规则ID
+     * 计划数量
      */
-    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
-    @Column(name = "barcode_rule_id")
-    private Long barcodeRuleId;
+    @ApiModelProperty(name="planQuantity",value = "计划数量")
+    @Excel(name = "计划数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "plan_quantity")
+    private BigDecimal planQuantity;
 
     /**
-     * 工单流转卡编码
+     * 备料数量
      */
-    @ApiModelProperty(name="workOrderCardId",value = "工单流转卡编码")
-    @Excel(name = "工单流转卡编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_card_id")
-    private String workOrderCardId;
+    @ApiModelProperty(name="stockQuantity",value = "备料数量")
+    @Excel(name = "备料数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "stock_quantity")
+    private BigDecimal stockQuantity;
 
     /**
-     * 流转卡状态(0-待投产 1-投产中 2-已完成)
+     * 状态(0、无效 1、有效)
      */
-    @ApiModelProperty(name="cardStatus",value = "流转卡状态(0-待投产 1-投产中 2-已完成)")
-    @Excel(name = "流转卡状态(0-待投产 1-投产中 2-已完成)", height = 20, width = 30,orderNum="") 
-    @Column(name = "card_status")
-    private Byte cardStatus;
-
-    /**
-     * 状态(0无效，1有效)
-     */
-    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="status",value = "状态(0、无效 1、有效)")
+    @Excel(name = "状态(0、无效 1、有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
