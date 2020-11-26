@@ -71,7 +71,7 @@ public class BarcodeRuleUtils {
                     //长度不足需要补位
                     if(barcodeLength>length){
                         if(StringUtils.isNotEmpty(fillOperator)){
-                             if("0".equals(fillDirection)){
+                             if(0==interceptDirection){
                                  for (int i=0;i<barcodeLength-length;i++){
                                      sb.append(fillOperator);
                                  }
@@ -89,7 +89,7 @@ public class BarcodeRuleUtils {
                     }else if(barcodeLength<length){
                          //截取位置从1开始
                          if(StringUtils.isNotEmpty(interceptPosition)){
-                             if("0".equals(interceptDirection)){
+                             if(0==interceptDirection){
                                  if(interceptPosition>=barcodeLength){
                                      code.substring(interceptPosition-barcodeLength,interceptPosition);
                                  }else {
