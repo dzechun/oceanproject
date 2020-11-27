@@ -15,4 +15,5 @@ import java.util.Map;
 public interface SmtProductBomService extends IService<SmtProductBom> {
 
     List<SmtProductBom> findList(SearchSmtProductBom searchSmtProductBom);
+    List<SmtProductBom> findByParentBomId(Long productBomId);
 }
