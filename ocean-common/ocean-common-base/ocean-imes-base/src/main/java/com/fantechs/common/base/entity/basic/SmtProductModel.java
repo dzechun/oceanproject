@@ -42,7 +42,6 @@ public class SmtProductModel extends ValidGroup implements Serializable {
      */
     @Column(name = "product_model_name")
     @ApiModelProperty(name="productModelName" ,value="产品型号名称")
-    @NotBlank(message = "产品型号名称不能为空")
     private String productModelName;
 
     /**
