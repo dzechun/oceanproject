@@ -48,12 +48,6 @@
       <if test="materialId!=null and materialId!=''">
         and spb.material_id=#{materialId}
       </if>
-      <if test="parentBomId!=null and parentBomId!=''">
-          and spb.parent_bom_id=#{parentBomId}
-      </if>
-      <if test="parentBomId==null or parentBomId==''">
-        and spb.parent_bom_id=0
-      </if>
       <if test="materialCode!=null and materialCode!=''">
         and sm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
