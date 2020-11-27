@@ -57,9 +57,11 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             Long workOrderId = smtWorkOrderCardCollocation.getWorkOrderId();
             SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
             Long barcodeRuleId = smtWorkOrderDto.getBarcodeRuleId();
+            //工单数量
             Integer workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
+            //转移批量
             Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
-            //工单的转移批次
+            //工单总转移批次
             int sumBatchQuantity = (int) Math.ceil((double)workOrderQuantity / transferQuantity);
 
             //产生数量
@@ -76,7 +78,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 }
             }
             if(produceQuantity+generatedQuantity>sumBatchQuantity){
-                   throw new BizErrorException("工单产生条码总数量不能大于工单数量");
+                   throw new BizErrorException("工单产生流转卡总数量不能大于工单转移批次数量");
             }else if(produceQuantity+generatedQuantity==sumBatchQuantity){
                 smtWorkOrderCardCollocation.setStatus((byte) 2);
             }else {

@@ -60,15 +60,14 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         Long workOrderId = record.getWorkOrderId();
         SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
         Long barcodeRuleId = smtWorkOrderDto.getBarcodeRuleId();
+        //工单数量
         Integer workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
-        Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
-        //工单的转移批次
-        int sumBatchQuantity = (int) Math.ceil((double)workOrderQuantity / transferQuantity);
+
         //产生数量
         Integer produceQuantity = record.getProduceQuantity();
         //已产生数量
         Integer generatedQuantity = 0;
-        Example example = new Example(SmtWorkOrderCardCollocation.class);
+        Example example = new Example(SmtWorkOrderBarcodeCollocation.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderId",record.getWorkOrderId());
         List<SmtWorkOrderBarcodeCollocation> barcodeCollocations = smtWorkOrderBarcodeCollocationMapper.selectByExample(example);
@@ -77,9 +76,9 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
                 generatedQuantity+=barcodeCollocation.getProduceQuantity();
             }
         }
-        if(produceQuantity+generatedQuantity>sumBatchQuantity){
+        if(produceQuantity+generatedQuantity>workOrderQuantity){
             throw new BizErrorException("工单产生条码总数量不能大于工单数量");
-        }else if(produceQuantity+generatedQuantity==sumBatchQuantity){
+        }else if(produceQuantity+generatedQuantity==workOrderQuantity){
             record.setStatus((byte) 2);
         }else {
             record.setStatus((byte) 1);

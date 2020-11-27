@@ -26,4 +26,5 @@ public class SmtHtProductBomServiceImpl extends BaseService<SmtHtProductBom> imp
         public List<SmtHtProductBom> findList(SearchSmtProductBom searchSmtProductBom) {
             return smtHtProductBomMapper.findList(searchSmtProductBom);
         }
+
 }

@@ -82,7 +82,7 @@ public class CodeUtils {
         todayEnd.set(Calendar.MINUTE, 59);
         todayEnd.set(Calendar.SECOND, 59);
         todayEnd.set(Calendar.MILLISECOND, 999);
-        return todayEnd.getTimeInMillis()-new Date().getTime();
+        return todayEnd.getTimeInMillis()-System.currentTimeMillis();
     }
 
 

@@ -44,6 +44,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         return smtWorkShopMapper.findList(map);
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SmtWorkShop smtWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -104,6 +105,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
          smtHtWorkShopMapper.insertList(list);
         return smtWorkShopMapper.deleteByIds(ids);
     }
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(SmtWorkShop smtWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
