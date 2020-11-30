@@ -4,7 +4,7 @@
 
     <parent>
         <groupId>com.fantechs.common</groupId>
-        <artifactId>ocean-common</artifactId>
+        <artifactId>ocean-common-base</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 

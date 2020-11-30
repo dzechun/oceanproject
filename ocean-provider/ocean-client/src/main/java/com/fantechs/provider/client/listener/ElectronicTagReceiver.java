@@ -17,15 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by lfz on 2020/11/27.
  */
 @Component
-public class FanoutReceiver {
+public class ElectronicTagReceiver {
     @Autowired
    private ElectronicTagFeignApi electronicTagFeignApi;
     @Autowired
@@ -42,6 +41,7 @@ public class FanoutReceiver {
             new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         MQResponseEntity mqResponseEntity=null;
+        //Code==1,初始状态
         if(mqResponseEntity1.getCode()==1){
             SearchSmtElectronicTagController searchSmtElectronicTagController = new SearchSmtElectronicTagController();
             searchSmtElectronicTagController.setPageSize(99999);
@@ -49,19 +49,10 @@ public class FanoutReceiver {
             mqResponseEntity =  new MQResponseEntity  <List<SmtElectronicTagController>>();
             BeanUtils.copyProperties(list,mqResponseEntity);
             mqResponseEntity.setCode(1);
+            mqResponseEntity.setSnedTime(new Date());
+        }else  if(mqResponseEntity1.getCode()==3){ //接收电子标签按钮返回的信息
+
         }
-
-        fanoutSender.send(mqResponseEntity+"");
+        fanoutSender.send(RabbitConfig.TOPIC_EXCHANGE,RabbitConfig.TOPIC_QUEUE1,mqResponseEntity);
     }
-
-//    @RabbitListener(queues = RabbitConfig.FANOUT_QUEUE2)
-//    public void receiveTopic2(User user) {
-//        System.out.println("【receiveFanout2监听到消息】" + user);
-//    }
-
-//    @RabbitListener(queues = RabbitConfig.TOPIC_TEXT)
-//    public void receiveTopic3(User user) {
-//        System.out.println("【receiveFanout3监听到消息】" + user);
-//    }
-
 }
