@@ -3,7 +3,6 @@ package com.fantechs.provider.client.controller;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.client.entity.User;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
