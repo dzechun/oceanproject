@@ -3,6 +3,7 @@ package com.fantechs.provider.client.controller;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class ElectronicTagController {
      * @param list
      * @throws Exception
      */
-    @GetMapping(value="/sendElectronicTagStorage")
+    @PostMapping(value="/sendElectronicTagStorage")
     public void sendElectronicTagStorage(@ModelAttribute("list") List<SmtElectronicTagStorage> list )  throws Exception{
         MQResponseEntity mQResponseEntity =  new  MQResponseEntity();
         if(StringUtils.isNotEmpty(list)){
@@ -32,6 +33,6 @@ public class ElectronicTagController {
             mQResponseEntity.setSnedTime(new Date());
             mQResponseEntity.setCount(list.size());
         }
-        fanoutSender.send(mQResponseEntity);
+        fanoutSender.send(RabbitConfig.TOPIC_EXCHANGE,RabbitConfig.TOPIC_QUEUE1,mQResponseEntity);
     }
 }

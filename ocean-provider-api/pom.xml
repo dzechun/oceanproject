@@ -18,7 +18,6 @@
     <modules>
         <module>ocean-fileserver-api</module>
         <module>ocean-security-api</module>
-        <module>ocean-imes-api</module>
         <module>ocean-electronic-tag-api</module>
     </modules>
 

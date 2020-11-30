@@ -49,10 +49,6 @@
                 <!--<groupId>com.fantechs.common.config</groupId>-->
                 <!--<artifactId>ocean-imes-config</artifactId>-->
                 <!--</include>-->
-                <!--<include>-->
-                <!--<groupId>com.fantechs.provider.api.imes.basic</groupId>-->
-                <!--<artifactId>ocean-imes-api</artifactId>-->
-                <!--</include>-->
                 <!--</includes>-->
                 <!--</configuration>-->
             </plugin>
