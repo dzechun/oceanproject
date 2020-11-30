@@ -1,10 +1,13 @@
 package com.fantechs.provider.client.listener;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagController;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.server.impl.FanoutSender;
@@ -30,17 +33,24 @@ public class FanoutReceiver {
 
     // queues是指要监听的队列的名字
     @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
-    public void receiveTopic1(byte[] sss) throws UnsupportedEncodingException {
+    public void receiveTopic1(byte[] message) throws UnsupportedEncodingException {
 
-        String str = new String(sss, "UTF-8");
-        System.out.println("【receiveFanout1监听到消息】" + str);
-        MQResponseEntity mqResponseEntity1 =  JsonUtils.jsonToPojo(str,MQResponseEntity.class);
-        SearchSmtElectronicTagController searchSmtElectronicTagController = new SearchSmtElectronicTagController();
-        searchSmtElectronicTagController.setPageSize(99999);
-        ResponseEntity<List<SmtElectronicTagController>> list =electronicTagFeignApi.findList(searchSmtElectronicTagController);
-        MQResponseEntity  <List<SmtElectronicTagController>> mqResponseEntity =  new MQResponseEntity  <List<SmtElectronicTagController>>();
-        BeanUtils.copyProperties(list,mqResponseEntity);
-        mqResponseEntity.setCode(1);
+        String messageStr = new String(message, "UTF-8");
+        System.out.println("【receiveFanout1监听到消息】" + messageStr);
+        MQResponseEntity mqResponseEntity1 =  JsonUtils.jsonToPojo(messageStr,MQResponseEntity.class);
+        if(StringUtils.isEmpty(mqResponseEntity1)){
+            new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+        MQResponseEntity mqResponseEntity=null;
+        if(mqResponseEntity1.getCode()==1){
+            SearchSmtElectronicTagController searchSmtElectronicTagController = new SearchSmtElectronicTagController();
+            searchSmtElectronicTagController.setPageSize(99999);
+            ResponseEntity<List<SmtElectronicTagController>> list =electronicTagFeignApi.findList(searchSmtElectronicTagController);
+            mqResponseEntity =  new MQResponseEntity  <List<SmtElectronicTagController>>();
+            BeanUtils.copyProperties(list,mqResponseEntity);
+            mqResponseEntity.setCode(1);
+        }
+
         fanoutSender.send(mqResponseEntity+"");
     }
 
