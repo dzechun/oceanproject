@@ -97,7 +97,7 @@ public class SmtProductBomController {
     @PostMapping("/findSubBomByBomId")
     public ResponseEntity<List<SmtProductBom>> findByParentBomId(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBom searchSmtProductBom) {
         Page<Object> page = PageHelper.startPage(searchSmtProductBom.getStartPage(),searchSmtProductBom.getPageSize());
-        List<SmtProductBom> list = smtProductBomService.findByParentBomId(searchSmtProductBom.getProductBomId());
+        List<SmtProductBom> list = smtProductBomService.findByParentBomId(ControllerUtil.dynamicConditionByEntity(searchSmtProductBom));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

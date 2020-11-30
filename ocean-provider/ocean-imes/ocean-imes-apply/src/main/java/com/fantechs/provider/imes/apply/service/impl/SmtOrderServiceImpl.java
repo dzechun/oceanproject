@@ -4,6 +4,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.entity.apply.SmtOrder;
+import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtOrderService;
+import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 

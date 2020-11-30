@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtProductBom;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
@@ -146,12 +147,8 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
     }
 
     @Override
-    public List<SmtProductBom> findByParentBomId(Long productBomId) {
-        Example example = new Example(SmtProductBom.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("parentBomId",productBomId);
-        List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
-        return smtProductBoms;
+    public List<SmtProductBom> findByParentBomId(Map<String,Object> map) {
+        return smtProductBomMapper.findByParentBomId(map);
     }
 
 }
