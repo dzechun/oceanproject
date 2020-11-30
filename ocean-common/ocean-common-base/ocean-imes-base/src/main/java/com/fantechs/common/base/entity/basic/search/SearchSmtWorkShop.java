@@ -32,4 +32,10 @@ public class SearchSmtWorkShop  extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "workShopDesc",value = "车间描述")
     private String workShopDesc;
 
+    /**
+     * 厂别id
+     */
+    @ApiModelProperty(name = "factoryId",value = "厂别id")
+    private String factoryId;
+
 }
