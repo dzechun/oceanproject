@@ -3,8 +3,10 @@ package com.fantechs.provider.imes.apply.controller;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardPool;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardPool;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderCardPoolService;
 import com.github.pagehelper.Page;
@@ -16,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -46,5 +48,18 @@ public class SmtWorkOrderCardPoolController {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderCardPool.getStartPage(),searchSmtWorkOrderCardPool.getPageSize());
         List<SmtWorkOrderCardPoolDto> list = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool){
+        List<SmtWorkOrderCardPoolDto> list = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "工单流转卡任务池信息", SmtWorkOrderCardPoolDto.class, " SmtWorkOrderCardPool.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 }

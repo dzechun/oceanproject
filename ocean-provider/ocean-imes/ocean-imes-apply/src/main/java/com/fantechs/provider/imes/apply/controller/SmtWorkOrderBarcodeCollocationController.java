@@ -4,11 +4,9 @@ import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodeCollocationDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
-import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderBarcodeCollocationService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -61,5 +58,18 @@ public class SmtWorkOrderBarcodeCollocationController {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderBarcodeCollocation.getStartPage(),searchSmtWorkOrderBarcodeCollocation.getPageSize());
         List<SmtWorkOrderBarcodeCollocationDto> list = smtWorkOrderBarcodeCollocationService.findList(searchSmtWorkOrderBarcodeCollocation);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+                            @RequestBody(required = false) SearchSmtWorkOrderBarcodeCollocation searchSmtWorkOrderBarcodeCollocation){
+        List<SmtWorkOrderBarcodeCollocationDto> list = smtWorkOrderBarcodeCollocationService.findList(searchSmtWorkOrderBarcodeCollocation);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "工单条码信息", SmtWorkOrderBarcodeCollocationDto.class, "SmtWorkOrderBarcodeCollocation.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 }

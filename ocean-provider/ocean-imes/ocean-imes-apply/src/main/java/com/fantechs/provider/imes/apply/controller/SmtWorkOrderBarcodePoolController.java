@@ -3,8 +3,10 @@ package com.fantechs.provider.imes.apply.controller;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodePool;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderBarcodePoolService;
 import com.github.pagehelper.Page;
@@ -16,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -49,4 +51,16 @@ public class SmtWorkOrderBarcodePoolController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool){
+        List<SmtWorkOrderBarcodePoolDto> list = smtWorkOrderBarcodePoolService.findList(searchSmtWorkOrderBarcodePool);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "工单任务池信息", SmtWorkOrderBarcodePoolDto.class, "SmtWorkOrderBarcodePool.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
 }

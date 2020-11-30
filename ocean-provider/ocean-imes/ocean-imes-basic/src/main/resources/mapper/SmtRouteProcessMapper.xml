@@ -31,7 +31,11 @@
     left join fantech_imes.smt_process sp on srp.process_id=sp.process_id
     left join fantech_imes.smt_process sps on srp.next_process_id=sps.process_id
     left join fantech_imes.smt_process p on srp.next_process_id=p.process_id
-    where srp.route_id=#{routeId}
+    <where>
+      <if test="routeId != null">
+        and srp.route_id=#{routeId}
+      </if>
+    </where>
   </select>
 
   <update id="configureProcess" parameterType="map">
