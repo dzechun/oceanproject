@@ -6,14 +6,13 @@ import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodeCollocationMapper;
 import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodePoolMapper;
@@ -127,7 +126,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             }
 
             SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
-            smtWorkOrderBarcodePool.setTaskCode(UUIDUtils.getUUID());
+            smtWorkOrderBarcodePool.setTaskCode(CodeUtils.getId("PROD"));
             smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderBarcodeCollocation.getWorkOrderId());
             smtWorkOrderBarcodePool.setBarcodeRuleId(barcodeRuleId);
             smtWorkOrderBarcodePool.setBarcode(workOrderBarcode);
