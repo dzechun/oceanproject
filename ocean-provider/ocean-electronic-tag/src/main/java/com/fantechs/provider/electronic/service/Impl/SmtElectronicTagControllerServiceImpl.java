@@ -10,6 +10,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.electronic.mapper.SmtElectronicTagControllerMapper;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagControllerMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagControllerService;
@@ -51,6 +52,7 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
         smtElectronicTagController.setCreateTime(new Date());
         smtElectronicTagController.setModifiedUserId(user.getUserId());
         smtElectronicTagController.setModifiedTime(new Date());
+        smtElectronicTagController.setIdentity(UUIDUtils.getUUID());
         smtElectronicTagController.setStatus(StringUtils.isEmpty(smtElectronicTagController.getStatus())?1:smtElectronicTagController.getStatus());
         int i = smtElectronicTagControllerMapper.insertUseGeneratedKeys(smtElectronicTagController);
 
