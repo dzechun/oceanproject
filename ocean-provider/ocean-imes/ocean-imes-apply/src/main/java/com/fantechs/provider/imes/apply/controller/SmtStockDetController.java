@@ -59,7 +59,7 @@ public class SmtStockDetController {
     List<SmtStockDetDto> list = smtStockDetService.findList(searchSmtStockDet);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtStockDet信息", SmtStockDet.class, "SmtStockDet.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "SmtStockDet信息", SmtStockDetDto.class, "SmtStockDet.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

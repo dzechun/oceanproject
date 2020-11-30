@@ -72,7 +72,7 @@ public class SmtProcessListProcessController {
     List<SmtProcessListProcessDto> list = smtProcessListProcessService.findList(searchSmtProcessListProcess);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtProcessListProcess信息", SmtProcessListProcess.class, "SmtProcessListProcess.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "SmtProcessListProcess信息", SmtProcessListProcessDto.class, "SmtProcessListProcess.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
