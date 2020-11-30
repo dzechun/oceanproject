@@ -146,9 +146,4 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         return smtProductBomMapper.findList(searchSmtProductBom);
     }
 
-    @Override
-    public List<SmtProductBom> findByParentBomId(Map<String,Object> map) {
-        return smtProductBomMapper.findByParentBomId(map);
-    }
-
 }

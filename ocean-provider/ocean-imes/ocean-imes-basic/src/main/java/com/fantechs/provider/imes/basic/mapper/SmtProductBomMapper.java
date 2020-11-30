@@ -9,5 +9,4 @@ import java.util.Map;
 
 public interface SmtProductBomMapper extends MyMapper<SmtProductBom> {
     List<SmtProductBom> findList(SearchSmtProductBom searchSmtProductBom);
-    List<SmtProductBom> findByParentBomId(Map<String,Object> map);
 }
