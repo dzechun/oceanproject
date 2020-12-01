@@ -74,6 +74,14 @@ public class SmtStorage extends ValidGroup implements Serializable {
     private String warehouseName;
 
     /**
+     * 仓库编码
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
+    @Excel(name = "仓库编码", height = 20, width = 30)
+    private String warehouseCode;
+
+    /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
@@ -87,6 +95,14 @@ public class SmtStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
     @Excel(name = "仓库区域名称", height = 20, width = 30)
     private String warehouseAreaName;
+
+    /**
+     * 仓库区域名编码
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域名编码")
+    @Excel(name = "仓库区域名编码", height = 20, width = 30)
+    private String warehouseAreaCode;
 
     /**
      * 状态(0无效，1有效)
