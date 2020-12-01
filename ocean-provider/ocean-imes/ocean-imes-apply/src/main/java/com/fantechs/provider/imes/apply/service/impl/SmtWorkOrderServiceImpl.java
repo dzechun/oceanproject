@@ -90,11 +90,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             BeanUtils.copyProperties(smtWorkOrder,smtStock,new String[]{"createUserId","createTime","modifiedUserId","modifiedTime"});
             smtStockMapper.insertUseGeneratedKeys(smtStock);
 
-
             //根据产品BOM生成工单BOM
             genWorkOrder(smtWorkOrder,smtStock);
-
-
 
             return i;
         }
@@ -193,6 +190,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     throw new BizErrorException(ErrorCodeEnum.OPT20012001);
                 }
 
+                //修改了工单的产品料号，对应的工单bom也要修改
                 if(!order.getMaterialId().equals(smtWorkOrder.getMaterialId())){
                     //throw new BizErrorException("工单不能修改产品料号信息");
                     Example example1 = new Example(SmtWorkOrderBom.class);
