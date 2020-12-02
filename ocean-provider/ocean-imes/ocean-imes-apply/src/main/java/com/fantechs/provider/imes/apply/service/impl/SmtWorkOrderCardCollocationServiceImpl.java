@@ -114,7 +114,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 if(smtBarcodeRule.getBarcodeRuleCategoryId()==1){
                     barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
                     continue;
-                }else if(smtBarcodeRule.getBarcodeRuleCategoryId()==6){
+                }
+                if(smtBarcodeRule.getBarcodeRuleCategoryId()==6){
                     //流转卡条码规则
                     cardCode = smtBarcodeRule.getBarcodeRuleId();
                     continue;
