@@ -1,11 +1,11 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SmtBarcodeRuleSetDetDto;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodeCollocationDto;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodeCollocation;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
+import com.fantechs.common.base.entity.apply.*;
+import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -13,10 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSpecMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodeCollocationMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderBarcodePoolMapper;
-import com.fantechs.provider.imes.apply.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.imes.apply.mapper.*;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderBarcodeCollocationService;
 import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import org.springframework.stereotype.Service;
@@ -43,6 +40,10 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
     private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
     @Resource
     private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+    @Resource
+    private com.fantechs.provider.imes.apply.mapper.SmtBarcodeRuleSetDetMapper SmtBarcodeRuleSetDetMapper;
+    @Resource
+    private SmtBarcodeRuleMapper SmtBarcodeRuleMapper;
 
     @Override
     public List<SmtWorkOrderBarcodeCollocationDto> findList(SearchSmtWorkOrderBarcodeCollocation searchSmtWorkOrderBarcodeCollocation) {
@@ -58,7 +59,25 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         }
         Long workOrderId = record.getWorkOrderId();
         SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
-        Long barcodeRuleId = smtWorkOrderDto.getBarcodeRuleId();
+        //通过条码集合找到对应的条码规则、流转卡规则
+        SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet = new SearchSmtBarcodeRuleSetDet();
+        searchSmtBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
+        List<SmtBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = SmtBarcodeRuleSetDetMapper.findList(searchSmtBarcodeRuleSetDet);
+        if(StringUtils.isEmpty(smtBarcodeRuleSetDetList)){
+            throw new BizErrorException("没有找到相关的条码集合规则");
+        }
+        Long barcodeRuleId = null;
+        for(SmtBarcodeRuleSetDet smtBarcodeRuleSetDet:smtBarcodeRuleSetDetList){
+            SmtBarcodeRule smtBarcodeRule = SmtBarcodeRuleMapper.selectByPrimaryKey(smtBarcodeRuleSetDet.getBarcodeRuleId());
+            if(StringUtils.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            //产品条码规则
+            if(smtBarcodeRule.getBarcodeRuleCategoryId()==1){
+                barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
+                break;
+            }
+        }
         //工单数量
         Integer workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
 

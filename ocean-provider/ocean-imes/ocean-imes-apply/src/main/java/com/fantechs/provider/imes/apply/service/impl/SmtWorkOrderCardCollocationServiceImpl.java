@@ -122,24 +122,16 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 }
 
             }
-            //工单流转卡
-            if(StringUtils.isNotEmpty(cardCode)){
-                List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity);
-                //产品条码流转卡
-                if(StringUtils.isNotEmpty(barcodeRuleId)){
-                    generateBarcode(list,smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
-                }
-            }else{
-                //产品条码流转卡
-                if(StringUtils.isNotEmpty(barcodeRuleId)){
-                    generateCardCode(smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
-                }
+
+            if(StringUtils.isEmpty(cardCode)){
+                throw new BizErrorException("没有找到相关的条码集合规则");
             }
-
-
-
-
-
+            //工单流转卡
+            List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity);
+            //产品条码流转卡
+            if(StringUtils.isNotEmpty(barcodeRuleId)){
+                generateBarcode(list,smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
+            }
             return smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
         }
 
@@ -167,9 +159,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
             }
 
-            if(StringUtils.isEmpty(list)){
-                throw new BizErrorException("没有生成工单流转卡解析码");
-            }
             for (SmtWorkOrderCardPool smtWorkOrderCardPool : list) {
                 Long workOrderCardPoolId = smtWorkOrderCardPool.getWorkOrderCardPoolId();
                 for (int i=0;i<quantity;i++){
