@@ -107,7 +107,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             }
             for(SmtBarcodeRuleSetDet smtBarcodeRuleSetDet:smtBarcodeRuleSetDetList){
                 SmtBarcodeRule smtBarcodeRule = SmtBarcodeRuleMapper.selectByPrimaryKey(smtBarcodeRuleSetDet.getBarcodeRuleId());
-                if(StringUtils.isEmpty()){
+                if(StringUtils.isEmpty(smtBarcodeRule)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
                 //产品条码规则
@@ -124,7 +124,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             }
 
             if(StringUtils.isEmpty(cardCode)){
-                throw new BizErrorException("没有找到相关的条码集合规则");
+                throw new BizErrorException("没有找到相关的流转卡条码规则");
             }
             //工单流转卡
             List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity);

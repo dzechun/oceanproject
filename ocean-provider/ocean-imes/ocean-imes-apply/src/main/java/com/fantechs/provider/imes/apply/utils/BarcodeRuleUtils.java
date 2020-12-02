@@ -359,6 +359,12 @@ public class BarcodeRuleUtils {
         }
         return code;
     }
+
+
+    // StringBuffer
+    public static String reverse1(String str) {
+        return new StringBuilder(str).reverse().toString();
+    }
 }
 
 
