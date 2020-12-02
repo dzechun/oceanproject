@@ -31,14 +31,14 @@ public class ElectronicTagReceiver {
     private FanoutSender fanoutSender;
 
     // queues是指要监听的队列的名字
-    @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
+    @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE2)
     public void receiveTopic1(byte[] message) throws UnsupportedEncodingException {
 
         String messageStr = new String(message, "UTF-8");
         System.out.println("【receiveFanout1监听到消息】" + messageStr);
         MQResponseEntity mqResponseEntity1 =  JsonUtils.jsonToPojo(messageStr,MQResponseEntity.class);
         if(StringUtils.isEmpty(mqResponseEntity1)){
-            new BizErrorException(ErrorCodeEnum.GL99990100);
+          new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         MQResponseEntity mqResponseEntity=null;
         //Code==1,初始状态
@@ -49,10 +49,9 @@ public class ElectronicTagReceiver {
             mqResponseEntity =  new MQResponseEntity  <List<SmtElectronicTagController>>();
             BeanUtils.copyProperties(list,mqResponseEntity);
             mqResponseEntity.setCode(1);
-            mqResponseEntity.setSnedTime(new Date());
         }else  if(mqResponseEntity1.getCode()==3){ //接收电子标签按钮返回的信息
 
         }
-        fanoutSender.send(RabbitConfig.TOPIC_EXCHANGE,RabbitConfig.TOPIC_QUEUE1,mqResponseEntity);
+        fanoutSender.send("testtopic",messageStr);
     }
 }

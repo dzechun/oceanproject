@@ -38,4 +38,10 @@ public class SearchSmtElectronicTagController extends BaseQuery implements Seria
      */
     @ApiModelProperty(name="electronicTagControllerPort",value = "电子标签控制器端口")
     private String electronicTagControllerPort;
+
+    /**
+     * 电子标签控制器标识
+     */
+    @ApiModelProperty(name="identity",value = "电子标签控制器标识")
+    private String identity;
 }

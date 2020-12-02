@@ -3,6 +3,7 @@ package com.fantechs.common.base.response;
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -28,9 +29,11 @@ public class MQResponseEntity<T>   implements Serializable {
     private T data;
     @ApiModelProperty(name = "count",value = "总数",example = "{}")
     private int count;
-    @ApiModelProperty(name = "snedTime",value = "发送时间",example = "{}")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date snedTime;
+//    @ApiModelProperty(name = "snedTime",value = "发送时间",example = "{}")
+//    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+//    private Date snedTime;
+    @ApiModelProperty(name = "key",value = "身份标识",example = "身份标识")
+    private String key;
 
 
     public MQResponseEntity() {
@@ -38,7 +41,8 @@ public class MQResponseEntity<T>   implements Serializable {
         this.message = "";
         this.data=null;
         this.count=0;
-        this.snedTime=new Date();
+//        this.snedTime=new Date();
+        this.key = "";
     }
 
     public MQResponseEntity(Builder<T> builder) {
@@ -46,7 +50,8 @@ public class MQResponseEntity<T>   implements Serializable {
         this.message = builder.message;
         this.data = builder.data;
         this.count = builder.count;
-        this.snedTime = builder.snedTime;
+//        this.snedTime = builder.snedTime;
+        this.key = builder.key;
     }
 
     public int getCode() {
@@ -81,6 +86,14 @@ public class MQResponseEntity<T>   implements Serializable {
         this.count = count;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public void setErrorMessage(String msg){
         this.code = 1;
         this.message = msg;
@@ -91,13 +104,13 @@ public class MQResponseEntity<T>   implements Serializable {
         this.message = msg;
     }
 
-    public Date getSnedTime() {
-        return snedTime;
-    }
-
-    public void setSnedTime(Date snedTime) {
-        this.snedTime = snedTime;
-    }
+//    public Date getSnedTime() {
+//        return snedTime;
+//    }
+//
+//    public void setSnedTime(Date snedTime) {
+//        this.snedTime = snedTime;
+//    }
 
     @Override
     public String toString() {
@@ -106,7 +119,8 @@ public class MQResponseEntity<T>   implements Serializable {
                 ", message='" + message + '\'' +
                 ", data=" + data +
                 ", count=" + count +
-                ", snedTime=" + snedTime +
+//                ", snedTime=" + snedTime +
+                ", key='" + key + '\'' +
                 '}';
     }
 
@@ -115,7 +129,8 @@ public class MQResponseEntity<T>   implements Serializable {
         private String message;
         private T data;
         private int count;
-        public Date snedTime;
+//        private Date snedTime;
+        private String key;
 
         public Builder() {
             this.status= 0;
@@ -141,10 +156,14 @@ public class MQResponseEntity<T>   implements Serializable {
             return this;
         }
 
-        public Builder<T> snedTime(Date snedTime) {
-            this.snedTime = snedTime;
-            return this;
-        }
+//        public Builder<T> snedTime(Date snedTime) {
+//            this.snedTime = snedTime;
+//            return this;
+//        }
+//        public Builder<T> snedKey(String key) {
+//            this.key = key;
+//            return this;
+//        }
 
 
         public MQResponseEntity<T> build(){

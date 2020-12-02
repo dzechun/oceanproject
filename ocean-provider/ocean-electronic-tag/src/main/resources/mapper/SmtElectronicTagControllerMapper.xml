@@ -58,6 +58,9 @@
       <if test="status!=null and status!=''">
         and setc.status=#{status}
       </if>
+      <if test="identity!=null and identity!=''">
+        and setc.identity=#{identity}
+      </if>
     </where>
     order by  setc.create_time desc
   </select>

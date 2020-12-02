@@ -30,9 +30,8 @@ public class ElectronicTagController {
         if(StringUtils.isNotEmpty(list)){
             mQResponseEntity.setCode(2);
             mQResponseEntity.setData(list);
-            mQResponseEntity.setSnedTime(new Date());
             mQResponseEntity.setCount(list.size());
         }
-        fanoutSender.send(RabbitConfig.TOPIC_EXCHANGE,RabbitConfig.TOPIC_QUEUE1,mQResponseEntity);
+        fanoutSender.send(RabbitConfig.TOPIC_QUEUE1,mQResponseEntity);
     }
 }

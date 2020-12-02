@@ -13,7 +13,6 @@ public class RabbitConfig {
     //topic
     public static final String TOPIC_QUEUE1 = "topic.queue1";
     public static final String TOPIC_QUEUE2 = "topic.queue2";
-    public static final String TOPIC_TEXT = "testtopic";
     public static final String TOPIC_EXCHANGE = "topic.exchange";
 
 
@@ -41,8 +40,6 @@ public class RabbitConfig {
         return new Queue(TOPIC_QUEUE2);
     }
 
-    @Bean
-    public Queue topicQueue3() { return new Queue(TOPIC_TEXT);  }
 
 
     @Bean
@@ -56,11 +53,6 @@ public class RabbitConfig {
     @Bean
     public Binding topicBinding2() {
         return BindingBuilder.bind(topicQueue2()).to(topicExchange()).with("lzc.#");
-    }
-
-    @Bean
-    public Binding topicBinding3() {
-        return BindingBuilder.bind(topicQueue3()).to(topicExchange()).with("testtopic");
     }
 
 
