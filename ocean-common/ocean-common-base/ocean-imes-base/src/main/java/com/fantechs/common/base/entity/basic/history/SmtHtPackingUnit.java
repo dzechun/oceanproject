@@ -30,7 +30,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 包装单位ID
      */
     @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
-    @Excel(name = "包装单位ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "包装单位ID", height = 20, width = 30,orderNum="")
     @Column(name = "packing_unit_id")
     private Long packingUnitId;
 
@@ -38,7 +38,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 包装单位名称
      */
     @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
-    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="")
     @Column(name = "packing_unit_name")
     private String packingUnitName;
 
@@ -46,7 +46,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 包装单位描述
      */
     @ApiModelProperty(name="packingUnitDesc",value = "包装单位描述")
-    @Excel(name = "包装单位描述", height = 20, width = 30,orderNum="") 
+    @Excel(name = "包装单位描述", height = 20, width = 30,orderNum="")
     @Column(name = "packing_unit_desc")
     private String packingUnitDesc;
 
@@ -54,7 +54,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 是否主要(0否，1是)
      */
     @ApiModelProperty(name="isChief",value = "是否主要(0否，1是)")
-    @Excel(name = "是否主要(0否，1是)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "是否主要(0否，1是)", height = 20, width = 30,orderNum="")
     @Column(name = "is_chief")
     private Byte isChief;
 
@@ -62,14 +62,14 @@ public class SmtHtPackingUnit implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -84,7 +84,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -93,7 +93,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -110,7 +110,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -119,7 +119,7 @@ public class SmtHtPackingUnit implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -127,21 +127,21 @@ public class SmtHtPackingUnit implements Serializable {
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
-    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="")
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
-    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="")
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
-    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="")
     private String option3;
 
 

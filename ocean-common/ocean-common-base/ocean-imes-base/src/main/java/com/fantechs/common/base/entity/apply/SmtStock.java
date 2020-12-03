@@ -22,7 +22,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 备料id
      */
     @ApiModelProperty(name="stockId",value = "备料id")
-    @Excel(name = "备料id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备料id", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "stock_id")
     private Long stockId;
@@ -31,7 +31,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 备料单号
      */
     @ApiModelProperty(name="stockCode",value = "备料单号")
-    @Excel(name = "备料单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备料单号", height = 20, width = 30,orderNum="")
     @Column(name = "stock_code")
     private String stockCode;
 
@@ -39,7 +39,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 工单id
      */
     @ApiModelProperty(name="workOrderId",value = "工单id")
-    @Excel(name = "工单id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工单id", height = 20, width = 30,orderNum="")
     @Column(name = "work_order_id")
     private Long workOrderId;
 
@@ -47,7 +47,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 计划配送时间
      */
     @ApiModelProperty(name="planStockTime",value = "计划配送时间")
-    @Excel(name = "计划配送时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "计划配送时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_stock_time")
     private Date planStockTime;
@@ -56,7 +56,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 配送方式(0、AGV 1、非AGV)
      */
     @ApiModelProperty(name="deliveryMode",value = "配送方式(0、AGV 1、非AGV)")
-    @Excel(name = "配送方式(0、AGV 1、非AGV)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "配送方式(0、AGV 1、非AGV)", height = 20, width = 30,orderNum="")
     @Column(name = "delivery_mode")
     private Byte deliveryMode;
 
@@ -64,7 +64,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 单据状态(0、无效 1、有效)
      */
     @ApiModelProperty(name="status",value = "单据状态(0、无效 1、有效)")
-    @Excel(name = "单据状态(0、无效 1、有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "单据状态(0、无效 1、有效)", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
@@ -105,7 +105,7 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -113,21 +113,21 @@ public class SmtStock extends ValidGroup implements Serializable {
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
-    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="")
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
-    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="")
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
-    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="")
     private String option3;
 
     private static final long serialVersionUID = 1L;

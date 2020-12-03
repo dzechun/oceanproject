@@ -22,7 +22,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 关键物料历史id
      */
     @ApiModelProperty(name="htKeyMaterialId",value = "关键物料历史id")
-    @Excel(name = "关键物料历史id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "关键物料历史id", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "ht_key_material_id")
     private Long htKeyMaterialId;
@@ -31,7 +31,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 关键物料ID
      */
     @ApiModelProperty(name="keyMaterialId",value = "关键物料ID")
-    @Excel(name = "关键物料ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "关键物料ID", height = 20, width = 30,orderNum="")
     @Column(name = "key_material_id")
     private Long keyMaterialId;
 
@@ -39,7 +39,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 产品类别(2-产品型号 3-产品料号)
      */
     @ApiModelProperty(name="productType",value = "产品类别(2-产品型号 3-产品料号)")
-    @Excel(name = "产品类别(2-产品型号 3-产品料号)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "产品类别(2-产品型号 3-产品料号)", height = 20, width = 30,orderNum="")
     @Column(name = "product_type")
     private Byte productType;
 
@@ -47,7 +47,7 @@ public class SmtHtKeyMaterial implements Serializable {
      *  产品型号ID
      */
     @ApiModelProperty(name="productModelId",value = " 产品型号ID")
-    @Excel(name = " 产品型号ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = " 产品型号ID", height = 20, width = 30,orderNum="")
     @Column(name = "product_model_id")
     private Long productModelId;
 
@@ -55,7 +55,7 @@ public class SmtHtKeyMaterial implements Serializable {
      *  物料ID
      */
     @ApiModelProperty(name="materialId",value = " 物料ID")
-    @Excel(name = " 物料ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = " 物料ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -63,7 +63,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 零件料号ID
      */
     @ApiModelProperty(name="partMaterialId",value = "零件料号ID")
-    @Excel(name = "零件料号ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "零件料号ID", height = 20, width = 30,orderNum="")
     @Column(name = "part_material_id")
     private Long partMaterialId;
 
@@ -71,7 +71,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 扫描枪数量
      */
     @ApiModelProperty(name="scanningGunQuantity",value = "扫描枪数量")
-    @Excel(name = "扫描枪数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扫描枪数量", height = 20, width = 30,orderNum="")
     @Column(name = "scanning_gun_quantity")
     private Integer scanningGunQuantity;
 
@@ -79,7 +79,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")
-    @Excel(name = "工序ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工序ID", height = 20, width = 30,orderNum="")
     @Column(name = "process_id")
     private Long processId;
 
@@ -87,7 +87,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 工位ID
      */
     @ApiModelProperty(name="stationId",value = "工位ID")
-    @Excel(name = "工位ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工位ID", height = 20, width = 30,orderNum="")
     @Column(name = "station_id")
     private Long stationId;
 
@@ -95,21 +95,21 @@ public class SmtHtKeyMaterial implements Serializable {
      * 用量
      */
     @ApiModelProperty(name="consumption",value = "用量")
-    @Excel(name = "用量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "用量", height = 20, width = 30,orderNum="")
     private BigDecimal consumption;
 
     /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -117,7 +117,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -126,7 +126,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -134,7 +134,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -143,7 +143,7 @@ public class SmtHtKeyMaterial implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -151,21 +151,21 @@ public class SmtHtKeyMaterial implements Serializable {
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
-    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="")
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
-    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="")
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
-    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
+    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="")
     private String option3;
 
     /**
