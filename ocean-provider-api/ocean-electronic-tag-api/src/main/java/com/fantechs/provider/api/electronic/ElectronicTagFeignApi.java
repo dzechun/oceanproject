@@ -27,10 +27,6 @@ public interface ElectronicTagFeignApi {
     @ApiOperation(value = "获取所有电子标签控制器",notes = "获取所有电子标签控制器")
     ResponseEntity<List<SmtElectronicTagControllerDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtElectronicTagController searchSmtElectronicTagController);
 
-    @PostMapping(value="/smtElectronicTagController/findList")
-    @ApiOperation(value = "获取电子标签控制器和储位信息",notes = "获取电子标签控制器和储位信息")
-    ResponseEntity<List<SmtElectronicTagStorageDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtElectronicTagStorage searchSmtElectronicTagStorage);
-
     @ApiOperation("通过id查询电子标签信息")
     @GetMapping("/smtElectronicTagController/findById")
     ResponseEntity<SmtElectronicTagControllerDto> findById(@ApiParam(value = "电子标签控制器id")@RequestParam String electronicTagControllerId);
