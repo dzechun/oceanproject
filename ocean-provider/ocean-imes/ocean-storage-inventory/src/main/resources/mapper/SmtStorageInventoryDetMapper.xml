@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper">
+
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.SmtStorageInventoryDet">
+        <id column="storage_inventory_det_id" jdbcType="BIGINT" property="storageInventoryDetId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId"/>
+        <result column="godown_entry" jdbcType="VARCHAR" property="godownEntry"/>
+        <result column="material_quantity" jdbcType="DECIMAL" property="materialQuantity"/>
+        <result column="production_code" jdbcType="VARCHAR" property="productionCode"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto">
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ssid.storage_inventory_det_id,ssid.storage_id,ssid.material_barcode_id,ssid.godown_entry,
+        ssid.material_quantity,ssid.production_code,ssid.production_date,ssid.supplier_id,
+        ssid.create_user_id,ssid.create_time,ssid.modified_user_id,ssid.modified_time
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        ss.storage_code,ss.storage_name,sm.material_desc,sm.material_name
+        FROM smt_storage_inventory_det ssid
+        LEFT JOIN ocean.sys_user su ON ssid.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON ssid.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssid.storage_id
+        LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.storage_id = ssid.storage_id
+        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssm.material_id
+        <where>
+            <if test="storageCode!= null and storageCode !='' ">
+                and ss.storage_code like CONCAT('%', #{storageCode}, '%')
+            </if>
+            <if test="storageName!= null and storageName !='' ">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by ssid.create_time desc
+    </select>
+
+
+</mapper>
