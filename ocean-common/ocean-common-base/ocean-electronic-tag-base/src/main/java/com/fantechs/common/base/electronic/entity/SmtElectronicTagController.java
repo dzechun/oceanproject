@@ -1,16 +1,23 @@
 package com.fantechs.common.base.electronic.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
-import lombok.Data;
+;
 
 /**
  * 电子标签控制器表
@@ -83,11 +90,19 @@ public class SmtElectronicTagController extends ValidGroup implements Serializab
     private String identity;
 
     /**
+     * 绑定电子标签的储位集合
+     */
+    @ApiModelProperty(name="identity",value = "绑定电子标签的储位集合")
+    @Transient
+    private List<SmtStorage> storageList;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
     @Excel(name = "状态", height = 20, width = 30,orderNum="7",replace = {"无效_0","有效_1"})
     private Byte status;
+
 
     /**
      * 创建人ID
@@ -120,6 +135,7 @@ public class SmtElectronicTagController extends ValidGroup implements Serializab
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
 
     /**
      * 逻辑删除（0、删除 1、正常）

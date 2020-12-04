@@ -1,6 +1,7 @@
 package com.fantechs.provider.client.listener;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagController;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -31,7 +32,7 @@ public class ElectronicTagReceiver {
     private FanoutSender fanoutSender;
 
     // queues是指要监听的队列的名字
-    @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE2)
+    @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
     public void receiveTopic1(byte[] message) throws UnsupportedEncodingException {
 
         String messageStr = new String(message, "UTF-8");
@@ -45,7 +46,7 @@ public class ElectronicTagReceiver {
         if(mqResponseEntity1.getCode()==1){
             SearchSmtElectronicTagController searchSmtElectronicTagController = new SearchSmtElectronicTagController();
             searchSmtElectronicTagController.setPageSize(99999);
-            ResponseEntity<List<SmtElectronicTagController>> list =electronicTagFeignApi.findList(searchSmtElectronicTagController);
+            ResponseEntity<List<SmtElectronicTagControllerDto>> list =electronicTagFeignApi.findList(searchSmtElectronicTagController);
             mqResponseEntity =  new MQResponseEntity  <List<SmtElectronicTagController>>();
             BeanUtils.copyProperties(list,mqResponseEntity);
             mqResponseEntity.setCode(1);

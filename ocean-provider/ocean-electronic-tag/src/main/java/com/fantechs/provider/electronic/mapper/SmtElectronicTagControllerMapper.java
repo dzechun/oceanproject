@@ -4,6 +4,7 @@ import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -11,4 +12,5 @@ import java.util.Map;
 @Mapper
 public interface SmtElectronicTagControllerMapper extends MyMapper<SmtElectronicTagController> {
     List<SmtElectronicTagControllerDto> findList(Map<String, Object> map);
+    SmtElectronicTagControllerDto findById(Long electronicTagControllerId);
 }

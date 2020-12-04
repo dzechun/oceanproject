@@ -169,4 +169,9 @@ public class SmtElectronicTagControllerServiceImpl extends BaseService<SmtElectr
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
     }
+
+    @Override
+    public SmtElectronicTagControllerDto findById(Long electronicTagControllerId) {
+        return smtElectronicTagControllerMapper.findById(electronicTagControllerId);
+    }
 }

@@ -25,6 +25,7 @@
             <artifactId>uasparser</artifactId>
             <version>0.6.0</version>
         </dependency>
+
     </dependencies>
 
 </project>

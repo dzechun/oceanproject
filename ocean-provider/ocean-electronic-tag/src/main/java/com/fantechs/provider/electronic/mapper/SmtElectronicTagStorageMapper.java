@@ -15,4 +15,7 @@ public interface SmtElectronicTagStorageMapper extends MyMapper<SmtElectronicTag
     List<SmtElectronicTagStorageDto> findList(Map<String, Object> map);
     SmtStorage findStorageByCode(String storageCode);
     SmtElectronicTagController findElectronicTagControllerByCode(String storageCode);
+
+    //通过电子标签控制器id查询储位信息
+    List<SmtStorage> findByElectronicTagControllerId(Long electronicTagControllerId);
 }

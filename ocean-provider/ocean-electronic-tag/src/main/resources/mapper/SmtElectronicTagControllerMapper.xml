@@ -64,4 +64,16 @@
     </where>
     order by  setc.create_time desc
   </select>
+
+  <select id="findById" resultMap="BaseResultMapDto" parameterType="java.lang.Long">
+    SELECT <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    FROM smt_electronic_tag_controller setc
+    LEFT JOIN ocean.sys_user su  ON setc.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON setc.modified_user_id = sus.user_id
+    <where>
+      <if test="_parameter!=null and _parameter!=''">
+        and setc.electronic_tag_controller_id=#{_parameter,jdbcType=BIGINT}
+      </if>
+    </where>
+  </select>
 </mapper>

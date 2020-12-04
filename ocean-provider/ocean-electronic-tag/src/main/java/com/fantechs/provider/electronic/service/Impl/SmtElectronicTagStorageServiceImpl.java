@@ -44,11 +44,11 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         Example example = new Example(SmtElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId())
-                .orEqualTo("electronicTagControllerId",smtElectronicTagStorage.getElectronicTagControllerId())
-                .orEqualTo("electronicTagId",smtElectronicTagStorage.getElectronicTagId());
+                .andEqualTo("electronicTagControllerId",smtElectronicTagStorage.getElectronicTagControllerId())
+                .andEqualTo("electronicTagId",smtElectronicTagStorage.getElectronicTagId());
         List<SmtElectronicTagStorage> smtElectronicTagStorages = smtElectronicTagStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtElectronicTagStorages)){
-            throw new BizErrorException("储位id或电子标签控制器id或电子标签id已存在");
+            throw new BizErrorException("该绑定关系已存在");
         }
         smtElectronicTagStorage.setCreateUserId(user.getUserId());
         smtElectronicTagStorage.setCreateTime(new Date());
@@ -185,5 +185,10 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
+    }
+
+    @Override
+    public List<SmtStorage> findByElectronicTagControllerId(Long electronicTagControllerId) {
+        return smtElectronicTagStorageMapper.findByElectronicTagControllerId(electronicTagControllerId);
     }
 }

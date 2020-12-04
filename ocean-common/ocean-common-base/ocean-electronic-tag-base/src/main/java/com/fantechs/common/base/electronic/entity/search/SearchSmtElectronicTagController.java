@@ -10,6 +10,11 @@ import java.io.Serializable;
 public class SearchSmtElectronicTagController extends BaseQuery implements Serializable {
 
     /**
+     * 电子标签控制器ID
+     */
+    @ApiModelProperty(name="electronicTagControllerId",value = "电子标签控制器Id")
+    private String electronicTagControllerId;
+    /**
      * 电子标签控制器编码
      */
     @ApiModelProperty(name="electronicTagControllerCode",value = "电子标签控制器编码")

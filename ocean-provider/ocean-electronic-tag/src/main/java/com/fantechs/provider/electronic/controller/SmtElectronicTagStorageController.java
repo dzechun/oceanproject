@@ -1,10 +1,12 @@
 package com.fantechs.provider.electronic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
+import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -118,5 +120,12 @@ public class SmtElectronicTagStorageController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation("通过电子标签id查询储位信息")
+    @GetMapping("/findByElectronicTagControllerId")
+    public ResponseEntity<List<SmtStorage>> findByElectronicTagControllerId(@ApiParam(value = "电子标签控制器id")@RequestParam Long electronicTagControllerId) {
+        List<SmtStorage> smtStorages = smtElectronicTagStorageService.findByElectronicTagControllerId(electronicTagControllerId);
+        return ControllerUtil.returnSuccess("查询成功",smtStorages);
     }
 }

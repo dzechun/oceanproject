@@ -2,6 +2,7 @@ package com.fantechs.provider.electronic.service;
 
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
+import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -16,4 +17,7 @@ public interface SmtElectronicTagStorageService extends IService<SmtElectronicTa
     List<SmtElectronicTagStorageDto> findList(Map<String, Object> map);
 
     Map<String,Object> importElectronicTagController(List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtos);
+
+    //通过电子标签控制器id查询储位信息
+    List<SmtStorage> findByElectronicTagControllerId(Long electronicTagControllerId);
 }

@@ -54,27 +54,31 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     </resultMap>
 
-    <resultMap id="SmtElectronicTagControllerMap" type="com.fantechs.common.base.electronic.entity.SmtElectronicTagController">
+    <resultMap id="SmtElectronicTagControllerMap"
+               type="com.fantechs.common.base.electronic.entity.SmtElectronicTagController">
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="electronic_tag_controller_id" jdbcType="BIGINT" property="electronicTagControllerId" />
-        <result column="electronic_tag_controller_code" jdbcType="VARCHAR" property="electronicTagControllerCode" />
-        <result column="electronic_tag_controller_name" jdbcType="VARCHAR" property="electronicTagControllerName" />
-        <result column="electronic_tag_controller_desc" jdbcType="VARCHAR" property="electronicTagControllerDesc" />
-        <result column="electronic_tag_controller_ip" jdbcType="VARCHAR" property="electronicTagControllerIp" />
-        <result column="electronic_tag_controller_port" jdbcType="VARCHAR" property="electronicTagControllerPort" />
-        <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-        <result column="option1" jdbcType="VARCHAR" property="option1" />
-        <result column="option2" jdbcType="VARCHAR" property="option2" />
-        <result column="option3" jdbcType="VARCHAR" property="option3" />
+        <id column="electronic_tag_controller_id" jdbcType="BIGINT" property="electronicTagControllerId"/>
+        <result column="electronic_tag_controller_code" jdbcType="VARCHAR" property="electronicTagControllerCode"/>
+        <result column="electronic_tag_controller_name" jdbcType="VARCHAR" property="electronicTagControllerName"/>
+        <result column="electronic_tag_controller_desc" jdbcType="VARCHAR" property="electronicTagControllerDesc"/>
+        <result column="electronic_tag_controller_ip" jdbcType="VARCHAR" property="electronicTagControllerIp"/>
+        <result column="electronic_tag_controller_port" jdbcType="VARCHAR" property="electronicTagControllerPort"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
 
     <sql id="Base_column_List">
@@ -127,6 +131,9 @@
             <if test="electronicTagControllerName != null">
                 and setc.electronic_tag_controller_name like CONCAT('%', #{electronicTagControllerName}, '%')
             </if>
+            <if test="electronicTagControllerId != null">
+                and setc.electronic_tag_controller_id = #{electronicTagControllerId}
+            </if>
             <if test="electronicTagControllerIp != null">
                 and setc.electronic_tag_controller_ip like CONCAT('%', #{electronicTagControllerIp}, '%')
             </if>
@@ -147,6 +154,14 @@
         <where>
             ss.storage_code =#{storageCode}
         </where>
+    </select>
+
+    <select id="findByElectronicTagControllerId" parameterType="java.lang.Long"
+            resultMap="SmtStorageMap">
+        SELECT ss.*
+        FROM smt_electronic_tag_storage sets
+	    LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
+        WHERE sets.electronic_tag_controller_id = #{_parameter,jdbcType=BIGINT}
     </select>
 
     <select id="findElectronicTagControllerByCode" parameterType="java.lang.String"

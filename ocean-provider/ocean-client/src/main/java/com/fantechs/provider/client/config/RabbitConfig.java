@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
     //topic
     public static final String TOPIC_QUEUE1 = "topic.queue1";
-    public static final String TOPIC_QUEUE2 = "topic.queue2";
+    public static final String TOPIC_HEARTBEAT_QUEUE = "topic.heartbeat.queue";
     public static final String TOPIC_EXCHANGE = "topic.exchange";
 
 
@@ -37,7 +37,7 @@ public class RabbitConfig {
 
     @Bean
     public Queue topicQueue2() {
-        return new Queue(TOPIC_QUEUE2);
+        return new Queue(TOPIC_HEARTBEAT_QUEUE);
     }
 
 

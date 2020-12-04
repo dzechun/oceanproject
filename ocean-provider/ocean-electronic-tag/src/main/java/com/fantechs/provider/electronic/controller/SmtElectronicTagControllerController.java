@@ -121,4 +121,11 @@ public class SmtElectronicTagControllerController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+    @ApiOperation("通过id查询电子标签信息")
+    @GetMapping("/findById")
+    public ResponseEntity<SmtElectronicTagControllerDto> findById(@ApiParam(value = "电子标签控制器id")@RequestParam String electronicTagControllerId) {
+        SmtElectronicTagControllerDto smtElectronicTagControllerDto = smtElectronicTagControllerService.findById(Long.parseLong(electronicTagControllerId));
+        return ControllerUtil.returnSuccess("查询成功",smtElectronicTagControllerDto);
+    }
 }
