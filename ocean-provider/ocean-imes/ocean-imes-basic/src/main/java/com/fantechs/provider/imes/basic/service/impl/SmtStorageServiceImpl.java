@@ -1,15 +1,20 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
 import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.imes.basic.mapper.SmtHtStorageMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtStorageMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtStorageMaterialMapper;
@@ -37,6 +42,9 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
     private SmtHtStorageMapper smtHtStorageMapper;
     @Resource
     private SmtStorageMaterialMapper smtStorageMaterialMapper;
+    @Resource
+    private ElectronicTagFeignApi electronicTagFeignApi;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -91,6 +99,14 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
             criteria.andEqualTo("storageId",storageId);
             List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtStorageMaterials)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
+            //该储位和电子标签控制器绑定
+            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
+            searchSmtElectronicTagStorage.setStorageId(storageId);
+            ResponseEntity<List<SmtElectronicTagStorageDto>> list1 = electronicTagFeignApi.findList(searchSmtElectronicTagStorage);
+            if (StringUtils.isNotEmpty(list1.getData().get(0))){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 

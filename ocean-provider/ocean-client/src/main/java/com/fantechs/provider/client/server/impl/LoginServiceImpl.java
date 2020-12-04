@@ -60,7 +60,7 @@ public class LoginServiceImpl implements LoginService {
                     if (StringUtils.isEmpty(electronicTagControllerDto)){
                         throw new BizErrorException("该电子标签不存在");
                     }
-                    electronicTagControllerDtos.add(electronicTagControllerDto);
+
 
                     //通过电子标签信息查询储位信息
                     ResponseEntity<List<SmtStorage>> responseSmtStorage = electronicTagFeignApi.findByElectronicTagControllerId(electronicTagControllerDto.getElectronicTagControllerId());
@@ -68,6 +68,8 @@ public class LoginServiceImpl implements LoginService {
                     if (StringUtils.isNotEmpty(smtStorages)){
                         electronicTagControllerDto.setStorageList(smtStorages);
                     }
+
+                    electronicTagControllerDtos.add(electronicTagControllerDto);
                 } else {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }

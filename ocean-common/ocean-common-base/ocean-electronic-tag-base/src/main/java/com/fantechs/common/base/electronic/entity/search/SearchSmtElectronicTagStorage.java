@@ -10,6 +10,11 @@ import java.io.Serializable;
 public class SearchSmtElectronicTagStorage extends BaseQuery implements Serializable {
 
     /**
+     * 储位id
+     */
+    @ApiModelProperty(name = "storageId",value = "储位id")
+    private String storageId;
+    /**
      * 储位名称
      */
     @ApiModelProperty(name = "storageName",value = "储位名称")

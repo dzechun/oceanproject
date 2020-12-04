@@ -119,6 +119,9 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="storageId != null">
+                and ss.storage_id =#{storageId}
+            </if>
             <if test="storageName != null">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
             </if>
