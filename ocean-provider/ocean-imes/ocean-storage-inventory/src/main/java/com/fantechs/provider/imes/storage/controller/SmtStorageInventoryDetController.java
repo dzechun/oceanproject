@@ -69,14 +69,6 @@ public class SmtStorageInventoryDetController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<SmtStorageInventoryDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageInventoryDet searchSmtStorageInventoryDet) {
-//        Page<Object> page = PageHelper.startPage(searchSmtStorageInventoryDet.getStartPage(),searchSmtStorageInventoryDet.getPageSize());
-//        List<SmtStorageInventoryDet> list = smtStorageInventoryDetService.findList(searchSmtStorageInventoryDet);
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
-
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")

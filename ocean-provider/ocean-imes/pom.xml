@@ -18,6 +18,7 @@
     <modules>
         <module>ocean-imes-basic</module>
         <module>ocean-imes-apply</module>
+        <module>ocean-storage-inventory</module>
     </modules>
 
 </project>

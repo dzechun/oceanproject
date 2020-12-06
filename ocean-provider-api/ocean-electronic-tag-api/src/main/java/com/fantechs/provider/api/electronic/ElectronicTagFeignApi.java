@@ -33,9 +33,9 @@ public interface ElectronicTagFeignApi {
 
     @ApiOperation("通过id查询电子标签信息")
     @GetMapping("/smtElectronicTagController/findById")
-    ResponseEntity<SmtElectronicTagControllerDto> findById(@ApiParam(value = "电子标签控制器id")@RequestParam String electronicTagControllerId);
+    ResponseEntity<SmtElectronicTagControllerDto> findById(@ApiParam(value = "电子标签控制器id")@RequestParam(value="electronicTagControllerId") String electronicTagControllerId);
 
     @ApiOperation("通过id查询储位信息")
     @GetMapping("/smtElectronicTagStorage/findByElectronicTagControllerId")
-    ResponseEntity<List<SmtStorage>> findByElectronicTagControllerId(@ApiParam(value = "电子标签控制器id")@RequestParam Long electronicTagControllerId);
+    ResponseEntity<List<SmtStorage>> findByElectronicTagControllerId(@ApiParam(value = "电子标签控制器id")@RequestParam(value="electronicTagControllerId") Long electronicTagControllerId);
 }
