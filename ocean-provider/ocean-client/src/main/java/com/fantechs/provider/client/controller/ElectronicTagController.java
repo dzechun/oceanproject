@@ -5,6 +5,8 @@ import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.server.impl.FanoutSender;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.List;
  * Created by lfz on 2020/11/27.
  */
 @RestController
+@Api(tags = "电子标签控制器")
 public class ElectronicTagController {
     @Autowired
     FanoutSender fanoutSender;
@@ -25,13 +28,14 @@ public class ElectronicTagController {
      * @throws Exception
      */
     @PostMapping(value="/sendElectronicTagStorage")
-    public void sendElectronicTagStorage(@ModelAttribute("list") List<SmtElectronicTagStorage> list )  throws Exception{
+    @ApiOperation(value = "发送需要亮灯",notes = "发送需要亮灯")
+    public void sendElectronicTagStorage(@RequestBody List<SmtElectronicTagStorage> list )  throws Exception{
         MQResponseEntity mQResponseEntity =  new  MQResponseEntity();
         if(StringUtils.isNotEmpty(list)){
-            mQResponseEntity.setCode(2);
+            mQResponseEntity.setCode(1001);
             mQResponseEntity.setData(list);
             mQResponseEntity.setCount(list.size());
         }
-        fanoutSender.send(RabbitConfig.TOPIC_QUEUE1,mQResponseEntity);
+        fanoutSender.send("ocean.ablepick6",mQResponseEntity);
     }
 }
