@@ -5,8 +5,11 @@ import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implements Serializable {
@@ -112,4 +115,32 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改账号", height = 20, width = 30,orderNum="16")
     private String modifiedUserName;
+
+    /**
+     * 物料编码
+     */
+    @Column(name = "material_code")
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30)
+    @NotBlank(message = "物料编码不能为空")
+    private String materialCode;
+
+    /**
+     * 物料描述
+     */
+    @Column(name = "material_desc")
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "物料描述", height = 20, width = 30)
+    private String materialDesc;
+
+
+    /**
+     * 数量
+     */
+    @Column(name = "quantity")
+    @ApiModelProperty(name="quantity" ,value="物料数量")
+    @Excel(name = "物料数量", height = 20, width = 30)
+    private BigDecimal  quantity;
+
+
 }
