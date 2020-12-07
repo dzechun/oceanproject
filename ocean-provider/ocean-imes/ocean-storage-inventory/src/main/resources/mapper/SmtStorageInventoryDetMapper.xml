@@ -42,11 +42,17 @@
         LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.storage_id = ssid.storage_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssm.material_id
         <where>
+            <if test="materialDesc!= null and materialDesc !='' ">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
             <if test="storageCode!= null and storageCode !='' ">
                 and ss.storage_code like CONCAT('%', #{storageCode}, '%')
             </if>
             <if test="storageName!= null and storageName !='' ">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="materialCode!= null and materialCode !='' ">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

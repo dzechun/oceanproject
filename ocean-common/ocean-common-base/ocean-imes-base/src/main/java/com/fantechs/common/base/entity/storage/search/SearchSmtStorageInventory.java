@@ -23,6 +23,12 @@ public class SearchSmtStorageInventory extends BaseQuery implements Serializable
     private String materialDesc;
 
     /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
+
+    /**
      * 储位编码
      */
     @ApiModelProperty(name = "storageCode",value = "储位编码")
@@ -33,5 +39,11 @@ public class SearchSmtStorageInventory extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name = "storageName",value = "储位名称")
     private String storageName;
+
+    /**
+     * 等级
+     */
+    @ApiModelProperty(name = "level",value = "等级")
+    private String level;
 
 }

@@ -34,5 +34,17 @@ public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializa
     @ApiModelProperty(name = "storageName",value = "储位名称")
     private String storageName;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 物料描述
+     */
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    private String materialDesc;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
+
+
 }

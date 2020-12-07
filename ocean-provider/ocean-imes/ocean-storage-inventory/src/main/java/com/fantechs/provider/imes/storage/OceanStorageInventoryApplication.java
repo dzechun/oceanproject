@@ -10,7 +10,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.imes.storage","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.imes.basic.mapper","com.fantechs.provider.imes.storage.mapper"})
+@MapperScan({"com.fantechs.provider.imes.storage.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
 public class OceanStorageInventoryApplication {
     public static void main(String[] args) {

@@ -2,16 +2,16 @@ package com.fantechs.provider.imes.storage.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.mapper.SmtStorageMaterialMapper;
+import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper;
 import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper;
 import com.fantechs.provider.imes.storage.service.SmtStorageInventoryDetService;
@@ -37,7 +37,7 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
     @Resource
     private SmtStorageInventoryMapper smtStorageInventoryMapper;
     @Resource
-    private SmtStorageMaterialMapper smtStorageMaterialMapper;
+    private StorageInventoryFeignApi storageInventoryFeignApi;
 
     @Override
     public List<SmtStorageInventoryDetDto> findList(Map<String, Object> map) {
@@ -52,12 +52,8 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example storageMaterialExample = new Example(SmtStorageMaterial.class);
-        Example.Criteria storageMaterialCriteria = storageMaterialExample.createCriteria();
-        storageMaterialCriteria.andEqualTo("storageId", smtStorageInventoryDet.getStorageId());
-
-        List<SmtStorageMaterial> smtStorageMaterials = smtStorageMaterialMapper.selectByExample(storageMaterialExample);
-        if (StringUtils.isEmpty(smtStorageMaterials)) {
+        ResponseEntity<SmtStorageMaterial> detail = storageInventoryFeignApi.detail(smtStorageInventoryDet.getStorageId());
+        if (StringUtils.isEmpty(detail.getData())) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
 
@@ -70,7 +66,7 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
         if (StringUtils.isEmpty(smtStorageInventories)) {
             SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
             smtStorageInventory.setStorageId(smtStorageInventoryDet.getStorageId());
-            smtStorageInventory.setMaterialId(smtStorageMaterials.get(0).getMaterialId());
+            smtStorageInventory.setMaterialId(detail.getData().getMaterialId());
             smtStorageInventory.setLevel(null);
             smtStorageInventory.setQuantity(smtStorageInventoryDet.getMaterialQuantity());
             smtStorageInventory.setCreateUserId(currentUser.getUserId());
@@ -78,18 +74,15 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
             smtStorageInventory.setModifiedUserId(currentUser.getUserId());
             smtStorageInventory.setModifiedTime(new Date());
             smtStorageInventoryMapper.insert(smtStorageInventory);
-
-            i = super.save(smtStorageInventoryDet);
         } else {
-
-            i = super.save(smtStorageInventoryDet);
-
             //刷新储位库存的数量
             Map<String,Object> map = new HashMap();
             map.put("quantity",smtStorageInventoryDet.getMaterialQuantity());
             map.put("storageId",smtStorageInventoryDet.getStorageId());
             smtStorageInventoryMapper.refreshQuantity(map);
         }
+
+        i = super.save(smtStorageInventoryDet);
 
         return i;
     }

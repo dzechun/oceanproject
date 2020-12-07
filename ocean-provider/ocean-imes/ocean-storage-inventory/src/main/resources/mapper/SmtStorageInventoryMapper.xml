@@ -45,6 +45,12 @@
             <if test="storageName!= null and storageName !='' ">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
             </if>
+            <if test="materialCode!= null and materialCode !='' ">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="level!= null and level !='' ">
+                and ssi.level like CONCAT('%', #{level}, '%')
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
