@@ -43,10 +43,10 @@
       <if test="storageId!=null and storageId!=''">
         and ss.storage_id = #{storageId}
       </if>
-      <if test="storageCode!=null and storageCode!='' and queryMark=1">
+      <if test="storageCode!=null and storageCode!='' and codeQueryMark=1">
         and ss.storage_code = #{storageCode}
       </if>
-      <if test="storageCode!=null and storageCode!=''">
+      <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
         and ss.storage_code like CONCAT('%', #{storageCode}, '%')
       </if>
       <if test="storageName!=null and storageName!=''">

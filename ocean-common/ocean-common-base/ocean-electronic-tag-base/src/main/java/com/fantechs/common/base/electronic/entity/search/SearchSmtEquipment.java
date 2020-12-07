@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic.search;
+package com.fantechs.common.base.electronic.entity.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
@@ -45,4 +45,10 @@ public class SearchSmtEquipment extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentType",value = "设备类型")
     private Byte equipmentType;
+
+    /**
+     * 根据编码查询方式标记（传1则为等值查询）
+     */
+    @ApiModelProperty(name = "queryMark",value = "查询方式标记")
+    private Byte codeQueryMark;
 }

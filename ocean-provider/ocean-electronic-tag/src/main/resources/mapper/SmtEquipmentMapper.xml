@@ -40,7 +40,10 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(se.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="equipmentCode != null">
+            <if test="equipmentCode != null and codeQueryMark=1">
+                and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')
+            </if>
+            <if test="equipmentCode != null and codeQueryMark != 1">
                 and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')
             </if>
             <if test="equipmentName != null">

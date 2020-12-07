@@ -2,7 +2,7 @@ package com.fantechs.provider.electronic.controller;
 
 import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.entity.SmtEquipment;
-import com.fantechs.common.base.entity.basic.search.SearchSmtEquipment;
+import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

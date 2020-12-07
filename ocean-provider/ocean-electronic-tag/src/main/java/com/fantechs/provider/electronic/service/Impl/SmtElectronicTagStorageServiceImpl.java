@@ -2,14 +2,17 @@ package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -18,6 +21,7 @@ import com.fantechs.provider.api.imes.basic.ClientManageFeignApi;
 import com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
+import com.fantechs.provider.electronic.service.SmtEquipmentService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +42,8 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     private SmtHtElectronicTagStorageMapper smtHtElectronicTagStorageMapper;
     @Resource
     private ClientManageFeignApi clientManageFeignApi;
+    @Resource
+    private SmtEquipmentServiceImpl smtEquipmentService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -142,21 +148,30 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         LinkedList<SmtHtElectronicTagStorage> htList = new LinkedList<>();
         for (int i = 0; i < smtElectronicTagStorageDtos.size(); i++) {
             SmtElectronicTagStorageDto smtElectronicTagStorageDto = smtElectronicTagStorageDtos.get(i);
+            String storageCode = smtElectronicTagStorageDto.getStorageCode();//储位编码
+            String equipmentCode = smtElectronicTagStorageDto.getEquipmentCode();//设备编码
+            String equipmentIp = smtElectronicTagStorageDto.getEquipmentIp();//设备ip
             if (StringUtils.isEmpty(
-                    smtElectronicTagStorageDto.getStorageCode(),
-                    smtElectronicTagStorageDto.getEquipmentCode()
+                    storageCode,equipmentCode,equipmentIp
             )){
                 fail.add(i+3);
                 continue;
             }
 
-            //判断编码对应的储位和电子标签控制器是否存在
+            //判断该编码对应的储位是否存在
             SearchSmtStorage searchSmtStorage = new SearchSmtStorage();
-            ResponseEntity<List<SmtHtStorage>> responseEntity = clientManageFeignApi.findList(searchSmtStorage);
-            SmtHtStorage storage = responseEntity.getData().get(0);
-            SmtElectronicTagController electronicTagController = smtElectronicTagStorageMapper.findElectronicTagControllerByCode(storage.getStorageCode());
+            searchSmtStorage.setStorageCode(storageCode);
+            searchSmtStorage.setCodeQueryMark((byte) 1);
+            ResponseEntity<List<SmtStorage>> responseEntity = clientManageFeignApi.findList(searchSmtStorage);
+            SmtStorage storage = responseEntity.getData().get(0);
 
-            if (StringUtils.isEmpty(storage,electronicTagController)){
+            //判断该编码对应的设备是否存在
+            SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
+            searchSmtEquipment.setEquipmentCode(equipmentCode);
+            searchSmtEquipment.setCodeQueryMark((byte) 1);
+            List<SmtEquipmentDto> smtEquipmentDtos = smtEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtEquipment));
+            SmtEquipmentDto smtEquipmentDto = smtEquipmentDtos.get(0);
+            if (StringUtils.isEmpty(storage,smtEquipmentDto)){
                 fail.add(i+3);
                 continue;
             }
@@ -165,7 +180,8 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             Example example = new Example(SmtElectronicTagStorage.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("storageId",storage.getStorageId())
-                    .orEqualTo("electronicTagControllerId",electronicTagController.getElectronicTagControllerId());
+                    .andEqualTo("equipmentId",smtEquipmentDto.getEquipmentId())
+                    .andNotEqualTo("equipmentIp",smtEquipmentDto.getEquipmentId());
             List<SmtElectronicTagStorage> smtElectronicTagStorages = smtElectronicTagStorageMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(smtElectronicTagStorages)){
                 fail.add(i+3);
@@ -174,7 +190,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             SmtElectronicTagStorage smtElectronicTagStorage = new SmtElectronicTagStorage();
             BeanUtils.copyProperties(smtElectronicTagStorageDto,smtElectronicTagStorage);
             smtElectronicTagStorage.setStorageId(storage.getStorageId());
-            smtElectronicTagStorage.setEquipmentId(electronicTagController.getElectronicTagControllerId());
+            smtElectronicTagStorage.setEquipmentId(smtEquipmentDto.getEquipmentId());
             smtElectronicTagStorage.setCreateTime(new Date());
             smtElectronicTagStorage.setCreateUserId(currentUser.getUserId());
             smtElectronicTagStorage.setModifiedTime(new Date());
