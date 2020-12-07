@@ -10,7 +10,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
-import com.fantechs.provider.api.basic.ClientManageFeignApi;
+import com.fantechs.provider.api.imes.basic.ClientManageFeignApi;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.client.server.LoginService;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.fantechs.provider.api.basic;
+package com.fantechs.provider.api.imes.basic;
 
 import com.fantechs.common.base.dto.basic.SmtClientManageDto;
 import com.fantechs.common.base.entity.basic.SmtClientManage;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
-
 @FeignClient(value="ocean-imes-basic")
 public interface ClientManageFeignApi {
     @PostMapping("/smtClientManage/update")

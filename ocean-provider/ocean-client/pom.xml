@@ -37,19 +37,13 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.imes.basic</groupId>
             <artifactId>ocean-imes-basic</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.basic</groupId>
+            <groupId>com.fantechs.provider.api.imes.basic</groupId>
             <artifactId>ocean-imes-basic-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>

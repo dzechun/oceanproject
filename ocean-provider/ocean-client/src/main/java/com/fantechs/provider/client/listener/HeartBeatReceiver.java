@@ -8,7 +8,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
-import com.fantechs.provider.api.basic.ClientManageFeignApi;
+import com.fantechs.provider.api.imes.basic.ClientManageFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.imes.basic.mapper.SmtClientManageMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
