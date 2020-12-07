@@ -49,7 +49,7 @@ public class SmtElectronicTagStorageController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：storageId、electronicTagControllerId、electronicTagId", required = true) @RequestBody @Validated SmtElectronicTagStorage smtElectronicTagStorage) {
+    public ResponseEntity add(@ApiParam(value = "必传：storageId、equipmentId、electronicTagId", required = true) @RequestBody @Validated SmtElectronicTagStorage smtElectronicTagStorage) {
         return ControllerUtil.returnCRUD(smtElectronicTagStorageService.save(smtElectronicTagStorage));
     }
 

@@ -1,7 +1,7 @@
-package com.fantechs.provider.imes.basic.service;
+package com.fantechs.provider.electronic.service;
 
-import com.fantechs.common.base.dto.basic.SmtEquipmentDto;
-import com.fantechs.common.base.entity.basic.SmtEquipment;
+import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
+import com.fantechs.common.base.electronic.entity.SmtEquipment;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

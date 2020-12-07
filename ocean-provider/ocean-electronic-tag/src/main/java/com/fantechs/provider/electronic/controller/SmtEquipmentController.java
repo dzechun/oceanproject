@@ -1,14 +1,14 @@
-package com.fantechs.provider.imes.basic.controller;
+package com.fantechs.provider.electronic.controller;
 
-import com.fantechs.common.base.dto.basic.SmtEquipmentDto;
-import com.fantechs.common.base.entity.basic.SmtEquipment;
+import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
+import com.fantechs.common.base.electronic.entity.SmtEquipment;
 import com.fantechs.common.base.entity.basic.search.SearchSmtEquipment;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.service.SmtEquipmentService;
+import com.fantechs.provider.electronic.service.SmtEquipmentService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -37,7 +37,7 @@ public class SmtEquipmentController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：equipmentCode、deviceName", required = true) @RequestBody @Validated SmtEquipment smtEquipment) {
+    public ResponseEntity add(@ApiParam(value = "必传：equipmentCode、equipmentName", required = true) @RequestBody @Validated SmtEquipment smtEquipment) {
         return ControllerUtil.returnCRUD(smtEquipmentService.save(smtEquipment));
     }
 

@@ -33,22 +33,22 @@ public class SearchSmtElectronicTagStorage extends BaseQuery implements Serializ
     private String warehouseAreaName;
 
     /**
-     * 电子标签控制器id
+     * 设备id（电子标签控制器）
      */
-    @ApiModelProperty(name="electronicTagControllerId",value = "电子标签控制器id")
-    private Long electronicTagControllerId;
+    @ApiModelProperty(name="equipment_id",value = "设备id（电子标签控制器）")
+    private Long equipmentId;
 
     /**
-     * 电子标签控制器名称
+     * 设备名称
      */
-    @ApiModelProperty(name="electronicTagControllerName",value = "电子标签控制器名称")
-    private String electronicTagControllerName;
+    @ApiModelProperty(name="equipment_name",value = "设备名称")
+    private String equipmentName;
 
     /**
-     * 电子标签控制器ip
+     * 设备ip
      */
-    @ApiModelProperty(name="electronicTagControllerIp",value = "电子标签控制器ip")
-    private String electronicTagControllerIp;
+    @ApiModelProperty(name="equipment_ip",value = "设备ip")
+    private String equipmentIp;
 
     /**
      * 电子标签id

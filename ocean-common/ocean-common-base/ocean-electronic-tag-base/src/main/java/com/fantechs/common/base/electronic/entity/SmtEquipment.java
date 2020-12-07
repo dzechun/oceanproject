@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic;
+package com.fantechs.common.base.electronic.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
@@ -31,43 +31,61 @@ public class SmtEquipment extends ValidGroup implements Serializable {
     private Long equipmentId;
 
     /**
-     * 客户端编号
+     * 设备编号
      */
-    @ApiModelProperty(name="equipmentCode",value = "客户端编号")
-    @Excel(name = "客户端编号", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="equipmentCode",value = "设备编号")
+    @Excel(name = "设备编号", height = 20, width = 30,orderNum="1")
     @Column(name = "equipment_code")
-    @NotBlank(message = "客户端编号不能为空")
+    @NotBlank(message = "设备编号不能为空")
     private String equipmentCode;
 
     /**
      * 设备名称
      */
-    @ApiModelProperty(name="deviceName",value = "设备名称")
+    @ApiModelProperty(name="equipmentName",value = "设备名称")
     @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
-    @Column(name = "device_name")
+    @Column(name = "equipment_name")
     @NotBlank(message = "设备名称不能为空")
-    private String deviceName;
+    private String equipmentName;
 
     /**
      * 设备数据
      */
-    @ApiModelProperty(name="deviceData",value = "设备数据")
+    @ApiModelProperty(name="equipmentData",value = "设备数据")
     @Excel(name = "设备数据", height = 20, width = 30,orderNum="3")
-    @Column(name = "device_data")
-    private String deviceData;
+    @Column(name = "equipment_data")
+    private String equipmentData;
+
+    /**
+     * 设备IP地址
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP地址")
+    @Excel(name = "设备IP地址", height = 20, width = 30,orderNum="4")
+    @Column(name = "equipment_ip")
+    private String equipmentIp;
+
+    /**
+     * 设备端口
+     */
+    @ApiModelProperty(name="equipmentPort",value = "设备端口")
+    @Excel(name = "设备端口", height = 20, width = 30,orderNum="5")
+    @Column(name = "equipment_port")
+    private String equipmentPort;
 
     /**
      * 设备类型
      */
-    @ApiModelProperty(name="type",value = "设备类型")
-    @Excel(name = "设备类型", height = 20, width = 30,orderNum="4")
-    private Byte type;
+    @ApiModelProperty(name="equipmentType",value = "设备类型")
+    @Excel(name = "设备类型", height = 20, width = 30,orderNum="6")
+    @Column(name = "equipment_type")
+    private Byte equipmentType;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="7")
+    @Column(name = "status")
     private Byte status;
 
     /**
@@ -81,7 +99,7 @@ public class SmtEquipment extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -97,7 +115,7 @@ public class SmtEquipment extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

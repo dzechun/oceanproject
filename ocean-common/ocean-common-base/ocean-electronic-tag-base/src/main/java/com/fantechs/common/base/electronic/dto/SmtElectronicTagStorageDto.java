@@ -36,35 +36,35 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
 
 
     /**
-     * 电子标签控制器名称
+     * 设备名称
      */
-    @ApiModelProperty(name="electronicTagControllerName",value = "电子标签控制器名称")
+    @ApiModelProperty(name="equipmentName",value = "设备名称")
     @Excel(name = "电子标签控制器名称", height = 20, width = 30,orderNum="4")
     @Transient
-    private String electronicTagControllerName;
+    private String equipmentName;
 
     /**
-     * 电子标签控制器编码
+     * 设备编码
      */
-    @ApiModelProperty(name="electronicTagControllerCode",value = "电子标签控制器编码")
+    @ApiModelProperty(name="equipmentCode",value = "电子标签控制器编码")
     @Excel(name = "电子标签控制器编码", height = 20, width = 30,orderNum="5")
-    private String electronicTagControllerCode;
+    private String equipmentCode;
 
     /**
-     * 电子标签控制器ip
+     * 设备ip
      */
-    @ApiModelProperty(name="electronicTagControllerIp",value = "电子标签控制器ip")
+    @ApiModelProperty(name="equipmentIp",value = "设备ip")
     @Excel(name = "电子标签控制器ip", height = 20, width = 30,orderNum="6")
     @Transient
-    private String electronicTagControllerIp;
+    private String equipmentIp;
 
     /**
-     * 电子标签控制器端口
+     * 设备端口
      */
-    @ApiModelProperty(name="electronicTagControllerPort",value = "电子标签控制器端口")
-    @Excel(name = "电子标签控制器端口", height = 20, width = 30,orderNum="8")
+    @ApiModelProperty(name="equipmentPort",value = "设备端口")
+    @Excel(name = "设备端口", height = 20, width = 30,orderNum="8")
     @Transient
-    private String electronicTagControllerPort;
+    private String equipmentPort;
 
     /**
      * 仓库名称

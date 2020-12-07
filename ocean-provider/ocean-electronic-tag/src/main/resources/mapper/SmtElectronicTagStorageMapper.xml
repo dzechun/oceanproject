@@ -7,7 +7,7 @@
         -->
         <id column="electronic_tag_storage_id" jdbcType="BIGINT" property="electronicTagStorageId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
-        <result column="electronic_tag_controller_id" jdbcType="BIGINT" property="electronicTagControllerId"/>
+        <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
         <result column="electronic_tag_id" jdbcType="VARCHAR" property="electronicTagId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -27,10 +27,10 @@
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
-        <result column="electronic_tag_controller_name" jdbcType="VARCHAR" property="electronicTagControllerName"/>
-        <result column="electronic_tag_controller_code" jdbcType="VARCHAR" property="electronicTagControllerCode"/>
-        <result column="electronic_tag_controller_ip" jdbcType="VARCHAR" property="electronicTagControllerIp"/>
-        <result column="electronic_tag_controller_port" jdbcType="VARCHAR" property="electronicTagControllerPort"/>
+        <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+        <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+        <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
+        <result column="equipment_port" jdbcType="VARCHAR" property="equipmentPort"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
@@ -84,7 +84,7 @@
     <sql id="Base_column_List">
     sets.electronic_tag_storage_id,
 	sets.storage_id,
-	sets.electronic_tag_controller_id,
+	sets.equipment_id,
 	sets.electronic_tag_id,
 	sets.`status`,
 	sets.create_user_id,
@@ -101,18 +101,18 @@
         SELECT<include refid="Base_column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         ss.storage_name AS storage_name, ss.storage_desc AS storage_desc, ss.storage_code AS storage_code,
-        setc.electronic_tag_controller_name AS electronic_tag_controller_name,
-        setc.electronic_tag_controller_code AS electronic_tag_controller_code,
-        setc.electronic_tag_controller_ip AS electronic_tag_controller_ip,
-        setc.electronic_tag_controller_port AS electronic_tag_controller_port,
+        se.equipment_name AS equipment_name,
+        se.equipment_code AS equipment_code,
+        se.equipment_ip AS equipment_ip,
+        se.equipment_port AS equipment_port,
         sw.warehouse_name AS warehouse_name, sw.warehouse_code AS warehouse_code,
         swa.warehouse_area_name AS warehouse_area_name, swa.warehouse_area_code AS warehouse_area_code
         FROM smt_electronic_tag_storage sets
         LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
         LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
-        LEFT JOIN smt_electronic_tag_controller setc ON sets.electronic_tag_controller_id =
-        setc.electronic_tag_controller_id
+        LEFT JOIN smt_equipment se ON sets.equipment_id =
+        se.equipment_id
         LEFT JOIN smt_warehouse sw ON ss.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
         <where>
@@ -131,14 +131,14 @@
             <if test="warehouseAreaName != null">
                 and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
             </if>
-            <if test="electronicTagControllerName != null">
-                and setc.electronic_tag_controller_name like CONCAT('%', #{electronicTagControllerName}, '%')
+            <if test="equipmentName != null">
+                and se.equipment_name like CONCAT('%', #{equipmentName}, '%')
             </if>
-            <if test="electronicTagControllerId != null">
-                and setc.electronic_tag_controller_id = #{electronicTagControllerId}
+            <if test="equipmentId != null">
+                and se.equipment_Id = #{equipmentId}
             </if>
-            <if test="electronicTagControllerIp != null">
-                and setc.electronic_tag_controller_ip like CONCAT('%', #{electronicTagControllerIp}, '%')
+            <if test="equipmentIp != null">
+                and se.equipment_ip like CONCAT('%', #{equipmentIp}, '%')
             </if>
             <if test="electronicTagId != null">
                 and sets.electronic_tag_id like CONCAT('%', #{electronicTagId}, '%')
@@ -148,15 +148,6 @@
             </if>
         </where>
         order by sets.create_time desc
-    </select>
-
-    <select id="findStorageByCode" parameterType="java.lang.String"
-            resultMap="SmtStorageMap">
-        SELECT *
-        FROM smt_storage ss
-        <where>
-            ss.storage_code =#{storageCode}
-        </where>
     </select>
 
     <select id="findByElectronicTagControllerId" parameterType="java.lang.Long"

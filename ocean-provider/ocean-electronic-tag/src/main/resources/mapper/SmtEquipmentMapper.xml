@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtEquipmentMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtEquipment">
+<mapper namespace="com.fantechs.provider.electronic.mapper.SmtEquipmentMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.SmtEquipment">
         <!--
           WARNING - @mbg.generated
         -->
         <id column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
         <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
-        <result column="device_name" jdbcType="VARCHAR" property="deviceName"/>
-        <result column="device_data" jdbcType="VARCHAR" property="deviceData"/>
-        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+        <result column="equipment_data" jdbcType="VARCHAR" property="equipmentData"/>
+        <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
+        <result column="equipment_port" jdbcType="VARCHAR" property="equipmentPort"/>
+        <result column="equipment_type" jdbcType="TINYINT" property="equipmentType"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -17,14 +19,15 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtEquipmentDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.SmtEquipmentDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-      se.equipment_id, se.equipment_code, se.device_name, se.device_data, se.type, se.status, se.create_user_id,
-      se.create_time, se.modified_user_id, se.modified_time
+      se.equipment_id, se.equipment_code, se.equipment_name, se.equipment_data, se.equipment_ip, se.equipment_port,
+      se.equipment_type, se.status, se.create_user_id, se.create_time, se.modified_user_id,
+      se.modified_time
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -40,14 +43,20 @@
             <if test="equipmentCode != null">
                 and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')
             </if>
-            <if test="deviceName != null">
-                and se.device_name like CONCAT('%', #{deviceName}, '%')
+            <if test="equipmentName != null">
+                and se.equipment_name like CONCAT('%', #{equipmentName}, '%')
             </if>
-            <if test="deviceData != null">
-                and se.device_data like CONCAT('%', #{deviceData}, '%')
+            <if test="equipmentIp != null">
+                and se.equipment_ip like CONCAT('%', #{equipmentIp}, '%')
             </if>
-            <if test="type != null">
-                and se.type=#{type}
+            <if test="equipmentPort != null">
+                and se.equipment_port like CONCAT('%', #{equipmentPort}, '%')
+            </if>
+            <if test="equipmentData != null">
+                and se.equipment_data like CONCAT('%', #{equipmentData}, '%')
+            </if>
+            <if test="equipmentType != null">
+                and se.equipment_type=#{equipmentType}
             </if>
             <if test="status!=null and status!=''">
                 and se.status=#{status}

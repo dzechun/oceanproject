@@ -39,12 +39,12 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
     private Long storageId;
 
     /**
-     * 控制器id
+     * 设备id（电子标签控制器）
      */
-    @ApiModelProperty(name="electronicTagControllerId",value = "控制器id")
-    @Column(name = "electronic_tag_controller_id")
-    @NotNull(message = "控制器id不能为空")
-    private Long electronicTagControllerId;
+    @ApiModelProperty(name="equipmentId",value = "设备id（电子标签控制器）")
+    @Column(name = "equipment_id")
+    @NotNull(message = "设备id（电子标签控制器）")
+    private Long equipmentId;
 
     /**
      * 电子标签id

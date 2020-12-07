@@ -51,10 +51,10 @@ public class SmtHtElectronicTagStorage implements Serializable {
     /**
      * 控制器id
      */
-    @ApiModelProperty(name="electronicTagControllerId",value = "控制器id")
+    @ApiModelProperty(name="equipmentId",value = "控制器id")
     @Excel(name = "控制器id", height = 20, width = 30,orderNum="") 
-    @Column(name = "electronic_tag_controller_id")
-    private Long electronicTagControllerId;
+    @Column(name = "equipment_id")
+    private Long equipmentId;
 
     /**
      * 电子标签id

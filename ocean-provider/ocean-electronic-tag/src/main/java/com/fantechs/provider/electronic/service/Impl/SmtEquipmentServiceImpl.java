@@ -1,15 +1,15 @@
-package com.fantechs.provider.imes.basic.service.impl;
+package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtEquipmentDto;
-import com.fantechs.common.base.entity.basic.SmtEquipment;
+import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
+import com.fantechs.common.base.electronic.entity.SmtEquipment;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.mapper.SmtEquipmentMapper;
-import com.fantechs.provider.imes.basic.service.SmtEquipmentService;
+import com.fantechs.provider.electronic.mapper.SmtEquipmentMapper;
+import com.fantechs.provider.electronic.service.SmtEquipmentService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
