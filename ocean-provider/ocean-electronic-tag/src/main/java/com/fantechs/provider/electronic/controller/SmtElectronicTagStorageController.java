@@ -122,10 +122,4 @@ public class SmtElectronicTagStorageController {
         }
     }
 
-    @ApiOperation("通过电子标签id查询储位信息")
-    @GetMapping("/findByElectronicTagControllerId")
-    public ResponseEntity<List<SmtStorage>> findByElectronicTagControllerId(@ApiParam(value = "电子标签控制器id")@RequestParam Long electronicTagControllerId) {
-        List<SmtStorage> smtStorages = smtElectronicTagStorageService.findByElectronicTagControllerId(electronicTagControllerId);
-        return ControllerUtil.returnSuccess("查询成功",smtStorages);
-    }
 }

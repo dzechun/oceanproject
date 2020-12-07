@@ -1,6 +1,7 @@
 package com.fantechs.provider.client.controller;
 
 import com.fantechs.common.base.dto.basic.SmtClientManageDto;
+import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.entity.basic.SmtClientManage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtClientManage;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by lfz on 2020/11/30.
@@ -23,12 +25,12 @@ public class LoginController {
     private LoginServiceImpl loginServiceImpl;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<SmtClientManageDto> sendElectronicTagStorage(@RequestBody SmtClientManage smtClientManage, HttpServletRequest request) {
+    public ResponseEntity<List<SmtEquipmentDto>> sendElectronicTagStorage(@RequestBody SmtClientManage smtClientManage, HttpServletRequest request) {
 
-        SmtClientManageDto smtClientManageDto = loginServiceImpl.login(smtClientManage, request);
-        if (smtClientManageDto == null){
+        List<SmtEquipmentDto> smtEquipmentDtos = loginServiceImpl.login(smtClientManage, request);
+        if (smtEquipmentDtos == null){
             return ControllerUtil.returnFail("验证失败", 100);
         }
-        return ControllerUtil.returnSuccess("验证成功",smtClientManageDto);
+        return ControllerUtil.returnSuccess("验证成功",smtEquipmentDtos);
     }
 }

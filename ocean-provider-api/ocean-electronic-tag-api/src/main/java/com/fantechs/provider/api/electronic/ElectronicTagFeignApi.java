@@ -2,8 +2,10 @@ package com.fantechs.provider.api.electronic;
 
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -35,7 +37,7 @@ public interface ElectronicTagFeignApi {
     @GetMapping("/smtElectronicTagController/findById")
     ResponseEntity<SmtElectronicTagControllerDto> findById(@ApiParam(value = "电子标签控制器id")@RequestParam(value="electronicTagControllerId") String electronicTagControllerId);
 
-    @ApiOperation("通过id查询储位信息")
-    @GetMapping("/smtElectronicTagStorage/findByElectronicTagControllerId")
-    ResponseEntity<List<SmtStorage>> findByElectronicTagControllerId(@ApiParam(value = "电子标签控制器id")@RequestParam(value="electronicTagControllerId") Long electronicTagControllerId);
+    @ApiOperation("根据客户端id查询电子标签信息")
+    @PostMapping("/smtEquipment/findList")
+    ResponseEntity<List<SmtEquipmentDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtEquipment searchSmtEquipment);
 }

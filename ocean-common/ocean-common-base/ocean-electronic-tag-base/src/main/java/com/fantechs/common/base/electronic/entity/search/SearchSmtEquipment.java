@@ -47,6 +47,12 @@ public class SearchSmtEquipment extends BaseQuery implements Serializable {
     private Byte equipmentType;
 
     /**
+     * 客户端id
+     */
+    @ApiModelProperty(name="clientId",value = "客户端id")
+    private Byte clientId;
+
+    /**
      * 根据编码查询方式标记（传1则为等值查询）
      */
     @ApiModelProperty(name = "queryMark",value = "查询方式标记")

@@ -27,11 +27,5 @@ public class SmtClientManageDto extends SmtClientManage implements Serializable 
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
     private String modifiedUserName;
 
-    /**
-     * 电子标签控制器列表
-     */
-    @ApiModelProperty(name="electronicTagControllerList",value = "电子标签控制器列表")
-    @Transient
-    Object electronicTagControllerList;
 
 }

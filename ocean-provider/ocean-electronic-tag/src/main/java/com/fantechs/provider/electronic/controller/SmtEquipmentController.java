@@ -37,7 +37,7 @@ public class SmtEquipmentController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：equipmentCode、equipmentName", required = true) @RequestBody @Validated SmtEquipment smtEquipment) {
+    public ResponseEntity add(@ApiParam(value = "必传：equipmentCode、equipmentName、clientId", required = true) @RequestBody @Validated SmtEquipment smtEquipment) {
         return ControllerUtil.returnCRUD(smtEquipmentService.save(smtEquipment));
     }
 

@@ -213,8 +213,4 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         return resutlMap;
     }
 
-    @Override
-    public List<SmtStorage> findByElectronicTagControllerId(Long electronicTagControllerId) {
-        return smtElectronicTagStorageMapper.findByElectronicTagControllerId(electronicTagControllerId);
-    }
 }

@@ -18,6 +18,4 @@ public interface SmtElectronicTagStorageService extends IService<SmtElectronicTa
 
     Map<String,Object> importElectronicTagController(List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtos);
 
-    //通过电子标签控制器id查询储位信息
-    List<SmtStorage> findByElectronicTagControllerId(Long electronicTagControllerId);
 }

@@ -13,8 +13,4 @@ import java.util.Map;
 @Mapper
 public interface SmtElectronicTagStorageMapper extends MyMapper<SmtElectronicTagStorage> {
     List<SmtElectronicTagStorageDto> findList(Map<String, Object> map);
-    SmtElectronicTagController findElectronicTagControllerByCode(String storageCode);
-
-    //通过电子标签控制器id查询储位信息
-    List<SmtStorage> findByElectronicTagControllerId(Long electronicTagControllerId);
 }
