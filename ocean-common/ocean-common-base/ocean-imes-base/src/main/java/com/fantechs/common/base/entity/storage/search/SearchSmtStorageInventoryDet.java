@@ -1,26 +1,26 @@
 package com.fantechs.common.base.entity.storage.search;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+;
 
 /**
- * @Date 2020/12/2 17:33
+ * @date 2020-12-04 14:39:37
  */
 @Data
-public class SearchSmtStorageInventory extends BaseQuery implements Serializable {
-
-    /**
-     * 物料描述
-     */
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    private String materialDesc;
+public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializable {
 
     /**
      * 储位编码
@@ -34,4 +34,5 @@ public class SearchSmtStorageInventory extends BaseQuery implements Serializable
     @ApiModelProperty(name = "storageName",value = "储位名称")
     private String storageName;
 
+    private static final long serialVersionUID = 1L;
 }

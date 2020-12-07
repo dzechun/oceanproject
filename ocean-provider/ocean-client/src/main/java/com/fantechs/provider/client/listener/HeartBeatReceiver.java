@@ -36,7 +36,6 @@ public class HeartBeatReceiver {
         smtClientManage.setMonitoringTime(new Date());
         smtClientManage.setLoginTag((byte) 1);
         clientManageFeignApi.update(smtClientManage);
-        //fanoutSender.send("testtopic",messageStr);
     }
 
 

@@ -1,4 +1,4 @@
-package com.fantechs.provider.imes.storage.config;
+package com.fantechs.provider.client.config;
 /**注意导入包是否齐全**/
 
 import com.google.common.base.Function;
@@ -31,7 +31,7 @@ public class SwaggerConfig
     private static final String splitor = ";";
     private List<ApiKey> securitySchemes() {
         List<ApiKey> apiKeyList= new ArrayList();
-        apiKeyList.add(new ApiKey("token", "token", "header"));
+//        apiKeyList.add(new ApiKey("token", "token", "header"));
         return apiKeyList;
     }
     /**
@@ -45,7 +45,7 @@ public class SwaggerConfig
                 .apiInfo(apiInfo())
                 .select()
                 // 指定当前包路径，这里就添加了两个包，注意方法变成了basePackage，中间加上成员变量splitor
-                .apis(basePackage("com.fantechs.provider.imes.storage.controller"))
+                .apis(basePackage("com.fantechs.provider.client.controller"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()

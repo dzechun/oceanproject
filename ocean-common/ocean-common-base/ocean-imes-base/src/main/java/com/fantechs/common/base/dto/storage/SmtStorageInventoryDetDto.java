@@ -1,18 +1,18 @@
 package com.fantechs.common.base.dto.storage;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
+import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * @Date 2020/12/4 14:43
+ */
 @Data
-public class SmtStorageInventoryDto extends SmtStorageInventory implements Serializable {
-
+public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements Serializable {
     /**
      * 储位编码
      */
@@ -38,12 +38,12 @@ public class SmtStorageInventoryDto extends SmtStorageInventory implements Seria
     private String materialDesc;
 
     /**
-     * 版本
+     * 物料名称
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
-    @Excel(name = "版本", height = 20, width = 30)
-    private String version;
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30)
+    private String materialName;
 
     /**
      * 创建用户名称
@@ -60,5 +60,4 @@ public class SmtStorageInventoryDto extends SmtStorageInventory implements Seria
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
-
 }

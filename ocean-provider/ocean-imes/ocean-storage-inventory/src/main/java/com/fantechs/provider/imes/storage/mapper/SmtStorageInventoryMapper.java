@@ -16,6 +16,8 @@ import java.util.Map;
 @Mapper
 public interface SmtStorageInventoryMapper extends MyMapper<SmtStorageInventory> {
 
-    List<SmtStorageInventoryDto> findList(Map<String,Object> map);
+    List<SmtStorageInventoryDto> findList(Map<String, Object> map);
+
+    int refreshQuantity(Map<String, Object> map);
 
 }

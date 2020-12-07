@@ -61,7 +61,6 @@ public class LoginServiceImpl implements LoginService {
                         throw new BizErrorException("该电子标签不存在");
                     }
 
-
                     //通过电子标签信息查询储位信息
                     ResponseEntity<List<SmtStorage>> responseSmtStorage = electronicTagFeignApi.findByElectronicTagControllerId(electronicTagControllerDto.getElectronicTagControllerId());
                     List<SmtStorage> smtStorages = responseSmtStorage.getData();

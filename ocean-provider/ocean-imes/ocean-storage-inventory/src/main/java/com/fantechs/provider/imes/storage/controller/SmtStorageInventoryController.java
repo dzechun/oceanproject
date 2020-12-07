@@ -2,16 +2,15 @@ package com.fantechs.provider.imes.storage.controller;
 
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
+import com.fantechs.common.base.entity.storage.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.entity.storage.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.storage.service.SmtStorageInventoryService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -70,14 +69,6 @@ public class SmtStorageInventoryController {
         List<SmtStorageInventoryDto> list = smtStorageInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtStorageInventory));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
-
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<SmtStorageInventoryDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageInventory searchSmtStorageInventory) {
-//        Page<Object> page = PageHelper.startPage(searchSmtStorageInventory.getStartPage(),searchSmtStorageInventory.getPageSize());
-//        List<SmtStorageInventoryDto> list = smtStorageInventoryService.findList(searchSmtStorageInventory);
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
