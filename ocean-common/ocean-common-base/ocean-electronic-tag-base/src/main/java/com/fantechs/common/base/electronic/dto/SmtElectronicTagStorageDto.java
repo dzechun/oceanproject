@@ -7,27 +7,10 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
 public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implements Serializable {
-
-    /**
-     * 储位名称
-     */
-    @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30,orderNum = "1")
-    @Transient
-    private String storageName;
-
-    /**
-     * 储位编码
-     */
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30,orderNum = "2")
-    private String storageCode;
 
     /**
      * 储位描述
@@ -36,6 +19,14 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     @Excel(name = "储位描述", height = 20, width = 30,orderNum = "3")
     @Transient
     private String storageDesc;
+
+    /**
+     * 储位名称
+     */
+    @ApiModelProperty(name = "storageName",value = "储位名称")
+    @Excel(name = "储位名称", height = 20, width = 30,orderNum = "1")
+    @Transient
+    private String storageName;
 
 
     /**
@@ -51,6 +42,7 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
      */
     @ApiModelProperty(name="equipmentCode",value = "电子标签控制器编码")
     @Excel(name = "电子标签控制器编码", height = 20, width = 30,orderNum="5")
+    @Transient
     private String equipmentCode;
 
     /**
@@ -78,14 +70,6 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     private String warehouseName;
 
     /**
-     * 仓库编码
-     */
-    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "11")
-    @Transient
-    private String warehouseCode;
-
-    /**
      * 仓库区域名称
      */
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
@@ -94,11 +78,20 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     private String warehouseAreaName;
 
     /**
-     * 仓库区域编码
+     * 物料名称
      */
-    @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")
-    @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum="13")
-    private String warehouseAreaCode;
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30)
+    @Transient
+    private String materialName;
+
+    /**
+     * 物料描述
+     */
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "物料描述", height = 20, width = 30)
+    @Transient
+    private String materialDesc;
 
     /**
      * 创建用户名称
@@ -117,35 +110,9 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     private String modifiedUserName;
 
     /**
-     * 物料编码
-     */
-    @Column(name = "material_code")
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
-    @NotBlank(message = "物料编码不能为空")
-    private String materialCode;
-
-    /**
-     * 物料描述
-     */
-    @Column(name = "material_desc")
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30)
-    private String materialDesc;
-
-
-    /**
-     * 数量
-     */
-    @Column(name = "quantity")
-    @ApiModelProperty(name="quantity" ,value="物料数量")
-    @Excel(name = "物料数量", height = 20, width = 30)
-    private BigDecimal  quantity;
-
-    /**
      * 队列名称
      */
-    @Column(name = "queue_name")
+    @Transient
     @ApiModelProperty(name="queueName" ,value="队列名称")
     @Excel(name = "队列名称", height = 20, width = 30)
     private String  queueName;

@@ -154,7 +154,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             }
 
             //判断该编码对应的储位是否存在
-            SmtStorage storage = storageFeignApi.detail(smtElectronicTagStorageDto.getStorageId()).getData();
+            SmtStorage storage = storageFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
             //判断该编码对应的设备是否存在
             SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
             searchSmtEquipment.setEquipmentCode(equipmentCode);
@@ -179,8 +179,8 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             }
             SmtElectronicTagStorage smtElectronicTagStorage = new SmtElectronicTagStorage();
             BeanUtils.copyProperties(smtElectronicTagStorageDto,smtElectronicTagStorage);
-            smtElectronicTagStorage.setStorageId(storage.getStorageId());
-            smtElectronicTagStorage.setEquipmentId(smtEquipmentDto.getEquipmentId());
+            smtElectronicTagStorage.setStorageId(String.valueOf(storage.getStorageId()));
+            smtElectronicTagStorage.setEquipmentId(String.valueOf(smtEquipmentDto.getEquipmentId()));
             smtElectronicTagStorage.setCreateTime(new Date());
             smtElectronicTagStorage.setCreateUserId(currentUser.getUserId());
             smtElectronicTagStorage.setModifiedTime(new Date());

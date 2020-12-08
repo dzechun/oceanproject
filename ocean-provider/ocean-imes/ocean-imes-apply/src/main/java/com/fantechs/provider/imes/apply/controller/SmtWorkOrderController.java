@@ -42,7 +42,7 @@ public class SmtWorkOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId",required = true)@RequestBody @Validated SmtWorkOrder smtWorkOrder) {
+    public ResponseEntity add(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId、proLineId",required = true)@RequestBody @Validated SmtWorkOrder smtWorkOrder) {
         return ControllerUtil.returnCRUD(smtWorkOrderService.save(smtWorkOrder));
     }
 
