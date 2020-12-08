@@ -35,7 +35,7 @@ public class ElectronicTagController {
     @ApiOperation(value = "发送需要亮灯",notes = "发送需要亮灯")
     public void sendElectronicTagStorage(@RequestBody List<SmtElectronicTagStorageDto> list ) {
         MQResponseEntity mQResponseEntity =  new  MQResponseEntity();
-        if(StringUtils.isNotEmpty()){
+        if(StringUtils.isNotEmpty(list)){
             mQResponseEntity.setCode(1001);
             mQResponseEntity.setData(list);
             fanoutSender.send(list.get(0).getQueueName(),
