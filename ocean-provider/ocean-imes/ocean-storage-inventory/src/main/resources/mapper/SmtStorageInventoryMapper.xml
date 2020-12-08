@@ -5,7 +5,7 @@
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.SmtStorageInventory">
         <id column="storing_inventory_id" jdbcType="BIGINT" property="storingInventoryId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
-        <result column="grade" jdbcType="VARCHAR" property="grade"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
