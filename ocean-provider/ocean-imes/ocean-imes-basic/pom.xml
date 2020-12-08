@@ -26,18 +26,12 @@
             <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.fantechs.common.base.electronic</groupId>
-            <artifactId>ocean-electronic-tag-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.electronic</groupId>
-            <artifactId>ocean-electronic-tag-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.fantechs.provider.api.electronic</groupId>-->
+<!--            <artifactId>ocean-electronic-tag-api</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

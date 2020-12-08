@@ -1,14 +1,14 @@
-package com.fantechs.provider.imes.basic.controller;
+package com.fantechs.provider.electronic.controller;
 
-import com.fantechs.common.base.dto.basic.SmtClientManageDto;
-import com.fantechs.common.base.entity.basic.SmtClientManage;
-import com.fantechs.common.base.entity.basic.search.SearchSmtClientManage;
+import com.fantechs.common.base.electronic.dto.SmtClientManageDto;
+import com.fantechs.common.base.electronic.entity.SmtClientManage;
+import com.fantechs.common.base.electronic.entity.search.SearchSmtClientManage;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.service.SmtClientManageService;
+import com.fantechs.provider.electronic.service.SmtClientManageService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;

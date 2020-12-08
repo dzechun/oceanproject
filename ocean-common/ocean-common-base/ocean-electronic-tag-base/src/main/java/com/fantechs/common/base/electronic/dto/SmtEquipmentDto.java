@@ -2,7 +2,6 @@ package com.fantechs.common.base.electronic.dto;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.electronic.entity.SmtEquipment;
-import com.fantechs.common.base.entity.basic.SmtStorage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -30,9 +29,9 @@ public class SmtEquipmentDto extends SmtEquipment implements Serializable {
     private String modifiedUserName;
 
     /**
-     * 储位集合
+     * 控制器设备对应的电子储位列表
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "储位集合")
-    private List<SmtStorage> storageList;
+    @ApiModelProperty(name = "electronicTagStorageList",value = "储位集合")
+    private List<SmtElectronicTagStorageDto> electronicTagStorageList;
 }

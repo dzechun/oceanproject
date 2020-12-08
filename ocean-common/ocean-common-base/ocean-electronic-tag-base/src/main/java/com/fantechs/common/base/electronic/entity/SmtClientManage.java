@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic;
+package com.fantechs.common.base.electronic.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 ;
 
@@ -27,11 +26,11 @@ public class SmtClientManage extends ValidGroup implements Serializable {
     /**
      * id
      */
-    @ApiModelProperty(name="id",value = "id")
+    @ApiModelProperty(name="client_id",value = "客户端Id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull(groups = update.class,message = "id不能为空")
-    private Long id;
+    private Long clientId;
 
     /**
      * 客户端名称
@@ -41,14 +40,6 @@ public class SmtClientManage extends ValidGroup implements Serializable {
     @Column(name = "client_name")
     @NotBlank(message = "客户端名称不能为空")
     private String clientName;
-
-    /**
-     * 电子标签控制器id列表
-     */
-    @ApiModelProperty(name="electronic_tag_controller_id_list",value = "使用场景")
-    @Excel(name = "电子标签控制器id列表", height = 20, width = 30,orderNum="")
-    @Column(name = "electronic_tag_controller_id_list")
-    private String electronicTagControllerIdList;
 
     /**
      * 客户端备注

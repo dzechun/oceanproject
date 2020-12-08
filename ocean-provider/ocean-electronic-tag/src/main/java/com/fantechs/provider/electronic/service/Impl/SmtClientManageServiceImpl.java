@@ -1,29 +1,19 @@
-package com.fantechs.provider.imes.basic.service.impl;
+package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtClientManageDto;
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagControllerDto;
-import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagController;
-import com.fantechs.common.base.entity.basic.SmtClientManage;
+import com.fantechs.common.base.electronic.dto.SmtClientManageDto;
+import com.fantechs.common.base.electronic.entity.SmtClientManage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.common.base.utils.TokenUtil;
 import com.fantechs.common.base.utils.UUIDUtils;
-import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
-import com.fantechs.provider.imes.basic.mapper.SmtClientManageMapper;
-import com.fantechs.provider.imes.basic.service.SmtClientManageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fantechs.provider.electronic.service.SmtClientManageService;
+import com.fantechs.provider.electronic.mapper.SmtClientManageMapper;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +39,7 @@ public class SmtClientManageServiceImpl extends BaseService<SmtClientManage> imp
         smtClientManage.setModifiedTime(new Date());
         smtClientManage.setSecretKey(UUIDUtils.getUUID());
         smtClientManageMapper.insertUseGeneratedKeys(smtClientManage);
-        smtClientManage.setQueueName("ocean.ablepick" + smtClientManage.getId());
+        smtClientManage.setQueueName("ocean.ablepick" + smtClientManage.getClientId());
         return smtClientManageMapper.updateByPrimaryKeySelective(smtClientManage);
     }
 

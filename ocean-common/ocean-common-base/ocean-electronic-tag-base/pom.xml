@@ -15,19 +15,7 @@
     <name>ocean-electronic-tag-base</name>
     <description>Demo project for Spring Boot</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
-    </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-public-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>cz.mallat.uasparser</groupId>
             <artifactId>uasparser</artifactId>
@@ -35,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
+            <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

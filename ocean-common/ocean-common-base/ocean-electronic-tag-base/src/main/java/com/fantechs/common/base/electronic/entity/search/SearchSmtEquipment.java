@@ -50,7 +50,7 @@ public class SearchSmtEquipment extends BaseQuery implements Serializable {
      * 客户端id
      */
     @ApiModelProperty(name="clientId",value = "客户端id")
-    private Byte clientId;
+    private Long clientId;
 
     /**
      * 根据编码查询方式标记（传1则为等值查询）

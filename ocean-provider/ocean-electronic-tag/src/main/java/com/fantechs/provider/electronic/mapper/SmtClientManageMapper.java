@@ -1,9 +1,9 @@
-package com.fantechs.provider.imes.basic.mapper;
+package com.fantechs.provider.electronic.mapper;
 
-import com.fantechs.common.base.dto.basic.SmtClientManageDto;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.electronic.dto.SmtClientManageDto;
+
+import com.fantechs.common.base.electronic.entity.SmtClientManage;
 import com.fantechs.common.base.mybatis.MyMapper;
-import com.fantechs.common.base.entity.basic.SmtClientManage;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

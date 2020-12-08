@@ -1,9 +1,7 @@
 package com.fantechs.provider.client.controller;
 
-import com.fantechs.common.base.dto.basic.SmtClientManageDto;
 import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
-import com.fantechs.common.base.entity.basic.SmtClientManage;
-import com.fantechs.common.base.entity.basic.search.SearchSmtClientManage;
+import com.fantechs.common.base.electronic.entity.SmtClientManage;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.client.server.impl.LoginServiceImpl;
@@ -13,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by lfz on 2020/11/30.

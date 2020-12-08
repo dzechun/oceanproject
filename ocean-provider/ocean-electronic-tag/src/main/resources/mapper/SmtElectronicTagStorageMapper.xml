@@ -8,7 +8,6 @@
         <id column="electronic_tag_storage_id" jdbcType="BIGINT" property="electronicTagStorageId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
-        <result column="electronic_tag_id" jdbcType="VARCHAR" property="electronicTagId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -37,12 +36,13 @@
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+        <result column="queue_name" jdbcType="VARCHAR" property="queueName" />
     </resultMap>
 
     <sql id="Base_column_List">
     sets.electronic_tag_storage_id,
 	sets.storage_id,
-	sets.electronic_tag_controller_id,
+	sets.equipment_id,
 	sets.electronic_tag_id,
 	sets.`status`,
 	sets.create_user_id,
@@ -57,24 +57,28 @@
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_column_List"/>,
-        su.user_name, sus.user_name,
-        ss.storage_name, ss.storage_desc, ss.storage_code,
+        sus.user_name,
+        ss.storage_name,
+        ss.storage_desc,
+        ss.storage_code,
         se.equipment_name,
         se.equipment_code,
         se.equipment_ip,
         se.equipment_port,
         sw.warehouse_name, sw.warehouse_code,
-        swa.warehouse_area_name, swa.warehouse_area_code,sm.material_desc,sm.material_code
+        swa.warehouse_area_name, swa.warehouse_area_code,sm.material_desc,
+        sm.material_code,
+        scm.queue_name
         FROM smt_electronic_tag_storage sets
         LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
         LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
-        LEFT JOIN smt_electronic_tag_controller setc ON sets.electronic_tag_controller_id = setc.electronic_tag_controller_id
         LEFT JOIN smt_equipment se ON sets.equipment_id = se.equipment_id
         LEFT JOIN smt_warehouse sw ON ss.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
         LEFT JOIN smt_storage_material ssm ON   ssm.storage_id = ss.storage_id
         LEFT JOIN smt_material sm ON sm.material_id = ssm.material_id
+        LEFT JOIN smt_client_manage scm ON scm.client_id = se.client_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

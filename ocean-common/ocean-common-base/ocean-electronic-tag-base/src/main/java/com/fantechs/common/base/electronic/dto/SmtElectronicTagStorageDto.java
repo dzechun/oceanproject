@@ -142,5 +142,13 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     @Excel(name = "物料数量", height = 20, width = 30)
     private BigDecimal  quantity;
 
+    /**
+     * 队列名称
+     */
+    @Column(name = "queue_name")
+    @ApiModelProperty(name="queueName" ,value="队列名称")
+    @Excel(name = "队列名称", height = 20, width = 30)
+    private String  queueName;
+
 
 }

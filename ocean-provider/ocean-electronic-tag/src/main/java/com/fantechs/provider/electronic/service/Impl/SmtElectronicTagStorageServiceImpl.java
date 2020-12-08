@@ -3,25 +3,20 @@ package com.fantechs.provider.electronic.service.Impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
-import com.fantechs.common.base.electronic.entity.SmtElectronicTagController;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
 import com.fantechs.common.base.entity.basic.SmtStorage;
-import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.ClientManageFeignApi;
+import com.fantechs.provider.api.imes.basic.StorageFeignApi;
 import com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
-import com.fantechs.provider.electronic.service.SmtEquipmentService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,9 +36,9 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     @Resource
     private SmtHtElectronicTagStorageMapper smtHtElectronicTagStorageMapper;
     @Resource
-    private ClientManageFeignApi clientManageFeignApi;
-    @Resource
     private SmtEquipmentServiceImpl smtEquipmentService;
+    @Resource
+    private StorageFeignApi  storageFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -159,12 +154,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             }
 
             //判断该编码对应的储位是否存在
-            SearchSmtStorage searchSmtStorage = new SearchSmtStorage();
-            searchSmtStorage.setStorageCode(storageCode);
-            searchSmtStorage.setCodeQueryMark((byte) 1);
-            ResponseEntity<List<SmtStorage>> responseEntity = clientManageFeignApi.findList(searchSmtStorage);
-            SmtStorage storage = responseEntity.getData().get(0);
-
+            SmtStorage storage = storageFeignApi.detail(smtElectronicTagStorageDto.getStorageId()).getData();
             //判断该编码对应的设备是否存在
             SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
             searchSmtEquipment.setEquipmentCode(equipmentCode);

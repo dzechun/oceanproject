@@ -1,7 +1,7 @@
 package com.fantechs.provider.client.server;
 
 import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
-import com.fantechs.common.base.entity.basic.SmtClientManage;
+import com.fantechs.common.base.electronic.entity.SmtClientManage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
