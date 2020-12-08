@@ -12,13 +12,12 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
-import com.fantechs.provider.api.electronic.ClientManageFeignApi;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.client.server.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.LinkedList;
@@ -26,9 +25,7 @@ import java.util.List;
 
 @Service
 public class LoginServiceImpl implements LoginService {
-    @Resource
-    private ClientManageFeignApi clientManageFeignApi;
-    @Resource
+    @Autowired
     private ElectronicTagFeignApi electronicTagFeignApi;
 
     @Override
@@ -37,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
         //通过登录密钥查询客户端信息
         SearchSmtClientManage searchSmtClientManage = new SearchSmtClientManage();
         searchSmtClientManage.setSecretKey(smtClientManage.getSecretKey());
-        ResponseEntity<List<SmtClientManageDto>> clientManageList = clientManageFeignApi.findList(searchSmtClientManage);
+        ResponseEntity<List<SmtClientManageDto>> clientManageList = electronicTagFeignApi.findClientManageList(searchSmtClientManage);
         if(StringUtils.isEmpty(clientManageList)){
             throw  new BizErrorException(ErrorCodeEnum.GL99990100);
         }
@@ -51,15 +48,15 @@ public class LoginServiceImpl implements LoginService {
             smtClientManageDto.setLoginTime(new Date());
             smtClientManageDto.setOnlineStatus("1");
             smtClientManageDto.setLoginTag((byte) 1);
-            clientManageFeignApi.update(smtClientManageDto);
+            electronicTagFeignApi.updateClientManage(smtClientManageDto);
 
 
             //根据客户端id查询电子标签信息
             SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
             searchSmtEquipment.setEquipmentType((byte) 0);
             searchSmtEquipment.setClientId(smtClientManageDto.getClientId());
-            equipmentDtoList = electronicTagFeignApi.findList(searchSmtEquipment).getData();
-            if(StringUtils.isEmpty(clientManageList)){
+            equipmentDtoList = electronicTagFeignApi.findEquipmentList(searchSmtEquipment).getData();
+            if(StringUtils.isEmpty(equipmentDtoList)){
                 throw new BizErrorException("该客户端未绑定设备");
             }
             //根据电子标签信息查询储位信息
@@ -67,7 +64,7 @@ public class LoginServiceImpl implements LoginService {
                 SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
                 for (SmtEquipmentDto equipmentDto : equipmentDtoList) {
                     searchSmtElectronicTagStorage.setEquipmentId(equipmentDto.getEquipmentId());
-                    ResponseEntity<List<SmtElectronicTagStorageDto>> responseEntity1 = electronicTagFeignApi.findList(searchSmtElectronicTagStorage);
+                    ResponseEntity<List<SmtElectronicTagStorageDto>> responseEntity1 = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage);
                     equipmentDto.setElectronicTagStorageList(responseEntity1.getData());
                 }
             }

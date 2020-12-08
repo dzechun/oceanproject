@@ -3,6 +3,7 @@ package com.fantechs.provider.client.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.response.MQResponseEntity;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import io.swagger.annotations.Api;
@@ -33,32 +34,12 @@ public class ElectronicTagController {
     @PostMapping(value="/sendElectronicTagStorage")
     @ApiOperation(value = "发送需要亮灯",notes = "发送需要亮灯")
     public void sendElectronicTagStorage(@RequestBody List<SmtElectronicTagStorageDto> list ) {
-        for(SmtElectronicTagStorageDto smtElectronicTagStorageDto :list){
-            MQResponseEntity mQResponseEntity =  new  MQResponseEntity();
+        MQResponseEntity mQResponseEntity =  new  MQResponseEntity();
+        if(StringUtils.isNotEmpty(list)){
             mQResponseEntity.setCode(1001);
-            mQResponseEntity.setData(smtElectronicTagStorageDto);
-            fanoutSender.send(smtElectronicTagStorageDto.getQueueName(),
+            mQResponseEntity.setData(list);
+            fanoutSender.send(list.get(0).getQueueName(),
                     JSONObject.toJSONString(mQResponseEntity));
         }
-
-
     }
-
-    public static void main(String[] args) {
-
-
-                List<String> list = new ArrayList<>();
-                list.add("aa");
-                list.add("bb");
-                list.add("cc");
-                CopyOnWriteArrayList<String> cowList = new CopyOnWriteArrayList<String>(list);
-                for (String str : cowList) {
-                    if ("aa".equals(str)) {
-                        cowList.remove(str);
-                    }
-                }
-                System.out.println(cowList.size());
-
-    }
-
 }
