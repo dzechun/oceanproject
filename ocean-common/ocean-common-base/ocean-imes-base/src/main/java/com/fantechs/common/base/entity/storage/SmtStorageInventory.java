@@ -54,7 +54,7 @@ public class SmtStorageInventory extends ValidGroup implements Serializable {
     /**
      * 等级
      */
-    @ApiModelProperty(name="grade",value = "等级")
+    @ApiModelProperty(name="level",value = "等级")
     @Excel(name = "等级", height = 20, width = 30,orderNum="")
     @Column(name = "level")
     private String level;
