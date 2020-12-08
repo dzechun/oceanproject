@@ -24,21 +24,24 @@ import java.util.List;
  */
 @FeignClient(value ="ocean-electronic-tag",contextId = "electronicTag")
 public interface ElectronicTagFeignApi {
-    @PostMapping(value="/smtElectronicTagController/findList")
+    @PostMapping(value="/smtElectronicTagStorage/findList")
     @ApiOperation(value = "获取电子标签控制器和储位信息",notes = "获取电子标签控制器和储位信息")
-    ResponseEntity<List<SmtElectronicTagStorageDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtElectronicTagStorage searchSmtElectronicTagStorage);
-
-    @ApiOperation("通过id查询电子标签信息")
-    @GetMapping("/smtElectronicTagController/findById")
-    ResponseEntity<SmtElectronicTagControllerDto> findById(@ApiParam(value = "电子标签控制器id")@RequestParam(value="electronicTagControllerId") String electronicTagControllerId);
+    ResponseEntity<List<SmtElectronicTagStorageDto>> findElectronicTagStorageList(@ApiParam(value = "查询对象") @RequestBody SearchSmtElectronicTagStorage searchSmtElectronicTagStorage);
 
     @ApiOperation("根据客户端id查询电子标签信息")
     @PostMapping("/smtEquipment/findList")
-    ResponseEntity<List<SmtEquipmentDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtEquipment searchSmtEquipment);
+    ResponseEntity<List<SmtEquipmentDto>> findEquipmentList(@ApiParam(value = "查询对象") @RequestBody SearchSmtEquipment searchSmtEquipment);
     @PostMapping("/smtClientManage/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传")@RequestBody SmtClientManage smtClientManage);
 
     @PostMapping("/smtClientManage/findList")
     ResponseEntity<List<SmtClientManageDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtClientManage searchSmtClientManage);
+
+
+    @PostMapping("/smtClientManage/update")
+    ResponseEntity updateClientManage(@ApiParam(value = "对象，Id必传")@RequestBody SmtClientManage smtClientManage);
+
+    @PostMapping("/smtClientManage/findList")
+    ResponseEntity<List<SmtClientManageDto>> findClientManageList(@ApiParam(value = "查询对象")@RequestBody SearchSmtClientManage searchSmtClientManage);
 
 }

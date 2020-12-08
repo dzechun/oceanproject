@@ -5,6 +5,7 @@ import com.fantechs.common.base.electronic.entity.SmtEquipment;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
@@ -34,4 +35,13 @@ public class SmtEquipmentDto extends SmtEquipment implements Serializable {
     @Transient
     @ApiModelProperty(name = "electronicTagStorageList",value = "储位集合")
     private List<SmtElectronicTagStorageDto> electronicTagStorageList;
+
+    /**
+     * 队列名称
+     */
+    @Column(name = "queue_name")
+    @ApiModelProperty(name="queueName" ,value="队列名称")
+    @Excel(name = "队列名称", height = 20, width = 30)
+    private String  queueName;
+
 }

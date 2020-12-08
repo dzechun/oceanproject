@@ -2,9 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage">
-        <!--
-          WARNING - @mbg.generated
-        -->
         <id column="electronic_tag_storage_id" jdbcType="BIGINT" property="electronicTagStorageId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
@@ -56,7 +53,7 @@
     </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_column_List"/>,
+        SELECT <include refid="Base_column_List"/>,
         sus.user_name,
         ss.storage_name,
         ss.storage_desc,
@@ -65,8 +62,11 @@
         se.equipment_code,
         se.equipment_ip,
         se.equipment_port,
-        sw.warehouse_name, sw.warehouse_code,
-        swa.warehouse_area_name, swa.warehouse_area_code,sm.material_desc,
+        sw.warehouse_name,
+        sw.warehouse_code,
+        swa.warehouse_area_name,
+        swa.warehouse_area_code,
+        sm.material_desc,
         sm.material_code,
         scm.queue_name
         FROM smt_electronic_tag_storage sets

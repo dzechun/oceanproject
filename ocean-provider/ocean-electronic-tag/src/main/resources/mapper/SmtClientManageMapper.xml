@@ -34,7 +34,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    scm.client_id, scm.client_name, scm.electronic_tag_controller_id_list, scm.client_remark, scm.client_type, scm.online_status, scm.login_ip,
+    scm.client_id, scm.client_name, scm.client_remark, scm.client_type, scm.online_status, scm.login_ip,
     scm.secret_key, scm.queue_name, scm.queue_address, scm.login_time, scm.offline_time, scm.monitoring_time, scm.status, scm.create_user_id,
     scm.create_time, scm.modified_user_id, scm.modified_time, scm.is_delete, scm.option1, scm.option2, scm.option3
   </sql>

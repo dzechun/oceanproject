@@ -22,34 +22,36 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.SmtEquipmentDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="queue_name" jdbcType="VARCHAR" property="queueName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-      se.equipment_id,ss.client_id se.equipment_code, se.equipment_name, se.equipment_data, se.equipment_ip, se.equipment_port,
+      se.equipment_id,se.client_id,se.equipment_code, se.equipment_name, se.equipment_data, se.equipment_ip, se.equipment_port,
       se.equipment_type, se.status, se.create_user_id, se.create_time, se.modified_user_id,
       se.modified_time
-  </sql>
+    </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select
-        <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+        <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,scm.queue_name
         from fantech_imes.smt_equipment se
         LEFT JOIN ocean.sys_user su ON se.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON se.modified_user_id = sus.user_id
+        LEFT JOIN smt_client_manage scm on scm.client_id = se.client_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(se.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="clientId != null">
+            <if test="clientId != null and clientId!=''">
                 and se.client_id = #{clientId}
             </if>
-            <if test="equipmentCode != null and codeQueryMark=1">
-                and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')
-            </if>
-            <if test="equipmentCode != null and codeQueryMark!=1">
-                and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')
-            </if>
-            <if test="equipmentName != null">
+            <!--<if test="equipmentCode != null and codeQueryMark=1 and equipmentCode!=''">-->
+                <!--and se.equipment_code =  #{equipmentCode}-->
+            <!--</if>-->
+            <!--<if test="equipmentCode != null and codeQueryMark!=1 and equipmentCode!=''">-->
+                <!--and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')-->
+            <!--</if>-->
+            <if test="equipmentName != null and equipmentName!='' ">
                 and se.equipment_name like CONCAT('%', #{equipmentName}, '%')
             </if>
             <if test="equipmentIp != null">
