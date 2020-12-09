@@ -8,12 +8,13 @@ spring:
   application:
     name: @pom.artifactId@
   rabbitmq:
-    host: 192.168.200.94
+    host: 10.182.163.191
     port: 5672
-    username: jiangfan
-    password: 123456
+    username: admin
+    password: StrongPassword
   servlet:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+
 

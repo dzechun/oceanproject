@@ -13,7 +13,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.StorageFeignApi;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
@@ -38,7 +38,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     @Resource
     private SmtEquipmentServiceImpl smtEquipmentService;
     @Resource
-    private StorageFeignApi  storageFeignApi;
+    private BasicFeignApi storageFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

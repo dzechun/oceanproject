@@ -18,4 +18,6 @@ public interface SmtElectronicTagStorageService extends IService<SmtElectronicTa
 
     Map<String,Object> importElectronicTagController(List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtos);
 
+
+
 }

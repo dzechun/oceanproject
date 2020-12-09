@@ -1,30 +1,25 @@
 package com.fantechs.common.base.electronic.entity.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
-import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
-public class SearchSmtSortingList extends BaseQuery implements Serializable {
+public class SearchSmtSorting extends BaseQuery implements Serializable {
 
     /**
      * 分拣单Id
      */
-    @ApiModelProperty(name="sortingListId",value = "分拣单Id")
-    private Long sortingListId;
+    @ApiModelProperty(name="sortingId",value = "分拣单Id")
+    private Long sortingId;
 
     /**
      * 分拣单号
      */
-    @ApiModelProperty(name="sortingLisCode",value = "分拣单号")
-    private String sortingLisCode;
+    @ApiModelProperty(name="sortingCode",value = "分拣单号")
+    private String sortingCode;
 
     /**
      * 工单号(预留)

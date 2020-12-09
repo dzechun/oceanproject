@@ -2,15 +2,15 @@ package com.fantechs.provider.electronic.service.Impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.electronic.dto.SmtSortingListDto;
-import com.fantechs.common.base.electronic.entity.SmtSortingList;
+import com.fantechs.common.base.electronic.dto.SmtSortingDto;
+import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.electronic.mapper.SmtSortingListMapper;
-import com.fantechs.provider.electronic.service.SmtSortingListService;
+import com.fantechs.provider.electronic.mapper.SmtSortingMapper;
+import com.fantechs.provider.electronic.service.SmtSortingService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -22,46 +22,48 @@ import java.util.Map;
  * Created by leifengzhi on 2020/12/08.
  */
 @Service
-public class SmtSortingListServiceImpl extends BaseService<SmtSortingList> implements SmtSortingListService {
+public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements SmtSortingService {
 
     @Resource
-    private SmtSortingListMapper smtSortingListMapper;
+    private SmtSortingMapper SmtSortingMapper;
 
     @Override
-    public int save(SmtSortingList smtSortingList) {
+    public int save(SmtSorting SmtSorting) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(SmtSortingList.class);
+        Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("sortingLisCode",smtSortingList.getSortingListCode());
-        List<SmtSortingList> smtSortingLists = smtSortingListMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(smtSortingLists)){
+        criteria.andEqualTo("materialCode",SmtSorting.getMaterialCode());
+        criteria.andEqualTo("sortingtCode",SmtSorting.getSortingtCode());
+        List<SmtSorting> SmtSortings = SmtSortingMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(SmtSortings)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-        smtSortingList.setStatus((byte) 1);
-        return smtSortingListMapper.insertUseGeneratedKeys(smtSortingList);
+        SmtSorting.setStatus((byte) 1);
+        return SmtSortingMapper.insertUseGeneratedKeys(SmtSorting);
     }
 
     @Override
-    public int update(SmtSortingList smtSortingList) {
+    public int update(SmtSorting SmtSorting) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(SmtSortingList.class);
+        Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("sortingLisCode",smtSortingList.getSortingListCode())
-                .andNotEqualTo("sortingListId",smtSortingList.getSortingListId());
-        List<SmtSortingList> smtSortingLists = smtSortingListMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(smtSortingLists)){
+        criteria.andEqualTo("materialCode",SmtSorting.getMaterialCode());
+        criteria.andEqualTo("sortingtCode",SmtSorting.getSortingtCode())
+                .andNotEqualTo("sortingId",SmtSorting.getSortingId());
+        List<SmtSorting> SmtSortings = SmtSortingMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(SmtSortings)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-       return smtSortingListMapper.updateByPrimaryKeySelective(smtSortingList);
+       return SmtSortingMapper.updateByPrimaryKeySelective(SmtSorting);
 
     }
 
@@ -74,17 +76,17 @@ public class SmtSortingListServiceImpl extends BaseService<SmtSortingList> imple
 
         String[] idsArr  = ids.split(",");
         for(String  id : idsArr){
-            SmtSortingList smtSortingList = smtSortingListMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(smtSortingList)){
+            SmtSorting SmtSorting = SmtSortingMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(SmtSorting)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
         }
 
-        return smtSortingListMapper.deleteByIds(ids);
+        return SmtSortingMapper.deleteByIds(ids);
     }
 
     @Override
-    public List<SmtSortingListDto> findList(Map<String, Object> map) {
-        return smtSortingListMapper.findList(map);
+    public List<SmtSortingDto> findList(Map<String, Object> map) {
+        return SmtSortingMapper.findList(map);
     }
 }

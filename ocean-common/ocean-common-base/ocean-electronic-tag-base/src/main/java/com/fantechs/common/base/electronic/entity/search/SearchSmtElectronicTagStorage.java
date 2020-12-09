@@ -1,5 +1,6 @@
 package com.fantechs.common.base.electronic.entity.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -55,4 +56,22 @@ public class SearchSmtElectronicTagStorage extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="electronicTagId",value = "电子标签id")
     private String electronicTagId;
+
+    /**
+     * 电子标签id
+     */
+    @ApiModelProperty(name="storageCode",value = "储位编码")
+    private String storageCode;
+
+    /**
+     * 物料id
+     */
+    @ApiModelProperty(name = "materialId",value = "物料Id")
+    private String materialId;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
 }
