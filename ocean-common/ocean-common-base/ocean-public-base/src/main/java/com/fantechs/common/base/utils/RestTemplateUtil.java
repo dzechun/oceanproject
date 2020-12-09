@@ -2,10 +2,7 @@ package com.fantechs.common.base.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -122,9 +119,8 @@ public class RestTemplateUtil {
      * @return
      */
     public static String postForString(String url, Map<String, Object> map) {
-        return JSONObject.toJSONString(postForResponseDTO(url,map).getData());
+        return postBody(url, map, String.class);
     }
-
     /**
      * 返回ResponseDTO
      * @param url 请求路径
@@ -156,6 +152,30 @@ public class RestTemplateUtil {
     public static <T> List<T> postForListEntity(String url, Map<String, Object> map, Class<T> responseClass) {
         String json = JSONObject.toJSONString(postForResponseDTO(url,map).getData());
         return BeanUtils.jsonToListObject(json, responseClass);
+    }
+
+    /**
+     * 通过json的方式传递body参数，时间字段现在只支持yyyy-MM-dd HH:mm:ss格式
+     * @param object
+     * @param url
+     * @return
+     */
+    public static String postJsonStrForString(Object object, String url) {
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        String token = CurrentUserInfoUtils.getToken();
+        log.info("rest调用token："+token);
+        log.info("rest调用地址："+url);
+        if(StringUtils.isNotEmpty(token)){
+            headers.add("token",token);
+            headers.add("Access-Control-Expose-Headers","token");
+        }
+        String reqStr = BeanUtils.getGson().toJson(object);
+        log.info("rest调用参数："+reqStr);
+        HttpEntity<String> formEntity = new HttpEntity<>(reqStr, headers);
+        return RestTemplateUtil.getInstance().postForEntity(url, formEntity, String.class).getBody();
     }
 
 }

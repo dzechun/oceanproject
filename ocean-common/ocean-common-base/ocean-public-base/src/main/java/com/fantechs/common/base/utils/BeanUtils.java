@@ -1,9 +1,14 @@
 package com.fantechs.common.base.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -209,5 +214,33 @@ public class BeanUtils {
             e.printStackTrace();
         }
         return datas;
+    }
+
+    /**
+     * 设置时间格式的转换
+     * @param jsonStr
+     * @param typeOfT
+     * @param dateTimeFormat 时间格式，例：yyyy-MM-dd
+     * @param <T>
+     * @return
+     * @throws IOException
+     * @throws JsonSyntaxException
+     */
+    public static <T> T convertJson(String jsonStr, Type typeOfT, String dateTimeFormat)
+            throws IOException, JsonSyntaxException {
+        Gson gson = new GsonBuilder().setDateFormat(dateTimeFormat).create();
+        return (T) gson.fromJson(jsonStr, typeOfT);
+    }
+
+    public static <T> T convertJson(String jsonStr, Type typeOfT)
+            throws IOException, JsonSyntaxException {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+        return (T) gson.fromJson(jsonStr, typeOfT);
+    }
+
+    public static Gson getGson() {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss") // 设置日期转换
+                .create();
+        return gson;
     }
 }

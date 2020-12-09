@@ -1,70 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtStorageMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtStorage">
-    <id column="storage_id" jdbcType="BIGINT" property="storageId" />
-    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
-    <result column="level" jdbcType="VARCHAR" property="level" />
-    <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtStorage">
+        <id column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
-    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
-    <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
-    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
-  </resultMap>
+        <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorage" resultMap="BaseResultMap">
-    select  ss.storage_id,ss.storage_code,ss.storage_name,ss.level,ss.storage_desc,ss.warehouse_id,sw.warehouse_name as warehouseName,
-    ss.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,ss.status,ss.create_user_id,u.user_name as createUserName,
-    ss.create_time,ss.modified_user_id, s.user_name as modifiedUserName,ss.modified_time, ss.is_delete,sw.warehouse_code, sw.warehouse_name,
-    swa.warehouse_area_code, swa.warehouse_area_name
-    from fantech_imes.smt_storage ss
-    left join fantech_imes.smt_warehouse sw on ss.warehouse_id=sw.warehouse_id
-    left join fantech_imes.smt_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
-    left join ocean.sys_user u on ss.create_user_id=u.user_id
-    left join ocean.sys_user s on ss.modified_user_id=s.user_id
-    <where>
-      1=1
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="storageId!=null and storageId!=''">
-        and ss.storage_id = #{storageId}
-      </if>
-      <if test="storageCode!=null and storageCode!='' and codeQueryMark=1">
-        and ss.storage_code = #{storageCode}
-      </if>
-      <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
-        and ss.storage_code like CONCAT('%', #{storageCode}, '%')
-      </if>
-      <if test="storageName!=null and storageName!=''">
-        and ss.storage_name like CONCAT('%', #{storageName}, '%')
-      </if>
-      <if test="storageDesc!=null and storageDesc!=''">
-        and ss.storage_desc like CONCAT('%', #{storageDesc}, '%')
-      </if>
-      <if test="warehouseId!=null and warehouseId!=''">
-        and ss.warehouse_id=#{warehouseId}
-      </if>
-      <if test="warehouseAreaId!=null and warehouseAreaId!=''">
-        and ss.warehouse_area_Id=#{warehouseAreaId}
-      </if>
-      <if test="status!=null and status!=''">
-        and ss.status=#{status}
-      </if>
-    </where>
-    order by ss.create_time desc
-  </select>
+    <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorage"
+            resultMap="BaseResultMap">
+        select ss.storage_id,ss.storage_code,ss.storage_name,ss.level,ss.storage_desc,ss.warehouse_id,sw.warehouse_name
+        as warehouseName,
+        ss.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,ss.status,ss.create_user_id,u.user_name as
+        createUserName,
+        ss.create_time,ss.modified_user_id, s.user_name as modifiedUserName,ss.modified_time,
+        ss.is_delete,sw.warehouse_code, sw.warehouse_name,
+        swa.warehouse_area_code, swa.warehouse_area_name
+        from fantech_imes.smt_storage ss
+        left join fantech_imes.smt_warehouse sw on ss.warehouse_id=sw.warehouse_id
+        left join fantech_imes.smt_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
+        left join ocean.sys_user u on ss.create_user_id=u.user_id
+        left join ocean.sys_user s on ss.modified_user_id=s.user_id
+        <where>
+            1=1
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="storageId!=null and storageId!=''">
+                and ss.storage_id = #{storageId}
+            </if>
+            <if test="storageCode!=null and storageCode!='' and codeQueryMark=1">
+                and ss.storage_code = #{storageCode}
+            </if>
+            <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
+                and ss.storage_code like CONCAT('%', #{storageCode}, '%')
+            </if>
+            <if test="storageName!=null and storageName!=''">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="storageDesc!=null and storageDesc!=''">
+                and ss.storage_desc like CONCAT('%', #{storageDesc}, '%')
+            </if>
+            <if test="warehouseId!=null and warehouseId!=''">
+                and ss.warehouse_id=#{warehouseId}
+            </if>
+            <if test="warehouseAreaId!=null and warehouseAreaId!=''">
+                and ss.warehouse_area_Id=#{warehouseAreaId}
+            </if>
+            <if test="status!=null and status!=''">
+                and ss.status=#{status}
+            </if>
+        </where>
+        order by ss.create_time desc
+    </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update smt_storage
+            <set>
+                storage_code =#{item.storageCode},
+                storage_name =#{item.storageName},
+                `level` =#{item.level},
+                storage_desc =#{item.storageDesc},
+                warehouse_id =#{item.warehouseId},
+                warehouse_area_id =#{item.warehouseAreaId},
+                status =#{item.status},
+                create_user_id =#{item.createUserId},
+                create_time =#{item.createTime},
+                modified_user_id =#{item.modifiedUserId},
+                modified_time =#{item.modifiedTime},
+                is_delete =#{item.isDelete},
+                option1 =#{item.option1},
+                option2 =#{item.option2},
+                option3 =#{item.option3}
+            </set>
+            where storage_code =#{item.storageCode}
+        </foreach>
+
+    </update>
+
+    <insert id="batchAdd">
+        insert into smt_storage
+        (storage_code, storage_name, `level`, storage_desc, warehouse_id,
+        warehouse_area_id, status, create_user_id, create_time, modified_user_id, modified_time,
+        is_delete, option1, option2, option3)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.storageCode}, #{item.storageName}, #{item.level}, #{item.storageDesc}, #{item.warehouseId},
+            #{item.warehouseAreaId}, #{item.status}, #{item.createUserId}, #{item.createTime}, #{item.modifiedUserId},
+            #{item.modifiedTime}, #{item.isDelete}, #{item.option1}, #{item.option2}, #{item.option3})
+        </foreach>
+    </insert>
 </mapper>

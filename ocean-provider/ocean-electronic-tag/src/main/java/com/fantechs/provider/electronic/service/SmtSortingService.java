@@ -16,4 +16,6 @@ import java.util.Map;
 public interface SmtSortingService extends IService<SmtSorting> {
 
     List<SmtSortingDto> findList(Map<String, Object> map);
+    //批量更新
+    int batchUpdate(List<SmtSorting> smtSortings);
 }

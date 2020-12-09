@@ -25,7 +25,7 @@ import java.util.Map;
 public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements SmtSortingService {
 
     @Resource
-    private SmtSortingMapper SmtSortingMapper;
+    private SmtSortingMapper smtSortingMapper;
 
     @Override
     public int save(SmtSorting SmtSorting) {
@@ -37,13 +37,13 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
         Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",SmtSorting.getMaterialCode());
-        criteria.andEqualTo("sortingtCode",SmtSorting.getSortingtCode());
-        List<SmtSorting> SmtSortings = SmtSortingMapper.selectByExample(example);
+        criteria.andEqualTo("sortingCode",SmtSorting.getSortingCode());
+        List<SmtSorting> SmtSortings = smtSortingMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(SmtSortings)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         SmtSorting.setStatus((byte) 1);
-        return SmtSortingMapper.insertUseGeneratedKeys(SmtSorting);
+        return smtSortingMapper.insertUseGeneratedKeys(SmtSorting);
     }
 
     @Override
@@ -56,14 +56,14 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
         Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",SmtSorting.getMaterialCode());
-        criteria.andEqualTo("sortingtCode",SmtSorting.getSortingtCode())
+        criteria.andEqualTo("sortingCode",SmtSorting.getSortingCode())
                 .andNotEqualTo("sortingId",SmtSorting.getSortingId());
-        List<SmtSorting> SmtSortings = SmtSortingMapper.selectByExample(example);
+        List<SmtSorting> SmtSortings = smtSortingMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(SmtSortings)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-       return SmtSortingMapper.updateByPrimaryKeySelective(SmtSorting);
+       return smtSortingMapper.updateByPrimaryKeySelective(SmtSorting);
 
     }
 
@@ -76,17 +76,22 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
 
         String[] idsArr  = ids.split(",");
         for(String  id : idsArr){
-            SmtSorting SmtSorting = SmtSortingMapper.selectByPrimaryKey(id);
+            SmtSorting SmtSorting = smtSortingMapper.selectByPrimaryKey(id);
             if (StringUtils.isEmpty(SmtSorting)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
         }
 
-        return SmtSortingMapper.deleteByIds(ids);
+        return smtSortingMapper.deleteByIds(ids);
     }
 
     @Override
     public List<SmtSortingDto> findList(Map<String, Object> map) {
-        return SmtSortingMapper.findList(map);
+        return smtSortingMapper.findList(map);
+    }
+
+    @Override
+    public int batchUpdate(List<SmtSorting> smtSortings) {
+        return smtSortingMapper.batchUpdate(smtSortings);
     }
 }

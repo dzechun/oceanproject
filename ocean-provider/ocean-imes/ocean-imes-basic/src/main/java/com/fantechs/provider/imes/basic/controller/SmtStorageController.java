@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
@@ -40,6 +41,36 @@ public class SmtStorageController {
 
     @Autowired
     private SmtHtStorageService smtHtStorageService;
+
+    @PostMapping("/getNewUpdateCWByUpdateDate")
+    @ApiOperation(value = "获取QIS储位数据")
+    public ResponseEntity getNewUpdateCWByUpdateDate() throws Exception {
+
+        try {
+            int i = smtStorageService.getNewUpdateCWByUpdateDate();
+            if (i==0){
+                return ControllerUtil.returnSuccess("暂无同步数据");
+            }else if (i>0){
+                return ControllerUtil.returnSuccess("同步成功");
+            }else {
+                return ControllerUtil.returnFail("同步失败",-1);
+            }
+        } catch (Exception e) {
+            return ControllerUtil.returnFail(ErrorCodeEnum.OPT20012002);
+        }
+    }
+
+    @ApiOperation(value = "批量更新",notes = "批量更新")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "必传：storageCode、storageName",required = true)@RequestBody @Validated List<SmtStorage> smtStorages) {
+        return ControllerUtil.returnCRUD(smtStorageService.batchUpdate(smtStorages));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：storageCode、storageName",required = true)@RequestBody @Validated List<SmtStorage> smtStorages) {
+        return ControllerUtil.returnCRUD(smtStorageService.batchAdd(smtStorages));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

@@ -6,7 +6,7 @@
           WARNING - @mbg.generated
         -->
         <id column="sorting_id" jdbcType="BIGINT" property="sortingId"/>
-        <result column="sorting_code" jdbcType="VARCHAR" property="sortingtCode"/>
+        <result column="sorting_code" jdbcType="VARCHAR" property="sortingCode"/>
         <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
@@ -18,8 +18,8 @@
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
-        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
-        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -32,7 +32,7 @@
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-        SELECT <include refid="Base_Column_List"/>,
+        SELECT<include refid="Base_Column_List"/>,
         ss.storage_name,
         swa.warehouse_area_name,
         sw.warehouse_name,
@@ -46,8 +46,8 @@
         LEFT JOIN smt_warehouse sw ON ss .warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sw.warehouse_id = swa.warehouse_id
         <where>
-            <if test="sortingtCode != null">
-                and `ssl`.sorting_code like CONCAT('%', #{sortingtCode}, '%')
+            <if test="sortingCode != null">
+                and `ssl`.sorting_code like CONCAT('%', #{sortingCode}, '%')
             </if>
             <if test="workOrderCode != null">
                 and `ssl`.work_order_code like CONCAT('%', #{workOrderCode}, '%')
@@ -63,4 +63,18 @@
             </if>
         </where>
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" open="" close="" index="index" separator=";">
+            update smt_sorting
+            <set>
+                sorting_code=#{item.sortingCode},
+                work_order_code=#{item.workOrderCode},
+                material_code=#{item.sortingId},
+                quantity=#{item.quantity},
+                status=#{item.status}
+            </set>
+            where sorting_id=#{item.sortingId}
+        </foreach>
+    </update>
 </mapper>

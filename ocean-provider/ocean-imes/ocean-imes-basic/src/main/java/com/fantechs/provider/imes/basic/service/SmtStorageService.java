@@ -14,4 +14,13 @@ import java.util.List;
 public interface SmtStorageService extends IService<SmtStorage> {
 
     List<SmtStorage> findList(SearchSmtStorage searchSmtStorage);
+
+    //从qis获取储位信息
+    int getNewUpdateCWByUpdateDate() throws Exception;
+
+    //更加编码进行批量更新
+    int batchUpdate(List<SmtStorage> smtStorages);
+
+    //批量新增
+    int batchAdd(List<SmtStorage> smtStorages);
 }

@@ -38,9 +38,9 @@ public class SmtSorting extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="sortingCode",value = "分拣单号")
     @Excel(name = "分拣单号", height = 20, width = 30,orderNum="1")
-    @Column(name = "sorting_lis_code")
+    @Column(name = "sorting_code")
     @NotBlank(message = "分拣单号不能为空")
-    private String sortingtCode;
+    private String sortingCode;
 
     /**
      * 工单号(预留)

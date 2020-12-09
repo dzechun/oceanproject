@@ -4,9 +4,15 @@ import com.fantechs.common.base.entity.security.SysUser;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 public class CurrentUserInfoUtils {
+
+    public static String getToken(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return request.getHeader("token");
+    }
 
     /**
      * 获取当前登录用户信息

@@ -4,7 +4,7 @@ import com.fantechs.service.CodeGeneratorManager;
 
 class CodeGeneratorMain {
 
-    private static final String TABLE = "smt_client_manage";
+    private static final String TABLE = "smt_sorting_list";
 
     private static final String MODEL_NAME = "ITest";
 

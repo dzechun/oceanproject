@@ -81,4 +81,10 @@ public class SmtSortingController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("批量新增")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtSorting.update.class) List<SmtSorting> SmtSortings) {
+        return ControllerUtil.returnCRUD(SmtSortingService.batchUpdate(SmtSortings));
+    }
 }
