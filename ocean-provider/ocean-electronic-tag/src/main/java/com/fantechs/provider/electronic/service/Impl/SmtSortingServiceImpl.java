@@ -29,11 +29,12 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
 
     @Override
     public int save(SmtSorting SmtSorting) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(SmtSorting.getUpdateStatus())){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if(StringUtils.isEmpty(user)){
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
         }
-
         Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",SmtSorting.getMaterialCode());
@@ -48,11 +49,12 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
 
     @Override
     public int update(SmtSorting SmtSorting) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(SmtSorting.getUpdateStatus())){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if(StringUtils.isEmpty(user)){
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
         }
-
         Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode",SmtSorting.getMaterialCode());

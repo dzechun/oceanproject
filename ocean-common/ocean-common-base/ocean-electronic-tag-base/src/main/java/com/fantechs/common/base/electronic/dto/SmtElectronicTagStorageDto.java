@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implements Serializable {
@@ -115,6 +116,12 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     @ApiModelProperty(name="queueName" ,value="队列名称")
     @Excel(name = "队列名称", height = 20, width = 30,orderNum="16")
     private String  queueName;
+
+    /**
+     * 数量
+     */
+    @ApiModelProperty(name="quantity" ,value="数量")
+    private BigDecimal quantity;
 
 
 }

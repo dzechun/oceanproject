@@ -24,12 +24,12 @@ public class ElectronicTagStorageController {
     private ElectronicTagStorageService electronicTagStorageService;
     /**
      * 发送需要亮灯的储位、标签信息
-     * @param sortingt
+     * @param Sorting
      * @throws Exception
      */
     @PostMapping(value="/sendElectronicTagStorage")
     @ApiOperation(value = "发送需要亮灯",notes = "发送需要亮灯")
-    public ResponseEntity sendElectronicTagStorage(@RequestBody  @Validated List<SmtSorting>  sortingt ) {
-        return ControllerUtil.returnCRUD(electronicTagStorageService.sendElectronicTagStorage(sortingt));
+    public ResponseEntity sendElectronicTagStorage(@RequestBody  @Validated List<SmtSorting>  Sorting ) {
+        return ControllerUtil.returnCRUD(electronicTagStorageService.sendElectronicTagStorage(Sorting));
     }
 }

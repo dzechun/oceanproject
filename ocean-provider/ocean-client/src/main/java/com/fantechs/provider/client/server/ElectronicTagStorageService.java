@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface ElectronicTagStorageService {
 
-    int  sendElectronicTagStorage(List<SmtSorting> sortingt);
+    int  sendElectronicTagStorage(List<SmtSorting> Sorting);
 }

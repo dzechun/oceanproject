@@ -54,9 +54,6 @@ public class LoginServiceImpl implements LoginService {
             searchSmtEquipment.setEquipmentType((byte) 0);
             searchSmtEquipment.setClientId(smtClientManageDto.getClientId());
             equipmentDtoList = electronicTagFeignApi.findEquipmentList(searchSmtEquipment).getData();
-            if(StringUtils.isEmpty(equipmentDtoList)){
-                throw new BizErrorException("该客户端未绑定设备");
-            }
 //            //根据电子标签信息查询储位信息
 //            if (StringUtils.isNotEmpty(equipmentDtoList)){
 //                SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();

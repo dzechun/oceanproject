@@ -45,9 +45,10 @@
         LEFT JOIN smt_storage ss ON ss.`storage_id` = ssm.`storage_id`
         LEFT JOIN smt_warehouse sw ON ss .warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sw.warehouse_id = swa.warehouse_id
+        LEFT JOIN smt_electronic_tag_storage sets on sets.material_id = sm.material_id
         <where>
-            <if test="sortingCode != null">
-                and `ssl`.sorting_code like CONCAT('%', #{sortingCode}, '%')
+            <if test="sortingCode != null and sortingCode!=''">
+                and `ssl`.sorting_code =#{sortingCode}
             </if>
             <if test="workOrderCode != null">
                 and `ssl`.work_order_code like CONCAT('%', #{workOrderCode}, '%')
@@ -57,6 +58,9 @@
             </if>
             <if test="sortingId != null">
                 and `ssl`.sorting_id=#{sortingId}
+            </if>
+            <if test="electronicTagId != null and electronicTagId!=''">
+                and sets.electronic_tag_id=#{electronicTagId}
             </if>
             <if test="status!=null and status!=''">
                 and `ssl`.status=#{status}

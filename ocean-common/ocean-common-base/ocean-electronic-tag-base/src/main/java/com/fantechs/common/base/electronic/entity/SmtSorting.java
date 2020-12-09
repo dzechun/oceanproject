@@ -4,10 +4,12 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -73,6 +75,13 @@ public class SmtSorting extends ValidGroup implements Serializable {
     @ApiModelProperty(name="status",value = "状态(0-未开始，1-分拣中 2-已完成)")
     @Excel(name = "状态(0-未开始，1-分拣中 2-已完成)", height = 20, width = 30,orderNum="6")
     private Byte status;
+
+    /**
+     * 状态(0-未开始，1-分拣中 2-已完成)
+     */
+    @ApiModelProperty(name="status",value = "是否客户端传入(0-是，1-否)")
+    @Transient
+    private Byte updateStatus;
 
     private static final long serialVersionUID = 1L;
 }

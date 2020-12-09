@@ -8,6 +8,7 @@
         <id column="electronic_tag_storage_id" jdbcType="BIGINT" property="electronicTagStorageId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="electronic_tag_id" jdbcType="VARCHAR" property="electronicTagId"/>
         <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
         <result column="equipment_area_id" jdbcType="VARCHAR" property="equipmentAreaId"/>
         <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
@@ -48,9 +49,12 @@
     sets.electronic_tag_storage_id,
 	sets.storage_id,
 	sets.storage_code,
-	sets.warehouse_id, sets.warehouse_code,
-	sets.warehouse_area_id, sets.warehouse_area_code,
-	sets.material_id, sets.material_code,
+	sets.warehouse_id,
+	sets.warehouse_code,
+	sets.warehouse_area_id,
+	 sets.warehouse_area_code,
+	sets.material_id,
+	sets.material_code,
 	sets.equipment_id,
 	sets.equipment_area_id,
 	sets.electronic_tag_id,
@@ -119,6 +123,9 @@
             </if>
             <if test="status!=null and status!=''">
                 and sets.status=#{status}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and  sm.material_id=#{materialId}
             </if>
         </where>
         order by sets.create_time desc

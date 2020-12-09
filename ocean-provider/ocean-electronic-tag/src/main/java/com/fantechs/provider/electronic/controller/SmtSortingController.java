@@ -11,10 +11,10 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.electronic.service.SmtSortingService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,18 +73,24 @@ public class SmtSortingController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSmtSorting searchSmtSorting){
-        List<SmtSortingDto> sortingtDtos = SmtSortingService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtSorting));
+        List<SmtSortingDto> SortingDtos = SmtSortingService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtSorting));
         try {
         // 导出操作
-        EasyPoiUtils.exportExcel(sortingtDtos, "导出信息", "SmtSorting信息", SmtSortingDto.class, "SmtSorting.xls", response);
+        EasyPoiUtils.exportExcel(SortingDtos, "导出信息", "SmtSorting信息", SmtSortingDto.class, "SmtSorting.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
     }
 
-    @ApiOperation("批量新增")
+    @ApiOperation("批量修改")
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtSorting.update.class) List<SmtSorting> SmtSortings) {
         return ControllerUtil.returnCRUD(SmtSortingService.batchUpdate(SmtSortings));
+    }
+
+    @ApiOperation("批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchInsert(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated List<SmtSorting> SmtSortings) {
+        return ControllerUtil.returnCRUD(SmtSortingService.batchSave(SmtSortings));
     }
 }

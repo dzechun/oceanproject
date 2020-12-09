@@ -5,7 +5,9 @@ import com.fantechs.common.base.electronic.entity.SmtSorting;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -52,5 +54,12 @@ public class SmtSortingDto extends SmtSorting implements Serializable {
     @Transient
     private String warehouseAreaName;
 
+
+    /**
+     * 电子标签id
+     */
+    @ApiModelProperty(name="electronicTagId",value = "电子标签id")
+    @Transient
+    private String electronicTagId;
 
 }

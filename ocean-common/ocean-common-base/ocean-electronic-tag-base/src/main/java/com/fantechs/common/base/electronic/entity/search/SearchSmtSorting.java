@@ -32,4 +32,10 @@ public class SearchSmtSorting extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="storageCode",value = "储位编码")
     private String storageCode;
+
+    /**
+     * 电子标签Id
+     */
+    @ApiModelProperty(name="electronicTagId",value = "电子标签Id")
+    private String electronicTagId;
 }
