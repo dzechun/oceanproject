@@ -26,7 +26,6 @@ public class LoginController {
 
     @PostMapping(value = "/login")
     public ResponseEntity<List<SmtEquipmentDto>> sendElectronicTagStorage(@RequestBody SmtClientManage smtClientManage, HttpServletRequest request) {
-
         List<SmtEquipmentDto> smtEquipmentDtos = loginServiceImpl.login(smtClientManage, request);
         if (smtEquipmentDtos == null){
             return ControllerUtil.returnFail("验证失败", 100);
