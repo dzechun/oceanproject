@@ -54,7 +54,6 @@ public class SmtStorageServiceImpl extends BaseService<SmtStorage> implements Sm
         Date date = new Date();
         int i = 0, j = 0;
         String lastUpdateDate = (String) redisUtil.get(ConstantBase.API_LASTUPDATE_TIME_CW);
-        lastUpdateDate = "2017-01-01T09:50:25.095Z";
         Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(lastUpdateDate)) {
             map.put("updated", lastUpdateDate);
