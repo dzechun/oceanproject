@@ -42,7 +42,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 储位编码
      */
     @ApiModelProperty(name = "storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30,orderNum = "2")
+    @Excel(name = "储位编码", height = 20, width = 30,orderNum = "1")
     @Column(name = "storage_code")
     private String storageCode;
 
@@ -66,7 +66,6 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 仓库id
      */
     @ApiModelProperty(name = "warehouseId",value = "仓库名称")
-    @Excel(name = "仓库id", height = 20, width = 30,orderNum = "10")
     @Column(name = "warehouse_id")
     @NotBlank(message = "仓库id不能为空")
     private String warehouseId;
@@ -75,7 +74,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 仓库编码
      */
     @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "11")
+    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "5")
     @Column(name = "warehouse_code")
     private String warehouseCode;
 
@@ -83,7 +82,6 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 仓库区域id
      */
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "11")
     @Column(name = "warehouse_area_id")
     @NotBlank(message = "仓库区域id不能为空")
     private String warehouseAreaId;
@@ -92,7 +90,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 仓库区域编码
      */
     @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")
-    @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum="13")
+    @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum="7")
     @Column(name = "warehouse_area_code")
     private String warehouseAreaCode;
 
@@ -100,7 +98,6 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 物料id
      */
     @ApiModelProperty(name = "materialId",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "11")
     @Column(name = "material_id")
     @NotBlank(message = "物料id不能为空")
     private String materialId;
@@ -110,7 +107,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      */
     @Column(name = "material_code")
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="9")
     private String materialCode;
 
 
@@ -118,7 +115,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 电子标签id
      */
     @ApiModelProperty(name="electronicTagId",value = "电子标签id")
-    @Excel(name = "电子标签id", height = 20, width = 30,orderNum="7")
+    @Excel(name = "电子标签id", height = 20, width = 30,orderNum="12")
     @Column(name = "electronic_tag_id")
     @NotBlank(message = "电子标签id不能为空")
     private String electronicTagId;
@@ -127,7 +124,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="9",replace = {"无效_0","有效_1"})
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="12",replace = {"无效_0","有效_1"})
     private Integer status;
 
     /**
@@ -141,7 +138,7 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;

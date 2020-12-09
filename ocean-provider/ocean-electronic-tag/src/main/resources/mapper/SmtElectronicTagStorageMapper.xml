@@ -16,7 +16,6 @@
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
         <result column="material_id" jdbcType="VARCHAR" property="materialId" />
         <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
