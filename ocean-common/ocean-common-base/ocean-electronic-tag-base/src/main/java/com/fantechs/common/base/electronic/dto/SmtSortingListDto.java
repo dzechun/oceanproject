@@ -30,7 +30,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 储位名称
      */
     @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30,orderNum = "2")
+    @Excel(name = "储位名称", height = 20, width = 30,orderNum = "4")
     @Transient
     private String storageName;
 
@@ -46,7 +46,6 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 物料id
      */
     @ApiModelProperty(name="materialId" ,value="物料编码")
-    @Excel(name = "物料id", height = 20, width = 30)
     @Transient
     private String materialId;
 
@@ -54,7 +53,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 物料名称
      */
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30)
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="8")
     @Transient
     private String materialName;
 
@@ -62,7 +61,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 物料编码
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="9")
     @Transient
     private String materialCode;
 
@@ -70,7 +69,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 物料描述
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30)
+    @Excel(name = "物料描述", height = 20, width = 30,orderNum="10")
     @Transient
     private String materialDesc;
 
@@ -78,7 +77,6 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 仓库Id
      */
     @ApiModelProperty(name = "warehouseId",value = "仓库Id")
-    @Excel(name = "仓库Id", height = 20, width = 30,orderNum = "10")
     @Transient
     private String warehouseId;
 
@@ -95,7 +93,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 仓库编码
      */
     @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "11")
+    @Excel(name = "仓库编码", height = 20, width = 30,orderNum = "12")
     @Transient
     private String warehouseCode;
 
@@ -103,7 +101,6 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 仓库区域Id
      */
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域Id")
-    @Excel(name = "仓库区域Id", height = 20, width = 30,orderNum = "10")
     @Transient
     private String warehouseAreaId;
 
@@ -112,7 +109,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 仓库区域名称
      */
     @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
-    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum = "11")
+    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum = "13")
     @Transient
     private String warehouseAreaName;
 
@@ -120,7 +117,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 仓库区域编码
      */
     @ApiModelProperty(name = "warehouseAreaCode",value = "仓库区域编码")
-    @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum = "11")
+    @Excel(name = "仓库区域编码", height = 20, width = 30,orderNum = "14")
     @Transient
     private String warehouseAreaCode;
 
@@ -142,7 +139,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 设备编号
      */
     @ApiModelProperty(name="equipmentCode",value = "设备编号")
-    @Excel(name = "设备编号", height = 20, width = 30,orderNum="1")
+    @Excel(name = "设备编号", height = 20, width = 30,orderNum="15")
     @Transient
     private String equipmentCode;
 
@@ -150,7 +147,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 设备名称
      */
     @ApiModelProperty(name="equipmentName",value = "设备名称")
-    @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "设备名称", height = 20, width = 30,orderNum="16")
     @Transient
     private String equipmentName;
 
@@ -158,7 +155,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 设备数据
      */
     @ApiModelProperty(name="equipmentData",value = "设备数据")
-    @Excel(name = "设备数据", height = 20, width = 30,orderNum="3")
+    @Excel(name = "设备数据", height = 20, width = 30,orderNum="17")
     @Transient
     private String equipmentData;
 
@@ -166,7 +163,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 设备IP地址
      */
     @ApiModelProperty(name="equipmentIp",value = "设备IP地址")
-    @Excel(name = "设备IP地址", height = 20, width = 30,orderNum="4")
+    @Excel(name = "设备IP地址", height = 20, width = 30,orderNum="18")
     @Transient
     private String equipmentIp;
 
@@ -174,7 +171,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 设备端口
      */
     @ApiModelProperty(name="equipmentPort",value = "设备端口")
-    @Excel(name = "设备端口", height = 20, width = 30,orderNum="5")
+    @Excel(name = "设备端口", height = 20, width = 30,orderNum="19")
     @Transient
     private String equipmentPort;
 
@@ -182,7 +179,7 @@ public class SmtSortingListDto extends SmtSortingList implements Serializable {
      * 设备类型
      */
     @ApiModelProperty(name="equipmentType",value = "设备类型")
-    @Excel(name = "设备类型", height = 20, width = 30,orderNum="6")
+    @Excel(name = "设备类型", height = 20, width = 30,orderNum="20",replace = {"控制器_0", "区域灯_1","其他_2"})
     @Transient
     private Byte equipmentType;
 

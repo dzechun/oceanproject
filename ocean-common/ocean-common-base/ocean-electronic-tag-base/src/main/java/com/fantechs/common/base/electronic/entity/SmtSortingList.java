@@ -25,7 +25,6 @@ public class SmtSortingList extends ValidGroup implements Serializable {
      * 分拣单Id
      */
     @ApiModelProperty(name="sortingListId",value = "分拣单Id")
-    @Excel(name = "分拣单Id", height = 20, width = 30,orderNum="1")
     @Id
     @Column(name = "sorting_list_id")
     @NotNull(groups = update.class,message = "分拣单Id不能为空")
@@ -35,16 +34,16 @@ public class SmtSortingList extends ValidGroup implements Serializable {
      * 分拣单号
      */
     @ApiModelProperty(name="sortingLisCode",value = "分拣单号")
-    @Excel(name = "分拣单号", height = 20, width = 30,orderNum="2")
+    @Excel(name = "分拣单号", height = 20, width = 30,orderNum="1")
     @Column(name = "sorting_lis_code")
     @NotBlank(message = "分拣单号不能为空")
-    private String sortingLisCode;
+    private String sortingListCode;
 
     /**
      * 工单号(预留)
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号(预留)")
-    @Excel(name = "工单号(预留)", height = 20, width = 30,orderNum="3")
+    @Excel(name = "工单号(预留)", height = 20, width = 30,orderNum="2")
     @Column(name = "work_order_code")
     @NotBlank(message = "工单号不能为空")
     private String workOrderCode;
@@ -53,7 +52,7 @@ public class SmtSortingList extends ValidGroup implements Serializable {
      * 储位编码
      */
     @ApiModelProperty(name="storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30,orderNum="4")
+    @Excel(name = "储位编码", height = 20, width = 30,orderNum="3")
     @Column(name = "storage_code")
     @NotBlank(message = "储位编码不能为空")
     private String storageCode;

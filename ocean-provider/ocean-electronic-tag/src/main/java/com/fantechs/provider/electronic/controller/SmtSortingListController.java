@@ -1,5 +1,6 @@
 package com.fantechs.provider.electronic.controller;
 
+import com.fantechs.common.base.electronic.dto.SmtSortingListDto;
 import com.fantechs.common.base.electronic.entity.SmtSortingList;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSortingList;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -62,20 +63,20 @@ public class SmtSortingListController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtSortingList>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSortingList searchSmtSortingList) {
+    public ResponseEntity<List<SmtSortingListDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSortingList searchSmtSortingList) {
         Page<Object> page = PageHelper.startPage(searchSmtSortingList.getStartPage(),searchSmtSortingList.getPageSize());
-        List<SmtSortingList> list = smtSortingListService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtSortingList));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        List<SmtSortingListDto> smtSortingListDtos = smtSortingListService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtSortingList));
+        return ControllerUtil.returnDataSuccess(smtSortingListDtos,(int)page.getTotal());
     }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSmtSortingList searchSmtSortingList){
-    List<SmtSortingList> list = smtSortingListService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtSortingList));
-    try {
+        List<SmtSortingListDto> sortingListDtos = smtSortingListService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtSortingList));
+        try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtSortingList信息", SmtSortingList.class, "SmtSortingList.xls", response);
+        EasyPoiUtils.exportExcel(sortingListDtos, "导出信息", "SmtSortingList信息", SmtSortingListDto.class, "SmtSortingList.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

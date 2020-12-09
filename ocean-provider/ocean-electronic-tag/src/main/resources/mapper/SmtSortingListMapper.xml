@@ -6,7 +6,7 @@
           WARNING - @mbg.generated
         -->
         <id column="sorting_list_id" jdbcType="BIGINT" property="sortingListId"/>
-        <result column="sorting_lis_code" jdbcType="VARCHAR" property="sortingLisCode"/>
+        <result column="sorting_list_code" jdbcType="VARCHAR" property="sortingListCode"/>
         <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
@@ -43,7 +43,7 @@
 
     <sql id="Base_Column_List">
     `ssl`.sorting_list_id,
-	`ssl`.sorting_lis_code,
+	`ssl`.sorting_list_code,
 	`ssl`.work_order_code,
 	`ssl`.storage_code,
 	`ssl`.quantity,
@@ -83,20 +83,20 @@
         LEFT JOIN smt_warehouse sw ON shets.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON shets.warehouse_area_id = swa.warehouse_area_id
         <where>
-            <if test="sortingLisCode != null">
-                and ssl.sortingLis_code like CONCAT('%', #{sortingLisCode}, '%')
+            <if test="sortingListCode != null">
+                and `ssl`.sorting_list_code like CONCAT('%', #{sortingListCode}, '%')
             </if>
             <if test="workOrderCode != null">
-                and ssl.workOrder_code like CONCAT('%', #{workOrderCode}, '%')
+                and `ssl`.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
             <if test="storageCode != null">
-                and ssl.storage_code like CONCAT('%', #{storageCode}, '%')
+                and `ssl`.storage_code like CONCAT('%', #{storageCode}, '%')
             </if>
             <if test="sortingListId != null">
-                and ssl.sortingList_id=#{sortingListId}
+                and `ssl`.sorting_list_id=#{sortingListId}
             </if>
             <if test="status!=null and status!=''">
-                and ssl.status=#{status}
+                and `ssl`.status=#{status}
             </if>
         </where>
     </select>

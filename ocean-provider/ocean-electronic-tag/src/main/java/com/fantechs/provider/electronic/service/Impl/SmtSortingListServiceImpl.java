@@ -2,6 +2,7 @@ package com.fantechs.provider.electronic.service.Impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.electronic.dto.SmtSortingListDto;
 import com.fantechs.common.base.electronic.entity.SmtSortingList;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -35,7 +36,7 @@ public class SmtSortingListServiceImpl extends BaseService<SmtSortingList> imple
 
         Example example = new Example(SmtSortingList.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("sortingLisCode",smtSortingList.getSortingLisCode());
+        criteria.andEqualTo("sortingLisCode",smtSortingList.getSortingListCode());
         List<SmtSortingList> smtSortingLists = smtSortingListMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtSortingLists)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -53,7 +54,7 @@ public class SmtSortingListServiceImpl extends BaseService<SmtSortingList> imple
 
         Example example = new Example(SmtSortingList.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("sortingLisCode",smtSortingList.getSortingLisCode())
+        criteria.andEqualTo("sortingLisCode",smtSortingList.getSortingListCode())
                 .andNotEqualTo("sortingListId",smtSortingList.getSortingListId());
         List<SmtSortingList> smtSortingLists = smtSortingListMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtSortingLists)){
@@ -83,7 +84,7 @@ public class SmtSortingListServiceImpl extends BaseService<SmtSortingList> imple
     }
 
     @Override
-    public List<SmtSortingList> findList(Map<String, Object> map) {
+    public List<SmtSortingListDto> findList(Map<String, Object> map) {
         return smtSortingListMapper.findList(map);
     }
 }
