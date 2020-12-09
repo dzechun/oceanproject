@@ -79,7 +79,7 @@
     se.equipment_port,
     se.equipment_type,
     scm.queue_name
-    FROM smt_electronic_tag_storage shets
+    FROM smt_ht_electronic_tag_storage shets
     LEFT JOIN ocean.sys_user su ON shets.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON shets.modified_user_id = sus.user_id
     LEFT JOIN smt_equipment se ON shets.equipment_id = se.equipment_id
