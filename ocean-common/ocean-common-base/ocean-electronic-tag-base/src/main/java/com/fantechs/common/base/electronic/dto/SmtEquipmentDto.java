@@ -29,12 +29,12 @@ public class SmtEquipmentDto extends SmtEquipment implements Serializable {
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
-    /**
-     * 控制器设备对应的电子储位列表
-     */
-    @Transient
-    @ApiModelProperty(name = "electronicTagStorageList",value = "储位集合")
-    private List<SmtElectronicTagStorageDto> electronicTagStorageList;
+//    /**
+//     * 控制器设备对应的电子储位列表
+//     */
+//    @Transient
+//    @ApiModelProperty(name = "electronicTagStorageList",value = "储位集合")
+//    private List<SmtElectronicTagStorageDto> electronicTagStorageList;
 
     /**
      * 队列名称

@@ -2,11 +2,9 @@ package com.fantechs.provider.client.server.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtClientManageDto;
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.entity.SmtClientManage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtClientManage;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -59,15 +57,15 @@ public class LoginServiceImpl implements LoginService {
             if(StringUtils.isEmpty(equipmentDtoList)){
                 throw new BizErrorException("该客户端未绑定设备");
             }
-            //根据电子标签信息查询储位信息
-            if (StringUtils.isNotEmpty(equipmentDtoList)){
-                SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-                for (SmtEquipmentDto equipmentDto : equipmentDtoList) {
-                    searchSmtElectronicTagStorage.setEquipmentId(equipmentDto.getEquipmentId());
-                    ResponseEntity<List<SmtElectronicTagStorageDto>> responseEntity1 = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage);
-                    equipmentDto.setElectronicTagStorageList(responseEntity1.getData());
-                }
-            }
+//            //根据电子标签信息查询储位信息
+//            if (StringUtils.isNotEmpty(equipmentDtoList)){
+//                SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
+//                for (SmtEquipmentDto equipmentDto : equipmentDtoList) {
+//                    searchSmtElectronicTagStorage.setEquipmentId(equipmentDto.getEquipmentId());
+//                    ResponseEntity<List<SmtElectronicTagStorageDto>> responseEntity1 = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage);
+//                    equipmentDto.setElectronicTagStorageList(responseEntity1.getData());
+//                }
+//            }
 
         }
         return equipmentDtoList;
