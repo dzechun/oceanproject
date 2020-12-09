@@ -41,7 +41,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
     @ApiModelProperty(name="electronicTagStorageId",value = "标签Id绑定储位关系Id")
     @Column(name = "electronic_tag_storage_id")
     @NotNull(groups = ValidGroup.update.class,message = "标签Id绑定储位关系Id不能为空")
-    private Long electronicTagStorageId;
+    private String electronicTagStorageId;
 
     /**
      * 储位id
@@ -56,7 +56,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
      */
     @ApiModelProperty(name = "storageCode",value = "储位名称")
     @Excel(name = "储位名称", height = 20, width = 30,orderNum = "1")
-    @Column(name = "storage_code")
+    @Transient
     private String storageCode;
 
     /**
@@ -68,12 +68,28 @@ public class SmtHtElectronicTagStorage implements Serializable {
     private String storageName;
 
     /**
+     * 储位描述
+     */
+    @ApiModelProperty(name = "storageDesc",value = "储位描述")
+    @Excel(name = "储位描述", height = 20, width = 30,orderNum = "3")
+    @Transient
+    private String storageDesc;
+
+    /**
      * 设备id（电子标签控制器）
      */
     @ApiModelProperty(name="equipmentId",value = "设备id（电子标签控制器）")
     @Column(name = "equipment_id")
     @NotBlank(message = "设备id（电子标签控制器）")
     private String equipmentId;
+
+    /**
+     * 区域设备Id
+     */
+    @ApiModelProperty(name="equipmentAreaId",value = "区域设备Id")
+    @Column(name = "equipment_area_id")
+    @NotBlank(message = "区域设备Id不能为空")
+    private String equipmentAreaId;
 
     /**
      * 仓库id
@@ -89,7 +105,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
      */
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum = "10")
-    @Column(name = "warehouse_name")
+    @Transient
     private String warehouseName;
 
     /**
@@ -114,7 +130,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
      */
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
     @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="12")
-    @Column(name = "warehouse_area_name")
+    @Transient
     private String warehouseAreaName;
 
     /**
@@ -147,7 +163,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
      */
     @Column(name = "material_name")
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30)
+    @Transient
     private String materialName;
 
     /**
@@ -156,6 +172,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
     @Column(name = "material_desc")
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     @Excel(name = "物料描述", height = 20, width = 30)
+    @Transient
     private String materialDesc;
 
 
@@ -174,14 +191,6 @@ public class SmtHtElectronicTagStorage implements Serializable {
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
     @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="9",replace = {"无效_0","有效_1"})
     private Integer status;
-
-    /**
-     * 储位描述
-     */
-    @ApiModelProperty(name = "storageDesc",value = "储位描述")
-    @Excel(name = "储位描述", height = 20, width = 30,orderNum = "3")
-    @Transient
-    private String storageDesc;
 
 
     /**

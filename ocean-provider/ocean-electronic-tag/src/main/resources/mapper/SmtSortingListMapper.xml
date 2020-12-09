@@ -52,14 +52,14 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT <include refid="Base_Column_List"/>,
-        sets.electronic_tag_storage_id,
-        sets.storage_id,
-        sets.storage_code,
-        sets.warehouse_id, sets.warehouse_code,
-        sets.warehouse_area_id, sets.warehouse_area_code,
-        sets.material_id, sets.material_code,
-        sets.equipment_id,
-        sets.electronic_tag_id,
+        shets.electronic_tag_storage_id,
+        shets.storage_id,
+        shets.storage_code,
+        shets.warehouse_id, shets.warehouse_code,
+        shets.warehouse_area_id, shets.warehouse_area_code,
+        shets.material_id, shets.material_code,
+        shets.equipment_id,
+        shets.electronic_tag_id,
         sus.user_name,
         ss.storage_desc,
         ss.storage_name,
@@ -73,15 +73,15 @@
         se.equipment_port,
         scm.queue_name
         FROM smt_sorting_list `ssl`
-        LEFT JOIN smt_electronic_tag_storage sets ON `ssl`.storage_code = sets.storage_code
-        LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
-        LEFT JOIN smt_equipment se ON sets.equipment_id = se.equipment_id
+        LEFT JOIN smt_electronic_tag_storage shets ON `ssl`.storage_code = shets.storage_code
+        LEFT JOIN ocean.sys_user su ON shets.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON shets.modified_user_id = sus.user_id
+        LEFT JOIN smt_equipment se ON shets.equipment_id = se.equipment_id
         LEFT JOIN smt_client_manage scm ON scm.client_id = se.client_id
-        LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
-        LEFT JOIN smt_material sm ON sets.material_id = sm.material_id
-        LEFT JOIN smt_warehouse sw ON sets.warehouse_id = sw.warehouse_id
-        LEFT JOIN smt_warehouse_area swa ON sets.warehouse_area_id = swa.warehouse_area_id
+        LEFT JOIN smt_storage ss ON shets.storage_id = ss.storage_id
+        LEFT JOIN smt_material sm ON shets.material_id = sm.material_id
+        LEFT JOIN smt_warehouse sw ON shets.warehouse_id = sw.warehouse_id
+        LEFT JOIN smt_warehouse_area swa ON shets.warehouse_area_id = swa.warehouse_area_id
         <where>
             <if test="sortingLisCode != null">
                 and ssl.sortingLis_code like CONCAT('%', #{sortingLisCode}, '%')

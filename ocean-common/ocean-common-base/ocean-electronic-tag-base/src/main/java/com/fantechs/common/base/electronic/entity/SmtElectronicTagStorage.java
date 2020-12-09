@@ -51,8 +51,16 @@ public class SmtElectronicTagStorage extends ValidGroup implements Serializable 
      */
     @ApiModelProperty(name="equipmentId",value = "设备id（电子标签控制器）")
     @Column(name = "equipment_id")
-    @NotBlank(message = "设备id（电子标签控制器）")
+    @NotBlank(message = "设备id不能为空")
     private String equipmentId;
+
+    /**
+     * 区域设备Id
+     */
+    @ApiModelProperty(name="equipmentAreaId",value = "区域设备Id")
+    @Column(name = "equipment_area_id")
+    @NotBlank(message = "区域设备Id不能为空")
+    private String equipmentAreaId;
 
     /**
      * 仓库id

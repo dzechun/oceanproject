@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage">
         <!--
           WARNING - @mbg.generated
         -->
@@ -9,6 +9,7 @@
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
+        <result column="equipment_area_id" jdbcType="VARCHAR" property="equipmentAreaId"/>
         <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
         <result column="warehouse_area_id" jdbcType="VARCHAR" property="warehouseAreaId"/>
@@ -52,6 +53,7 @@
 	sets.warehouse_area_id, sets.warehouse_area_code,
 	sets.material_id, sets.material_code,
 	sets.equipment_id,
+	sets.equipment_area_id,
 	sets.electronic_tag_id,
 	sets.`status`,
 	sets.create_user_id,
@@ -77,6 +79,7 @@
         se.equipment_code,
         se.equipment_ip,
         se.equipment_port,
+        se.equipment_type,
         scm.queue_name
         FROM smt_electronic_tag_storage sets
         LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
@@ -89,19 +92,19 @@
         LEFT JOIN smt_warehouse_area swa ON sets.warehouse_area_id = swa.warehouse_area_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(sets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                and date_format(shets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
             <if test="storageId != null">
                 and sets.storage_id =#{storageId}
             </if>
             <if test="storageName != null">
-                and sets.storage_name like CONCAT('%', #{storageName}, '%')
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
             </if>
             <if test="warehouseName != null">
-                and sets.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+                and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
             <if test="warehouseAreaName != null">
-                and sets.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+                and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
             </if>
             <if test="equipmentName != null">
                 and se.equipment_name like CONCAT('%', #{equipmentName}, '%')

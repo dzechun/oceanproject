@@ -6,21 +6,17 @@
       WARNING - @mbg.generated
     -->
     <id column="ht_electronic_tag_storage_id" jdbcType="BIGINT" property="htElectronicTagStorageId" />
-    <result column="electronic_tag_storage_id" jdbcType="BIGINT" property="electronicTagStorageId"/>
+    <result column="electronic_tag_storage_id" jdbcType="VARCHAR" property="electronicTagStorageId"/>
     <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
-    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
+    <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId"/>
+    <result column="equipment_area_id" jdbcType="VARCHAR" property="equipmentAreaId"/>
     <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="warehouse_area_id" jdbcType="VARCHAR" property="warehouseAreaId"/>
-    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
     <result column="material_id" jdbcType="VARCHAR" property="materialId" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="status" jdbcType="TINYINT" property="status"/>
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -39,17 +35,23 @@
     <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
     <result column="equipment_port" jdbcType="VARCHAR" property="equipmentPort"/>
     <result column="queue_name" jdbcType="VARCHAR" property="queueName" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
   </resultMap>
 
   <sql id="Base_column_List">
     shets.ht_electronic_tag_storage_id,
     shets.electronic_tag_storage_id,
 	shets.storage_id,
-	shets.storage_name, shets.storage_code,
-	shets.warehouse_id, shets.warehouse_name, shets.warehouse_code,
-	shets.warehouse_area_id, shets.warehouse_area_name, shets.warehouse_area_code,
-	shets.material_id, shets.material_desc, shets.material_code, shets.material_name
+	shets.storage_code,
+	shets.warehouse_id, shets.warehouse_code,
+	shets.warehouse_area_id, shets.warehouse_area_code,
+	shets.material_id, shets.material_code,
 	shets.equipment_id,
+	shets.equipment_area_id,
 	shets.electronic_tag_id,
 	shets.`status`,
 	shets.create_user_id,
@@ -62,35 +64,45 @@
 	shets.option3
     </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     SELECT<include refid="Base_column_List"/>,
     sus.user_name,
     ss.storage_desc,
+    ss.storage_name,
+    swa.warehouse_area_name,
+    sw.warehouse_name,
+    sm.material_desc,
+    sm.material_name,
     se.equipment_name,
     se.equipment_code,
     se.equipment_ip,
     se.equipment_port,
+    se.equipment_type,
     scm.queue_name
-    FROM smt_ht_electronic_tag_storage shets
+    FROM smt_electronic_tag_storage shets
     LEFT JOIN ocean.sys_user su ON shets.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON shets.modified_user_id = sus.user_id
     LEFT JOIN smt_equipment se ON shets.equipment_id = se.equipment_id
     LEFT JOIN smt_client_manage scm ON scm.client_id = se.client_id
+    LEFT JOIN smt_storage ss ON shets.storage_id = ss.storage_id
+    LEFT JOIN smt_material sm ON shets.material_id = sm.material_id
+    LEFT JOIN smt_warehouse sw ON shets.warehouse_id = sw.warehouse_id
+    LEFT JOIN smt_warehouse_area swa ON shets.warehouse_area_id = swa.warehouse_area_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(sets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(shets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="storageId != null">
         and shets.storage_id =#{storageId}
       </if>
       <if test="storageName != null">
-        and shets.storage_name like CONCAT('%', #{storageName}, '%')
+        and ss.storage_name like CONCAT('%', #{storageName}, '%')
       </if>
       <if test="warehouseName != null">
-        and shets.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
       </if>
       <if test="warehouseAreaName != null">
-        and shets.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+        and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
       </if>
       <if test="equipmentName != null">
         and se.equipment_name like CONCAT('%', #{equipmentName}, '%')
