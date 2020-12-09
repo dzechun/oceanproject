@@ -7,6 +7,9 @@
     <result column="spec_name" jdbcType="VARCHAR" property="specName" />
     <result column="para" jdbcType="VARCHAR" property="para" />
     <result column="para_value" jdbcType="VARCHAR" property="paraValue" />
+    <result column="category" jdbcType="BIT" property="category" />
+    <result column="order_num" jdbcType="BIT" property="orderNum" />
+    <result column="affiliation_module" jdbcType="VARCHAR" property="affiliationModule" />
     <result column="is_hide" jdbcType="INTEGER" property="isHide" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -17,15 +20,16 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
   <sql id="Base_Column_List">
-    spec_id, spec_code, spec_name, para, para_value, create_user_id, create_time, modified_user_id, 
+    spec_id, spec_code, spec_name, para, para_value, create_user_id, create_time, modified_user_id,
     modified_time, is_delete, option1, option2, option3
   </sql>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.security.search.SearchSysSpecItem" resultMap="BaseResultMap">
     select  si.spec_id, si.spec_code, si.spec_name, si.para, si.para_value, si.is_hide,si.create_user_id, u.user_name as createUserName,
     si.create_time, si.modified_user_id,s.user_name as modifiedUserName,
-    si.modified_time,si.is_delete
+    si.modified_time,si.is_delete,si.category,si.order_num,si.affiliation_module
     from sys_spec_item si
     left join sys_user u on si.create_user_id=u.user_id
     left join sys_user s on si.modified_user_id=s.user_id
@@ -43,6 +47,20 @@
       <if test="paraValue!=null and paraValue!=''">
         and si.para_value like CONCAT('%', #{paraValue}, '%')
       </if>
+      <if test="affiliationModule != null and affiliationModule != '' ">
+        and si.affiliation_module = #{affiliationModule} and si.para_value != 'null'
+      </if>
+      <if test="(category != null and category != '') or category == 0 ">
+        and si.category = #{category}
+      </if>
     </where>
+
   </select>
+
+  <select id="findModule" parameterType="java.lang.String" resultType="java.lang.String">
+    select ssi.affiliation_module from sys_spec_item ssi where ssi.category = #{category} group BY ssi.affiliation_module
+  </select>
+
 </mapper>
+
+

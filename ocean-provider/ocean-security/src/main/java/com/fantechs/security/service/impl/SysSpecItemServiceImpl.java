@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements SysSpecItemService {
@@ -34,6 +35,11 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
         return sysSpecItemMapper.findList(searchSysSpecItem);
+    }
+
+    @Override
+    public List<String> findModule(Map<String,Object> map) {
+        return sysSpecItemMapper.findModule(map);
     }
 
     @Override

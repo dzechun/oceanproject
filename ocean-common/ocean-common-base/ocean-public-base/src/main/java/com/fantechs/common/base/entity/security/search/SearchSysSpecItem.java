@@ -1,11 +1,13 @@
 package com.fantechs.common.base.entity.security.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -48,5 +50,22 @@ public class SearchSysSpecItem  extends BaseQuery implements Serializable {
     @ApiModelProperty(name="paraValue" ,value="参数值")
     private String paraValue;
 
+    /**
+     * 配置类别（0-系统配置，1-模块配置）默认0
+     */
+    @ApiModelProperty(name="category" ,value="配置类别")
+    private Byte category;
+
+    /**
+     * 配置顺序
+     */
+    @ApiModelProperty(name="orderNum" ,value="配置顺序")
+    private Byte orderNum;
+
+    /**
+     * 所属模块
+     */
+    @ApiModelProperty(name="affiliationModule" ,value="所属模块")
+    private String affiliationModule;
 
 }

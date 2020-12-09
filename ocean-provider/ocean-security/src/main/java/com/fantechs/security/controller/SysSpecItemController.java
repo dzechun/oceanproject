@@ -49,6 +49,7 @@ public class SysSpecItemController {
     public ResponseEntity<List<SysSpecItem>> findList(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
         Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
+        System.out.println(searchSysSpecItem);
         List<SysSpecItem> SysSpecItems = sysSpecItemService.findList(searchSysSpecItem);
         return ControllerUtil.returnDataSuccess(SysSpecItems,(int)page.getTotal());
     }
@@ -109,6 +110,13 @@ public class SysSpecItemController {
         Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
         List<SysHtSpecItem> SysHtSpecItems = sysHtSpecItemService.findHtSpecItemList(ControllerUtil.dynamicConditionByEntity(searchSysSpecItem));
         return  ControllerUtil.returnDataSuccess(SysHtSpecItems, (int)page.getTotal());
+    }
+
+    @PostMapping("/findModule")
+    @ApiOperation(value = "根据条件查询所有模块名称",notes = "根据条件查询所有模块名称")
+    public ResponseEntity<List<String>> findModule(@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem) {
+        List<String> list = sysSpecItemService.findModule(ControllerUtil.dynamicConditionByEntity(searchSysSpecItem));
+        return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
 }

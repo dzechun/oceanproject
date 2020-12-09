@@ -63,6 +63,31 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     private String paraValue;
 
     /**
+     * 配置类别（0-系统配置，1-模块配置）默认0
+     */
+    @Column(name = "category")
+    @ApiModelProperty(name="category" ,value="配置类别")
+    @Excel(name = "配置类别", height = 20, width = 30)
+    private Byte category;
+
+    /**
+     * 配置顺序
+     */
+    @Column(name = "order_num")
+    @ApiModelProperty(name="orderNum" ,value="配置顺序")
+    @Excel(name = "配置顺序", height = 20, width = 30)
+    private Byte orderNum;
+
+    /**
+     * 所属模块
+     */
+    @Column(name = "affiliation_module")
+    @ApiModelProperty(name="affiliationModule" ,value="所属模块")
+    @Excel(name = "所属模块", height = 20, width = 30)
+    @NotBlank(message = "配置项所属模块不能为空")
+    private String affiliationModule;
+
+    /**
      * 是否隐藏(0、是 1、否 )
      */
     @Column(name = "is_hide")
