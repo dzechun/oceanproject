@@ -14,6 +14,13 @@ import java.io.Serializable;
 public class SmtSortingDto extends SmtSorting implements Serializable {
 
     /**
+     * 储位编码
+     */
+    @ApiModelProperty(name = "storageCode",value = "储位编码")
+    @Transient
+    private String storageCode;
+
+    /**
      * 储位名称
      */
     @ApiModelProperty(name = "storageName",value = "储位名称")

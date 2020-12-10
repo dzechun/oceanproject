@@ -15,6 +15,7 @@
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.electronic.dto.SmtSortingDto">
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
@@ -32,7 +33,8 @@
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-        SELECT<include refid="Base_Column_List"/>,
+        SELECT <include refid="Base_Column_List"/>,
+        ss.storage_code,
         ss.storage_name,
         swa.warehouse_area_name,
         sw.warehouse_name,
@@ -61,6 +63,9 @@
             </if>
             <if test="electronicTagId != null and electronicTagId!=''">
                 and sets.electronic_tag_id=#{electronicTagId}
+            </if>
+            <if test="equipmentId != null and equipmentId!=''">
+                and sets.equipment_Id=#{equipmentId}
             </if>
             <if test="status!=null and status!=''">
                 and `ssl`.status=#{status}

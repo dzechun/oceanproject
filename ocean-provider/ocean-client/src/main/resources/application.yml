@@ -16,5 +16,5 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
-
-
+mesAPI:
+  resApi: http://10.182.163.82:8099/getForPtlAPI/getPtlSortingOrder

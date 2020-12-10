@@ -165,13 +165,13 @@ public class RestTemplateUtil {
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-        String token = CurrentUserInfoUtils.getToken();
-        log.info("rest调用token："+token);
-        log.info("rest调用地址："+url);
-        if(StringUtils.isNotEmpty(token)){
-            headers.add("token",token);
-            headers.add("Access-Control-Expose-Headers","token");
-        }
+//        String token = CurrentUserInfoUtils.getToken();
+//        log.info("rest调用token："+token);
+//        log.info("rest调用地址："+url);
+//        if(StringUtils.isNotEmpty(token)){
+//            headers.add("token",token);
+//            headers.add("Access-Control-Expose-Headers","token");
+//        }
         String reqStr = BeanUtils.getGson().toJson(object);
         log.info("rest调用参数："+reqStr);
         HttpEntity<String> formEntity = new HttpEntity<>(reqStr, headers);
