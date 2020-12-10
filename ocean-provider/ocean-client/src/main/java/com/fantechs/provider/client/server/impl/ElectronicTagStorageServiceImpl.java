@@ -46,6 +46,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         int i = 0;
         List<SmtElectronicTagStorageDto> list = new LinkedList<>();
         for(SmtSorting sorting: sortingList){
+            searchSmtSorting = new SearchSmtSorting();
+            searchSmtSorting.setSortingCode(sorting.getSortingCode());
+            smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+            if(StringUtils.isNotEmpty(smtSortingList)){
+                throw  new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复分拣单");
+            }
             SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
             searchSmtMaterial.setMaterialCode(sorting.getMaterialCode());
             List<SmtMaterial>   smtMaterials=   basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
@@ -58,6 +64,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             if(StringUtils.isEmpty(smtElectronicTagStorageDtoList)){
                 throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请先维护储位对应的电子标签信息");
+            }
+            if(StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())){
+                throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"没有找到物料对应的储位信息");
             }
             smtElectronicTagStorageDtoList.get(0).setQuantity(sorting.getQuantity());
             list.add(smtElectronicTagStorageDtoList.get(0));

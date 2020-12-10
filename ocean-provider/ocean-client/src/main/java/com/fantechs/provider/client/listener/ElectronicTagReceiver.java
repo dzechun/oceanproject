@@ -62,6 +62,7 @@ public class ElectronicTagReceiver {
             SearchSmtSorting searchSmtSorting =   new SearchSmtSorting();
             searchSmtSorting.setElectronicTagId(b.toString());
             searchSmtSorting.setEquipmentId(equipmentId);
+            searchSmtSorting.setStatus((byte)1);
            List<SmtSortingDto> findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
            if(StringUtils.isNotEmpty(findSortingList)){
                SmtSortingDto smtSortingDto = findSortingList.get(0);
