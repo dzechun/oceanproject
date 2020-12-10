@@ -98,4 +98,10 @@ public class SmtWarehouseController {
             throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("根据仓库编码批量更新")
+    @PostMapping("/batchUpdateByCode")
+    public ResponseEntity batchUpdateByCode(@ApiParam(value = "编码必传",required = true)@RequestBody List<SmtWarehouse> smtWarehouses) {
+         return ControllerUtil.returnDataSuccess("",smtWarehouseService.batchUpdateByCode(smtWarehouses));
+    }
 }

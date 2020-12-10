@@ -8,4 +8,9 @@ import java.util.List;
 
 public interface SmtWarehouseService extends IService<SmtWarehouse>{
     List<SmtWarehouse> findList(SearchSmtWarehouse searchSmtWarehouse);
+
+    //更新编码批量更新仓库
+    int batchUpdateByCode(List<SmtWarehouse> smtWarehouses);
+
+    int insertList(List<SmtWarehouse> smtWarehouses);
 }

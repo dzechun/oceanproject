@@ -45,12 +45,12 @@
             <if test="clientId != null">
                 and se.client_id = #{clientId}
             </if>
-            <!--<if test="equipmentCode != null and codeQueryMark=1 and equipmentCode!='' ">-->
-                <!--and se.equipment_code  = #{equipmentCode}-->
-            <!--</if>-->
-            <!--<if test="equipmentCode != null and codeQueryMark!=1 and equipmentCode!=''">-->
-                <!--and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')-->
-            <!--</if>-->
+            <if test="equipmentCode != null and codeQueryMark==1 and equipmentCode!='' ">
+                and se.equipment_code  = #{equipmentCode}
+            </if>
+            <if test="equipmentCode != null and codeQueryMark!=1 and equipmentCode!=''">
+                and se.equipment_code like CONCAT('%', #{equipmentCode}, '%')
+            </if>
             <if test="equipmentName != null">
                 and se.equipment_name like CONCAT('%', #{equipmentName}, '%')
             </if>

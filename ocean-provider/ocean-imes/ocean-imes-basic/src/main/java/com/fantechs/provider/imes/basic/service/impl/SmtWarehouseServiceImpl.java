@@ -146,4 +146,14 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
     public List<SmtWarehouse> findList(SearchSmtWarehouse searchSmtWarehouse) {
         return smtWarehouseMapper.findList(searchSmtWarehouse);
     }
+
+    @Override
+    public int batchUpdateByCode(List<SmtWarehouse> smtWarehouses) {
+        return smtWarehouseMapper.batchUpdateByCode(smtWarehouses);
+    }
+
+    @Override
+    public int insertList(List<SmtWarehouse> smtWarehouses) {
+        return smtWarehouseMapper.insertList(smtWarehouses);
+    }
 }

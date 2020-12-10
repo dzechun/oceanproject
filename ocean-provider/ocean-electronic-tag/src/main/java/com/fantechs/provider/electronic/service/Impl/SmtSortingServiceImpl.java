@@ -94,7 +94,11 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
 
     @Override
     public int batchUpdate(List<SmtSorting> smtSortings) {
-        return smtSortingMapper.batchUpdate(smtSortings);
+        int i = 0;
+        if (StringUtils.isNotEmpty()){
+            i = smtSortingMapper.batchUpdate(smtSortings);
+        }
+        return i;
     }
 
     @Override

@@ -42,12 +42,12 @@ public class SmtStorageController {
     @Autowired
     private SmtHtStorageService smtHtStorageService;
 
-    @PostMapping("/getNewUpdateCWByUpdateDate")
-    @ApiOperation(value = "获取QIS储位数据")
-    public ResponseEntity getNewUpdateCWByUpdateDate() throws Exception {
+    @PostMapping("/updateWarehouseAndStorageFromQis")
+    @ApiOperation(value = "获取QIS仓库储位数据")
+    public ResponseEntity updateWarehouseAndStorageFromQis() throws Exception {
 
         try {
-            int i = smtStorageService.getNewUpdateCWByUpdateDate();
+            int i = smtStorageService.updateWarehouseAndStorageFromQis();
             if (i==0){
                 return ControllerUtil.returnSuccess("暂无同步数据");
             }else if (i>0){
@@ -66,11 +66,6 @@ public class SmtStorageController {
         return ControllerUtil.returnCRUD(smtStorageService.batchUpdate(smtStorages));
     }
 
-    @ApiOperation(value = "批量新增",notes = "批量新增")
-    @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "必传：storageCode、storageName",required = true)@RequestBody @Validated List<SmtStorage> smtStorages) {
-        return ControllerUtil.returnCRUD(smtStorageService.batchAdd(smtStorages));
-    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

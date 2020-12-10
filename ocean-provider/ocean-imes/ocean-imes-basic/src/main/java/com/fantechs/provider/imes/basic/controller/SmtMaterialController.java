@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -108,5 +109,19 @@ public class SmtMaterialController {
         Page<Object> page = PageHelper.startPage(searchSmtMaterial.getStartPage(),searchSmtMaterial.getPageSize());
         List<SmtHtMaterial> htMaterials = smtHtMaterialService.findHtList(searchSmtMaterial);
         return ControllerUtil.returnDataSuccess(htMaterials,(int)page.getTotal());
+    }
+
+    @ApiOperation("批量新增物料信息")
+    @PostMapping("/addList")
+    public ResponseEntity addList(@ApiParam(value = "物料信息集合")@RequestBody List<SmtMaterial> smtMaterials){
+        return ControllerUtil.returnCRUD(smtMaterialService.batchSave(smtMaterials));
+
+    }
+
+    @ApiOperation("批量更新物料信息")
+    @PostMapping("/batchUpdateByCode")
+    public ResponseEntity batchUpdateByCode(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<SmtMaterial> smtMaterials){
+        return ControllerUtil.returnCRUD(smtMaterialService.batchUpdateByCode(smtMaterials));
+
     }
 }

@@ -27,4 +27,10 @@ public class SearchSmtWarehouse extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "warehouseDesc",value = "仓库描述")
     private String warehouseDesc;
 
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
+
 }

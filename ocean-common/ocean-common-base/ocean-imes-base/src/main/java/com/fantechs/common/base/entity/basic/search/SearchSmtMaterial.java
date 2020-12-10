@@ -4,6 +4,8 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
 import java.io.Serializable;
 
@@ -47,4 +49,10 @@ public class SearchSmtMaterial extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
     private Long workOrderId;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

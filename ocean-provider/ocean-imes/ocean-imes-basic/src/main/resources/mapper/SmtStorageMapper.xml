@@ -47,7 +47,7 @@
             <if test="storageId!=null and storageId!=''">
                 and ss.storage_id = #{storageId}
             </if>
-            <if test="storageCode!=null and storageCode!='' and codeQueryMark=1">
+            <if test="storageCode!=null and storageCode!='' and codeQueryMark==1">
                 and ss.storage_code = #{storageCode}
             </if>
             <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
@@ -94,19 +94,6 @@
             </set>
             where storage_code =#{item.storageCode}
         </foreach>
-
     </update>
 
-    <insert id="batchAdd">
-        insert into smt_storage
-        (storage_code, storage_name, `level`, storage_desc, warehouse_id,
-        warehouse_area_id, status, create_user_id, create_time, modified_user_id, modified_time,
-        is_delete, option1, option2, option3)
-        values
-        <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.storageCode}, #{item.storageName}, #{item.level}, #{item.storageDesc}, #{item.warehouseId},
-            #{item.warehouseAreaId}, #{item.status}, #{item.createUserId}, #{item.createTime}, #{item.modifiedUserId},
-            #{item.modifiedTime}, #{item.isDelete}, #{item.option1}, #{item.option2}, #{item.option3})
-        </foreach>
-    </insert>
 </mapper>

@@ -103,11 +103,11 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     private Long barcodeRuleId;
 
     /**
-     * 条码规则集合ID
+     * 条码规则集合名称
      */
     @Transient
     @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
-    @Excel(name = "条码规则集合", height = 20, width = 30)
+    @Excel(name = "条码规则集合名称", height = 20, width = 30)
     private String barcodeRuleName;
 
     /**
@@ -137,6 +137,7 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     /**
      * 节拍数量(秒)
      */
+    @Column(name = "takt")
     @ApiModelProperty(name="takt" ,value="节拍数量(秒)")
     private Integer takt;
 
@@ -153,6 +154,7 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="status" ,value="状态")
     @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
+    @Column(name = "status")
     private Integer status;
 
     /**
@@ -226,16 +228,19 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     /**
      * 扩展字段1
      */
+    @Column(name = "option1")
     private String option1;
 
     /**
      * 扩展字段2
      */
+    @Column(name = "option2")
     private String option2;
 
     /**
      * 扩展字段3
      */
+    @Column(name = "option3")
     private String option3;
 
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.electronic.mapper.SmtPaddingMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.SmtPaddingMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="padding_material_id" jdbcType="BIGINT" property="paddingMaterialId" />
+    <result column="padding_material_code" jdbcType="VARCHAR" property="paddingMaterialCode" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.electronic.dto.SmtSortingDto">
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    spm.padding_material_id,
+	spm.padding_material_code,
+	spm.work_order_code,
+	spm.material_code,
+	spm.quantity,
+	spm.status
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    SELECT<include refid="Base_Column_List"/>,
+    ss.storage_name,
+    swa.warehouse_area_name,
+    sw.warehouse_name,
+    sm.material_desc,
+    sm.material_name,
+    swa.warehouse_area_name
+    FROM smt_padding_material spm
+    LEFT JOIN smt_material sm ON spm.material_code= sm.material_code
+    LEFT JOIN smt_storage_material ssm ON ssm.`material_id` = sm.`material_id`
+    LEFT JOIN smt_storage ss ON ss.`storage_id` = ssm.`storage_id`
+    LEFT JOIN smt_warehouse sw ON ss .warehouse_id = sw.warehouse_id
+    LEFT JOIN smt_warehouse_area swa ON sw.warehouse_id = swa.warehouse_id
+    LEFT JOIN smt_electronic_tag_storage sets on sets.material_id = sm.material_id
+    <where>
+      <if test="paddingMaterialCode != null and paddingMaterialCode!=''">
+        and spm.padding_material_code like CONCAT('%', #{paddingMaterialCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and spm.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="storageCode != null  workOrderCode!=''">
+        and `ss`.storage_code like CONCAT('%', #{storageCode}, '%')
+      </if>
+      <if test="paddingMaterialId != null  paddingMaterialId!=''">
+        and spm.padding_material_id=#{paddingMaterialId}
+      </if>
+      <if test="electronicTagId != null and electronicTagId!=''">
+        and sets.electronic_tag_id=#{electronicTagId}
+      </if>
+      <if test="status!=null and status!=''">
+        and spm.status=#{status}
+      </if>
+    </where>
+  </select>
+</mapper>

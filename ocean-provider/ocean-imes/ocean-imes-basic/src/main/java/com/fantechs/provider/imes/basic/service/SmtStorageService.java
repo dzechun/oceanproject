@@ -16,11 +16,8 @@ public interface SmtStorageService extends IService<SmtStorage> {
     List<SmtStorage> findList(SearchSmtStorage searchSmtStorage);
 
     //从qis获取储位信息
-    int getNewUpdateCWByUpdateDate() throws Exception;
+    int updateWarehouseAndStorageFromQis() throws Exception;
 
-    //更加编码进行批量更新
+    //根据编码进行批量更新
     int batchUpdate(List<SmtStorage> smtStorages);
-
-    //批量新增
-    int batchAdd(List<SmtStorage> smtStorages);
 }

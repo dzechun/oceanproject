@@ -11,6 +11,4 @@ public interface SmtStorageMapper extends MyMapper<SmtStorage> {
     List<SmtStorage> findList(SearchSmtStorage searchSmtStorage);
     //批量更新
     int batchUpdate(List<SmtStorage> smtStorages);
-    //批量新增
-    int batchAdd(List<SmtStorage> smtStorages);
 }

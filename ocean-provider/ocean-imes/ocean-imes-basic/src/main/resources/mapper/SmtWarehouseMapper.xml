@@ -29,7 +29,10 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="warehouseCode!=null and warehouseCode!=''">
+      <if test="warehouseCode!=null and warehouseCode!='' and codeQueryMark==1">
+        and sw.warehouse_code = #{warehouseCode}
+      </if>
+      <if test="warehouseCode!=null and warehouseCode!='' and codeQueryMark!=1">
         and sw.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
@@ -44,4 +47,25 @@
     </where>
     order by sw.create_time desc
   </select>
+
+  <update id="batchUpdateByCode" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+      update smt_warehouse
+      <set>
+        warehouse_code =#{item.warehouseCode},
+        warehouse_name =#{item.warehouseName},
+        warehouse_desc =#{item.warehouseDesc},
+        status =#{item.status},
+        create_user_id =#{item.createUserId},
+        create_time =#{item.createTime},
+        modified_user_id =#{item.modifiedUserId},
+        modified_time =#{item.modifiedTime},
+        is_delete =#{item.isDelete},
+        option1 =#{item.option1},
+        option2 =#{item.option2},
+        option3 =#{item.option3}
+      </set>
+      where warehouse_code =#{item.warehouseCode}
+    </foreach>
+  </update>
 </mapper>
