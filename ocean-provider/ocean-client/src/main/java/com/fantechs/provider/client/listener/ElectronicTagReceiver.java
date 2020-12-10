@@ -105,11 +105,4 @@ public class ElectronicTagReceiver {
 
         }
     }
-
-    public static void main(String args[]) throws Exception
-    {
-        BigInteger b = new BigInteger("-1888832");
-        b = b.abs();
-        System.out.println(b.toString());
-    }
 }
