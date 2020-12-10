@@ -81,4 +81,11 @@
             where sorting_id=#{item.sortingId}
         </foreach>
     </update>
+
+    <delete id="delBatchBySortingCode" parameterType="list">
+        delete from smt_sorting  where  sorting_code in
+        <foreach collection="list" index="index" item="item" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

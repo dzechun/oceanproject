@@ -45,4 +45,16 @@ public class SearchSmtStorageMaterial extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialDesc" ,value="物料编码")
+    private String materialCode;
+
+    /**
+     * 储位编码
+     */
+    @ApiModelProperty(name="storageCode" ,value="储位编码")
+    private String storageCode;
 }

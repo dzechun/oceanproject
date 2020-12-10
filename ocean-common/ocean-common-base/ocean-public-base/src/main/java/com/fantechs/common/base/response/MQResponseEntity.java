@@ -1,12 +1,9 @@
 package com.fantechs.common.base.response;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author sunny

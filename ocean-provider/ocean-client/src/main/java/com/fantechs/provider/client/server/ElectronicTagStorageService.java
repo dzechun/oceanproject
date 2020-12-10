@@ -1,5 +1,6 @@
 package com.fantechs.provider.client.server;
 
+import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
 
 import java.util.List;
@@ -9,5 +10,7 @@ import java.util.List;
  */
 public interface ElectronicTagStorageService {
 
-    int  sendElectronicTagStorage(List<SmtSorting> Sorting);
+    int sendElectronicTagStorage(List<SmtSorting> Sorting);
+    SmtElectronicTagStorageDto sendPlaceMaterials(String materialCode);
+    int batchSortingDelete(List<String> Sorting);
 }

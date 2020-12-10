@@ -15,4 +15,5 @@ public interface SmtSortingMapper extends MyMapper<SmtSorting> {
     List<SmtSortingDto> findList(Map<String, Object> map);
 
     int batchUpdate(List<SmtSorting> smtSortings);
+    int delBatchBySortingCode(List<String> sortingCodes);
 }

@@ -44,11 +44,17 @@
       <if test="storageId!=null and storageId!=''">
         and ssm.storage_id=#{storageId}
       </if>
+      <if test="storageCode!=null and storageCode!=''">
+        and ss.storage_code like CONCAT('%', #{storageCode}, '%')
+      </if>
       <if test="storageName!=null and storageName!=''">
         and ss.storage_name like CONCAT('%', #{storageName}, '%')
       </if>
       <if test="materialId!=null and materialId!=''">
         and ssm.material_id=#{materialId}
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and sm.material_code=#{materialCode}
       </if>
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')

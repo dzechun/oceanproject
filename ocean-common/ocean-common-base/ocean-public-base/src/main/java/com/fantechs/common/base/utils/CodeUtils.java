@@ -194,29 +194,32 @@ public class CodeUtils {
 
 
     public static void main(String[] args) throws ParseException, IOException {
-        //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
-        String str1 = "0HJ";
-        int num=16;
-        Character[] nums= ArrayUtils.toObject(code.toCharArray());
-        List<Character> list = Arrays.asList(nums);
-        String str2 = list.get(num).toString();
-        String r=generateSerialNumber(str1,str2,code);
-        System.out.println(r);
 
-
-        Calendar cal= Calendar.getInstance();
-        String date="2020-01-03";
-        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd");
-        cal.setTime(sdf.parse(date));
-
-        int week = cal.get(Calendar.WEEK_OF_YEAR);
-        System.out.println(week);
-
-        String customizeValue="{\"1\": \"1\",\"2\": \"2\",\"3\": \"3\",\"4\": \"4\",\"5\": \"5\",\"6\": \"6\",\"7\": \"7\",\"8\": \"8\",\"9\": \"9\",\"10\": \"A\",\"11\": \"B\",\"12\": \"C\"}";
-        String a="[m]";
-        String typeCode = getTypeCode(a,customizeValue);
-        System.out.println(typeCode);
+        CodeUtils codeUtils = new CodeUtils(redisTemplate);
+        codeUtils.getId("ORDER-");
+//        //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//        String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
+//        String str1 = "0HJ";
+//        int num=16;
+//        Character[] nums= ArrayUtils.toObject(code.toCharArray());
+//        List<Character> list = Arrays.asList(nums);
+//        String str2 = list.get(num).toString();
+//        String r=generateSerialNumber(str1,str2,code);
+//        System.out.println(r);
+//
+//
+//        Calendar cal= Calendar.getInstance();
+//        String date="2020-01-03";
+//        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd");
+//        cal.setTime(sdf.parse(date));
+//
+//        int week = cal.get(Calendar.WEEK_OF_YEAR);
+//        System.out.println(week);
+//
+//        String customizeValue="{\"1\": \"1\",\"2\": \"2\",\"3\": \"3\",\"4\": \"4\",\"5\": \"5\",\"6\": \"6\",\"7\": \"7\",\"8\": \"8\",\"9\": \"9\",\"10\": \"A\",\"11\": \"B\",\"12\": \"C\"}";
+//        String a="[m]";
+//        String typeCode = getTypeCode(a,customizeValue);
+//        System.out.println(typeCode);
     }
 
 

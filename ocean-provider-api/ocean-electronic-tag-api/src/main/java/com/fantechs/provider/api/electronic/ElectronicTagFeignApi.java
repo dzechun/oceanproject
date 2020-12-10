@@ -53,7 +53,10 @@ public interface ElectronicTagFeignApi {
 
     @PostMapping("/smtSorting/batchSave")
     @ApiOperation("批量新增分拣单")
-    public ResponseEntity batchInsertSmtSorting(@
-                                                            ApiParam(value = "对象，Id必传",required = true)@RequestBody  List<SmtSorting> SmtSortings);
+    public ResponseEntity batchInsertSmtSorting(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  List<SmtSorting> SmtSortings);
+
+    @PostMapping("/smtSorting/batchDelete")
+    @ApiOperation("批量删除分拣单")
+    public ResponseEntity batchDeleteSorting(@ApiParam(value = "sortingCodes",required = true)@RequestBody  List<String> sortingCodes);
 
 }

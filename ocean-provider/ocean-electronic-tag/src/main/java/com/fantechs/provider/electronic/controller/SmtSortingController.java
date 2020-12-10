@@ -93,4 +93,10 @@ public class SmtSortingController {
     public ResponseEntity batchInsert(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated List<SmtSorting> SmtSortings) {
         return ControllerUtil.returnCRUD(SmtSortingService.batchSave(SmtSortings));
     }
+
+    @ApiOperation("批量删除")
+    @PostMapping("/batchDelete")
+    public ResponseEntity batchDelete(@ApiParam(value = "对象，sortingCode必传",required = true)@RequestBody @Validated List<String> sortingCodes) {
+        return ControllerUtil.returnCRUD(SmtSortingService.delBatchBySortingCode(sortingCodes));
+    }
 }

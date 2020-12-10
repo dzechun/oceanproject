@@ -21,5 +21,6 @@
         <module>ocean-quartz</module>    <!-- 定时任务调度器 -->
         <module>ocean-electronic-tag</module> <!-- 电子标签 -->
         <module>ocean-client</module>
+        <module>ocean-restapi</module>
     </modules>
 </project>

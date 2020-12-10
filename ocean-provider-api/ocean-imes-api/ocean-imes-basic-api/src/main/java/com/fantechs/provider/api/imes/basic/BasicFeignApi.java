@@ -2,7 +2,9 @@ package com.fantechs.provider.api.imes.basic;
 
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtStorage;
+import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,5 +25,9 @@ public interface BasicFeignApi {
     @PostMapping(value="/smtMaterial/findList")
     @ApiOperation(value = "获取物料信息",notes = "获取物料信息")
     ResponseEntity<List<SmtMaterial>> findSmtMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchSmtMaterial searchSmtMaterial);
+
+    @ApiOperation("根据条件查询物料对应储位信息列表")
+    @PostMapping("/smtStorageMaterial/findList")
+    public ResponseEntity<List<SmtStorageMaterial>> findStorageMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageMaterial searchSmtStorageMaterial) ;
 
 }

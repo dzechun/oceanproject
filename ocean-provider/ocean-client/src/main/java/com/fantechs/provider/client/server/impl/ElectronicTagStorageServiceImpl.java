@@ -8,7 +8,9 @@ import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -46,7 +48,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         for(SmtSorting sorting: sortingList){
             SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
             searchSmtMaterial.setMaterialCode(sorting.getMaterialCode());
-           List<SmtMaterial>   smtMaterials=   basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
+            List<SmtMaterial>   smtMaterials=   basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
             if(StringUtils.isEmpty(smtMaterials)){
                 throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"没有找到对应物料信息");
             }
@@ -71,5 +73,37 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     JSONObject.toJSONString(mQResponseEntity));
         }
         return i;
+    }
+
+    @Override
+    public SmtElectronicTagStorageDto sendPlaceMaterials(String materialCode) {
+        if(StringUtils.isEmpty(materialCode)){
+            throw  new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+        SearchSmtStorageMaterial searchSmtStorageMaterial =  new SearchSmtStorageMaterial();
+        searchSmtStorageMaterial.setMaterialCode(materialCode);
+        List<SmtStorageMaterial> storageMaterialList=basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
+        if(StringUtils.isEmpty(storageMaterialList)){
+            throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"没有找到对应物料信息");
+        }
+
+        SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
+        searchSmtElectronicTagStorage.setMaterialId(storageMaterialList.get(0).getMaterialId().toString());
+        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList=electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+        if(StringUtils.isEmpty(smtElectronicTagStorageDtoList)){
+            throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请先维护物料对应储位的信息");
+        }
+//        MQResponseEntity mQResponseEntity =  new MQResponseEntity<>();
+//        mQResponseEntity.setCode(1001);
+//        smtElectronicTagStorageDtoList.get(0).setQuantity(BigDecimal.ZERO);
+//        mQResponseEntity.setData(smtElectronicTagStorageDtoList.get(0));
+//        fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
+//                JSONObject.toJSONString(mQResponseEntity));
+        return smtElectronicTagStorageDtoList.get(0);
+    }
+
+    @Override
+    public int batchSortingDelete(List<String> sortingCodes) {
+        return electronicTagFeignApi.batchDeleteSorting(sortingCodes).getCount();
     }
 }
