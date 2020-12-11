@@ -36,7 +36,7 @@ spring:
       username: sa
       password: Jf@2020
   redis:
-    host: 10.182.163.81
+    host: 10.182.163.246
     port: 6379
     password:
     jackson:

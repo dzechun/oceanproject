@@ -3,8 +3,11 @@ package com.fantechs.provider.api.imes.basic;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
+import com.fantechs.common.base.entity.basic.SmtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,4 +44,30 @@ public interface BasicFeignApi {
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/smtMaterial/findList")
     ResponseEntity<List<SmtMaterial>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial );
+
+    @ApiOperation(value = "批量更新", notes = "批量更新")
+    @PostMapping("/smtStorage/batchUpdate")
+    ResponseEntity batchUpdate(@ApiParam(value = "储位集合", required = true) @RequestBody List<SmtStorage> smtStorages);
+
+    @ApiOperation(value = "批量新增", notes = "批量新增")
+    @PostMapping("/smtStorage/batchSave")
+    ResponseEntity batchAdd(@ApiParam(value = "储位集合", required = true) @RequestBody List<SmtStorage> smtStorages);
+
+    @ApiOperation("根据条件查询信息列表")
+    @PostMapping("/smtStorage/findList")
+    ResponseEntity<List<SmtStorage>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorage searchSmtStorage);
+
+    @ApiOperation("根据仓库编码批量更新")
+    @PostMapping("/smtWarehouse/batchUpdateByCode")
+    ResponseEntity batchUpdateWarehouseByCode(@ApiParam(value = "编码必传")@RequestBody List<SmtWarehouse> smtWarehouses);
+
+    @ApiOperation("批量新增")
+    @PostMapping("/smtWarehouse/batchSave")
+    ResponseEntity batchSave(@ApiParam(value = "批量新增")@RequestBody List<SmtWarehouse> smtWarehouses);
+
+    @ApiOperation("根据条件查询信息列表")
+    @PostMapping("/smtWarehouse/findList")
+    ResponseEntity<List<SmtWarehouse>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWarehouse searchSmtWarehouse);
+
+
 }

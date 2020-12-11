@@ -34,4 +34,19 @@ public class GetDataFromU9Controller {
             return ControllerUtil.returnFail("同步失败", -1);
         }
     }
+
+    @GetMapping("/updateWarehouseFromU9")
+    @ApiOperation(value = "同步U9仓库数据", notes = "同步U9仓库数据")
+    public ResponseEntity updateWarehouse() throws Exception {
+
+        int i = getDataFromU9Service.updateWarehouse();
+        if (i==500){
+            return ControllerUtil.returnFail("正在同步更新物料数据，请勿重复操作",500);
+        }
+        if (i==1){
+            return ControllerUtil.returnSuccess("同步完成");
+        }else {
+            return ControllerUtil.returnFail("同步失败", -1);
+        }
+    }
 }
