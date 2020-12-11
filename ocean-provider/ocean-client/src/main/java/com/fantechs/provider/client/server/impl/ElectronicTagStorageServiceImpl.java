@@ -16,7 +16,10 @@ import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.client.listener.ElectronicTagReceiver;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ import java.util.List;
  */
 @Service
 public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageService {
+    private static final Logger log = LoggerFactory.getLogger(ElectronicTagReceiver.class);
     @Autowired
     private  FanoutSender fanoutSender;
     @Autowired
@@ -43,7 +47,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if(StringUtils.isNotEmpty(smtSortingList)){
             throw  new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"正在处理其他分拣单，请稍后在试");
         }
-        int i = 0;
         List<SmtElectronicTagStorageDto> list = new LinkedList<>();
         for(SmtSorting sorting: sortingList){
             searchSmtSorting = new SearchSmtSorting();
@@ -72,16 +75,20 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             list.add(smtElectronicTagStorageDtoList.get(0));
             sorting.setStatus((byte)1);
         }
-        i=electronicTagFeignApi.batchInsertSmtSorting(sortingList).getCount();
+        electronicTagFeignApi.batchInsertSmtSorting(sortingList).getCount();
         //不同的标签可能对应的队列不一样，最终一条一条发给客户端
         for(SmtElectronicTagStorageDto  smtElectronicTagStorageDto : list){
             MQResponseEntity mQResponseEntity =  new MQResponseEntity<>();
             mQResponseEntity.setCode(1001);
             mQResponseEntity.setData(smtElectronicTagStorageDto);
+            log.info("===========开始发送消息给客户端===============");
             fanoutSender.send(smtElectronicTagStorageDto.getQueueName(),
                     JSONObject.toJSONString(mQResponseEntity));
+            log.info("===========队列名称:"+smtElectronicTagStorageDto.getQueueName());
+            log.info("===========消息内容:"+JSONObject.toJSONString(mQResponseEntity));
+            log.info("===========发送消息给客户端完成===============");
         }
-        return i;
+        return 1;
     }
 
     @Override
@@ -113,6 +120,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     public int batchSortingDelete(List<String> sortingCodes) {
-        return electronicTagFeignApi.batchDeleteSorting(sortingCodes).getCount();
+        electronicTagFeignApi.batchDeleteSorting(sortingCodes);
+        return 1;
     }
 }

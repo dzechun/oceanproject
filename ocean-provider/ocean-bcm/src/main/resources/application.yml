@@ -1,0 +1,13 @@
+server:
+  port: 8802
+  maxHttpHeaderSize: 10000000
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: @pom.artifactId@
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB

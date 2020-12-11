@@ -16,6 +16,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>ocean-mes-pm</module>
+        <module>ocean-mes-sfc</module>
+        <module></module>
+        <module></module>
     </modules>
 
 </project>
