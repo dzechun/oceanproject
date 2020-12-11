@@ -1,8 +1,13 @@
 package com.fantechs.provider.restapi.imes.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.entity.basic.SmtWarehouse;
 import com.fantechs.common.base.entity.basic.U9.CustGetItemInfo;
+import com.fantechs.common.base.entity.basic.U9.CustGetWhInfo;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -10,9 +15,13 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.restapi.imes.config.ConstantBase;
 import com.fantechs.provider.restapi.imes.config.DynamicDataSourceHolder;
-import com.fantechs.provider.restapi.imes.mapper.GetDataFromU9Mapper;
+import com.fantechs.provider.restapi.imes.mapper.CustGetItemInfoFromU9Mapper;
+import com.fantechs.provider.restapi.imes.mapper.CustGetWharehouseInfoFromU9Mapper;
 import com.fantechs.provider.restapi.imes.service.GetDataFromU9Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -23,14 +32,18 @@ import java.util.List;
 @Service
 public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
 
+    private Logger logger = LoggerFactory.getLogger(GetDataFromU9Service.class);
+
     @Resource
     private RedisUtil redisUtil;
     @Resource
     private ConstantBase constantBase;
     @Resource
-    private GetDataFromU9Mapper getDataFromU9Mapper;
+    private CustGetItemInfoFromU9Mapper custGetItemInfoFromU9Mapper;
     @Resource
     private BasicFeignApi basicFeignApi;
+    @Resource
+    private CustGetWharehouseInfoFromU9Mapper custGetWharehouseInfoFromU9Mapper;
 
     @Override
     public int updateMaterial() throws Exception {
@@ -117,7 +130,7 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
         if (!StringUtils.isEmpty(lastUpdateDate)) {
             criteria.andGreaterThanOrEqualTo("最后更新时间", lastUpdateDate);
         }
-        List<CustGetItemInfo> listItemInfos = getDataFromU9Mapper.selectByExample(example);
+        List<CustGetItemInfo> listItemInfos = custGetItemInfoFromU9Mapper.selectByExample(example);
         if (StringUtils.isNotEmpty(listItemInfos)) {
             //恢复主数据源
             DynamicDataSourceHolder.removeDataSource();
@@ -126,6 +139,79 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
             //恢复主数据源
             DynamicDataSourceHolder.removeDataSource();
             return null;
+        }
+    }
+
+    @Override
+    public int updateWarehouse() throws Exception {
+
+        // Redis锁，预防短时间内连续操作请求
+        String updateWarehouse = (String) redisUtil.get("updateWarehouse");
+        if (StringUtils.isEmpty(updateWarehouse)) {
+            redisUtil.set("updateWarehouse", "updateWarehouse", 60);
+        } else {
+            return 500;
+        }
+
+        List<CustGetWhInfo> listWhInfos = getWarehouseInfoFromU9();
+
+        Date date = new Date();
+        List<SmtWarehouse> smtWarehousesAddList = new ArrayList<>();//批量新增集合
+        List<SmtWarehouse> smtWarehousesUpdateList = new ArrayList<>();//批量更新集合
+
+        SearchSmtWarehouse searchSmtWarehouse = new SearchSmtWarehouse();//仓库查询实体
+        searchSmtWarehouse.setCodeQueryMark(1);
+        for (CustGetWhInfo info : listWhInfos) {
+            SmtWarehouse smtWarehouse = new SmtWarehouse();
+            smtWarehouse.setWarehouseCode(info.getCode());
+            smtWarehouse.setWarehouseName(info.getName());
+            searchSmtWarehouse.setWarehouseCode(smtWarehouse.getWarehouseCode());
+            ResponseEntity<List<SmtWarehouse>> responseEntity = basicFeignApi.findList(searchSmtWarehouse);
+            if (StringUtils.isNotEmpty(responseEntity.getData())){
+                smtWarehousesUpdateList.add(smtWarehouse);
+            }else {
+                smtWarehousesAddList.add(smtWarehouse);
+            }
+        }
+
+
+        logger.info("/material/updateMaterialByU9  同步更新仓库信息接口 " + " smtWarehousesAddList:" + JSON.toJSONString(smtWarehousesUpdateList));
+        basicFeignApi.batchUpdateWarehouseByCode(smtWarehousesUpdateList);
+        logger.info("/material/updateMaterialByU9  同步新增仓库信息接口 " + " smtWarehousesUpdateList:" + JSON.toJSONString(smtWarehousesAddList));
+        basicFeignApi.batchSave(smtWarehousesAddList);
+
+        // 释放Redis锁
+        if (StringUtils.isNotEmpty(redisUtil.get("updateWarehouse"))) {
+            redisUtil.del("updateWarehouse");
+        }
+
+        redisUtil.set(ConstantBase.API_LASTUPDATE_TIME_WAREHOUSE, DateUtils.getDateString(date, "yyyy-MM-dd HH:mm:ss"));
+
+        return 1;
+    }
+
+    //从U9获取仓库数据
+    public List<CustGetWhInfo> getWarehouseInfoFromU9(){
+
+        //切换到从数据源
+        DynamicDataSourceHolder.putDataSouce("secondary");
+
+        String lastUpdateDate = (String) redisUtil.get(ConstantBase.API_LASTUPDATE_TIME_WAREHOUSE);
+        Example example = new Example(CustGetWhInfo.class);
+        Example.Criteria criteria = example.createCriteria().andEqualTo("orgid", constantBase.getDefaultOrgId());
+        if (!StringUtils.isEmpty(lastUpdateDate)) {
+//            criteria.andGreaterThanOrEqualTo("udpatetime", lastUpdateDate);
+        }
+
+        List<CustGetWhInfo> listWhInfos = custGetWharehouseInfoFromU9Mapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(listWhInfos)) {
+            //恢复主数据源
+            DynamicDataSourceHolder.removeDataSource();
+            return null;
+        }else {
+            //恢复主数据源
+            DynamicDataSourceHolder.removeDataSource();
+            return listWhInfos;
         }
     }
 }

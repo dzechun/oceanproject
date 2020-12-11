@@ -91,7 +91,7 @@ management:
       show-details: ALWAYS
 
 ##对接U9
-url:
+server-url:
   qisGetNewUpdateCW: http://10.182.163.71:8080/qisapi/api/getNewUpdateCW
 
 constant-base:

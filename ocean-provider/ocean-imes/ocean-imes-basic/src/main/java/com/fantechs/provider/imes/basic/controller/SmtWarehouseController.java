@@ -101,7 +101,14 @@ public class SmtWarehouseController {
 
     @ApiOperation("根据仓库编码批量更新")
     @PostMapping("/batchUpdateByCode")
-    public ResponseEntity batchUpdateByCode(@ApiParam(value = "编码必传",required = true)@RequestBody List<SmtWarehouse> smtWarehouses) {
+    public ResponseEntity batchUpdateWarehouseByCode(@ApiParam(value = "编码必传")@RequestBody List<SmtWarehouse> smtWarehouses) {
          return ControllerUtil.returnDataSuccess("",smtWarehouseService.batchUpdateByCode(smtWarehouses));
     }
+
+    @ApiOperation("批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchSave(@ApiParam(value = "批量新增")@RequestBody List<SmtWarehouse> smtWarehouses) {
+        return ControllerUtil.returnDataSuccess("",smtWarehouseService.batchSave(smtWarehouses));
+    }
+
 }

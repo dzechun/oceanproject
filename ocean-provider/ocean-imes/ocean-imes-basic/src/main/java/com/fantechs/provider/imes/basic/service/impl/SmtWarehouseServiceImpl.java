@@ -149,7 +149,11 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     public int batchUpdateByCode(List<SmtWarehouse> smtWarehouses) {
-        return smtWarehouseMapper.batchUpdateByCode(smtWarehouses);
+        if (StringUtils.isNotEmpty(smtWarehouses)){
+            return smtWarehouseMapper.batchUpdateByCode(smtWarehouses);
+        }else {
+            return 0;
+        }
     }
 
     @Override

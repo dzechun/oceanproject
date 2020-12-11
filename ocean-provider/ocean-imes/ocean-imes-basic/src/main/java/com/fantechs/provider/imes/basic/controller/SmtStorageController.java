@@ -1,9 +1,8 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.SmtStorage;
+import com.fantechs.common.base.entity.basic.history.SmtHtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -14,10 +13,10 @@ import com.fantechs.provider.imes.basic.service.SmtHtStorageService;
 import com.fantechs.provider.imes.basic.service.SmtStorageService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- *
  * Created by wcz on 2020/09/23.
  */
 @RestController
@@ -42,81 +40,70 @@ public class SmtStorageController {
     @Autowired
     private SmtHtStorageService smtHtStorageService;
 
-    @PostMapping("/updateWarehouseAndStorageFromQis")
-    @ApiOperation(value = "获取QIS仓库储位数据")
-    public ResponseEntity updateWarehouseAndStorageFromQis() throws Exception {
-
-        try {
-            int i = smtStorageService.updateWarehouseAndStorageFromQis();
-            if (i==0){
-                return ControllerUtil.returnSuccess("暂无同步数据");
-            }else if (i>0){
-                return ControllerUtil.returnSuccess("同步成功");
-            }else {
-                return ControllerUtil.returnFail("同步失败",-1);
-            }
-        } catch (Exception e) {
-            return ControllerUtil.returnFail(ErrorCodeEnum.OPT20012002);
-        }
-    }
-
-    @ApiOperation(value = "批量更新",notes = "批量更新")
+    @ApiOperation(value = "批量更新", notes = "批量更新")
     @PostMapping("/batchUpdate")
-    public ResponseEntity batchUpdate(@ApiParam(value = "必传：storageCode、storageName",required = true)@RequestBody @Validated List<SmtStorage> smtStorages) {
+    public ResponseEntity batchUpdate(@ApiParam(value = "储位集合", required = true) @RequestBody List<SmtStorage> smtStorages) {
         return ControllerUtil.returnCRUD(smtStorageService.batchUpdate(smtStorages));
     }
 
+    @ApiOperation(value = "批量新增", notes = "批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchAdd(@ApiParam(value = "储位集合", required = true) @RequestBody List<SmtStorage> smtStorages) {
+        return ControllerUtil.returnCRUD(smtStorageService.batchSave(smtStorages));
+    }
 
-    @ApiOperation(value = "新增",notes = "新增")
+
+    @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：storageCode、storageName",required = true)@RequestBody @Validated SmtStorage storage) {
+    public ResponseEntity add(@ApiParam(value = "必传：storageCode、storageName", required = true) @RequestBody @Validated SmtStorage storage) {
         return ControllerUtil.returnCRUD(smtStorageService.save(storage));
     }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(smtStorageService.batchDelete(ids));
     }
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value = SmtStorage.update.class) SmtStorage storage) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = SmtStorage.update.class) SmtStorage storage) {
         return ControllerUtil.returnCRUD(smtStorageService.update(storage));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtStorage> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) {
+    public ResponseEntity<SmtStorage> detail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id) {
         SmtStorage storage = smtStorageService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(storage,StringUtils.isEmpty(storage)?0:1);
+        return ControllerUtil.returnDataSuccess(storage, StringUtils.isEmpty(storage) ? 0 : 1);
     }
 
     @ApiOperation("根据条件查询信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtStorage>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorage searchSmtStorage) {
-        Page<Object> page = PageHelper.startPage(searchSmtStorage.getStartPage(),searchSmtStorage.getPageSize());
+    public ResponseEntity<List<SmtStorage>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorage searchSmtStorage) {
+        Page<Object> page = PageHelper.startPage(searchSmtStorage.getStartPage(), searchSmtStorage.getPageSize());
         List<SmtStorage> list = smtStorageService.findList(searchSmtStorage);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
     @ApiOperation("根据条件查询信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtHtStorage>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorage searchSmtStorage) {
-        Page<Object> page = PageHelper.startPage(searchSmtStorage.getStartPage(),searchSmtStorage.getPageSize());
+    public ResponseEntity<List<SmtHtStorage>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorage searchSmtStorage) {
+        Page<Object> page = PageHelper.startPage(searchSmtStorage.getStartPage(), searchSmtStorage.getPageSize());
         List<SmtHtStorage> list = smtHtStorageService.findHtList(searchSmtStorage);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
     /**
      * 导出数据
+     *
      * @return
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出储位信息excel",notes = "导出储位信息excel",produces = "application/octet-stream")
+    @ApiOperation(value = "导出储位信息excel", notes = "导出储位信息excel", produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-                              @RequestBody(required = false) SearchSmtStorage searchSmtStorage){
+    @RequestBody(required = false) SearchSmtStorage searchSmtStorage) {
         List<SmtStorage> list = smtStorageService.findList(searchSmtStorage);
         try {
             // 导出操作

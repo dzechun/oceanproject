@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "url")
+@ConfigurationProperties(prefix = "server-url")
 public class RestURL {
 
     private String u9UrlTest;
