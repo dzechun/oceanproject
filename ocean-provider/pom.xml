@@ -22,5 +22,7 @@
         <module>ocean-electronic-tag</module> <!-- 电子标签 -->
         <module>ocean-client</module>
         <module>ocean-restapi</module>
+        <module>ocean-mes</module>    <!-- mes服务 -->
+        <module>ocean-wms</module>    <!-- wms服务 -->
     </modules>
 </project>

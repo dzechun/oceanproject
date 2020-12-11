@@ -4,7 +4,6 @@ package com.fantechs.provider.electronic.service.Impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtPaddingMaterialDto;
 import com.fantechs.common.base.electronic.entity.SmtPaddingMaterial;
-import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
@@ -41,8 +40,7 @@ public class SmtPaddingMaterialServiceImpl extends BaseService<SmtPaddingMateria
         if (StringUtils.isNotEmpty(smtPaddingMaterials)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-        smtPaddingMaterial.setStatus((byte) 1);
-        return smtPaddingMaterialMapper.insertUseGeneratedKeys(smtPaddingMaterial);
+        return smtPaddingMaterialMapper.insertSelective(smtPaddingMaterial);
     }
 
     @Override
