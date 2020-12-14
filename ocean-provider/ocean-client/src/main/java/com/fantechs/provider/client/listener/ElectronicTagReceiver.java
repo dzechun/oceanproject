@@ -81,6 +81,7 @@ public class ElectronicTagReceiver {
                if(StringUtils.isEmpty(findSortingList)){
                    PtlSortingDTO ptlSortingDTO  = new PtlSortingDTO();
                    searchSmtSorting1.setStatus(null);
+                   searchSmtSorting1.setPageSize(99999);
                    //获取分拣单号的所有物料、储位信息回传MES
                    findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
                    List<PtlSortingDetailDTO> ptlSortingDetailDTOList = new LinkedList<>();

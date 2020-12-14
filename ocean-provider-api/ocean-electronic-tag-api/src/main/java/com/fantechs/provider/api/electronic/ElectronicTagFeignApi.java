@@ -5,6 +5,7 @@ import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
 import com.fantechs.common.base.electronic.entity.SmtClientManage;
+import com.fantechs.common.base.electronic.entity.SmtPaddingMaterial;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtClientManage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
@@ -53,10 +54,14 @@ public interface ElectronicTagFeignApi {
 
     @PostMapping("/smtSorting/batchSave")
     @ApiOperation("批量新增分拣单")
-    public ResponseEntity batchInsertSmtSorting(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  List<SmtSorting> SmtSortings);
+    ResponseEntity batchInsertSmtSorting(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  List<SmtSorting> SmtSortings);
 
     @PostMapping("/smtSorting/batchDelete")
     @ApiOperation("批量删除分拣单")
-    public ResponseEntity batchDeleteSorting(@ApiParam(value = "sortingCodes",required = true)@RequestBody  List<String> sortingCodes);
+    ResponseEntity batchDeleteSorting(@ApiParam(value = "sortingCodes",required = true)@RequestBody  List<String> sortingCodes);
+
+    @ApiOperation(value = "新增上料",notes = "新增上料")
+    @PostMapping("/smtPaddingMaterial/add")
+    ResponseEntity addPaddingMaterial(@ApiParam(value = "必传：paddingMaterialCode、materialCode、quantity")@RequestBody SmtPaddingMaterial smtPaddingMaterial);
 
 }

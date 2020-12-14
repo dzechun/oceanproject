@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
+import com.fantechs.common.base.electronic.entity.SmtPaddingMaterial;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
@@ -13,6 +14,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -109,6 +112,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if(StringUtils.isEmpty(smtElectronicTagStorageDtoList)){
             throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请先维护物料对应储位的信息");
         }
+        SmtPaddingMaterial smtPaddingMaterial = new SmtPaddingMaterial();
+        smtPaddingMaterial.setMaterialCode(materialCode);
+        smtPaddingMaterial.setQuantity(BigDecimal.ZERO);
+        smtPaddingMaterial.setStatus((byte)2);
+        smtPaddingMaterial.setPaddingMaterialCode(CodeUtils.getScheduleNo("PM-"));
+        electronicTagFeignApi.addPaddingMaterial(smtPaddingMaterial);
 //        MQResponseEntity mQResponseEntity =  new MQResponseEntity<>();
 //        mQResponseEntity.setCode(1001);
 //        smtElectronicTagStorageDtoList.get(0).setQuantity(BigDecimal.ZERO);
