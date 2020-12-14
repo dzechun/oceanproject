@@ -10,7 +10,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.bcm","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.client.mapper"})
+@MapperScan({"com.fantechs.provider.bcm.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider.api")
 public class OceanBcmApplication {
 

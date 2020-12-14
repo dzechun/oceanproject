@@ -1,4 +1,4 @@
-package com.fantechs.provider.mes.pm;
+package com.fantechs.provider.ids;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,13 +9,13 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan({"com.fantechs.provider.mes.pm","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.imes.pm.mapper"})
-@EnableFeignClients(basePackages = "com.fantechs.provider")
-public class OceanMesPmApplication {
+@ComponentScan({"com.fantechs.provider.ids","com.fantechs.common"})
+@MapperScan({"com.fantechs.provider.ids.mapper"})
+@EnableFeignClients(basePackages = "com.fantechs.provider.api")
+public class OceanIdsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OceanMesPmApplication.class, args);
+        SpringApplication.run(OceanIdsApplication.class, args);
     }
 
 }

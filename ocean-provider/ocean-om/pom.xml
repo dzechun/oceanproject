@@ -1,44 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>ocean-provider</artifactId>
         <groupId>com.fantechs.provider</groupId>
+        <artifactId>ocean-provider</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fantechs.provider.client</groupId>
-    <artifactId>ocean-client</artifactId>
+    <groupId>com.fantechs.provider.om</groupId>
+    <artifactId>ocean-om</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-client</name>
+    <name>ocean-om</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.fantechs.common.base.electronic</groupId>
-            <artifactId>ocean-electronic-tag-base</artifactId>
+            <groupId>com.fantechs.common.base</groupId>
+            <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-base-config</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fantechs.provider.api.electronic</groupId>
-            <artifactId>ocean-electronic-tag-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <!-- rabbitMQ -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.imes.basic</groupId>
-            <artifactId>ocean-imes-basic-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
@@ -77,13 +60,12 @@
             <!--<goal>copy-dependencies</goal>-->
             <!--</goals>-->
             <!--<configuration>-->
-            <!--<outputDirectory>D:/IMES/lib/basic/electronic-tag</outputDirectory>-->
+            <!--<outputDirectory>D:/IMES/lib</outputDirectory>-->
             <!--</configuration>-->
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
         </plugins>
     </build>
-
 
 </project>

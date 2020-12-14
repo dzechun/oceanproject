@@ -14,12 +14,17 @@
     <name>ocean-bcm</name>
     <description>Demo project for Spring Boot</description>
 
+
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
+            <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.common.config</groupId>
+            <artifactId>ocean-base-config</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -36,15 +41,11 @@
                 <!--&lt;!&ndash;此处可以指定包含jar包&ndash;&gt;-->
                 <!--<include>-->
                 <!--<groupId>com.fantechs.common.base</groupId>-->
-                <!--<artifactId>ocean-public-base</artifactId>-->
+                <!--<artifactId>ocean-imes-base</artifactId>-->
                 <!--</include>-->
                 <!--<include>-->
                 <!--<groupId>com.fantechs.common.config</groupId>-->
-                <!--<artifactId>ocean-base-config</artifactId>-->
-                <!--</include>-->
-                <!--<include>-->
-                <!--<groupId>>com.fantechs.provider.api.security</groupId>-->
-                <!--<artifactId>ocean-security-api</artifactId>-->
+                <!--<artifactId>ocean-imes-config</artifactId>-->
                 <!--</include>-->
                 <!--</includes>-->
                 <!--</configuration>-->
@@ -61,12 +62,13 @@
             <!--<goal>copy-dependencies</goal>-->
             <!--</goals>-->
             <!--<configuration>-->
-            <!--<outputDirectory>D:/IMES/lib/security/libs</outputDirectory>-->
+            <!--<outputDirectory>D:/IMES/lib</outputDirectory>-->
             <!--</configuration>-->
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
         </plugins>
     </build>
+
 
 </project>
