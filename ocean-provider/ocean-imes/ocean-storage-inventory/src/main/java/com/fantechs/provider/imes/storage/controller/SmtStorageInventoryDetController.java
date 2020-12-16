@@ -2,7 +2,7 @@ package com.fantechs.provider.imes.storage.controller;
 
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
-import com.fantechs.common.base.entity.storage.search.SearchSmtStorageInventoryDet;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

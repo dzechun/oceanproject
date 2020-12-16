@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProductFamilyMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductFamily">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="product_family_id" jdbcType="BIGINT" property="productFamilyId" />
+    <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode" />
+    <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName" />
+    <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bpf.product_family_id,
+	bpf.product_family_code,
+	bpf.product_family_name,
+	bpf.product_family_desc,
+	bpf.`status`,
+	bpf.create_user_id,
+	bpf.create_time,
+	bpf.modified_user_id,
+	bpf.modified_time,
+	bpf.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    FROM fantech_imes.base_product_family AS bpf
+    LEFT JOIN ocean.sys_user su ON bpf.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bpf.modified_user_id = sus.user_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="productFamilyCode != null and productFamilyCode!=''">
+        and bpf.product_family_code like CONCAT('%', #{productFamilyCode}, '%')
+      </if>
+      <if test="productFamilyName != null and productFamilyName!=''">
+        and bpf.product_family_name like CONCAT('%', #{productFamilyName}, '%')
+      </if>
+      <if test="productFamilyDesc != null and productFamilyDesc!=''">
+        and bpf.product_family_desc like CONCAT('%', #{productFamilyDesc}, '%')
+      </if>
+      <if test="status!=null and status!=''">
+        and bpf.status=#{status}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+
+</mapper>

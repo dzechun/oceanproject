@@ -77,7 +77,7 @@ public class SmtSorting extends ValidGroup implements Serializable {
     private Byte status;
 
     /**
-     * 状态(0-未开始，1-分拣中 2-已完成)
+     * 是否客户端传入(0-是，1-否)
      */
     @ApiModelProperty(name="status",value = "是否客户端传入(0-是，1-否)")
     @Transient

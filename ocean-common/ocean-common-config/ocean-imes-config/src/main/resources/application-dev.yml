@@ -89,13 +89,3 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-
-##对接U9
-server-url:
-  qisGetNewUpdateCW: http://10.182.163.71:8080/qisapi/api/getNewUpdateCW
-
-constant-base:
-  defaultOrgId: 1001802050000491
-  API_LASTUPDATE_TIME_CW: 2017
-  defaultOrgNum: N
-  defaultOrgName: 广东纽恩泰新能源科技发展有限公司

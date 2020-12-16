@@ -36,59 +36,60 @@ import java.util.List;
 public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageService {
     private static final Logger log = LoggerFactory.getLogger(ElectronicTagReceiver.class);
     @Autowired
-    private  FanoutSender fanoutSender;
+    private FanoutSender fanoutSender;
     @Autowired
     private ElectronicTagFeignApi electronicTagFeignApi;
     @Autowired
     private BasicFeignApi basicFeignApi;
+
     @Override
     public int sendElectronicTagStorage(List<SmtSorting> sortingList) {
         //是否有在做单据
         SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
-        searchSmtSorting.setStatus((byte)1);
-        List<SmtSortingDto>  smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
-        if(StringUtils.isNotEmpty(smtSortingList)){
-            throw  new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"正在处理其他分拣单，请稍后在试");
+        searchSmtSorting.setStatus((byte) 1);
+        List<SmtSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+        if (StringUtils.isNotEmpty(smtSortingList)) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他分拣单，请稍后在试");
         }
         List<SmtElectronicTagStorageDto> list = new LinkedList<>();
-        for(SmtSorting sorting: sortingList){
+        for (SmtSorting sorting : sortingList) {
             searchSmtSorting = new SearchSmtSorting();
             searchSmtSorting.setSortingCode(sorting.getSortingCode());
             smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
-            if(StringUtils.isNotEmpty(smtSortingList)){
-                throw  new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复分拣单");
+            if (StringUtils.isNotEmpty(smtSortingList)) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
             }
             SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
             searchSmtMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<SmtMaterial>   smtMaterials=   basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-            if(StringUtils.isEmpty(smtMaterials)){
-                throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"没有找到对应物料信息");
+            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
+            if (StringUtils.isEmpty(smtMaterials)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
             SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
             searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList=electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
-            if(StringUtils.isEmpty(smtElectronicTagStorageDtoList)){
-                throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请先维护储位对应的电子标签信息");
+            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
             }
-            if(StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())){
-                throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"没有找到物料对应的储位信息");
+            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
             }
             smtElectronicTagStorageDtoList.get(0).setQuantity(sorting.getQuantity());
             list.add(smtElectronicTagStorageDtoList.get(0));
-            sorting.setStatus((byte)1);
+            sorting.setStatus((byte) 1);
         }
         electronicTagFeignApi.batchInsertSmtSorting(sortingList).getCount();
         //不同的标签可能对应的队列不一样，最终一条一条发给客户端
-        for(SmtElectronicTagStorageDto  smtElectronicTagStorageDto : list){
-            MQResponseEntity mQResponseEntity =  new MQResponseEntity<>();
+        for (SmtElectronicTagStorageDto smtElectronicTagStorageDto : list) {
+            MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
             mQResponseEntity.setCode(1001);
             mQResponseEntity.setData(smtElectronicTagStorageDto);
             log.info("===========开始发送消息给客户端===============");
             fanoutSender.send(smtElectronicTagStorageDto.getQueueName(),
                     JSONObject.toJSONString(mQResponseEntity));
-            log.info("===========队列名称:"+smtElectronicTagStorageDto.getQueueName());
-            log.info("===========消息内容:"+JSONObject.toJSONString(mQResponseEntity));
+            log.info("===========队列名称:" + smtElectronicTagStorageDto.getQueueName());
+            log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
             log.info("===========发送消息给客户端完成===============");
         }
         return 1;
@@ -96,26 +97,26 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     public SmtElectronicTagStorageDto sendPlaceMaterials(String materialCode) {
-        if(StringUtils.isEmpty(materialCode)){
-            throw  new BizErrorException(ErrorCodeEnum.GL99990100);
+        if (StringUtils.isEmpty(materialCode)) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
-        SearchSmtStorageMaterial searchSmtStorageMaterial =  new SearchSmtStorageMaterial();
+        SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
         searchSmtStorageMaterial.setMaterialCode(materialCode);
-        List<SmtStorageMaterial> storageMaterialList=basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-        if(StringUtils.isEmpty(storageMaterialList)){
-            throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"没有找到对应物料信息");
+        List<SmtStorageMaterial> storageMaterialList = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
+        if (StringUtils.isEmpty(storageMaterialList)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
         }
 
         SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
         searchSmtElectronicTagStorage.setMaterialId(storageMaterialList.get(0).getMaterialId().toString());
-        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList=electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
-        if(StringUtils.isEmpty(smtElectronicTagStorageDtoList)){
-            throw  new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请先维护物料对应储位的信息");
+        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护物料对应储位的信息");
         }
         SmtPaddingMaterial smtPaddingMaterial = new SmtPaddingMaterial();
         smtPaddingMaterial.setMaterialCode(materialCode);
         smtPaddingMaterial.setQuantity(BigDecimal.ZERO);
-        smtPaddingMaterial.setStatus((byte)2);
+        smtPaddingMaterial.setStatus((byte) 2);
         smtPaddingMaterial.setPaddingMaterialCode(CodeUtils.getScheduleNo("PM-"));
         electronicTagFeignApi.addPaddingMaterial(smtPaddingMaterial);
 //        MQResponseEntity mQResponseEntity =  new MQResponseEntity<>();

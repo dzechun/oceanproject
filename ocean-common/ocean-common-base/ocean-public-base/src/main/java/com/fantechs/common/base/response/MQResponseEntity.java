@@ -14,30 +14,30 @@ import java.io.Serializable;
                 "所有的接口返回的接口均由ResponseEntity实体封装后返回,主要字段有code,message,data。" +
                         "如果数据正常返回,code为0,失败则为非0;错误信息在message字段中给出;如果请求正常返回,数据在data字段中获取"
 )
-public class MQResponseEntity<T>   implements Serializable {
+public class MQResponseEntity<T> implements Serializable {
 
     private static final long serialVersionUID = -3313878706348433292L;
 
-    @ApiModelProperty(name = "code",value = "执行动作编码",example = "0")
+    @ApiModelProperty(name = "code", value = "执行动作编码", example = "0")
     private int code;
-    @ApiModelProperty(name = "message",value = "提示信息",example = "登录失败")
+    @ApiModelProperty(name = "message", value = "提示信息", example = "登录失败")
     private String message;
-    @ApiModelProperty(name = "data",value = "数据",example = "{}")
+    @ApiModelProperty(name = "data", value = "数据", example = "{}")
     private T data;
-    @ApiModelProperty(name = "count",value = "总数",example = "{}")
+    @ApiModelProperty(name = "count", value = "总数", example = "{}")
     private int count;
 //    @ApiModelProperty(name = "snedTime",value = "发送时间",example = "{}")
 //    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
 //    private Date snedTime;
-    @ApiModelProperty(name = "key",value = "身份标识",example = "身份标识")
+    @ApiModelProperty(name = "key", value = "身份标识", example = "身份标识")
     private String key;
 
 
     public MQResponseEntity() {
         this.code = 0;
         this.message = "";
-        this.data=null;
-        this.count=0;
+        this.data = null;
+        this.count = 0;
 //        this.snedTime=new Date();
         this.key = "";
     }
@@ -91,12 +91,12 @@ public class MQResponseEntity<T>   implements Serializable {
         this.key = key;
     }
 
-    public void setErrorMessage(String msg){
+    public void setErrorMessage(String msg) {
         this.code = 1;
         this.message = msg;
     }
 
-    public void setErrorMessage(String msg,int code){
+    public void setErrorMessage(String msg, int code) {
         this.code = code;
         this.message = msg;
     }
@@ -121,16 +121,16 @@ public class MQResponseEntity<T>   implements Serializable {
                 '}';
     }
 
-    public static class Builder<T>{
+    public static class Builder<T> {
         private int status;
         private String message;
         private T data;
         private int count;
-//        private Date snedTime;
+        //        private Date snedTime;
         private String key;
 
         public Builder() {
-            this.status= 0;
+            this.status = 0;
             this.message = "";
         }
 
@@ -148,6 +148,7 @@ public class MQResponseEntity<T>   implements Serializable {
             this.data = data;
             return this;
         }
+
         public Builder<T> setCount(int count) {
             this.count = count;
             return this;
@@ -163,7 +164,7 @@ public class MQResponseEntity<T>   implements Serializable {
 //        }
 
 
-        public MQResponseEntity<T> build(){
+        public MQResponseEntity<T> build() {
             return new MQResponseEntity<>(this);
         }
     }
