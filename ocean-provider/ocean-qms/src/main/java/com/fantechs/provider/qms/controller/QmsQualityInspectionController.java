@@ -9,6 +9,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.qms.service.QmsHtQualityInspectionService;
 import com.fantechs.provider.qms.service.QmsQualityInspectionService;
 import com.github.pagehelper.Page;
@@ -94,5 +95,11 @@ public class QmsQualityInspectionController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("生成质检单号")
+    @PostMapping("/generateOdd")
+    public ResponseEntity<String> generateOdd() {
+        return  ControllerUtil.returnDataSuccess(UUIDUtils.getUUID(),1);
     }
 }
