@@ -27,7 +27,7 @@ public class BaseProductFamily extends ValidGroup implements Serializable {
     @ApiModelProperty(name="productFamilyId",value = "产品族id")
     @Id
     @Column(name = "product_family_id")
-    @NotNull(groups = update.class,message = "产品族id不能为")
+    @NotNull(groups = update.class,message = "产品族id不能为空")
     private Long productFamilyId;
 
     /**

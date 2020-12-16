@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -30,10 +31,10 @@ public class SearchBaseShipmentEnterprise extends BaseQuery implements Serializa
     private String shipmentEnterpriseDesc;
 
     /**
-     * 运输类型（数据字典维护）
+     * 运输类型ID
      */
-    @ApiModelProperty(name="transportCategoryId",value = "运输类型（数据字典维护）")
-    private Long transportCategoryType;
+    @ApiModelProperty(name="transportCategoryId",value = "运输类型ID")
+    private Byte transportCategoryId;
 
     /**
      * 状态（0、无效 1、有效）

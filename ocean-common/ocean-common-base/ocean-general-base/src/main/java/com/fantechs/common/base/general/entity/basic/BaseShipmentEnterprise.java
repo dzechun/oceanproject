@@ -57,13 +57,13 @@ public class BaseShipmentEnterprise extends ValidGroup implements Serializable {
     private String shipmentEnterpriseDesc;
 
     /**
-     * 运输类型（数据字典维护）
+     * 运输类型ID
      */
-    @ApiModelProperty(name="transportCategoryType",value = "运输类型（数据字典维护）")
+    @ApiModelProperty(name="transportCategoryId",value = "运输类型ID")
     @Excel(name = "运输类型ID", height = 20, width = 30,orderNum="4")
-    @Column(name = "transport_category_type")
-    @NotNull(message = "运输类型不能为空")
-    private Byte transportCategoryType;
+    @Column(name = "transport_category_id")
+    @NotNull(message = "运输类型Id不能为空")
+    private Byte transportCategoryId;
 
     /**
      * 联系人

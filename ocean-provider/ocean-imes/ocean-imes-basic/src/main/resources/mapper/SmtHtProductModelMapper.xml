@@ -15,6 +15,13 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="BIGINT" property="productFamilyId"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="product_family_id" jdbcType="VARCHAR" property="productFamilyCode" />
+    <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode" />
+    <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName" />
+    <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc" />
   </resultMap>
   <sql id="Base_Column_List">
     ht_product_model_id, product_model_id, product_model_code, product_model_name, product_model_desc, 
@@ -24,11 +31,13 @@
 
   <select id="selectHtProductModels" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductModel" resultMap="BaseResultMap">
     select shpm.ht_product_model_id, shpm.product_model_id,shpm.product_model_code, shpm.product_model_name, shpm.product_model_desc,
+    shpm.product_family_id, bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
     shpm.status, shpm.create_user_id, u.user_name as createUserName,shpm.create_time, shpm.modified_user_id,
     s.user_name as modifiedUserName,shpm.modified_time
     from fantech_imes.smt_ht_product_model shpm
     left join ocean.sys_user u on shpm.create_user_id=u.user_id
     left join ocean.sys_user s on shpm.modified_user_id=s.user_id
+    left join fantech_imes.base_product_family bpf on shpm.product_family_id = bpf.product_family_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

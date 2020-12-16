@@ -9,7 +9,7 @@
         <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId"/>
         <result column="shipment_enterprise_code" jdbcType="VARCHAR" property="shipmentEnterpriseCode"/>
         <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName"/>
-        <result column="transport_category_type" jdbcType="TINYINT" property="transportCategoryType"/>
+        <result column="transport_category_id" jdbcType="BIGINT" property="transportCategoryId"/>
         <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -57,8 +57,8 @@
             <if test="shipmentEnterpriseDesc != null and shipmentEnterpriseDesc!=''">
                 and bhse.shipment_enterprise_desc like CONCAT('%', #{shipmentEnterpriseDesc}, '%')
             </if>
-            <if test="transportCategoryType != null and transportCategoryType!=''">
-                and bhse.transport_category_type = #{transportCategoryType}
+            <if test="transportCategoryId != null and transportCategoryId!=''">
+                and bse.transport_category_id = #{transportCategoryId}
             </if>
             <if test="status!=null and status!=''">
                 and bhse.status=#{status}

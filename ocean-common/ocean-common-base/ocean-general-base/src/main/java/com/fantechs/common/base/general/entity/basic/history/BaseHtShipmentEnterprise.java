@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -59,12 +61,13 @@ public class BaseHtShipmentEnterprise implements Serializable {
     private String shipmentEnterpriseDesc;
 
     /**
-     * 运输类型（数据字典维护）
+     * 运输类型ID
      */
-    @ApiModelProperty(name="transportCategoryType",value = "运输类型（数据字典维护）")
-    @Excel(name = "运输类型（数据字典维护）", height = 20, width = 30,orderNum="")
-    @Column(name = "transport_category_type")
-    private Byte transportCategoryType;
+    @ApiModelProperty(name="transportCategoryId",value = "运输类型ID")
+    @Excel(name = "运输类型ID", height = 20, width = 30,orderNum="4")
+    @Column(name = "transport_category_id")
+    @NotNull(message = "运输类型Id不能为空")
+    private Byte transportCategoryId;
 
     /**
      * 联系人

@@ -53,6 +53,37 @@ public class SmtProductModel extends ValidGroup implements Serializable {
     private String productModelDesc;
 
     /**
+     * 产品族id
+     */
+    @ApiModelProperty(name="productFamilyId",value = "产品族id")
+    @Column(name = "product_family_id")
+    private Long productFamilyId;
+
+    /**
+     * 产品族编码
+     */
+    @Transient
+    @ApiModelProperty(name="productFamilyCode",value = "产品族编码")
+    @Excel(name = "产品族编码", height = 20, width = 30)
+    private String productFamilyCode;
+
+    /**
+     * 产品族名称
+     */
+    @Transient
+    @ApiModelProperty(name="productFamilyName",value = "产品族名称")
+    @Excel(name = "产品族名称", height = 20, width = 30)
+    private String productFamilyName;
+
+    /**
+     * 产品族描述
+     */
+    @Transient
+    @ApiModelProperty(name="productFamilyDesc",value = "产品族描述")
+    @Excel(name = "产品族描述", height = 20, width = 30)
+    private String productFamilyDesc;
+
+    /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="状态（0、无效 1、有效）")
@@ -111,6 +142,8 @@ public class SmtProductModel extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     @ApiModelProperty(name="isDelete" ,value="逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
+
+
     /**
      * 扩展字段1
      */
