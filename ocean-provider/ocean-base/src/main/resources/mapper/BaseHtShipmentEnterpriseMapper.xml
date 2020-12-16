@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtShipmentEnterpriseMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtShipmentEnterprise">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_shipment_enterprise_id" jdbcType="BIGINT" property="htShipmentEnterpriseId"/>
+        <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId"/>
+        <result column="shipment_enterprise_code" jdbcType="VARCHAR" property="shipmentEnterpriseCode"/>
+        <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName"/>
+        <result column="transport_category_type" jdbcType="TINYINT" property="transportCategoryType"/>
+        <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    bhse.ht_shipment_enterprise_id,
+	bhse.shipment_enterprise_id,
+	bhse.shipment_enterprise_code,
+	bhse.shipment_enterprise_name,
+	bhse.transport_category_id,
+	bhse.contacts,
+	bhse.phone,
+	bhse.`status`,
+	bhse.create_user_id,
+	bhse.create_time,
+	bhse.modified_user_id,
+	bhse.modified_time,
+	bhse.is_delete
+  </sql>
+
+    <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+        select<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+        FROM fantech_imes.base_ht_shipment_enterprise AS bhse
+        LEFT JOIN ocean.sys_user su ON bhse.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON bhse.modified_user_id = sus.user_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bhse.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="shipmentEnterpriseCode != null and shipmentEnterpriseCode!=''">
+                and bhse.shipment_enterprise_code like CONCAT('%', #{shipmentEnterpriseCode}, '%')
+            </if>
+            <if test="shipmentEnterpriseName != null and shipmentEnterpriseName!=''">
+                and bhse.shipment_enterprise_name like CONCAT('%', #{shipmentEnterpriseName}, '%')
+            </if>
+            <if test="shipmentEnterpriseDesc != null and shipmentEnterpriseDesc!=''">
+                and bhse.shipment_enterprise_desc like CONCAT('%', #{shipmentEnterpriseDesc}, '%')
+            </if>
+            <if test="transportCategoryType != null and transportCategoryType!=''">
+                and bhse.transport_category_type = #{transportCategoryType}
+            </if>
+            <if test="status!=null and status!=''">
+                and bhse.status=#{status}
+            </if>
+        </where>
+        order by modified_time desc
+    </select>
+
+</mapper>

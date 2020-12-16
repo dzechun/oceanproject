@@ -42,18 +42,19 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
 
         Example example = new Example(BaseProductFamily.class);
         Example.Criteria criteria1 = example.createCriteria();
-        Example.Criteria criteria2 = example.createCriteria();
         //判断编码是否重复
         criteria1.andEqualTo("productFamilyCode",baseProductFamily.getProductFamilyCode());
         BaseProductFamily baseProductFamily1 = baseProductFamilyMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductFamily1)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100,"产品族编码已存在");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+        Example example1 = new Example(BaseProductFamily.class);
+        Example.Criteria criteria2 = example1.createCriteria();
         //判断名称是否重复
         criteria2.andEqualTo("productFamilyName",baseProductFamily.getProductFamilyName());
-        BaseProductFamily baseProductFamily2 = baseProductFamilyMapper.selectOneByExample(example);
+        BaseProductFamily baseProductFamily2 = baseProductFamilyMapper.selectOneByExample(example1);
         if (StringUtils.isNotEmpty(baseProductFamily2)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100,"产品族名称已存在");
+            throw new BizErrorException("产品族名称已存在");
         }
 
         baseProductFamily.setCreateTime(new Date());
@@ -84,7 +85,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
                 .andNotEqualTo("productFamilyId",baseProductFamily.getProductFamilyId());
         BaseProductFamily baseProductFamily1 = baseProductFamilyMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductFamily1)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100,"产品族编码已存在");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
         Example example1 = new Example(BaseProductFamily.class);

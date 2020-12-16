@@ -31,7 +31,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/15.
  */
 @RestController
-@Api(tags = "产品族控制器")
+@Api(tags = "产品族信息管理")
 @RequestMapping("/baseProductFamily")
 @Validated
 public class BaseProductFamilyController {
