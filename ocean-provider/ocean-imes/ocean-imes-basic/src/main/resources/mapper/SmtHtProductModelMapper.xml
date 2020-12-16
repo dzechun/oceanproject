@@ -16,9 +16,9 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
 
-    <result column="create_user_name" jdbcType="BIGINT" property="productFamilyId"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="product_family_id" jdbcType="VARCHAR" property="productFamilyCode" />
+    <result column="product_family_id" jdbcType="VARCHAR" property="productFamilyId" />
     <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode" />
     <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName" />
     <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc" />
