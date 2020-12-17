@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerStocktakingMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="stocktaking_id" jdbcType="BIGINT" property="stocktakingId" />
+    <result column="stocktaking_code" jdbcType="VARCHAR" property="stocktakingCode" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="book_inventory" jdbcType="DECIMAL" property="bookInventory" />
+    <result column="counted_quantity" jdbcType="DECIMAL" property="countedQuantity" />
+    <result column="profit_loss_quantity" jdbcType="DECIMAL" property="profitLossQuantity" />
+    <result column="delivery_rate" jdbcType="VARCHAR" property="deliveryRate" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="profit_loss_amount" jdbcType="DECIMAL" property="profitLossAmount" />
+    <result column="stockist_id" jdbcType="BIGINT" property="stockistId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="pro_desc" jdbcType="VARCHAR" property="proDesc" />
+    <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode" />
+    <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+    <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wis.stocktaking_id,
+	wis.stocktaking_code,
+	wis.pro_line_id,
+	wis.material_id,
+	wis.book_inventory,
+	wis.counted_quantity,
+	wis.profit_loss_quantity,
+	wis.delivery_rate,
+	wis.price,
+	wis.profit_loss_amount,
+	wis.stockist_id,
+	wis.create_user_id,
+	wis.`status`,
+	wis.create_time,
+	wis.modified_user_id,
+	wis.modified_time,
+	wis.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,sf.factory_name,
+    spl.pro_code, spl.pro_name, spl.pro_desc, swh.work_shop_code, swh.work_shop_name, swh.work_shop_desc
+    from fantech_imes.wms_inner_stocktaking wis
+    LEFT JOIN ocean.sys_user su  ON wis.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON wis.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.smt_pro_line spl ON wis.pro_line_id = spl.pro_line_id
+    LEFT JOIN fantech_imes.smt_work_shop swh ON spl.work_shop_id = swh.work_shop_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(wis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="stocktakingCode != null and stocktakingCode!=''">
+        and wis.stocktaking_code like CONCAT('%', #{stocktakingCode}, '%')
+      </if>
+      <if test="proCode != null and proCode!=''">
+        and spl.pro_code like CONCAT('%', #{proCode}, '%')
+      </if>
+      <if test="proName != null and proName!=''">
+        and spl.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="workShopCode != null and workShopCode!=''">
+        and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')
+      </if>
+      <if test="workShopName != null and workShopName!=''">
+        and swh.work_shop_name like CONCAT('%', #{workShopName}, '%')
+      </if>
+      <if test="status!=null and status!=''">
+        and wis.status=#{status}
+      </if>
+    </where>
+    order by wis.create_time desc
+  </select>
+</mapper>
