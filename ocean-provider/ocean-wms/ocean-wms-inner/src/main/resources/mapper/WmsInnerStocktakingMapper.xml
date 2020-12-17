@@ -57,7 +57,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select
-    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,sf.factory_name,
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spl.pro_code, spl.pro_name, spl.pro_desc, swh.work_shop_code, swh.work_shop_name, swh.work_shop_desc
     from fantech_imes.wms_inner_stocktaking wis
     LEFT JOIN ocean.sys_user su  ON wis.create_user_id = su.user_id
