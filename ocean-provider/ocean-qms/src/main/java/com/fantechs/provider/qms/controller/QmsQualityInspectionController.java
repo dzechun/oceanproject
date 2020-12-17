@@ -97,9 +97,6 @@ public class QmsQualityInspectionController {
         }
     }
 
-    @ApiOperation("生成质检单号")
-    @PostMapping("/generateOdd")
-    public ResponseEntity<String> generateOdd() {
-        return  ControllerUtil.returnDataSuccess(UUIDUtils.getUUID(),1);
-    }
+
+
 }

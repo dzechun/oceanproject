@@ -4,8 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsQualityInspectionDto;
-import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.qms.QmsQualityInspection;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtQualityInspection;
 import com.fantechs.common.base.support.BaseService;
@@ -16,9 +14,10 @@ import com.fantechs.provider.qms.mapper.QmsQualityInspectionMapper;
 import com.fantechs.provider.qms.service.QmsQualityInspectionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,20 +36,11 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
     private QmsHtQualityInspectionMapper qmsHtQualityInspectionMapper;
 
     @Override
-    public int save(QmsQualityInspection qmsQualityInspection) {
+    @Transactional(rollbackFor = Exception.class)
+    public synchronized int save(QmsQualityInspection qmsQualityInspection) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        Example example = new Example(QmsQualityInspection.class);
-        Example.Criteria criteria = example.createCriteria();
-
-        criteria.andEqualTo("qualityInspectionCode", qmsQualityInspection.getQualityInspectionCode());
-        QmsQualityInspection qmsQualityInspection1 = qmsQualityInspectionMapper.selectOneByExample(example);
-        //判断单号是否重复
-        if (StringUtils.isNotEmpty(qmsQualityInspection1)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100,"质检单号已存在");
         }
 
         qmsQualityInspection.setCreateTime(new Date());
@@ -58,6 +48,8 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
         qmsQualityInspection.setModifiedTime(new Date());
         qmsQualityInspection.setModifiedUserId(user.getUserId());
         qmsQualityInspection.setStatus(StringUtils.isEmpty(qmsQualityInspection.getStatus())?1:qmsQualityInspection.getStatus());
+
+        qmsQualityInspection.setQualityInspectionCode(getOdd());
 
         int i = qmsQualityInspectionMapper.insertUseGeneratedKeys(qmsQualityInspection);
 
@@ -69,21 +61,11 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(QmsQualityInspection qmsQualityInspection) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        Example example = new Example(QmsQualityInspection.class);
-        Example.Criteria criteria = example.createCriteria();
-
-        criteria.andEqualTo("qualityInspectionCode", qmsQualityInspection.getQualityInspectionCode())
-                .andNotEqualTo("qualityInspectionId",qmsQualityInspection.getQualityInspectionId());
-        QmsQualityInspection qmsQualityInspection1 = qmsQualityInspectionMapper.selectOneByExample(example);
-        //判断单号是否重复
-        if (StringUtils.isNotEmpty(qmsQualityInspection1)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100,"质检单号已存在");
         }
 
         qmsQualityInspection.setModifiedTime(new Date());
@@ -97,6 +79,7 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -125,4 +108,23 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
     public List<QmsQualityInspectionDto> findList(Map<String, Object> map) {
         return qmsQualityInspectionMapper.findList(map);
     }
+
+    /**
+     * 生成质检单号
+     * @return
+     */
+    public String getOdd(){
+        String before = "DH";
+        String amongst = new SimpleDateFormat("YYMMdd").format(new Date());
+        QmsQualityInspection qmsQualityInspection = qmsQualityInspectionMapper.getMax();
+        String qualityInspectionCode = before+amongst+"0001";
+        if (StringUtils.isNotEmpty(qmsQualityInspection)){
+            qualityInspectionCode = qmsQualityInspection.getQualityInspectionCode();
+        }
+        Integer maxCode = Integer.parseInt(qualityInspectionCode.substring(8, qualityInspectionCode.length()));
+        String after = String.format("%04d", ++maxCode);
+        String code = before + amongst + after;
+        return code;
+    }
+
 }
