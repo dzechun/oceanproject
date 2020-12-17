@@ -32,6 +32,12 @@ zuul:
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
+    ocean-fileserver:
+        path: /ocean-imes-basic/**
+        serviceId: ocean-imes-basic
+    ocean-fileserver:
+        path: /ocean-imes-apply/**
+        serviceId: ocean-imes-apply
 
   sensitive-headers: Access-Control-Allow-Origin
   ignored-headers: Access-Control-Allow-Origin

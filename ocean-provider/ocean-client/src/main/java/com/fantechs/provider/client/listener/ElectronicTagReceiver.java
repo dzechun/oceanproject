@@ -1,11 +1,9 @@
 package com.fantechs.provider.client.listener;
 
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
-import com.fantechs.common.base.electronic.entity.SmtClientManage;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
 import com.fantechs.common.base.response.MQResponseEntity;
-import com.fantechs.common.base.utils.HTTPUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -14,7 +12,6 @@ import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.dto.PtlSortingDTO;
 import com.fantechs.provider.client.dto.PtlSortingDetailDTO;
 import com.fantechs.provider.client.server.impl.FanoutSender;
-import lombok.extern.log4j.Log4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

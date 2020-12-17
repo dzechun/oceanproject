@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsQualityInspectionMapper">
+
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsQualityInspection">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="quality_inspection_id" jdbcType="BIGINT" property="qualityInspectionId" />
+    <result column="quality_inspection_code" jdbcType="VARCHAR" property="qualityInspectionCode" />
+    <result column="bills_status" jdbcType="TINYINT" property="billsStatus" />
+    <result column="bills_type" jdbcType="BIGINT" property="billsType" />
+    <result column="examination_region" jdbcType="VARCHAR" property="examinationRegion" />
+    <result column="proving_time" jdbcType="TIMESTAMP" property="provingTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsQualityInspectionDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qqi.quality_inspection_id,qqi.quality_inspection_code,qqi.bills_status,qqi.bills_type,qqi.examination_region,
+    qqi.proving_time,qqi.status,qqi.create_user_id,qqi.create_time,qqi.modified_user_id,qqi.modified_time,qqi.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"></include> , su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from fantech_imes.qms_quality_inspection qqi
+    LEFT JOIN ocean.sys_user su ON qqi.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qqi.modified_user_id = sus.user_id
+    <where>
+      <if test="qualityInspectionCode != null and qualityInspectionCode != '' ">
+        and qqi.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')
+      </if>
+      <if test="billsType != null and billsType!=''">
+        and qqi.bills_type = #{billsType}
+      </if>
+      <if test="examinationRegion != null and examinationRegion!=''">
+        and qqi.examination_region like CONCAT('%', #{examinationRegion}, '%')
+      </if>
+      <if test="billsStatus != null and billsStatus!=''">
+        and qqi.bills_status = #{billsStatus}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qqi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+
+</mapper>
