@@ -37,7 +37,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
     @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
     @Excel(name = "盘点单号", height = 20, width = 30,orderNum="1")
     @Column(name = "stocktaking_code")
-    @NotBlank(message = "盘点单号不能为空")
     private String stocktakingCode;
 
     /**
