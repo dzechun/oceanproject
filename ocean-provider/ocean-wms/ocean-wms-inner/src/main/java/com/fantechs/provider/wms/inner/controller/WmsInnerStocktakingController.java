@@ -38,7 +38,7 @@ public class WmsInnerStocktakingController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：stocktakingCode、materialId",required = true)@RequestBody @Validated WmsInnerStocktaking wmsInnerStocktaking) {
+    public ResponseEntity add(@ApiParam(value = "必传：materialId",required = true)@RequestBody @Validated WmsInnerStocktaking wmsInnerStocktaking) {
         return ControllerUtil.returnCRUD(wmsInnerStocktakingService.save(wmsInnerStocktaking));
     }
 
