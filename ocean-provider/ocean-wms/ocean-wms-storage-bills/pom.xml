@@ -7,23 +7,27 @@
         <artifactId>ocean-wms</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.fantechs.provider.wms.in</groupId>
-    <artifactId>ocean-wms-in</artifactId>
+    <groupId>com.fantechs.provider.wms.storageBills</groupId>
+    <artifactId>ocean-wms-storageBills</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-wms-in</name>
+    <name>ocean-wms-storage-bills</name>
     <description>Demo project for Spring Boot</description>
 
 
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-base-config</artifactId>
+            <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-public-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.common.base</groupId>
+            <artifactId>ocean-imes-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsStorageBillsMapper">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsStorageBills">
+        <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
+        <result column="storage_bills_code" jdbcType="VARCHAR" property="storageBillsCode" />
+        <result column="total" jdbcType="DECIMAL" property="total" />
+        <result column="material_type_total" jdbcType="DECIMAL" property="materialTypeTotal" />
+        <result column="finished_total" jdbcType="DECIMAL" property="finishedTotal" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    </resultMap>
+
+
+  <select id="selectUserName" resultType="string">
+    select su.user_name from ocean.sys_user su where su.user_id = #{id}
+  </select>
+  <select id="selectFilterAll" resultMap="BaseResultMap">
+    SELECT
+      wsb.storage_bills_id,
+      wsb.storage_bills_code,
+      wsb.total,
+      wsb.material_type_total,
+      wsb.finished_total,
+      wsb.type,
+      wsb.supplier_id,
+      wsb.`status`,
+      wsb.is_delete,
+      wsb.create_user_id,
+      wsb.create_time,
+      wsb.modified_user_id,
+      wsb.modified_time
+    FROM
+      wms_storage_bills AS wsb
+    <where>
+        <if test="type != null and type>0">
+          wsb.type = #{type}
+        </if>
+        <if test="storageBillsCode != null and storageBillsCode != ''">
+          OR wsb.storage_bills_code = #{storageBillsCode}
+        </if>
+    </where>
+    order by wsb.modified_time desc
+  </select>
+</mapper>

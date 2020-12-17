@@ -46,6 +46,9 @@
       <if test="proDesc!=null and proDesc!=''">
         and spl.pro_desc like CONCAT('%', #{proDesc}, '%')
       </if>
+      <if test="workShopId!=null and workShopId!=''">
+        and spl.work_shop_id = #{workShopId}
+      </if>
       <if test="status!=null and status!=''">
         and spl.status=#{status}
       </if>
