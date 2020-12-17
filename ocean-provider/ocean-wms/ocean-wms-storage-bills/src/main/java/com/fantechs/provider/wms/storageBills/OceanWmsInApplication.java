@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.in;
+package com.fantechs.provider.wms.storageBills;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,9 +9,10 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan({"com.fantechs.provider.wms.in","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.wms.in.mapper"})
-@EnableFeignClients(basePackages = "com.fantechs.provider.api")public class OceanWmsInApplication {
+@ComponentScan({"com.fantechs.provider.wms.storageBills","com.fantechs.common"})
+@MapperScan({"com.fantechs.provider.wms.storageBills.mapper"})
+@EnableFeignClients(basePackages = "com.fantechs.provider.api")
+public class OceanWmsInApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OceanWmsInApplication.class, args);
