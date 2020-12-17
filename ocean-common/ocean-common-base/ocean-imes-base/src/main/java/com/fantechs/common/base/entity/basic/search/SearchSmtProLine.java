@@ -4,6 +4,8 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -32,4 +34,9 @@ public class SearchSmtProLine  extends BaseQuery implements Serializable {
     @ApiModelProperty(name="proDesc" ,value="线别描述")
     private String proDesc;
 
+    /**
+     * 车间ID
+     */
+    @ApiModelProperty(name="workShopId" ,value="车间ID")
+    private String workShopId;
 }
