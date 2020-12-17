@@ -5,7 +5,9 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -16,7 +18,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="19")
     private String createUserName;
 
     /**
@@ -24,7 +26,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="21")
     private String modifiedUserName;
 
     /**
@@ -32,7 +34,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name="proCode" ,value="线别代码")
-    @Excel(name = "线别代码", height = 20, width = 30)
+    @Excel(name = "线别代码", height = 20, width = 30,orderNum="2")
     private String proCode;
 
     /**
@@ -40,7 +42,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30)
+    @Excel(name = "线别名称", height = 20, width = 30,orderNum="3")
     private String proName;
 
     /**
@@ -48,14 +50,15 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name="proDesc" ,value="线别描述")
-    @Excel(name = "线别描述", height = 20, width = 30)
+    @Excel(name = "线别描述", height = 20, width = 30,orderNum="4")
     private String proDesc;
+
 
     /**
      * 车间编码
      */
     @Transient
-    @Excel(name = "车间编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "车间编码", height = 20, width = 30,orderNum="5")
     @ApiModelProperty(name = "workShopCode",value = "车间编码")
     private String workShopCode;
 
@@ -63,7 +66,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 车间名称
      */
     @Transient
-    @Excel(name = "车间名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "车间名称", height = 20, width = 30,orderNum="6")
     @ApiModelProperty(name = "workShopName",value = "车间名称")
     private String workShopName;
 
@@ -72,6 +75,37 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "workShopDesc",value = "车间描述")
-    @Excel(name = "车间描述", height = 20, width = 30,orderNum="3")
+    @Excel(name = "车间描述", height = 20, width = 30,orderNum="7")
     private String workShopDesc;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="8")
+    private String materialCode;
+
+    /**
+     * 物料描述
+     */
+    @Column(name = "material_desc")
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "物料描述", height = 20, width = 30,orderNum="9")
+    private String materialDesc;
+
+    /**
+     * 盘点员名称
+     */
+    @Transient
+    @ApiModelProperty(name = "stockistName",value = "盘点员名称")
+    @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="16")
+    private String stockistName;
+
+    /**
+     * 盘点员编码
+     */
+    @Transient
+    @ApiModelProperty(name = "stockistCode",value = "stockistCode")
+    @Excel(name = "盘点员编码", height = 20, width = 30,orderNum="17")
+    private String stockistCode;
 }
