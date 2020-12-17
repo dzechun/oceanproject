@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStocktakingMapper;
@@ -34,15 +35,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(WmsInnerStocktaking.class);
-        Example.Criteria criteria1 = example.createCriteria();
-        //判断编码是否重复
-        criteria1.andEqualTo("stocktakingCode",wmsInnerStocktaking.getStocktakingCode());
-        WmsInnerStocktaking wmsInnerStocktaking1 = wmsInnerStocktakingMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(wmsInnerStocktaking1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
-
+        wmsInnerStocktaking.setStocktakingCode(CodeUtils.getId("ST-"));
         wmsInnerStocktaking.setCreateTime(new Date());
         wmsInnerStocktaking.setCreateUserId(user.getUserId());
         wmsInnerStocktaking.setModifiedTime(new Date());
@@ -57,16 +50,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        Example example = new Example(WmsInnerStocktaking.class);
-        Example.Criteria criteria1 = example.createCriteria();
-        //判断编码是否重复
-        criteria1.andEqualTo("stocktakingCode",wmsInnerStocktaking.getStocktakingCode())
-                .andNotEqualTo("stocktakingId",wmsInnerStocktaking.getStocktakingId());
-        WmsInnerStocktaking wmsInnerStocktaking1 = wmsInnerStocktakingMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(wmsInnerStocktaking1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
         wmsInnerStocktaking.setModifiedUserId(user.getUserId());
