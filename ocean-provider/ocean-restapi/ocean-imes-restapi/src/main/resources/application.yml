@@ -9,10 +9,10 @@ spring:
     name: @pom.artifactId@
   datasource:
     primary:
-      jdbc-url: jdbc:mysql://10.182.163.191:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      jdbc-url: jdbc:mysql://192.168.61.55:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
       type: com.alibaba.druid.pool.DruidDataSource
       username: root
-      password: 123456
+      password: newentai123!@#.
       driverClassName: com.mysql.cj.jdbc.Driver
       initialSize: 5
       minIdle: 5
@@ -31,14 +31,25 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     secondary:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      #本地测试地址
-      jdbc-url: jdbc:sqlserver://10.182.164.248:1433;DatabaseName=newenergy_mes
-      username: sa
-      password: Jf@2020
+      jdbc-url: jdbc:sqlserver://14.116.204.3:1433;DatabaseName=NET01
+      username: QIS2019
+      password: Jiafan_2019
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 1
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: true
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
   redis:
-    host: 10.182.163.246
+    host: 192.168.61.55
     port: 6379
-    password:
+    password: 'qwe!@#.'
     jackson:
       date-format: yyyy-MM-dd HH:mm
       time-zone: GMT+8
