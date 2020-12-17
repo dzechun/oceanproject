@@ -92,6 +92,9 @@
       <if test="workShopName != null and workShopName!=''">
         and swh.work_shop_name like CONCAT('%', #{workShopName}, '%')
       </if>
+      <if test="materialCode != null and materialCode!=''">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
       <if test="status!=null and status!=''">
         and wis.status=#{status}
       </if>

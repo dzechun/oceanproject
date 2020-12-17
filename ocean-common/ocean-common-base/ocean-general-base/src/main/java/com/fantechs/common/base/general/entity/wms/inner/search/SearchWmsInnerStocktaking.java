@@ -39,4 +39,10 @@ public class SearchWmsInnerStocktaking extends BaseQuery implements Serializable
      */
     @Excel(name = "车间名称", height = 20, width = 30,orderNum="2")
     private String workShopName;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
 }
