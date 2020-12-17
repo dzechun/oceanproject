@@ -15,23 +15,23 @@
     <packaging>pom</packaging>
 
     <modules>
-<!--        <module>ocean-fileserver</module>  &lt;!&ndash; 文件服务 &ndash;&gt;-->
+        <module>ocean-fileserver</module>  <!-- 文件服务 -->
         <module>ocean-security</module>    <!-- 用户认证中心 -->
         <module>ocean-imes</module>    <!-- imes服务 -->
         <module>ocean-quartz</module>    <!-- 定时任务调度器 -->
         <module>ocean-electronic-tag</module> <!-- 电子标签 -->
         <module>ocean-client</module>     <!-- 客户端服务 -->
         <module>ocean-restapi</module><!-- API接口服务 -->
-<!--        <module>ocean-mes</module>    &lt;!&ndash; mes服务 &ndash;&gt;-->
-<!--        <module>ocean-wms</module>    &lt;!&ndash; wms服务 &ndash;&gt;-->
-<!--        <module>ocean-bcm</module>     &lt;!&ndash; 条码管理模块 &ndash;&gt;-->
-<!--        <module>ocean-base</module>    &lt;!&ndash; 基础模块 &ndash;&gt;-->
-<!--        <module>ocean-ews</module>    &lt;!&ndash; 预警模块 &ndash;&gt;-->
-<!--        <module>ocean-ids</module>    &lt;!&ndash; 配送管理 &ndash;&gt;-->
-<!--        <module>ocean-om</module>    &lt;!&ndash; 订单管理 &ndash;&gt;-->
-<!--        <module>ocean-pas</module>    &lt;!&ndash; 绩效分析管理 &ndash;&gt;-->
-<!--        <module>ocean-qms</module>    &lt;!&ndash; 质量管理 &ndash;&gt;-->
-<!--        <module>ocean-srm</module>    &lt;!&ndash; 供应商管理 &ndash;&gt;-->
-<!--        <module>ocean-tem</module>    &lt;!&ndash; 周转设备管理 &ndash;&gt;-->
+        <module>ocean-mes</module>    <!-- mes服务 -->
+        <module>ocean-wms</module>    <!-- wms服务 -->
+        <module>ocean-bcm</module>     <!-- 条码管理模块 -->
+        <module>ocean-base</module>    <!-- 基础模块 -->
+        <module>ocean-ews</module>    <!-- 预警模块 -->
+        <module>ocean-ids</module>    <!-- 配送管理 -->
+        <module>ocean-om</module>    <!-- 订单管理 -->
+        <module>ocean-pas</module>    <!-- 绩效分析管理 -->
+        <module>ocean-qms</module>    <!-- 质量管理 -->
+        <module>ocean-srm</module>    <!-- 供应商管理 -->
+        <module>ocean-tem</module>    <!-- 周转设备管理 -->
     </modules>
 </project>
