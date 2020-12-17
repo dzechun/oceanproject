@@ -22,7 +22,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    qhqi.quality_inspection_id,qhqi.quality_inspection_code,qhqi.bills_status,qhqi.bills_type,qhqi.examination_region,
+    qhqi.ht_quality_inspection_id,qhqi.quality_inspection_id,qhqi.quality_inspection_code,qhqi.bills_status,qhqi.bills_type,qhqi.examination_region,
     qhqi.proving_time,qhqi.status,qhqi.create_user_id,qhqi.create_time,qhqi.modified_user_id,qhqi.modified_time,qhqi.is_delete
   </sql>
 

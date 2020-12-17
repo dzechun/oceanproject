@@ -55,6 +55,10 @@
     order by create_time desc
   </select>
 
+  <select id="getMax" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from qms_quality_inspection qqi ORDER BY qqi.quality_inspection_id desc limit 1
+  </select>
 
 
 </mapper>

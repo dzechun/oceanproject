@@ -38,7 +38,6 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
     @ApiModelProperty(name="qualityInspectionCode",value = "质检单号")
     @Excel(name = "质检单号", height = 20, width = 30,orderNum="")
     @Column(name = "quality_inspection_code")
-    @NotBlank(groups = update.class,message = "质检单号不能为空")
     private String qualityInspectionCode;
 
     /**
