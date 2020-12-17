@@ -44,6 +44,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="proLineId",value = "线别id")
     @Column(name = "pro_line_id")
+    @NotNull(message = "线别id不能为空")
     private Long proLineId;
 
     /**
