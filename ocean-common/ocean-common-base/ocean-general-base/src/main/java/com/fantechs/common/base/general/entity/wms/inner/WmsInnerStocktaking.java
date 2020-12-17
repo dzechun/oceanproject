@@ -59,7 +59,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 账面数量
      */
     @ApiModelProperty(name="bookInventory",value = "账面数量")
-    @Excel(name = "账面数量", height = 20, width = 30,orderNum="10")
+    @Excel(name = "账面数量", height = 20, width = 30,orderNum="11")
     @Column(name = "book_inventory")
     private BigDecimal bookInventory;
 
@@ -67,7 +67,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 已盘点数量
      */
     @ApiModelProperty(name="countedQuantity",value = "已盘点数量")
-    @Excel(name = "已盘点数量", height = 20, width = 30,orderNum="11")
+    @Excel(name = "已盘点数量", height = 20, width = 30,orderNum="12")
     @Column(name = "counted_quantity")
     private BigDecimal countedQuantity;
 
@@ -75,7 +75,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盈亏数量
      */
     @ApiModelProperty(name="profitLossQuantity",value = "盈亏数量")
-    @Excel(name = "盈亏数量", height = 20, width = 30,orderNum="12")
+    @Excel(name = "盈亏数量", height = 20, width = 30,orderNum="13")
     @Column(name = "profit_loss_quantity")
     private BigDecimal profitLossQuantity;
 
@@ -83,7 +83,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 出库率
      */
     @ApiModelProperty(name="deliveryRate",value = "出库率")
-    @Excel(name = "出库率", height = 20, width = 30,orderNum="13")
+    @Excel(name = "出库率", height = 20, width = 30,orderNum="14")
     @Column(name = "delivery_rate")
     private String deliveryRate;
 
@@ -91,14 +91,14 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 单价
      */
     @ApiModelProperty(name="price",value = "单价")
-    @Excel(name = "单价", height = 20, width = 30,orderNum="14")
+    @Excel(name = "单价", height = 20, width = 30,orderNum="15")
     private BigDecimal price;
 
     /**
      * 盈亏金额
      */
     @ApiModelProperty(name="profitLossAmount",value = "盈亏金额")
-    @Excel(name = "盈亏金额", height = 20, width = 30,orderNum="15")
+    @Excel(name = "盈亏金额", height = 20, width = 30,orderNum="16")
     @Column(name = "profit_loss_amount")
     private BigDecimal profitLossAmount;
 
@@ -113,7 +113,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点状态(0、待盘点 1、盘点中 2、盘点完成)
      */
     @ApiModelProperty(name="status",value = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)")
-    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="18")
+    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="19")
     private Byte status;
 
     /**
@@ -127,7 +127,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="21",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;

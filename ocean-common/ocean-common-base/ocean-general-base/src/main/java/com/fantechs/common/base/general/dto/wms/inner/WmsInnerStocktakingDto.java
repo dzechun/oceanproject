@@ -18,7 +18,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="19")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="20")
     private String createUserName;
 
     /**
@@ -26,7 +26,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="21")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="22")
     private String modifiedUserName;
 
     /**
@@ -86,11 +86,18 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
     private String materialCode;
 
     /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="9")
+    private String materialName;
+
+    /**
      * 物料描述
      */
     @Column(name = "material_desc")
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30,orderNum="9")
+    @Excel(name = "物料描述", height = 20, width = 30,orderNum="10")
     private String materialDesc;
 
     /**
@@ -98,7 +105,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "stockistName",value = "盘点员名称")
-    @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="16")
+    @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="17")
     private String stockistName;
 
     /**
@@ -106,6 +113,6 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "stockistCode",value = "stockistCode")
-    @Excel(name = "盘点员编码", height = 20, width = 30,orderNum="17")
+    @Excel(name = "盘点员编码", height = 20, width = 30,orderNum="18")
     private String stockistCode;
 }
