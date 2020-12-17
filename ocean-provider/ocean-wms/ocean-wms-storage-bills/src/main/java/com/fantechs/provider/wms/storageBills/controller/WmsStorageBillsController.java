@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.storageBills.controller;
 
 import com.fantechs.common.base.entity.storage.WmsStorageBills;
-import com.fantechs.provider.wms.storageBills.service.impl.WmsStorageBillsServiceImpl;
+import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsService;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 public class WmsStorageBillsController {
 
     @Resource
-    private WmsStorageBillsServiceImpl wmsStorageBillsServiceImpl;
+    private WmsStorageBillsService wmsStorageBillsService;
 
     @ApiOperation("查询仓库清单表列表")
     @PostMapping("list")
@@ -38,7 +39,7 @@ public class WmsStorageBillsController {
             @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize
     ){
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
-        List<WmsStorageBills> wmsStorageBillsList = wmsStorageBillsServiceImpl.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsStorageBillsListDTO));
+        List<WmsStorageBills> wmsStorageBillsList = wmsStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsStorageBillsListDTO));
         return ControllerUtil.returnDataSuccess(wmsStorageBillsList,(int)page.getTotal());
     }
 
@@ -48,33 +49,33 @@ public class WmsStorageBillsController {
         if(StringUtils.isEmpty(id)){
             return ControllerUtil.returnFailByParameError();
         }
-        WmsStorageBills wmsStorageBills = wmsStorageBillsServiceImpl.selectByKey(id);
+        WmsStorageBills wmsStorageBills = wmsStorageBillsService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(wmsStorageBills, StringUtils.isEmpty(wmsStorageBills)?0:1);
     }
 
     @ApiOperation("增加仓库清单表数据")
     @PostMapping("add")
-    public ResponseEntity add(@ApiParam(value = "仓库清单表对象",required = true)@RequestBody WmsStorageBills wmsStorageBills){
-        return ControllerUtil.returnCRUD(wmsStorageBillsServiceImpl.save(wmsStorageBills));
+    public ResponseEntity add(@ApiParam(value = "仓库清单表对象",required = true)@RequestBody @Validated WmsStorageBills wmsStorageBills){
+        return ControllerUtil.returnCRUD(wmsStorageBillsService.save(wmsStorageBills));
     }
 
     @ApiOperation("删除仓库清单表数据")
     @GetMapping("delete")
     public ResponseEntity delete(@ApiParam(value = "仓库清单表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(wmsStorageBillsServiceImpl.deleteByKey(id));
+        return ControllerUtil.returnCRUD(wmsStorageBillsService.deleteByKey(id));
     }
 
     @ApiOperation("修改仓库清单表数据")
     @PostMapping("update")
     public ResponseEntity update(@ApiParam(value = "仓库清单表对象，对象ID必传",required = true)@RequestBody WmsStorageBills wmsStorageBills){
-        return ControllerUtil.returnCRUD(wmsStorageBillsServiceImpl.update(wmsStorageBills));
+        return ControllerUtil.returnCRUD(wmsStorageBillsService.update(wmsStorageBills));
     }
 
 //    导出需要用到easyPOI
 //    @PostMapping(value = "export",produces = "application/octet-stream")
 //    @ApiOperation(value = "导出EXCEL")
 //    public void export(HttpServletResponse response){
-//        List<WmsStorageBills> wmsStorageBillss = wmsStorageBillsServiceImpl.selectAll(null);
+//        List<WmsStorageBills> wmsStorageBillss = wmsStorageBillsService.selectAll(null);
 //        EasyPoiUtils.exportExcel(wmsStorageBillss,"仓库清单表信息","仓库清单表信息", WmsStorageBills.class, "仓库清单表信息.xls", response);
 //    }
 }

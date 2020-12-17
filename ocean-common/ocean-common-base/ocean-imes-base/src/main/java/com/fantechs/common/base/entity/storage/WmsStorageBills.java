@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 @Table(name = "wms_storage_bills")
 @Data
-public class WmsStorageBills extends ValidGroup implements Serializable {
+public class WmsStorageBills implements Serializable {
     /**
     * 仓库清单id
     */

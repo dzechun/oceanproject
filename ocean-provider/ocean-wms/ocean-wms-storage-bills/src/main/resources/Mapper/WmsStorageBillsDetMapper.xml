@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsStorageBillsDetMapper">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsStorageBillsDet">
+        <result column="storage_bills_det_id" jdbcType="BIGINT" property="storageBillsDetId" />
+        <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
+        <result column="material_id" jdbcType="VARCHAR" property="materialId" />
+        <result column="will_income_total" jdbcType="DECIMAL" property="willIncomeTotal" />
+        <result column="real_income_total" jdbcType="DECIMAL" property="realIncomeTotal" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+      </resultMap>
+  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsStorageBillsDetDTO" extends="BaseResultMap">
+
+  </resultMap>
+
+
+  <select id="selectUserName" resultType="string">
+    select su.user_name from ocean.sys_user su where su.user_id = #{id}
+  </select>
+  <select id="selectDTOByBillId" resultMap="BaseResultMapDTO">
+    SELECT
+      wsbd.storage_bills_det_id,
+      wsbd.storage_bills_id,
+      wsbd.material_id,
+      wsbd.will_income_total,
+      wsbd.real_income_total,
+      wsbd.`status`,
+      wsbd.is_delete,
+      wsbd.create_user_id,
+      wsbd.create_time,
+      wsbd.modified_user_id,
+      wsbd.modified_time,
+      sm.material_code AS 'materialCode',
+      sm.material_name AS 'materialName',
+      sm.material_desc AS 'materialDesc',
+      spm.product_model_name AS 'productModelName',
+      sm.unit,
+      ss.storage_name AS 'storageName'
+    FROM
+      wms_storage_bills_det AS wsbd
+        LEFT JOIN `smt_material` sm ON wsbd.material_id = sm.material_id
+        LEFT JOIN `smt_product_model` spm ON spm.product_model_id = sm.product_model_id
+        LEFT JOIN `smt_storage_material` ssm ON ssm.material_id = sm.material_id
+        LEFT JOIN `smt_storage` ss ON ss.storage_id = ssm.storage_id
+    WHERE
+      wsbd.storage_bills_id = #{billId}
+  </select>
+</mapper>

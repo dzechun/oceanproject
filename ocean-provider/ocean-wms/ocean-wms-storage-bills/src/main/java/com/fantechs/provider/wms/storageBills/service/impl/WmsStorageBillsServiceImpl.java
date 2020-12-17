@@ -93,8 +93,8 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
 
     @Override
     public int save(WmsStorageBills wmsStorageBills) {
-        SysUser sysUser = this.currentUser();
-        wmsStorageBills.setCreateUserId(sysUser.getUserId());
+//        SysUser sysUser = this.currentUser();
+//        wmsStorageBills.setCreateUserId(sysUser.getUserId());
         wmsStorageBills.setCreateTime(new Date());
         wmsStorageBills.setIsDelete((byte)1);
         wmsStorageBills.setStorageBillsCode(CodeUtils.getId("SKN"));
