@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class QmsQualityInspectionDet extends ValidGroup implements Serializable 
     @ApiModelProperty(name="qualityInspectionId",value = "质检单ID")
     @Excel(name = "质检单ID", height = 20, width = 30,orderNum="")
     @Column(name = "quality_inspection_id")
+    @NotNull(groups = update.class,message = "质检单ID不能为空")
     private Long qualityInspectionId;
 
     /**
@@ -47,6 +49,7 @@ public class QmsQualityInspectionDet extends ValidGroup implements Serializable 
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
+    @NotNull(groups = update.class,message = "物料ID不能为空")
     private Long materialId;
 
     /**
@@ -63,6 +66,7 @@ public class QmsQualityInspectionDet extends ValidGroup implements Serializable 
     @ApiModelProperty(name="checkoutQuantity",value = "检验数量")
     @Excel(name = "检验数量", height = 20, width = 30,orderNum="")
     @Column(name = "checkout_quantity")
+    @NotNull(groups = update.class,message = "检验数量不能为空")
     private BigDecimal checkoutQuantity;
 
     /**

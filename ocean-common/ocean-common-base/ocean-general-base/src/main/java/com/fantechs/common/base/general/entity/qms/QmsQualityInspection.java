@@ -9,6 +9,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -36,6 +38,7 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
     @ApiModelProperty(name="qualityInspectionCode",value = "质检单号")
     @Excel(name = "质检单号", height = 20, width = 30,orderNum="")
     @Column(name = "quality_inspection_code")
+    @NotBlank(groups = update.class,message = "质检单号不能为空")
     private String qualityInspectionCode;
 
     /**
@@ -60,6 +63,7 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
     @ApiModelProperty(name="examinationRegion",value = "检验区域")
     @Excel(name = "检验区域", height = 20, width = 30,orderNum="")
     @Column(name = "examination_region")
+    @NotBlank(groups = update.class,message = "检验区域不能为空")
     private String examinationRegion;
 
     /**
@@ -69,6 +73,7 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
     @Excel(name = "计划检验时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "proving_time")
+    @NotNull(groups = update.class,message = "检验时间不能为空")
     private Date provingTime;
 
     /**
