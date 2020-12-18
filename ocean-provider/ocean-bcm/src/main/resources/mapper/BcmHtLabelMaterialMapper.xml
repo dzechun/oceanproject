@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.bcm.mapper.BcmHtLabelMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.history.BcmHtLabelMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="label_ht_material_id" jdbcType="BIGINT" property="labelHtMaterialId" />
+    <result column="label_material_id" jdbcType="BIGINT" property="labelMaterialId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="label_id" jdbcType="BIGINT" property="labelId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.BcmLabelMaterialDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
+    <result column="label_version" jdbcType="VARCHAR" property="labelVersion"/>
+    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+bcm.label_material_id,bcm.material_id,bcm.label_id,bcm.label_category_id,bcm.process_id,bcm.status,bcm.create_user_id,bcm.create_time,bcm.modified_user_id,bcm.modified_time,bcm.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>,sm.material_code,sm.version as material_version,sm.material_desc,bl.label_name,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_label_material bcm
+    INNER JOIN smt_material sm ON bcm.material_id = sm.material_id
+    INNER JOIN bcm_label bl ON bl.label_id = bcm.label_id
+    INNER JOIN bcm_label_category blc ON blc.`label_category_id`=bl.label_category_id
+    INNER JOIN smt_process sp ON sp.process_id = bcm.process_id
+    INNER JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
+    INNER JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
+    <where>
+      <if test="materialId!=null and materialId!=''">
+        and bcm.material_id = #{materialId}
+      </if>
+      <if test="labelId!=null and labelId!=''">
+        and bcm.label_id = #{labelId}
+      </if>
+      <if test="labelCategoryId!=null and labelCategoryId!=''">
+        and bcm.label_category_id =@{labelCategoryId}
+      </if>
+      <if test="processId!=null and processId!=''">
+        and bcm.process_id = #{processId}
+      </if>
+    </where>
+  </select>
+</mapper>

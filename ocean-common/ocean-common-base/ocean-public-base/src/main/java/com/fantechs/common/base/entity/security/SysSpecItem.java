@@ -84,7 +84,6 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     @Column(name = "affiliation_module")
     @ApiModelProperty(name="affiliationModule" ,value="所属模块")
     @Excel(name = "所属模块", height = 20, width = 30)
-    @NotBlank(message = "配置项所属模块不能为空")
     private String affiliationModule;
 
     /**

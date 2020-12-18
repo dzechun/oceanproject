@@ -10,5 +10,8 @@ import java.util.Map;
 
 @Mapper
 public interface QmsQualityInspectionMapper extends MyMapper<QmsQualityInspection> {
+
     List<QmsQualityInspectionDto> findList(Map<String, Object> map);
+
+    QmsQualityInspection getMax();
 }
