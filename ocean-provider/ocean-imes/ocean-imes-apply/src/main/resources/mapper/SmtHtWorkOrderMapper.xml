@@ -36,6 +36,7 @@
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="barcode_rule_set_name" jdbcType="BIGINT" property="barcodeRuleSetName" />
   </resultMap>
 
 

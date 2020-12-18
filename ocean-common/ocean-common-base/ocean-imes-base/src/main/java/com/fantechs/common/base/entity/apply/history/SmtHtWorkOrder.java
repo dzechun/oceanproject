@@ -100,6 +100,13 @@ public class SmtHtWorkOrder implements Serializable {
     private Long barcodeRuleSetId;
 
     /**
+     * 条码规则名称
+     */
+    @Transient
+    @ApiModelProperty(name="barcodeRuleSetName" ,value="条码规则名称")
+    private String barcodeRuleSetName;
+
+    /**
      * 工单类型(0、量产 1、试产 2、返工 3、维修)
      */
     @Column(name = "work_order_type")

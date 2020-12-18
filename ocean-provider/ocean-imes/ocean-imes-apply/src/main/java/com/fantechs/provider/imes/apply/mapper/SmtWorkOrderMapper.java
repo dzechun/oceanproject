@@ -6,13 +6,14 @@ import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.mybatis.MyMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface SmtWorkOrderMapper extends MyMapper<SmtWorkOrder> {
     List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder);
 
-    List<SmtProductBomDet> selectProductBomDet(Long materialId);
+    List<SmtProductBomDet> selectProductBomDet(@Param(value = "materialId") Long materialId);
 
     SmtWorkOrderDto selectByWorkOrderId(Long workOrderId);
 

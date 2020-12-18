@@ -28,6 +28,13 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     private String materialName;
 
     /**
+     * 条码规则名称
+     */
+    @Transient
+    @ApiModelProperty(name="barcodeRuleSetName" ,value="条码规则名称")
+    private String barcodeRuleSetName;
+
+    /**
      * 版本
      */
     @Transient
