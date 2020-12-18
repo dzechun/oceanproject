@@ -35,7 +35,7 @@
 bcm.label_ht_material_id,bcm.label_material_id,bcm.material_id,bcm.label_id,bcm.label_category_id,bcm.process_id,bcm.status,bcm.create_user_id,bcm.create_time,bcm.modified_user_id,bcm.modified_time,bcm.is_delete
   </sql>
   <select id="findList" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/>,sm.material_code,sm.version as material_version,sm.material_desc,bl.label_name,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_label_material bcm
+    SELECT <include refid="Base_Column_List"/>,sm.material_code,sm.version as material_version,sm.material_desc,bl.label_name,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_ht_label_material bcm
     INNER JOIN smt_material sm ON bcm.material_id = sm.material_id
     INNER JOIN bcm_label bl ON bl.label_id = bcm.label_id
     INNER JOIN bcm_label_category blc ON blc.`label_category_id`=bl.label_category_id

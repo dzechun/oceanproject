@@ -44,7 +44,7 @@ public class BcmLabelController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@Validated @RequestPart BcmLabel bcmLabel, @RequestPart MultipartFile file) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@Validated BcmLabel bcmLabel, MultipartFile file) {
         return ControllerUtil.returnCRUD(bcmLabelService.add(bcmLabel,file));
     }
 
@@ -56,7 +56,7 @@ public class BcmLabelController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true) @Validated(value=BcmLabel.update.class) @RequestPart BcmLabel bcmLabel,@RequestPart MultipartFile file) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true) @Validated(value=BcmLabel.update.class) BcmLabel bcmLabel, MultipartFile file) {
         return ControllerUtil.returnCRUD(bcmLabelService.update(bcmLabel,file));
     }
 
