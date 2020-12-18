@@ -38,6 +38,7 @@
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="barcode_rule_set_name" jdbcType="BIGINT" property="barcodeRuleSetName" />
   </resultMap>
 
   <resultMap id="BomResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBomDet">
@@ -76,7 +77,7 @@
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMapDto">
     select  swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,sm.transfer_quantity,
     swo.work_order_quantity,swo.production_quantity,swo.output_quantity,swo.work_order_status,swo.pro_line_id,spl.pro_name,swo.route_id,sr.route_name,
-    swo.barcode_rule_set_id,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
+    swo.barcode_rule_set_id,sbrs.barcode_rule_set_name,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
     u.user_name as create_user_name,swo.create_time,swo.modified_user_id,s.user_name as modified_user_name,swo.modified_time, swo.is_delete
     from fantech_imes.smt_work_order swo
     left join fantech_imes.smt_material sm on swo.material_id=sm.material_id

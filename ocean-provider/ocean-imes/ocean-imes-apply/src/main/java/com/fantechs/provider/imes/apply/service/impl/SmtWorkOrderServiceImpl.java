@@ -120,7 +120,9 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 BigDecimal baseQuantity = smtProductBomDet.getBaseQuantity();
                 smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
                 smtWorkOrderBom.setSingleQuantity(quantity);
-                smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity).multiply(baseQuantity));
+                if (StringUtils.isNotEmpty(baseQuantity,quantity)){
+                    smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity).multiply(baseQuantity));
+                }
                 smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
                 smtWorkOrderBom.setCreateTime(new Date());
                 list.add(smtWorkOrderBom);
