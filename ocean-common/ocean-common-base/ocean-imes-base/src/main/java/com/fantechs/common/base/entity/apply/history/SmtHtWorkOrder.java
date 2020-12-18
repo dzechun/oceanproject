@@ -95,9 +95,9 @@ public class SmtHtWorkOrder implements Serializable {
     /**
      * 条码规则集合ID
      */
-    @Column(name = "barcode_rule_id")
-    @ApiModelProperty(name="barcodeRuleId" ,value="条码规则集合ID")
-    private Long barcodeRuleId;
+    @Column(name = "barcode_rule_set_id")
+    @ApiModelProperty(name="barcodeRuleSetId" ,value="条码规则集合ID")
+    private Long barcodeRuleSetId;
 
     /**
      * 工单类型(0、量产 1、试产 2、返工 3、维修)

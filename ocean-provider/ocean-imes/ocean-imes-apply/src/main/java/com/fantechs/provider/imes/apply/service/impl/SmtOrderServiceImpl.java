@@ -53,6 +53,18 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
 
     @Override
     public int batchDelete(String ids) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUserInfo)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        String[] idArray = ids.split(",");
+        for (String id : idArray) {
+            SmtOrder smtOrder = smtOrderMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(smtOrder)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
         return smtOrderMapper.deleteByIds(ids);
     }
 
