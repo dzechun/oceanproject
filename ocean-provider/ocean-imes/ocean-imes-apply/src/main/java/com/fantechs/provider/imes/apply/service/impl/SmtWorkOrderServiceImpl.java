@@ -11,6 +11,7 @@ import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.*;
@@ -84,6 +85,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
         smtStock.setDeliveryMode(new Byte("0"));
         smtStock.setStatus(new Byte("1"));
+        smtStock.setStockCode(CodeUtils.getId("BLD-"));
         Date date = smtWorkOrder.getPlannedStartTime();
         Date afterDate = new Date(date.getTime() + 600000);
         BeanUtils.copyProperties(smtWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});

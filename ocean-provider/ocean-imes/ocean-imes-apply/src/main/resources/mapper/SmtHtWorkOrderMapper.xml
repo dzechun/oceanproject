@@ -13,7 +13,7 @@
     <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus" />
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
-    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
+    <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId" />
     <result column="work_order_type" jdbcType="TINYINT" property="workOrderType" />
     <result column="planned_start_time" jdbcType="TIMESTAMP" property="plannedStartTime" />
     <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime" />
@@ -34,7 +34,6 @@
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="pro_name" jdbcType="VARCHAR" property="proName" />
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
-    <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
@@ -42,7 +41,7 @@
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder" resultMap="BaseResultMap">
     select  shwo.ht_work_order_id,shwo.work_order_id,shwo.work_order_code,shwo.order_id,shwo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
-    shwo.work_order_quantity,shwo.production_quantity,shwo.output_quantity,shwo.work_order_status,shwo.pro_line_id,spl.pro_name,shwo.route_id,sr.route_name,shwo.barcode_rule_id,
+    shwo.work_order_quantity,shwo.production_quantity,shwo.output_quantity,shwo.work_order_status,shwo.pro_line_id,spl.pro_name,shwo.route_id,sr.route_name,shwo.barcode_rule_set_id,
     shwo.work_order_type,shwo.planned_start_time,shwo.planned_end_time,shwo.actual_start_time,shwo.actual_end_time,shwo.create_user_id,
     u.user_name as create_user_name,shwo.create_time,shwo.modified_user_id,s.user_name as modified_user_name,shwo.modified_time, shwo.is_delete
     from fantech_imes.smt_ht_work_order shwo
