@@ -23,9 +23,7 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.BcmLabelDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>
@@ -34,7 +32,7 @@
     bl.`label_ht_id`,bl.`label_id`,bl.label_code,bl.label_name,bl.label_desc,bl.label_version,bl.print_mode,bl.`label_category_id`,bl.save_path,bl.`status`,bl.create_user_id,bl.create_time,sus.user_name,bl.modified_time,bl.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto">
+  <select id="findList" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_ht_label bl
     INNER JOIN bcm_label_category blc ON blc.`label_category_id`= bl.label_category_id
     LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id

@@ -23,7 +23,7 @@ import java.util.List;
  * Created by lfz on 2020/8/6.
  */
 @FeignClient(value = "ocean-security")
-public interface LoginFeignApi {
+public interface SecurityFeignApi {
 
     @PostMapping(value = "/login")
     ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password);

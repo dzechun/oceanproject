@@ -22,7 +22,7 @@ public class BcmHtLabelMaterialServiceImpl  extends BaseService<BcmHtLabelMateri
          private BcmHtLabelMaterialMapper bcmHtLabelMaterialMapper;
 
     @Override
-    public List<BcmLabelMaterialDto> findList(SearchBcmLabelMaterial searchBcmLabelMaterial) {
+    public List<BcmHtLabelMaterial> findList(SearchBcmLabelMaterial searchBcmLabelMaterial) {
         return bcmHtLabelMaterialMapper.findList(searchBcmLabelMaterial);
     }
 }

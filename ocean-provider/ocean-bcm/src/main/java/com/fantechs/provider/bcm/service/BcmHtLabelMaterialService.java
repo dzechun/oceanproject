@@ -14,5 +14,5 @@ import java.util.Map;
 * @create 2020/12/17.
 */
 public interface BcmHtLabelMaterialService extends IService<BcmHtLabelMaterial> {
-    List<BcmLabelMaterialDto> findList(SearchBcmLabelMaterial searchBcmLabelMaterial);
+    List<BcmHtLabelMaterial> findList(SearchBcmLabelMaterial searchBcmLabelMaterial);
 }

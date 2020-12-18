@@ -22,7 +22,7 @@ public class BcmHtLabelServiceImpl  extends BaseService<BcmHtLabel> implements B
     private BcmHtLabelMapper bcmHtLabelMapper;
 
     @Override
-    public List<BcmLabelDto> findList(SearchBcmLabel searchBcmLabel) {
+    public List<BcmHtLabel> findList(SearchBcmLabel searchBcmLabel) {
         return bcmHtLabelMapper.findList(searchBcmLabel);
     }
 }

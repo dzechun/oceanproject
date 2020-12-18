@@ -1,21 +1,16 @@
 package com.fantechs.provider.bcm.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmLabelDto;
 import com.fantechs.common.base.general.entity.bcm.BcmLabel;
-import com.fantechs.common.base.general.entity.bcm.BcmLabelCategory;
 import com.fantechs.common.base.general.entity.bcm.history.BcmHtLabel;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabel;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.LoginFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.bcm.mapper.BcmHtLabelMapper;
 import com.fantechs.provider.bcm.mapper.BcmLabelCategoryMapper;
 import com.fantechs.provider.bcm.mapper.BcmLabelMapper;
@@ -29,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +41,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
     @Resource
     private BcmHtLabelMapper bcmHtLabelMapper;
     @Resource
-    private LoginFeignApi loginFeignApi;
+    private SecurityFeignApi securityFeignApi;
     @Resource
     private BcmLabelCategoryMapper bcmLabelCategoryMapper;
     @Autowired
