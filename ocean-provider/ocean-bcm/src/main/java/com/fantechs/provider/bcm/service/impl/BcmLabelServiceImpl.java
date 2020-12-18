@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public int add(BcmLabel record, MultipartFile file) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
@@ -73,42 +74,30 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
-        //存放路径：标签类别+名称
-        record.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getOriginalFilename());
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("FTP");
-        ResponseEntity<List<SysSpecItem>> itemList= loginFeignApi.findSpecItemList(searchSysSpecItem);
-        List<SysSpecItem> sysSpecItemList = itemList.getData();
-        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-        boolean isLogin = false;
-        boolean success = false;
+//        BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
+//        //存放路径：标签类别+名称
+//        record.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getOriginalFilename());
+//        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+//        searchSysSpecItem.setSpecCode("FTP");
+//        ResponseEntity<List<SysSpecItem>> itemList= loginFeignApi.findSpecItemList(searchSysSpecItem);
+//        List<SysSpecItem> sysSpecItemList = itemList.getData();
+//        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+//        map.put("savePath",record.getSavePath());
+//        boolean success = uploadFile(map,file);
+//        if(!success){
+//            throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
+//        }
 
-        //上传FTP服务器
-        try {
-            String ip = map.get("ip").toString();
-            Integer port = Integer.parseInt(map.get("port").toString());
-            String username = map.get("username").toString();
-            String password = map.get("password").toString();
-            isLogin = this.ftpUtil.connectFTP(ip,port,username,password);
-            if(isLogin){
-                success = this.ftpUtil.uploadFile(FTPUtil.multipartFileToFile(file),record.getSavePath());
-            }
-        }catch (Exception e){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("上传失败"));
-        }finally {
-            this.ftpUtil.loginOut();
-        }
         record.setCreateTime(new Date());
-        //record.setCreateUserId(currentUserInfo.getUserId());
+        record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
-        //record.setModifiedUserId(currentUserInfo.getUserId());
+        record.setModifiedUserId(currentUserInfo.getUserId());
 
         return bcmLabelMapper.insertUseGeneratedKeys(record);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(BcmLabel entity,MultipartFile file) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
@@ -123,32 +112,19 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
-        //存放路径：标签类别+名称
-        entity.setSavePath(bcmLabelCategory.getLabelCategoryName()+file.getName());
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("FTP");
-        ResponseEntity<List<SysSpecItem>> itemList= loginFeignApi.findSpecItemList(searchSysSpecItem);
-        List<SysSpecItem> sysSpecItemList = itemList.getData();
-        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-        boolean isLogin = false;
-        boolean success = false;
-
-        //上传FTP服务器
-        try {
-            String ip = map.get("ip").toString();
-            Integer port = Integer.parseInt(map.get("port").toString());
-            String username = map.get("username").toString();
-            String password = map.get("password").toString();
-            isLogin = this.ftpUtil.connectFTP(ip,port,username,password);
-            if(isLogin){
-                success = this.ftpUtil.uploadFile(FTPUtil.multipartFileToFile(file),entity.getSavePath());
-            }
-        }catch (Exception e){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("上传失败"));
-        }finally {
-            this.ftpUtil.loginOut();
-        }
+//        BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
+//        //存放路径：标签类别+名称
+//        entity.setSavePath(bcmLabelCategory.getLabelCategoryName()+file.getName());
+//        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+//        searchSysSpecItem.setSpecCode("FTP");
+//        ResponseEntity<List<SysSpecItem>> itemList= loginFeignApi.findSpecItemList(searchSysSpecItem);
+//        List<SysSpecItem> sysSpecItemList = itemList.getData();
+//        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+//        map.put("savePath",entity.getSavePath());
+//        boolean success = uploadFile(map,file);
+//        if(!success){
+//            throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
+//        }
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
@@ -181,5 +157,28 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         bcmHtLabelMapper.insertList(list);
 
         return bcmLabelMapper.deleteByIds(ids);
+    }
+
+    @Transactional(rollbackFor = RuntimeException.class)
+    public boolean uploadFile(Map map, MultipartFile file){
+        boolean isLogin = false;
+        boolean success = false;
+
+        //上传FTP服务器
+        try {
+            String ip = map.get("ip").toString();
+            Integer port = Integer.parseInt(map.get("port").toString());
+            String username = map.get("username").toString();
+            String password = map.get("password").toString();
+            isLogin = this.ftpUtil.connectFTP(ip,port,username,password);
+            if(isLogin){
+                success = this.ftpUtil.uploadFile(FTPUtil.multipartFileToFile(file),map.get("savePath").toString());
+            }
+        }catch (Exception e){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("上传失败"));
+        }finally {
+            this.ftpUtil.loginOut();
+        }
+        return success;
     }
 }

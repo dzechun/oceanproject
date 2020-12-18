@@ -67,7 +67,12 @@ public class FTPUtil {
         BufferedInputStream inputStream = null;
         boolean success = false;
         try {
-            this.ftpClient.changeWorkingDirectory(remotUploadePath.trim());
+            //选择存放路径 true：路径存在 flase：路径不存在
+            boolean isDirectory = this.ftpClient.changeWorkingDirectory(remotUploadePath.trim());
+            if(!isDirectory){
+                //创建文件夹
+                this.ftpClient.makeDirectory(remotUploadePath.trim());
+            }
             inputStream = new BufferedInputStream(new FileInputStream(localFile));
             logger.info("{}开始上传", localFile.getName());
             success = this.ftpClient.storeFile(localFile.getName(), inputStream);
@@ -99,7 +104,10 @@ public class FTPUtil {
     public boolean deleteFile(String filePath, String fileName) {
         boolean success = false;
         try {
-            this.ftpClient.changeWorkingDirectory(filePath);
+            boolean isDirectory = this.ftpClient.changeWorkingDirectory(filePath);
+            if(!isDirectory){
+                logger.info("文件路径不存在");
+            }
             success = this.ftpClient.deleteFile(fileName);
         } catch (IOException e) {
             e.printStackTrace();
