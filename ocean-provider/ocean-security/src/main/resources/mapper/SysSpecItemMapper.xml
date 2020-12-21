@@ -59,7 +59,7 @@
   </select>
 
   <select id="findModule" resultMap="BaseResultMap">
-    select ssi.affiliation_module,ssi. from sys_spec_item ssi where ISNULL(category ) group BY ssi.affiliation_module
+    select ssi.affiliation_module,ssi.spec_id from sys_spec_item ssi where ISNULL(category)
   </select>
 
   <update id="updateModule" parameterType="map">
