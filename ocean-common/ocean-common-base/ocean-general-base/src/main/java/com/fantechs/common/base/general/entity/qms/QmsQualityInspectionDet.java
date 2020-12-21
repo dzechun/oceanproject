@@ -55,8 +55,8 @@ public class QmsQualityInspectionDet extends ValidGroup implements Serializable 
     /**
      * 检验状态（0-未检验 1-检验中 2-已检验）
      */
-    @ApiModelProperty(name="checkoutStatus",value = "检验状态（0-未检验 1-检验中 2-已检验）")
-    @Excel(name = "检验状态（0-未检验 1-检验中 2-已检验）", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="checkoutStatus",value = "检验状态（0-未检验 1-待检验 2-已检验）")
+    @Excel(name = "检验状态（0-未检验 1-待检验 2-已检验）", height = 20, width = 30,orderNum="")
     @Column(name = "checkout_status")
     private Byte checkoutStatus;
 

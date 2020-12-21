@@ -32,7 +32,9 @@ zuul:
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
-
+    ocean-qms:
+        path: /ocean-qms/**
+        serviceId: ocean-qms
   sensitive-headers: Access-Control-Allow-Origin
   ignored-headers: Access-Control-Allow-Origin
 
