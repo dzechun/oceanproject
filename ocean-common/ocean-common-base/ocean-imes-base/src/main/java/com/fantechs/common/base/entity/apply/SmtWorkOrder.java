@@ -2,8 +2,10 @@ package com.fantechs.common.base.entity.apply;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -118,6 +120,8 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "planned_start_time")
     @ApiModelProperty(name="plannedStartTime" ,value="计划开始时间")
     @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="13",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @NotNull(message = "计划开始时间不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date plannedStartTime;
 
     /**
@@ -126,6 +130,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "planned_end_time")
     @ApiModelProperty(name="plannedEndTime" ,value="计划结束时间")
     @Excel(name = "计划结束时间", height = 20, width = 30,orderNum="14",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date plannedEndTime;
 
     /**
@@ -134,6 +139,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "actual_start_time")
     @ApiModelProperty(name="actualStartTime" ,value="实际开始时间")
     @Excel(name = "实际开始时间", height = 20, width = 30,orderNum="15",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date actualStartTime;
 
     /**
@@ -142,6 +148,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "actual_end_time")
     @ApiModelProperty(name="actualEndTime" ,value="实际结束时间")
     @Excel(name = "实际结束时间", height = 20, width = 30,orderNum="16",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date actualEndTime;
 
     /**
@@ -157,6 +164,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
     /**
@@ -172,6 +180,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date modifiedTime;
 
     /**

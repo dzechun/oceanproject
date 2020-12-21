@@ -14,5 +14,5 @@ import java.util.Map;
 * @create 2020/12/17.
 */
 public interface BcmHtLabelCategoryService extends IService<BcmHtLabelCategory> {
-    List<BcmLabelCategoryDto> findList(SearchBcmLabelCategory searchBcmLabelCategory);
+    List<BcmHtLabelCategory> findList(SearchBcmLabelCategory searchBcmLabelCategory);
 }

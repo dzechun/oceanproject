@@ -161,5 +161,21 @@ public class BcmHtLabel extends ValidGroup implements Serializable {
     @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
 
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    private String modifiedUserName;
+
     private static final long serialVersionUID = 1L;
 }

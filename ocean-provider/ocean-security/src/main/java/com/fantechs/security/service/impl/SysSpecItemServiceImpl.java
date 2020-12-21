@@ -38,8 +38,62 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     }
 
     @Override
-    public List<String> findModule(Map<String,Object> map) {
-        return sysSpecItemMapper.findModule(map);
+    public List<SysSpecItem> findModule() {
+        return sysSpecItemMapper.findModule();
+    }
+
+    @Override
+    public int addModule(String moduleName) {
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Example example = new Example(SysSpecItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("affiliationModule",moduleName)
+                .andIsNull("category");
+        List<SysSpecItem> sysSpecItems = sysSpecItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(sysSpecItems)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002);
+        }
+        SysSpecItem sysSpecItem = new SysSpecItem();
+        sysSpecItem.setAffiliationModule(moduleName);
+        int i = sysSpecItemMapper.insert(sysSpecItem);
+        return i;
+    }
+
+    @Override
+    public int updateModule(Map<String, Object> map) {
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Example example = new Example(SysSpecItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("affiliationModule",map.get("affiliationModule")==null?"":map.get("affiliationModule"))
+                .andNotEqualTo("specId",map.get("specId")==null?"":map.get("specId"));
+        List<SysSpecItem> sysSpecItems = sysSpecItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(sysSpecItems)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002);
+        }
+        int i = sysSpecItemMapper.updateModule(map);
+        return i;
+    }
+
+    @Override
+    public int deleteModule(String ids) {
+        SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        String[] idsArr = ids.split(",");
+        for (String specId : idsArr) {
+            List<SysSpecItem> list = sysSpecItemMapper.examineModule(specId);
+            if (StringUtils.isNotEmpty(list)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+        }
+        return sysSpecItemMapper.deleteByIds(ids);
     }
 
     @Override

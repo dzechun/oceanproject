@@ -19,18 +19,16 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
 
-  <sql id="Base_Column_List">
-    blc.`label_ht_category_id`,blc.`label_category_id`,blc.label_category_code,blc.label_category_name,blc.label_category_desc,blc.`status`,blc.create_user_id,blc.create_time,blc.modified_user_id,blc.modified_time,blc.is_delete
-  </sql>
-
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>
 
-  <select id="findList" resultMap="BaseResultMapDto">
+  <sql id="Base_Column_List">
+    blc.label_ht_category_id,blc.`label_category_id`,blc.label_category_code,blc.label_category_name,blc.label_category_desc,blc.`status`,blc.create_user_id,blc.create_time,blc.modified_user_id,blc.modified_time,blc.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_ht_label_category blc
     LEFT JOIN ocean.sys_user su ON blc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON blc.modified_user_id = sus.user_id

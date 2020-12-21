@@ -76,9 +76,9 @@ public class BcmLabelMaterialController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BcmLabelMaterialDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelMaterial searchBcmLabelMaterial) {
+    public ResponseEntity<List<BcmHtLabelMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelMaterial searchBcmLabelMaterial) {
         Page<Object> page = PageHelper.startPage(searchBcmLabelMaterial.getStartPage(),searchBcmLabelMaterial.getPageSize());
-        List<BcmLabelMaterialDto> list = bcmHtLabelMaterialService.findList(searchBcmLabelMaterial);
+        List<BcmHtLabelMaterial> list = bcmHtLabelMaterialService.findList(searchBcmLabelMaterial);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

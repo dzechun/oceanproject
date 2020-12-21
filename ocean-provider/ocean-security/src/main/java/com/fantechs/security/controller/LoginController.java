@@ -8,12 +8,10 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
-import com.fantechs.provider.api.security.service.LoginFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -36,18 +34,18 @@ import java.io.IOException;
 public class LoginController {
 
     @Resource
-    private LoginFeignApi loginFeignApi;
+    private SecurityFeignApi securityFeignApi;
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
     public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password){
-        ResponseEntity responseEntity = loginFeignApi.login(username, password);
+        ResponseEntity responseEntity = securityFeignApi.login(username, password);
         return  responseEntity;
     }
 
     @GetMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request){
-        ResponseEntity responseEntity = loginFeignApi.logout();
+        ResponseEntity responseEntity = securityFeignApi.logout();
         return responseEntity;
     }
 

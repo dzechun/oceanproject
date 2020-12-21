@@ -28,6 +28,13 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     private String materialName;
 
     /**
+     * 条码规则名称
+     */
+    @Transient
+    @ApiModelProperty(name="barcodeRuleSetName" ,value="条码规则名称")
+    private String barcodeRuleSetName;
+
+    /**
      * 版本
      */
     @Transient
@@ -64,14 +71,6 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @ApiModelProperty(name="routeName" ,value="工艺路线名称")
     @Excel(name = "工艺路线名称", height = 20, width = 30,orderNum="10")
     private String routeName;
-
-    /**
-     * 条码规则集合
-     */
-    @Transient
-    @ApiModelProperty(name="barcodeRule" ,value="条码规则集合")
-    @Excel(name = "条码规则集合", height = 20, width = 30,orderNum="11")
-    private String barcodeRule;
 
     /**
      * 创建用户名称

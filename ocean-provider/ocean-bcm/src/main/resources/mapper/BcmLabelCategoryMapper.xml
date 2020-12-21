@@ -20,7 +20,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>

@@ -29,10 +29,11 @@
   <select id="findList" parameterType="com.fantechs.common.base.entity.security.search.SearchSysSpecItem" resultMap="BaseResultMap">
     select  si.spec_id, si.spec_code, si.spec_name, si.para, si.para_value, si.is_hide,si.create_user_id, u.user_name as createUserName,
     si.create_time, si.modified_user_id,s.user_name as modifiedUserName,
-    si.modified_time,si.is_delete,si.category,si.order_num,si.affiliation_module
+    si.modified_time,si.is_delete,si.category,si.order_num,ssi.affiliation_module
     from sys_spec_item si
     left join sys_user u on si.create_user_id=u.user_id
     left join sys_user s on si.modified_user_id=s.user_id
+    left join sys_spec_item ssi on si.affiliation_module = ssi.spec_id
     <where>
       1=1
       <if test="specCode!=null and specCode!=''">
@@ -48,7 +49,7 @@
         and si.para_value like CONCAT('%', #{paraValue}, '%')
       </if>
       <if test="affiliationModule != null and affiliationModule != '' ">
-        and si.affiliation_module = #{affiliationModule} and si.para_value != 'null'
+        and si.affiliation_module = #{affiliationModule}
       </if>
       <if test="(category != null and category != '') or category == 0 ">
         and si.category = #{category}
@@ -57,8 +58,18 @@
 
   </select>
 
-  <select id="findModule" parameterType="java.lang.String" resultType="java.lang.String">
-    select ssi.affiliation_module from sys_spec_item ssi where ssi.category = #{category} group BY ssi.affiliation_module
+  <select id="findModule" resultMap="BaseResultMap">
+    select ssi.affiliation_module,ssi.spec_id from sys_spec_item ssi where ISNULL(category)
+  </select>
+
+  <update id="updateModule" parameterType="map">
+    update sys_spec_item ssi.spec_id set ssi.affiliation_module = #{affiliationModule} where ssi.spec_id = #{specId}
+  </update>
+
+  <select id="examineModule" parameterType="string" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List"></include>
+    from sys_spec_item ssi
+    where  ssi.affiliation_module = #{specId}
   </select>
 
 </mapper>

@@ -3,6 +3,7 @@ package com.fantechs.provider.bcm.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
 import com.fantechs.common.base.general.entity.bcm.BcmLabelCategory;
+import com.fantechs.common.base.general.entity.bcm.history.BcmHtLabelCategory;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabelCategory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -74,9 +75,9 @@ public class BcmLabelCategoryController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BcmLabelCategoryDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory) {
+    public ResponseEntity<List<BcmHtLabelCategory>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory) {
         Page<Object> page = PageHelper.startPage(searchBcmLabelCategory.getStartPage(),searchBcmLabelCategory.getPageSize());
-        List<BcmLabelCategoryDto> list = bcmHtLabelCategoryService.findList(searchBcmLabelCategory);
+        List<BcmHtLabelCategory> list = bcmHtLabelCategoryService.findList(searchBcmLabelCategory);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

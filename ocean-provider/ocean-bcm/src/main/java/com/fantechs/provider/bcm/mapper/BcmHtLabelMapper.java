@@ -10,5 +10,5 @@ import java.util.List;
 
 @Mapper
 public interface BcmHtLabelMapper extends MyMapper<BcmHtLabel> {
-    List<BcmLabelDto> findList(SearchBcmLabel searchBcmLabel);
+    List<BcmHtLabel> findList(SearchBcmLabel searchBcmLabel);
 }

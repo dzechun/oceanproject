@@ -56,7 +56,7 @@ public class BcmLabelController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true) @Validated(value=BcmLabel.update.class) BcmLabel bcmLabel,MultipartFile file) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true) @Validated(value=BcmLabel.update.class) BcmLabel bcmLabel, MultipartFile file) {
         return ControllerUtil.returnCRUD(bcmLabelService.update(bcmLabel,file));
     }
 
@@ -77,9 +77,9 @@ public class BcmLabelController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BcmLabelDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabel searchBcmLabel) {
+    public ResponseEntity<List<BcmHtLabel>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabel searchBcmLabel) {
         Page<Object> page = PageHelper.startPage(searchBcmLabel.getStartPage(),searchBcmLabel.getPageSize());
-        List<BcmLabelDto> list = bcmHtLabelService.findList(searchBcmLabel);
+        List<BcmHtLabel> list = bcmHtLabelService.findList(searchBcmLabel);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

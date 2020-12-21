@@ -35,7 +35,8 @@ public class FTPUtil {
         this.ftpClient = new FTPClient();
         FTPClientConfig ftpClientConfig = new FTPClientConfig();
         ftpClientConfig.setServerTimeZoneId(TimeZone.getDefault().getID());
-        this.ftpClient.setControlEncoding("UTF-8");
+        ftpClientConfig.setServerLanguageCode("zh");
+        this.ftpClient.setControlEncoding("GBK");
         this.ftpClient.configure(ftpClientConfig);
         this.ftpClient.connect(url.trim(), port);
         //ftp连接回答返回码
@@ -67,10 +68,17 @@ public class FTPUtil {
         BufferedInputStream inputStream = null;
         boolean success = false;
         try {
-            this.ftpClient.changeWorkingDirectory(remotUploadePath.trim());
+            //选择存放路径 true：路径存在 flase：路径不存在
+            String gbk = new String(remotUploadePath.trim().getBytes("GBK"), "ISO-8859-1");
+            boolean isDirectory = this.ftpClient.changeWorkingDirectory(remotUploadePath.trim());
+            if(!isDirectory){
+                //创建文件夹
+                this.ftpClient.makeDirectory(gbk);
+                this.ftpClient.changeWorkingDirectory(remotUploadePath.trim());
+            }
             inputStream = new BufferedInputStream(new FileInputStream(localFile));
             logger.info("{}开始上传", localFile.getName());
-            success = this.ftpClient.storeFile(localFile.getName(), inputStream);
+            success = this.ftpClient.storeFile(new String(localFile.getName().getBytes("GBK"),"ISO-8859-1"), inputStream);
             if (success) {
                 logger.info("上传成功");
                 return success;
@@ -99,7 +107,10 @@ public class FTPUtil {
     public boolean deleteFile(String filePath, String fileName) {
         boolean success = false;
         try {
-            this.ftpClient.changeWorkingDirectory(filePath);
+            boolean isDirectory = this.ftpClient.changeWorkingDirectory(filePath);
+            if(!isDirectory){
+                logger.info("文件路径不存在");
+            }
             success = this.ftpClient.deleteFile(fileName);
         } catch (IOException e) {
             e.printStackTrace();

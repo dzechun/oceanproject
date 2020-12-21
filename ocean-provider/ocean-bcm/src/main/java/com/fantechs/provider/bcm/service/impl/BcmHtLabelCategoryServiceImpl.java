@@ -22,7 +22,7 @@ public class BcmHtLabelCategoryServiceImpl  extends BaseService<BcmHtLabelCatego
          private BcmHtLabelCategoryMapper bcmHtLabelCategoryMapper;
 
     @Override
-    public List<BcmLabelCategoryDto> findList(SearchBcmLabelCategory searchBcmLabelCategory) {
+    public List<BcmHtLabelCategory> findList(SearchBcmLabelCategory searchBcmLabelCategory) {
         return bcmHtLabelCategoryMapper.findList(searchBcmLabelCategory);
     }
 }

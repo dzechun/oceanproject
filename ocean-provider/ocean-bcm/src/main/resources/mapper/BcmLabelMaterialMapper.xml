@@ -20,7 +20,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.BcmLabelMaterialDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.BcmLabelMaterialDto">
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -51,7 +51,7 @@ bcm.label_material_id,bcm.material_id,bcm.label_id,bcm.label_category_id,bcm.pro
           and bcm.label_id = #{labelId}
         </if>
         <if test="labelCategoryId!=null and labelCategoryId!=''">
-          and bcm.label_category_id =@{labelCategoryId}
+          and bl.label_category_id =#{labelCategoryId}
         </if>
         <if test="processId!=null and processId!=''">
           and bcm.process_id = #{processId}

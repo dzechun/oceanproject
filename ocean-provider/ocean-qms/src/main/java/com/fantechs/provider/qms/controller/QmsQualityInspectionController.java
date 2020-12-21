@@ -87,13 +87,13 @@ public class QmsQualityInspectionController {
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchQmsQualityInspection searchQmsQualityInspection){
-    List<QmsQualityInspectionDto> list = qmsQualityInspectionService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsQualityInspection));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsQualityInspection信息", QmsQualityInspection.class, "QmsQualityInspection.xls", response);
+                        @RequestBody(required = false) SearchQmsQualityInspection searchQmsQualityInspection){
+        List<QmsQualityInspectionDto> list = qmsQualityInspectionService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsQualityInspection));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "质检计划信息导出", "质检计划信息", QmsQualityInspectionDto.class, "质检计划信息.xls", response);
         } catch (Exception e) {
-        throw new BizErrorException(e);
+            throw new BizErrorException(e);
         }
     }
 
