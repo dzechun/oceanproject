@@ -4,6 +4,7 @@
       <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsStorageBills">
         <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
         <result column="storage_bills_code" jdbcType="VARCHAR" property="storageBillsCode" />
+        <result column="bills_type" jdbcType="INTEGER" property="billsType" />
         <result column="total" jdbcType="DECIMAL" property="total" />
         <result column="material_type_total" jdbcType="DECIMAL" property="materialTypeTotal" />
         <result column="finished_total" jdbcType="DECIMAL" property="finishedTotal" />
@@ -16,35 +17,43 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
+  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsStorageBillsDTO" extends="BaseResultMap">
 
+  </resultMap>
 
   <select id="selectUserName" resultType="string">
     select su.user_name from ocean.sys_user su where su.user_id = #{id}
   </select>
-  <select id="selectFilterAll" resultMap="BaseResultMap">
+  <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
     SELECT
-      wsb.storage_bills_id,
-      wsb.storage_bills_code,
-      wsb.total,
-      wsb.material_type_total,
-      wsb.finished_total,
-      wsb.type,
-      wsb.supplier_id,
-      wsb.`status`,
-      wsb.is_delete,
-      wsb.create_user_id,
-      wsb.create_time,
-      wsb.modified_user_id,
-      wsb.modified_time
+    wsb.storage_bills_id,
+    wsb.storage_bills_code,
+    wsb.bills_type,
+    wsb.total,
+    wsb.material_type_total,
+    wsb.finished_total,
+    wsb.type,
+    wsb.supplier_id,
+    smts.supplier_name as supplierName,
+    wsb.`status`,
+    wsb.is_delete,
+    wsb.create_user_id,
+    wsb.create_time,
+    wsb.modified_user_id,
+    wsb.modified_time
     FROM
-      wms_storage_bills AS wsb
+    wms_storage_bills AS wsb
+    LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
     <where>
-        <if test="type != null and type>0">
-          wsb.type = #{type}
-        </if>
-        <if test="storageBillsCode != null and storageBillsCode != ''">
-          OR wsb.storage_bills_code = #{storageBillsCode}
-        </if>
+      <if test="billsType != null and billsType>0">
+        AND wsb.bills_type = #{billsType}
+      </if>
+      <if test="type != null and type>0">
+        AND wsb.type = #{type}
+      </if>
+      <if test="storageBillsCode != null and storageBillsCode != ''">
+        AND wsb.storage_bills_code = #{storageBillsCode}
+      </if>
     </where>
     order by wsb.modified_time desc
   </select>
