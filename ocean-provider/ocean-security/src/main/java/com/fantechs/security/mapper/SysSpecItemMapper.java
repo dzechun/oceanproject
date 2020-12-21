@@ -10,7 +10,7 @@ import java.util.Map;
 public interface SysSpecItemMapper extends MyMapper<SysSpecItem> {
     List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem);
 
-    List<String> findModule();
+    List<SysSpecItem> findModule();
 
     int updateModule(Map<String, Object> map);
 

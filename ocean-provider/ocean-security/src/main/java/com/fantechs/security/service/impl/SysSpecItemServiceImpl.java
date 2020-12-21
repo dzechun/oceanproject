@@ -38,7 +38,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     }
 
     @Override
-    public List<String> findModule() {
+    public List<SysSpecItem> findModule() {
         return sysSpecItemMapper.findModule();
     }
 

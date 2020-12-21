@@ -13,7 +13,7 @@ public interface SysSpecItemService extends IService<SysSpecItem> {
     List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem);
 
     //通过配置类别，查询该类别下所有模块名称
-    List<String> findModule();
+    List<SysSpecItem> findModule();
 
     int addModule(String moduleName);
 

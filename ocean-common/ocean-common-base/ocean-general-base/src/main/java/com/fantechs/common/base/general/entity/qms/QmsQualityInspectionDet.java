@@ -90,7 +90,7 @@ public class QmsQualityInspectionDet extends ValidGroup implements Serializable 
     @ApiModelProperty(name="inspectionResult",value = "检验结果")
     @Excel(name = "检验结果", height = 20, width = 30,orderNum="")
     @Column(name = "inspection_result")
-    private String inspectionResult;
+    private Byte inspectionResult;
 
     /**
      * 检验开始时间
