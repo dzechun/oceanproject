@@ -1,6 +1,9 @@
 package com.fantechs.provider.wms.storageBills.service;
 
+import com.fantechs.common.base.dto.storage.SaveBilssDet;
+import com.fantechs.common.base.dto.storage.WmsStorageBillsDTO;
 import com.fantechs.common.base.entity.storage.WmsStorageBills;
+import com.fantechs.common.base.exception.SQLExecuteException;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -26,5 +29,7 @@ public interface WmsStorageBillsService extends IService<WmsStorageBills> {
     String selectUserName(Object id);
     //===========================基础功能 end============================
     //以特定过滤条件查询
-    List<WmsStorageBills> selectFilterAll(Map<String,Object> map);
+    List<WmsStorageBillsDTO> selectFilterAll(Map<String,Object> map);
+    //保存单据详情单
+    int saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException;
 }

@@ -29,7 +29,18 @@ public class WmsStorageBills implements Serializable {
     @ApiModelProperty(value = "单号",example = "单号")
     @Column(name = "storage_bills_code")
     @Excel(name = "单号")
+    @NotBlank(message = "单号不能为空")
     private String storageBillsCode;
+
+    /**
+     * 仓库清单类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）
+     */
+    @ApiModelProperty(value = "仓库清单类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）",example = "仓库清单类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    @Column(name = "bills_type")
+    @Excel(name = "仓库清单类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    @NotBlank(message = "仓库清单类型不能为空")
+    private Integer billsType;
+
 
     /**
     * 入库数量总计
@@ -59,8 +70,8 @@ public class WmsStorageBills implements Serializable {
     /**
     * 单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）
     */
-    @ApiModelProperty(value = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）",example = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
-    @Excel(name = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    @ApiModelProperty(value = "单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）",example = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    @Excel(name = "单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）")
     @NotNull(message = "单据类型不能为空")
     private Integer type;
 

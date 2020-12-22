@@ -23,4 +23,12 @@ public class WmsStorageBillsDTO extends WmsStorageBills implements Serializable 
     @ApiModelProperty(value = "修改用户名称",example = "修改用户名称")
     @Excel(name = "修改用户名称")
     private String modifiedUserName;
+
+    /**
+     * 供应商名称
+     */
+    @Transient
+    @ApiModelProperty(value = "供应商名称",example = "供应商名称")
+    @Excel(name = "供应商名称")
+    private String supplierName;
 }

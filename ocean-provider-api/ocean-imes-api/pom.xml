@@ -19,5 +19,6 @@
 	<modules>
 		<module>ocean-imes-basic-api</module>
         <module>ocean-storage-inventory-api</module>
+		<module>ocean-imes-apply-api</module>
     </modules>
 </project>
