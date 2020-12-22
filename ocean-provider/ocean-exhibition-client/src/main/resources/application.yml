@@ -1,0 +1,16 @@
+server:
+  port: 8998
+  max-http-header-size: 10000000
+
+spring:
+  profiles:
+    include: dev
+  application:
+    name: @pom.artifactId@
+  rabbitmq:
+    host: 10.182.163.191
+    port: 5672
+    username: admin
+    password: StrongPassword
+logging:
+  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

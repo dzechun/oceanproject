@@ -123,7 +123,6 @@ public class CodeUtils {
         switch(str){
             //月
             case "[M]" :
-                //ruleType =  cal.get(Calendar.MONTH) + 1+"";
                 ruleType =new SimpleDateFormat("MM").format(new Date());
                 break;
             //周
@@ -134,7 +133,6 @@ public class CodeUtils {
                 break;
             //日
             case "[D]" :
-                //ruleType =  cal.get(Calendar.DATE)+"";
                 ruleType =new SimpleDateFormat("dd").format(new Date());
                 break;
             //周的日
@@ -193,36 +191,6 @@ public class CodeUtils {
     }
 
 
-    public static void main(String[] args) throws ParseException, IOException {
-
-        CodeUtils codeUtils = new CodeUtils(redisTemplate);
-        codeUtils.getId("ORDER-");
-//        //String code="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//        String code="0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
-//        String str1 = "0HJ";
-//        int num=16;
-//        Character[] nums= ArrayUtils.toObject(code.toCharArray());
-//        List<Character> list = Arrays.asList(nums);
-//        String str2 = list.get(num).toString();
-//        String r=generateSerialNumber(str1,str2,code);
-//        System.out.println(r);
-//
-//
-//        Calendar cal= Calendar.getInstance();
-//        String date="2020-01-03";
-//        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd");
-//        cal.setTime(sdf.parse(date));
-//
-//        int week = cal.get(Calendar.WEEK_OF_YEAR);
-//        System.out.println(week);
-//
-//        String customizeValue="{\"1\": \"1\",\"2\": \"2\",\"3\": \"3\",\"4\": \"4\",\"5\": \"5\",\"6\": \"6\",\"7\": \"7\",\"8\": \"8\",\"9\": \"9\",\"10\": \"A\",\"11\": \"B\",\"12\": \"C\"}";
-//        String a="[m]";
-//        String typeCode = getTypeCode(a,customizeValue);
-//        System.out.println(typeCode);
-    }
-
-
     /**
      *
      * @param str1  当前最大流水号
@@ -231,7 +199,6 @@ public class CodeUtils {
      * @return
      */
     public static String generateSerialNumber(String str1, String str2, String code) {
-        //Character[] nums = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
         Character[] nums= ArrayUtils.toObject(code.toCharArray());
         List<Character> list = Arrays.asList(nums);
         int length = code.length();
