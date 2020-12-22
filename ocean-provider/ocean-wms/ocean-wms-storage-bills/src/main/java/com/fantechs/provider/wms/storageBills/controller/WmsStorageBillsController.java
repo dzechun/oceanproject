@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.storageBills.controller;
 
+import com.fantechs.common.base.dto.storage.WmsStorageBillsDTO;
 import com.fantechs.common.base.entity.storage.WmsStorageBills;
 import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsService;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsListDTO;
@@ -33,13 +34,13 @@ public class WmsStorageBillsController {
 
     @ApiOperation("查询仓库清单表列表")
     @PostMapping("list")
-    public ResponseEntity<List<WmsStorageBills>> list(
+    public ResponseEntity<List<WmsStorageBillsDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchWmsStorageBillsListDTO searchWmsStorageBillsListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
             @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize
     ){
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
-        List<WmsStorageBills> wmsStorageBillsList = wmsStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsStorageBillsListDTO));
+        List<WmsStorageBillsDTO> wmsStorageBillsList = wmsStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsStorageBillsListDTO));
         return ControllerUtil.returnDataSuccess(wmsStorageBillsList,(int)page.getTotal());
     }
 

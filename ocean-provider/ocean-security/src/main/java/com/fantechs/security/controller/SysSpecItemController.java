@@ -114,8 +114,8 @@ public class SysSpecItemController {
 
     @PostMapping("/findModule")
     @ApiOperation(value = "根据条件查询所有模块名称",notes = "根据条件查询所有模块名称")
-    public ResponseEntity<List<String>> findModule() {
-        List<String> list = sysSpecItemService.findModule();
+    public ResponseEntity<List<SysSpecItem>> findModule() {
+        List<SysSpecItem> list = sysSpecItemService.findModule();
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 

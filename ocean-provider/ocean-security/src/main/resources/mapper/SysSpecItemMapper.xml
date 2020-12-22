@@ -58,12 +58,12 @@
 
   </select>
 
-  <select id="findModule" resultType="java.lang.String">
-    select ssi.affiliation_module from sys_spec_item ssi where ISNULL(category ) group BY ssi.affiliation_module
+  <select id="findModule" resultMap="BaseResultMap">
+    select ssi.affiliation_module,ssi.spec_id from sys_spec_item ssi where ISNULL(category)
   </select>
 
   <update id="updateModule" parameterType="map">
-    update sys_spec_item ssi set ssi.affiliation_module = #{affiliationModule} where ssi.spec_id = #{specId}
+    update sys_spec_item ssi.spec_id set ssi.affiliation_module = #{affiliationModule} where ssi.spec_id = #{specId}
   </update>
 
   <select id="examineModule" parameterType="string" resultMap="BaseResultMap" >

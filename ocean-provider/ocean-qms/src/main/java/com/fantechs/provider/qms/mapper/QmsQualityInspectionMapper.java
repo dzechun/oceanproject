@@ -14,4 +14,6 @@ public interface QmsQualityInspectionMapper extends MyMapper<QmsQualityInspectio
     List<QmsQualityInspectionDto> findList(Map<String, Object> map);
 
     QmsQualityInspection getMax();
+
+    int deleteDetail(String ids);
 }

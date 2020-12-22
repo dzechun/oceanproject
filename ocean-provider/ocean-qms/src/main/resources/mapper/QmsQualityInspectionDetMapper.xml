@@ -13,7 +13,7 @@
     <result column="checkout_quantity" jdbcType="DECIMAL" property="checkoutQuantity" />
     <result column="qualified_quantity" jdbcType="DECIMAL" property="qualifiedQuantity" />
     <result column="surveyor" jdbcType="VARCHAR" property="surveyor" />
-    <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="checkout_start_time" jdbcType="TIMESTAMP" property="checkoutStartTime" />
     <result column="checkout_end_time" jdbcType="TIMESTAMP" property="checkoutEndTime" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -50,7 +50,7 @@
     LEFT JOIN fantech_imes.smt_material sm ON qqid.material_id = sm.material_id
     <where>
       <if test="qualityInspectionCode != null and qualityInspectionCode != '' ">
-        and qqid.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')
+        and qqi.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')
       </if>
       <if test="checkoutStatus != null and checkoutStatus!=''">
         and qqid.checkout_status = #{checkoutStatus}

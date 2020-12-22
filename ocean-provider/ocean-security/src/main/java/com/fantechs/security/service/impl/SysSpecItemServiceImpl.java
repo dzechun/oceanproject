@@ -38,16 +38,16 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     }
 
     @Override
-    public List<String> findModule() {
+    public List<SysSpecItem> findModule() {
         return sysSpecItemMapper.findModule();
     }
 
     @Override
     public int addModule(String moduleName) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(currentUser)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(SysSpecItem.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("affiliationModule",moduleName)
@@ -65,9 +65,9 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     @Override
     public int updateModule(Map<String, Object> map) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(currentUser)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(SysSpecItem.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("affiliationModule",map.get("affiliationModule")==null?"":map.get("affiliationModule"))

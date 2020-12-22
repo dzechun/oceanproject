@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.QmsQualityInspectionDetDto;
 import com.fantechs.common.base.general.entity.qms.QmsQualityInspectionDet;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityInspectionDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -62,9 +63,9 @@ public class QmsQualityInspectionDetController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<QmsQualityInspectionDet>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsQualityInspectionDet searchQmsQualityInspectionDet) {
+    public ResponseEntity<List<QmsQualityInspectionDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsQualityInspectionDet searchQmsQualityInspectionDet) {
         Page<Object> page = PageHelper.startPage(searchQmsQualityInspectionDet.getStartPage(),searchQmsQualityInspectionDet.getPageSize());
-        List<QmsQualityInspectionDet> list = qmsQualityInspectionDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsQualityInspectionDet));
+        List<QmsQualityInspectionDetDto> list = qmsQualityInspectionDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsQualityInspectionDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -72,10 +73,10 @@ public class QmsQualityInspectionDetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchQmsQualityInspectionDet searchQmsQualityInspectionDet){
-    List<QmsQualityInspectionDet> list = qmsQualityInspectionDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsQualityInspectionDet));
+    List<QmsQualityInspectionDetDto> list = qmsQualityInspectionDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsQualityInspectionDet));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsQualityInspectionDet信息", QmsQualityInspectionDet.class, "QmsQualityInspectionDet.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "QmsQualityInspectionDet信息", QmsQualityInspectionDetDto.class, "QmsQualityInspectionDet.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

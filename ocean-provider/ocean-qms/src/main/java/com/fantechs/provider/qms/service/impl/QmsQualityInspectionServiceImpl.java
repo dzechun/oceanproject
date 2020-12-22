@@ -100,7 +100,7 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
         }
 
         qmsHtQualityInspectionMapper.insertList(qmsHtQualityInspections);
-
+        qmsQualityInspectionMapper.deleteDetail(ids);
         return qmsQualityInspectionMapper.deleteByIds(ids);
     }
 

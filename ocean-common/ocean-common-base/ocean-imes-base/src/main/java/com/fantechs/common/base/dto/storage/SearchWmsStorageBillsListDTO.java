@@ -16,10 +16,14 @@ import java.io.Serializable;
 public class SearchWmsStorageBillsListDTO extends BaseQuery implements Serializable {
     @ApiModelProperty(value = "单号")
     private String storageBillsCode;
-    @ApiModelProperty(value = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    @ApiModelProperty(value = "仓库清单类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    private Integer billsType;
+    @ApiModelProperty(value = "单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）")
     private Integer type;
     @ApiModelProperty(value = "储位条码")
     private String storageBarcode;
     @ApiModelProperty(value = "物料条码")
     private String materialBarcode;
+    @ApiModelProperty(value = "仓库条码")
+    private String wareHouseBarcode;
 }

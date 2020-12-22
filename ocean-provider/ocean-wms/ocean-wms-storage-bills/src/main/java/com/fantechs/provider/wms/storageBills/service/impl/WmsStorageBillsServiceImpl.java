@@ -1,11 +1,16 @@
 package com.fantechs.provider.wms.storageBills.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.storage.SaveBilssDet;
+import com.fantechs.common.base.dto.storage.WmsStorageBillsDTO;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.WmsStorageBills;
+import com.fantechs.common.base.entity.storage.WmsStorageBillsDet;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.exception.SQLExecuteException;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsDetService;
 import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsService;
 import com.fantechs.provider.wms.storageBills.mapper.WmsStorageBillsMapper;
 import com.fantechs.common.base.support.BaseService;
@@ -13,6 +18,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +34,8 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
 
      @Resource
      private WmsStorageBillsMapper wmsStorageBillsMapper;
+     @Resource
+     private WmsStorageBillsDetService wmsStorageBillsDetService;
 
     @Override
     public List<WmsStorageBills> selectAll(Map<String,Object> map) {
@@ -124,8 +132,8 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
 
     @Override
     public int update(WmsStorageBills wmsStorageBills) {
-        SysUser sysUser = this.currentUser();
-        wmsStorageBills.setModifiedUserId(sysUser.getUserId());
+        /*SysUser sysUser = this.currentUser();
+        wmsStorageBills.setModifiedUserId(sysUser.getUserId());*/
         wmsStorageBills.setModifiedTime(new Date());
         return wmsStorageBillsMapper.updateByPrimaryKeySelective(wmsStorageBills);
     }
@@ -136,8 +144,41 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public List<WmsStorageBills> selectFilterAll(Map<String, Object> map) {
+    public List<WmsStorageBillsDTO> selectFilterAll(Map<String, Object> map) {
         return wmsStorageBillsMapper.selectFilterAll(map);
+    }
+
+    @Override
+    public int saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException {
+        WmsStorageBills wmsStorageBills = selectByKey(saveBilssDet.getStorageBillsId());
+        if(StringUtils.isEmpty(wmsStorageBills)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+        }
+        int income=0;
+        List<WmsStorageBillsDet> wmsStorageBillsDetList = saveBilssDet.getWmsStorageBillsDetList();
+        if(StringUtils.isEmpty(wmsStorageBillsDetList)){
+            return 0;
+        }
+        for (WmsStorageBillsDet wmsStorageBillsDet : wmsStorageBillsDetList) {
+            double willIncaomeTotal = wmsStorageBillsDet.getWillIncomeTotal().doubleValue();
+            double realIncomeTotal = wmsStorageBillsDet.getRealIncomeTotal().doubleValue();
+            if(willIncaomeTotal<=0){
+                continue;
+            }
+            if(realIncomeTotal>willIncaomeTotal){
+                throw new BizErrorException("实际数量大于应需数量");
+            }
+            if(realIncomeTotal<willIncaomeTotal){
+                wmsStorageBillsDet.setStatus((byte)2);
+            }else{
+                wmsStorageBillsDet.setStatus((byte)3);
+            }
+            income++;
+            if(wmsStorageBillsDetService.update(wmsStorageBillsDet)<=0){
+                throw new SQLExecuteException(ErrorCodeEnum.OPT20012006);
+            }
+        }
+        return 0;
     }
 
     /**
