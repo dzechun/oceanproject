@@ -31,7 +31,6 @@
 
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="product_family_id" jdbcType="VARCHAR" property="productFamilyId"/>
         <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode"/>
         <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName"/>
         <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc"/>
@@ -47,7 +46,7 @@
             resultMap="BaseResultMap">
         select sm.material_id, sm.material_code, sm.material_name, sm.material_desc, sm.unit,sm.version,
         sm.product_model_id, spm.product_model_code as productModelCode,
-        sm.product_family_id,bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
+        bpf.product_family_id,bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
         sm.material_type,sm.material_source, sm.barcode_rule_id,sm.if_compoboard,sm.if_linking_board,
         sm.linking_board_number,sm.takt,sm.transfer_quantity,sm.status, sm.customer_material_code,
         sm.min_package_number, sm.create_user_id, u.user_name as createUserName,sm.create_time,
@@ -56,7 +55,7 @@
         left join ocean.sys_user u on sm.create_user_id=u.user_id
         left join ocean.sys_user s on sm.modified_user_id=s.user_id
         left join fantech_imes.smt_product_model spm on sm.product_model_id=spm.product_model_id
-        left join fantech_imes.base_product_family bpf on sm.product_family_id = bpf.product_family_id
+        left join fantech_imes.base_product_family bpf on spm.product_family_id = bpf.product_family_id
         <where>
             1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
