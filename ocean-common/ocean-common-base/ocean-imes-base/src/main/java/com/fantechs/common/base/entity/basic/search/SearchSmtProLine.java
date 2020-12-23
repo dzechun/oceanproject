@@ -39,4 +39,12 @@ public class SearchSmtProLine  extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="workShopId" ,value="车间ID")
     private String workShopId;
+
+
+
+    /**
+     * 根据编码查询方式标记（传1则为等值查询）
+     */
+    @ApiModelProperty(name = "queryMark",value = "查询方式标记")
+    private Byte codeQueryMark;
 }

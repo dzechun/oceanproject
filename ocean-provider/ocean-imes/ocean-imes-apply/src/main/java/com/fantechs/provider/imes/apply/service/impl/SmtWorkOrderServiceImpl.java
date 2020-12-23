@@ -83,7 +83,6 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         //生成备料单
         SmtStock smtStock = new SmtStock();
         smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
-        smtStock.setStockCode(CodeUtils.getId("ST-"));
         smtStock.setDeliveryMode(new Byte("0"));
         smtStock.setStatus(new Byte("1"));
         smtStock.setStockCode(CodeUtils.getId("BLD-"));

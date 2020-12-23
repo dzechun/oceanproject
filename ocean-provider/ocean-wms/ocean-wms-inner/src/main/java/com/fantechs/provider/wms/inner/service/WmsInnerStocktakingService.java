@@ -17,4 +17,7 @@ import java.util.Map;
 public interface WmsInnerStocktakingService extends IService<WmsInnerStocktaking> {
 
     List<WmsInnerStocktakingDto> findList(Map<String, Object> map);
+
+    //导入盘点明细
+    Map<String, Object> importStocktaking(List<WmsInnerStocktakingDto> wmsInnerStocktakings);
 }

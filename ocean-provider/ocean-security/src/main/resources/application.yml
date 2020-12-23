@@ -7,5 +7,7 @@ spring:
     include: dev
   application:
     name: @pom.artifactId@
+  main:
+    allow-bean-definition-overriding: true
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
