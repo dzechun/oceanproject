@@ -53,19 +53,16 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
 
         Date date = new Date();
         String lastUpdateDate = (String) redisUtil.get(ConstantBase.API_LASTUPDATE_TIME_CW);
-        lastUpdateDate = "2017-01-01T07:50:46.963Z";
+       // lastUpdateDate = "2017-01-01T07:50:46.963Z";
         Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(lastUpdateDate)) {
             map.put("updated", lastUpdateDate);
-        } else {
-            map = null;
         }
-
         getDataFromQisService.updateWarehouse();
 
         //同步U9仓库完成，获取本地的仓库数据
         SearchSmtWarehouse searchSmtWarehouse1 = new SearchSmtWarehouse();
-        searchSmtWarehouse1.setPageSize(1000);
+        searchSmtWarehouse1.setPageSize(999999);
         ResponseEntity<List<SmtWarehouse>> responseEntity = basicFeignApi.findList(searchSmtWarehouse1);
         List<SmtWarehouse> warehouseList = responseEntity.getData();
 

@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.basic.U9.CustGetItemInfo;
 import com.fantechs.common.base.entity.basic.U9.CustGetWhInfo;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.DateUtils;
@@ -47,18 +48,14 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
 
     @Override
     public int updateMaterial() throws Exception {
-
         // Redis锁，预防短时间内连续操作请求
         String updateMaterial = (String) redisUtil.get("updateMaterial");
-        if (StringUtils.isEmpty(updateMaterial)) {
-            redisUtil.set("updateMaterial", "updateMaterial", 60);
-        } else {
-            return 500;
+        if (StringUtils.isNotEmpty(updateMaterial)) {
+            throw new BizErrorException("正在同步数据，请稍后再试！");
         }
-
+        redisUtil.set("updateMaterial", "updateMaterial", 60);
         //获取U9物料信息
         List<CustGetItemInfo> listItemInfos = getMaterialByU9();
-
         Date date = new Date();
         List<SmtMaterial> smtMaterialAddList = new ArrayList<>();//物料新增集合
         List<SmtMaterial> smtMaterialUpdateList = new ArrayList<>();//物料更新集合
@@ -80,16 +77,13 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
             } else {
                 smtMaterialAddList.add(smtMaterial);
             }
-
             //集合满1000条数据时执行一次新增和更新操作
             if (listItemInfos.size() > 1000 && smtMaterialAddList.size() > 0 && smtMaterialAddList.size() % 1000 == 0) {
-
                 //批量更新物料
                 if (StringUtils.isNotEmpty(smtMaterialAddList)) {
                     basicFeignApi.batchUpdateByCode(smtMaterialUpdateList);
                     smtMaterialUpdateList.clear();
                 }
-
                 //批量新增物料
                 if (StringUtils.isNotEmpty(smtMaterialAddList)) {
                     basicFeignApi.addList(smtMaterialAddList);
@@ -97,26 +91,19 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
                 }
             }
         }
-
         //批量更新物料
         if (StringUtils.isNotEmpty(smtMaterialAddList)) {
             basicFeignApi.batchUpdateByCode(smtMaterialUpdateList);
         }
-
-
         //批量新增物料
         if (StringUtils.isNotEmpty(smtMaterialAddList)) {
             basicFeignApi.addList(smtMaterialAddList);
         }
-
-
         // 释放Redis锁
         if (StringUtils.isNotEmpty(redisUtil.get("updateMaterial"))) {
             redisUtil.del("updateMaterial");
         }
-
         redisUtil.set(ConstantBase.API_LASTUPDATE_TIME_MATERIAL, DateUtils.getDateString(date, "yyyy-MM-dd HH:mm:ss"));
-
         return 1;
     }
 
@@ -147,14 +134,12 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
 
         // Redis锁，预防短时间内连续操作请求
         String updateWarehouse = (String) redisUtil.get("updateWarehouse");
-        if (StringUtils.isEmpty(updateWarehouse)) {
-            redisUtil.set("updateWarehouse", "updateWarehouse", 60);
-        } else {
-            return 500;
+        if (StringUtils.isNotEmpty(updateWarehouse)) {
+            throw new BizErrorException("正在同步数据，请稍后再试！");
         }
+        redisUtil.set("updateWarehouse", "updateWarehouse", 60);
 
         List<CustGetWhInfo> listWhInfos = getWarehouseInfoFromU9();
-
         Date date = new Date();
         List<SmtWarehouse> smtWarehousesAddList = new ArrayList<>();//批量新增集合
         List<SmtWarehouse> smtWarehousesUpdateList = new ArrayList<>();//批量更新集合
@@ -174,19 +159,15 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
             }
         }
 
-
         logger.info("/material/updateMaterialByU9  同步更新仓库信息接口 " + " smtWarehousesAddList:" + JSON.toJSONString(smtWarehousesUpdateList));
         basicFeignApi.batchUpdateWarehouseByCode(smtWarehousesUpdateList);
         logger.info("/material/updateMaterialByU9  同步新增仓库信息接口 " + " smtWarehousesUpdateList:" + JSON.toJSONString(smtWarehousesAddList));
         basicFeignApi.batchSave(smtWarehousesAddList);
-
         // 释放Redis锁
         if (StringUtils.isNotEmpty(redisUtil.get("updateWarehouse"))) {
             redisUtil.del("updateWarehouse");
         }
-
         redisUtil.set(ConstantBase.API_LASTUPDATE_TIME_WAREHOUSE, DateUtils.getDateString(date, "yyyy-MM-dd HH:mm:ss"));
-
         return 1;
     }
 
