@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutFinishedProductDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturnDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="purchase_return_det_id" jdbcType="BIGINT" property="purchaseReturnDetId" />
+    <result column="purchase_return_id" jdbcType="BIGINT" property="purchaseReturnId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="plan_outquantity" jdbcType="DECIMAL" property="planOutquantity" />
+    <result column="reality_outquantity" jdbcType="DECIMAL" property="realityOutquantity" />
+    <result column="plan_price" jdbcType="DECIMAL" property="planPrice" />
+    <result column="reality_price" jdbcType="DECIMAL" property="realityPrice" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDetDto">
+
+    <result column="finished_product_code" jdbcType="VARCHAR" property="purchaseReturnCode"/>
+    <result column="product_model_code" jdbcType="VARCHAR" property="productMaterialCode"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productMaterialName"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
+
+  </resultMap>
+</mapper>
