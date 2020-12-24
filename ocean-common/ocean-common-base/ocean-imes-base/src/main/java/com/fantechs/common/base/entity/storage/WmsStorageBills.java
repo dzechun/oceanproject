@@ -26,10 +26,10 @@ public class WmsStorageBills implements Serializable {
     /**
     * 单号
     */
-    @ApiModelProperty(value = "单号",example = "单号")
+    @ApiModelProperty(value = "仓库清单单号",example = "单号")
     @Column(name = "storage_bills_code")
-    @Excel(name = "单号")
-    @NotBlank(message = "单号不能为空")
+    @Excel(name = "仓库清单单号")
+    @NotBlank(message = "仓库清单单号不能为空")
     private String storageBillsCode;
 
     /**
@@ -45,9 +45,9 @@ public class WmsStorageBills implements Serializable {
     /**
     * 入库数量总计
     */
-    @ApiModelProperty(value = "入库数量总计",example = "入库数量总计")
-    @Excel(name = "入库数量总计")
-    @NotNull(message = "入库数量总计不能为空")
+    @ApiModelProperty(value = "仓库清单数量总计",example = "入库数量总计")
+    @Excel(name = "仓库清单数量总计")
+    @NotNull(message = "仓库清单数量总计不能为空")
     private java.math.BigDecimal total;
 
     /**
@@ -70,9 +70,9 @@ public class WmsStorageBills implements Serializable {
     /**
     * 单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）
     */
-    @ApiModelProperty(value = "单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）",example = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
-    @Excel(name = "单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）")
-    @NotNull(message = "单据类型不能为空")
+    @ApiModelProperty(value = "仓库清单单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）",example = "单据类型（1、入库计划 2、收获计划 3、完工入库计划 4、销售退货计划）")
+    @Excel(name = "仓库清单单据类型（1、收货单 2、入库任务单 3、完工入库单 4、销售退货单）")
+    @NotNull(message = "仓库清单类型不能为空")
     private Integer type;
 
     /**
@@ -84,10 +84,18 @@ public class WmsStorageBills implements Serializable {
     private Long supplierId;
 
     /**
+     * 是否允许分批次（0、否 1、是）
+     */
+    @ApiModelProperty(value = "是否允许分批次（0、否 1、是）",example = "是否允许分批次（0、否 1、是）")
+    @Column(name = "allow_batch")
+    @Excel(name = "是否允许分批次（0、否 1、是）")
+    private Byte allowBatch;
+
+    /**
     * 入库状态（1、待完成 2、进行中 3、完成）
     */
-    @ApiModelProperty(value = "入库状态（1、待完成 2、进行中 3、完成）",example = "入库状态（1、待完成 2、进行中 3、完成）")
-    @Excel(name = "入库状态（1、待完成 2、进行中 3、完成）")
+    @ApiModelProperty(value = "仓库清单状态（1、待完成 2、进行中 3、完成 4、未完成）",example = "入库状态（1、待完成 2、进行中 3、完成 4、未完成）")
+    @Excel(name = "仓库清单状态（1、待完成 2、进行中 3、完成）")
     private Byte status;
 
     /**
@@ -97,6 +105,22 @@ public class WmsStorageBills implements Serializable {
     @Column(name = "is_delete")
     @Excel(name = "逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
+
+    /**
+     * 送货人名称
+     */
+    @ApiModelProperty(value = "送货人名称",example = "送货人名称")
+    @Column(name = "send_user_name")
+    @Excel(name = "送货人名称")
+    private String sendUserName;
+
+    /**
+     * 收货人ID
+     */
+    @ApiModelProperty(value = "收货人ID",example = "收货人ID")
+    @Column(name = "accept_user_id")
+    @Excel(name = "收货人ID")
+    private Long acceptUserId;
 
     /**
     * 创建人ID
