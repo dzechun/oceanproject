@@ -31,5 +31,5 @@ public interface WmsStorageBillsService extends IService<WmsStorageBills> {
     //以特定过滤条件查询
     List<WmsStorageBillsDTO> selectFilterAll(Map<String,Object> map);
     //保存单据详情单
-    int saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException;
+    WmsStorageBills saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException;
 }
