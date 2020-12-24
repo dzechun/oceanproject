@@ -39,7 +39,7 @@ public class WmsStorageBillsDet implements Serializable {
     @Column(name = "material_id")
     @Excel(name = "物料ID")
     @NotNull(message = "物料ID不能为空")
-    private String materialId;
+    private Long materialId;
 
     /**
     * 应收总计

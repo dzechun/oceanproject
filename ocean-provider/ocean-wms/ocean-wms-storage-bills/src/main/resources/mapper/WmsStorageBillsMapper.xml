@@ -16,6 +16,7 @@
         <result column="send_user_name" jdbcType="VARCHAR" property="sendUserName" />
         <result column="accept_user_id" jdbcType="BIGINT" property="acceptUserId" />
         <result column="bills_time" jdbcType="TIMESTAMP" property="billsTime" />
+        <result column="note" jdbcType="VARCHAR" property="note" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -47,6 +48,7 @@
     wsb.accept_user_id,
     su1.user_name as acceptUserName,
     wsb.bills_time,
+    wsb.note,
     wsb.create_user_id,
     su2.user_name as createUserName,
     wsb.create_time,
