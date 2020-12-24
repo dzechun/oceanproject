@@ -1,13 +1,7 @@
 package com.fantechs.provider.api.imes.basic;
 
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtStorage;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.SmtWarehouse;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.entity.basic.*;
+import com.fantechs.common.base.entity.basic.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -70,4 +64,7 @@ public interface BasicFeignApi {
     ResponseEntity<List<SmtWarehouse>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWarehouse searchSmtWarehouse);
 
 
+    @ApiOperation("根据条件查询线别")
+    @PostMapping("/smtProLine/findList")
+    ResponseEntity<List<SmtProLine>> selectProLines(@RequestBody(required = false) SearchSmtProLine searchSmtProLine);
 }

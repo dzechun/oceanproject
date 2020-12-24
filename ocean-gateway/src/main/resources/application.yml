@@ -35,6 +35,12 @@ zuul:
     ocean-qms:
         path: /ocean-qms/**
         serviceId: ocean-qms
+    ocean-base:
+      path: /ocean-base/**
+      serviceId: ocean-base
+    ocean-imes-basic:
+      path: /ocean-imes-basic/**
+      serviceId: ocean-imes-basic
   sensitive-headers: Access-Control-Allow-Origin
   ignored-headers: Access-Control-Allow-Origin
 

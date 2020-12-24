@@ -13,9 +13,8 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/QISAPI")
-@Api(tags = "同步Qis数据", basePath = "/QISAPI")
+@Api(tags = "同步Qis数据")
 public class GetDataFromQisController {
-
 
     @Resource
     private GetDataFromQisServiceImpl getDataFromQisService;
@@ -23,16 +22,6 @@ public class GetDataFromQisController {
     @GetMapping("/updateStorageFromQis")
     @ApiOperation(value = "同步QIS仓库储位数据")
     public ResponseEntity updateStorageFromQis() throws Exception {
-
-
-        int i = getDataFromQisService.updateStorageFromQis();
-        if (i == 500) {
-            return ControllerUtil.returnFail("同步QIS仓库储位数据，请勿重复操作", 500);
-        }
-        if (i == 1) {
-            return ControllerUtil.returnSuccess("同步完成");
-        } else {
-            return ControllerUtil.returnFail("同步失败", -1);
-        }
+        return ControllerUtil.returnCRUD(getDataFromQisService.updateStorageFromQis()) ;
     }
 }

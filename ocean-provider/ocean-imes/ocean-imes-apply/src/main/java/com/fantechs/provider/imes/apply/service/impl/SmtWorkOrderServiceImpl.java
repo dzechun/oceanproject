@@ -86,8 +86,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         smtStock.setDeliveryMode(new Byte("0"));
         smtStock.setStatus(new Byte("1"));
         smtStock.setStockCode(CodeUtils.getId("BLD-"));
-        Date date = smtWorkOrder.getPlannedStartTime();
-        Date afterDate = new Date(date.getTime() + 600000);
+       // Date date = smtWorkOrder.getPlannedStartTime();
+       // Date afterDate = new Date(date.getTime() + 600000);
         BeanUtils.copyProperties(smtWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
         smtStockMapper.insertUseGeneratedKeys(smtStock);
 
@@ -116,8 +116,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 SmtWorkOrderBom smtWorkOrderBom = new SmtWorkOrderBom();
                 BeanUtils.copyProperties(smtProductBomDet, smtWorkOrderBom, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
                 Integer workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
-                BigDecimal quantity = smtProductBomDet.getQuantity();
-                BigDecimal baseQuantity = smtProductBomDet.getBaseQuantity();
+                BigDecimal quantity = StringUtils.isEmpty(smtProductBomDet.getQuantity())?new BigDecimal(1):smtProductBomDet.getQuantity();
+                BigDecimal baseQuantity = StringUtils.isEmpty(smtProductBomDet.getBaseQuantity())?new BigDecimal(1):smtProductBomDet.getBaseQuantity();
                 smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
                 smtWorkOrderBom.setSingleQuantity(quantity);
                 if (StringUtils.isNotEmpty(baseQuantity,quantity)){
@@ -132,7 +132,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 smtStockDet.setStockId(smtStock.getStockId());
                 smtStockDet.setMaterialId(smtWorkOrderBom.getPartMaterialId());
                 smtStockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
-                smtStockDet.setStockQuantity(smtWorkOrderBom.getBaseQuantity());
+                smtStockDet.setStockQuantity(StringUtils.isEmpty(smtWorkOrderBom.getBaseQuantity())?new BigDecimal(1):smtWorkOrderBom.getBaseQuantity());
                 smtStockDet.setStatus(new Byte("1"));
                 BeanUtils.copyProperties(smtWorkOrderBom, smtStockDet, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
                 stockDetList.add(smtStockDet);

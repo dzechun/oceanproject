@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.fantechs.provider.wms</groupId>
-        <artifactId>ocean-wms</artifactId>
+        <groupId>com.fantechs.provider</groupId>
+        <artifactId>ocean-provider</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.fantechs.provider.wms.inner</groupId>
-    <artifactId>ocean-wms-inner</artifactId>
+    <groupId>com.fantechs.provider.qms</groupId>
+    <artifactId>ocean-qms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-wms-inner</name>
+    <name>ocean-qms</name>
     <description>Demo project for Spring Boot</description>
 
+
     <dependencies>
-        <dependency>
-            <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-imes-config</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.common.base.general</groupId>
-            <artifactId>ocean-general-base</artifactId>
+            <groupId>com.fantechs.common.config</groupId>
+            <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.imes.basic</groupId>
-            <artifactId>ocean-imes-basic-api</artifactId>
+            <groupId>com.fantechs.common.base.general</groupId>
+            <artifactId>ocean-general-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -71,12 +67,11 @@
             <!--<goal>copy-dependencies</goal>-->
             <!--</goals>-->
             <!--<configuration>-->
-            <!--<outputDirectory>D:/IMES/lib/basic/electronic-tag</outputDirectory>-->
+            <!--<outputDirectory>D:/IMES/lib</outputDirectory>-->
             <!--</configuration>-->
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
         </plugins>
     </build>
-
 </project>

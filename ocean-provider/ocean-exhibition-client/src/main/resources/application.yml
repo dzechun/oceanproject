@@ -1,5 +1,5 @@
 server:
-  port: 8762
+  port: 8998
   max-http-header-size: 10000000
 
 spring:
@@ -7,7 +7,10 @@ spring:
     include: dev
   application:
     name: @pom.artifactId@
-  main:
-    allow-bean-definition-overriding: true
+  rabbitmq:
+    host: 10.182.163.191
+    port: 5672
+    username: admin
+    password: StrongPassword
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
