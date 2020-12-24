@@ -73,14 +73,6 @@ public class WmsStorageBillsController {
     public ResponseEntity update(@ApiParam(value = "仓库清单表对象，对象ID必传",required = true)@RequestBody WmsStorageBills wmsStorageBills){
         return ControllerUtil.returnCRUD(wmsStorageBillsService.update(wmsStorageBills));
     }
-
-    @ApiOperation("修改仓库清单表数据")
-    @PostMapping("saveBilssDet")
-    public ResponseEntity<WmsStorageBills> saveBilssDet(
-            @ApiParam(value = "保存对象",required = true)@RequestBody @Validated SaveBilssDet saveBilssDet) throws SQLExecuteException {
-        WmsStorageBills wmsStorageBills = wmsStorageBillsService.saveBilssDet(saveBilssDet);
-        return ControllerUtil.returnDataSuccess(wmsStorageBills,StringUtils.isEmpty(wmsStorageBills)?0:1);
-    }
 //    导出需要用到easyPOI
 //    @PostMapping(value = "export",produces = "application/octet-stream")
 //    @ApiOperation(value = "导出EXCEL")

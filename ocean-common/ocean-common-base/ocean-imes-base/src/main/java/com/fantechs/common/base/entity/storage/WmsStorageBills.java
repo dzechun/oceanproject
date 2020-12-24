@@ -123,6 +123,15 @@ public class WmsStorageBills implements Serializable {
     private Long acceptUserId;
 
     /**
+     * 单据时间（看具体需求而定义不同）
+     */
+    @ApiModelProperty(value = "单据时间（看具体需求而定义不同）",example = "单据时间（看具体需求而定义不同）")
+    @Column(name = "bills_time")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "单据时间（看具体需求而定义不同）")
+    private java.util.Date billsTime;
+
+    /**
     * 创建人ID
     */
     @ApiModelProperty(value = "创建人ID",example = "创建人ID")

@@ -40,13 +40,17 @@
       sm.material_desc AS 'materialDesc',
       spm.product_model_name AS 'productModelName',
       sm.unit,
-      ss.storage_name AS 'storageName'
+      ss.storage_name AS 'storageName',
+      su1.user_name as createUserName,
+      su2.user_name as modifiedUserName
     FROM
       wms_storage_bills_det AS wsbd
         LEFT JOIN `smt_material` sm ON wsbd.material_id = sm.material_id
         LEFT JOIN `smt_product_model` spm ON spm.product_model_id = sm.product_model_id
         LEFT JOIN `smt_storage_material` ssm ON ssm.material_id = sm.material_id
         LEFT JOIN `smt_storage` ss ON ss.storage_id = ssm.storage_id
+        LEFT JOIN ocean.sys_user su1 on su1.user_id = wsbd.create_user_id
+        LEFT JOIN ocean.sys_user su2 on su2.user_id = wsbd.modified_user_id
     WHERE
       wsbd.storage_bills_id = #{billId}
   </select>

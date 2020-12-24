@@ -61,8 +61,8 @@ public class WmsStorageBillsDet implements Serializable {
     /**
     * 入库状态（1、待完成 2、进行中 3、完成）
     */
-    @ApiModelProperty(value = "入库状态（1、待完成 2、进行中 3、完成）",example = "入库状态（1、待完成 2、进行中 3、完成）")
-    @Excel(name = "入库状态（1、待完成 2、进行中 3、完成）")
+    @ApiModelProperty(value = "入库状态（1、待完成 2、进行中 3、完成 4、未完成）",example = "入库状态（1、待完成 2、进行中 3、完成 4、未完成）")
+    @Excel(name = "入库状态（1、待完成 2、进行中 3、完成 4、未完成）")
     private Byte status;
 
     /**

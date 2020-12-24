@@ -148,8 +148,15 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
         return wmsStorageBillsMapper.selectFilterAll(map);
     }
 
+
+
+
+
+
+
+
     @Override
-    public WmsStorageBills saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException {
+    public WmsStorageBills pdaSaveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException {
         WmsStorageBills wmsStorageBills = selectByKey(saveBilssDet.getStorageBillsId());
         if(StringUtils.isEmpty(wmsStorageBills)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
@@ -204,6 +211,11 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
             throw new SQLExecuteException(ErrorCodeEnum.OPT20012006);
         }
         return wmsStorageBills;
+    }
+
+    @Override
+    public List<WmsStorageBillsDTO> pdaSelectFilterAll(Map<String, Object> map) {
+        return wmsStorageBillsMapper.pdaSelectFilterAll(map);
     }
 
     /**
