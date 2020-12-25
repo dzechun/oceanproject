@@ -2,12 +2,14 @@ package com.fantechs.common.base.general.entity.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,12 +24,14 @@ import java.util.Date;
  */
 @Data
 @Table(name = "wms_out_purchase_return_det")
-public class WmsOutPurchaseReturnDet implements Serializable {
+public class WmsOutPurchaseReturnDet extends ValidGroup implements Serializable {
+
+
     /**
      * 采购退货明细单ID
      */
     @ApiModelProperty(name="purchaseReturnDetId",value = "采购退货明细单ID")
-    @Excel(name = "采购退货明细单ID", height = 20, width = 30,orderNum="") 
+    @NotNull(groups = update.class,message = "成品出库明细单ID不能为空")
     @Id
     @Column(name = "purchase_return_det_id")
     private Long purchaseReturnDetId;
@@ -60,7 +64,7 @@ public class WmsOutPurchaseReturnDet implements Serializable {
      * 实际出库数量
      */
     @ApiModelProperty(name="realityOutquantity",value = "实际出库数量")
-    @Excel(name = "实际出库数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "实际出库数量", height = 20, width = 30,orderNum="")
     @Column(name = "reality_outquantity")
     private BigDecimal realityOutquantity;
 

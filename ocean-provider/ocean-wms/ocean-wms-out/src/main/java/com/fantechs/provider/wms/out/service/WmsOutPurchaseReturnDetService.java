@@ -1,14 +1,18 @@
-package com.fantechs.provider.wms.out.mapper;
+package com.fantechs.provider.wms.out.service;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturnDet;
-import com.fantechs.common.base.mybatis.MyMapper;
-import org.apache.ibatis.annotations.Mapper;
+import com.fantechs.common.base.support.IService;
 
 import java.util.List;
 import java.util.Map;
 
-@Mapper
-public interface WmsOutPurchaseReturnDetMapper extends MyMapper<WmsOutPurchaseReturnDet> {
+/**
+ *
+ * Created by leifengzhi on 2020/12/24.
+ */
+
+public interface WmsOutPurchaseReturnDetService extends IService<WmsOutPurchaseReturnDet> {
+
     List<WmsOutPurchaseReturnDetDto> findList(Map<String, Object> dynamicConditionByEntity);
 }

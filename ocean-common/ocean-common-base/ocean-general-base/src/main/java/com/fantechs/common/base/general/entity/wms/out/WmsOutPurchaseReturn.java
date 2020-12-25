@@ -2,12 +2,14 @@ package com.fantechs.common.base.general.entity.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,12 +23,12 @@ import java.util.Date;
  */
 @Data
 @Table(name = "wms_out_purchase_return")
-public class WmsOutPurchaseReturn implements Serializable {
+public class WmsOutPurchaseReturn extends ValidGroup implements Serializable {
     /**
      * 采购退货单ID
      */
     @ApiModelProperty(name="purchaseReturnId",value = "采购退货单ID")
-    @Excel(name = "采购退货单ID", height = 20, width = 30,orderNum="") 
+    @NotNull(groups = update.class,message = "成品出库明细单ID不能为空")
     @Id
     @Column(name = "purchase_return_id")
     private Long purchaseReturnId;
