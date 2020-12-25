@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsSamplingPlanMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsSamplingPlan">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="sampling_plan_id" jdbcType="BIGINT" property="samplingPlanId" />
+    <result column="minimum_quantity" jdbcType="DECIMAL" property="minimumQuantity" />
+    <result column="maximum_quantity" jdbcType="DECIMAL" property="maximumQuantity" />
+    <result column="level" jdbcType="TINYINT" property="level" />
+    <result column="sample_size" jdbcType="DECIMAL" property="sampleSize" />
+    <result column="aql" jdbcType="DECIMAL" property="aql" />
+    <result column="ac" jdbcType="DECIMAL" property="ac" />
+    <result column="re" jdbcType="DECIMAL" property="re" />
+    <result column="examine_quantity" jdbcType="DECIMAL" property="examineQuantity" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qsp.sampling_plan_id,qsp.minimum_quantity,qsp.maximum_quantity,qsp.level,qsp.sample_size,
+    qsp.aql,qsp.ac,qsp.re,qsp.examine_quantity,qsp.status,qsp.create_user_id,qsp.create_time,
+    qsp.modified_user_id,qsp.modified_time,qsp.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.qms_sampling_plan qsp
+    <where>
+      <if test="batch != null and batch != ''">
+        and qsp.minimum_quantity &lt;= #{batch} and  qsp.maximum_quantity &gt;= #{batch}
+      </if>
+      <if test="level != null and level != ''">
+        and qsp.level = #{level}
+      </if>
+      <if test="aql != null and aql != ''">
+        and qsp.aql = #{aql}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qit.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+</mapper>

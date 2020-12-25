@@ -15,4 +15,6 @@ public interface WmsStorageBillsMapper extends MyMapper<WmsStorageBills> {
    String selectUserName(@Param("id") Object id);
     //以特定过滤条件查询
     List<WmsStorageBillsDTO> selectFilterAll(Map<String,Object> map);
+    //以特定过滤条件查询
+    List<WmsStorageBillsDTO> pdaSelectFilterAll(Map<String,Object> map);
 }
