@@ -54,6 +54,7 @@
       <if test="(category != null and category != '') or category == 0 ">
         and si.category = #{category}
       </if>
+      and si.category IS NOT NULL
     </where>
 
   </select>
@@ -63,7 +64,7 @@
   </select>
 
   <update id="updateModule" parameterType="map">
-    update sys_spec_item ssi.spec_id set ssi.affiliation_module = #{affiliationModule} where ssi.spec_id = #{specId}
+    update sys_spec_item ssi set ssi.affiliation_module = #{affiliationModule} where ssi.spec_id = #{specId}
   </update>
 
   <select id="examineModule" parameterType="string" resultMap="BaseResultMap" >
