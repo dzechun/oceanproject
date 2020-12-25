@@ -13,45 +13,44 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
 /**
- * 检验类型
- * @date 2020-12-23 11:09:14
+ * 检验项目表
+ * @date 2020-12-25 13:42:51
  */
 @Data
-@Table(name = "qms_inspection_type")
-public class QmsInspectionType extends ValidGroup implements Serializable {
+@Table(name = "qms_inspection_item")
+public class QmsInspectionItem extends ValidGroup implements Serializable {
     /**
-     * 检验类型ID
+     * 检验项目ID
      */
-    @ApiModelProperty(name="inspectionTypeId",value = "检验类型ID")
+    @ApiModelProperty(name="inspectionItemId",value = "检验项目ID")
     @Id
-    @Column(name = "inspection_type_id")
-    private Long inspectionTypeId;
+    @Column(name = "inspection_item_id")
+    private Long inspectionItemId;
 
     /**
-     * 检验类型单号
+     * 检验项目单号
      */
-    @ApiModelProperty(name="inspectionTypeCode",value = "检验类型单号")
-    @Excel(name = "检验类型单号", height = 20, width = 30,orderNum="1")
-    @Column(name = "inspection_type_code")
-    private String inspectionTypeCode;
+    @ApiModelProperty(name="inspectionItemCode",value = "检验项目单号")
+    @Excel(name = "检验项目单号", height = 20, width = 30,orderNum="1")
+    @Column(name = "inspection_item_code")
+    private String inspectionItemCode;
 
     /**
-     * 检验类型名称
+     * 检验项目名称
      */
-    @ApiModelProperty(name="inspectionTypeName",value = "检验类型名称")
-    @Excel(name = "检验类型名称", height = 20, width = 30,orderNum="2")
-    @Column(name = "inspection_type_name")
-    private String inspectionTypeName;
+    @ApiModelProperty(name="inspectionItemName",value = "检验项目名称")
+    @Excel(name = "检验项目名称", height = 20, width = 30,orderNum="2")
+    @Column(name = "inspection_item_name")
+    private String inspectionItemName;
 
     /**
-     * 检验类型水平
+     * 检验项目水平
      */
-    @ApiModelProperty(name="inspectionTypeLevel",value = "检验类型水平")
-    @Excel(name = "检验类型水平", height = 20, width = 30,orderNum="3")
-    @Column(name = "inspection_type_level")
-    private Long inspectionTypeLevel;
+    @ApiModelProperty(name="inspectionItemLevel",value = "检验项目水平")
+    @Excel(name = "检验项目水平", height = 20, width = 30,orderNum="3")
+    @Column(name = "inspection_item_level")
+    private Long inspectionItemLevel;
 
     /**
      * 检验工具

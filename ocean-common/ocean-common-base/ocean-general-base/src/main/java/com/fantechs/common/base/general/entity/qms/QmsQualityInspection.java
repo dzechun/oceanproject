@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
-;
 
 /**
  * 质检单表
@@ -85,7 +84,6 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="7")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -102,7 +100,6 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="9")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 

@@ -13,8 +13,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-;
-
 /**
  * 抽样方案
  * @date 2020-12-23 14:51:47

@@ -2,8 +2,7 @@ package com.fantechs.common.base.general.dto.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
-import com.fantechs.common.base.general.entity.qms.QmsQualityInspection;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionItem;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,11 +15,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
+/**
+ * @date 2020-12-25 13:42:51
+ */
 @Data
-public class QmsInspectionTypeDto extends QmsInspectionType implements Serializable{
-
-
+public class QmsInspectionItemDto extends QmsInspectionItem implements Serializable {
     /**
      * 创建用户名称
      */

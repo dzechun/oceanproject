@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsHtMrbReviewMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.history.QmsHtMrbReview">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_mrb_review_id" jdbcType="BIGINT" property="htMrbReviewId" />
+    <result column="mrb_review_id" jdbcType="BIGINT" property="mrbReviewId" />
+    <result column="mrb_review_code" jdbcType="VARCHAR" property="mrbReviewCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="quality_inspection_id" jdbcType="BIGINT" property="qualityInspectionId" />
+    <result column="receipts_type" jdbcType="TINYINT" property="receiptsType" />
+    <result column="receipts_status" jdbcType="TINYINT" property="receiptsStatus" />
+    <result column="review_dept" jdbcType="BIGINT" property="reviewDept" />
+    <result column="review_result" jdbcType="BIGINT" property="reviewResult" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qhmr.ht_mrb_review_id,qhmr.mrb_review_id,qhmr.mrb_review_code,qhmr.material_id,qhmr.quality_inspection_id,
+    qhmr.receipts_type,qhmr.receipts_status,qhmr.review_dept,qhmr.review_result,qhmr.quantity,qhmr.remark,
+    qhmr.status,qhmr.create_user_id,qhmr.create_time,qhmr.modified_user_id,qhmr.modified_time,qhmr.is_delete
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.qms_ht_mrb_review qhmr
+    <where>
+      <if test="mrbReviewCode != null and mrbReviewCode != ''">
+        and qhmr.mrb_review_code like CONCAT('%', #{mrbReviewCode}, '%')
+      </if>
+      <if test="receiptsStatus != null and receiptsStatus != ''">
+        and qhmr.receipts_status like CONCAT('%', #{receiptsStatus}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qit.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>
