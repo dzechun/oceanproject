@@ -25,10 +25,10 @@ public class DataSourceConfig {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
 
         //1.设置默认数据源
-        dynamicDataSource.setDefaultTargetDataSource(dbProperties.getPrimary());
+        dynamicDataSource.setDefaultTargetDataSource(dbProperties.getSecondary());
         //2.配置多数据源
         Map<Object, Object> map = new HashMap<>();
-        map.put("primary", dbProperties.getPrimary());
+        //map.put("primary", dbProperties.getPrimary());
         map.put("secondary", dbProperties.getSecondary());
 
         //3.存放数据源集

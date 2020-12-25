@@ -39,9 +39,17 @@ public class SmtEquipmentDto extends SmtEquipment implements Serializable {
     /**
      * 队列名称
      */
-    @Column(name = "queue_name")
+    @Transient
     @ApiModelProperty(name="queueName" ,value="队列名称")
     @Excel(name = "队列名称", height = 20, width = 30)
     private String  queueName;
+
+    /**
+     * 客户端名称
+     */
+    @Transient
+    @ApiModelProperty(name="clientName" ,value="客户端名称")
+    @Excel(name = "客户端名称", height = 20, width = 30)
+    private String  clientName;
 
 }

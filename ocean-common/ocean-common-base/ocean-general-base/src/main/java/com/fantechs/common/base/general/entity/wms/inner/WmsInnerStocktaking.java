@@ -113,8 +113,8 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点状态(0、待盘点 1、盘点中 2、盘点完成)
      */
     @ApiModelProperty(name="status",value = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)")
-    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="19")
-    private Byte status;
+    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="19",replace = {"待盘点_0","盘点中_1","盘点完成_2"})
+    private Integer status;
 
     /**
      * 创建人ID

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseCalendarWorkShiftMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="calendar_work_shift_id" jdbcType="BIGINT" property="calendarWorkShiftId" />
+    <result column="work_shift_id" jdbcType="BIGINT" property="workShiftId" />
+    <result column="calendar_id" jdbcType="BIGINT" property="calendarId" />
+    <result column="day" jdbcType="TINYINT" property="day" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+</mapper>
