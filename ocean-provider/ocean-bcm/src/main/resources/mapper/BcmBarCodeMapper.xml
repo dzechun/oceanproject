@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.bcm.mapper.BcmBarCodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.BcmBarCode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="bar_code_id" jdbcType="BIGINT" property="barCodeId" />
+    <result column="bar_code_type" jdbcType="TINYINT" property="barCodeType" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="label_material_id" jdbcType="BIGINT" property="labelMaterialId" />
+    <result column="print_quantity" jdbcType="INTEGER" property="printQuantity"/>
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto">
+<!--    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId"/>-->
+    <result column="print_mode" jdbcType="VARCHAR" property="printMode"/>
+    <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <resultMap id="BaseResultMapWorkDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto">
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="work_order_quantity" jdbcType="INTEGER" property="workOrderQuantity"/>
+    <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity"/>
+    <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="planned_end_time" jdbcType="VARCHAR" property="plannedEndTime"/>
+    <result column="next_process_name" jdbcType="VARCHAR" property="nextProcessName"/>
+    <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+    <result column="print_mode" jdbcType="VARCHAR" property="labelMode"/>
+    <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
+    <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
+    <result column="barcode_rule_code" jdbcType="VARCHAR" property="barcodeRuleCode"/>
+    <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    bc.bar_code_id,bc.bar_code_type,bc.work_order_id,bc.label_material_id,bc.print_quantity,bc.status,bc.create_user_id,bc.create_time,bc.modified_user_id,bc.modified_time,bc.is_delete
+  </sql>
+<!--  <select id="sel_work_order" resultType="com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto">-->
+  <select id="sel_work_order" resultMap="BaseResultMapWorkDto">
+    SELECT
+    sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sp.process_name,sw.planned_end_time,sps.process_name as next_process_name,
+    so.order_code,sc.customer_name,sm.transfer_quantity,blm.label_material_id,bl.print_mode,bl.save_path,br.barcode_rule_code,
+    <if test="barCodeType==1">
+      wobp.barcode
+    </if>
+     <if test="barCodeType==2">
+       wobp.work_order_card_id as barcode
+     </if>
+    FROM smt_work_order sw
+    LEFT JOIN smt_order so ON sw.order_id = so.order_id
+    LEFT JOIN smt_customer sc ON so.customer_id = sc.customer_id
+    LEFT JOIN smt_material sm ON sm.material_id = sw.material_id
+    LEFT JOIN smt_route sr ON sw.route_id = sr.route_id
+    LEFT JOIN smt_route_process srp ON sr.route_id = srp.route_id
+    LEFT JOIN smt_process sp ON srp.process_id = sp.process_id
+    LEFT JOIN smt_process sps ON srp.next_process_id = sps.process_id
+    <if test="barCodeType==1">
+      LEFT JOIN smt_work_order_barcode_pool wobp ON sw.work_order_id = wobp.work_order_id
+    </if>
+    <if test="barCodeType==2">
+      LEFT JOIN smt_work_order_card_pool wobp ON sw.work_order_id = wobp.work_order_id
+    </if>
+    LEFT JOIN smt_barcode_rule br ON wobp.barcode_rule_id = br.barcode_rule_id
+    LEFT JOIN bcm_label_material blm ON sw.material_id = blm.material_id
+    LEFT JOIN bcm_label bl ON blm.label_id = bl.label_id
+    <where>
+      <if test="workOrderCode!=null and workOrderCode!=''">
+      and sw.work_order_code =  #{workOrderCode}
+      </if>
+      <if test="labelName!=null and labelName!=''">
+        and bl.label_name =#{labelName}
+      </if>
+      <if test="printMode!=null and printMode!=''">
+        and bl.print_mode = #{printModl}
+      </if>
+      <if test="savePath!=null and savePath!=''">
+        and bl.save_path =#{savePath}
+      </if>
+    </where>
+  </select>
+  <select id="findList" resultMap="BaseResultMapDto">
+  SELECT <include refid="Base_Column_List"/>,bl.print_mode,bl.save_path,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_bar_code bc
+  LEFT JOIN bcm_label_material blm ON bc.label_material_id = blm.label_material_id
+  LEFT JOIN bcm_label bl ON blm.label_id = bl.label_id
+  LEFT JOIN smt_work_order sw on bc.work_order_id = sw.work_order_id
+  LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
+  LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
+    <where>
+      <if test="workOrderCode!=null and workOrderCode!=''">
+        and sw.work_order_code =  #{workOrderCode}
+      </if>
+      <if test="labelName!=null and labelName!=''">
+        and bl.label_name =#{labelName}
+      </if>
+      <if test="printMode!=null and printMode!=''">
+        and bl.print_mode = #{printModl}
+      </if>
+      <if test="savePath!=null and savePath!=''">
+        and bl.save_path =#{savePath}
+      </if>
+      <if test="barCodeType!=null">
+        and bc.bar_code_type = #{barCodeType}
+      </if>
+    </where>
+  </select>
+</mapper>

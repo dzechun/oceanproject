@@ -174,7 +174,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
             if(isLogin){
                 File MFile = FTPUtil.multipartFileToFile(file);
                 success = this.ftpUtil.uploadFile(MFile,map.get("savePath").toString());
-                FTPUtil.delteTempFile(MFile);
+                FTPUtil.deleteTempFile(MFile);
             }
         }catch (Exception e){
             throw new BizErrorException(ErrorCodeEnum.valueOf("上传失败"));
