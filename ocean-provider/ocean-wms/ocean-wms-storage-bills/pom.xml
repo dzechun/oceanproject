@@ -13,7 +13,6 @@
     <name>ocean-wms-storage-bills</name>
     <description>Demo project for Spring Boot</description>
 
-
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
@@ -29,6 +28,10 @@
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-imes-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
     </dependencies>
 

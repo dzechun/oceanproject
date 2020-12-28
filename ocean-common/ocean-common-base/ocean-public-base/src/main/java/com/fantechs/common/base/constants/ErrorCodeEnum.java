@@ -253,6 +253,8 @@ public enum ErrorCodeEnum {
     OPT20012005(20012005,"对应ID未找到正确数据"),
 
     OPT20012006(20012006,"数据库执行失败"),
+
+    OPT20012007(20012007,"未找到能导出的数据"),
     ;
 
     private Integer code;

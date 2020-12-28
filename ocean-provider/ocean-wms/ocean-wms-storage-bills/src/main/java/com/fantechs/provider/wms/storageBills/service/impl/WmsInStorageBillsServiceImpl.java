@@ -1,25 +1,27 @@
 package com.fantechs.provider.wms.storageBills.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SaveBilssDet;
-import com.fantechs.common.base.dto.storage.WmsStorageBillsDTO;
+import com.fantechs.common.base.dto.storage.SaveBillsDetDTO;
+import com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO;
+import com.fantechs.common.base.entity.apply.history.WmsInHtStorageBills;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.WmsStorageBills;
-import com.fantechs.common.base.entity.storage.WmsStorageBillsDet;
+import com.fantechs.common.base.entity.storage.WmsInStorageBills;
+import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.SQLExecuteException;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsDetService;
-import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsService;
-import com.fantechs.provider.wms.storageBills.mapper.WmsStorageBillsMapper;
+import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsDetService;
+import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsService;
+import com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsMapper;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,19 +32,21 @@ import java.util.Map;
  * @Version: 1.0
  */
 @Service
-public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  implements WmsStorageBillsService{
+public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>  implements WmsInStorageBillsService {
 
      @Resource
-     private WmsStorageBillsMapper wmsStorageBillsMapper;
+     private WmsInStorageBillsMapper wmsStorageBillsMapper;
      @Resource
-     private WmsStorageBillsDetService wmsStorageBillsDetService;
+     private WmsInStorageBillsDetService wmsStorageBillsDetService;
+     @Resource
+     private WmsInHtStorageBillsService wmsHtStorageBillsService;
 
     @Override
-    public List<WmsStorageBills> selectAll(Map<String,Object> map) {
-        Example example = new Example(WmsStorageBills.class);
+    public List<WmsInStorageBills> selectAll(Map<String,Object> map) {
+        Example example = new Example(WmsInStorageBills.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("IsDelete",1).orIsNull("IsDelete");
+        criteria1.andEqualTo("isDelete",1).orIsNull("isDelete");
         example.and(criteria1);
         if(StringUtils.isNotEmpty(map)){
             map.forEach((k,v)->{
@@ -62,11 +66,11 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public List<WmsStorageBills> selectLikeAll(Map<String,Object> map) {
-        Example example = new Example(WmsStorageBills.class);
+    public List<WmsInStorageBills> selectLikeAll(Map<String,Object> map) {
+        Example example = new Example(WmsInStorageBills.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("IsDelete",1).orIsNull("IsDelete");
+        criteria1.andEqualTo("isDelete",1).orIsNull("isDelete");
         example.and(criteria1);
         if(StringUtils.isNotEmpty(map)){
             map.forEach((k,v)->{
@@ -79,8 +83,8 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public WmsStorageBills selectByKey(Object id) {
-        WmsStorageBills wmsStorageBills = wmsStorageBillsMapper.selectByPrimaryKey(id);
+    public WmsInStorageBills selectByKey(Object id) {
+        WmsInStorageBills wmsStorageBills = wmsStorageBillsMapper.selectByPrimaryKey(id);
         if(wmsStorageBills != null && (wmsStorageBills.getIsDelete() != null && wmsStorageBills.getIsDelete() == 0)){
         wmsStorageBills = null;
         }
@@ -88,8 +92,8 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public WmsStorageBills selectByMap(Map<String,Object> map) {
-        List<WmsStorageBills> wmsStorageBills = selectAll(map);
+    public WmsInStorageBills selectByMap(Map<String,Object> map) {
+        List<WmsInStorageBills> wmsStorageBills = selectAll(map);
         if(StringUtils.isEmpty(wmsStorageBills)){
             return null;
         }
@@ -100,18 +104,21 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public int save(WmsStorageBills wmsStorageBills) {
+    public int save(WmsInStorageBills wmsStorageBills) {
 //        SysUser sysUser = this.currentUser();
 //        wmsStorageBills.setCreateUserId(sysUser.getUserId());
-        wmsStorageBills.setCreateTime(new Date());
         wmsStorageBills.setIsDelete((byte)1);
         wmsStorageBills.setStorageBillsCode(CodeUtils.getId("SKN"));
-        return wmsStorageBillsMapper.insertUseGeneratedKeys(wmsStorageBills);
+        if(wmsStorageBillsMapper.insertUseGeneratedKeys(wmsStorageBills)<=0){
+            return 0;
+        }
+        recordHistory(wmsStorageBills.getStorageBillsId(),"新增");
+        return 1;
     }
 
     @Override
     public int deleteByKey(Object id) {
-        WmsStorageBills wmsStorageBills = new WmsStorageBills();
+        WmsInStorageBills wmsStorageBills = new WmsInStorageBills();
         wmsStorageBills.setStorageBillsId((Long)id);
         wmsStorageBills.setIsDelete((byte)0);
         return update(wmsStorageBills);
@@ -119,9 +126,9 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
 
     @Override
     public int deleteByMap(Map<String,Object> map){
-        List<WmsStorageBills> wmsStorageBillss = selectAll(map);
+        List<WmsInStorageBills> wmsStorageBillss = selectAll(map);
         if (StringUtils.isNotEmpty(wmsStorageBillss)) {
-            for (WmsStorageBills wmsStorageBills : wmsStorageBillss) {
+            for (WmsInStorageBills wmsStorageBills : wmsStorageBillss) {
                 if(deleteByKey(wmsStorageBills.getStorageBillsId())<=0){
                     return 0;
                 }
@@ -131,11 +138,14 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public int update(WmsStorageBills wmsStorageBills) {
+    public int update(WmsInStorageBills wmsStorageBills) {
         /*SysUser sysUser = this.currentUser();
         wmsStorageBills.setModifiedUserId(sysUser.getUserId());*/
-        wmsStorageBills.setModifiedTime(new Date());
-        return wmsStorageBillsMapper.updateByPrimaryKeySelective(wmsStorageBills);
+        if(wmsStorageBillsMapper.updateByPrimaryKeySelective(wmsStorageBills)<=0){
+            return 0;
+        }
+        recordHistory(wmsStorageBills.getStorageBillsId(),"更新");
+        return 1;
     }
 
     @Override
@@ -144,7 +154,7 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public List<WmsStorageBillsDTO> selectFilterAll(Map<String, Object> map) {
+    public List<WmsInStorageBillsDTO> selectFilterAll(Map<String, Object> map) {
         return wmsStorageBillsMapper.selectFilterAll(map);
     }
 
@@ -156,19 +166,19 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
 
 
     @Override
-    public WmsStorageBills pdaSaveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException {
-        WmsStorageBills wmsStorageBills = selectByKey(saveBilssDet.getStorageBillsId());
+    public WmsInStorageBills pdaSaveBilssDet(SaveBillsDetDTO saveBillsDet) throws SQLExecuteException {
+        WmsInStorageBills wmsStorageBills = selectByKey(saveBillsDet.getStorageBillsId());
         if(StringUtils.isEmpty(wmsStorageBills)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
         }
         int income=0;
         boolean finished=true;
-        List<WmsStorageBillsDet> wmsStorageBillsDetList = saveBilssDet.getWmsStorageBillsDetList();
+        List<WmsInStorageBillsDet> wmsStorageBillsDetList = saveBillsDet.getWmsStorageBillsDetList();
         if(StringUtils.isEmpty(wmsStorageBillsDetList)){
             return null;
         }
         Byte allowBatch = wmsStorageBills.getAllowBatch();
-        for (WmsStorageBillsDet wmsStorageBillsDet : wmsStorageBillsDetList) {
+        for (WmsInStorageBillsDet wmsStorageBillsDet : wmsStorageBillsDetList) {
             double willIncaomeTotal = wmsStorageBillsDet.getWillIncomeTotal().doubleValue();
             double realIncomeTotal = wmsStorageBillsDet.getRealIncomeTotal().doubleValue();
             if(willIncaomeTotal<=0 || realIncomeTotal<=0){
@@ -214,7 +224,7 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
     }
 
     @Override
-    public List<WmsStorageBillsDTO> pdaSelectFilterAll(Map<String, Object> map) {
+    public List<WmsInStorageBillsDTO> pdaSelectFilterAll(Map<String, Object> map) {
         return wmsStorageBillsMapper.pdaSelectFilterAll(map);
     }
 
@@ -228,5 +238,21 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return user;
+    }
+
+    /**
+     * 记录操作历史
+     * @param id
+     * @param operation
+     */
+    private void recordHistory(Long id,String operation){
+        WmsInHtStorageBills wmsHtStorageBills = new WmsInHtStorageBills();
+        wmsHtStorageBills.setOperation(operation);
+        WmsInStorageBills wmsStorageBills = selectByKey(id);
+        if (StringUtils.isEmpty(wmsStorageBills)){
+            return;
+        }
+        BeanUtils.autoFillEqFields(wmsStorageBills,wmsHtStorageBills);
+        wmsHtStorageBillsService.save(wmsHtStorageBills);
     }
 }

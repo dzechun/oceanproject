@@ -1,6 +1,6 @@
 package com.fantechs.common.base.dto.storage;
 
-import com.fantechs.common.base.entity.storage.WmsStorageBills;
+import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
 @Data
-public class WmsStorageBillsDTO extends WmsStorageBills implements Serializable {
+public class WmsInStorageBillsDTO extends WmsInStorageBills implements Serializable {
     /**
     * 创建用户名称
     */

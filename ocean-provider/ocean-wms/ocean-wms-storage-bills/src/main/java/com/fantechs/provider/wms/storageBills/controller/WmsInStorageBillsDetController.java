@@ -1,8 +1,8 @@
 package com.fantechs.provider.wms.storageBills.controller;
 
-import com.fantechs.common.base.dto.storage.WmsStorageBillsDetDTO;
-import com.fantechs.common.base.entity.storage.WmsStorageBillsDet;
-import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsDetService;
+import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
+import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
+import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsDetService;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsDetListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -27,33 +27,33 @@ import java.util.List;
 @Api(tags = "仓库清单详情表管理",basePath = "wmsStorageBillsDet")
 @RequestMapping("wmsStorageBillsDet")
 @Slf4j
-public class WmsStorageBillsDetController {
+public class WmsInStorageBillsDetController {
 
     @Resource
-    private WmsStorageBillsDetService wmsStorageBillsDetService;
+    private WmsInStorageBillsDetService wmsStorageBillsDetService;
 
     @ApiOperation("查询仓库清单详情表列表")
     @PostMapping("list")
-    public ResponseEntity<List<WmsStorageBillsDetDTO>> list(
+    public ResponseEntity<List<WmsInStorageBillsDetDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) @Validated SearchWmsStorageBillsDetListDTO searchWmsStorageBillsDetListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
             @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize
     ){
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
-        List<WmsStorageBillsDetDTO> wmsStorageBillsDetDTOS = wmsStorageBillsDetService.selectDTOByBillId(searchWmsStorageBillsDetListDTO.getStorageBillsId());
+        List<WmsInStorageBillsDetDTO> wmsStorageBillsDetDTOS = wmsStorageBillsDetService.selectFilterAll(searchWmsStorageBillsDetListDTO.getStorageBillsId());
         return ControllerUtil.returnDataSuccess(wmsStorageBillsDetDTOS,(int)page.getTotal());
     }
 
     @ApiOperation("通过ID查询仓库清单详情表")
     @GetMapping("one")
-    public ResponseEntity<WmsStorageBillsDet> one(@ApiParam(value = "仓库清单详情表对象ID",required = true)@RequestParam Long id){
-        WmsStorageBillsDet wmsStorageBillsDet = wmsStorageBillsDetService.selectByKey(id);
+    public ResponseEntity<WmsInStorageBillsDet> one(@ApiParam(value = "仓库清单详情表对象ID",required = true)@RequestParam Long id){
+        WmsInStorageBillsDet wmsStorageBillsDet = wmsStorageBillsDetService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(wmsStorageBillsDet, StringUtils.isEmpty(wmsStorageBillsDet)?0:1);
     }
 
     @ApiOperation("增加仓库清单详情表数据")
     @PostMapping("add")
-    public ResponseEntity add(@ApiParam(value = "仓库清单详情表对象",required = true)@RequestBody WmsStorageBillsDet wmsStorageBillsDet){
+    public ResponseEntity add(@ApiParam(value = "仓库清单详情表对象",required = true)@RequestBody WmsInStorageBillsDet wmsStorageBillsDet){
         return ControllerUtil.returnCRUD(wmsStorageBillsDetService.save(wmsStorageBillsDet));
     }
 
@@ -65,7 +65,7 @@ public class WmsStorageBillsDetController {
 
     @ApiOperation("修改仓库清单详情表数据")
     @PostMapping("update")
-    public ResponseEntity update(@ApiParam(value = "仓库清单详情表对象，对象ID必传",required = true)@RequestBody WmsStorageBillsDet wmsStorageBillsDet){
+    public ResponseEntity update(@ApiParam(value = "仓库清单详情表对象，对象ID必传",required = true)@RequestBody WmsInStorageBillsDet wmsStorageBillsDet){
         return ControllerUtil.returnCRUD(wmsStorageBillsDetService.update(wmsStorageBillsDet));
     }
 
