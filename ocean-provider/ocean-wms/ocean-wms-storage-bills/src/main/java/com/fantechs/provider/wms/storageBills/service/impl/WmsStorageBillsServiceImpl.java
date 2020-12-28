@@ -148,37 +148,74 @@ public class WmsStorageBillsServiceImpl extends BaseService<WmsStorageBills>  im
         return wmsStorageBillsMapper.selectFilterAll(map);
     }
 
+
+
+
+
+
+
+
     @Override
-    public int saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException {
+    public WmsStorageBills pdaSaveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException {
         WmsStorageBills wmsStorageBills = selectByKey(saveBilssDet.getStorageBillsId());
         if(StringUtils.isEmpty(wmsStorageBills)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
         }
         int income=0;
+        boolean finished=true;
         List<WmsStorageBillsDet> wmsStorageBillsDetList = saveBilssDet.getWmsStorageBillsDetList();
         if(StringUtils.isEmpty(wmsStorageBillsDetList)){
-            return 0;
+            return null;
         }
+        Byte allowBatch = wmsStorageBills.getAllowBatch();
         for (WmsStorageBillsDet wmsStorageBillsDet : wmsStorageBillsDetList) {
             double willIncaomeTotal = wmsStorageBillsDet.getWillIncomeTotal().doubleValue();
             double realIncomeTotal = wmsStorageBillsDet.getRealIncomeTotal().doubleValue();
-            if(willIncaomeTotal<=0){
-                continue;
-            }
-            if(realIncomeTotal>willIncaomeTotal){
-                throw new BizErrorException("实际数量大于应需数量");
-            }
-            if(realIncomeTotal<willIncaomeTotal){
-                wmsStorageBillsDet.setStatus((byte)2);
+            if(willIncaomeTotal<=0 || realIncomeTotal<=0){
+                finished=false;
             }else{
-                wmsStorageBillsDet.setStatus((byte)3);
+                if(realIncomeTotal>willIncaomeTotal){
+                    throw new BizErrorException("实际数量大于应需数量");
+                }
+                if(realIncomeTotal<willIncaomeTotal){
+                    if(allowBatch == 0 ){
+                        wmsStorageBillsDet.setStatus((byte)4);
+                    }else{
+                        wmsStorageBillsDet.setStatus((byte)2);
+                    }
+                    finished=false;
+                }else{
+                    wmsStorageBillsDet.setStatus((byte)3);
+                }
+                income++;
             }
-            income++;
+
             if(wmsStorageBillsDetService.update(wmsStorageBillsDet)<=0){
                 throw new SQLExecuteException(ErrorCodeEnum.OPT20012006);
             }
         }
-        return 0;
+        wmsStorageBills.setFinishedTotal(new BigDecimal(income));
+        double waitTypeTotal = wmsStorageBills.getMaterialTypeTotal().doubleValue();
+        double finishedTypeTotal = wmsStorageBills.getFinishedTotal().doubleValue();
+        if(finished && waitTypeTotal == finishedTypeTotal){
+            wmsStorageBills.setStatus((byte)3);
+        }else if(income>0){
+            wmsStorageBills.setStatus((byte)2);
+        }else{
+            wmsStorageBills.setStatus((byte)1);
+        }
+        if(allowBatch == 0){
+            wmsStorageBills.setStatus((byte)4);
+        }
+        if(this.update(wmsStorageBills)<=0){
+            throw new SQLExecuteException(ErrorCodeEnum.OPT20012006);
+        }
+        return wmsStorageBills;
+    }
+
+    @Override
+    public List<WmsStorageBillsDTO> pdaSelectFilterAll(Map<String, Object> map) {
+        return wmsStorageBillsMapper.pdaSelectFilterAll(map);
     }
 
     /**

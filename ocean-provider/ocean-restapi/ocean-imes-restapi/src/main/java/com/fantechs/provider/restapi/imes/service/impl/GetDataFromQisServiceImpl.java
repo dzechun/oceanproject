@@ -1,9 +1,7 @@
 package com.fantechs.provider.restapi.imes.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.SmtWarehouse;
-import com.fantechs.common.base.entity.basic.U9.CustGetWhInfo;
 import com.fantechs.common.base.entity.basic.qis.QisResultBean;
 import com.fantechs.common.base.entity.basic.qis.QisWareHouseCW;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
@@ -12,10 +10,8 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.restapi.imes.config.ConstantBase;
-import com.fantechs.provider.restapi.imes.config.DynamicDataSource;
-import com.fantechs.provider.restapi.imes.config.DynamicDataSourceHolder;
+import com.fantechs.provider.restapi.imes.config.DataSource;
 import com.fantechs.provider.restapi.imes.config.RestURL;
-import com.fantechs.provider.restapi.imes.mapper.CustGetWharehouseInfoFromU9Mapper;
 import com.fantechs.provider.restapi.imes.service.GetDataFromQisService;
 import com.fantechs.provider.restapi.imes.service.GetDataFromU9Service;
 import com.google.gson.reflect.TypeToken;
@@ -23,11 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -49,15 +42,17 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @DataSource
     public int updateStorageFromQis() throws Exception {
 
         Date date = new Date();
         String lastUpdateDate = (String) redisUtil.get(ConstantBase.API_LASTUPDATE_TIME_CW);
-       // lastUpdateDate = "2017-01-01T07:50:46.963Z";
+        //lastUpdateDate = "2017-01-01T07:50:46.963Z";
         Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(lastUpdateDate)) {
             map.put("updated", lastUpdateDate);
         }
+
         getDataFromQisService.updateWarehouse();
 
         //同步U9仓库完成，获取本地的仓库数据

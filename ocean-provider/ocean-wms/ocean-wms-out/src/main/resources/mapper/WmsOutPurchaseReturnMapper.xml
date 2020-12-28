@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutFinishedProductMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="purchase_return_id" jdbcType="BIGINT" property="purchaseReturnId" />
+    <result column="purchase_return_code" jdbcType="VARCHAR" property="purchaseReturnCode" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
+    <result column="return_type" jdbcType="VARCHAR" property="returnType" />
+    <result column="plan_outtime" jdbcType="TIMESTAMP" property="planOuttime" />
+    <result column="reality_outtime" jdbcType="TIMESTAMP" property="realityOuttime" />
+    <result column="return_status" jdbcType="TINYINT" property="returnStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDto">
+
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+    <result column="buy_name" jdbcType="VARCHAR" property="buyName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    pr.purchase_return_id,
+    pr.purchase_return_code,
+    pr.customer_id,
+    pr.buyer_id,
+    pr.return_type,
+    pr.plan_outtime,
+    pr.reality_outtime,
+    pr.return_status,
+    pr.`status`,
+    pr.create_user_id,
+    pr.create_time,
+    pr.modified_user_id,
+    pr.modified_time,
+    pr.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+    SELECT <include refid="Base_Column_List"></include>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    sy.user_name AS buy_name,
+    sc.customer_name,
+    sc.customer_code
+        FROM
+    wms_out_purchase_return AS pr
+    LEFT JOIN ocean.sys_user su  ON pr.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON pr.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user sy ON pr.buyer_id = sy.user_id
+    LEFT JOIN smt_customer sc ON pr.customer_id = sc.customer_id
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(pr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="purchaseReturnCode != null and purchaseReturnCode != ''">
+        and pr.purchase_return_code like CONCAT('%', #{purchaseReturnCode}, '%')
+      </if>
+
+    </where>
+
+
+  </select>
+
+</mapper>

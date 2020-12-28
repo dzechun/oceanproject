@@ -30,6 +30,13 @@ public interface WmsStorageBillsService extends IService<WmsStorageBills> {
     //===========================基础功能 end============================
     //以特定过滤条件查询
     List<WmsStorageBillsDTO> selectFilterAll(Map<String,Object> map);
+
+
+
+    //===========================PDA start============================
+    //以特定过滤条件查询
+    List<WmsStorageBillsDTO> pdaSelectFilterAll(Map<String,Object> map);
     //保存单据详情单
-    int saveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException;
+    WmsStorageBills pdaSaveBilssDet(SaveBilssDet saveBilssDet) throws SQLExecuteException;
+    //===========================PDA end============================
 }

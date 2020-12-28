@@ -8,7 +8,6 @@ import com.fantechs.common.base.entity.basic.U9.CustGetWhInfo;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -137,32 +136,40 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
         if (StringUtils.isNotEmpty(updateWarehouse)) {
             throw new BizErrorException("正在同步数据，请稍后再试！");
         }
-        redisUtil.set("updateWarehouse", "updateWarehouse", 60);
+        redisUtil.set("updateWarehouse", "updateWarehouse", 3);
 
         List<CustGetWhInfo> listWhInfos = getWarehouseInfoFromU9();
+
         Date date = new Date();
         List<SmtWarehouse> smtWarehousesAddList = new ArrayList<>();//批量新增集合
         List<SmtWarehouse> smtWarehousesUpdateList = new ArrayList<>();//批量更新集合
 
         SearchSmtWarehouse searchSmtWarehouse = new SearchSmtWarehouse();//仓库查询实体
         searchSmtWarehouse.setCodeQueryMark(1);
-        for (CustGetWhInfo info : listWhInfos) {
-            SmtWarehouse smtWarehouse = new SmtWarehouse();
-            smtWarehouse.setWarehouseCode(info.getCode());
-            smtWarehouse.setWarehouseName(info.getName());
-            searchSmtWarehouse.setWarehouseCode(smtWarehouse.getWarehouseCode());
-            ResponseEntity<List<SmtWarehouse>> responseEntity = basicFeignApi.findList(searchSmtWarehouse);
-            if (StringUtils.isNotEmpty(responseEntity.getData())){
-                smtWarehousesUpdateList.add(smtWarehouse);
-            }else {
-                smtWarehousesAddList.add(smtWarehouse);
+        if (StringUtils.isNotEmpty(listWhInfos)) {
+            for (CustGetWhInfo info : listWhInfos) {
+                SmtWarehouse smtWarehouse = new SmtWarehouse();
+                smtWarehouse.setWarehouseCode(info.getCode());
+                smtWarehouse.setWarehouseName(info.getName());
+                searchSmtWarehouse.setWarehouseCode(smtWarehouse.getWarehouseCode());
+                ResponseEntity<List<SmtWarehouse>> responseEntity = basicFeignApi.findList(searchSmtWarehouse);
+                if (StringUtils.isNotEmpty(responseEntity.getData())) {
+                    smtWarehousesUpdateList.add(smtWarehouse);
+                } else {
+                    smtWarehousesAddList.add(smtWarehouse);
+                }
             }
         }
 
         logger.info("/material/updateMaterialByU9  同步更新仓库信息接口 " + " smtWarehousesAddList:" + JSON.toJSONString(smtWarehousesUpdateList));
-        basicFeignApi.batchUpdateWarehouseByCode(smtWarehousesUpdateList);
+        if (StringUtils.isNotEmpty(smtWarehousesUpdateList)) {
+            basicFeignApi.batchUpdateWarehouseByCode(smtWarehousesUpdateList);
+        }
         logger.info("/material/updateMaterialByU9  同步新增仓库信息接口 " + " smtWarehousesUpdateList:" + JSON.toJSONString(smtWarehousesAddList));
-        basicFeignApi.batchSave(smtWarehousesAddList);
+        if (StringUtils.isNotEmpty(smtWarehousesAddList)) {
+            basicFeignApi.batchSave(smtWarehousesAddList);
+        }
+
         // 释放Redis锁
         if (StringUtils.isNotEmpty(redisUtil.get("updateWarehouse"))) {
             redisUtil.del("updateWarehouse");
@@ -172,10 +179,7 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
     }
 
     //从U9获取仓库数据
-    public List<CustGetWhInfo> getWarehouseInfoFromU9(){
-
-        //切换到从数据源
-        DynamicDataSourceHolder.putDataSouce("secondary");
+    public List<CustGetWhInfo> getWarehouseInfoFromU9() {
         String lastUpdateDate = (String) redisUtil.get(ConstantBase.API_LASTUPDATE_TIME_WAREHOUSE);
         Example example = new Example(CustGetWhInfo.class);
         Example.Criteria criteria = example.createCriteria().andEqualTo("orgid", constantBase.getDefaultOrgId());
@@ -184,14 +188,6 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
         }
 
         List<CustGetWhInfo> listWhInfos = custGetWharehouseInfoFromU9Mapper.selectByExample(example);
-        if (CollectionUtils.isEmpty(listWhInfos)) {
-            //恢复主数据源
-            DynamicDataSourceHolder.removeDataSource();
-            return null;
-        }else {
-            //恢复主数据源
-            DynamicDataSourceHolder.removeDataSource();
-            return listWhInfos;
-        }
+        return listWhInfos;
     }
 }

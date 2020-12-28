@@ -49,7 +49,6 @@ public class SysSpecItemController {
     public ResponseEntity<List<SysSpecItem>> findList(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
         Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
-        System.out.println(searchSysSpecItem);
         List<SysSpecItem> SysSpecItems = sysSpecItemService.findList(searchSysSpecItem);
         return ControllerUtil.returnDataSuccess(SysSpecItems,(int)page.getTotal());
     }
@@ -121,8 +120,8 @@ public class SysSpecItemController {
 
     @PostMapping("/addModule")
     @ApiOperation(value = "添加模块",notes = "添加模块")
-    public ResponseEntity addModule(@RequestParam(required = false)@NotBlank(message = "moduleName不能为空") String moduleName) {
-        return ControllerUtil.returnCRUD(sysSpecItemService.addModule(moduleName));
+    public ResponseEntity addModule(@RequestParam(required = false)@NotBlank(message = "affiliationModule不能为空") String affiliationModule) {
+        return ControllerUtil.returnCRUD(sysSpecItemService.addModule(affiliationModule));
     }
 
     @PostMapping("/updateModule")

@@ -106,7 +106,7 @@ public class SmtElectronicTagStorageController {
      */
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
-    public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
+    public ResponseEntity importElectronicTagController(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作

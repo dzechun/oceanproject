@@ -27,6 +27,6 @@ public interface WmsStorageBillsDetService extends IService<WmsStorageBillsDet> 
     //通过ID查找用户名称
     String selectUserName(Object id);
     //===========================基础功能 end============================
-    //通过仓库清单ID找到所有对应的物料信息,1、对应取仓库信息 2、对应取储位信息
+    //通过仓库清单ID找到所有对应的物料信息
     List<WmsStorageBillsDetDTO> selectDTOByBillId(Long billId);
 }

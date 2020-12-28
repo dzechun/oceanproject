@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 public class DataSourceAspect {
 
     //切入点在service层的方法上，配置aop的切入点
-    @Pointcut("execution( * com.fantech.dual_data_source.server..*.*(..))")
+    @Pointcut("execution( * com.fantechs.provider.restapi.imes.service..*.*(..))")
     public void dataSourcePointCut() {
     }
 

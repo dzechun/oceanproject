@@ -1,7 +1,9 @@
 package com.fantechs.provider.wms.storageBills.controller;
 
+import com.fantechs.common.base.dto.storage.SaveBilssDet;
 import com.fantechs.common.base.dto.storage.WmsStorageBillsDTO;
 import com.fantechs.common.base.entity.storage.WmsStorageBills;
+import com.fantechs.common.base.exception.SQLExecuteException;
 import com.fantechs.provider.wms.storageBills.service.WmsStorageBillsService;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -71,7 +73,6 @@ public class WmsStorageBillsController {
     public ResponseEntity update(@ApiParam(value = "仓库清单表对象，对象ID必传",required = true)@RequestBody WmsStorageBills wmsStorageBills){
         return ControllerUtil.returnCRUD(wmsStorageBillsService.update(wmsStorageBills));
     }
-
 //    导出需要用到easyPOI
 //    @PostMapping(value = "export",produces = "application/octet-stream")
 //    @ApiOperation(value = "导出EXCEL")

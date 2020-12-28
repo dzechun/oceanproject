@@ -14,12 +14,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-;
-
 /**
  * 质检单明细表
- * qms_quality_inspection_det
- * @author jbb
  * @date 2020-12-16 14:58:12
  */
 @Data

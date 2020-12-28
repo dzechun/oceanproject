@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseCalendarMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseCalendar">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="calendar_id" jdbcType="BIGINT" property="calendarId" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="calendar_code" jdbcType="VARCHAR" property="calendarCode" />
+    <result column="calendar_name" jdbcType="VARCHAR" property="calendarName" />
+    <result column="calendar_desc" jdbcType="VARCHAR" property="calendarDesc" />
+    <result column="date" jdbcType="VARCHAR" property="date" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseCalendarDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="pro_desc" jdbcType="VARCHAR" property="proDesc" />
+    <result column="work_shift_id" jdbcType="BIGINT" property="workShiftId" />
+    <result column="work_shift_code" jdbcType="VARCHAR" property="workShiftCode" />
+    <result column="work_shift_name" jdbcType="VARCHAR" property="workShiftName" />
+    <result column="work_shift_desc" jdbcType="VARCHAR" property="workShiftDesc" />
+    <result column="start_time" jdbcType="TIME" property="startTime" />
+    <result column="end_time" jdbcType="TIME" property="endTime" />
+    <result column="day" jdbcType="TINYINT" property="day" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bc.calendar_id,
+	bc.pro_line_id,
+	bc.calendar_code,
+	bc.calendar_name,
+	bc.calendar_desc,
+	bc.date,
+	bc.`status`,
+	bc.create_user_id,
+	bc.create_time,
+	bc.modified_user_id,
+	bc.modified_time,
+	bc.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    spl.pro_code, spl.pro_name , spl.pro_desc,
+    bcws.day, bws.work_shift_id, bws.work_shift_code, bws.work_shift_name, bws.work_shift_desc, bws.start_time, bws.end_time
+    FROM fantech_imes.base_calendar bc
+    LEFT JOIN ocean.sys_user su ON bc.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bc.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.smt_pro_line spl ON bc.pro_line_id = spl.pro_line_id
+    LEFT JOIN fantech_imes.base_calendar_work_shift bcws ON bc.calendar_id = bcws.calendar_id
+    LEFT JOIN fantech_imes.base_work_shift bws ON bcws.work_shift_id = bws.work_shift_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="proLineId != null and proLineId!=''">
+        and bc.pro_line_id =#{proLineId}
+      </if>
+      <if test="date!= null and date!= ''">
+        and bc.date =#{date}
+      </if>
+      <if test="status!=null and status!=''">
+        and bws.status=#{status}
+      </if>
+    </where>
+    order by bcws.day desc
+  </select>
+</mapper>

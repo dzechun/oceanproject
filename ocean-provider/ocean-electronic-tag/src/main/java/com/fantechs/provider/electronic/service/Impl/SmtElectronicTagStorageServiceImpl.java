@@ -138,7 +138,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
-        List<Integer> fail = new ArrayList<>();  //记录操作失败数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtElectronicTagStorage> list = new LinkedList<>();
         LinkedList<SmtHtElectronicTagStorage> htList = new LinkedList<>();
         for (int i = 0; i < smtElectronicTagStorageDtos.size(); i++) {

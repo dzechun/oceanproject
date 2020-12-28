@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsInspectionItemDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inspection_item_det_id" jdbcType="BIGINT" property="inspectionItemDetId" />
+    <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="min_package_number" jdbcType="DECIMAL" property="minPackageNumber" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="safe_stock" jdbcType="DECIMAL" property="safeStock" />
+    <result column="special_sort" jdbcType="BIGINT" property="specialSort" />
+    <result column="expiration_date" jdbcType="DECIMAL" property="expirationDate" />
+    <result column="rewarming_time" jdbcType="VARCHAR" property="rewarmingTime" />
+    <result column="element_size" jdbcType="VARCHAR" property="elementSize" />
+    <result column="humidity_class" jdbcType="VARCHAR" property="humidityClass" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsInspectionItemDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qiid.inspection_item_det_id,qiid.inspection_item_id,qiid.material_id,qiid.min_package_number,qiid.unit,
+    qiid.safe_stock,qiid.special_sort,qiid.expiration_date,qiid.rewarming_time,qiid.element_size,
+    qiid.humidity_class,qiid.status,qiid.create_user_id,qiid.create_time,qiid.modified_user_id,qiid.modified_time,
+    qiid.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    sm.material_code,sm.material_name,sm.version
+    from fantech_imes.qms_inspection_item_det qiid
+    LEFT JOIN ocean.sys_user su ON qiid.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qiid.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.smt_material sm ON qiid.material_id = sm.material_id
+    <where>
+      <if test="specialSort != null and specialSort != ''">
+        and qiid.special_sort like CONCAT('%', #{specialSort}, '%')
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and qiid.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName != null and materialName != ''">
+        and qiid.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+
+
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+</mapper>
