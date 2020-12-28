@@ -11,5 +11,5 @@ import java.util.Map;
 
 @Mapper
 public interface WmsOutFinishedProductDetMapper extends MyMapper<WmsOutFinishedProductDet> {
-    List<WmsOutFinishedProductDetDto> findList(Map<String, Object> dynamicConditionByEntity);
+    List<WmsOutFinishedProductDetDto> findList(Map<String, Object> map);
 }

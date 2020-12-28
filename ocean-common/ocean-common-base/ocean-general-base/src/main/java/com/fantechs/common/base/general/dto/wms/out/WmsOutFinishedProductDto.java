@@ -24,7 +24,6 @@ import java.util.Date;
  * @date 2020-12-22 15:02:48
  */
 @Data
-@Table(name = "wms_out_finished_product")
 public class WmsOutFinishedProductDto extends WmsOutFinishedProduct implements Serializable {
 
     /**

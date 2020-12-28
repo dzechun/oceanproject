@@ -75,7 +75,7 @@ public class WmsOutFinishedProductDetServiceImpl extends BaseService<WmsOutFinis
     }
 
     @Override
-    public List<WmsOutFinishedProductDetDto> findList(Map<String, Object> dynamicConditionByEntity) {
-        return wmsOutFinishedProductDetMapper.findList(dynamicConditionByEntity);
+    public List<WmsOutFinishedProductDetDto> findList(Map<String, Object> map) {
+        return wmsOutFinishedProductDetMapper.findList(map);
     }
 }

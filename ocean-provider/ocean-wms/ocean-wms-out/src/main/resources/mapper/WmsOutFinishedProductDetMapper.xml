@@ -47,7 +47,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDTO">
 
-    SELECT <include refid="Base_Column_List"></include>,
+    SELECT <include refid="Base_Column_List"/>,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         suy.user_name AS warehouse_user_name,
@@ -75,13 +75,13 @@
             and pm.product_model_code like CONCAT('%', #{productMaterialCode}, '%')
         </if>
         <if test="productMaterialName != null and productMaterialName != ''">
-            amd pm.product_model_name like CONCAT('%', #{productMaterialName}, '%')
+            and pm.product_model_name like CONCAT('%', #{productMaterialName}, '%')
         </if>
         <if test="warehouseCode != null and warehouseCode != ''">
-            amd w.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
+            and w.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
         </if>
         <if test="warehouseName != null and warehouseName != ''">
-            amd w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            and w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
         </if>
         <if test="status!=null and status!=''">
             and fpd.status=#{status}
