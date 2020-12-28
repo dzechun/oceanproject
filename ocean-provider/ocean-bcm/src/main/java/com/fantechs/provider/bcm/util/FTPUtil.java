@@ -1,15 +1,20 @@
 package com.fantechs.provider.bcm.util;
 
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.TimeZone;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Mr.Lei
@@ -95,6 +100,34 @@ public class FTPUtil {
             }
         }
         return success;
+    }
+
+    /**
+     * Description: 从FTP服务器下载文件
+     * @param remotePath FTP服务器上的相对路径
+     * @param fileName 要下载的文件名
+     * @return
+     */
+    public InputStream downFile(String remotePath,String fileName) {
+        InputStream in = null;
+        try {
+            if(!this.ftpClient.printWorkingDirectory().equals(remotePath)){
+                this.ftpClient.changeWorkingDirectory(remotePath);//转移到FTP服务器目录
+            }
+            in = this.ftpClient.retrieveFileStream(fileName);
+            return in;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (this.ftpClient.isConnected()) {
+                try {
+                    this.ftpClient.disconnect();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+        return in;
     }
 
     /**
@@ -186,10 +219,78 @@ public class FTPUtil {
      *
      * @param file
      */
-    public static void delteTempFile(File file) {
+    public static void deleteTempFile(File file) {
         if (file != null) {
             File del = new File(file.toURI());
             del.delete();
+        }
+    }
+
+    /**
+     * 下载压缩文件
+     * @param response
+     * @param zipFileName
+     */
+    public void downloadZipFiles(HttpServletResponse response,List<InputStream> inputStreams, String zipFileName,String[] fileName) {
+        try {
+
+            response.setHeader("content-type", "application/octet-stream");
+            response.setContentType("application/octet-stream");// 不同类型的文件对应不同的MIME类型 // 重点突出
+            // 对文件名进行编码处理中文问题
+            zipFileName = new String(zipFileName.getBytes(), StandardCharsets.UTF_8);
+            // inline在浏览器中直接显示，不提示用户下载
+            // attachment弹出对话框，提示用户进行下载保存本地
+            // 默认为inline方式
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(zipFileName+".zip", "UTF-8"));
+
+            // --设置成这样可以不用保存在本地，再输出， 通过response流输出,直接输出到客户端浏览器中。
+            ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
+            zipFile(inputStreams,zos,fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 压缩文件
+     * @param inputStreams
+     * @param zos
+     */
+    public static  void zipFile(List<InputStream> inputStreams, ZipOutputStream zos, String[] fileName) {
+        //设置读取数据缓存大小
+        byte[] buffer = new byte[4096];
+        try {
+            //循环读取文件路径集合，获取每一个文件的路径
+            int i=0;
+            for (InputStream inputStream : inputStreams) {
+                //判断文件是否存在
+                //判断是否属于文件，还是文件夹
+                //创建输入流读取文件
+                BufferedInputStream bis = new BufferedInputStream(inputStream);
+                //将文件写入zip内，即将文件进行打包
+                zos.putNextEntry(new ZipEntry(fileName[i]));
+                //写入文件的方法，同上
+                int size = 0;
+                //设置读取数据缓存大小
+                while ((size = bis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, size);
+                }
+                //关闭输入输出流
+                zos.closeEntry();
+                bis.close();
+                i++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != zos) {
+                try {
+                    zos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
