@@ -120,7 +120,7 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
         if (StringUtils.isNotEmpty(qmsMrbReview)){
             qmsInspectionTypeCode = qmsMrbReview.getMrbReviewCode();
         }
-        Integer maxCode = Integer.parseInt(qmsInspectionTypeCode.substring(8, qmsInspectionTypeCode.length()));
+        Integer maxCode = Integer.parseInt(qmsInspectionTypeCode.substring(9, qmsInspectionTypeCode.length()));
         String after = String.format("%04d", ++maxCode);
         String code = before + amongst + after;
         return code;

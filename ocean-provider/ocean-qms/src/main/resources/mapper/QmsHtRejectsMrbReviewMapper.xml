@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsHtRejectsMrbReviewMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.history.QmsHtRejectsMrbReview">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_rejects_mrb_review_id" jdbcType="BIGINT" property="htRejectsMrbReviewId" />
+    <result column="rejects_mrb_review_id" jdbcType="BIGINT" property="rejectsMrbReviewId" />
+    <result column="rejects_mrb_review_code" jdbcType="VARCHAR" property="rejectsMrbReviewCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="quality_inspection_id" jdbcType="BIGINT" property="qualityInspectionId" />
+    <result column="receipts_type" jdbcType="TINYINT" property="receiptsType" />
+    <result column="receipts_status" jdbcType="TINYINT" property="receiptsStatus" />
+    <result column="review_dept" jdbcType="BIGINT" property="reviewDept" />
+    <result column="review_result" jdbcType="TINYINT" property="reviewResult" />
+    <result column="selected_number" jdbcType="DECIMAL" property="selectedNumber" />
+    <result column="selected_person" jdbcType="BIGINT" property="selectedPerson" />
+    <result column="selected_time" jdbcType="TIMESTAMP" property="selectedTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qhrmr.ht_rejects_mrb_review_id,qhrmr.rejects_mrb_review_id,qhrmr.rejects_mrb_review_code,qhrmr.material_id,
+    qhrmr.quality_inspection_id,qhrmr.receipts_type,qhrmr.receipts_status,qhrmr.review_dept,qhrmr.review_result,
+    qhrmr.selected_number,qhrmr.selected_person,qhrmr.selected_time,qhrmr.remark,qhrmr.status,
+    qhrmr.create_user_id,qhrmr.create_time,qhrmr.modified_user_id,qhrmr.modified_time,qhrmr.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from qms_ht_rejects_mrb_review qhrmr
+    <where>
+      <if test="mrbReviewCode != null and mrbReviewCode != ''">
+        and qhrmr.mrb_review_code like CONCAT('%', #{mrbReviewCode}, '%')
+      </if>
+      <if test="receiptsStatus != null and receiptsStatus != ''">
+        and qhrmr.receipts_status like CONCAT('%', #{receiptsStatus}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qhrmr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+</mapper>
