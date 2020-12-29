@@ -69,6 +69,7 @@ public class QmsMrbReviewController {
     @PostMapping("/findList")
     public ResponseEntity<List<QmsMrbReviewDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsMrbReview searchQmsMrbReview) {
         Page<Object> page = PageHelper.startPage(searchQmsMrbReview.getStartPage(),searchQmsMrbReview.getPageSize());
+        System.out.println(searchQmsMrbReview);
         List<QmsMrbReviewDto> list = qmsMrbReviewService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsMrbReview));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }

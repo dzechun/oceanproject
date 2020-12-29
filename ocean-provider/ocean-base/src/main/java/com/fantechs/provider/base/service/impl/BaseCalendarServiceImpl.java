@@ -151,8 +151,8 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
                 .andEqualTo("date",date);
         BaseCalendar baseCalendar = baseCalendarMapper.selectOneByExample(example);
         BaseCalendarDto baseCalendarDto = new BaseCalendarDto();
-        BeanUtils.copyProperties(baseCalendar,baseCalendarDto);
         if (StringUtils.isNotEmpty(baseCalendar)){
+            BeanUtils.copyProperties(baseCalendar,baseCalendarDto);
             //通过日历id获取日历班次关系表的信息
             Long calendarId = baseCalendar.getCalendarId();
             Example example1 = new Example(BaseCalendarWorkShift.class);

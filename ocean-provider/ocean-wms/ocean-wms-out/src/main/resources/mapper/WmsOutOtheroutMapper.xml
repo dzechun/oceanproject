@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutOtheroutMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="otherout_id" jdbcType="BIGINT" property="otheroutId"/>
+        <result column="otherout_code" jdbcType="VARCHAR" property="otheroutCode"/>
+        <result column="otherout_type" jdbcType="TINYINT" property="otheroutType"/>
+        <result column="otherout_time" jdbcType="TIMESTAMP" property="otheroutTime"/>
+        <result column="otherout_status" jdbcType="TINYINT" property="otheroutStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    woo.otherout_id,
+	woo.otherout_code,
+	woo.otherout_type,
+	woo.otherout_time,
+	woo.operator_id,
+	woo.otherout_status,
+	woo.`status`,
+	woo.create_user_id,
+	woo.create_time,
+	woo.modified_user_id,
+	woo.modified_time,
+	woo.is_delete
+  </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name, suss.user_name AS operator_name
+        FROM wms_out_otherout woo
+        LEFT JOIN ocean.sys_user su ON woo.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON woo.modified_user_id = sus.user_id
+        LEFT JOIN ocean.sys_user suss ON woo.operator_id = suss.user_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(woo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="otheroutCode != null and otheroutCode != ''">
+                and woo.otherout_code like CONCAT('%', #{otheroutCode}, '%')
+            </if>
+            <if test="otheroutStatus!=null and otheroutStatus!=''">
+                and woo.otherout_status=#{otheroutStatus}
+            </if>
+            <if test="status!=null and status!=''">
+                and woo.status=#{status}
+            </if>
+        </where>
+        order by woo.create_time desc
+    </select>
+</mapper>
