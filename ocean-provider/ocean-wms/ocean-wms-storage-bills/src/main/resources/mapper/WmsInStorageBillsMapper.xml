@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsStorageBillsMapper">
-      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsStorageBills">
+<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsMapper">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsInStorageBills">
         <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
         <result column="storage_bills_code" jdbcType="VARCHAR" property="storageBillsCode" />
         <result column="bills_type" jdbcType="INTEGER" property="billsType" />
@@ -22,7 +22,7 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
-  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsStorageBillsDTO" extends="BaseResultMap">
+  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO" extends="BaseResultMap">
 
   </resultMap>
 
@@ -56,7 +56,7 @@
     su3.user_name as modifiedUserName,
     wsb.modified_time
     FROM
-    wms_storage_bills AS wsb
+    wms_in_storage_bills AS wsb
     LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
     LEFT JOIN ocean.sys_user su1 on su1.user_id = wsb.accept_user_id
     LEFT JOIN ocean.sys_user su2 on su2.user_id = wsb.create_user_id
@@ -80,6 +80,13 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         AND wsb.create_time = #{startTime} AND wsb.modified_time = #{endTime}
       </if>
+      <if test="supplierCode != null and supplierCode != ''">
+        AND smts.supplier_code = #{supplierCode}
+      </if>
+      <if test="supplierName != null and supplierName != ''">
+        AND smts.supplier_name = #{supplierName}
+      </if>
+        AND wsb.is_delete=1
     </where>
     order by wsb.modified_time desc
   </select>
@@ -103,7 +110,7 @@
     wsb.`status`,
     wsb.is_delete
     FROM
-    wms_storage_bills AS wsb
+    wms_in_storage_bills AS wsb
     LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
     <where>
       <if test="billsType != null and billsType>0">
@@ -124,6 +131,7 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         AND wsb.create_time = #{startTime} AND wsb.modified_time = #{endTime}
       </if>
+        AND wsb.is_delete=1
     </where>
     order by wsb.modified_time desc
   </select>

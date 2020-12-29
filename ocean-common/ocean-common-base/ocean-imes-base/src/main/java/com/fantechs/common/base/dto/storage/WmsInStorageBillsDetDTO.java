@@ -1,6 +1,6 @@
 package com.fantechs.common.base.dto.storage;
 
-import com.fantechs.common.base.entity.storage.WmsStorageBillsDet;
+import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
 @Data
-public class WmsStorageBillsDetDTO extends WmsStorageBillsDet implements Serializable {
+public class WmsInStorageBillsDetDTO extends WmsInStorageBillsDet implements Serializable {
     /**
     * 创建用户名称
     */
@@ -52,10 +52,45 @@ public class WmsStorageBillsDetDTO extends WmsStorageBillsDet implements Seriali
     @Excel(name = "单位")
     private String unit;
     /**
-     * 存放位置
+     * 储位名称
      */
     @Transient
-    @ApiModelProperty(value = "存放位置",example = "存放位置")
-    @Excel(name = "存放位置")
+    @ApiModelProperty(value = "储位名称",example = "储位名称")
+    @Excel(name = "储位名称")
     private String storageName;
+    /**
+     * 储位编码
+     */
+    @Transient
+    @ApiModelProperty(value = "储位编码",example = "储位编码")
+    @Excel(name = "储位编码")
+    private String storageCode;
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库区域名称",example = "仓库区域名称")
+    @Excel(name = "仓库区域名称")
+    private String warehouseAreaName;
+    /**
+     * 仓库区域编码
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库区域编码",example = "仓库区域编码")
+    @Excel(name = "仓库区域编码")
+    private String warehouseAreaCode;
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库名称",example = "仓库名称")
+    @Excel(name = "仓库名称")
+    private String warehouseName;
+    /**
+     * 仓库编码
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库编码",example = "仓库编码")
+    @Excel(name = "仓库编码")
+    private String warehouseCode;
 }

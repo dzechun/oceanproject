@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsStorageBillsDetMapper">
-      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsStorageBillsDet">
+<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsDetMapper">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsInStorageBillsDet">
         <result column="storage_bills_det_id" jdbcType="BIGINT" property="storageBillsDetId" />
         <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
@@ -14,7 +14,7 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
       </resultMap>
-  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsStorageBillsDetDTO" extends="BaseResultMap">
+  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO" extends="BaseResultMap">
 
   </resultMap>
 
@@ -22,7 +22,7 @@
   <select id="selectUserName" resultType="string">
     select su.user_name from ocean.sys_user su where su.user_id = #{id}
   </select>
-  <select id="selectDTOByBillId" resultMap="BaseResultMapDTO">
+  <select id="selectFilterAll" resultMap="BaseResultMapDTO">
     SELECT
       wsbd.storage_bills_det_id,
       wsbd.storage_bills_id,
@@ -41,17 +41,25 @@
       spm.product_model_name AS 'productModelName',
       sm.unit,
       ss.storage_name AS 'storageName',
-      su1.user_name as createUserName,
-      su2.user_name as modifiedUserName
+      ss.storage_code AS 'storageCode',
+      su1.user_name AS createUserName,
+      su2.user_name AS modifiedUserName,
+      swha.warehouse_area_name AS warehouseAreaName,
+      swha.warehouse_area_code AS warehouseAreaCode,
+      swh.warehouse_name AS warehouseName,
+      swh.warehouse_code AS warehouseCode
     FROM
-      wms_storage_bills_det AS wsbd
+      wms_in_storage_bills_det AS wsbd
         LEFT JOIN `smt_material` sm ON wsbd.material_id = sm.material_id
         LEFT JOIN `smt_product_model` spm ON spm.product_model_id = sm.product_model_id
         LEFT JOIN `smt_storage_material` ssm ON ssm.material_id = sm.material_id
         LEFT JOIN `smt_storage` ss ON ss.storage_id = ssm.storage_id
-        LEFT JOIN ocean.sys_user su1 on su1.user_id = wsbd.create_user_id
-        LEFT JOIN ocean.sys_user su2 on su2.user_id = wsbd.modified_user_id
+        LEFT JOIN ocean.sys_user su1 ON su1.user_id = wsbd.create_user_id
+        LEFT JOIN ocean.sys_user su2 ON su2.user_id = wsbd.modified_user_id
+        LEFT JOIN smt_warehouse swh ON swh.warehouse_id = ss.warehouse_id
+        LEFT JOIN smt_warehouse_area swha ON swha.warehouse_area_id = ss.warehouse_area_id
     WHERE
-      wsbd.storage_bills_id = #{billId}
+      wsbd.storage_bills_id = #{storageBillsId}
+      AND wsbd.is_delete=1
   </select>
 </mapper>
