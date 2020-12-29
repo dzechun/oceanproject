@@ -29,18 +29,30 @@ zuul:
     ocean-security:               #传统的路由配置,此名称可以自定义
         path: /ocean-security/**  #映射的url
         serviceId: ocean-security #服务名
-    ocean-fileserver:
-        path: /ocean-fileserver/**
-        serviceId: ocean-fileserver
+    ocean-base:
+        path: /ocean-base/**
+        serviceId: ocean-base
+    ocean-imes-basic:
+        path: /ocean-imes-basic/**
+        serviceId: ocean-imes-basic
+    ocean-imes-apply:
+        path: /ocean-imes-apply/**
+        serviceId: ocean-imes-apply
+    ocean-wms-storageBills:
+        path: /ocean-wms-storageBills/**
+        serviceId: ocean-wms-storageBills
     ocean-qms:
         path: /ocean-qms/**
         serviceId: ocean-qms
-    ocean-base:
-      path: /ocean-base/**
-      serviceId: ocean-base
-    ocean-imes-basic:
-      path: /ocean-imes-basic/**
-      serviceId: ocean-imes-basic
+    ocean-bcm:
+        path: /ocean-bcm/**
+        serviceId: ocean-bcm
+    ocean-electronic-tag:
+        path: /ocean-electronic-tag/**
+        serviceId: ocean-electronic-tag
+    ocean-fileserver:
+        path: /ocean-fileserver/**
+        serviceId: ocean-fileserver
   sensitive-headers: Access-Control-Allow-Origin
   ignored-headers: Access-Control-Allow-Origin
 

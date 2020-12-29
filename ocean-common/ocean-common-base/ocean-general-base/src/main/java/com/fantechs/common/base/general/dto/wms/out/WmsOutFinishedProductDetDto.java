@@ -20,6 +20,9 @@ public class WmsOutFinishedProductDetDto extends WmsOutFinishedProductDet implem
     @ApiModelProperty(name="productMaterialName" ,value="成品名称")
     private String productMaterialName;
 
+    @ApiModelProperty(name="productMaterialName" ,value="成品描述（规格？）")
+    private String productMaterialDesc;
+
     @ApiModelProperty(name="warehouseCode" ,value="仓库编码")
     private String warehouseCode;
 
