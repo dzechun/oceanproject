@@ -85,6 +85,7 @@ public class WmsInStorageBillsController {
     @PostMapping(value = "export",produces = "application/octet-stream")
     @ApiOperation(value = "导出EXCEL")
     public void export(
+            @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchWmsStorageBillsListDTO searchWmsStorageBillsListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
             @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize,
             HttpServletResponse response){
