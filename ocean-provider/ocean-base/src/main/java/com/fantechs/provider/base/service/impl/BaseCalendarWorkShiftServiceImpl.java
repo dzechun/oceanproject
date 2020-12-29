@@ -136,6 +136,10 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("calendarId",calendarId)
                 .andEqualTo("day",day);
+        List<BaseCalendarWorkShift> baseCalendarWorkShifts = baseCalendarWorkShiftMapper.selectByExample(example);
+        if (StringUtils.isEmpty(baseCalendarWorkShifts)){
+            throw new BizErrorException("当日无可删除班次");
+        }
         return baseCalendarWorkShiftMapper.deleteByExample(example);
     }
 }
