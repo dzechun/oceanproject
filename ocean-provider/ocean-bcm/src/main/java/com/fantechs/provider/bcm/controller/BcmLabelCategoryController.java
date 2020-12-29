@@ -88,7 +88,7 @@ public class BcmLabelCategoryController {
     List<BcmLabelCategoryDto> list = bcmLabelCategoryService.findList(searchBcmLabelCategory);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BcmLabelCategory信息", BcmLabelCategory.class, "BcmLabelCategory.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "BcmLabelCategory信息", BcmLabelCategoryDto.class, "BcmLabelCategory.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
