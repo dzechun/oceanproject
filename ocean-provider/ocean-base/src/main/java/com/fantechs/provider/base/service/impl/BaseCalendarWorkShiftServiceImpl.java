@@ -92,6 +92,7 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        int i = 0;
         //日历为空，先添加一个日历
         BaseCalendarWorkShift baseCalendarWorkShift = baseCalendarWorkShifts.get(0);
         if (StringUtils.isEmpty(baseCalendarWorkShift.getCalendarId())){
@@ -102,26 +103,27 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
             baseCalendarWorkShift.setCalendarId(baseCalendar.getCalendarId());
         }
 
-
-        for (BaseCalendarWorkShift calendarWorkShift : baseCalendarWorkShifts) {
-            //判断该产线当日班次是否重复绑定
-            Example example = new Example(BaseCalendarWorkShift.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workShiftId",calendarWorkShift.getWorkShiftId())
-                    .andEqualTo("calendarId",calendarWorkShift.getCalendarId())
-                    .andEqualTo("day",calendarWorkShift.getDay());
-            BaseCalendarWorkShift baseCalendarWorkShift1 = baseCalendarWorkShiftMapper.selectOneByExample(example);
-            if (StringUtils.isNotEmpty(baseCalendarWorkShift1)){
-                throw new BizErrorException("当日已存在该班次");
+        if (StringUtils.isNotEmpty(baseCalendarWorkShifts)){
+            for (BaseCalendarWorkShift calendarWorkShift : baseCalendarWorkShifts) {
+                //判断该产线当日班次是否重复绑定
+                Example example = new Example(BaseCalendarWorkShift.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("workShiftId",calendarWorkShift.getWorkShiftId())
+                        .andEqualTo("calendarId",calendarWorkShift.getCalendarId())
+                        .andEqualTo("day",calendarWorkShift.getDay());
+                BaseCalendarWorkShift baseCalendarWorkShift1 = baseCalendarWorkShiftMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(baseCalendarWorkShift1)){
+                    throw new BizErrorException("当日已存在该班次");
+                }
+                //新增日历和班次关系
+                calendarWorkShift.setCreateTime(new Date());
+                calendarWorkShift.setCreateUserId(user.getUserId());
+                calendarWorkShift.setModifiedTime(new Date());
+                calendarWorkShift.setModifiedUserId(user.getUserId());
+                calendarWorkShift.setStatus(StringUtils.isEmpty(baseCalendarWorkShift.getStatus())?1:baseCalendarWorkShift.getStatus());
             }
-            //新增日历和班次关系
-            calendarWorkShift.setCreateTime(new Date());
-            calendarWorkShift.setCreateUserId(user.getUserId());
-            calendarWorkShift.setModifiedTime(new Date());
-            calendarWorkShift.setModifiedUserId(user.getUserId());
-            calendarWorkShift.setStatus(StringUtils.isEmpty(baseCalendarWorkShift.getStatus())?1:baseCalendarWorkShift.getStatus());
+            baseCalendarWorkShiftMapper.insertList(baseCalendarWorkShifts);
         }
-        int i = baseCalendarWorkShiftMapper.insertList(baseCalendarWorkShifts);
         return i;
     }
 
