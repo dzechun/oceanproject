@@ -39,14 +39,14 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
     @Override
     public int save(QmsRejectsMrbReview qmsRejectsMrbReview) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         qmsRejectsMrbReview.setCreateTime(new Date());
-        qmsRejectsMrbReview.setCreateUserId(user.getUserId());
+//        qmsRejectsMrbReview.setCreateUserId(user.getUserId());
         qmsRejectsMrbReview.setModifiedTime(new Date());
-        qmsRejectsMrbReview.setModifiedUserId(user.getUserId());
+//        qmsRejectsMrbReview.setModifiedUserId(user.getUserId());
         qmsRejectsMrbReview.setStatus(StringUtils.isEmpty(qmsRejectsMrbReview.getStatus())?1:qmsRejectsMrbReview.getStatus());
         qmsRejectsMrbReview.setRejectsMrbReviewCode(getOdd());
 
@@ -64,12 +64,12 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
     @Override
     public int update(QmsRejectsMrbReview qmsRejectsMrbReview) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         qmsRejectsMrbReview.setModifiedTime(new Date());
-        qmsRejectsMrbReview.setModifiedUserId(user.getUserId());
+//        qmsRejectsMrbReview.setModifiedUserId(user.getUserId());
 
         QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
         BeanUtils.copyProperties(qmsRejectsMrbReview,qmsHtRejectsMrbReview);
@@ -81,9 +81,9 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
         List<QmsHtRejectsMrbReview> qmsHtQualityInspections = new ArrayList<>();
         String[] idsArr  = ids.split(",");
         for (String id : idsArr) {

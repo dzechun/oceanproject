@@ -18,6 +18,12 @@ import java.util.Date;
 public class SearchQmsInspectionItemDet extends BaseQuery implements Serializable {
 
     /**
+     * 检验项目单号
+     */
+    @ApiModelProperty(name="inspectionItemCode",value = "检验项目单号")
+    private String inspectionItemCode;
+
+    /**
      * 特殊分类
      */
     @ApiModelProperty(name="specialSort",value = "特殊分类")

@@ -27,7 +27,7 @@ public class QmsRejectsMrbReviewDto extends QmsRejectsMrbReview implements Seria
      */
     @Transient
     @ApiModelProperty(name="supplierName",value = "供应商")
-    @Excel(name = "供应商", height = 20, width = 30,orderNum="2")
+    @Excel(name = "供应商", height = 20, width = 30,orderNum="3")
     private String supplierName;
 
     /**
@@ -35,7 +35,7 @@ public class QmsRejectsMrbReviewDto extends QmsRejectsMrbReview implements Seria
      */
     @Transient
     @ApiModelProperty(name="qualityInspectionCode",value = "质检单号")
-    @Excel(name = "质检单号", height = 20, width = 30,orderNum="3")
+    @Excel(name = "质检单号", height = 20, width = 30,orderNum="4")
     private String qualityInspectionCode;
 
     /**
@@ -43,7 +43,7 @@ public class QmsRejectsMrbReviewDto extends QmsRejectsMrbReview implements Seria
      */
     @Transient
     @ApiModelProperty(name = "materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="4")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="2")
     private String materialCode;
 
     /**
@@ -51,15 +51,23 @@ public class QmsRejectsMrbReviewDto extends QmsRejectsMrbReview implements Seria
      */
     @Transient
     @ApiModelProperty(name = "deptName",value = "评审部门名称")
-    @Excel(name = "评审部门", height = 20, width = 30,orderNum="4")
+    @Excel(name = "评审部门", height = 20, width = 30,orderNum="7")
     private String deptName;
+
+    /**
+     * 挑选人名称
+     */
+    @Transient
+    @ApiModelProperty(name = "selectedPersonName",value = "挑选人名称")
+    @Excel(name = "挑选人名称", height = 20, width = 30,orderNum="10")
+    private String selectedPersonName;
 
     /**
      * 创建用户名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
     private String createUserName;
 
     /**
@@ -67,7 +75,7 @@ public class QmsRejectsMrbReviewDto extends QmsRejectsMrbReview implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
     private String modifiedUserName;
 
     private static final long serialVersionUID = 1L;
