@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtMaterialDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements SmtMaterialService {
@@ -41,8 +43,8 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     private SmtMaterialSupplierMapper smtMaterialSupplierMapper;
 
     @Override
-    public List<SmtMaterial> findList(SearchSmtMaterial searchSmtMaterial) {
-        return smtMaterialMapper.findList(searchSmtMaterial);
+    public List<SmtMaterialDto> findList(Map<String, Object> map) {
+        return smtMaterialMapper.findList(map);
     }
 
     @Override

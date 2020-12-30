@@ -9,7 +9,7 @@
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
-        <result column="material_type" jdbcType="VARCHAR" property="materialType"/>
+        <result column="materiaxl_type" jdbcType="VARCHAR" property="materialType"/>
         <result column="material_source" jdbcType="INTEGER" property="materialSource"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="if_compoboard" jdbcType="BIT" property="ifCompoboard"/>
@@ -28,32 +28,55 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtMaterialDto" extends="BaseResultMap">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode"/>
         <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName"/>
         <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName"/>
     </resultMap>
     <sql id="Base_Column_List">
-    material_id, material_code, material_name, material_desc, unit, version, product_model_id, product_family_id,
-    material_type, material_source, barcode_rule_id, if_compoboard, if_linking_board, 
-    linking_board_number, takt,transfer_quantitystatus, customer_material_code, min_package_number, create_user_id,
-    create_time, modified_user_id, modified_time, is_delete, option1, option2, option3
+    sm.material_id,
+	sm.material_code,
+	sm.material_name,
+	sm.material_desc,
+	sm.unit,
+	sm.version,
+	sm.product_model_id,
+	sm.material_type,
+	sm.material_source,
+	sm.barcode_rule_id,
+	sm.if_compoboard,
+	sm.if_linking_board,
+	sm.linking_board_number,
+	sm.takt,
+	sm.transfer_quantity,
+	sm.`status`,
+	sm.customer_material_code,
+	sm.min_package_number,
+	sm.create_user_id,
+	sm.create_time,
+	sm.modified_user_id,
+	sm.modified_time,
+	sm.is_delete,
+	sm.option1,
+	sm.option2,
+	sm.option3
   </sql>
 
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterial"
-            resultMap="BaseResultMap">
-        select sm.material_id, sm.material_code, sm.material_name, sm.material_desc, sm.unit,sm.version,
-        sm.product_model_id, spm.product_model_code as productModelCode,
-        bpf.product_family_id,bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
-        sm.material_type,sm.material_source, sm.barcode_rule_id,sm.if_compoboard,sm.if_linking_board,
-        sm.linking_board_number,sm.takt,sm.transfer_quantity,sm.status, sm.customer_material_code,
-        sm.min_package_number, sm.create_user_id, u.user_name as createUserName,sm.create_time,
-        sm.modified_user_id, s.user_name as modifiedUserName, sm.modified_time, sm.is_delete
+            resultMap="BaseResultMapDto">
+        select<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        spm.product_model_code,
+        bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc
         from fantech_imes.smt_material sm
-        left join ocean.sys_user u on sm.create_user_id=u.user_id
-        left join ocean.sys_user s on sm.modified_user_id=s.user_id
+        left join ocean.sys_user su on sm.create_user_id=su.user_id
+        left join ocean.sys_user sus on sm.modified_user_id=sus.user_id
         left join fantech_imes.smt_product_model spm on sm.product_model_id=spm.product_model_id
         left join fantech_imes.base_product_family bpf on spm.product_family_id = bpf.product_family_id
         <where>
