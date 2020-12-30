@@ -24,8 +24,8 @@
 
     <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDto">
-        <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
-        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -50,13 +50,13 @@
         select<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
-        sc.customer_name,
-        sc.customer_code
+        ss.supplier_name,
+        ss.supplier_code
         from
         fantech_imes.wms_out_finished_product AS fp
         LEFT JOIN ocean.sys_user su ON fp.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON fp.modified_user_id = sus.user_id
-        LEFT JOIN smt_customer sc ON fp.customer_id = sc.customer_id
+        LEFT JOIN smt_supplier ss ON fp.customer_id = ss.supplier_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
