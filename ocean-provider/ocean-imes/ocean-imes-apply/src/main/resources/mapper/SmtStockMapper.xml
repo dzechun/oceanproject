@@ -21,7 +21,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
   
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.apply.SmtStockDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtStockDto">
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -48,7 +48,12 @@
       LEFT JOIN ocean.sys_user su ON ss.create_user_id = su.user_id
       LEFT JOIN ocean.sys_user sus ON ss.modified_user_id = sus.user_id
       <where>
-        1=1
+        <if test="stockCode!=null and stockCode!=''">
+          and ss.stock_code like CONCAT('%',#{stockCode},'%')
+        </if>
+        <if test="workOrderCode!=null and workOrderCode!=''">
+          and wo.work_order_code like CONCAT('%',#{workOrderCode},'%')
+        </if>
       </where>
   </select>
 </mapper>

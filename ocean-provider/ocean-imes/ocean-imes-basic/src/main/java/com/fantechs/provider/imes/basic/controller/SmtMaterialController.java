@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 
+import com.fantechs.common.base.dto.basic.SmtMaterialDto;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
@@ -50,9 +51,9 @@ public class SmtMaterialController {
 
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtMaterial>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial ){
+    public ResponseEntity<List<SmtMaterialDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial ){
         Page<Object> page = PageHelper.startPage(searchSmtMaterial.getStartPage(),searchSmtMaterial.getPageSize());
-        List<SmtMaterial> smtMaterials = smtMaterialService.findList(searchSmtMaterial);
+        List<SmtMaterialDto> smtMaterials = smtMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtMaterial));
         return ControllerUtil.returnDataSuccess(smtMaterials,(int)page.getTotal());
     }
 
@@ -94,10 +95,10 @@ public class SmtMaterialController {
     @ApiOperation(value = "导出物料excel",notes = "导出物料excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                               @RequestBody(required = false)SearchSmtMaterial searchSmtMaterial){
-        List<SmtMaterial> list = smtMaterialService.findList(searchSmtMaterial);
+        List<SmtMaterialDto> list = smtMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtMaterial));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出物料信息", "物料信息", SmtMaterial.class, "物料信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "导出物料信息", "物料信息", SmtMaterialDto.class, "物料信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
