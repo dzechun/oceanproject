@@ -73,38 +73,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
 
 
     /**
-     * 产品族编码
-     */
-    @Transient
-    @ApiModelProperty(name="productFamilyCode",value = "产品族编码")
-    @Excel(name = "产品族编码", height = 20, width = 30)
-    private String productFamilyCode;
-
-    /**
-     * 产品族名称
-     */
-    @Transient
-    @ApiModelProperty(name="productFamilyName",value = "产品族名称")
-    @Excel(name = "产品族名称", height = 20, width = 30)
-    private String productFamilyName;
-
-    /**
-     * 产品族描述
-     */
-    @Transient
-    @ApiModelProperty(name="productFamilyDesc",value = "产品族描述")
-    @Excel(name = "产品族描述", height = 20, width = 30)
-    private String productFamilyDesc;
-
-    /**
-     *  产品型号编码
-     */
-    @Transient
-    @ApiModelProperty(name="productModelCode" ,value="产品型号")
-    @Excel(name = "产品型号", height = 20, width = 30)
-    private String productModelCode;
-
-    /**
      * 物料类别
      */
     @Column(name = "material_type")
@@ -127,13 +95,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="barcodeRuleId" ,value="条码规则集合ID")
     private Long barcodeRuleId;
 
-    /**
-     * 条码规则集合名称
-     */
-    @Transient
-    @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
-    @Excel(name = "条码规则集合名称", height = 20, width = 30)
-    private String barcodeRuleName;
 
     /**
      * 是否组合板(0.否 1.是)
@@ -205,13 +166,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="createUserId" ,value="创建账号ID")
     private Long createUserId;
 
-    /**
-     * 创建账号名称
-     */
-    @Transient
-    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
-    @Excel(name = "创建账号", height = 20, width = 30)
-    private String createUserName;
 
     /**
      * 创建时间
@@ -228,13 +182,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="modifiedUserId" ,value="修改账号ID")
     private Long modifiedUserId;
 
-    /**
-     * 修改账号名称
-     */
-    @Transient
-    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
-    @Excel(name = "修改账号", height = 20, width = 30)
-    private String modifiedUserName;
 
     /**
      * 修改时间

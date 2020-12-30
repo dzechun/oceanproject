@@ -27,7 +27,6 @@ public class BcmBarCodeDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "printMode",value = "打印方式")
-    @Excel(name = "printMode", height = 20, width = 30,orderNum="6")
     private String printMode;
 
     /**
@@ -35,7 +34,6 @@ public class BcmBarCodeDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "savePath",value = "保存路径")
-    @Excel(name = "savePath", height = 20, width = 30,orderNum="6")
     private String savePath;
 
     /**
@@ -43,7 +41,6 @@ public class BcmBarCodeDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
     private String createUserName;
 
     /**
@@ -51,6 +48,5 @@ public class BcmBarCodeDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
 }

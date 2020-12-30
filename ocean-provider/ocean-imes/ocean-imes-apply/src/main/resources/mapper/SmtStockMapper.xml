@@ -21,7 +21,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
   
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.apply.SmtStockDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtStockDto">
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
