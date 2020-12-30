@@ -45,7 +45,6 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
         Example example = new Example(BcmLabelCategory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCategoryCode",record.getLabelCategoryCode());
@@ -75,9 +74,6 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCategoryCode",entity.getLabelCategoryCode());
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectOneByExample(example);
-        if(!StringUtils.isEmpty(bcmLabelCategory)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
