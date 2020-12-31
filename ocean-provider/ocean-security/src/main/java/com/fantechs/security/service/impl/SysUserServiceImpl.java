@@ -85,9 +85,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         SysHtUser sysHtUser=new SysHtUser();
         BeanUtils.copyProperties(sysUser,sysHtUser);
 
-        //批量新增用户和组织关系
-
-
         return  sysHtUserMapper.insertSelective(sysHtUser);
     }
 
