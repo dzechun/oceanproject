@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.wms.out;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 其他出库
@@ -54,7 +56,8 @@ public class WmsOutOtherout extends ValidGroup implements Serializable {
     @Excel(name = "出库时间", height = 20, width = 30,orderNum="3",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "otherout_time")
-    @NotBlank(message = "出库时间不能为空")
+    @NotNull(message = "出库时间不能为空")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date otheroutTime;
 
     /**

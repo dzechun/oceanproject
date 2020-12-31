@@ -3,7 +3,7 @@ package com.fantechs.provider.wms.storageBills.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SaveBillsDetDTO;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO;
-import com.fantechs.common.base.entity.apply.history.WmsInHtStorageBills;
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;

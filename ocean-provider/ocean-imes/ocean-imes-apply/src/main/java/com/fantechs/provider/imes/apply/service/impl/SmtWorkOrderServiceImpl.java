@@ -115,7 +115,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             for (SmtProductBomDet smtProductBomDet : smtProductBomDets) {
                 SmtWorkOrderBom smtWorkOrderBom = new SmtWorkOrderBom();
                 BeanUtils.copyProperties(smtProductBomDet, smtWorkOrderBom, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
-                Integer workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
+                BigDecimal workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
                 BigDecimal quantity = StringUtils.isEmpty(smtProductBomDet.getQuantity())?new BigDecimal(1):smtProductBomDet.getQuantity();
                 BigDecimal baseQuantity = StringUtils.isEmpty(smtProductBomDet.getBaseQuantity())?new BigDecimal(1):smtProductBomDet.getBaseQuantity();
                 smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());

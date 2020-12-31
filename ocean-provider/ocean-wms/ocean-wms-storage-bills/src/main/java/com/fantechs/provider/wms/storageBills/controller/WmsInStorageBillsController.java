@@ -76,6 +76,12 @@ public class WmsInStorageBillsController {
         return ControllerUtil.returnCRUD(wmsStorageBillsService.deleteByKey(id));
     }
 
+    @ApiOperation("批量删除仓库清单表数据")
+    @GetMapping("batchDelete")
+    public ResponseEntity batchDelete(@ApiParam(value = "仓库清单表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
+        return ControllerUtil.returnCRUD(wmsStorageBillsService.batchDelete(ids));
+    }
+
     @ApiOperation("修改仓库清单表数据")
     @PostMapping("update")
     public ResponseEntity update(@ApiParam(value = "仓库清单表对象，对象ID必传",required = true)@RequestBody WmsInStorageBills wmsStorageBills){

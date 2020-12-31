@@ -24,4 +24,10 @@ public class SearchWmsOutOtherout extends BaseQuery implements Serializable {
     @ApiModelProperty(name="otheroutStatus",value = "单据状态（0-待出库 1-出货中 2-出货完成）")
     private Byte otheroutStatus;
 
+    /**
+     * 操作人名称
+     */
+    @ApiModelProperty(name="operatorName",value = "操作人名称")
+    private String operatorName;
+
 }
