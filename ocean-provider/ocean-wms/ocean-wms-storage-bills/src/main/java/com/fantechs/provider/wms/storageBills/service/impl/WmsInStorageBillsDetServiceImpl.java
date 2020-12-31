@@ -2,7 +2,7 @@ package com.fantechs.provider.wms.storageBills.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
-import com.fantechs.common.base.entity.apply.history.WmsInHtStorageBillsDet;
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBillsDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.exception.BizErrorException;

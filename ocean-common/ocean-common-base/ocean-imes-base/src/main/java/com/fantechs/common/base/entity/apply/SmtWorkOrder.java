@@ -57,7 +57,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="workOrderQuantity" ,value="工单数量")
     @NotNull(message = "工单数量不能为空")
     @Excel(name = "工单数量", height = 20, width = 30,orderNum="5")
-    private Integer workOrderQuantity;
+    private java.math.BigDecimal workOrderQuantity;
 
     /**
      * 投产数量
@@ -65,7 +65,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "production_quantity")
     @ApiModelProperty(name="productionQuantity" ,value="投产数量")
     @Excel(name = "投产数量", height = 20, width = 30,orderNum="6")
-    private Integer productionQuantity;
+    private java.math.BigDecimal productionQuantity;
 
     /**
      * 产出数量
@@ -73,7 +73,15 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "output_quantity")
     @ApiModelProperty(name="outputQuantity" ,value="产出数量")
     @Excel(name = "产出数量", height = 20, width = 30,orderNum="7")
-    private Integer outputQuantity;
+    private java.math.BigDecimal outputQuantity;
+
+    /**
+     * 排产数量
+     */
+    @Column(name = "scheduled_quantity")
+    @ApiModelProperty(name="scheduledQuantity" ,value="排产数量")
+    @Excel(name = "排产数量", height = 20, width = 30,orderNum="7")
+    private java.math.BigDecimal scheduledQuantity;
 
     /**
      * 工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)

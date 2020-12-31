@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.apply.history;
+package com.fantechs.common.base.entity.basic.history;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,6 +27,14 @@ public class WmsInHtStorageBillsDet implements Serializable {
     @Column(name = "storage_bills_det_id")
     @Excel(name = "仓库清单详情id")
     private Long storageBillsDetId;
+
+    /**
+     * 仓库清单id
+     */
+    @ApiModelProperty(value = "组织代码id",example = "组织代码id")
+    @Column(name = "organization_id")
+    @Id
+    private Long organizationId;
 
     /**
     * 仓库清单ID

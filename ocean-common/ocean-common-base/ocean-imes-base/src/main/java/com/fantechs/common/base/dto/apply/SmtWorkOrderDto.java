@@ -108,4 +108,11 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name="analysisCode" ,value="流转卡规则解析码")
     private String analysisCode;
+
+    /**
+     * 订单号
+     */
+    @Transient
+    @ApiModelProperty(name="orderCode" ,value="订单号")
+    private String orderCode;
 }

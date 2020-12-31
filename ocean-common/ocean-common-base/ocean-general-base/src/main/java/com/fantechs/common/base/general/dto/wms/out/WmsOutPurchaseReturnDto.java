@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.wms.out;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,19 +15,22 @@ public class WmsOutPurchaseReturnDto extends WmsOutPurchaseReturn implements Ser
     /**
      * 供应商代码
      */
-    @ApiModelProperty(name="customerCode" ,value="供应商代码")
-    private String customerCode;
+    @ApiModelProperty(name="supplierCode" ,value="供应商代码")
+    @Excel(name = "供应商代码", height = 20, width = 30,orderNum="2")
+    private String supplierCode;
 
     /**
      * 供应商名称
      */
-    @ApiModelProperty(name="customerName" ,value="供应商名称")
-    private String customerName;
+    @ApiModelProperty(name="supplierName" ,value="供应商名称")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="3")
+    private String supplierName;
 
     /**
      * 采购员名称
      */
     @ApiModelProperty(name="buyName" ,value="采购员名称")
+    @Excel(name = "采购员名称", height = 20, width = 30,orderNum="4")
     private String buyName;
 
 }

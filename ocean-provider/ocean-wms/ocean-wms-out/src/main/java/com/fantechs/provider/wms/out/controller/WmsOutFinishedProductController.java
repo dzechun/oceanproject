@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.out.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProduct;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutFinishedProduct;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/22.
  */
 @RestController
-@Api(tags = "wmsOutFinishedProduct控制器")
+@Api(tags = "成品出库控制器")
 @RequestMapping("/wmsOutFinishedProduct")
 @Validated
 public class WmsOutFinishedProductController {
@@ -70,13 +71,13 @@ public class WmsOutFinishedProductController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<WmsOutFinishedProduct>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutFinishedProduct searchWmsOutFinishedProduct) {
-//        Page<Object> page = PageHelper.startPage(searchWmsOutFinishedProduct.getStartPage(),searchWmsOutFinishedProduct.getPageSize());
-//        List<WmsOutFinishedProductDto> list = wmsOutFinishedProductService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutFinishedProduct));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsOutHtFinishedProduct>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutFinishedProduct searchWmsOutFinishedProduct) {
+        Page<Object> page = PageHelper.startPage(searchWmsOutFinishedProduct.getStartPage(),searchWmsOutFinishedProduct.getPageSize());
+        List<WmsOutHtFinishedProduct> list = wmsOutFinishedProductService.findHTList(ControllerUtil.dynamicConditionByEntity(searchWmsOutFinishedProduct));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
@@ -85,7 +86,7 @@ public class WmsOutFinishedProductController {
     List<WmsOutFinishedProductDto> list = wmsOutFinishedProductService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutFinishedProduct));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutFinishedProduct信息", WmsOutFinishedProduct.class, "WmsOutFinishedProduct.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutFinishedProduct信息", WmsOutFinishedProductDto.class, "WmsOutFinishedProduct.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

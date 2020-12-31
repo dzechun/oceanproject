@@ -19,21 +19,27 @@ public class WmsOutPurchaseReturnDetDto extends WmsOutPurchaseReturnDet implemen
      * 采购退货单ID
      */
     @ApiModelProperty(name="purchaseReturnCode",value = "采购退货单号")
-    private Long purchaseReturnCode;
+    @Excel(name = "采购退货单号", height = 20, width = 30,orderNum="1")
+    private String purchaseReturnCode;
 
     @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="2")
     private String materialCode;
 
     @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="3")
     private String materialName;
 
     @ApiModelProperty(name="warehouseCode" ,value="仓库编码")
+    @Excel(name = "仓库编码", height = 20, width = 30,orderNum="8")
     private String warehouseCode;
 
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="9")
     private String warehouseName;
 
     @ApiModelProperty(name="warehouseUserName" ,value="仓库管理员名称")
+    @Excel(name = "仓库管理员名称", height = 20, width = 30,orderNum="10")
     private String warehouseUserName;
 
 }

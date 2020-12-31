@@ -24,7 +24,7 @@
     <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode"/>
     <result column="product_model_code" jdbcType="VARCHAR" property="productMaterialCode"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productMaterialName"/>
-      <result column="product_model_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
+    <result column="product_model_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>

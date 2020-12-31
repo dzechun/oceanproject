@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.out.service;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtheroutDet;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface WmsOutOtheroutDetService extends IService<WmsOutOtheroutDet> {
 
     //批量更新
     int batchUpdate(List<WmsOutOtheroutDet> wmsOutOtheroutDets);
+
+    List<WmsOutHtOtheroutDet> findHTList(Map<String, Object> dynamicConditionByEntity);
 }

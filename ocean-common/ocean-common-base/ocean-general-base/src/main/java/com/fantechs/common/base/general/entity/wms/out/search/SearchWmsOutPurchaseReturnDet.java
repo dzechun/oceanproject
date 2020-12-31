@@ -18,10 +18,10 @@ public class SearchWmsOutPurchaseReturnDet extends BaseQuery implements Serializ
     @ApiModelProperty(name="purchaseReturnCode",value = "采购退货单号")
     private String purchaseReturnCode;
 
-    @ApiModelProperty(name="productMaterialCode" ,value="物料编码")
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
     private String materialCode;
 
-    @ApiModelProperty(name="productMaterialName" ,value="物料名称")
+    @ApiModelProperty(name="materialName" ,value="物料名称")
     private String materialName;
 
     @ApiModelProperty(name="warehouseCode" ,value="仓库编码")

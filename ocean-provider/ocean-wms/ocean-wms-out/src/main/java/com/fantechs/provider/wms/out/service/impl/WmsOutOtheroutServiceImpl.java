@@ -7,12 +7,14 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutOtheroutDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutOtheroutMapper;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutDetService;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutService;
@@ -34,6 +36,8 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
     @Resource
     private WmsOutOtheroutMapper wmsOutOtheroutMapper;
     @Resource
+    private WmsOutHtOtheroutMapper wmsOutHtOtheroutMapper;
+    @Resource
     private WmsOutOtheroutDetService wmsOutOtheroutDetService;
 
     @Override
@@ -54,13 +58,15 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         int i = wmsOutOtheroutMapper.insertUseGeneratedKeys(wmsOutOtherout);
 
         List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
-        for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
-            if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
+            for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
+                if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                }
+                wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
             }
-            wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDets());
         }
-        wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDets());
 
         return i;
     }
@@ -122,5 +128,10 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         }
 
         return wmsOutOtheroutDtos;
+    }
+
+    @Override
+    public List<WmsOutHtOtherout> findHTList(Map<String, Object> map) {
+        return wmsOutHtOtheroutMapper.findHTList(map);
     }
 }

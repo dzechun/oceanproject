@@ -54,6 +54,9 @@
             <if test="otheroutCode != null and otheroutCode != ''">
                 and woo.otherout_code like CONCAT('%', #{otheroutCode}, '%')
             </if>
+            <if test="operatorName != null and operatorName != ''">
+                and suss.user_name like CONCAT('%', #{operatorName}, '%')
+            </if>
             <if test="otheroutStatus!=null and otheroutStatus!=''">
                 and woo.otherout_status=#{otheroutStatus}
             </if>
