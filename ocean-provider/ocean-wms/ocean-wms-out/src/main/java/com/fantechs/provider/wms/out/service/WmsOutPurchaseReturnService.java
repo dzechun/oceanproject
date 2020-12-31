@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.out.service;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPurchaseReturn;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPurchaseReturn;
 import com.fantechs.common.base.support.IService;
 
@@ -17,4 +18,6 @@ public interface WmsOutPurchaseReturnService extends IService<WmsOutPurchaseRetu
 
 
     List<WmsOutPurchaseReturnDto> findList(Map<String, Object> dynamicConditionByEntity);
+
+    List<WmsOutHtPurchaseReturn> findHTList(Map<String, Object> dynamicConditionByEntity);
 }

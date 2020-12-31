@@ -71,8 +71,8 @@ public class WmsOutOtheroutDetDto extends WmsOutOtheroutDet implements Serializa
      * 仓库编码（出货仓库）
      */
     @ApiModelProperty(name="warehouseCode",value = "仓库编码（出货仓库）")
-    @Excel(name = "仓库ID（出货仓库）", height = 20, width = 30,orderNum="12")
-    @Column(name = "warehouse_id")
+    @Excel(name = "仓库编码（出货仓库）", height = 20, width = 30,orderNum="12")
+    @Column(name = "warehouse_code")
     private String warehouseCode;
 
     /**

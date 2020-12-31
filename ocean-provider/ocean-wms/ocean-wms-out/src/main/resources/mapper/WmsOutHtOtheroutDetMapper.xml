@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtheroutDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_otherout_det_id" jdbcType="BIGINT" property="htOtheroutDetId" />
+    <result column="otherout_det_id" jdbcType="BIGINT" property="otheroutDetId" />
+    <result column="otherout_id" jdbcType="BIGINT" property="otheroutId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="plan_outquantity" jdbcType="DECIMAL" property="planOutquantity" />
+    <result column="reality_outquantity" jdbcType="DECIMAL" property="realityOutquantity" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="sum" jdbcType="DECIMAL" property="sum" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="otherout_code" jdbcType="VARCHAR" property="otheroutCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="unit" jdbcType="VARCHAR" property="unit"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+    <result column="warehouse_desc" jdbcType="VARCHAR" property="warehouseDesc"/>
+    <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wood.otherout_det_id,
+	wood.otherout_id,
+	wood.material_id,
+	wood.plan_outquantity,
+	wood.reality_outquantity,
+	wood.unit_price,
+	wood.sum,
+	wood.warehouse_id,
+	wood.warehouse_user_id,
+	wood.`status`,
+	wood.create_user_id,
+	wood.create_time,
+	wood.modified_user_id,
+	wood.modified_time,
+	wood.is_delete
+  </sql>
+
+  <select id="findHTList" resultMap="BaseResultMap" parameterType="map">
+    SELECT<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name, suss.user_name AS warehouse_user_name,
+    woo.otherout_code,
+    sm.material_code, sm.material_name, sm.material_desc, sm.unit, sm.version,
+    sw.warehouse_name, sw.warehouse_code, sw.warehouse_desc
+    FROM wms_out_otherout_det wood
+    LEFT JOIN ocean.sys_user su ON wood.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON wood.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user suss ON wood.warehouse_user_id = suss.user_id
+    LEFT JOIN wms_out_otherout woo ON wood.otherout_id = woo.otherout_id
+    LEFT JOIN smt_material sm ON wood.material_id = sm.material_id
+    LEFT JOIN smt_warehouse sw ON wood.warehouse_id = sw.warehouse_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(wood.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="otheroutCode != null and otheroutCode != ''">
+        and woo.otherout_code like CONCAT('%', #{otheroutCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="warehouseCode != null and warehouseCode != ''">
+        and sw.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="warehouseDesc != null and warehouseDesc != ''">
+        and sw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
+      </if>
+      <if test="otheroutId!=null and otheroutId!=''">
+        and wood.otherout_Id=#{otheroutId}
+      </if>
+      <if test="status!=null and status!=''">
+        and wood.status=#{status}
+      </if>
+    </where>
+    order by wood.create_time desc
+  </select>
+</mapper>
