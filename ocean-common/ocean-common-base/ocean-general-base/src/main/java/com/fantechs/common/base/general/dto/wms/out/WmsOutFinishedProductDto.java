@@ -29,14 +29,14 @@ public class WmsOutFinishedProductDto extends WmsOutFinishedProduct implements S
     /**
      * 客户代码
      */
-    @ApiModelProperty(name="customerCode" ,value="客户代码")
-    private String customerCode;
+    @ApiModelProperty(name="supplierCode" ,value="客户代码")
+    private String supplierCode;
 
     /**
      * 客户名称
      */
-    @ApiModelProperty(name="customerName" ,value="客户名称")
-    private String customerName;
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
 
 
     private static final long serialVersionUID = 1L;

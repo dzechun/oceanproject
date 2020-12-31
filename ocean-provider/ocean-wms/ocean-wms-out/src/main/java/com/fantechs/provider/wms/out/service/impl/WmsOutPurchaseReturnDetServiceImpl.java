@@ -27,8 +27,8 @@ import java.util.Map;
 @Service
 public class WmsOutPurchaseReturnDetServiceImpl  extends BaseService<WmsOutPurchaseReturnDet> implements WmsOutPurchaseReturnDetService {
 
-         @Resource
-         private WmsOutPurchaseReturnDetMapper wmsOutPurchaseReturnDetMapper;
+    @Resource
+    private WmsOutPurchaseReturnDetMapper wmsOutPurchaseReturnDetMapper;
 
     @Override
     public List<WmsOutPurchaseReturnDetDto> findList(Map<String, Object> dynamicConditionByEntity) {

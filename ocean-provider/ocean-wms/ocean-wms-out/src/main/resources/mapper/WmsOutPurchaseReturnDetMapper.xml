@@ -25,8 +25,8 @@
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDetDto">
 
     <result column="purchase_return_code" jdbcType="VARCHAR" property="purchaseReturnCode"/>
-    <result column="model_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="model_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
@@ -69,5 +69,27 @@
     LEFT JOIN wms_out_purchase_return pr ON prt.purchase_return_id = pr.purchase_return_id
     LEFT JOIN smt_material m ON prt.material_id = m.material_id
     LEFT JOIN smt_warehouse w ON prt.warehouse_id = w.warehouse_id
+    <where>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and date_format(prt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="purchaseReturnCode != null and purchaseReturnCode != ''">
+            and pr.purchase_return_code like CONCAT('%', #{purchaseReturnCode}, '%')
+        </if>
+        <if test="materialCode != null and materialCode != ''">
+            and m.material_code like CONCAT('%', #{materialCode}, '%')
+        </if>
+        <if test="materialName != null and materialName != ''">
+            and m.material_name like CONCAT('%', #{materialName}, '%')
+        </if>
+        <if test="warehouseCode != null and warehouseCode != ''">
+            and w.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
+        </if>
+        <if test="warehouseName != null and warehouseName != ''">
+            and w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+        </if>
+
+
+    </where>
   </select>
 </mapper>

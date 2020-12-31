@@ -86,7 +86,7 @@ public class WmsOutFinishedProductDetController {
     List<WmsOutFinishedProductDetDto> list = wmsOutFinishedProductDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutFinishedProductDet));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutFinishedProductDet信息", WmsOutFinishedProductDet.class, "WmsOutFinishedProductDet.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutFinishedProductDet信息", WmsOutFinishedProductDetDto.class, "WmsOutFinishedProductDet.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
