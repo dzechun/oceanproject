@@ -54,13 +54,15 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         int i = wmsOutOtheroutMapper.insertUseGeneratedKeys(wmsOutOtherout);
 
         List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
-        for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
-            if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
+            for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
+                if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                }
+                wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
             }
-            wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDets());
         }
-        wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDets());
 
         return i;
     }
