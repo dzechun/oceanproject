@@ -1,6 +1,6 @@
 package com.fantechs.common.base.dto.apply.history;
 
-import com.fantechs.common.base.entity.apply.history.WmsInHtStorageBills;
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;

@@ -3,6 +3,7 @@
 <mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsDetMapper">
       <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsInStorageBillsDet">
         <result column="storage_bills_det_id" jdbcType="BIGINT" property="storageBillsDetId" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
         <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
         <result column="will_income_total" jdbcType="DECIMAL" property="willIncomeTotal" />

@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.storageBills.controller.history;
 
 import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO;
-import com.fantechs.common.base.entity.apply.history.WmsInHtStorageBills;
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsService;
 import com.fantechs.common.base.dto.apply.history.SearchWmsInHtStorageBillsListDTO;
 import com.fantechs.common.base.response.ResponseEntity;

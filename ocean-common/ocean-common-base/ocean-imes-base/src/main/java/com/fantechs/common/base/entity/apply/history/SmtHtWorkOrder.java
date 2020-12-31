@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.apply.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "smt_ht_work_order")
@@ -55,21 +57,29 @@ public class SmtHtWorkOrder implements Serializable {
      */
     @Column(name = "work_order_quantity")
     @ApiModelProperty(name="workOrderQuantity" ,value="工单数量")
-    private Integer workOrderQuantity;
+    private BigDecimal workOrderQuantity;
 
     /**
      * 投产数量
      */
     @Column(name = "production_quantity")
     @ApiModelProperty(name="productionQuantity" ,value="投产数量")
-    private Integer productionQuantity;
+    private BigDecimal productionQuantity;
 
     /**
      * 产出数量
      */
     @Column(name = "output_quantity")
     @ApiModelProperty(name="outputQuantity" ,value="产出数量")
-    private Integer outputQuantity;
+    private BigDecimal outputQuantity;
+
+    /**
+     * 排产数量
+     */
+    @Column(name = "scheduled_quantity")
+    @ApiModelProperty(name="scheduledQuantity" ,value="排产数量")
+    @Excel(name = "排产数量", height = 20, width = 30,orderNum="7")
+    private java.math.BigDecimal scheduledQuantity;
 
     /**
      * 工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
