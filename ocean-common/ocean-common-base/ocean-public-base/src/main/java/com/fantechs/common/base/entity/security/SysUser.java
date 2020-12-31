@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -179,4 +180,10 @@ public class SysUser extends ValidGroup implements Serializable {
     @Transient
     @JSONField(serialize = false)
     private Set<String> authority;
+
+    /**
+     *用户所属组织列表
+     */
+    @Transient
+    private List<String> organizationIds;
 }
