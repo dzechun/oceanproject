@@ -4,6 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutOtherout;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -70,13 +71,13 @@ public class WmsOutOtheroutController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-/*    @ApiOperation("历史列表")
+    @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsOutOtherout>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutOtherout searchWmsOutOtherout) {
+    public ResponseEntity<List<WmsOutHtOtherout>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutOtherout searchWmsOutOtherout) {
         Page<Object> page = PageHelper.startPage(searchWmsOutOtherout.getStartPage(),searchWmsOutOtherout.getPageSize());
-        List<WmsOutOtherout> list = wmsOutOtheroutService.findList(searchWmsOutOtherout);
+        List<WmsOutHtOtherout> list = wmsOutOtheroutService.findHTList(ControllerUtil.dynamicConditionByEntity(searchWmsOutOtherout));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }*/
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

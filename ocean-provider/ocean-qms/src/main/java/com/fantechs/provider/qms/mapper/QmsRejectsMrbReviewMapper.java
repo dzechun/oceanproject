@@ -14,6 +14,5 @@ public interface QmsRejectsMrbReviewMapper extends MyMapper<QmsRejectsMrbReview>
 
     List<QmsRejectsMrbReviewDto> findList(Map<String, Object> map);
 
-
     QmsRejectsMrbReview getMax();
 }

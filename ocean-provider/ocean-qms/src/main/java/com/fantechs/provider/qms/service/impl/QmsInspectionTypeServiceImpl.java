@@ -114,7 +114,7 @@ public class QmsInspectionTypeServiceImpl extends BaseService<QmsInspectionType>
      */
     public String getOdd(){
         String before = "JL";
-        String amongst = new SimpleDateFormat("YYMMdd").format(new Date());
+        String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsInspectionType qmsInspectionType = qmsInspectionTypeMapper.getMax();
         String qmsInspectionTypeCode = before+amongst+"0000";
         if (StringUtils.isNotEmpty(qmsInspectionType)){

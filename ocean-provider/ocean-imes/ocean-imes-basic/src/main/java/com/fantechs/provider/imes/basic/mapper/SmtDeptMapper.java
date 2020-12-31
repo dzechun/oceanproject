@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface SmtDeptMapper extends MyMapper<SmtDept> {
     List<SmtDept> findList(SearchSmtDept searchSmtDept);
+
+    List<SmtDept> findById(Long parentId);
 }

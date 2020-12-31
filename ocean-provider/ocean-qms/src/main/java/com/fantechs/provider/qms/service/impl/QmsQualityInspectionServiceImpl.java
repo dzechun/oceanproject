@@ -115,7 +115,7 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
      */
     public String getOdd(){
         String before = "DH";
-        String amongst = new SimpleDateFormat("YYMMdd").format(new Date());
+        String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsQualityInspection qmsQualityInspection = qmsQualityInspectionMapper.getMax();
         String qualityInspectionCode = before+amongst+"0001";
         if (StringUtils.isNotEmpty(qmsQualityInspection)){

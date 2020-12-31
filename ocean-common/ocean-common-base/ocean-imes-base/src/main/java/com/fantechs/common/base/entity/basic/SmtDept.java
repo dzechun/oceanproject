@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "smt_dept")
 @Data
@@ -66,6 +67,14 @@ public class SmtDept extends ValidGroup implements Serializable  {
     @ApiModelProperty(name="factoryName" ,value="厂别名称")
     @Excel(name = "厂别", height = 20, width = 30)
     private String factoryName;
+
+    /**
+     * 父级ID
+     */
+    @ApiModelProperty(name="parentId",value = "父级ID")
+    @Excel(name = "父级ID", height = 20, width = 30,orderNum="4")
+    @Column(name = "parent_id")
+    private Long parentId;
 
     /**
      * 状态
@@ -140,4 +149,6 @@ public class SmtDept extends ValidGroup implements Serializable  {
      * 扩展字段3
      */
     private String option3;
+
+    private List<SmtDept> depts;
 }

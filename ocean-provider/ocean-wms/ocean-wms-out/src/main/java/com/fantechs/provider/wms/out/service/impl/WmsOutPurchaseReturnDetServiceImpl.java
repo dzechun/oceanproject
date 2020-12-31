@@ -7,10 +7,12 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturnDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPurchaseReturnDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtPurchaseReturnDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPurchaseReturnDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPurchaseReturnDetService;
 import org.springframework.stereotype.Service;
@@ -29,10 +31,17 @@ public class WmsOutPurchaseReturnDetServiceImpl  extends BaseService<WmsOutPurch
 
     @Resource
     private WmsOutPurchaseReturnDetMapper wmsOutPurchaseReturnDetMapper;
+    @Resource
+    private WmsOutHtPurchaseReturnDetMapper wmsOutHtPurchaseReturnDetMapper;
 
     @Override
     public List<WmsOutPurchaseReturnDetDto> findList(Map<String, Object> dynamicConditionByEntity) {
         return wmsOutPurchaseReturnDetMapper.findList(dynamicConditionByEntity);
+    }
+
+    @Override
+    public List<WmsOutHtPurchaseReturnDet> findHTList(Map<String, Object> dynamicConditionByEntity) {
+        return wmsOutHtPurchaseReturnDetMapper.findHTList(dynamicConditionByEntity);
     }
 
     @Override

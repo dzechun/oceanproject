@@ -15,7 +15,7 @@
     <result column="expiration_date" jdbcType="DECIMAL" property="expirationDate" />
     <result column="rewarming_time" jdbcType="VARCHAR" property="rewarmingTime" />
     <result column="element_size" jdbcType="VARCHAR" property="elementSize" />
-    <result column="humidity_class" jdbcType="VARCHAR" property="humidityClass" />
+    <result column="humidity_class" jdbcType="BIGINT" property="humidityClass" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -41,11 +41,12 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    sm.material_code,sm.material_name,sm.version
+    sm.material_code,sm.material_name,sm.version,qii.inspection_item_code
     from fantech_imes.qms_inspection_item_det qiid
     LEFT JOIN ocean.sys_user su ON qiid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qiid.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.smt_material sm ON qiid.material_id = sm.material_id
+    LEFT JOIN fantech_imes.qms_inspection_item qii ON qiid.inspection_item_id = qii.inspection_item_id
     <where>
       <if test="specialSort != null and specialSort != ''">
         and qiid.special_sort like CONCAT('%', #{specialSort}, '%')
@@ -56,8 +57,9 @@
       <if test="materialName != null and materialName != ''">
         and qiid.material_name like CONCAT('%', #{materialName}, '%')
       </if>
-
-
+      <if test="inspectionItemCode != null and inspectionItemCode != ''">
+        and qii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.out.mapper;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

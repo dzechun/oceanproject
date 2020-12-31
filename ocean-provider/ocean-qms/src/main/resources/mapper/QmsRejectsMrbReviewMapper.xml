@@ -32,6 +32,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    <result column="selected_person_name" jdbcType="VARCHAR" property="selectedPersonName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -43,8 +44,8 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    qqi.quality_inspection_code,sm.material_code,ss.supplier_name,sd.dept_name
-    from fantech_imes.qms_ht_rejects_mrb_review qrmr
+    qqi.quality_inspection_code,sm.material_code,ss.supplier_name,sd.dept_name,ssu.user_name AS selected_person_name
+    from fantech_imes.qms_rejects_mrb_review qrmr
     LEFT JOIN ocean.sys_user su ON qrmr.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qrmr.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.qms_quality_inspection qqi ON qrmr.quality_inspection_id = qqi.quality_inspection_id
@@ -52,12 +53,13 @@
     LEFT JOIN fantech_imes.smt_material_supplier sms ON qrmr.material_id = sms.material_id
     LEFT JOIN fantech_imes.smt_supplier ss ON sms.supplier_id = ss.supplier_id
     LEFT JOIN fantech_imes.smt_dept sd ON qrmr.review_dept = sd.dept_id
+    LEFT JOIN ocean.sys_user ssu ON qrmr.selected_person = ssu.user_id
     <where>
-      <if test="mrbReviewCode != null and mrbReviewCode != ''">
-        and qhmr.mrb_review_code like CONCAT('%', #{mrbReviewCode}, '%')
+      <if test="rejectsMrbReviewCode != null and rejectsMrbReviewCode != ''">
+        and qrmr.rejects_mrb_review_code like CONCAT('%', #{rejectsMrbReviewCode}, '%')
       </if>
       <if test="receiptsStatus != null and receiptsStatus != ''">
-        and qhmr.receipts_status like CONCAT('%', #{receiptsStatus}, '%')
+        and qrmr.receipts_status like CONCAT('%', #{receiptsStatus}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qit.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

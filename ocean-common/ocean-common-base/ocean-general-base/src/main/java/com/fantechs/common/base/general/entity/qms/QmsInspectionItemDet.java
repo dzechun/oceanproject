@@ -33,7 +33,6 @@ public class QmsInspectionItemDet extends ValidGroup implements Serializable {
      * 检验项目ID
      */
     @ApiModelProperty(name="inspectionItemId",value = "检验项目ID")
-    @Excel(name = "检验项目ID", height = 20, width = 30,orderNum="1")
     @Column(name = "inspection_item_id")
     private Long inspectionItemId;
 
@@ -105,7 +104,7 @@ public class QmsInspectionItemDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="humidityClass",value = "湿敏等级")
     @Excel(name = "湿敏等级", height = 20, width = 30,orderNum="12")
     @Column(name = "humidity_class")
-    private String humidityClass;
+    private Long humidityClass;
 
     /**
      * 状态（0、无效 1、有效）

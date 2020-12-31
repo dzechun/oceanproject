@@ -7,6 +7,7 @@
     <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
     <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -16,9 +17,10 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="depts" ofType="com.fantechs.common.base.entity.basic.SmtDept" select="com.fantechs.provider.imes.basic.mapper.SmtDeptMapper.findById" column="dept_id"/>
   </resultMap>
   <sql id="Base_Column_List">
-    dept_id, dept_code, dept_name, dept_desc, factory_id, status, create_user_id, create_time, 
+    dept_id, dept_code, dept_name, dept_desc, factory_id, parent_id,status, create_user_id, create_time,
     modified_user_id, modified_time, is_delete, option1, option2, option3
   </sql>
 
@@ -47,10 +49,20 @@
       <if test="factoryId!=null and factoryId!=''">
         and sd.factory_id=#{factoryId}
       </if>
+      <if test="parentId!=null and parentId!=''">
+        and sd.parent_id=#{parentId}
+      </if>
       <if test="status!=null and status!=''">
         and sd.status=#{status}
       </if>
     </where>
     order by sd.create_time desc
   </select>
+
+  <select id="findById" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.smt_dept sd
+    where sd.parent_id=#{parentId}
+  </select>
+
 </mapper>

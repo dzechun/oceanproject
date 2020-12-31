@@ -6,10 +6,12 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPurchaseReturn;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtPurchaseReturnMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPurchaseReturnMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPurchaseReturnService;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ public class WmsOutPurchaseReturnServiceImpl  extends BaseService<WmsOutPurchase
 
     @Resource
     private WmsOutPurchaseReturnMapper wmsOutPurchaseReturnMapper;
+    @Resource
+    private WmsOutHtPurchaseReturnMapper wmsOutHtPurchaseReturnMapper;
 
     @Override
     public int save(WmsOutPurchaseReturn wmsOutPurchaseReturn) {
@@ -78,5 +82,10 @@ public class WmsOutPurchaseReturnServiceImpl  extends BaseService<WmsOutPurchase
     @Override
     public List<WmsOutPurchaseReturnDto> findList(Map<String, Object> dynamicConditionByEntity) {
         return wmsOutPurchaseReturnMapper.findList(dynamicConditionByEntity);
+    }
+
+    @Override
+    public List<WmsOutHtPurchaseReturn> findHTList(Map<String, Object> dynamicConditionByEntity) {
+        return wmsOutHtPurchaseReturnMapper.findHTList(dynamicConditionByEntity);
     }
 }
