@@ -84,7 +84,7 @@
                     work_order_code=#{item.workOrderCode},
                 </if>
                 <if test="sortingId!=null and sortingId!=''">
-                    material_code=#{item.sortingId},
+                    sorting_id=#{item.sortingId},
                 </if>
                 <if test="quantity!=null and quantity!=''">
                     quantity=#{item.quantity},
