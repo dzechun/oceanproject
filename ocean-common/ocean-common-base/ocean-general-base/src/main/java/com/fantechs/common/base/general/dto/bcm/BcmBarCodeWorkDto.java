@@ -25,14 +25,12 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="workOrderId" ,value="工单号")
-    @Excel(name = "工单id", height = 20, width = 30,orderNum="1")
     private Long workOrderId;
     /**
      * 工单号
      */
     @Transient
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
-    @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
     /**
      * 工单类别
@@ -46,7 +44,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="零件料号")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="2")
     private String materialCode;
 
     /**
@@ -61,7 +58,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="version" ,value="版本")
-    @Excel(name = "产品料号版本", height = 20, width = 30,orderNum="3")
     private String version;
 
     /**
@@ -70,7 +66,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
     @Column(name = "work_order_quantity")
     @ApiModelProperty(name="workOrderQuantity" ,value="工单数量")
     @NotNull(message = "工单数量不能为空")
-    @Excel(name = "工单数量", height = 20, width = 30,orderNum="5")
     private Integer workOrderQuantity;
 
     /**
@@ -78,7 +73,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Column(name = "production_quantity")
     @ApiModelProperty(name="productionQuantity" ,value="投产数量")
-    @Excel(name = "投产数量", height = 20, width = 30,orderNum="6")
     private Integer productionQuantity;
 
     /**
@@ -86,7 +80,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="routeName" ,value="工艺路线名称")
-    @Excel(name = "工艺路线名称", height = 20, width = 30,orderNum="10")
     private String routeName;
 
     /**
@@ -108,7 +101,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Column(name = "planned_end_time")
     @ApiModelProperty(name="plannedEndTime" ,value="计划结束时间")
-    @Excel(name = "计划结束时间", height = 20, width = 30,orderNum="14",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date plannedEndTime;
 
@@ -117,7 +109,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="customerName" ,value="客户名称")
-    @Excel(name = "客户名称", height = 20, width = 30,orderNum="2")
     private String customerName;
 
     /**
@@ -126,7 +117,6 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
     @Column(name = "order_code")
     @NotBlank(message = "订单号不能为空")
     @ApiModelProperty(name="orderCode" ,value="订单号")
-    @Excel(name = "订单号", height = 20, width = 30,orderNum="1")
     private String orderCode;
 
     /**

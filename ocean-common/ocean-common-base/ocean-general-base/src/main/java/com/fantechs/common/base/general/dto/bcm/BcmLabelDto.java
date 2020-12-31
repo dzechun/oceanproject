@@ -17,11 +17,19 @@ import java.io.Serializable;
 public class BcmLabelDto extends BcmLabel implements Serializable {
 
     /**
+     * 标签类别名称
+     */
+    @Transient
+    @ApiModelProperty(name = "labelCategoryName",value = "标签类别名称")
+    @Excel(name = "标签类别名称", height = 20, width = 30,orderNum="6")
+    private String labelCategoryName;
+
+    /**
      * 创建用户名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
     private String createUserName;
 
     /**
@@ -29,6 +37,6 @@ public class BcmLabelDto extends BcmLabel implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
     private String modifiedUserName;
 }

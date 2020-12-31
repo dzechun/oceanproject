@@ -27,6 +27,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.BcmLabelDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
