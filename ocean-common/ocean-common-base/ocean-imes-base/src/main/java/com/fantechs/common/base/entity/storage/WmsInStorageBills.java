@@ -23,6 +23,14 @@ public class WmsInStorageBills implements Serializable {
     private Long storageBillsId;
 
     /**
+     * 仓库清单id
+     */
+    @ApiModelProperty(value = "组织代码id",example = "组织代码id")
+    @Column(name = "organization_id")
+    @Id
+    private Long organizationId;
+
+    /**
     * 单号
     */
     @ApiModelProperty(value = "仓库清单单号",example = "单号")

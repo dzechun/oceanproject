@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.apply.history;
+package com.fantechs.common.base.entity.basic.history;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,6 +28,14 @@ public class WmsInHtStorageBills implements Serializable {
     @Column(name = "storage_bills_id")
     @Excel(name = "仓库清单id")
     private Long storageBillsId;
+
+    /**
+     * 仓库清单id
+     */
+    @ApiModelProperty(value = "组织代码id",example = "组织代码id")
+    @Column(name = "organization_id")
+    @Id
+    private Long organizationId;
 
     /**
     * 仓库清单号
