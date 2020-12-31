@@ -22,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -117,13 +114,13 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
      */
     public String getOdd(){
         String before = "JYXM";
-        String amongst = new SimpleDateFormat("YYMMdd").format(new Date());
+        String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsInspectionItem qmsInspectionItem = qmsInspectionItemMapper.getMax();
         String qmsInspectionItemCode = before+amongst+"0000";
         if (StringUtils.isNotEmpty(qmsInspectionItem)){
             qmsInspectionItemCode = qmsInspectionItem.getInspectionItemCode();
         }
-        Integer maxCode = Integer.parseInt(qmsInspectionItemCode.substring(8, qmsInspectionItemCode.length()));
+        Integer maxCode = Integer.parseInt(qmsInspectionItemCode.substring(10, qmsInspectionItemCode.length()));
         String after = String.format("%04d", ++maxCode);
         String code = before + amongst + after;
         return code;

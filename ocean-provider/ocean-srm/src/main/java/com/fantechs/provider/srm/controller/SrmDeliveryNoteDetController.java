@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/29.
  */
 @RestController
-@Api(tags = "srmDeliveryNoteDet控制器")
+@Api(tags = "送货通知单ASN明细")
 @RequestMapping("/srmDeliveryNoteDet")
 @Validated
 public class SrmDeliveryNoteDetController {
@@ -38,8 +38,8 @@ public class SrmDeliveryNoteDetController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SrmDeliveryNoteDet srmDeliveryNoteDet) {
-        return ControllerUtil.returnCRUD(srmDeliveryNoteDetService.save(srmDeliveryNoteDet));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<SrmDeliveryNoteDet> srmDeliveryNoteDets) {
+        return ControllerUtil.returnCRUD(srmDeliveryNoteDetService.batchSave(srmDeliveryNoteDets));
     }
 
     @ApiOperation("删除")
@@ -50,8 +50,8 @@ public class SrmDeliveryNoteDetController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SrmDeliveryNoteDet.update.class) SrmDeliveryNoteDet srmDeliveryNoteDet) {
-        return ControllerUtil.returnCRUD(srmDeliveryNoteDetService.update(srmDeliveryNoteDet));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SrmDeliveryNoteDet.update.class) List<SrmDeliveryNoteDet> srmDeliveryNoteDets) {
+        return ControllerUtil.returnCRUD(srmDeliveryNoteDetService.batchUpdate(srmDeliveryNoteDets));
     }
 
     @ApiOperation("获取详情")

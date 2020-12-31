@@ -15,4 +15,6 @@ import java.util.Map;
 public interface SrmDeliveryNoteDetService extends IService<SrmDeliveryNoteDet> {
 
     List<SrmDeliveryNoteDetDto> findList(Map<String, Object> map);
+
+    int batchUpdate(List<SrmDeliveryNoteDet> list);
 }

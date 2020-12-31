@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface SrmDeliveryNoteDetMapper extends MyMapper<SrmDeliveryNoteDet> {
     List<SrmDeliveryNoteDetDto> findList(Map<String, Object> map);
+
+    int batchUpdate(List<SrmDeliveryNoteDet> list);
 }

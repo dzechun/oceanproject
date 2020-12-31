@@ -9,6 +9,7 @@
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
     <result column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="order_type" jdbcType="TINYINT" property="orderType" />
+    <result column="document_date" jdbcType="TIMESTAMP" property="documentDate" />
     <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate" />
     <result column="delivery_quantity" jdbcType="DECIMAL" property="deliveryQuantity" />
     <result column="delivery_man" jdbcType="BIGINT" property="deliveryMan" />
@@ -23,24 +24,30 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmDeliveryNoteDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="purchase_customer_code" jdbcType="VARCHAR" property="purchaseCustomerCode"/>
-    <result column="delivery_customer_code" jdbcType="VARCHAR" property="deliveryCustomerCode"/>
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
     <result column="deliveryman_name" jdbcType="VARCHAR" property="deliverymanName"/>
+    <result column="order_quantity" jdbcType="DECIMAL" property="orderQuantity"/>
+    <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
+    <result column="need_time" jdbcType="TIMESTAMP" property="needTime"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    sdn.delivery_note_id,sdn.asn_code,sdn.order_id,sdn.order_type,
-    sdn.delivery_date,sdn.delivery_quantity,sdn.delivery_man,sdn.status,sdn.create_user_id,
-    sdn.create_time,sdn.modified_user_id,sdn.modified_time,sdn.is_delete
+    sdn.delivery_note_id,sdn.asn_code,sdn.order_id,sdn.order_type,sdn.document_date,sdn.delivery_date,
+    sdn.delivery_quantity,sdn.delivery_man,sdn.status,sdn.create_user_id,sdn.create_time,
+    sdn.modified_user_id,sdn.modified_time,sdn.is_delete
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,ssu.user_name AS deliveryman_name
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,ssu.user_name AS deliveryman_name,
+    (CASE WHEN order_type = 0 THEN '客户代码' WHEN order_type = 1 THEN '客户代码' END) AS customer_code,
+    (CASE WHEN order_type = 0 THEN '订单数量' WHEN order_type = 1 THEN '订单数量' END) AS order_quantity,
+    (CASE WHEN order_type = 0 THEN '计划交货日期' WHEN order_type = 1 THEN '计划交货日期' END) AS plan_delivery_date,
+    (CASE WHEN order_type = 0 THEN '需用时间' WHEN order_type = 1 THEN '需用时间' END) AS need_time
     from fantech_imes.srm_delivery_note sdn
-    LEFT JOIN ocean.sys_user su ON qrmr.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qrmr.modified_user_id = sus.user_id
---     LEFT JOIN fantech_imes.送货计划表
---     LEFT JOIN fantech_imes.采购订单表
+    LEFT JOIN ocean.sys_user su ON sdn.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON sdn.modified_user_id = sus.user_id
+    --     LEFT JOIN fantech_imes.送货计划表
+    --     LEFT JOIN fantech_imes.采购订单表
     LEFT JOIN ocean.sys_user ssu ON sdn.delivery_man = ssu.user_id
     <where>
       <if test="asnCode != null and asnCode != ''">

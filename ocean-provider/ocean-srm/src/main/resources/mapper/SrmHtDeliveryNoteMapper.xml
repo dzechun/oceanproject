@@ -10,6 +10,7 @@
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
     <result column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="order_type" jdbcType="TINYINT" property="orderType" />
+    <result column="document_date" jdbcType="TIMESTAMP" property="documentDate" />
     <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate" />
     <result column="delivery_quantity" jdbcType="DECIMAL" property="deliveryQuantity" />
     <result column="delivery_man" jdbcType="BIGINT" property="deliveryMan" />
@@ -22,10 +23,18 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    shdn.ht_delivery_note_id,shdn.delivery_note_id,shdn.asn_code,shdn.order_id,shdn.order_type,
-    shdn.delivery_date,shdn.delivery_quantity,shdn.delivery_man,shdn.status,shdn.create_user_id,
-    shdn.create_time,shdn.modified_user_id,shdn.modified_time,shdn.is_delete
+    shdn.ht_delivery_note_id,
+    shdn.delivery_note_id,
+    shdn.asn_code,
+    shdn.order_id,
+    shdn.order_type,
+    shdn.document_date,
+    shdn.delivery_date,
+    shdn.delivery_quantity,
+    shdn.delivery_man,
+    shdn.status,shdn.create_user_id,shdn.create_time,shdn.modified_user_id,shdn.modified_time,shdn.is_delete
   </sql>
+
 
   <select id="findList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>
@@ -46,5 +55,6 @@
     </where>
     order by create_time desc
   </select>
+
 
 </mapper>

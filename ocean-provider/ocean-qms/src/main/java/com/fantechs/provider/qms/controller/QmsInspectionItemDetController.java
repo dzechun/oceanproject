@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDetDto;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItemDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -62,9 +63,9 @@ public class QmsInspectionItemDetController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<QmsInspectionItemDet>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionItemDet searchQmsInspectionItemDet) {
+    public ResponseEntity<List<QmsInspectionItemDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionItemDet searchQmsInspectionItemDet) {
         Page<Object> page = PageHelper.startPage(searchQmsInspectionItemDet.getStartPage(),searchQmsInspectionItemDet.getPageSize());
-        List<QmsInspectionItemDet> list = qmsInspectionItemDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionItemDet));
+        List<QmsInspectionItemDetDto> list = qmsInspectionItemDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionItemDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -72,7 +73,7 @@ public class QmsInspectionItemDetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchQmsInspectionItemDet searchQmsInspectionItemDet){
-    List<QmsInspectionItemDet> list = qmsInspectionItemDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionItemDet));
+    List<QmsInspectionItemDetDto> list = qmsInspectionItemDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionItemDet));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "QmsInspectionItemDet信息", QmsInspectionItemDet.class, "QmsInspectionItemDet.xls", response);

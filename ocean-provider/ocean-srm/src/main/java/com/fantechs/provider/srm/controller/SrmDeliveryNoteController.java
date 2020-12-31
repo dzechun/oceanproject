@@ -1,6 +1,7 @@
 package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.srm.SrmDeliveryNoteDto;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryNote;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtDeliveryNote;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmDeliveryNote;
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/29.
  */
 @RestController
-@Api(tags = "srmDeliveryNote控制器")
+@Api(tags = "送货通知单ASN")
 @RequestMapping("/srmDeliveryNote")
 @Validated
 public class SrmDeliveryNoteController {
@@ -66,9 +67,9 @@ public class SrmDeliveryNoteController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SrmDeliveryNote>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSrmDeliveryNote searchSrmDeliveryNote) {
+    public ResponseEntity<List<SrmDeliveryNoteDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSrmDeliveryNote searchSrmDeliveryNote) {
         Page<Object> page = PageHelper.startPage(searchSrmDeliveryNote.getStartPage(),searchSrmDeliveryNote.getPageSize());
-        List<SrmDeliveryNote> list = srmDeliveryNoteService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmDeliveryNote));
+        List<SrmDeliveryNoteDto> list = srmDeliveryNoteService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmDeliveryNote));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -84,7 +85,7 @@ public class SrmDeliveryNoteController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSrmDeliveryNote searchSrmDeliveryNote){
-    List<SrmDeliveryNote> list = srmDeliveryNoteService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmDeliveryNote));
+    List<SrmDeliveryNoteDto> list = srmDeliveryNoteService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmDeliveryNote));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "SrmDeliveryNote信息", SrmDeliveryNote.class, "SrmDeliveryNote.xls", response);

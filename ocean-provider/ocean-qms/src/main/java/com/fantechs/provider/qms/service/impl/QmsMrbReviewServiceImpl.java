@@ -114,7 +114,7 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
      */
     public String getOdd(){
         String before = "MRB";
-        String amongst = new SimpleDateFormat("YYMMdd").format(new Date());
+        String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsMrbReview qmsMrbReview = qmsMrbReviewMapper.getMax();
         String qmsInspectionTypeCode = before+amongst+"0000";
         if (StringUtils.isNotEmpty(qmsMrbReview)){

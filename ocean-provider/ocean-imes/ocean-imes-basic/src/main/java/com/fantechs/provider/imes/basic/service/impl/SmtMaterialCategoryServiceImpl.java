@@ -43,14 +43,14 @@ public class SmtMaterialCategoryServiceImpl extends BaseService<SmtMaterialCateg
     @Override
     public int save(SmtMaterialCategory smtMaterialCategory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         smtMaterialCategory.setCreateTime(new Date());
-//        srmDeliveryNote.setCreateUserId(user.getUserId());
+        smtMaterialCategory.setCreateUserId(user.getUserId());
         smtMaterialCategory.setModifiedTime(new Date());
-//        srmDeliveryNote.setModifiedUserId(user.getUserId());
+        smtMaterialCategory.setModifiedUserId(user.getUserId());
         smtMaterialCategory.setStatus(StringUtils.isEmpty(smtMaterialCategory.getStatus())?1:smtMaterialCategory.getStatus());
 
         int i = smtMaterialCategoryMapper.insertUseGeneratedKeys(smtMaterialCategory);
@@ -65,11 +65,11 @@ public class SmtMaterialCategoryServiceImpl extends BaseService<SmtMaterialCateg
     @Override
     public int update(SmtMaterialCategory smtMaterialCategory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         smtMaterialCategory.setModifiedTime(new Date());
-//        srmDeliveryNote.setModifiedUserId(user.getUserId());
+        smtMaterialCategory.setModifiedUserId(user.getUserId());
 
         SmtHtMaterialCategory smtHtMaterialCategory = new SmtHtMaterialCategory();
         BeanUtils.copyProperties(smtMaterialCategory,smtHtMaterialCategory);
@@ -81,9 +81,9 @@ public class SmtMaterialCategoryServiceImpl extends BaseService<SmtMaterialCateg
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         List<SmtHtMaterialCategory> srmHtDeliveryNotes= new ArrayList<>();
         String[] idsArr  = ids.split(",");
         for (String id : idsArr) {

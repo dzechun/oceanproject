@@ -74,7 +74,7 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
         QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
         BeanUtils.copyProperties(qmsRejectsMrbReview,qmsHtRejectsMrbReview);
         qmsHtRejectsMrbReviewMapper.insert(qmsHtRejectsMrbReview);
-
+        System.out.println(qmsRejectsMrbReview+"==========================");
         return qmsRejectsMrbReviewMapper.updateByPrimaryKeySelective(qmsRejectsMrbReview);
     }
 
@@ -113,7 +113,7 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
      */
     public String getOdd(){
         String before = "BLD";
-        String amongst = new SimpleDateFormat("YYMMdd").format(new Date());
+        String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsRejectsMrbReview qmsMrbReview = qmsRejectsMrbReviewMapper.getMax();
         String qmsInspectionTypeCode = before+amongst+"0000";
         if (StringUtils.isNotEmpty(qmsMrbReview)){

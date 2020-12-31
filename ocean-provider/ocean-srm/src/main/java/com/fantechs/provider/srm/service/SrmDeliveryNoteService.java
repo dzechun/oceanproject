@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service;
 
+import com.fantechs.common.base.general.dto.srm.SrmDeliveryNoteDto;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryNote;
 import com.fantechs.common.base.support.IService;
 
@@ -13,6 +14,6 @@ import java.util.Map;
 
 public interface SrmDeliveryNoteService extends IService<SrmDeliveryNote> {
 
-    List<SrmDeliveryNote> findList(Map<String, Object> map);
+    List<SrmDeliveryNoteDto> findList(Map<String, Object> map);
 
 }
