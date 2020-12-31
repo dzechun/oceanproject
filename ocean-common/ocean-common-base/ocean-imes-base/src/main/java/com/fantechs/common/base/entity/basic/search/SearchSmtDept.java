@@ -1,10 +1,12 @@
 package com.fantechs.common.base.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -41,5 +43,11 @@ public class SearchSmtDept  extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="factoryId" ,value="厂别ID")
     private Long factoryId;
+
+    /**
+     * 父级ID
+     */
+    @ApiModelProperty(name="parentId",value = "父级ID")
+    private Long parentId;
 
 }

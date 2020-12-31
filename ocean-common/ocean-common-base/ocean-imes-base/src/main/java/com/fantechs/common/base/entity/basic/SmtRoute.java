@@ -54,6 +54,23 @@ public class SmtRoute extends ValidGroup implements Serializable {
     private String routeDesc;
 
     /**
+     * 标准时间
+     */
+    @Column(name = "standard_time")
+    @ApiModelProperty(name="standardTime" ,value="标准时间")
+    @Excel(name = "标准时间", height = 20, width = 30)
+    private Date standardTime;
+
+    /**
+     * 准备时间
+     */
+    @Column(name = "readiness_time")
+    @ApiModelProperty(name="readinessTime" ,value="准备时间")
+    @Excel(name = "准备时间", height = 20, width = 30)
+    private Date readinessTime;
+
+
+    /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="状态")

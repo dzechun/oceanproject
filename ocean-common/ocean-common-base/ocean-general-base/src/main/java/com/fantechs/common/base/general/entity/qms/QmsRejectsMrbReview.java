@@ -94,7 +94,6 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 挑选人
      */
     @ApiModelProperty(name="selectedPerson",value = "挑选人")
-    @Excel(name = "挑选人", height = 20, width = 30,orderNum="")
     @Column(name = "selected_person")
     private Long selectedPerson;
 

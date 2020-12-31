@@ -1,8 +1,7 @@
-package com.fantechs.common.base.general.entity.srm;
+package com.fantechs.common.base.entity.basic.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,57 +9,78 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
-
 /**
- * 送货通知明细表
- * @date 2020-12-29 19:46:04
+ * 物料类别历史表
+ * @date 2020-12-31 10:00:53
  */
 @Data
-@Table(name = "srm_delivery_note_det")
-public class SrmDeliveryNoteDet extends ValidGroup implements Serializable {
+@Table(name = "smt_ht_material_category")
+public class SmtHtMaterialCategory implements Serializable {
     /**
-     * 送货通知明细ID
+     * 物料类别历史ID
      */
-    @ApiModelProperty(name="deliveryNoteDetId",value = "送货通知明细ID")
-    @Excel(name = "送货通知明细ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="htMaterialCategoryId",value = "物料类别历史ID")
+    @Excel(name = "物料类别历史ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "delivery_note_det_id")
-    private Long deliveryNoteDetId;
+    @Column(name = "ht_material_category_id")
+    private Long htMaterialCategoryId;
 
     /**
-     * 送货通知ID
+     * 物料类别ID
      */
-    @ApiModelProperty(name="deliveryNoteId",value = "送货通知ID")
-    @Excel(name = "送货通知ID", height = 20, width = 30,orderNum="")
-    @Column(name = "delivery_note_id")
-    private Long deliveryNoteId;
+    @ApiModelProperty(name="materialCategoryId",value = "物料类别ID")
+    @Excel(name = "物料类别ID", height = 20, width = 30,orderNum="")
+    @Column(name = "material_category_id")
+    private Long materialCategoryId;
 
     /**
-     * 物料ID
+     * 物料类别编码
      */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
-    @Column(name = "material_id")
-    private Long materialId;
+    @ApiModelProperty(name="materialCategoryCode",value = "物料类别编码")
+    @Excel(name = "物料类别编码", height = 20, width = 30,orderNum="")
+    @Column(name = "material_category_code")
+    private String materialCategoryCode;
 
     /**
-     * 订单数量
+     * 物料类别名称
      */
-    @ApiModelProperty(name="orderQuantity",value = "订单数量")
-    @Excel(name = "订单数量", height = 20, width = 30,orderNum="")
-    @Column(name = "order_quantity")
-    private BigDecimal orderQuantity;
+    @ApiModelProperty(name="materialCategoryName",value = "物料类别名称")
+    @Excel(name = "物料类别名称", height = 20, width = 30,orderNum="")
+    @Column(name = "material_category_name")
+    private String materialCategoryName;
 
     /**
-     * 交付数量
+     * 物料类别描述
      */
-    @ApiModelProperty(name="practicalDeliveryQuantity",value = "交付数量")
-    @Excel(name = "交付数量", height = 20, width = 30,orderNum="")
-    @Column(name = "practical_delivery_quantity")
-    private BigDecimal practicalDeliveryQuantity;
+    @ApiModelProperty(name="materialCategoryDesc",value = "物料类别描述")
+    @Excel(name = "物料类别描述", height = 20, width = 30,orderNum="")
+    @Column(name = "material_category_desc")
+    private String materialCategoryDesc;
+
+    /**
+     * 父级ID
+     */
+    @ApiModelProperty(name="parentId",value = "父级ID")
+    @Excel(name = "父级ID", height = 20, width = 30,orderNum="")
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="")
+    private String remark;
 
     /**
      * 状态（0、无效 1、有效）

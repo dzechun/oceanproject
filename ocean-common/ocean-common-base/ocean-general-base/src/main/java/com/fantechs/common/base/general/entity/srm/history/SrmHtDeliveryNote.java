@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.srm.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,11 +19,11 @@ import java.util.Date;
  * 送货通知历史表
  * srm_ht_delivery_note
  * @author jbb
- * @date 2020-12-29 14:54:09
+ * @date 2020-12-29 19:47:58
  */
 @Data
 @Table(name = "srm_ht_delivery_note")
-public class SrmHtDeliveryNote implements Serializable {
+public class SrmHtDeliveryNote extends ValidGroup implements Serializable {
     /**
      * 送货通知历史ID
      */
@@ -63,6 +64,14 @@ public class SrmHtDeliveryNote implements Serializable {
     @Excel(name = "订单类别（0、送货计划单 1、采购订单）", height = 20, width = 30,orderNum="")
     @Column(name = "order_type")
     private Byte orderType;
+
+    /**
+     * 单据日期
+     */
+    @ApiModelProperty(name="documentDate",value = "单据日期")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="")
+    @Column(name = "document_date")
+    private Date documentDate;
 
     /**
      * 交付日期

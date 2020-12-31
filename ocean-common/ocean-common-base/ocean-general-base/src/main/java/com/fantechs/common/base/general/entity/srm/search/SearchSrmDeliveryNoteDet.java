@@ -24,9 +24,15 @@ public class SearchSrmDeliveryNoteDet extends BaseQuery implements Serializable 
     private Long deliveryNoteId;
 
     /**
-     * 订单类别
+     * 送货通知编码
      */
-    @ApiModelProperty(name="orderType",value = "订单类别")
+    @ApiModelProperty(name="deliveryNoteCode",value = "送货通知编码")
+    private Long deliveryNoteCode;
+
+    /**
+     * 订单类别（0、送货计划单 1、采购订单）
+     */
+    @ApiModelProperty(name="orderType",value = "订单类别（0、送货计划单 1、采购订单）")
     private Byte orderType;
 
 

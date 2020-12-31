@@ -14,11 +14,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-;
 
 /**
  * 送货通知表
- * @date 2020-12-29 13:46:57
+ * @date 2020-12-29 19:46:59
  */
 @Data
 @Table(name = "srm_delivery_note")
@@ -55,6 +54,14 @@ public class SrmDeliveryNote extends ValidGroup implements Serializable {
     @Excel(name = "订单类别（0、送货计划单 1、采购订单）", height = 20, width = 30,orderNum="")
     @Column(name = "order_type")
     private Byte orderType;
+
+    /**
+     * 单据日期
+     */
+    @ApiModelProperty(name="documentDate",value = "单据日期")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="")
+    @Column(name = "document_date")
+    private Date documentDate;
 
     /**
      * 交付日期
@@ -130,8 +137,9 @@ public class SrmDeliveryNote extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     /**
-     * 送货通知单明细集合
+     * 送货通知ASN明细集合
      */
+    @ApiModelProperty(name="srmDeliveryNoteDets",value = "送货通知ASN明细集合")
     private List<SrmDeliveryNoteDet> srmDeliveryNoteDets;
 
     private static final long serialVersionUID = 1L;

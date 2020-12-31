@@ -18,20 +18,38 @@ import java.util.Date;
 public class SrmDeliveryNoteDto extends SrmDeliveryNote implements Serializable {
 
     /**
-     * 采购订单客户代码
+     * 订单客户代码
      */
     @Transient
-    @ApiModelProperty(name="purchaseCustomerCode",value = "采购订单客户代码")
-    @Excel(name = "采购订单客户代码", height = 20, width = 30,orderNum="3")
-    private String purchaseCustomerCode;
+    @ApiModelProperty(name="customerCode",value = "客户代码")
+    @Excel(name = "客户代码", height = 20, width = 30,orderNum="3")
+    private String customerCode;
+
 
     /**
-     * 送货计划客户代码
+     * 订单数量
      */
     @Transient
-    @ApiModelProperty(name="deliveryCustomerCode",value = "送货计划客户代码")
-    @Excel(name = "送货计划客户代码", height = 20, width = 30,orderNum="3")
-    private String deliveryCustomerCode;
+    @ApiModelProperty(name="orderQuantity",value = "订单数量")
+    @Excel(name = "订单数量", height = 20, width = 30,orderNum="")
+    private BigDecimal orderQuantity;
+
+    /**
+     * 计划交货日期
+     */
+    @Transient
+    @ApiModelProperty(name="planDeliveryDate",value = "计划交货日期")
+    @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="4")
+    private Date planDeliveryDate;
+
+
+    /**
+     * 需用时间
+     */
+    @Transient
+    @ApiModelProperty(name="needTime",value = "需用时间")
+    @Excel(name = "需用时间", height = 20, width = 30,orderNum="4")
+    private Date needTime;
 
     /**
      * 送货员名称
