@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
 
         int i = wmsOutOtheroutMapper.insertUseGeneratedKeys(wmsOutOtherout);
 
-        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDetList();
         if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
             for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
                 if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
@@ -61,7 +62,7 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
                 }
                 wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
             }
-            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDets());
+            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDetList());
         }
 
         return i;
@@ -79,9 +80,22 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         wmsOutOtherout.setModifiedUserId(user.getUserId());
 
         //批量更新其他出库单明细
-        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
+        //删除原本保存的杂出单明细
+        Example example = new Example(WmsOutOtheroutDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("otheroutId",wmsOutOtherout.getOtheroutId());
+//        List<WmsOutOtheroutDet> wmsOutOtheroutDets1 = wmsOutOtheroutDetService.selectByExample(example);
+        wmsOutOtheroutDetService.deleteByExample(example);
+        //批量新增杂出明细
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDetList();
         if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
-            wmsOutOtheroutDetService.batchUpdate(wmsOutOtheroutDets);
+            for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
+                if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                }
+                wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+            }
+            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDetList());
         }
         return wmsOutOtheroutMapper.updateByPrimaryKeySelective(wmsOutOtherout);
     }

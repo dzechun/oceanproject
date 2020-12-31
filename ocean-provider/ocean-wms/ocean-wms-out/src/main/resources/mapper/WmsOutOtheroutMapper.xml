@@ -9,6 +9,7 @@
         <result column="otherout_code" jdbcType="VARCHAR" property="otheroutCode"/>
         <result column="otherout_type" jdbcType="TINYINT" property="otheroutType"/>
         <result column="otherout_time" jdbcType="TIMESTAMP" property="otheroutTime"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
         <result column="otherout_status" jdbcType="TINYINT" property="otheroutStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
