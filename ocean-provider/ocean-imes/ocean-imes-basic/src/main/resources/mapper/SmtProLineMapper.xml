@@ -9,6 +9,8 @@
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
     <result column="status" jdbcType="BIT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -20,18 +22,21 @@
   </resultMap>
   <sql id="Base_Column_List">
     pro_line_id, pro_code, pro_name, pro_desc, factory_id, work_shop_id, status, create_user_id, 
-    create_time, modified_user_id, modified_time, is_delete, option1, option2, option3
+    create_time, modified_user_id, modified_time, is_delete, option1, option2, option3, organization_id,
+	remark,
   </sql>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProLine" resultMap="BaseResultMap">
     select spl.pro_line_id,spl.pro_code, spl.pro_name, spl.pro_desc, spl.factory_id, f.factory_name as factoryName,
     spl.work_shop_id,ws.work_shop_name as workShopName, spl.status, spl.create_user_id,u.user_name as createUserName,
-    spl.create_time, spl.modified_user_id,s.user_name as modifiedUserName,spl.modified_time,spl.is_delete
+    spl.create_time, spl.modified_user_id,s.user_name as modifiedUserName,spl.modified_time,spl.is_delete, spl.organization_id,
+    spl.remark, bo.organization_name
     from fantech_imes.smt_pro_line spl
     left join ocean.sys_user u on spl.create_user_id=u.user_id
     left join ocean.sys_user s on spl.modified_user_id=s.user_id
     left join fantech_imes.smt_factory f on spl.factory_id=f.factory_id
     left join fantech_imes.smt_work_shop ws on  spl.work_shop_id= ws.work_shop_id
+    LEFT JOIN fantech_imes.base_organization bo ON spl.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

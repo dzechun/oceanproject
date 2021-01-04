@@ -7,6 +7,8 @@
     <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
     <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
     <result column="factory_desc" jdbcType="VARCHAR" property="factoryDesc" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -18,18 +20,22 @@
 
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <sql id="Base_Column_List">
     hf.ht_factory_id, hf.factory_id, hf.factory_code, hf.factory_name, hf.factory_desc, hf.create_user_id,
-    hf.create_time, hf.modified_user_id, hf.modified_time, hf.status, hf.option1, hf.option2, hf.option3
+    hf.create_time, hf.modified_user_id, hf.modified_time, hf.status, hf.option1, hf.option2, hf.option3,
+    bc.organization_id, bc.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMap" parameterType="map">
     select
-    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
     from fantech_imes.smt_ht_factory hf
     LEFT JOIN ocean.sys_user su  ON hf.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON hf.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON hf.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(hf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

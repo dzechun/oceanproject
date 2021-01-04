@@ -43,11 +43,11 @@ public class WmsOutFinishedProduct extends ValidGroup implements Serializable {
     private String finishedProductCode;
 
     /**
-     * 客户ID
+     * 供应商Id
      */
-    @ApiModelProperty(name="customerId",value = "客户ID")
-    @Column(name = "customer_id")
-    private Long customerId;
+    @ApiModelProperty(name="supplierId",value = "供应商Id")
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     /**
      * 预计出库时间
@@ -98,6 +98,20 @@ public class WmsOutFinishedProduct extends ValidGroup implements Serializable {
     @Excel(name = "单据状态（0-待出库 1-出库中 2-出库完成）", height = 20, width = 30,orderNum="7",replace = {"待出库_0","出库中_1","出库完成_2"})
     @Column(name = "out_status")
     private Byte outStatus;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
 
     /**
      * 是否有效（0、无效 1、有效）

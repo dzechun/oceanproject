@@ -80,6 +80,28 @@ public class SmtProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="processCategoryName" ,value="工序类别名称")
     @Excel(name = "工序类别名称",  height = 20, width = 30)
     private String processCategoryName;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Column(name = "organization_name")
+    private String organizationName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
     /**
      * 状态(0无效，1有效)
      */

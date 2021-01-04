@@ -8,6 +8,8 @@
     <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
     <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -16,21 +18,25 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     ws.ht_work_shop_id, ws.work_shop_id, ws.work_shop_code, ws.work_shop_name, ws.work_shop_desc, ws.factory_id,
     ws.create_user_id, ws.create_time, ws.modified_user_id, ws.modified_time, ws.status, ws.option1, ws.option2,
-    ws.option3
+    ws.option3, ws.organization_id, ws.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMap" parameterType="map">
     select
-    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name, sf.factory_name
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name, sf.factory_name,
+    bo.organization_name
     from fantech_imes.smt_ht_work_shop ws
     LEFT JOIN ocean.sys_user su  ON ws.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON ws.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.smt_factory sf ON sf.factory_id = ws.factory_id
+    LEFT JOIN fantech_imes.base_organization bo ON ws.organization_id = bo.organization_id
     <where>
       <if test="workShopCode != null">
         and  ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')

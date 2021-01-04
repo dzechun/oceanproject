@@ -123,5 +123,11 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     @ApiModelProperty(name="quantity" ,value="数量")
     private BigDecimal quantity;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 
 }

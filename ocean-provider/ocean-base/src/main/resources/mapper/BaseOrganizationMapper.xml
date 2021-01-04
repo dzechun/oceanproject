@@ -9,6 +9,8 @@
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -20,6 +22,7 @@
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseOrganizationDto" extends="BaseResultMap">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -27,6 +30,8 @@
 	bo.organization_code,
 	bo.organization_name,
 	bo.organization_desc,
+	bo.organization_id,
+	bo.remark,
 	bo.`status`,
 	bo.create_user_id,
 	bo.create_time,

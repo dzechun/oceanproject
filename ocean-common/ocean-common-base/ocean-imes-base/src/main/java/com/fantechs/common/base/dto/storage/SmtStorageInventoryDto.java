@@ -61,4 +61,11 @@ public class SmtStorageInventoryDto extends SmtStorageInventory implements Seria
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Column(name = "organization_name")
+    private String organizationName;
+
 }

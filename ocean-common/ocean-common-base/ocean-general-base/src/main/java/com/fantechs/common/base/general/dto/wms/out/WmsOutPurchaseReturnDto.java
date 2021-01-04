@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -33,4 +34,10 @@ public class WmsOutPurchaseReturnDto extends WmsOutPurchaseReturn implements Ser
     @Excel(name = "采购员名称", height = 20, width = 30,orderNum="4")
     private String buyName;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

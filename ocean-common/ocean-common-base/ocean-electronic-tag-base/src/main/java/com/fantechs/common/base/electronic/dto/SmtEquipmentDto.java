@@ -52,4 +52,11 @@ public class SmtEquipmentDto extends SmtEquipment implements Serializable {
     @Excel(name = "客户端名称", height = 20, width = 30)
     private String  clientName;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
 }

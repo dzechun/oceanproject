@@ -23,4 +23,13 @@ public class WmsInHtStorageBillsDTO extends WmsInHtStorageBills implements Seria
     @ApiModelProperty(value = "修改用户名称",example = "修改用户名称")
     @Excel(name = "修改用户名称")
     private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Column(name = "organization_name")
+    private String organizationName;
+
+
 }

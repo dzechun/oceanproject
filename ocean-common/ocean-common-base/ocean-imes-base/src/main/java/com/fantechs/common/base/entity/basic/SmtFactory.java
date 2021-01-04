@@ -46,6 +46,20 @@ public class SmtFactory extends ValidGroup implements Serializable {
     private String factoryName;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 工厂描述
      */
     @Column(name = "factory_desc")

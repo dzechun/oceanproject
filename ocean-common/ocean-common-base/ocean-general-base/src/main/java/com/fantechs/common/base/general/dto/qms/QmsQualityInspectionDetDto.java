@@ -61,5 +61,12 @@ public class QmsQualityInspectionDetDto extends QmsQualityInspectionDet implemen
     @Excel(name = "物料版本", height = 20, width = 30,orderNum="8")
     private String version;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
     private static final long serialVersionUID = 1L;
 }

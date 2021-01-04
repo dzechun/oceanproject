@@ -60,6 +60,20 @@ public class SmtWorkOrderBarcodeCollocation extends ValidGroup implements Serial
     private Long printId;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 状态（0、未生成 1、部分生成 2、已生成）
      */
     @ApiModelProperty(name="status",value = "状态（0、未生成 1、部分生成 2、已生成）")

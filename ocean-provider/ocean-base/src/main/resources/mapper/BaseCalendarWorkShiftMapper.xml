@@ -9,6 +9,8 @@
     <result column="work_shift_id" jdbcType="BIGINT" property="workShiftId" />
     <result column="calendar_id" jdbcType="BIGINT" property="calendarId" />
     <result column="day" jdbcType="TINYINT" property="day" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

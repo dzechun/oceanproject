@@ -114,6 +114,13 @@ public class BaseCalendarDto extends BaseCalendar implements Serializable {
     @Excel(name = "日期-天", height = 20, width = 30,orderNum="")
     private Long day;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
     @ApiModelProperty(name = "返回班次和时间日期")
     private List<BaseWorkShiftTimeDto> baseWorkShiftTimeDtos;
 }

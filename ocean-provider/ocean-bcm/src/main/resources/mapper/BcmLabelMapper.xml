@@ -1,60 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.bcm.mapper.BcmLabelMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.BcmLabel">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="label_id" jdbcType="BIGINT" property="labelId" />
-    <result column="label_code" jdbcType="VARCHAR" property="labelCode" />
-    <result column="label_name" jdbcType="VARCHAR" property="labelName" />
-    <result column="label_desc" jdbcType="VARCHAR" property="labelDesc" />
-    <result column="label_version" jdbcType="VARCHAR" property="labelVersion" />
-    <result column="print_mode" jdbcType="VARCHAR" property="printMode" />
-    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
-    <result column="save_path" jdbcType="VARCHAR" property="savePath" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.BcmLabel">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="label_id" jdbcType="BIGINT" property="labelId"/>
+        <result column="label_code" jdbcType="VARCHAR" property="labelCode"/>
+        <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
+        <result column="label_desc" jdbcType="VARCHAR" property="labelDesc"/>
+        <result column="label_version" jdbcType="VARCHAR" property="labelVersion"/>
+        <result column="print_mode" jdbcType="VARCHAR" property="printMode"/>
+        <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId"/>
+        <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.BcmLabelDto">
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.bcm.BcmLabelDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    bl.`label_id`,bl.label_code,bl.label_name,bl.label_desc,bl.label_version,bl.print_mode,bl.`label_category_id`,bl.save_path,bl.`status`,bl.create_user_id,bl.create_time,sus.user_name,bl.modified_time,bl.is_delete
+    <sql id="Base_Column_List">
+    bl.`label_id`,
+    bl.label_code,
+    bl.label_name,
+    bl.label_desc,
+    bl.label_version,
+    bl.print_mode,
+    bl.`label_category_id`,
+    bl.save_path,
+    bl.organization_id,
+	bl.remark,
+    bl.`status`,
+    bl.create_user_id,
+    bl.create_time,
+    sus.user_name,
+    bl.modified_time,
+    bl.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name FROM bcm_label bl
-    INNER JOIN bcm_label_category blc ON blc.`label_category_id`= bl.label_category_id
-    LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
-    <where>
-      <if test="labelCode!=null and labelCode!=''">
-        and bl.label_code LIKE CONCAT('%',#{labelCode},'%')
-      </if>
-      <if test="labelName!=null and labelName!=''">
-        and bl.label_name LIKE CONCAT('%',#{labelName},'%')
-      </if>
-      <if test="labelDesc!=null and labelDesc!=''">
-        and bl.label_desc LIKE CONCAT('%',#{labelDesc},'%')
-      </if>
-      <if test="labelCategoryName!=null and labelCategoryName!=''">
-        and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-    </where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name, bo.organization_name
+        as modified_user_name FROM bcm_label bl
+        INNER JOIN bcm_label_category blc ON blc.`label_category_id`= bl.label_category_id
+        LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON bl.organization_id = bo.organization_id
+        <where>
+            <if test="labelCode!=null and labelCode!=''">
+                and bl.label_code LIKE CONCAT('%',#{labelCode},'%')
+            </if>
+            <if test="labelName!=null and labelName!=''">
+                and bl.label_name LIKE CONCAT('%',#{labelName},'%')
+            </if>
+            <if test="labelDesc!=null and labelDesc!=''">
+                and bl.label_desc LIKE CONCAT('%',#{labelDesc},'%')
+            </if>
+            <if test="labelCategoryName!=null and labelCategoryName!=''">
+                and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+    </select>
 </mapper>

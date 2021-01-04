@@ -17,6 +17,8 @@
     <result column="element_size" jdbcType="VARCHAR" property="elementSize" />
     <result column="humidity_class" jdbcType="BIGINT" property="humidityClass" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -30,23 +32,25 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qiid.inspection_item_det_id,qiid.inspection_item_id,qiid.material_id,qiid.min_package_number,qiid.unit,
     qiid.safe_stock,qiid.special_sort,qiid.expiration_date,qiid.rewarming_time,qiid.element_size,
     qiid.humidity_class,qiid.status,qiid.create_user_id,qiid.create_time,qiid.modified_user_id,qiid.modified_time,
-    qiid.is_delete
+    qiid.is_delete, qiid.organization_id, qiid.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    sm.material_code,sm.material_name,sm.version,qii.inspection_item_code
+    sm.material_code,sm.material_name,sm.version,qii.inspection_item_code, bo.organization_name
     from fantech_imes.qms_inspection_item_det qiid
     LEFT JOIN ocean.sys_user su ON qiid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qiid.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.smt_material sm ON qiid.material_id = sm.material_id
     LEFT JOIN fantech_imes.qms_inspection_item qii ON qiid.inspection_item_id = qii.inspection_item_id
+    LEFT JOIN fantech_imes.base_organization bo ON qiid.organization_id = bo.organization_id
     <where>
       <if test="specialSort != null and specialSort != ''">
         and qiid.special_sort like CONCAT('%', #{specialSort}, '%')

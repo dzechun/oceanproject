@@ -146,4 +146,11 @@ public class SmtWorkOrderBarcodeCollocationDto extends SmtWorkOrderBarcodeColloc
     @Transient
     @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
     private String barcodeRuleName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

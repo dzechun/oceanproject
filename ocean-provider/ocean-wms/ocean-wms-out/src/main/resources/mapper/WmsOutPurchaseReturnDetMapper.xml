@@ -15,6 +15,8 @@
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -30,7 +32,7 @@
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
-
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -44,6 +46,8 @@
     prt.warehouse_id,
     prt.warehouse_user_id,
     prt.`status`,
+    prt.organization_id,
+	prt.remark,
     prt.create_user_id,
     prt.create_time,
     prt.modified_user_id,
@@ -60,7 +64,8 @@
     m.material_code,
     m.material_name,
     w.warehouse_code,
-    w.warehouse_name
+    w.warehouse_name,
+    bo.organization_name
     FROM
     wms_out_purchase_return_det AS prt
     LEFT JOIN ocean.sys_user su  ON prt.create_user_id = su.user_id
@@ -69,6 +74,7 @@
     LEFT JOIN wms_out_purchase_return pr ON prt.purchase_return_id = pr.purchase_return_id
     LEFT JOIN smt_material m ON prt.material_id = m.material_id
     LEFT JOIN smt_warehouse w ON prt.warehouse_id = w.warehouse_id
+    LEFT JOIN fantech_imes.base_organization bo ON prt.organization_id = bo.organization_id
     <where>
         <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
             and date_format(prt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

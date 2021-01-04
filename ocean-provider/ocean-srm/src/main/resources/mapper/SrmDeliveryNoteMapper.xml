@@ -14,6 +14,8 @@
     <result column="delivery_quantity" jdbcType="DECIMAL" property="deliveryQuantity" />
     <result column="delivery_man" jdbcType="BIGINT" property="deliveryMan" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -29,12 +31,13 @@
     <result column="order_quantity" jdbcType="DECIMAL" property="orderQuantity"/>
     <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
     <result column="need_time" jdbcType="TIMESTAMP" property="needTime"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     sdn.delivery_note_id,sdn.asn_code,sdn.order_id,sdn.order_type,sdn.document_date,sdn.delivery_date,
     sdn.delivery_quantity,sdn.delivery_man,sdn.status,sdn.create_user_id,sdn.create_time,
-    sdn.modified_user_id,sdn.modified_time,sdn.is_delete
+    sdn.modified_user_id,sdn.modified_time,sdn.is_delete, sdn.organization_id, sdn.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
@@ -49,6 +52,7 @@
     --     LEFT JOIN fantech_imes.送货计划表
     --     LEFT JOIN fantech_imes.采购订单表
     LEFT JOIN ocean.sys_user ssu ON sdn.delivery_man = ssu.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON sdn.organization_id = bo.organization_id
     <where>
       <if test="asnCode != null and asnCode != ''">
         and sdn.asn_code like CONCAT('%', #{asnCode}, '%')

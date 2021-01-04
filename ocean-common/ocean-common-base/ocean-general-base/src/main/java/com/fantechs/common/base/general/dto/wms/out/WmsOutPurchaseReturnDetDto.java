@@ -8,6 +8,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -41,5 +42,12 @@ public class WmsOutPurchaseReturnDetDto extends WmsOutPurchaseReturnDet implemen
     @ApiModelProperty(name="warehouseUserName" ,value="仓库管理员名称")
     @Excel(name = "仓库管理员名称", height = 20, width = 30,orderNum="10")
     private String warehouseUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 
 }

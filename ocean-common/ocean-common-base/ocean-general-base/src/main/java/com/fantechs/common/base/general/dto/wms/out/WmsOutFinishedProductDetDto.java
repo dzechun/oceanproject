@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProductDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -39,4 +40,11 @@ public class WmsOutFinishedProductDetDto extends WmsOutFinishedProductDet implem
     @Excel(name = "仓库管理员名称", height = 20, width = 30,orderNum="8")
     @ApiModelProperty(name="warehouseUserName" ,value="仓库管理员名称")
     private String warehouseUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

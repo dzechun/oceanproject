@@ -7,6 +7,8 @@
     <result column="signature_code" jdbcType="VARCHAR" property="signatureCode" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -16,17 +18,21 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtSignature" resultMap="BaseResultMap">
     select  shs.ht_signature_id,shs.signature_id,shs.signature_code,shs.material_id,sm.material_code as materialCode,sm.material_name as materialName,
     sm.version,sm.material_desc as materialDesc,shs.supplier_id,ssu.supplier_name as supplierName,shs.status,shs.create_user_id,u.user_name as createUserName,
-    shs.create_time,shs.modified_user_id,s.user_name as modifiedUserName,shs.modified_time, shs.is_delete
+    shs.create_time,shs.modified_user_id,s.user_name as modifiedUserName,shs.modified_time, shs.is_delete, shs.organization_id,
+    shs.remark, bo.organization_name
     from fantech_imes.smt_ht_signature shs
     left join fantech_imes.smt_material sm on shs.material_id=sm.material_id
     left join fantech_imes.smt_supplier ssu on shs.supplier_id=ssu.supplier_id
     left join ocean.sys_user u on shs.create_user_id=u.user_id
     left join ocean.sys_user s on shs.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON shs.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

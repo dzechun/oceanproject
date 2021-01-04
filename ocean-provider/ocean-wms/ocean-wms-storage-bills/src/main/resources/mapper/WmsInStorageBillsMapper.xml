@@ -13,6 +13,8 @@
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
         <result column="allow_batch" jdbcType="TINYINT" property="allowBatch" />
         <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
         <result column="send_user_name" jdbcType="VARCHAR" property="sendUserName" />
         <result column="accept_user_id" jdbcType="BIGINT" property="acceptUserId" />
@@ -24,7 +26,7 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
   <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO" extends="BaseResultMap">
-
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="selectUserName" resultType="string">
@@ -56,12 +58,15 @@
     wsb.modified_user_id,
     su3.user_name as modifiedUserName,
     wsb.modified_time
+    wsb.organization_id,
+    wsb.remark,
     FROM
     wms_in_storage_bills AS wsb
     LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
     LEFT JOIN ocean.sys_user su1 on su1.user_id = wsb.accept_user_id
     LEFT JOIN ocean.sys_user su2 on su2.user_id = wsb.create_user_id
     LEFT JOIN ocean.sys_user su3 on su3.user_id = wsb.modified_user_id
+    LEFT JOIN fantech_imes.base_organization bo ON wsb.organization_id = bo.organization_id
     <where>
       <if test="billsType != null and billsType>0">
         AND wsb.bills_type = #{billsType}

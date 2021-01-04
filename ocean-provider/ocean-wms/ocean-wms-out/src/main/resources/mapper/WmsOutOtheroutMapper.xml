@@ -12,6 +12,8 @@
         <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
         <result column="otherout_status" jdbcType="TINYINT" property="otheroutStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -24,6 +26,7 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -34,6 +37,8 @@
 	woo.operator_id,
 	woo.otherout_status,
 	woo.`status`,
+	woo.organization_id,
+	woo.remark,
 	woo.create_user_id,
 	woo.create_time,
 	woo.modified_user_id,
@@ -43,11 +48,13 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>,
-        su.user_name AS create_user_name, sus.user_name AS modified_user_name, suss.user_name AS operator_name
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name, suss.user_name AS operator_name,
+        bo.organization_name
         FROM wms_out_otherout woo
         LEFT JOIN ocean.sys_user su ON woo.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON woo.modified_user_id = sus.user_id
         LEFT JOIN ocean.sys_user suss ON woo.operator_id = suss.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON woo.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(woo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -8,6 +8,8 @@
     <id column="organization_user_id" jdbcType="BIGINT" property="organizationUserId" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -23,12 +25,14 @@
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     bou.organization_user_id,
 	bou.organization_id,
 	bou.user_id,
+	bou.remark,
 	bou.`status`,
 	bou.create_user_id,
 	bou.create_time,

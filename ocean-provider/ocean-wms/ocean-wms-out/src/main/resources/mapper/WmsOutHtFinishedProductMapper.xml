@@ -16,6 +16,8 @@
     <result column="traffic_type" jdbcType="TINYINT" property="trafficType" />
     <result column="out_status" jdbcType="TINYINT" property="outStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -24,6 +26,7 @@
 
     <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
     <result column="supplier_code" jdbcType="VARCHAR" property="supplierName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -38,6 +41,8 @@
     fp.traffic_type,
     fp.out_status,
     fp.`status`,
+    fp.organization_id,
+	fp.remark,
     fp.create_user_id,
     fp.create_time,
     fp.modified_user_id,

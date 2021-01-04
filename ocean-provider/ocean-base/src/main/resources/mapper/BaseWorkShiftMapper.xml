@@ -11,6 +11,8 @@
     <result column="work_shift_desc" jdbcType="VARCHAR" property="workShiftDesc" />
     <result column="start_time" jdbcType="TIME" property="startTime" />
     <result column="end_time" jdbcType="TIME" property="endTime" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -22,6 +24,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -31,6 +34,8 @@
 	bws.work_shift_desc,
 	bws.start_time,
 	bws.end_time,
+	bws.organization_id,
+	bws.remark,
 	bws.`status`,
 	bws.create_user_id,
 	bws.create_time,
@@ -40,10 +45,12 @@
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
     FROM fantech_imes.base_work_shift bws
     LEFT JOIN ocean.sys_user su ON bws.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON bws.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bws.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

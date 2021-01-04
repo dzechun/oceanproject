@@ -93,4 +93,11 @@ public class WmsInStorageBillsDetDTO extends WmsInStorageBillsDet implements Ser
     @ApiModelProperty(value = "仓库编码",example = "仓库编码")
     @Excel(name = "仓库编码")
     private String warehouseCode;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Column(name = "organization_name")
+    private String organizationName;
 }

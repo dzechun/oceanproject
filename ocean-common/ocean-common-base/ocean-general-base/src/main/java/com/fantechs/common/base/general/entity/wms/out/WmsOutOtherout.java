@@ -77,6 +77,20 @@ public class WmsOutOtherout extends ValidGroup implements Serializable {
     private Byte otheroutStatus;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 是否有效（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "是否有效（0、无效 1、有效）")

@@ -7,6 +7,8 @@
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
     <result column="section_desc" jdbcType="VARCHAR" property="sectionDesc" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -15,14 +17,17 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection" resultMap="BaseResultMap">
     select ws.section_id, ws.section_code, ws.section_name, ws.section_desc,
     ws.status, ws.create_user_id,u.user_name as createUserName,ws.create_time,ws.modified_user_id,
-    s.user_name as modifiedUserName, ws.modified_time,ws.is_delete
+    s.user_name as modifiedUserName, ws.modified_time, ws.is_delete, ws.organization_id, ws.remark, bo.organization_name
     from fantech_imes.smt_workshop_section ws
     left join ocean.sys_user u on ws.create_user_id=u.user_id
     left join ocean.sys_user s on ws.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON ws.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">

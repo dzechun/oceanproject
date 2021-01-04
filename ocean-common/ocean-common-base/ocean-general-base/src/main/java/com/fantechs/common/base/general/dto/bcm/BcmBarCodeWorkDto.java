@@ -139,4 +139,11 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
     @Transient
     @ApiModelProperty(name = "barcode",value = "条码/流转卡 解析码")
     private String barcode;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

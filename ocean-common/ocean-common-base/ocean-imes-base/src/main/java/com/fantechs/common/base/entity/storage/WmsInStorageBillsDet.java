@@ -69,6 +69,13 @@ public class WmsInStorageBillsDet implements Serializable {
     private Byte status;
 
     /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
     * 逻辑删除（0、删除 1、正常）
     */
     @ApiModelProperty(value = "逻辑删除（0、删除 1、正常）",example = "逻辑删除（0、删除 1、正常）")

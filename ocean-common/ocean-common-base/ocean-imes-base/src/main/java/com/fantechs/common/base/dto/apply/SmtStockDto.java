@@ -79,4 +79,11 @@ public class SmtStockDto extends SmtStock implements Serializable {
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
     @Excel(name = "修改账号", height = 20, width = 30)
     private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

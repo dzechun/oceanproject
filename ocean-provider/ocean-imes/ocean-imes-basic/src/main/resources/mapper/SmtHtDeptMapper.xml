@@ -9,6 +9,8 @@
     <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -17,18 +19,20 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <sql id="Base_Column_List">
     ht_dept_id, dept_id, dept_code, dept_name, dept_desc, factory_id, parent_id,status, create_user_id,
-    create_time, modified_user_id, modified_time, option1, option2, option3
+    create_time, modified_user_id, modified_time, option1, option2, option3, bc.organization_id, bc.remark
   </sql>
 
   <select id="selectHtDepts" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
     select shd.ht_dept_id, shd.dept_id,shd.dept_code, shd.dept_name, shd.dept_desc, shd.factory_id, shd.status, shd.create_user_id,
-    u.user_name as createUserName,shd.create_time,shd.modified_user_id, s.user_name as modifiedUserName, shd.modified_time
+    u.user_name as createUserName,shd.create_time,shd.modified_user_id, s.user_name as modifiedUserName, shd.modified_time, bo.organization_name
     from fantech_imes.smt_ht_dept shd
     left join ocean.sys_user u on shd.create_user_id=u.user_id
     left join ocean.sys_user s on shd.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON shd.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

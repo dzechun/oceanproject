@@ -14,6 +14,8 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
     <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -32,13 +34,14 @@
     <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     shps.ht_package_specification_id,shps.package_specification_id, shps.package_specification_code, shps.package_specification_name,
     shps.package_specification_desc, shps.package_specification_quantity, shps.material_id, shps.barcode_rule_id,
     shps.packing_unit_id, shps.status, shps.create_user_id, shps.create_time, shps.modified_user_id, shps.modified_time,
-    shps.is_delete, shps.option1, shps.option2, shps.option3
+    shps.is_delete, shps.option1, shps.option2, shps.option3, shps.organization_id, shps.remark
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
@@ -46,13 +49,14 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spu.packing_unit_name, spu.packing_unit_desc,
     sm.material_code, sm.material_desc,sm.version,
-    sbr.barcode_rule
+    sbr.barcode_rule, shps.organization_name
     from fantech_imes.smt_ht_package_specification shps
     LEFT JOIN fantech_imes.smt_barcode_rule sbr ON shps.barcode_rule_id = sbr.barcode_rule_id
     LEFT JOIN fantech_imes.smt_material sm ON shps.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_packing_unit spu ON shps.packing_unit_id = spu.packing_unit_id
     LEFT JOIN ocean.sys_user su  ON shps.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON shps.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON shps.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

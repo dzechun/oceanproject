@@ -146,4 +146,10 @@ public class SmtWorkOrderCardCollocationDto extends SmtWorkOrderCardCollocation 
     @ApiModelProperty(name="barcodeRule" ,value="条码规则集合")
     private String barcodeRule;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

@@ -15,11 +15,15 @@
     <result column="delivery_quantity" jdbcType="DECIMAL" property="deliveryQuantity" />
     <result column="delivery_man" jdbcType="BIGINT" property="deliveryMan" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -32,13 +36,21 @@
     shdn.delivery_date,
     shdn.delivery_quantity,
     shdn.delivery_man,
-    shdn.status,shdn.create_user_id,shdn.create_time,shdn.modified_user_id,shdn.modified_time,shdn.is_delete
+    shdn.status,
+    shdn.create_user_id,
+    shdn.create_time,
+    shdn.modified_user_id,
+    shdn.modified_time,
+    shdn.is_delete,
+    shdn.organization_id,
+	shdn.remark
   </sql>
 
 
   <select id="findList" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"></include>, bo.organization_name
     from fantech_imes.srm_ht_delivery_note shdn
+    LEFT JOIN fantech_imes.base_organization bo ON shdn.organization_id = bo.organization_id
     <where>
       <if test="asnCode != null and asnCode != ''">
         and shdn.asn_code like CONCAT('%', #{asnCode}, '%')

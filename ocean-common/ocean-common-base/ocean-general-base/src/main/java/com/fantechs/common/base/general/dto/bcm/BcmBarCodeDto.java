@@ -49,4 +49,11 @@ public class BcmBarCodeDto extends BcmBarCode implements Serializable {
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

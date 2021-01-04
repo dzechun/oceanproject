@@ -20,6 +20,7 @@
     <result column="re" jdbcType="DECIMAL" property="re" />
     <result column="test_method" jdbcType="BIGINT" property="testMethod" />
     <result column="test_times" jdbcType="DECIMAL" property="testTimes" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -27,18 +28,22 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qhii.ht_inspection_item_id,qhii.inspection_item_id,qhii.inspection_item_code,qhii.inspection_item_name,
     qhii.inspection_item_level,qhii.inspection_tool,qhii.inspection_standard,qhii.inspection_nape,
     qhii.batch,qhii.aql,qhii.sampling_amount,qhii.ac,qhii.re,qhii.test_method,qhii.test_times,qhii.remark,
-    qhii.status,qhii.create_user_id,qhii.create_time,qhii.modified_user_id,qhii.modified_time,qhii.is_delete
+    qhii.status,qhii.create_user_id,qhii.create_time,qhii.modified_user_id,qhii.modified_time,qhii.is_delete,
+    qhii.organization_id
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"/>, bo.organization_name
     from fantech_imes.qms_ht_inspection_item qhii
+    LEFT JOIN fantech_imes.base_organization bo ON qhii.organization_id = bo.organization_id
     <where>
       <if test="inspectionItemCode != null and inspectionItemCode != ''">
         and qhii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')

@@ -8,6 +8,8 @@
     <result column="barcode_rule_desc" jdbcType="VARCHAR" property="barcodeRuleDesc" />
     <result column="barcode_rule_category_id" jdbcType="BIGINT" property="barcodeRuleCategoryId" />
     <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -24,16 +26,18 @@
     <result column="barcode_rule_category_name" jdbcType="VARCHAR" property="barcodeRuleCategoryName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule" resultMap="BaseResultMapDto">
     select sbr.barcode_rule_id,sbr.barcode_rule_code,sbr.barcode_rule_name,sbr.barcode_rule_desc,sbr.barcode_rule_category_id,ssi.spec_name as barcode_rule_category_name,
-    sbr.barcode_rule,sbr.status,sbr.create_user_id, u.user_name as create_user_name,sbr.create_time,sbr.modified_user_id,s.user_name as modified_user_name,sbr.modified_time,
+    sbr.barcode_rule, sbr.organization_id, sbr.remark,sbr.status,sbr.create_user_id, u.user_name as create_user_name,sbr.create_time,sbr.modified_user_id,s.user_name as modified_user_name,sbr.modified_time,
     sbr.is_delete
     from fantech_imes.smt_barcode_rule sbr
     left join ocean.sys_spec_item ssi on sbr.barcode_rule_category_id=ssi.spec_id
     left join ocean.sys_user u on sbr.create_user_id=u.user_id
     left join ocean.sys_user s on sbr.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bc.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

@@ -13,6 +13,8 @@
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -24,19 +26,22 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtMaterialCategoryDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     smc.material_category_id,smc.material_category_code,smc.material_category_name,
     smc.material_category_desc,smc.parent_id,smc.organization_id,smc.remark,smc.status,smc.create_user_id,
-    smc.create_time,smc.modified_user_id,smc.modified_time,smc.is_delete
+    smc.create_time,smc.modified_user_id,smc.modified_time,smc.is_delete,smc.organization_id,
+	smc.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name, bo.organization_name
     from fantech_imes.smt_ht_material_category smc
     LEFT JOIN ocean.sys_user su ON smc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON smc.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON smc.organization_id = bo.organization_id
     <where>
       <if test="materialCategoryCode != null and materialCategoryCode != ''">
         and smc.material_category_code like CONCAT('%', #{materialCategoryCode}, '%')

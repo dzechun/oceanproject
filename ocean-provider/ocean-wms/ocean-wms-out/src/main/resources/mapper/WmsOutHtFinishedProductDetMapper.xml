@@ -13,6 +13,8 @@
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -26,6 +28,7 @@
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -37,6 +40,8 @@
         fpd.warehouse_id,
         fpd.warehouse_user_id,
         fpd.`status`,
+        fpd.organization_id,
+	    fpd.remark,
         fpd.create_user_id,
         fpd.create_time,
         fpd.modified_user_id,
@@ -55,7 +60,8 @@
     pm.product_model_name,
     pm.product_model_desc,
     w.warehouse_code,
-    w.warehouse_name
+    w.warehouse_name,
+    bo.organization_name
     FROM
     wms_out_ht_finished_product_det AS fpd
     LEFT JOIN ocean.sys_user su  ON fpd.create_user_id = su.user_id
@@ -64,6 +70,7 @@
     LEFT JOIN wms_out_finished_product fp ON fpd.finished_product_id = fp.finished_product_id
     LEFT JOIN smt_product_model pm ON fpd.product_model_id = pm.product_model_id
     LEFT JOIN smt_warehouse w ON fpd.warehouse_id = w.warehouse_id
+    LEFT JOIN fantech_imes.base_organization bo ON fpd.organization_id = bo.organization_id
     <where>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

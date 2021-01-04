@@ -6,6 +6,8 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="material_supplier_code" jdbcType="VARCHAR" property="materialSupplierCode" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -24,6 +26,7 @@
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
 
@@ -31,12 +34,13 @@
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier" resultMap="BaseResultMapDto">
     select  sms.material_supplier_id,sms.material_id,sm.material_code,sm.version,sm.material_desc,sms.material_supplier_code,sms.supplier_id,
     ss.supplier_name,sms.status,sms.create_user_id,u.user_name as create_user_name,sms.create_time,sms.modified_user_id,s.user_name as modified_user_name,
-    sms.modified_time, sms.is_delete
+    sms.modified_time, sms.is_delete, sms.organization_id, sms.remark, bo.organization_name
     from fantech_imes.smt_material_supplier sms
     left join fantech_imes.smt_material sm on sms.material_id=sm.material_id
     left join fantech_imes.smt_supplier ss on sms.supplier_id=ss.supplier_id
     left join ocean.sys_user u on sms.create_user_id=u.user_id
     left join ocean.sys_user s on sms.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON sms.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

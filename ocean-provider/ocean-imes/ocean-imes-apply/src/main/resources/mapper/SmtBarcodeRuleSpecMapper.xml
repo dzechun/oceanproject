@@ -16,20 +16,24 @@
     <result column="intercept_position" jdbcType="INTEGER" property="interceptPosition" />
     <result column="intercept_direction" jdbcType="TINYINT" property="interceptDirection" />
     <result column="customize_value" jdbcType="LONGVARCHAR" property="customizeValue" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtBarcodeRuleSpecDto">
     <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
     <result column="spec_name" jdbcType="VARCHAR" property="specName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSpec" resultMap="BaseResultMapDto">
     select sbrs.barcode_rule_spec_id,sbrs.barcode_rule_id,sbr.barcode_rule,sbrs.spec_id,ssi.spec_name,sbrs.specification,sbrs.barcode_length,sbrs.initial_value,
     sbrs.step,sbrs.fill_operator,sbrs.fill_direction,sbrs.customize_name,sbrs.intercept_length,sbrs.intercept_position,sbrs.intercept_direction,
-    sbrs.customize_value
+    sbrs.customize_value, sbrs.organization_id, sbrs.remark, bo.organization_name
     from fantech_imes.smt_barcode_rule_spec sbrs
     left join fantech_imes.smt_barcode_rule sbr on sbrs.barcode_rule_id=sbr.barcode_rule_id
     left join ocean.sys_spec_item ssi on sbrs.spec_id=ssi.spec_id
+    LEFT JOIN fantech_imes.base_organization bo ON sbrs.organization_id = bo.organization_id
     <where>
       1=1
       <if test="barcodeRuleId!=null and barcodeRuleId!=''">

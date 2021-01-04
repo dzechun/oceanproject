@@ -15,6 +15,8 @@
         <result column="station_id" jdbcType="BIGINT" property="stationId"/>
         <result column="consumption" jdbcType="DECIMAL" property="consumption"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -38,12 +40,14 @@
         <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
 
     <sql id="Base_Column_List">
     skm.key_material_id, skm.product_type, skm.product_model_id, skm.material_id, skm.part_material_id,
     skm.scanning_gun_quantity, skm.process_id, skm.station_id, skm.consumption, skm.status, skm.create_user_id,
-    skm.create_time, skm.modified_user_id, skm.modified_time, skm.is_delete, skm.option1, skm.option2, skm.option3
+    skm.create_time, skm.modified_user_id, skm.modified_time, skm.is_delete, skm.option1, skm.option2, skm.option3,
+    skm.organization_id, skm.remark
   </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
@@ -53,7 +57,7 @@
         sm1.material_code AS material_code, sm1.material_desc AS material_desc, sm1.version AS version,
         sm2.material_code AS part_material_code, sm2.material_desc AS part_material_desc, sm2.version AS
         part_material_version,
-        sp.process_name AS process_name, ss.station_name AS station_name
+        sp.process_name AS process_name, ss.station_name AS station_name, bo.organization_name
         FROM fantech_imes.smt_key_material skm
         LEFT JOIN ocean.sys_user su ON skm.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON skm.modified_user_id = sus.user_id
@@ -62,6 +66,7 @@
         LEFT JOIN fantech_imes.smt_material sm2 ON skm.part_material_id = sm2.material_id
         LEFT JOIN fantech_imes.smt_process sp ON skm.process_id = sp.process_id
         LEFT JOIN fantech_imes.smt_station ss ON skm.station_id = ss.station_id
+        LEFT JOIN fantech_imes.base_organization bo ON skm.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(skm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

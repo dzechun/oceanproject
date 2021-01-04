@@ -115,4 +115,11 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
     @ApiModelProperty(name = "stockistCode",value = "stockistCode")
     @Excel(name = "盘点员编码", height = 20, width = 30,orderNum="18")
     private String stockistCode;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }
