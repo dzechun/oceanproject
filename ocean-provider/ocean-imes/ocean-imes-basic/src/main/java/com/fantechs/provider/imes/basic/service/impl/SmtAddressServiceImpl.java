@@ -57,7 +57,7 @@ public class SmtAddressServiceImpl extends BaseService<SmtAddress> implements Sm
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(SmtCurrency.class);
+        Example example = new Example(SmtAddress.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("addressDetail", smtAddress.getAddressDetail())
         .andNotEqualTo("addressId", smtAddress.getAddressId());
