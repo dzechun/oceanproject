@@ -58,26 +58,6 @@ public class BaseWorkShift extends ValidGroup implements Serializable {
     private String workShiftDesc;
 
     /**
-     * 开始时间
-     */
-    @ApiModelProperty(name="startTime",value = "开始时间")
-    @Excel(name = "开始时间", height = 20, width = 30,orderNum="4")
-    @Column(name = "start_time")
-    @NotNull(message = "开始时间不能为空")
-    @JsonFormat(pattern = "HH:mm:ss")
-    private Date startTime;
-
-    /**
-     * 结束时间
-     */
-    @ApiModelProperty(name="workShiftDesc",value = "结束时间")
-    @Excel(name = "结束时间", height = 20, width = 30,orderNum="5")
-    @Column(name = "end_time")
-    @NotNull(message = "结束时间不能为空")
-    @JsonFormat(pattern = "HH:mm:ss")
-    private Date endTime;
-
-    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

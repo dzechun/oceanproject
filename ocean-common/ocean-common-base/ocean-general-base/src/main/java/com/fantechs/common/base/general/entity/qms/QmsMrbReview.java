@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -43,6 +44,7 @@ public class QmsMrbReview extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Column(name = "material_id")
+    @NotNull(message = "物料ID不能为空")
     private Long materialId;
 
     /**
@@ -50,6 +52,7 @@ public class QmsMrbReview extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="qualityInspectionId",value = "质检单ID")
     @Column(name = "quality_inspection_id")
+    @NotNull(message = "质检单ID不能为空")
     private Long qualityInspectionId;
 
     /**

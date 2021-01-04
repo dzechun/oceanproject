@@ -9,6 +9,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -42,6 +44,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="inspectionItemName",value = "检验项目名称")
     @Excel(name = "检验项目名称", height = 20, width = 30,orderNum="2")
     @Column(name = "inspection_item_name")
+    @NotBlank(message = "质检项目名称不能为空")
     private String inspectionItemName;
 
     /**
@@ -50,6 +53,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="inspectionItemLevel",value = "检验项目水平")
     @Excel(name = "检验项目水平", height = 20, width = 30,orderNum="3")
     @Column(name = "inspection_item_level")
+    @NotNull(message = "检验项目水平不能为空")
     private Long inspectionItemLevel;
 
     /**
@@ -58,6 +62,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="inspectionTool",value = "检验工具")
     @Excel(name = "检验工具", height = 20, width = 30,orderNum="4")
     @Column(name = "inspection_tool")
+    @NotNull(message = "检验工具不能为空")
     private Long inspectionTool;
 
     /**
@@ -66,6 +71,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="inspectionStandard",value = "检验标准")
     @Excel(name = "检验标准", height = 20, width = 30,orderNum="5")
     @Column(name = "inspection_standard")
+    @NotBlank(message = "检验标准不能为空")
     private String inspectionStandard;
 
     /**
@@ -74,6 +80,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="inspectionNape",value = "检验项")
     @Excel(name = "检验项", height = 20, width = 30,orderNum="6")
     @Column(name = "inspection_nape")
+    @NotNull(message = "检验项不能为空")
     private Long inspectionNape;
 
     /**
@@ -81,6 +88,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="batch",value = "批量")
     @Excel(name = "批量", height = 20, width = 30,orderNum="7")
+    @NotNull(message = "批量不能为空")
     private BigDecimal batch;
 
     /**
@@ -88,6 +96,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="aql",value = "AQL")
     @Excel(name = "AQL", height = 20, width = 30,orderNum="8")
+    @NotNull(message = "AQL不能为空")
     private BigDecimal aql;
 
     /**
@@ -118,6 +127,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="testMethod",value = "测试方法")
     @Excel(name = "测试方法", height = 20, width = 30,orderNum="12")
     @Column(name = "test_method")
+    @NotNull(message = "测试方法不能为空")
     private Long testMethod;
 
     /**
@@ -126,6 +136,7 @@ public class QmsInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="testTimes",value = "测试次数")
     @Excel(name = "测试次数", height = 20, width = 30,orderNum="13")
     @Column(name = "test_times")
+    @NotNull(message = "测试次数不能为空")
     private BigDecimal testTimes;
 
     /**

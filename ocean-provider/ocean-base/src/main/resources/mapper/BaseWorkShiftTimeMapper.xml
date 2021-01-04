@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseWorkShiftTimeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_shift_time_id" jdbcType="BIGINT" property="workShiftTimeId" />
+    <result column="work_shift_id" jdbcType="BIGINT" property="workShiftId" />
+    <result column="start_time" jdbcType="TIME" property="startTime" />
+    <result column="end_time" jdbcType="TIME" property="endTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bwst.work_shift_time_id,
+	bwst.work_shift_id,
+	bwst.start_time,
+	bwst.end_time,
+	bwst.`status`,
+	bwst.remark,
+	bwst.organization_id,
+	bwst.create_user_id,
+	bwst.create_time,
+	bwst.modified_user_id,
+	bwst.modified_time,
+	bwst.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.base_work_shift_time bwst
+    <where>
+      <if test="workShiftId != null and workShiftId != ''">
+        and bwst.work_shift_id = #{workShiftId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+</mapper>

@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.basic.BaseWorkShiftTimeDto;
 import com.fantechs.common.base.general.entity.basic.BaseCalendar;
 import com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
+import com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -15,6 +16,7 @@ import com.fantechs.provider.base.mapper.BaseCalendarMapper;
 import com.fantechs.provider.base.service.BaseCalendarService;
 import com.fantechs.provider.base.service.BaseCalendarWorkShiftService;
 import com.fantechs.provider.base.service.BaseWorkShiftService;
+import com.fantechs.provider.base.service.BaseWorkShiftTimeService;
 import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
     private BaseCalendarWorkShiftService baseCalendarWorkShiftService;
     @Resource
     private BaseWorkShiftService baseWorkShiftServicel;
+    @Resource
+    private BaseWorkShiftTimeService baseWorkShiftTimeService;
 
     @Override
     public int save(BaseCalendar baseCalendar) {
@@ -170,15 +174,16 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
                     ArrayList<String> allWorkShift = new ArrayList<>();
                     //保存班次时间
                     for (BaseCalendarWorkShift baseCalendarWorkShift : baseCalendarWorkShifts) {
-                        Example example2 = new Example(BaseWorkShift.class);
+                        Example example2 = new Example(BaseWorkShiftTime.class);
                         Example.Criteria criteria2 = example2.createCriteria();
                         criteria2.andEqualTo("workShiftId",baseCalendarWorkShift.getWorkShiftId());
-                        BaseWorkShift baseWorkShift = baseWorkShiftServicel.selectByExample(example2).get(0);
+                        BaseWorkShiftTime baseWorkShiftTime = baseWorkShiftTimeService.selectByExample(example2).get(0);
+
                         //格式化时间再保存
                         String strDateFormat = "HH:mm:ss";
                         SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
-                        String startTime = sdf.format(baseWorkShift.getStartTime());
-                        String endTime = sdf.format(baseWorkShift.getEndTime());
+                        String startTime = sdf.format(baseWorkShiftTime.getStartTime());
+                        String endTime = sdf.format(baseWorkShiftTime.getEndTime());
                         String workTime = startTime + "-" + endTime;
                         allWorkShift.add(workTime);
                     }

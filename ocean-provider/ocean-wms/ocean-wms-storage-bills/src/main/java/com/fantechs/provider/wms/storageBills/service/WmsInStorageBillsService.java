@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.storageBills.service;
 
 import com.fantechs.common.base.dto.storage.SaveBillsDetDTO;
+import com.fantechs.common.base.dto.storage.SaveDoubleBillsDTO;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO;
 import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.exception.SQLExecuteException;
@@ -30,7 +31,8 @@ public interface WmsInStorageBillsService extends IService<WmsInStorageBills> {
     //===========================基础功能 end============================
     //以特定过滤条件查询
     List<WmsInStorageBillsDTO> selectFilterAll(Map<String,Object> map);
-
+    //同时添加清单及清单详情
+    int saveDouble(SaveDoubleBillsDTO saveDoubleBillsDTO) throws SQLExecuteException;
 
 
     //===========================PDA start============================
