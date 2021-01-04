@@ -12,6 +12,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutOtheroutDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutDetService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,7 +43,13 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
         wmsOutOtheroutDet.setModifiedUserId(user.getUserId());
         wmsOutOtheroutDet.setModifiedTime(new Date());
         wmsOutOtheroutDet.setStatus(StringUtils.isEmpty(wmsOutOtheroutDet.getStatus())?1:wmsOutOtheroutDet.getStatus());
-        return wmsOutOtheroutDetMapper.insertUseGeneratedKeys(wmsOutOtheroutDet);
+        int i = wmsOutOtheroutDetMapper.insertUseGeneratedKeys(wmsOutOtheroutDet);
+
+        WmsOutHtOtheroutDet wmsOutHtOtheroutDet = new WmsOutHtOtheroutDet();
+        BeanUtils.copyProperties(wmsOutOtheroutDet,wmsOutHtOtheroutDet);
+        wmsOutHtOtheroutDetMapper.insert(wmsOutHtOtheroutDet);
+
+        return i;
     }
 
     @Override
@@ -72,6 +79,10 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
         wmsOutOtheroutDet.setMaterialId(user.getUserId());
         wmsOutOtheroutDet.setModifiedTime(new Date());
 
+        WmsOutHtOtheroutDet wmsOutHtOtheroutDet = new WmsOutHtOtheroutDet();
+        BeanUtils.copyProperties(wmsOutOtheroutDet,wmsOutHtOtheroutDet);
+        wmsOutHtOtheroutDetMapper.insert(wmsOutHtOtheroutDet);
+
         return wmsOutOtheroutDetMapper.updateByPrimaryKeySelective(wmsOutOtheroutDet);
     }
 
@@ -88,6 +99,11 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
             if (StringUtils.isEmpty(wmsOutOtheroutDet)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            //新增其他出库单明细履历
+            WmsOutHtOtheroutDet wmsOutHtOtheroutDet = new WmsOutHtOtheroutDet();
+            BeanUtils.copyProperties(wmsOutOtheroutDet,wmsOutHtOtheroutDet);
+            wmsOutHtOtheroutDetMapper.insert(wmsOutHtOtheroutDet);
         }
 
         return wmsOutOtheroutDetMapper.deleteByIds(ids);
