@@ -1,15 +1,13 @@
 package com.fantechs.provider.wms.storageBills.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.ExportBillsDTO;
-import com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO;
-import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
+import com.fantechs.common.base.dto.storage.*;
 import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.exception.SQLExecuteException;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsDetService;
 import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsService;
-import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -66,8 +64,14 @@ public class WmsInStorageBillsController {
 
     @ApiOperation("增加仓库清单表数据")
     @PostMapping("add")
-    public ResponseEntity add(@ApiParam(value = "仓库清单表对象",required = true)@RequestBody @Validated WmsInStorageBills wmsStorageBills){
+    public ResponseEntity add(@ApiParam(value = "仓库清单表对象",required = true)@RequestBody WmsInStorageBills wmsStorageBills){
         return ControllerUtil.returnCRUD(wmsStorageBillsService.save(wmsStorageBills));
+    }
+
+    @ApiOperation("增加仓库清单表数据及增加仓库清单详情数据")
+    @PostMapping("addDouble")
+    public ResponseEntity addDouble(@ApiParam(value = "仓库清单表对象",required = true)@RequestBody SaveDoubleBillsDTO saveDoubleBillsDTO) throws SQLExecuteException {
+        return ControllerUtil.returnCRUD(wmsStorageBillsService.saveDouble(saveDoubleBillsDTO));
     }
 
     @ApiOperation("删除仓库清单表数据")

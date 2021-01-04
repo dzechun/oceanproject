@@ -1,7 +1,9 @@
 package com.fantechs.provider.wms.storageBills.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SaveBillsDetDTO;
+import com.fantechs.common.base.dto.storage.SaveDoubleBillsDTO;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO;
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -17,7 +19,9 @@ import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsService;
 import com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsMapper;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
@@ -32,6 +36,7 @@ import java.util.Map;
  * @Version: 1.0
  */
 @Service
+@Slf4j
 public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>  implements WmsInStorageBillsService {
 
      @Resource
@@ -158,11 +163,43 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
         return wmsStorageBillsMapper.selectFilterAll(map);
     }
 
-
-
-
-
-
+    /**
+     * 新增或更新仓库清单及详情
+     * @param saveDoubleBillsDTO
+     * @return
+     * @throws SQLExecuteException
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int saveDouble(SaveDoubleBillsDTO saveDoubleBillsDTO) throws SQLExecuteException {
+        WmsInStorageBills wmsInStorageBills = saveDoubleBillsDTO.getWmsInStorageBills();
+        if(StringUtils.isEmpty(wmsInStorageBills.getStorageBillsId())){
+            //ID为空做新增
+            if(this.save(wmsInStorageBills)<=0){
+                return 0;
+            }
+            List<WmsInStorageBillsDet> wmsInStorageBillsDetList = saveDoubleBillsDTO.getWmsInStorageBillsDetList();
+            if(StringUtils.isNotEmpty(wmsInStorageBillsDetList)){
+                for (WmsInStorageBillsDet wmsInStorageBillsDet : wmsInStorageBillsDetList) {
+                    wmsInStorageBillsDet.setStorageBillsId(wmsInStorageBills.getStorageBillsId());
+                }
+                if(wmsStorageBillsDetService.batchSave(wmsInStorageBillsDetList)<=0){
+                    log.error("添加仓库清单详情数据错误："+ JSONObject.toJSONString(wmsInStorageBillsDetList));
+                    throw new SQLExecuteException(ErrorCodeEnum.OPT20012006,"添加仓库清单详情数据错误");
+                }
+            }
+        }else{
+            //更新
+            if(this.update(wmsInStorageBills)<=0){
+                return 0;
+            }
+            SaveBillsDetDTO saveBillsDetDTO = new SaveBillsDetDTO();
+            saveBillsDetDTO.setStorageBillsId(wmsInStorageBills.getStorageBillsId());
+            saveBillsDetDTO.setWmsStorageBillsDetList(saveDoubleBillsDTO.getWmsInStorageBillsDetList());
+            pdaSaveBilssDet(saveBillsDetDTO);
+        }
+        return 1;
+    }
 
 
     @Override

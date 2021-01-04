@@ -8,7 +8,9 @@ import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -54,10 +56,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SmtWorkOrder smtWorkOrder) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        SysUser currentUser = currentUser();
 
         Example example = new Example(SmtWorkOrder.class);
         Example.Criteria criteria = example.createCriteria();
@@ -70,14 +69,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         smtWorkOrder.setCreateUserId(currentUser.getUserId());
         smtWorkOrder.setCreateTime(new Date());
-        smtWorkOrderMapper.insertUseGeneratedKeys(smtWorkOrder);
+        if(smtWorkOrderMapper.insertUseGeneratedKeys(smtWorkOrder)<=0){
+            return 0;
+        }
 
         //新增工单历史信息
-        SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
-        BeanUtils.copyProperties(smtWorkOrder, smtHtWorkOrder);
-        smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
-        smtHtWorkOrder.setModifiedTime(new Date());
-        int i = smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
+        recordHistory(smtWorkOrder.getWorkOrderId(),"新增");
 
 
         //生成备料单
@@ -94,7 +91,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         //根据产品BOM生成工单BOM
         genWorkOrder(smtWorkOrder, smtStock);
 
-        return i;
+        return 1;
     }
 
     /**
@@ -104,7 +101,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
      */
     @Transactional(rollbackFor = Exception.class)
     public void genWorkOrder(SmtWorkOrder smtWorkOrder, SmtStock smtStock) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        SysUser currentUser = currentUser();
         List<SmtWorkOrderBom> list = new ArrayList<>();
         List<SmtHtWorkOrderBom> htList = new ArrayList<>();
 
@@ -329,5 +326,33 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
         }
         return list;
+    }
+
+    /**
+     * 获取当前登录用户
+     * @return
+     */
+    private SysUser currentUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
+    }
+
+    /**
+     * 记录操作历史
+     * @param id
+     * @param operation
+     */
+    private void recordHistory(Long id,String operation){
+        SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
+        smtHtWorkOrder.setOption1(operation);
+        SmtWorkOrder smtWorkOrder = selectByKey(id);
+        if (StringUtils.isEmpty(smtWorkOrder)){
+            return;
+        }
+        BeanUtils.copyProperties(smtWorkOrder, smtHtWorkOrder);
+        smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
     }
 }
