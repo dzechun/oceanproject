@@ -76,7 +76,7 @@ public class QmsInspectionItemDetController {
     List<QmsInspectionItemDetDto> list = qmsInspectionItemDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionItemDet));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsInspectionItemDet信息", QmsInspectionItemDet.class, "QmsInspectionItemDet.xls", response);
+        EasyPoiUtils.exportExcel(list, "检验项目明细导出信息", "检验项目明细信息", QmsInspectionItemDet.class, "检验项目明细.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

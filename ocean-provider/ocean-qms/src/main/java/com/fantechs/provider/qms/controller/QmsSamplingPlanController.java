@@ -75,7 +75,7 @@ public class QmsSamplingPlanController {
     List<QmsSamplingPlan> list = qmsSamplingPlanService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsSamplingPlan));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsSamplingPlan信息", QmsSamplingPlan.class, "QmsSamplingPlan.xls", response);
+        EasyPoiUtils.exportExcel(list, "抽样方案导出信息", "抽样方案信息", QmsSamplingPlan.class, "抽样方案.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

@@ -89,7 +89,7 @@ public class QmsMrbReviewController {
     List<QmsMrbReviewDto> list = qmsMrbReviewService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsMrbReview));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsMrbReview信息", QmsMrbReview.class, "QmsMrbReview.xls", response);
+        EasyPoiUtils.exportExcel(list, "MRB评审导出信息", "MRB评审信息", QmsMrbReview.class, "MRB评审.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
