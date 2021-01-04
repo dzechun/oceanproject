@@ -177,15 +177,17 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
                         Example example2 = new Example(BaseWorkShiftTime.class);
                         Example.Criteria criteria2 = example2.createCriteria();
                         criteria2.andEqualTo("workShiftId",baseCalendarWorkShift.getWorkShiftId());
-                        BaseWorkShiftTime baseWorkShiftTime = baseWorkShiftTimeService.selectByExample(example2).get(0);
-
-                        //格式化时间再保存
-                        String strDateFormat = "HH:mm:ss";
-                        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
-                        String startTime = sdf.format(baseWorkShiftTime.getStartTime());
-                        String endTime = sdf.format(baseWorkShiftTime.getEndTime());
-                        String workTime = startTime + "-" + endTime;
-                        allWorkShift.add(workTime);
+                        //查询班次下面的所有时间段
+                        List<BaseWorkShiftTime> baseWorkShiftTimes = baseWorkShiftTimeService.selectByExample(example2);
+                        for (BaseWorkShiftTime baseWorkShiftTime : baseWorkShiftTimes) {
+                            //格式化时间再保存
+                            String strDateFormat = "HH:mm:ss";
+                            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+                            String startTime = sdf.format(baseWorkShiftTime.getStartTime());
+                            String endTime = sdf.format(baseWorkShiftTime.getEndTime());
+                            String workTime = startTime + "-" + endTime;
+                            allWorkShift.add(workTime);
+                        }
                     }
 
                     baseWorkShiftTimeDto.setDay((long) i);

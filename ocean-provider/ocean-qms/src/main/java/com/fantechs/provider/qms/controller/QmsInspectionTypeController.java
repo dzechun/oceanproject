@@ -90,7 +90,7 @@ public class QmsInspectionTypeController {
     List<QmsInspectionTypeDto> list = qmsInspectionTypeService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionType));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsInspectionType信息", QmsInspectionType.class, "QmsInspectionType.xls", response);
+        EasyPoiUtils.exportExcel(list, "检验类型导出信息", "检验类型信息", QmsInspectionType.class, "检验类型.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
