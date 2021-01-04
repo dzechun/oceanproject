@@ -8,6 +8,7 @@
     <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
     <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,7 +19,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
   <sql id="Base_Column_List">
-    ht_dept_id, dept_id, dept_code, dept_name, dept_desc, factory_id, status, create_user_id, 
+    ht_dept_id, dept_id, dept_code, dept_name, dept_desc, factory_id, parent_id,status, create_user_id,
     create_time, modified_user_id, modified_time, option1, option2, option3
   </sql>
 
@@ -38,6 +39,9 @@
       </if>
       <if test="deptName!=null and deptName!=''">
         and shd.dept_name like CONCAT('%', #{deptName}, '%')
+      </if>
+      <if test="parentId!=null and parentId!=''">
+        and sd.parent_id=#{parentId}
       </if>
       <if test="deptDesc!=null and deptDesc!=''">
         and shd.dept_desc like CONCAT('%', #{deptDesc}, '%')

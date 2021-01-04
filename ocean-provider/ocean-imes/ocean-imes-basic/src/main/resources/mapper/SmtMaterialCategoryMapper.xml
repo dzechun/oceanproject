@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtMaterialCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtMaterialCategory">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="material_category_id" jdbcType="BIGINT" property="materialCategoryId" />
+    <result column="material_category_code" jdbcType="VARCHAR" property="materialCategoryCode" />
+    <result column="material_category_name" jdbcType="VARCHAR" property="materialCategoryName" />
+    <result column="material_category_desc" jdbcType="VARCHAR" property="materialCategoryDesc" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <collection property="list" column="material_category_id" select="com.fantechs.provider.imes.basic.mapper.SmtMaterialCategoryMapper.findById" ofType="com.fantechs.common.base.entity.basic.SmtMaterialCategory"></collection>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtMaterialCategoryDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    smc.material_category_id,smc.material_category_code,smc.material_category_name,
+    smc.material_category_desc,smc.parent_id,smc.organization_id,smc.remark,smc.status,smc.create_user_id,
+    smc.create_time,smc.modified_user_id,smc.modified_time,smc.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from fantech_imes.smt_ht_material_category smc
+    LEFT JOIN ocean.sys_user su ON smc.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON smc.modified_user_id = sus.user_id
+    <where>
+      <if test="materialCategoryCode != null and materialCategoryCode != ''">
+        and smc.material_category_code like CONCAT('%', #{materialCategoryCode}, '%')
+      </if>
+      <if test="materialCategoryName != null and materialCategoryName != ''">
+        and smc.material_category_name like CONCAT('%', #{materialCategoryName}, '%')
+      </if>
+
+      <if test="materialCategoryDesc != null and materialCategoryDesc != ''">
+        and smc.material_category_desc like CONCAT('%', #{materialCategoryDesc}, '%')
+      </if>
+      <if test="parentId != null and parentId != ''">
+        and smc.parent_id like CONCAT('%', #{parentId}, '%')
+      </if>
+      <if test="materialCategoryId != null and materialCategoryId != ''">
+        and smc.material_category_id = #{materialCategoryId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(smc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+  <select id="findById" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.smt_material_category smc
+    where smc.parent_id = #{parentId}
+  </select>
+
+
+</mapper>

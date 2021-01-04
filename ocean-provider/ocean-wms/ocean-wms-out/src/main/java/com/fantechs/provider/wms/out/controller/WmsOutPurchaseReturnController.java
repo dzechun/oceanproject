@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.out.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPurchaseReturnDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturn;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPurchaseReturn;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPurchaseReturn;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -28,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/24.
  */
 @RestController
-@Api(tags = "wmsOutPurchaseReturn控制器")
+@Api(tags = "采购退货控制器")
 @RequestMapping("/wmsOutPurchaseReturn")
 @Validated
 public class WmsOutPurchaseReturnController {
@@ -71,9 +72,9 @@ public class WmsOutPurchaseReturnController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsOutPurchaseReturnDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutPurchaseReturn searchWmsOutPurchaseReturn) {
+    public ResponseEntity<List<WmsOutHtPurchaseReturn>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutPurchaseReturn searchWmsOutPurchaseReturn) {
         Page<Object> page = PageHelper.startPage(searchWmsOutPurchaseReturn.getStartPage(),searchWmsOutPurchaseReturn.getPageSize());
-        List<WmsOutPurchaseReturnDto> list = wmsOutPurchaseReturnService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPurchaseReturn));
+        List<WmsOutHtPurchaseReturn> list = wmsOutPurchaseReturnService.findHTList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPurchaseReturn));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

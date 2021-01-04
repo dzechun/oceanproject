@@ -18,6 +18,14 @@ import java.util.Date;
 public class QmsInspectionItemDetDto extends QmsInspectionItemDet implements Serializable {
 
     /**
+     * 检验项目单号
+     */
+    @Transient
+    @ApiModelProperty(name="inspectionItemCode",value = "检验项目单号")
+    @Excel(name = "检验项目单号", height = 20, width = 30,orderNum="1")
+    private String inspectionItemCode;
+
+    /**
      * 物料编码
      */
     @Transient

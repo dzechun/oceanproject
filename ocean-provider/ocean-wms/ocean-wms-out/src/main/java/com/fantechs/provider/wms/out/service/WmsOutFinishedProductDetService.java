@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.out.service;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProductDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProductDet;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -15,4 +16,6 @@ import java.util.Map;
 public interface WmsOutFinishedProductDetService extends IService<WmsOutFinishedProductDet> {
 
     List<WmsOutFinishedProductDetDto> findList(Map<String, Object> dynamicConditionByEntity);
+
+    List<WmsOutHtFinishedProductDet> findHTList(Map<String, Object> dynamicConditionByEntity);
 }

@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtDept;
+import com.fantechs.common.base.entity.basic.SmtMaterialCategory;
 import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -120,6 +121,15 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             if(StringUtils.isEmpty(smtDept)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example = new Example(SmtDept.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("parentId",deptId);
+            List<SmtDept> smtMaterialCategories = smtDeptMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(smtMaterialCategories)){
+                throw new BizErrorException("删除失败，该部门有子部门");
+            }
+
             //新增部门历史信息
             SmtHtDept smtHtDept=new SmtHtDept();
             BeanUtils.copyProperties(smtDept,smtHtDept);

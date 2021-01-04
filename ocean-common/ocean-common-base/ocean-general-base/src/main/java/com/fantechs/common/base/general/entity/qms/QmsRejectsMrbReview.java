@@ -33,7 +33,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 评审单号
      */
     @ApiModelProperty(name="mrbReviewCode",value = "评审单号")
-    @Excel(name = "评审单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "评审单号", height = 20, width = 30,orderNum="1")
     @Column(name = "rejects_mrb_review_code")
     private String rejectsMrbReviewCode;
 
@@ -55,7 +55,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 单据类型 0-在库检验 1-其他
      */
     @ApiModelProperty(name="receiptsType",value = "单据类型 0-在库检验 1-其他")
-    @Excel(name = "单据类型 0-在库检验 1-其他", height = 20, width = 30,orderNum="")
+    @Excel(name = "单据类型 0-在库检验 1-其他", height = 20, width = 30,orderNum="5")
     @Column(name = "receipts_type")
     private Byte receiptsType;
 
@@ -63,7 +63,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 状态（0、审核中 1、已审核 2、未审核）
      */
     @ApiModelProperty(name="receiptsStatus",value = "状态（0、审核中 1、已审核 2、未审核）")
-    @Excel(name = "状态（0、审核中 1、已审核 2、未审核）", height = 20, width = 30,orderNum="")
+    @Excel(name = "状态（0、审核中 1、已审核 2、未审核）", height = 20, width = 30,orderNum="6")
     @Column(name = "receipts_status")
     private Byte receiptsStatus;
 
@@ -78,7 +78,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * MRB结果 0-挑选 1-其他
      */
     @ApiModelProperty(name="reviewResult",value = "MRB结果 0-挑选 1-其他")
-    @Excel(name = "MRB结果 0-挑选 1-其他", height = 20, width = 30,orderNum="")
+    @Excel(name = "MRB结果 0-挑选 1-其他", height = 20, width = 30,orderNum="8")
     @Column(name = "review_result")
     private Byte reviewResult;
 
@@ -86,7 +86,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 挑选数量
      */
     @ApiModelProperty(name="selectedNumber",value = "挑选数量")
-    @Excel(name = "挑选数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "挑选数量", height = 20, width = 30,orderNum="9")
     @Column(name = "selected_number")
     private BigDecimal selectedNumber;
 
@@ -94,7 +94,6 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 挑选人
      */
     @ApiModelProperty(name="selectedPerson",value = "挑选人")
-    @Excel(name = "挑选人", height = 20, width = 30,orderNum="")
     @Column(name = "selected_person")
     private Long selectedPerson;
 
@@ -102,7 +101,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 挑选时间
      */
     @ApiModelProperty(name="selectedTime",value = "挑选时间")
-    @Excel(name = "挑选时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "挑选时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "selected_time")
     private Date selectedTime;
@@ -111,7 +110,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="11")
     private String remark;
 
     /**
@@ -131,7 +130,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -147,7 +146,7 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

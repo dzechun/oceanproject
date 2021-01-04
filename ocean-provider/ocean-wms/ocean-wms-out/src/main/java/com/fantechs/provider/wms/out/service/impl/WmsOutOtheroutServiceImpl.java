@@ -7,12 +7,14 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutOtheroutDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutOtheroutMapper;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutDetService;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutService;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,8 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
 
     @Resource
     private WmsOutOtheroutMapper wmsOutOtheroutMapper;
+    @Resource
+    private WmsOutHtOtheroutMapper wmsOutHtOtheroutMapper;
     @Resource
     private WmsOutOtheroutDetService wmsOutOtheroutDetService;
 
@@ -53,14 +58,16 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
 
         int i = wmsOutOtheroutMapper.insertUseGeneratedKeys(wmsOutOtherout);
 
-        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
-        for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
-            if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDetList();
+        if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
+            for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
+                if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                }
+                wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
             }
-            wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDetList());
         }
-        wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDets());
 
         return i;
     }
@@ -77,9 +84,22 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         wmsOutOtherout.setModifiedUserId(user.getUserId());
 
         //批量更新其他出库单明细
-        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
+        //删除原本保存的杂出单明细
+        Example example = new Example(WmsOutOtheroutDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("otheroutId",wmsOutOtherout.getOtheroutId());
+//        List<WmsOutOtheroutDet> wmsOutOtheroutDets1 = wmsOutOtheroutDetService.selectByExample(example);
+        wmsOutOtheroutDetService.deleteByExample(example);
+        //批量新增杂出明细
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDetList();
         if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
-            wmsOutOtheroutDetService.batchUpdate(wmsOutOtheroutDets);
+            for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
+                if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                }
+                wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+            }
+            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDetList());
         }
         return wmsOutOtheroutMapper.updateByPrimaryKeySelective(wmsOutOtherout);
     }
@@ -122,5 +142,10 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         }
 
         return wmsOutOtheroutDtos;
+    }
+
+    @Override
+    public List<WmsOutHtOtherout> findHTList(Map<String, Object> map) {
+        return wmsOutHtOtheroutMapper.findHTList(map);
     }
 }

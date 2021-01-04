@@ -5,9 +5,11 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtheroutDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutOtheroutDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutDetService;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
 
     @Resource
     private WmsOutOtheroutDetMapper wmsOutOtheroutDetMapper;
+    @Resource
+    private WmsOutHtOtheroutDetMapper wmsOutHtOtheroutDetMapper;
 
     @Override
     public int save(WmsOutOtheroutDet wmsOutOtheroutDet) {
@@ -97,5 +101,10 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
     @Override
     public int batchUpdate(List<WmsOutOtheroutDet> wmsOutOtheroutDets) {
         return wmsOutOtheroutDetMapper.batchUpdate(wmsOutOtheroutDets);
+    }
+
+    @Override
+    public List<WmsOutHtOtheroutDet> findHTList(Map<String, Object> map) {
+        return wmsOutHtOtheroutDetMapper.findHTList(map);
     }
 }

@@ -77,11 +77,21 @@
         <foreach collection="list" item="item" open="" close="" index="index" separator=";">
             update smt_sorting
             <set>
-                sorting_code=#{item.sortingCode},
-                work_order_code=#{item.workOrderCode},
-                material_code=#{item.sortingId},
-                quantity=#{item.quantity},
-                status=#{item.status}
+                <if test="sortingCode!=null and sortingCode!=''">
+                    sorting_code=#{item.sortingCode},
+                </if>
+                <if test="workOrderCode!=null and workOrderCode!=''">
+                    work_order_code=#{item.workOrderCode},
+                </if>
+                <if test="sortingId!=null and sortingId!=''">
+                    sorting_id=#{item.sortingId},
+                </if>
+                <if test="quantity!=null and quantity!=''">
+                    quantity=#{item.quantity},
+                </if>
+                <if test="status!=null and status!=''">
+                    status=#{item.status}
+                </if>
             </set>
             where sorting_id=#{item.sortingId}
         </foreach>

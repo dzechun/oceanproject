@@ -7,12 +7,14 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProductDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProductDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutFinishedProductDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.mapper.WmsOutFinishedProductDetMapper;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtFinishedProductDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutFinishedProductDetService;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ public class WmsOutFinishedProductDetServiceImpl extends BaseService<WmsOutFinis
 
     @Resource
     private WmsOutFinishedProductDetMapper wmsOutFinishedProductDetMapper;
+    @Resource
+    private WmsOutHtFinishedProductDetMapper wmsOutHtFinishedProductDetMapper;
 
     @Override
     public int save(WmsOutFinishedProductDet wmsOutFinishedProductDet) {
@@ -77,5 +81,10 @@ public class WmsOutFinishedProductDetServiceImpl extends BaseService<WmsOutFinis
     @Override
     public List<WmsOutFinishedProductDetDto> findList(Map<String, Object> map) {
         return wmsOutFinishedProductDetMapper.findList(map);
+    }
+
+    @Override
+    public List<WmsOutHtFinishedProductDet> findHTList(Map<String, Object> map) {
+        return wmsOutHtFinishedProductDetMapper.findHTList(map);
     }
 }

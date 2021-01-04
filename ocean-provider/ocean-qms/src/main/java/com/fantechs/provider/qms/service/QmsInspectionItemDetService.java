@@ -1,5 +1,6 @@
 package com.fantechs.provider.qms.service;
 
+import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDetDto;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
 import com.fantechs.common.base.support.IService;
 
@@ -13,5 +14,5 @@ import java.util.Map;
 
 public interface QmsInspectionItemDetService extends IService<QmsInspectionItemDet> {
 
-    List<QmsInspectionItemDet> findList(Map<String, Object> map);
+    List<QmsInspectionItemDetDto> findList(Map<String, Object> map);
 }

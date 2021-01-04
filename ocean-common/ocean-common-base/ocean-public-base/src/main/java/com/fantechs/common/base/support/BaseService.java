@@ -243,7 +243,7 @@ public abstract class BaseService<T> implements IService<T> {
 	 */
 	@Override
 	public int deleteByExample(Object example) {
-		return mapper.deleteByPrimaryKey(example);
+		return mapper.deleteByExample(example);
 	}
 
 	/**

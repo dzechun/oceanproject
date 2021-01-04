@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -61,6 +62,13 @@ public class SmtHtDept implements Serializable {
     @Transient
     @ApiModelProperty(name="factoryName" ,value="厂别名称")
     private String factoryName;
+
+    /**
+     * 父级ID
+     */
+    @ApiModelProperty(name="parentId",value = "父级ID")
+    @Column(name = "parent_id")
+    private Long parentId;
 
     /**
      * 状态
