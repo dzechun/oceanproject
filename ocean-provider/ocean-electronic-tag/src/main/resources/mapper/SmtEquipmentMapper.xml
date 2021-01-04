@@ -9,6 +9,7 @@
         <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
         <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
         <result column="equipment_data" jdbcType="VARCHAR" property="equipmentData"/>
+        <result column="client_id" jdbcType="BIGINT" property="clientId"/>
         <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
         <result column="equipment_port" jdbcType="VARCHAR" property="equipmentPort"/>
         <result column="equipment_type" jdbcType="TINYINT" property="equipmentType"/>
