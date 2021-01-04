@@ -18,6 +18,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutOtheroutMapper;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutDetService;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -55,20 +56,25 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         wmsOutOtherout.setModifiedUserId(user.getUserId());
         wmsOutOtherout.setModifiedTime(new Date());
         wmsOutOtherout.setStatus(StringUtils.isEmpty(wmsOutOtherout.getStatus())?1:wmsOutOtherout.getStatus());
-
+        //新增其他出库单
         int i = wmsOutOtheroutMapper.insertUseGeneratedKeys(wmsOutOtherout);
 
-        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDetList();
+        //新增其他出库单履历
+        WmsOutHtOtherout wmsOutHtOtherout = new WmsOutHtOtherout();
+        BeanUtils.copyProperties(wmsOutOtherout,wmsOutHtOtherout);
+        wmsOutHtOtheroutMapper.insert(wmsOutHtOtherout);
+
+        //新增其他出库单明细
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
         if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
             for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
                 if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100);
                 }
                 wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+                wmsOutOtheroutDetService.save(wmsOutOtheroutDet);
             }
-            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDetList());
         }
-
         return i;
     }
 
@@ -83,23 +89,25 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         wmsOutOtherout.setModifiedTime(new Date());
         wmsOutOtherout.setModifiedUserId(user.getUserId());
 
-        //批量更新其他出库单明细
         //删除原本保存的杂出单明细
         Example example = new Example(WmsOutOtheroutDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("otheroutId",wmsOutOtherout.getOtheroutId());
-//        List<WmsOutOtheroutDet> wmsOutOtheroutDets1 = wmsOutOtheroutDetService.selectByExample(example);
-        wmsOutOtheroutDetService.deleteByExample(example);
-        //批量新增杂出明细
-        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDetList();
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets1 = wmsOutOtheroutDetService.selectByExample(example);
+        for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets1) {
+            wmsOutOtheroutDetService.batchDelete(String.valueOf(wmsOutOtheroutDet.getOtheroutDetId()));
+        }
+
+        //新增其他出库单明细
+        List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
         if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
             for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
                 if (StringUtils.isEmpty(wmsOutOtheroutDet.getMaterialId(),wmsOutOtherout.getOtheroutId())){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100);
                 }
                 wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
+                wmsOutOtheroutDetService.save(wmsOutOtheroutDet);
             }
-            wmsOutOtheroutDetService.batchSave(wmsOutOtherout.getWmsOutOtheroutDetList());
         }
         return wmsOutOtheroutMapper.updateByPrimaryKeySelective(wmsOutOtherout);
     }
@@ -123,8 +131,16 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
             criteria.andEqualTo("otheroutId",id);
             List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtheroutDetService.selectByExample(example);
             if (StringUtils.isNotEmpty(wmsOutOtheroutDets)){
-                wmsOutOtheroutDetService.batchDelete(wmsOutOtheroutDets);
+                for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets) {
+                    //删除其他出库单对应的明细
+                    wmsOutOtheroutDetService.batchDelete(String.valueOf(wmsOutOtheroutDet.getOtheroutDetId()));
+                }
             }
+
+            //新增其他出库单历史
+            WmsOutHtOtherout wmsOutHtOtherout = new WmsOutHtOtherout();
+            BeanUtils.copyProperties(wmsOutOtherout,wmsOutHtOtherout);
+            wmsOutHtOtheroutMapper.insert(wmsOutHtOtherout);
         }
 
         return wmsOutOtheroutMapper.deleteByIds(ids);

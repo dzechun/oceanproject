@@ -9,8 +9,6 @@
     <result column="work_shift_code" jdbcType="VARCHAR" property="workShiftCode" />
     <result column="work_shift_name" jdbcType="VARCHAR" property="workShiftName" />
     <result column="work_shift_desc" jdbcType="VARCHAR" property="workShiftDesc" />
-    <result column="start_time" jdbcType="TIME" property="startTime" />
-    <result column="end_time" jdbcType="TIME" property="endTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -29,8 +27,6 @@
 	bws.work_shift_code,
 	bws.work_shift_name,
 	bws.work_shift_desc,
-	bws.start_time,
-	bws.end_time,
 	bws.`status`,
 	bws.create_user_id,
 	bws.create_time,
