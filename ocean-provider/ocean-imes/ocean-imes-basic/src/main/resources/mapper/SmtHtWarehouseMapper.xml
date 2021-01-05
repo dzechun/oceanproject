@@ -7,6 +7,10 @@
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="warehouse_desc" jdbcType="VARCHAR" property="warehouseDesc" />
+    <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory" />
+    <result column="capacity" jdbcType="DECIMAL" property="capacity" />
+    <result column="temperature" jdbcType="DECIMAL" property="temperature" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -23,6 +27,7 @@
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse" resultMap="BaseResultMap">
     select  shw.ht_warehouse_id,shw.warehouse_id,shw.warehouse_code,shw.warehouse_name,shw.warehouse_desc,shw.status,shw.create_user_id,
+    shw.warehouse_category,shw.capacity,shw.temperature,shw.unit,
     u.user_name as createUserName,shw.create_time,shw.modified_user_id, s.user_name as modifiedUserName,
     shw.modified_time, shw.is_delete, shw.organization_id, shw.remark, bo.organization_name
     from fantech_imes.smt_ht_warehouse shw

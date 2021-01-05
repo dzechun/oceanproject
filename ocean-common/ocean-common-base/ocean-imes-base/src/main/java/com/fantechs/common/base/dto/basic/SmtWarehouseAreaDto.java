@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -45,4 +46,11 @@ public class SmtWarehouseAreaDto extends SmtWarehouseArea implements Serializabl
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 仓库类型
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseCategory",value = "仓库类型")
+    private Long warehouseCategory;
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -51,6 +52,35 @@ public class SmtWarehouse extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "warehouseDesc",value = "仓库描述")
     @Excel(name = "仓库描述", height = 20, width = 30)
     private String warehouseDesc;
+
+    /**
+     * 仓库类型
+     */
+    @ApiModelProperty(name="warehouseCategory",value = "仓库类型")
+    @Excel(name = "仓库类型", height = 20, width = 30)
+    @Column(name = "warehouse_category")
+    private Long warehouseCategory;
+
+    /**
+     * 容量
+     */
+    @ApiModelProperty(name="capacity",value = "容量")
+    @Excel(name = "容量", height = 20, width = 30)
+    private BigDecimal capacity;
+
+    /**
+     * 温度
+     */
+    @ApiModelProperty(name="temperature",value = "温度")
+    @Excel(name = "温度", height = 20, width = 30)
+    private BigDecimal temperature;
+
+    /**
+     * 单位
+     */
+    @ApiModelProperty(name="unit",value = "单位")
+    @Excel(name = "单位", height = 20, width = 30)
+    private String unit;
 
     /**
      * 组织id

@@ -8,6 +8,10 @@
     <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
     <result column="level" jdbcType="VARCHAR" property="level" />
     <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc" />
+    <result column="capacity" jdbcType="DECIMAL" property="capacity" />
+    <result column="temperature" jdbcType="DECIMAL" property="temperature" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -27,7 +31,8 @@
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorage" resultMap="BaseResultMap">
     select  shs.ht_storage_id,shs.storage_id,shs.storage_code,shs.storage_name,shs.level,shs.storage_desc,shs.warehouse_id,sw.warehouse_name as warehouseName,
-    shs.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,shs.status,shs.create_user_id,u.user_name as createUserName,
+    shs.warehouse_area_id,shs.warehouse_state,shs.capacity,shs.temperature,shs.unit,
+    swa.warehouse_area_name as warehouseAreaName,shs.status,shs.create_user_id,u.user_name as createUserName,
     shs.create_time,shs.modified_user_id, s.user_name as modifiedUserName,shs.modified_time, shs.is_delete, shs.organization_id,
     shs.remark, bo.organization_name
     from fantech_imes.smt_ht_storage shs

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -82,6 +83,13 @@ public class SmtStorage extends ValidGroup implements Serializable {
     private String warehouseCode;
 
     /**
+     * 仓库类型
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseCategory",value = "仓库类型")
+    private Long warehouseCategory;
+
+    /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
@@ -103,6 +111,34 @@ public class SmtStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域名编码")
     @Excel(name = "仓库区域名编码", height = 20, width = 30)
     private String warehouseAreaCode;
+
+    /**
+     * 容量
+     */
+    @ApiModelProperty(name="capacity",value = "容量")
+    @Excel(name = "容量", height = 20, width = 30)
+    private BigDecimal capacity;
+
+    /**
+     * 温度
+     */
+    @ApiModelProperty(name="temperature",value = "温度")
+    @Excel(name = "温度", height = 20, width = 30)
+    private BigDecimal temperature;
+
+    /**
+     * 单位
+     */
+    @ApiModelProperty(name="unit",value = "单位")
+    @Excel(name = "单位", height = 20, width = 30)
+    private String unit;
+
+    /**
+     * 仓库状态（0、储存 1、领用 2、出货）
+     */
+    @ApiModelProperty(name="status",value = "仓库状态（0、储存 1、领用 2、出货）")
+    @Column(name = "warehouse_state")
+    private Byte warehouseState;
 
     /**
      * 组织id
