@@ -1,7 +1,13 @@
 package com.fantechs.provider.wms.storageBills.controller.history;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.history.ExportHtBillsDTO;
 import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDetDTO;
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.utils.EasyPoiUtils;
+import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsDetService;
 import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsService;
 import com.fantechs.common.base.dto.apply.history.SearchWmsInHtStorageBillsListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -15,6 +21,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
 import java.util.List;
 /**
  * @Auther: bingo.ren
@@ -30,6 +38,8 @@ public class WmsInHtStorageBillsController {
 
     @Resource
     private WmsInHtStorageBillsService wmsHtStorageBillsService;
+    @Resource
+    private WmsInHtStorageBillsDetService wmsInHtStorageBillsDetService;
 
     @ApiOperation("查询履历仓库清单表列表")
     @PostMapping("list")
@@ -68,11 +78,26 @@ public class WmsInHtStorageBillsController {
         return ControllerUtil.returnCRUD(wmsHtStorageBillsService.update(wmsHtStorageBills));
     }
 
-//    导出需要用到easyPOI
-//    @PostMapping(value = "export",produces = "application/octet-stream")
-//    @ApiOperation(value = "导出EXCEL")
-//    public void export(HttpServletResponse response){
-//        List<WmsHtStorageBills> wmsHtStorageBillss = wmsHtStorageBillsService.selectAll(null);
-//        EasyPoiUtils.exportExcel(wmsHtStorageBillss,"履历仓库清单表信息","履历仓库清单表信息", WmsHtStorageBills.class, "履历仓库清单表信息.xls", response);
-//    }
+    @PostMapping(value = "export",produces = "application/octet-stream")
+    @ApiOperation(value = "导出EXCEL")
+    public void export(
+            @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchWmsInHtStorageBillsListDTO searchWmsHtStorageBillsListDTO,
+            @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
+            @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize,
+            HttpServletResponse response){
+        Page<Object> page = PageHelper.startPage(startPage, pageSize);
+        List<WmsInHtStorageBillsDTO> wmsHtStorageBillsDTOList = wmsHtStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsHtStorageBillsListDTO));
+        if(StringUtils.isEmpty(wmsHtStorageBillsDTOList)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012007);
+        }
+        List<ExportHtBillsDTO> exportBillsDTOList=new LinkedList<>();
+        for (WmsInHtStorageBillsDTO wmsInHtStorageBillsDTO : wmsHtStorageBillsDTOList) {
+            ExportHtBillsDTO exportHtBillsDTO=new ExportHtBillsDTO();
+            exportHtBillsDTO.setWmsInHtStorageBillsDTO(wmsInHtStorageBillsDTO);
+            List<WmsInHtStorageBillsDetDTO> wmsInHtStorageBillsDetDTOList = wmsInHtStorageBillsDetService.selectFilterAll(wmsInHtStorageBillsDTO.getStorageBillsId());
+            exportHtBillsDTO.setWmsInHtStorageBillsDetDTOList(wmsInHtStorageBillsDetDTOList);
+            exportBillsDTOList.add(exportHtBillsDTO);
+        }
+        EasyPoiUtils.exportExcel(exportBillsDTOList,"仓库清单履历表信息","仓库清单履历表信息", ExportHtBillsDTO.class, "仓库清单履历表信息.xls", response);
+    }
 }

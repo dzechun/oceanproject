@@ -13,7 +13,6 @@
         <result column="type" jdbcType="INTEGER" property="type" />
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
         <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="allow_batch" jdbcType="TINYINT" property="allowBatch" />
         <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
@@ -66,7 +65,7 @@
    whsb.modified_user_id,
    su3.user_name as modifiedUserName,
    whsb.modified_time,
-   whsb.organization_name
+   bo.organization_name
    FROM
    wms_in_ht_storage_bills AS whsb
    LEFT JOIN smt_supplier smts on smts.supplier_id = whsb.supplier_id
@@ -92,6 +91,12 @@
      </if>
      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
        AND whsb.create_time = #{startTime} AND whsb.modified_time = #{endTime}
+     </if>
+     <if test="supplierCode != null and supplierCode != ''">
+       AND smts.supplier_code = #{supplierCode}
+     </if>
+     <if test="supplierName != null and supplierName != ''">
+       AND smts.supplier_name = #{supplierName}
      </if>
      AND whsb.is_delete=1
    </where>

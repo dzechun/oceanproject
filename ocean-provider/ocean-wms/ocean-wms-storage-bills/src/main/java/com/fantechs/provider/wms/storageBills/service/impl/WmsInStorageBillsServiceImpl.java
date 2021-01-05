@@ -11,6 +11,7 @@ import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.SQLExecuteException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -26,6 +27,8 @@ import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -173,31 +176,41 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
     @Transactional(rollbackFor = Exception.class)
     public int saveDouble(SaveDoubleBillsDTO saveDoubleBillsDTO) throws SQLExecuteException {
         WmsInStorageBills wmsInStorageBills = saveDoubleBillsDTO.getWmsInStorageBills();
+        List<WmsInStorageBillsDet> wmsInStorageBillsDetList = saveDoubleBillsDTO.getWmsInStorageBillsDetList();
         if(StringUtils.isEmpty(wmsInStorageBills.getStorageBillsId())){
             //ID为空做新增
             if(this.save(wmsInStorageBills)<=0){
                 return 0;
             }
-            List<WmsInStorageBillsDet> wmsInStorageBillsDetList = saveDoubleBillsDTO.getWmsInStorageBillsDetList();
-            if(StringUtils.isNotEmpty(wmsInStorageBillsDetList)){
-                for (WmsInStorageBillsDet wmsInStorageBillsDet : wmsInStorageBillsDetList) {
-                    wmsInStorageBillsDet.setStorageBillsId(wmsInStorageBills.getStorageBillsId());
-                }
-                if(wmsStorageBillsDetService.batchSave(wmsInStorageBillsDetList)<=0){
-                    log.error("添加仓库清单详情数据错误："+ JSONObject.toJSONString(wmsInStorageBillsDetList));
-                    throw new SQLExecuteException(ErrorCodeEnum.OPT20012006,"添加仓库清单详情数据错误");
-                }
-            }
-        }else{
+        }else {
             //更新
-            if(this.update(wmsInStorageBills)<=0){
+            if (this.update(wmsInStorageBills) <= 0) {
                 return 0;
             }
-            SaveBillsDetDTO saveBillsDetDTO = new SaveBillsDetDTO();
-            saveBillsDetDTO.setStorageBillsId(wmsInStorageBills.getStorageBillsId());
-            saveBillsDetDTO.setWmsStorageBillsDetList(saveDoubleBillsDTO.getWmsInStorageBillsDetList());
-            pdaSaveBilssDet(saveBillsDetDTO);
         }
+        //删除仓库清单下的所有详情信息，重新新增
+        wmsStorageBillsDetService.deleteByMap(ControllerUtil.dynamicCondition("storageBillsId",wmsInStorageBills.getStorageBillsId()));
+
+        //=====如果不为空则重新全部进行新增
+        if(StringUtils.isNotEmpty(wmsInStorageBillsDetList)){
+            for (WmsInStorageBillsDet wmsInStorageBillsDet : wmsInStorageBillsDetList) {
+                wmsInStorageBillsDet.setStorageBillsId(wmsInStorageBills.getStorageBillsId());
+                wmsInStorageBillsDet.setCreateTime(new Date());
+                wmsInStorageBillsDet.setModifiedTime(new Date());
+                wmsInStorageBillsDet.setIsDelete((byte)1);
+            }
+            if(wmsStorageBillsDetService.batchSave(wmsInStorageBillsDetList)<=0){
+                log.error("添加仓库清单详情数据错误："+ JSONObject.toJSONString(wmsInStorageBillsDetList));
+                throw new SQLExecuteException(ErrorCodeEnum.OPT20012006,"添加仓库清单详情数据错误");
+            }
+        }
+        //=====
+
+        //重新计算各种数据下的各种状态
+        SaveBillsDetDTO saveBillsDetDTO = new SaveBillsDetDTO();
+        saveBillsDetDTO.setStorageBillsId(wmsInStorageBills.getStorageBillsId());
+        saveBillsDetDTO.setWmsStorageBillsDetList(wmsInStorageBillsDetList);
+        pdaSaveBilssDet(saveBillsDetDTO);
         return 1;
     }
 
