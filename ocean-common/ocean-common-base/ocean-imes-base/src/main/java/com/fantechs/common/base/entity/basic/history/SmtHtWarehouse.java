@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "smt_ht_warehouse")
@@ -50,6 +52,35 @@ public class SmtHtWarehouse implements Serializable {
     @Column(name = "warehouse_desc")
     @ApiModelProperty(name = "warehouseDesc",value = "仓库描述")
     private String warehouseDesc;
+
+    /**
+     * 仓库类型
+     */
+    @ApiModelProperty(name="warehouseCategory",value = "仓库类型")
+    @Excel(name = "仓库类型", height = 20, width = 30)
+    @Column(name = "warehouse_category")
+    private Long warehouseCategory;
+
+    /**
+     * 容量
+     */
+    @ApiModelProperty(name="capacity",value = "容量")
+    @Excel(name = "容量", height = 20, width = 30)
+    private BigDecimal capacity;
+
+    /**
+     * 温度
+     */
+    @ApiModelProperty(name="temperature",value = "温度")
+    @Excel(name = "温度", height = 20, width = 30)
+    private BigDecimal temperature;
+
+    /**
+     * 单位
+     */
+    @ApiModelProperty(name="unit",value = "单位")
+    @Excel(name = "单位", height = 20, width = 30)
+    private String unit;
 
     /**
      * 组织id

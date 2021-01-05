@@ -89,7 +89,7 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         wmsOutOtherout.setModifiedTime(new Date());
         wmsOutOtherout.setModifiedUserId(user.getUserId());
 
-        //删除原本保存的杂出单明细
+        //删除原本保存的其他出库单明细
         Example example = new Example(WmsOutOtheroutDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("otheroutId",wmsOutOtherout.getOtheroutId());
@@ -97,6 +97,11 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
         for (WmsOutOtheroutDet wmsOutOtheroutDet : wmsOutOtheroutDets1) {
             wmsOutOtheroutDetService.batchDelete(String.valueOf(wmsOutOtheroutDet.getOtheroutDetId()));
         }
+
+        //新增其他出库单历史
+        WmsOutHtOtherout wmsOutHtOtherout = new WmsOutHtOtherout();
+        BeanUtils.copyProperties(wmsOutOtherout,wmsOutHtOtherout);
+        wmsOutHtOtheroutMapper.insertSelective(wmsOutHtOtherout);
 
         //新增其他出库单明细
         List<WmsOutOtheroutDet> wmsOutOtheroutDets = wmsOutOtherout.getWmsOutOtheroutDets();
