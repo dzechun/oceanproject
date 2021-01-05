@@ -13,7 +13,6 @@
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
         <result column="allow_batch" jdbcType="TINYINT" property="allowBatch" />
         <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
         <result column="send_user_name" jdbcType="VARCHAR" property="sendUserName" />
@@ -57,9 +56,9 @@
     wsb.create_time,
     wsb.modified_user_id,
     su3.user_name as modifiedUserName,
-    wsb.modified_time
-    wsb.organization_id,
-    wsb.remark,
+    wsb.modified_time,
+    bo.organization_name,
+    wsb.remark
     FROM
     wms_in_storage_bills AS wsb
     LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
