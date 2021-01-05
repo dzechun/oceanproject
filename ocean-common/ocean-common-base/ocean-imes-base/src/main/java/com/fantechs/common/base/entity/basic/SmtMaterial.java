@@ -89,6 +89,14 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     private Integer materialSource;
 
     /**
+     * 物料属性(0.半成品 1.成品)
+     */
+    @Column(name = "material_property")
+    @ApiModelProperty(name="materialProperty" ,value="物料属性(0.半成品 1.成品)")
+    @Excel(name = "物料属性", height = 20, width = 30,replace = {"半成品_0", "成品_1"})
+    private Integer materialProperty;
+
+    /**
      * 条码规则集合ID
      */
     @Column(name = "barcode_rule_id")
@@ -134,6 +142,20 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="transferQuantity" ,value="移转数量")
     @NotNull(message = "移转数量不能为空")
     private Integer transferQuantity;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
 
     /**
      * 状态（0、无效 1、有效）

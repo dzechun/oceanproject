@@ -69,4 +69,10 @@ public class SmtSortingDto extends SmtSorting implements Serializable {
     @Transient
     private String electronicTagId;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

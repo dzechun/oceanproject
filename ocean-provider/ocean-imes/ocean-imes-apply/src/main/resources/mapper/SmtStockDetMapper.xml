@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtStockDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtStockDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="stock_det_id" jdbcType="BIGINT" property="stockDetId" />
-    <result column="stock_id" jdbcType="BIGINT" property="stockId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="plan_quantity" jdbcType="DECIMAL" property="planQuantity" />
-    <result column="stock_quantity" jdbcType="DECIMAL" property="stockQuantity" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtStockDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="stock_det_id" jdbcType="BIGINT" property="stockDetId"/>
+        <result column="stock_id" jdbcType="BIGINT" property="stockId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="plan_quantity" jdbcType="DECIMAL" property="planQuantity"/>
+        <result column="stock_quantity" jdbcType="DECIMAL" property="stockQuantity"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.apply.SmtStockDetDto">
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="unit" jdbcType="VARCHAR" property="unit"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-  </resultMap>
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.apply.SmtStockDetDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
+    <sql id="Base_Column_List">
   ssd.stock_det_id, ssd.stock_id, ssd.material_id, ssd.plan_quantity, ssd.stock_quantity, ssd.status, ssd.create_user_id,
-  ssd.create_time, ssd.modified_user_id, ssd.modified_time, ssd.is_delete, ssd.option1, ssd.option2, ssd.option3
+  ssd.create_time, ssd.modified_user_id, ssd.modified_time, ssd.is_delete, ssd.option1, ssd.option2, ssd.option3, ssd.organization_id,
+  ssd.remark,
 </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtStockDet">
-    select <include refid="Base_Column_List"/>,sm.material_code,sm.version,sm.material_desc,sm.unit,su.user_name as createName,su.user_name
-      FROM smt_stock_det ssd
-      LEFT JOIN smt_material sm ON ssd.material_id = sm.material_id
-      LEFT JOIN ocean.sys_user su ON ssd.create_user_id = su.user_id
-      LEFT JOIN ocean.sys_user sus ON ssd.modified_user_id = sus.user_id
-      <where>
-        1=1
-        <if test="stockId!=null and stockId!=''">
-          and ssd.stock_id = #{stockId}
-        </if>
-      </where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto"
+            parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtStockDet">
+        select<include refid="Base_Column_List"/>,sm.material_code,sm.version,sm.material_desc,sm.unit,su.user_name as
+        createName,su.user_name, bo.organization_name
+        FROM smt_stock_det ssd
+        LEFT JOIN smt_material sm ON ssd.material_id = sm.material_id
+        LEFT JOIN ocean.sys_user su ON ssd.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON ssd.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON ssd.organization_id = bo.organization_id
+        <where>
+            1=1
+            <if test="stockId!=null and stockId!=''">
+                and ssd.stock_id = #{stockId}
+            </if>
+        </where>
+    </select>
 
-  <update id="updateBatch"  parameterType="java.util.List">
-    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-      update smt_stock_det
-      <set>
-        plan_quantity = #{item.planQuantity}
-      </set>
-      <set>
-        stock_quantity = #{item.stockQuantity}
-      </set>
-      where stock_det_id = ${item.stockDetId}
-    </foreach>
-  </update>
+    <update id="updateBatch" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update smt_stock_det
+            <set>
+                plan_quantity = #{item.planQuantity}
+            </set>
+            <set>
+                stock_quantity = #{item.stockQuantity}
+            </set>
+            where stock_det_id = ${item.stockDetId}
+        </foreach>
+    </update>
 </mapper>

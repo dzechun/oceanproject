@@ -38,4 +38,11 @@ public class SmtWarehouseAreaDto extends SmtWarehouseArea implements Serializabl
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
     private String  warehouseName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

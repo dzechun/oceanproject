@@ -131,4 +131,26 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="qualificationId" ,value="资质ID")
     private Long qualificationId;
 
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Transient
+    private String organizationName;
+
 }

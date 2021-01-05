@@ -47,4 +47,11 @@ public class WmsInStorageBillsDTO extends WmsInStorageBills implements Serializa
     @ApiModelProperty(value = "收货人名称")
     @Excel(name = "收货人名称")
     private String acceptUserName;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Transient
+    private String organizationName;
 }

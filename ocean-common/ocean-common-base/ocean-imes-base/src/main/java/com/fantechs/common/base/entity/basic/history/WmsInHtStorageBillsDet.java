@@ -68,6 +68,13 @@ public class WmsInHtStorageBillsDet implements Serializable {
     private java.math.BigDecimal realIncomeTotal;
 
     /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
     * 入库状态（1、待完成 2、进行中 3、完成 4、未完成）
     */
     @ApiModelProperty(value = "入库状态（1、待完成 2、进行中 3、完成 4、未完成）",example = "入库状态（1、待完成 2、进行中 3、完成 4、未完成）")

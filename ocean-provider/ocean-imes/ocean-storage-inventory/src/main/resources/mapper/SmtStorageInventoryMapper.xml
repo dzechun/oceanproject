@@ -11,6 +11,8 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDto">
@@ -20,21 +22,24 @@
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
 
     <sql id="Base_Column_List">
         ssi.storing_inventory_id,ssi.storage_id,ssi.material_id,ssi.level,ssi.quantity,
-        ssi.create_user_id,ssi.create_time,ssi.modified_user_id,ssi.modified_time
+        ssi.create_user_id,ssi.create_time,ssi.modified_user_id,ssi.modified_time, ssi.organization_id,
+	    ssi.remark,
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        ss.storage_name,ss.storage_code,sm.material_desc,sm.version
+        ss.storage_name,ss.storage_code,sm.material_desc,sm.version, bo.organization_name
         FROM smt_storage_inventory ssi
         LEFT JOIN ocean.sys_user su ON ssi.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON ssi.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssi.storage_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssi.material_id
+        LEFT JOIN fantech_imes.base_organization bo ON ssi.organization_id = bo.organization_id
         <where>
             <if test="materialDesc!= null and materialDesc !='' ">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')

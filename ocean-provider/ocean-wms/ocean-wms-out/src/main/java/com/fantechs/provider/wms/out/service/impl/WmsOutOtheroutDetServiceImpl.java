@@ -47,7 +47,7 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
 
         WmsOutHtOtheroutDet wmsOutHtOtheroutDet = new WmsOutHtOtheroutDet();
         BeanUtils.copyProperties(wmsOutOtheroutDet,wmsOutHtOtheroutDet);
-        wmsOutHtOtheroutDetMapper.insert(wmsOutHtOtheroutDet);
+        wmsOutHtOtheroutDetMapper.insertSelective(wmsOutHtOtheroutDet);
 
         return i;
     }
@@ -103,7 +103,7 @@ public class WmsOutOtheroutDetServiceImpl extends BaseService<WmsOutOtheroutDet>
             //新增其他出库单明细履历
             WmsOutHtOtheroutDet wmsOutHtOtheroutDet = new WmsOutHtOtheroutDet();
             BeanUtils.copyProperties(wmsOutOtheroutDet,wmsOutHtOtheroutDet);
-            wmsOutHtOtheroutDetMapper.insert(wmsOutHtOtheroutDet);
+            wmsOutHtOtheroutDetMapper.insertSelective(wmsOutHtOtheroutDet);
         }
 
         return wmsOutOtheroutDetMapper.deleteByIds(ids);

@@ -19,6 +19,8 @@
         <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
         <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime"/>
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -41,6 +43,7 @@
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <resultMap id="BomResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBomDet">
@@ -84,8 +87,8 @@
         swo.barcode_rule_set_id,sbrs.barcode_rule_set_name,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
         u.user_name as create_user_name,swo.create_time,
         swo.modified_user_id,s.user_name as
-        modified_user_name,swo.modified_time,so.order_code
-        swo.is_delete
+        modified_user_name,swo.modified_time,so.order_code, swo.is_delete, swo.organization_id, swo.remark,
+        bo.organization_name
         from fantech_imes.smt_work_order swo
         left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
         left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
@@ -94,6 +97,7 @@
         left join smt_order so on so.order_id = swo.order_id
         left join ocean.sys_user u on swo.create_user_id=u.user_id
         left join ocean.sys_user s on swo.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON swo.organization_id = bo.organization_id
         <where>
             1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

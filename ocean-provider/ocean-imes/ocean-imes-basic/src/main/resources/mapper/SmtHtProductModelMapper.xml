@@ -7,6 +7,8 @@
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
     <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -22,22 +24,24 @@
     <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode" />
     <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName" />
     <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <sql id="Base_Column_List">
     ht_product_model_id, product_model_id, product_model_code, product_model_name, product_model_desc, 
     status, create_user_id, create_time, modified_user_id, modified_time, option1, option2, 
-    option3
+    option3, organization_id, remark
   </sql>
 
   <select id="selectHtProductModels" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductModel" resultMap="BaseResultMap">
     select shpm.ht_product_model_id, shpm.product_model_id,shpm.product_model_code, shpm.product_model_name, shpm.product_model_desc,
     shpm.product_family_id, bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
     shpm.status, shpm.create_user_id, u.user_name as createUserName,shpm.create_time, shpm.modified_user_id,
-    s.user_name as modifiedUserName,shpm.modified_time
+    s.user_name as modifiedUserName,shpm.modified_time, shpm.organization_id, shpm.remark, bo.organization_name
     from fantech_imes.smt_ht_product_model shpm
     left join ocean.sys_user u on shpm.create_user_id=u.user_id
     left join ocean.sys_user s on shpm.modified_user_id=s.user_id
     left join fantech_imes.base_product_family bpf on shpm.product_family_id = bpf.product_family_id
+    LEFT JOIN fantech_imes.base_organization bo ON shpm.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

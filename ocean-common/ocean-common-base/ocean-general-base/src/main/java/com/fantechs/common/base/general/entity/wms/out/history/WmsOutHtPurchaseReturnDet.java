@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -98,6 +99,27 @@ public class WmsOutHtPurchaseReturnDet implements Serializable {
     @Excel(name = "仓库管理员ID", height = 20, width = 30,orderNum="") 
     @Column(name = "warehouse_user_id")
     private Long warehouseUserId;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Transient
+    private String organizationName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
 
     /**
      * 是否有效（0、无效 1、有效）

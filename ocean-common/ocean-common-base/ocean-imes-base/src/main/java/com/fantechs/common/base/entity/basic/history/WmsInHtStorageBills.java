@@ -139,6 +139,13 @@ public class WmsInHtStorageBills implements Serializable {
     private java.util.Date billsTime;
 
     /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
     * 备注
     */
     @ApiModelProperty(value = "备注",example = "备注")

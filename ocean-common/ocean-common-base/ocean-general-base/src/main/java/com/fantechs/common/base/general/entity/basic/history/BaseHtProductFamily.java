@@ -59,6 +59,27 @@ public class BaseHtProductFamily implements Serializable {
     private String productFamilyDesc;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Transient
+    private String organizationName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 工厂（0、不启用 1、启用）
      */
     @ApiModelProperty(name="status",value = "工厂（0、不启用 1、启用）")

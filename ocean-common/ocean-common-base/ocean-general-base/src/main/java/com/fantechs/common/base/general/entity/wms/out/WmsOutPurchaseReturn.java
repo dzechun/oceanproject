@@ -42,11 +42,11 @@ public class WmsOutPurchaseReturn extends ValidGroup implements Serializable {
     private String purchaseReturnCode;
 
     /**
-     * 供应商ID
+     * 供应商Id
      */
-    @ApiModelProperty(name="customerId",value = "供应商ID")
-    @Column(name = "customer_id")
-    private Long customerId;
+    @ApiModelProperty(name="supplierId",value = "供应商Id")
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     /**
      * 采购员ID
@@ -88,6 +88,20 @@ public class WmsOutPurchaseReturn extends ValidGroup implements Serializable {
     @Excel(name = "单据状态（0-待退货 1-退货中 2-退货完成）", height = 20, width = 30,orderNum="8")
     @Column(name = "return_status")
     private Byte returnStatus;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
 
     /**
      * 是否有效（0、无效 1、有效）

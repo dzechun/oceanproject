@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -91,6 +92,27 @@ public class WmsOutHtPurchaseReturn implements Serializable {
     @Excel(name = "单据状态（0-待退货 1-退货中 2-退货完成）", height = 20, width = 30,orderNum="") 
     @Column(name = "return_status")
     private Byte returnStatus;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Transient
+    private String organizationName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
 
     /**
      * 是否有效（0、无效 1、有效）

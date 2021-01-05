@@ -21,6 +21,7 @@
     <result column="test_method" jdbcType="BIGINT" property="testMethod" />
     <result column="test_times" jdbcType="DECIMAL" property="testTimes" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -32,20 +33,23 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qit.inspection_type_id,qit.inspection_type_code,qit.inspection_type_name,qit.inspection_type_level,
     qit.inspection_tool,qit.inspection_standard,qit.inspection_nape,qit.batch,qit.aql,qit.sampling_amount,
     qit.ac,qit.re,qit.test_method,qit.test_times,qit.remark,qit.status,qit.create_user_id,qit.create_time,
-    qit.modified_user_id,qit.modified_time,qit.is_delete
+    qit.modified_user_id,qit.modified_time,qit.is_delete, qit.organization_id
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"></include>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
     from fantech_imes.qms_inspection_type qit
     LEFT JOIN ocean.sys_user su ON qit.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qit.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qit.organization_id = bo.organization_id
     <where>
       <if test="inspectionTypeCode != null and inspectionTypeCode != ''">
         and qit.inspection_type_code like CONCAT('%', #{inspectionTypeCode}, '%')

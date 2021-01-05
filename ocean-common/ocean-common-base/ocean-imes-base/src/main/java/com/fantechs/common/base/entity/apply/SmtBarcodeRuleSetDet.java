@@ -52,6 +52,21 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
     private Long barcodeRuleId;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+
+    /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")

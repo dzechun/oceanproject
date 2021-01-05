@@ -185,4 +185,11 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     @ApiModelProperty(name="operator",value = "作业员")
     @Excel(name = "作业员", height = 20, width = 30,orderNum="")
     private Long operator;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

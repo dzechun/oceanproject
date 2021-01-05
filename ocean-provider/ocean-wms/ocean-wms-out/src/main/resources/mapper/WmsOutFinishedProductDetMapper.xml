@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutFinishedProductDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProductDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="finished_product_det_id" jdbcType="BIGINT" property="finishedProductDetId" />
-    <result column="finished_product_id" jdbcType="BIGINT" property="finishedProductId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
-    <result column="reality_outquantity" jdbcType="DECIMAL" property="realityOutquantity" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutFinishedProductDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="finished_product_det_id" jdbcType="BIGINT" property="finishedProductDetId"/>
+        <result column="finished_product_id" jdbcType="BIGINT" property="finishedProductId"/>
+        <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
+        <result column="reality_outquantity" jdbcType="DECIMAL" property="realityOutquantity"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDetDto">
+    <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDetDto">
 
-    <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode"/>
-    <result column="product_model_code" jdbcType="VARCHAR" property="productMaterialCode"/>
-    <result column="product_model_name" jdbcType="VARCHAR" property="productMaterialName"/>
-    <result column="product_model_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
-    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-    <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
-
-  </resultMap>
+        <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productMaterialCode"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productMaterialName"/>
+        <result column="product_model_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
+        <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
     <sql id="Base_Column_List">
         fpd.finished_product_det_id,
@@ -39,6 +42,8 @@
         fpd.warehouse_id,
         fpd.warehouse_user_id,
         fpd.`status`,
+        fpd.organization_id,
+	    fpd.remark,
         fpd.create_user_id,
         fpd.create_time,
         fpd.modified_user_id,
@@ -46,9 +51,9 @@
         fpd.is_delete
     </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMapDTO">
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDTO">
 
-    SELECT <include refid="Base_Column_List"/>,
+        SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         suy.user_name AS warehouse_user_name,
@@ -57,39 +62,41 @@
         pm.product_model_name,
         pm.product_model_desc,
         w.warehouse_code,
-        w.warehouse_name
-            FROM
+        w.warehouse_name,
+        bo.organization_name
+        FROM
         wms_out_finished_product_det AS fpd
-        LEFT JOIN ocean.sys_user su  ON fpd.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user su ON fpd.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON fpd.modified_user_id = sus.user_id
         LEFT JOIN ocean.sys_user suy ON fpd.warehouse_user_id = suy.user_id
         LEFT JOIN wms_out_finished_product fp ON fpd.finished_product_id = fp.finished_product_id
         LEFT JOIN smt_product_model pm ON fpd.product_model_id = pm.product_model_id
         LEFT JOIN smt_warehouse w ON fpd.warehouse_id = w.warehouse_id
-    <where>
-        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-            and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-        </if>
-        <if test="finishedProductCode != null and finishedProductCode != ''">
-            and fp.finished_product_code like CONCAT('%', #{finishedProductCode}, '%')
-        </if>
-        <if test="productMaterialCode != null and productMaterialCode != ''">
-            and pm.product_model_code like CONCAT('%', #{productMaterialCode}, '%')
-        </if>
-        <if test="productMaterialName != null and productMaterialName != ''">
-            and pm.product_model_name like CONCAT('%', #{productMaterialName}, '%')
-        </if>
-        <if test="warehouseCode != null and warehouseCode != ''">
-            and w.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
-        </if>
-        <if test="warehouseName != null and warehouseName != ''">
-            and w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
-        </if>
-        <if test="status!=null and status!=''">
-            and fpd.status=#{status}
-        </if>
-    </where>
+        LEFT JOIN fantech_imes.base_organization bo ON fpd.organization_id = bo.organization_id
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="finishedProductCode != null and finishedProductCode != ''">
+                and fp.finished_product_code like CONCAT('%', #{finishedProductCode}, '%')
+            </if>
+            <if test="productMaterialCode != null and productMaterialCode != ''">
+                and pm.product_model_code like CONCAT('%', #{productMaterialCode}, '%')
+            </if>
+            <if test="productMaterialName != null and productMaterialName != ''">
+                and pm.product_model_name like CONCAT('%', #{productMaterialName}, '%')
+            </if>
+            <if test="warehouseCode != null and warehouseCode != ''">
+                and w.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
+            </if>
+            <if test="warehouseName != null and warehouseName != ''">
+                and w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and fpd.status=#{status}
+            </if>
+        </where>
 
 
-  </select>
+    </select>
 </mapper>

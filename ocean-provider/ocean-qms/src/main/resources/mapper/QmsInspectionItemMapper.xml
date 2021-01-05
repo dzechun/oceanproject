@@ -20,6 +20,7 @@
     <result column="test_method" jdbcType="BIGINT" property="testMethod" />
     <result column="test_times" jdbcType="DECIMAL" property="testTimes" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -31,20 +32,24 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qii.inspection_item_id,qii.inspection_item_code,qii.inspection_item_name,
     qii.inspection_item_level,qii.inspection_tool,qii.inspection_standard,qii.inspection_nape,
     qii.batch,qii.aql,qii.sampling_amount,qii.ac,qii.re,qii.test_method,qii.test_times,qii.remark,
-    qii.status,qii.create_user_id,qii.create_time,qii.modified_user_id,qii.modified_time,qii.is_delete
+    qii.status,qii.create_user_id,qii.create_time,qii.modified_user_id,qii.modified_time,qii.is_delete, qii.organization_id,
+	qii.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
     from fantech_imes.qms_inspection_item qii
     LEFT JOIN ocean.sys_user su ON qii.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qii.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qii.organization_id = bo.organization_id
     <where>
       <if test="inspectionItemCode != null and inspectionItemCode != ''">
         and qii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')

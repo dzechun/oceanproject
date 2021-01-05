@@ -39,4 +39,10 @@ public class SmtWorkShopDto extends SmtWorkShop implements Serializable {
     @Excel(name = "工厂名称", height = 20, width = 30,orderNum="4")
     private String factoryName;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

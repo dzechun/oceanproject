@@ -59,6 +59,13 @@ public class BaseHtOrganization implements Serializable {
     private String organizationDesc;
 
     /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 创建人id
      */
     @ApiModelProperty(name="createUserId",value = "创建人id")

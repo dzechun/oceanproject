@@ -9,6 +9,8 @@
     <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -28,19 +30,21 @@
     <result column="route_desc" jdbcType="VARCHAR" property="routeDesc" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute" resultMap="BaseResultMap">
     select shppr.ht_product_process_route_id,shppr.product_process_route_id,shppr.product_type,shppr.pro_line_id,spl.pro_name,shppr.product_model_id,spm.product_model_code,
     shppr.material_id,sm.material_code,sm.material_desc,sm.version,shppr.route_id,
     shppr.status, shppr.create_user_id,u.user_name as createUserName,shppr.create_time, shppr.modified_user_id,s.user_name as modifiedUserName,
-    shppr.modified_time,shppr.is_delete
+    shppr.modified_time,shppr.is_delete, shppr.organization_id, shppr.remark, bo.organization_name
     from fantech_imes.smt_ht_product_process_route shppr
     left join fantech_imes.smt_pro_line spl on shppr.pro_line_id=spl.pro_line_id
     left join fantech_imes.smt_product_model spm on shppr.product_model_id=spm.product_model_id
     left join fantech_imes.smt_material sm on shppr.material_id=sm.material_id
     left join ocean.sys_user u on shppr.create_user_id=u.user_id
     left join ocean.sys_user s on shppr.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON shppr.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

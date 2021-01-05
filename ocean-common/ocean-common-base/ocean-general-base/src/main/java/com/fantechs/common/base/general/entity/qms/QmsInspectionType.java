@@ -130,10 +130,17 @@ public class QmsInspectionType extends ValidGroup implements Serializable {
     private BigDecimal testTimes;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="14")
+    @Column(name = "remark")
     private String remark;
 
     /**

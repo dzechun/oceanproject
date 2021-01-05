@@ -7,7 +7,7 @@
         -->
         <id column="finished_product_id" jdbcType="BIGINT" property="finishedProductId"/>
         <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode"/>
-        <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="plan_outtime" jdbcType="TIMESTAMP" property="planOuttime"/>
         <result column="reality_outtime" jdbcType="TIMESTAMP" property="realityOuttime"/>
         <result column="plan_outquantity" jdbcType="DECIMAL" property="planOutquantity"/>
@@ -15,6 +15,8 @@
         <result column="traffic_type" jdbcType="TINYINT" property="trafficType"/>
         <result column="out_status" jdbcType="TINYINT" property="outStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -26,12 +28,13 @@
                type="com.fantechs.common.base.general.dto.wms.out.WmsOutFinishedProductDto">
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
 
     <sql id="Base_Column_List">
     fp.finished_product_id,
     fp.finished_product_code,
-    fp.customer_id,
+    fp.supplier_id,
     fp.plan_outtime,
     fp.reality_outtime,
     fp.plan_outquantity,
@@ -39,6 +42,8 @@
     fp.traffic_type,
     fp.out_status,
     fp.`status`,
+    fp.organization_id,
+	fp.remark,
     fp.create_user_id,
     fp.create_time,
     fp.modified_user_id,
@@ -51,12 +56,14 @@
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         ss.supplier_name,
-        ss.supplier_code
+        ss.supplier_code,
+        bo.organization_name
         from
         fantech_imes.wms_out_finished_product AS fp
         LEFT JOIN ocean.sys_user su ON fp.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON fp.modified_user_id = sus.user_id
-        LEFT JOIN smt_supplier ss ON fp.customer_id = ss.supplier_id
+        LEFT JOIN smt_supplier ss ON fp.supplier_id = ss.supplier_id
+        LEFT JOIN fantech_imes.base_organization bo ON fp.organization_id = bo.organization_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

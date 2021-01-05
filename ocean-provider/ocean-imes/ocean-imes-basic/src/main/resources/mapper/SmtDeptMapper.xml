@@ -8,6 +8,8 @@
     <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -17,6 +19,7 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <collection property="depts" ofType="com.fantechs.common.base.entity.basic.SmtDept" select="com.fantechs.provider.imes.basic.mapper.SmtDeptMapper.findById" column="dept_id"/>
   </resultMap>
   <sql id="Base_Column_List">

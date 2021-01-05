@@ -63,6 +63,20 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
     private Byte receiptsType;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 状态（0、审核中 1、已审核 2、未审核）
      */
     @ApiModelProperty(name="receiptsStatus",value = "状态（0、审核中 1、已审核 2、未审核）")
@@ -108,13 +122,6 @@ public class QmsRejectsMrbReview extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "selected_time")
     private Date selectedTime;
-
-    /**
-     * 备注
-     */
-    @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="11")
-    private String remark;
 
     /**
      * 状态（0、无效 1、有效）

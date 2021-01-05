@@ -14,20 +14,27 @@
     <result column="examination_region" jdbcType="VARCHAR" property="examinationRegion" />
     <result column="proving_time" jdbcType="TIMESTAMP" property="provingTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qhqi.ht_quality_inspection_id,qhqi.quality_inspection_id,qhqi.quality_inspection_code,qhqi.bills_status,qhqi.bills_type,qhqi.examination_region,
-    qhqi.proving_time,qhqi.status,qhqi.create_user_id,qhqi.create_time,qhqi.modified_user_id,qhqi.modified_time,qhqi.is_delete
+    qhqi.proving_time,qhqi.status,qhqi.create_user_id,qhqi.create_time,qhqi.modified_user_id,qhqi.modified_time,qhqi.is_delete, qhqi.organization_id,
+	qhqi.remark
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
-    select <include refid="Base_Column_List"></include> from fantech_imes.qms_ht_quality_inspection qhqi
+    select <include refid="Base_Column_List"/>, bo.organization_name
+    from fantech_imes.qms_ht_quality_inspection qhqi
+    LEFT JOIN fantech_imes.base_organization bo ON qhqi.organization_id = bo.organization_id
     <where>
       <if test="qualityInspectionCode != null and qualityInspectionCode != '' ">
         and qhqi.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')

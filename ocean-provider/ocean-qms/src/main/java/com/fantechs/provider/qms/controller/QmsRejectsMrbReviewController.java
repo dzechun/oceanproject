@@ -88,7 +88,7 @@ public class QmsRejectsMrbReviewController {
     List<QmsRejectsMrbReviewDto> list = qmsRejectsMrbReviewService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsRejectsMrbReview));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsRejectsMrbReview信息", QmsRejectsMrbReview.class, "QmsRejectsMrbReview.xls", response);
+        EasyPoiUtils.exportExcel(list, "不良品MRB评审导出信息", "不良品MRB评审信息", QmsRejectsMrbReview.class, "不良品MRB评审.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

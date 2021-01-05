@@ -11,6 +11,8 @@
     <result column="single_quantity" jdbcType="DECIMAL" property="singleQuantity" />
     <result column="quantity" jdbcType="DECIMAL" property="quantity" />
     <result column="base_quantity" jdbcType="DECIMAL" property="baseQuantity" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="position" jdbcType="VARCHAR" property="position" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -30,13 +32,14 @@
     <result column="process_name" jdbcType="VARCHAR" property="processName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom" resultMap="BaseResultMap">
     select  shwob.ht_work_order_bom_id,shwob.work_order_bom_id,shwob.work_order_id,swo.work_order_code,shwob.part_material_id,sm.material_code as part_material_code,
     sm.material_name,sm.version,sm.material_desc,shwob.sub_material_id,sml.material_code as sub_material_code,shwob.process_id,sp.process_name,shwob.single_quantity,
     shwob.quantity,shwob.base_quantity,shwob.position,shwob.create_user_id, u.user_name as create_user_name,shwob.create_time,shwob.modified_user_id,s.user_name as modified_user_name,
-    shwob.modified_time, shwob.is_delete
+    shwob.modified_time, shwob.is_delete, shwob.organization_id, shwob.remark, bo.organization_name
     from fantech_imes.smt_ht_work_order_bom shwob
     left join fantech_imes.smt_work_order swo on shwob.work_order_id=swo.work_order_id
     left join fantech_imes.smt_material sm on shwob.part_material_id=sm.material_id
@@ -44,6 +47,7 @@
     left join fantech_imes.smt_process sp on shwob.process_id=sp.process_id
     left join ocean.sys_user u on shwob.create_user_id=u.user_id
     left join ocean.sys_user s on shwob.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON shwob.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

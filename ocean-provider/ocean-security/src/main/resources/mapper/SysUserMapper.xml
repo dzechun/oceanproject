@@ -8,6 +8,8 @@
     <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
@@ -21,6 +23,7 @@
 
     <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
     <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <resultMap id="DeptResultMap" type="com.fantechs.common.base.entity.basic.SmtDept">
@@ -41,18 +44,19 @@
   <sql id="Base_Column_List">
     user_id, user_name, user_code, nick_name, password, status, factory_id, dept_id, 
     telephone, mobile, email, create_user_id, create_time, modified_user_id, modified_time, 
-    is_delete
+    is_delete, organization_id, remark
   </sql>
 
   <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser" resultMap="BaseResultMap">
     select su.user_id, su.user_name, su.user_code, su.nick_name, su.password, su.status, su.factory_id,f.factory_name,su.dept_id,
     d.dept_name,su.telephone,su.mobile, su.email, su.create_user_id,u.user_name as createUserName,su.create_time, su.modified_user_id,
-    s.user_name as modifiedUserName, su.modified_time
+    s.user_name as modifiedUserName, su.modified_time, su.organization_id, su.remark, bo.organization_name
     from ocean.sys_user su
     left join ocean.sys_user u on su.create_user_id=u.user_id
     left join ocean.sys_user s on su.modified_user_id=s.user_id
     left join fantech_imes.smt_factory f on su.factory_id=f.factory_id
     left join fantech_imes.smt_dept d on su.dept_id=d.dept_id
+    LEFT JOIN fantech_imes.base_organization bo ON su.organization_id = bo.organization_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

@@ -11,6 +11,7 @@
         <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
         <result column="materiaxl_type" jdbcType="VARCHAR" property="materialType"/>
         <result column="material_source" jdbcType="INTEGER" property="materialSource"/>
+        <result column="material_property" jdbcType="INTEGER" property="materialProperty"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="if_compoboard" jdbcType="BIT" property="ifCompoboard"/>
         <result column="if_linking_board" jdbcType="BIT" property="ifLinkingBoard"/>
@@ -20,6 +21,8 @@
         <result column="status" jdbcType="BIT" property="status"/>
         <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode"/>
         <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -38,6 +41,7 @@
         <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc"/>
         <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
         <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
     <sql id="Base_Column_List">
     sm.material_id,
@@ -49,6 +53,7 @@
 	sm.product_model_id,
 	sm.material_type,
 	sm.material_source,
+	sm.material_property,
 	sm.barcode_rule_id,
 	sm.if_compoboard,
 	sm.if_linking_board,
@@ -56,6 +61,8 @@
 	sm.takt,
 	sm.transfer_quantity,
 	sm.`status`,
+	sm.organization_id,
+	sm.remark,
 	sm.customer_material_code,
 	sm.min_package_number,
 	sm.create_user_id,
@@ -73,12 +80,13 @@
         select<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         spm.product_model_code,
-        bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc
+        bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc, bo.organization_name
         from fantech_imes.smt_material sm
         left join ocean.sys_user su on sm.create_user_id=su.user_id
         left join ocean.sys_user sus on sm.modified_user_id=sus.user_id
         left join fantech_imes.smt_product_model spm on sm.product_model_id=spm.product_model_id
         left join fantech_imes.base_product_family bpf on spm.product_family_id = bpf.product_family_id
+        LEFT JOIN fantech_imes.base_organization bo ON sm.organization_id = bo.organization_id
         <where>
             1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

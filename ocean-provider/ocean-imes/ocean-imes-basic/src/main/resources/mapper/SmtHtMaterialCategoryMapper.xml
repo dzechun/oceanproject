@@ -28,8 +28,9 @@
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"/>, bo.organization_name
     from fantech_imes.smt_ht_material_category shmc
+    LEFT JOIN fantech_imes.base_organization bo ON shmc.organization_id = bo.organization_id
     <where>
       <if test="materialCategoryCode != null and materialCategoryCode != ''">
         and shmc.material_category_code like CONCAT('%', #{materialCategoryCode}, '%')

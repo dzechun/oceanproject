@@ -73,11 +73,11 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
     private Long materialId;
 
     /**
-     * 条码规则集合ID
+     * 条码规则ID
      */
-    @ApiModelProperty(name="barcodeRuleId",value = "条码规则集合ID")
+    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
     @Column(name = "barcode_rule_id")
-    @NotNull(message = "条码规则集合ID不能为空")
+    @NotNull(message = "条码规则ID不能为空")
     private Long barcodeRuleId;
 
     /**
@@ -87,6 +87,20 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
     @Column(name = "packing_unit_id")
     @NotNull(message = "包装单位ID不能为空")
     private Long packingUnitId;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
 
     /**
      * 状态(0无效，1有效)

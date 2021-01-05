@@ -81,4 +81,11 @@ public class SmtWorkOrderBomDto extends SmtWorkOrderBom implements Serializable 
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改账号", height = 20, width = 30,orderNum="12")
     private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

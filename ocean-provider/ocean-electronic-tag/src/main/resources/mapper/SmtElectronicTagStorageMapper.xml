@@ -17,6 +17,8 @@
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
         <result column="material_id" jdbcType="VARCHAR" property="materialId" />
         <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -43,6 +45,7 @@
         <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
         <result column="equipment_port" jdbcType="VARCHAR" property="equipmentPort"/>
         <result column="queue_name" jdbcType="VARCHAR" property="queueName" />
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
 
     <sql id="Base_column_List">
@@ -58,6 +61,8 @@
 	sets.equipment_id,
 	sets.equipment_area_id,
 	sets.electronic_tag_id,
+	sets.organization_id,
+	sets.remark,
 	sets.`status`,
 	sets.create_user_id,
 	sets.create_time,
@@ -83,7 +88,8 @@
         se.equipment_ip,
         se.equipment_port,
         se.equipment_type,
-        scm.queue_name
+        scm.queue_name,
+        bo.organization_name
         FROM smt_electronic_tag_storage sets
         LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
@@ -93,6 +99,7 @@
         LEFT JOIN smt_material sm ON sets.material_id = sm.material_id
         LEFT JOIN smt_warehouse sw ON sets.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sets.warehouse_area_id = swa.warehouse_area_id
+        LEFT JOIN fantech_imes.base_organization bo ON bc.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -17,6 +17,8 @@
     <result column="profit_loss_amount" jdbcType="DECIMAL" property="profitLossAmount" />
     <result column="stockist_id" jdbcType="BIGINT" property="stockistId" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -38,6 +40,7 @@
     <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
     <result column="stockist_name" jdbcType="VARCHAR" property="stockistName"/>
     <result column="stockist_code" jdbcType="VARCHAR" property="stockistCode"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -54,6 +57,8 @@
 	wis.stockist_id,
 	wis.create_user_id,
 	wis.`status`,
+	bc.organization_id,
+	bc.remark,
 	wis.create_time,
 	wis.modified_user_id,
 	wis.modified_time,
@@ -65,7 +70,7 @@
     <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spl.pro_code, spl.pro_name, spl.pro_desc, spl.work_shop_id, swh.work_shop_code, swh.work_shop_name, swh.work_shop_desc,
     suss.user_name AS stockist_name, suss.user_code AS stockist_code,
-    sm.material_code, sm.material_name, sm.material_desc
+    sm.material_code, sm.material_name, sm.material_desc, bo.organization_name
     from fantech_imes.wms_inner_stocktaking wis
     LEFT JOIN ocean.sys_user su  ON wis.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wis.modified_user_id = sus.user_id
@@ -73,6 +78,7 @@
     LEFT JOIN fantech_imes.smt_pro_line spl ON wis.pro_line_id = spl.pro_line_id
     LEFT JOIN fantech_imes.smt_work_shop swh ON spl.work_shop_id = swh.work_shop_id
     LEFT JOIN fantech_imes.smt_material sm ON wis.material_id = sm.material_id
+    LEFT JOIN fantech_imes.base_organization bo ON wis.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

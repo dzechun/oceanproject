@@ -10,6 +10,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -38,6 +39,11 @@ public class WmsOutFinishedProductDto extends WmsOutFinishedProduct implements S
     @ApiModelProperty(name="supplierName" ,value="客户名称")
     private String supplierName;
 
-
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
     private static final long serialVersionUID = 1L;
 }

@@ -17,6 +17,7 @@
     <result column="selected_person" jdbcType="BIGINT" property="selectedPerson" />
     <result column="selected_time" jdbcType="TIMESTAMP" property="selectedTime" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -33,18 +34,20 @@
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="selected_person_name" jdbcType="VARCHAR" property="selectedPersonName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qrmr.rejects_mrb_review_id,qrmr.rejects_mrb_review_code,qrmr.material_id,
     qrmr.quality_inspection_id,qrmr.receipts_type,qrmr.receipts_status,qrmr.review_dept,qrmr.review_result,
     qrmr.selected_number,qrmr.selected_person,qrmr.selected_time,qrmr.remark,qrmr.status,
-    qrmr.create_user_id,qrmr.create_time,qrmr.modified_user_id,qrmr.modified_time,qrmr.is_delete
+    qrmr.create_user_id,qrmr.create_time,qrmr.modified_user_id,qrmr.modified_time,qrmr.is_delete, qrmr.organization_id,
+	qrmr.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    qqi.quality_inspection_code,sm.material_code,ss.supplier_name,sd.dept_name,ssu.user_name AS selected_person_name
+    qqi.quality_inspection_code,sm.material_code,ss.supplier_name,sd.dept_name,ssu.user_name AS selected_person_name, bo.organization_name
     from fantech_imes.qms_rejects_mrb_review qrmr
     LEFT JOIN ocean.sys_user su ON qrmr.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qrmr.modified_user_id = sus.user_id
@@ -54,6 +57,7 @@
     LEFT JOIN fantech_imes.smt_supplier ss ON sms.supplier_id = ss.supplier_id
     LEFT JOIN fantech_imes.smt_dept sd ON qrmr.review_dept = sd.dept_id
     LEFT JOIN ocean.sys_user ssu ON qrmr.selected_person = ssu.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qrmr.organization_id = bo.organization_id
     <where>
       <if test="rejectsMrbReviewCode != null and rejectsMrbReviewCode != ''">
         and qrmr.rejects_mrb_review_code like CONCAT('%', #{rejectsMrbReviewCode}, '%')

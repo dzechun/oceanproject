@@ -27,4 +27,11 @@ public class BaseWorkShiftTimeDto implements Serializable {
      */
     @ApiModelProperty(name="allWorkShift",value = "班次")
     private List<String> allWorkShift;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

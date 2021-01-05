@@ -34,4 +34,11 @@ public class BaseOrganizationDto extends BaseOrganization implements Serializabl
     @ApiModelProperty(name = "userName",value = "用户名称")
     @Excel(name = "用户名称", height = 20, width = 30,orderNum="8")
     private String userName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

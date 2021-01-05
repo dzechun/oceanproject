@@ -66,6 +66,20 @@ public class SmtPaddingMaterial extends ValidGroup implements Serializable {
     private BigDecimal quantity;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 状态(0-未开始，1-分拣中 2-已完成)
      */
     @ApiModelProperty(name="status",value = "状态(0-未开始，1-分拣中 2-已完成)")

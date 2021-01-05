@@ -13,6 +13,8 @@
     <result column="examination_region" jdbcType="VARCHAR" property="examinationRegion" />
     <result column="proving_time" jdbcType="TIMESTAMP" property="provingTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -23,18 +25,22 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsQualityInspectionDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qqi.quality_inspection_id,qqi.quality_inspection_code,qqi.bills_status,qqi.bills_type,qqi.examination_region,
-    qqi.proving_time,qqi.status,qqi.create_user_id,qqi.create_time,qqi.modified_user_id,qqi.modified_time,qqi.is_delete
+    qqi.proving_time,qqi.status,qqi.create_user_id,qqi.create_time,qqi.modified_user_id,qqi.modified_time,qqi.is_delete,
+    qqi.organization_id, qqi.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"></include> , su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"></include> , su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
     from fantech_imes.qms_quality_inspection qqi
     LEFT JOIN ocean.sys_user su ON qqi.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qqi.organization_id = bo.organization_id
     <where>
       <if test="qualityInspectionCode != null and qualityInspectionCode != '' ">
         and qqi.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')

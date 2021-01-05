@@ -10,6 +10,8 @@
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc" />
     <result column="is_chief" jdbcType="TINYINT" property="isChief" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -22,19 +24,23 @@
 
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
 
   <sql id="Base_Column_List">
     shpu.ht_packing_unit_id,shpu.packing_unit_id,shpu.packing_unit_name,shpu.packing_unit_desc,shpu.is_chief,shpu.status,shpu.create_user_id,shpu.create_time,
-    shpu.modified_user_id,shpu.modified_time,shpu.is_delete,shpu.option1,shpu.option2,shpu.option3
+    shpu.modified_user_id,shpu.modified_time,shpu.is_delete,shpu.option1,shpu.option2,shpu.option3, shpu.organization_id,
+	shpu.remark
   </sql>
 
   <select id="findHtList"  resultMap="BaseResultMap" parameterType="map">
-    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
     from fantech_imes.smt_ht_packing_unit shpu
     LEFT JOIN ocean.sys_user su  ON shpu.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON shpu.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON shpu.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shpu.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

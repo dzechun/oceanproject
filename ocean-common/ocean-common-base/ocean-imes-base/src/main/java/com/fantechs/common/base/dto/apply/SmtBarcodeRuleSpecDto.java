@@ -25,4 +25,11 @@ public class SmtBarcodeRuleSpecDto extends SmtBarcodeRuleSpec implements Seriali
     @Transient
     @ApiModelProperty(name="specName",value = "属性类别")
     private String specName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

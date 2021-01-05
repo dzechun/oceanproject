@@ -45,6 +45,13 @@ public class BaseOrganizationUser extends ValidGroup implements Serializable {
     private Long userId;
 
     /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name="status",value = "状态（0、不启用 1、启用）")

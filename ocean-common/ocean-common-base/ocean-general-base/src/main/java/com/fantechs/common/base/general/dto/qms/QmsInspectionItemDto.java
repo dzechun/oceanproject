@@ -36,5 +36,12 @@ public class QmsInspectionItemDto extends QmsInspectionItem implements Serializa
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="17")
     private String modifiedUserName;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
     private static final long serialVersionUID = 1L;
 }

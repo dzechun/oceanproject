@@ -17,6 +17,7 @@
     <result column="checkout_start_time" jdbcType="TIMESTAMP" property="checkoutStartTime" />
     <result column="checkout_end_time" jdbcType="TIMESTAMP" property="checkoutEndTime" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -32,22 +33,24 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qqid.quality_inspection_det_id,qqid.quality_inspection_id,qqid.material_id,qqid.checkout_status,
     qqid.checkout_quantity,qqid.qualified_quantity,qqid.surveyor,qqid.inspection_result,qqid.checkout_start_time,qqid.checkout_end_time,
-    qqid.remark,qqid.status,qqid.create_user_id,qqid.create_time,qqid.modified_user_id,qqid.modified_time,qqid.is_delete
+    qqid.remark,qqid.status,qqid.create_user_id,qqid.create_time,qqid.modified_user_id,qqid.modified_time,qqid.is_delete, qqid.organization_id
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"></include> , su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    qqi.quality_inspection_code,sm.material_code,sm.material_name,sm.version
+    select <include refid="Base_Column_List"></include>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    qqi.quality_inspection_code,sm.material_code,sm.material_name,sm.version, qqid.organization_name
     from fantech_imes.qms_quality_inspection_det qqid
     LEFT JOIN ocean.sys_user su ON qqid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqid.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.qms_quality_inspection qqi ON qqid.quality_inspection_id = qqi.quality_inspection_id
     LEFT JOIN fantech_imes.smt_material sm ON qqid.material_id = sm.material_id
+    LEFT JOIN fantech_imes.base_organization bo ON qqid.organization_id = bo.organization_id
     <where>
       <if test="qualityInspectionCode != null and qualityInspectionCode != '' ">
         and qqi.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')

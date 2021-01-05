@@ -3,6 +3,7 @@ package com.fantechs.common.base.dto.apply;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -70,4 +71,10 @@ public class ProcessListDto implements Serializable {
     @ApiModelProperty(name="qualificationId" ,value="资质ID")
     private Long qualificationId;
 
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

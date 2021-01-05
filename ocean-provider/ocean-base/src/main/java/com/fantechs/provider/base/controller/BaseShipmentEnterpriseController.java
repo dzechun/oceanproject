@@ -89,7 +89,7 @@ public class BaseShipmentEnterpriseController {
     List<BaseShipmentEnterpriseDto> list = baseShipmentEnterpriseService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseShipmentEnterprise));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseShipmentEnterprise信息", BaseShipmentEnterpriseDto.class, "BaseShipmentEnterprise.xls", response);
+        EasyPoiUtils.exportExcel(list, "物流商信息", "物流商信息", BaseShipmentEnterpriseDto.class, "物流商信息表.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

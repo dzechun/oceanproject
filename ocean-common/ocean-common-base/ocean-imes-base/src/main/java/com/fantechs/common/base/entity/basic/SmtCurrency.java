@@ -50,6 +50,20 @@ public class SmtCurrency extends ValidGroup implements Serializable {
     private String currencyName;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")

@@ -16,23 +16,28 @@
     <result column="review_result" jdbcType="BIGINT" property="reviewResult" />
     <result column="quantity" jdbcType="DECIMAL" property="quantity" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     qhmr.ht_mrb_review_id,qhmr.mrb_review_id,qhmr.mrb_review_code,qhmr.material_id,qhmr.quality_inspection_id,
     qhmr.receipts_type,qhmr.receipts_status,qhmr.review_dept,qhmr.review_result,qhmr.quantity,qhmr.remark,
-    qhmr.status,qhmr.create_user_id,qhmr.create_time,qhmr.modified_user_id,qhmr.modified_time,qhmr.is_delete
+    qhmr.status,qhmr.create_user_id,qhmr.create_time,qhmr.modified_user_id,qhmr.modified_time,qhmr.is_delete,
+    qhmr.organization_id
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"/>, bo.organization_name
     from fantech_imes.qms_ht_mrb_review qhmr
+    LEFT JOIN fantech_imes.base_organization bo ON qhmr.organization_id = bo.organization_id
     <where>
       <if test="mrbReviewCode != null and mrbReviewCode != ''">
         and qhmr.mrb_review_code like CONCAT('%', #{mrbReviewCode}, '%')

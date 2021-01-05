@@ -12,6 +12,8 @@
         <result column="transport_category_id" jdbcType="BIGINT" property="transportCategoryId"/>
         <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -24,6 +26,7 @@
                type="com.fantechs.common.base.general.dto.basic.BaseShipmentEnterpriseDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -34,6 +37,8 @@
 	bse.transport_category_id,
 	bse.contacts,
 	bse.phone,
+	bse.organization_id,
+	bse.remark,
 	bse.`status`,
 	bse.create_user_id,
 	bse.create_time,
@@ -43,10 +48,12 @@
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-        select<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+        select<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bo.organization_name
         FROM fantech_imes.base_shipment_enterprise AS bse
         LEFT JOIN ocean.sys_user su ON bse.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON bse.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON bse.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(bse.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

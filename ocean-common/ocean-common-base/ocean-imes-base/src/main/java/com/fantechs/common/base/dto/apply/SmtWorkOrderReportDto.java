@@ -78,4 +78,11 @@ public class SmtWorkOrderReportDto extends SmtWorkOrderReport implements Seriali
     @Transient
     @ApiModelProperty(name = "outPutQuantity",value = "产出数量")
     private Integer outPutQuantity;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
 }

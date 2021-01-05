@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -60,4 +61,11 @@ public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Transient
+    private String organizationName;
 }

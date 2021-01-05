@@ -14,6 +14,8 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
 
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -26,6 +28,7 @@
 	bho.organization_code,
 	bho.organization_name,
 	bho.organization_desc,
+	bho.remark,
 	bho.create_user_id,
 	bho.create_time,
 	bho.modified_user_id,

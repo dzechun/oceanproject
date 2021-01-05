@@ -105,6 +105,21 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     private String photoUrl;
 
     /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Column(name = "remark")
+    private String remark;
+
+
+    /**
      * 创建人ID
      */
     @Column(name = "create_user_id")

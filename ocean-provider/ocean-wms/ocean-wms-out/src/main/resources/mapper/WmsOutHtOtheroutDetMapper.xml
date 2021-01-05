@@ -16,6 +16,8 @@
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_user_id" jdbcType="BIGINT" property="warehouseUserId" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -34,6 +36,7 @@
     <result column="warehouse_user_name" jdbcType="VARCHAR" property="warehouseUserName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -47,6 +50,8 @@
 	wood.warehouse_id,
 	wood.warehouse_user_id,
 	wood.`status`,
+	bc.organization_id,
+	bc.remark,
 	wood.create_user_id,
 	wood.create_time,
 	wood.modified_user_id,
@@ -59,7 +64,8 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name, suss.user_name AS warehouse_user_name,
     woo.otherout_code,
     sm.material_code, sm.material_name, sm.material_desc, sm.unit, sm.version,
-    sw.warehouse_name, sw.warehouse_code, sw.warehouse_desc
+    sw.warehouse_name, sw.warehouse_code, sw.warehouse_desc,
+    bo.organization_name
     FROM wms_out_otherout_det wood
     LEFT JOIN ocean.sys_user su ON wood.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wood.modified_user_id = sus.user_id
@@ -67,6 +73,7 @@
     LEFT JOIN wms_out_otherout woo ON wood.otherout_id = woo.otherout_id
     LEFT JOIN smt_material sm ON wood.material_id = sm.material_id
     LEFT JOIN smt_warehouse sw ON wood.warehouse_id = sw.warehouse_id
+    LEFT JOIN fantech_imes.base_organization bo ON wood.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wood.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
