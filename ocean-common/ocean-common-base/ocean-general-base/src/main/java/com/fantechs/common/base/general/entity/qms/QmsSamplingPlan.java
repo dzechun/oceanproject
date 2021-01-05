@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -100,7 +101,7 @@ public class QmsSamplingPlan extends ValidGroup implements Serializable {
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Column(name = "organization_name")
+    @Transient
     private String organizationName;
 
     /**

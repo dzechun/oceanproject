@@ -29,7 +29,7 @@
 
   <sql id="Base_Column_List">
     sc.currency_id, sc.currency_code, sc.currency_name,sc.organization_id, sc.remark, sc.status, sc.create_user_id, sc.create_time, sc.modified_user_id,
-    sc.modified_time, sc.is_delete, sc.option1, sc.option2, sc.option
+    sc.modified_time, sc.is_delete, sc.option1, sc.option2, sc.option3
   </sql>
 
   <select id="findList"  resultMap="BaseResultMapDto" parameterType="map">
