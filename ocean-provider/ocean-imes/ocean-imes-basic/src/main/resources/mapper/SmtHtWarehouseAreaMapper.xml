@@ -8,6 +8,9 @@
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
     <result column="warehouse_area_desc" jdbcType="VARCHAR" property="warehouseAreaDesc" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="capacity" jdbcType="DECIMAL" property="capacity" />
+    <result column="temperature" jdbcType="DECIMAL" property="temperature" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -28,7 +31,7 @@
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select  wha.ht_warehouse_area_id,wha.warehouse_area_id,wha.warehouse_area_code,wha.warehouse_area_name,wha.warehouse_area_desc,
-    wha.warehouse_id,wha.status,wha.create_user_id,wha.create_time,wha.modified_user_id,wha.is_delete,wha.option1,wha.option2,wha.option3,
+    wha.warehouse_id,wha.capacity,wha.temperature,wha.unit,wha.status,wha.create_user_id,wha.create_time,wha.modified_user_id,wha.is_delete,wha.option1,wha.option2,wha.option3,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name, sw.warehouse_name, wha.organization_id,
     wha.remark, bo.organization_name
     FROM  fantech_imes.smt_ht_warehouse_area wha

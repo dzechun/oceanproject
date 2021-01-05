@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "smt_warehouse_area")
@@ -60,6 +61,27 @@ public class SmtWarehouseArea extends ValidGroup implements Serializable {
     @ApiModelProperty(name="warehouseId" ,value="仓库ID")
     @NotNull(message = "仓库id不能为空")
     private Long warehouseId;
+
+    /**
+     * 容量
+     */
+    @ApiModelProperty(name="capacity",value = "容量")
+    @Excel(name = "容量", height = 20, width = 30)
+    private BigDecimal capacity;
+
+    /**
+     * 温度
+     */
+    @ApiModelProperty(name="temperature",value = "温度")
+    @Excel(name = "温度", height = 20, width = 30)
+    private BigDecimal temperature;
+
+    /**
+     * 单位
+     */
+    @ApiModelProperty(name="unit",value = "单位")
+    @Excel(name = "单位", height = 20, width = 30)
+    private String unit;
 
     /**
      * 组织id
