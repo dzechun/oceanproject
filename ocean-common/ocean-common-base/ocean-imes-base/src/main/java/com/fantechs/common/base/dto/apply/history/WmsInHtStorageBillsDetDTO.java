@@ -98,7 +98,7 @@ public class WmsInHtStorageBillsDetDTO extends WmsInHtStorageBillsDet implements
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Column(name = "organization_name")
+    @Transient
     private String organizationName;
 
 }

@@ -45,10 +45,10 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(spu.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="packingUnitName != null">
+      <if test="packingUnitName != null and packingUnitName != ''">
         and spu.packing_unit_name like CONCAT('%', #{packingUnitName}, '%')
       </if>
-      <if test="packingUnitDesc != null">
+      <if test="packingUnitDesc != null and packingUnitDesc != ''">
         and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
       </if>
       <if test="status!=null and status!=''">

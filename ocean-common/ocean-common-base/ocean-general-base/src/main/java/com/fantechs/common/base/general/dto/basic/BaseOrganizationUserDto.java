@@ -39,7 +39,6 @@ public class BaseOrganizationUserDto extends BaseOrganizationUser implements Ser
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Column(name = "organization_name")
     @NotBlank(message = "组织名称不能为空")
     private String organizationName;
 
