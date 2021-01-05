@@ -31,14 +31,26 @@ public class SearchSmtStorage extends BaseQuery implements Serializable {
     /**
      * 仓库ID
      */
-    @ApiModelProperty(name = "storageCode",value = "仓库ID")
+    @ApiModelProperty(name = "warehouseId",value = "仓库ID")
     private Long warehouseId;
+
+    /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
 
     /**
      * 仓库区域ID
      */
-    @ApiModelProperty(name = "storageCode",value = "仓库区域ID")
+    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
     private Long warehouseAreaId;
+
+    /**
+     * 仓库区域名称
+     */
+    @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
+    private String warehouseAreaName;
 
     /**
      * 储位ID

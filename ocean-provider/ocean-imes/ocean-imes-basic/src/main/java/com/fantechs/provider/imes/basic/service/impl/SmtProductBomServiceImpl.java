@@ -143,7 +143,41 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
 
     @Override
     public List<SmtProductBom> findList(SearchSmtProductBom searchSmtProductBom) {
-        return smtProductBomMapper.findList(searchSmtProductBom);
+
+        List<SmtProductBom> smtProductBoms = smtProductBomMapper.findList(searchSmtProductBom);
+
+        /*if (StringUtils.isNotEmpty(smtProductBoms)){
+            Example example = new Example(SmtProductBomDet.class);
+            for (SmtProductBom smtProductBom : smtProductBoms) {
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("productBomId",smtProductBom.getProductBomId());
+                //查询所有产品BOM明细
+                List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
+                example.clear();
+                if (StringUtils.isNotEmpty(smtProductBomDets)){
+                    smtProductBom.setSmtProductBomDets(smtProductBomDets);
+                    for (SmtProductBomDet smtProductBomDet : smtProductBomDets) {
+                        findNextLevelProductBomDet(smtProductBomDet);
+                    }
+                }
+            }
+        }*/
+        return smtProductBoms;
+    }
+
+    public void findNextLevelProductBomDet(SmtProductBomDet smtProductBomDet){
+        Example example = new Example(SmtProductBomDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("parentId",smtProductBomDet.getProductBomDetId());
+        //查询出所有的子级明细
+        List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(smtProductBomDets)){
+            //将子级明细放进父级实体中返回
+            smtProductBomDet.setNextLevelProductBomDet(smtProductBomDets);
+            for (SmtProductBomDet productBomDet : smtProductBomDets) {
+                findNextLevelProductBomDet(productBomDet);
+            }
+        }
     }
 
 }
