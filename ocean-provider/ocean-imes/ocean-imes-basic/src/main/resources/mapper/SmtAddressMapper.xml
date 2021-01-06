@@ -93,4 +93,23 @@
         </where>
     </select>
 
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update fantech_imes.smt_address sa set
+            sa.province_code = #{item.provinceCode},
+            sa.city_code = #{item.cityCode},
+            sa.classify_code = #{item.classifyCode},
+            sa.address_detail = #{item.addressDetail},
+            sa.post_code = #{item.postCode},
+            sa.organization_id = #{item.organizationId},
+            sa.remark = #{item.remark},
+            sa.status = #{item.status},
+            sa.modified_user_id = #{item.modifiedUserId},
+            sa.modified_time = #{item.modifiedTime},
+            sa.is_delete = #{item.isDelete}
+            where sa.address_id = #{item.addressId}
+        </foreach>
+    </update>
+
+
 </mapper>

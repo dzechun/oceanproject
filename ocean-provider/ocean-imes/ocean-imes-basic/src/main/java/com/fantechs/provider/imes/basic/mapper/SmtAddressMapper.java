@@ -18,4 +18,5 @@ public interface SmtAddressMapper extends MyMapper<SmtAddress> {
 
     List<Long> findDelete(@Param("list") List<SmtAddressDto> list,@Param("supplierId") Long supplierId);
 
+    int batchUpdate(List<SmtAddress> list);
 }
