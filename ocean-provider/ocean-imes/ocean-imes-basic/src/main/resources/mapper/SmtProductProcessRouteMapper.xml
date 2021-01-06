@@ -36,13 +36,15 @@
     select sppr.product_process_route_id,sppr.product_type,sppr.pro_line_id,spl.pro_name,sppr.product_model_id,spm.product_model_code,
     sppr.material_id,sm.material_code,sm.material_desc,sm.version,sppr.route_id,
     sppr.status, sppr.create_user_id,u.user_name as createUserName,sppr.create_time, sppr.modified_user_id,s.user_name as modifiedUserName,
-    sppr.modified_time,sppr.is_delete, sppr.organization_id, sppr.remark, bo.organization_name
+    sppr.modified_time,sppr.is_delete, sppr.organization_id, sppr.remark, bo.organization_name,
+    sr.route_name, sr.route_desc
     from fantech_imes.smt_product_process_route sppr
     left join fantech_imes.smt_pro_line spl on sppr.pro_line_id=spl.pro_line_id
     left join fantech_imes.smt_product_model spm on sppr.product_model_id=spm.product_model_id
     left join fantech_imes.smt_material sm on sppr.material_id=sm.material_id
     left join ocean.sys_user u on sppr.create_user_id=u.user_id
     left join ocean.sys_user s on sppr.modified_user_id=s.user_id
+    left join fantech_imes.smt_route sr on sppr on sppr.route_id = sr.route_id
     LEFT JOIN fantech_imes.base_organization bo ON sppr.organization_id = bo.organization_id
     <where>
       1=1
@@ -63,6 +65,12 @@
       </if>
       <if test="routeId!=null and routeId!=''">
         and sppr.route_id=#{routeId}
+      </if>
+      <if test="routeName != null and routeName != ''">
+        and sr.route_name like CONCAT('%', #{routeName}, '%')
+      </if>
+      <if test="routeDesc != null and routeDesc != ''">
+        and sr.route_desc like CONCAT('%', #{routeDesc}, '%')
       </if>
       <if test="status!=null and status!=''">
         and sppr.status=#{status}

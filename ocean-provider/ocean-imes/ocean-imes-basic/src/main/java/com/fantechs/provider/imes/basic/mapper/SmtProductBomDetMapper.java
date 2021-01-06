@@ -7,5 +7,9 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;
 
 public interface SmtProductBomDetMapper extends MyMapper<SmtProductBomDet> {
+
     List<SmtProductBomDet> findList(SearchSmtProductBomDet searchSmtProductBomDet);
+    List<SmtProductBomDet> findFirstLevelProductBomDet(Long productBomId);
+
+    List<SmtProductBomDet> findNextLevelProductBomDet(Long productBomDetId);
 }
