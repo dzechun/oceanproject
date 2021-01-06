@@ -93,6 +93,17 @@
         </where>
     </select>
 
+    <select id="findAdd" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>
+        from fantech_imes.smt_address sa
+        <where>
+            sa.address_id in (
+            select ssa.address_id
+            from fantech_imes.smt_supplier_address ssa where ssa.supplier_id = #{supplierId}
+            )
+        </where>
+    </select>
+
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" separator=";">
             update fantech_imes.smt_address sa set
