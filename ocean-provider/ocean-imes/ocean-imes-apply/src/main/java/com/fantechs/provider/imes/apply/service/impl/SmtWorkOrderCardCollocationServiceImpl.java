@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,11 +63,11 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         //工单数量
-        Integer workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
+        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
         //转移批量
         Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
         //工单总转移批次
-        int sumBatchQuantity = (int) Math.ceil((double) workOrderQuantity / transferQuantity);
+        int sumBatchQuantity = (int) Math.ceil(workOrderQuantity.doubleValue() / transferQuantity);
 
         //产生数量
         Integer produceQuantity = smtWorkOrderCardCollocation.getProduceQuantity();
