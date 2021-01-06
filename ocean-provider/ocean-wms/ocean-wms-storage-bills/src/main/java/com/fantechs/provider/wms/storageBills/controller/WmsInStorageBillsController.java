@@ -100,7 +100,7 @@ public class WmsInStorageBillsController {
             @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize,
             HttpServletResponse response){
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
-        List<WmsInStorageBillsDTO> wmsStorageBillsList = wmsStorageBillsService.selectFilterAll(null);
+        List<WmsInStorageBillsDTO> wmsStorageBillsList = wmsStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsStorageBillsListDTO));
         if(StringUtils.isEmpty(wmsStorageBillsList)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012007);
         }

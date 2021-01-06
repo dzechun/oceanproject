@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "smt_product_bom_det")
 @Data
@@ -148,6 +149,13 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
     private String remark;
 
     /**
+     * 父ID
+     */
+    @Column(name = "parent_id")
+    @ApiModelProperty(name="parentId" ,value="父ID")
+    private Long parentId;
+
+    /**
      * 创建人ID
      */
     @Column(name = "create_user_id")
@@ -199,6 +207,10 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     @ApiModelProperty(name="isDelete" ,value="逻辑删除")
     private Byte isDelete;
+
+    @Transient
+    @ApiModelProperty(name = "nextLevelProductBomDet",value = "下一级明细")
+    private List<SmtProductBomDet> nextLevelProductBomDet;
 
     /**
      * 扩展字段1

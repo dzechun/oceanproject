@@ -1,11 +1,9 @@
 package com.fantechs.common.base.entity.basic.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -35,4 +33,10 @@ public class SearchSmtProductBomDet extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 产品BOM详细ID
+     */
+    @ApiModelProperty(name="productBomDetId" ,value="产品BOM详细ID")
+    private Long productBomDetId;
 }
