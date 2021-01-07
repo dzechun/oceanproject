@@ -44,7 +44,7 @@
     left join fantech_imes.smt_material sm on sppr.material_id=sm.material_id
     left join ocean.sys_user u on sppr.create_user_id=u.user_id
     left join ocean.sys_user s on sppr.modified_user_id=s.user_id
-    left join fantech_imes.smt_route sr on sppr on sppr.route_id = sr.route_id
+    left join fantech_imes.smt_route sr on sppr.route_id = sr.route_id
     LEFT JOIN fantech_imes.base_organization bo ON sppr.organization_id = bo.organization_id
     <where>
       1=1

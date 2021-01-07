@@ -10,6 +10,7 @@
     <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
     <result column="package_specification_desc" jdbcType="VARCHAR" property="packageSpecificationDesc" />
     <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
     <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
@@ -40,7 +41,7 @@
 
   <sql id="Base_Column_List">
     sps.package_specification_id, sps.package_specification_code, sps.package_specification_name,
-    sps.package_specification_desc, sps.package_specification_quantity, sps.material_id, sps.barcode_rule_id,
+    sps.package_specification_desc, sps.package_specification_quantity, sps.material_id, sps.processId, sps.barcode_rule_id,
     sps.packing_unit_id, sps.status, sps.create_user_id, sps.create_time, sps.modified_user_id, sps.modified_time,
     sps.is_delete, sps.option1, sps.option2, sps.option3, sps.organization_id, sps.remark
   </sql>
@@ -50,6 +51,7 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spu.packing_unit_name, spu.packing_unit_desc,
     sm.material_code, sm.material_desc, sm.version,
+    sp.process_code, sp.process_name, sp.process_desc,
     sbr.barcode_rule, bo.organization_name
     from fantech_imes.smt_package_specification sps
     LEFT JOIN fantech_imes.smt_packing_unit spu ON sps.packing_unit_id = spu.packing_unit_id
@@ -58,6 +60,7 @@
     LEFT JOIN ocean.sys_user su  ON sps.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON sps.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON sps.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_process sp ON sps.process_id = sp.process_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

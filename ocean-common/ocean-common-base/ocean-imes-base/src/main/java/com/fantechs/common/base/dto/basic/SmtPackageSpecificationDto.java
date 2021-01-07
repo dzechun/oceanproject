@@ -4,7 +4,10 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.entity.basic.SmtPackageSpecification;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -80,4 +83,25 @@ public class SmtPackageSpecificationDto extends SmtPackageSpecification implemen
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 工序代码
+     */
+    @ApiModelProperty(name="processCode" ,value="工序代码")
+    @Excel(name = "工序代码", height = 20, width = 30)
+    private String processCode;
+
+    /**
+     * 工序名称
+     */
+    @ApiModelProperty(name="processName" ,value="工序名称")
+    @Excel(name = "工序名称", height = 20, width = 30)
+    private String processName;
+
+    /**
+     * 工序描述
+     */
+    @ApiModelProperty(name="processDesc" ,value="工序描述")
+    @Excel(name = "工序描述", height = 20, width = 30)
+    private String processDesc;
 }

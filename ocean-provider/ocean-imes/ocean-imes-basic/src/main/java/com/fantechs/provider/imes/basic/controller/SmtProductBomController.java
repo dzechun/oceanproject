@@ -42,7 +42,7 @@ public class SmtProductBomController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：productBomCode", required = true) @RequestBody @Validated SmtProductBom smtProductBom) {
+    public ResponseEntity add(@ApiParam(value = "必传：productBomCode、processId、materialId", required = true) @RequestBody @Validated SmtProductBom smtProductBom) {
         return ControllerUtil.returnCRUD(smtProductBomService.save(smtProductBom));
     }
 

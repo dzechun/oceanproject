@@ -46,7 +46,7 @@
 
     <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
         select<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        bhse.organization_name
+        bo.organization_name
         FROM fantech_imes.base_ht_shipment_enterprise AS bhse
         LEFT JOIN ocean.sys_user su ON bhse.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON bhse.modified_user_id = sus.user_id

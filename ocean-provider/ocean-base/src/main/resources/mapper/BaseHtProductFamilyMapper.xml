@@ -42,7 +42,7 @@
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    bhpf.organization_name
+    bo.organization_name
     FROM base_ht_product_family AS bhpf
     LEFT JOIN ocean.sys_user su ON bhpf.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON bhpf.modified_user_id = sus.user_id
