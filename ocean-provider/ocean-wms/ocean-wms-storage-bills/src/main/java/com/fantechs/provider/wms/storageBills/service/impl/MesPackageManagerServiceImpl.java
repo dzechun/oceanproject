@@ -163,6 +163,9 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     public int printCode(Long packageManagerId) {
         MesPackageManager mesPackageManager = this.selectByKey(packageManagerId);
         this.printCode(mesPackageManager);
+        if(this.update(mesPackageManager)<=0){
+            return 0;
+        }
         return 1;
     }
 
