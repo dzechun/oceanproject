@@ -36,7 +36,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
     @ApiModelProperty(name="provinceCode",value = "省编码")
     @Excel(name = "省编码", height = 20, width = 30,orderNum="1")
     @Column(name = "province_code")
-    @NotBlank(message = "省编码不能为空")
     private String provinceCode;
 
     /**
@@ -45,7 +44,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
     @ApiModelProperty(name="cityCode",value = "市编码")
     @Excel(name = "市编码", height = 20, width = 30,orderNum="2")
     @Column(name = "city_code")
-    @NotBlank(message = "市编码不能为空")
     private String cityCode;
 
     /**
@@ -54,7 +52,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
     @ApiModelProperty(name="classifyCode",value = "区/县编码")
     @Excel(name = "区/县编码", height = 20, width = 30,orderNum="3")
     @Column(name = "classify_code")
-    @NotBlank(message = "区/县编码不能为空")
     private String classifyCode;
 
     /**
@@ -72,7 +69,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
     @ApiModelProperty(name="postCode",value = "邮政编码")
     @Excel(name = "邮政编码", height = 20, width = 30,orderNum="5")
     @Column(name = "post_code")
-    @NotBlank(message = "邮政编码不能为空")
     private String postCode;
 
 

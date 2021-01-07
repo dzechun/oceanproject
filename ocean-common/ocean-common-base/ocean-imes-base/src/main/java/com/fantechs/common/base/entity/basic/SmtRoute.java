@@ -2,6 +2,7 @@ package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -59,6 +60,7 @@ public class SmtRoute extends ValidGroup implements Serializable {
     @Column(name = "standard_time")
     @ApiModelProperty(name="standardTime" ,value="标准时间")
     @Excel(name = "标准时间", height = 20, width = 30)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date standardTime;
 
     /**
@@ -67,6 +69,7 @@ public class SmtRoute extends ValidGroup implements Serializable {
     @Column(name = "readiness_time")
     @ApiModelProperty(name="readinessTime" ,value="准备时间")
     @Excel(name = "准备时间", height = 20, width = 30)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date readinessTime;
 
     /**
@@ -149,6 +152,10 @@ public class SmtRoute extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     @ApiModelProperty(name="isDelete" ,value="逻辑删除")
     private Byte isDelete;
+
+    @Transient
+    @ApiModelProperty(name = "产品工艺路线",notes = "产品工艺路线")
+    private SmtProductProcessRoute smtProductProcessRoute;
 
     /**
      * 扩展字段1

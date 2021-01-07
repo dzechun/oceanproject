@@ -20,6 +20,7 @@
         <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime"/>
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="contract_no" jdbcType="BIGINT" property="contractNo"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>

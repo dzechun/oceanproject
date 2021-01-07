@@ -68,11 +68,11 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     private java.math.BigDecimal productionQuantity;
 
     /**
-     * 产出数量
+     * 完工数量
      */
     @Column(name = "output_quantity")
-    @ApiModelProperty(name="outputQuantity" ,value="产出数量")
-    @Excel(name = "产出数量", height = 20, width = 30,orderNum="7")
+    @ApiModelProperty(name="outputQuantity" ,value="完工数量")
+    @Excel(name = "完工数量", height = 20, width = 30,orderNum="7")
     private java.math.BigDecimal outputQuantity;
 
     /**
@@ -165,6 +165,13 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Column(name = "organization_id")
     private Long organizationId;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractNo",value = "合同号")
+    @Column(name = "contract_no")
+    private String contractNo;
 
     /**
      * 备注

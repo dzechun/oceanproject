@@ -1,12 +1,14 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.dto.basic.SmtAddressDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -152,4 +154,10 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      * 扩展字段3
      */
     private String option3;
+
+    /**
+     * 地址集合
+     */
+    @ApiModelProperty("地址集合")
+    private List<SmtAddressDto> list;
 }

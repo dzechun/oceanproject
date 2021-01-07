@@ -9,6 +9,8 @@
     <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory" />
     <result column="capacity" jdbcType="DECIMAL" property="capacity" />
     <result column="temperature" jdbcType="DECIMAL" property="temperature" />
+    <result column="complete_analysis" jdbcType="TINYINT" property="completeAnalysis" />
+    <result column="mrb_operation" jdbcType="TINYINT" property="MrbOperation" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -29,7 +31,8 @@
     select  sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,sw.warehouse_desc,sw.warehouse_category,
     sw.capacity,sw.temperature,sw.unit,sw.status,sw.create_user_id,
     u.user_name as createUserName,sw.create_time,sw.modified_user_id, s.user_name as modifiedUserName,
-    sw.modified_time, sw.is_delete, sw.organization_id, sw.remark, bo.organization_name
+    sw.modified_time, sw.is_delete, sw.organization_id, sw.remark, sw.complete_analysis,
+    sw.mrb_operation, bo.organization_name
     from fantech_imes.smt_warehouse sw
     left join ocean.sys_user u on sw.create_user_id=u.user_id
     left join ocean.sys_user s on sw.modified_user_id=s.user_id

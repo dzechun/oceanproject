@@ -60,6 +60,13 @@ public class SmtMaterialSupplier extends ValidGroup implements Serializable {
     private Long supplierId;
 
     /**
+     * 图片
+     */
+    @ApiModelProperty(name="image",value = "图片")
+    @Column(name = "image")
+    private String image;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

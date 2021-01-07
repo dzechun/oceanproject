@@ -83,6 +83,22 @@ public class SmtWarehouse extends ValidGroup implements Serializable {
     private String unit;
 
     /**
+     * 是否参与齐套分析(0.否 1.是)
+     */
+    @ApiModelProperty(name="completeAnalysis",value = "是否参与齐套分析(0.否 1.是)")
+    @Column(name = "complete_analysis")
+    @Excel(name = "是否参与齐套分析", height = 20, width = 30,replace = {"否_0", "是_1"})
+    private Integer completeAnalysis;
+
+    /**
+     * 是否参与MRB运算(0.否 1.是)
+     */
+    @ApiModelProperty(name="MrbOperation",value = "是否参与齐套分析(0.否 1.是)")
+    @Column(name = "mrb_operation")
+    @Excel(name = "是否参与齐套分析", height = 20, width = 30,replace = {"否_0", "是_1"})
+    private Integer MrbOperation;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

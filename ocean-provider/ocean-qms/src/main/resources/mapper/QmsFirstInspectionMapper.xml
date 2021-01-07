@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsFirstInspectionMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsFirstInspection">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="first_inspection_id" jdbcType="BIGINT" property="firstInspectionId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="handler" jdbcType="BIGINT" property="handler" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsFirstInspectionDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
+    <result column="product_des" jdbcType="VARCHAR" property="productDes" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="selected_total_quantity" jdbcType="DECIMAL" property="selectedTotalQuantity"/>
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
+    <result column="handler_name" jdbcType="VARCHAR" property="handlerName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qfi.first_inspection_id,qfi.work_order_id,qfi.inspection_result,qfi.status,qfi.create_user_id, bo.organization_name,
+    qfi.create_time,qfi.modified_user_id,qfi.modified_time,qfi.is_delete, qfi.organization_id,qfi.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    swo.work_order_quantity,spl.pro_name,sm.material_code AS product_code,sm.material_des AS product_des,
+    spm.product_model_name,sys.user_name AS handler_name
+    from fantech_imes.qms_first_inspection qfi
+    LEFT JOIN ocean.sys_user su ON qfi.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qfi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qmr.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_work_order swo ON qfi.work_order_id = swo.work_order_id
+    LEFT JOIN fantech_imes.smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+    LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON sm.product_model_id = spm.product_model_id
+    LEFT JOIN ocean.sys_user sys ON qfi.handler = sys.user_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+</mapper>
