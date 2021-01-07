@@ -4,6 +4,8 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -43,4 +45,5 @@ public class SearchSmtProductBom extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="productBomId" ,value="产品BOM ID")
     private Long productBomId;
+
 }
