@@ -48,14 +48,14 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
     @Transient
     @ApiModelProperty(name="submaterialCode" ,value="替代物料编码")
     @Excel(name = "替代物料编码", height = 20, width = 30)
-    private String submaterialCode;
+    private String subMaterialCode;
 
     /**
      * 替代物料名称
      */
     @Transient
     @ApiModelProperty(name="submaterialName" ,value="替代物料名称")
-    private String submaterialName;
+    private String subMaterialName;
 
     /**
      * 替代物料版本
@@ -63,7 +63,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
     @Transient
     @ApiModelProperty(name="subversion" ,value="替代物料版本")
     @Excel(name = "替代物料版本", height = 20, width = 30)
-    private String subversion;
+    private String subVersion;
 
     /**
      * 替代物料描述
@@ -71,7 +71,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
     @Transient
     @ApiModelProperty(name="submaterialDesc" ,value="替代物料描述")
     @Excel(name = "替代物料描述", height = 20, width = 30)
-    private String submaterialDesc;
+    private String subMaterialDesc;
 
     /**
      * 线别代码

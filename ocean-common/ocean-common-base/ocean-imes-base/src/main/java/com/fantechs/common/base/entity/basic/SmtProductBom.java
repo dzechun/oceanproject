@@ -32,12 +32,12 @@ public class SmtProductBom extends ValidGroup implements Serializable {
     private Long productBomId;
 
     /**
-     * 物料清单编号
+     * 产品BOM编号
      */
     @Column(name = "product_bom_code")
     @ApiModelProperty(name = "productBomCode", value = "BOM ID")
     @Excel(name = "BOM ID", height = 20, width = 30)
-    @NotBlank(message = "物料清单编码不能为空")
+    @NotBlank(message = "产品BOM编号不能为空")
     private String productBomCode;
 
     /**
@@ -45,6 +45,7 @@ public class SmtProductBom extends ValidGroup implements Serializable {
      */
     @Column(name = "material_id")
     @ApiModelProperty(name = "materialId", value = "产品料号ID")
+    @NotNull(message = "物料id不能为空")
     private Long materialId;
 
     /**
