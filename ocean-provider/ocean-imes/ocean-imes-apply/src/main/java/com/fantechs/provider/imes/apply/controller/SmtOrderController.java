@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.entity.apply.SmtOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtOrder;
@@ -38,7 +39,7 @@ public class SmtOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：orderCode、materialId、orderQuantity",required = true)@RequestBody @Validated SmtOrder smtOrder) {
+    public ResponseEntity add(@ApiParam(value = "订单对象信息",required = true)@RequestBody SmtOrder smtOrder) {
         return ControllerUtil.returnCRUD(smtOrderService.save(smtOrder));
     }
 
@@ -50,7 +51,7 @@ public class SmtOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtOrder.update.class) SmtOrder smtOrder) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtOrder smtOrder) {
         return ControllerUtil.returnCRUD(smtOrderService.update(smtOrder));
     }
 
@@ -67,6 +68,13 @@ public class SmtOrderController {
         Page<Object> page = PageHelper.startPage(searchSmtOrder.getStartPage(),searchSmtOrder.getPageSize());
         List<SmtOrderDto> list = smtOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("获取订单产品详情")
+    @PostMapping("/orderMaterialDetail")
+    public ResponseEntity<List<MesOrderMaterialDTO>> orderMaterialDetail(@ApiParam(value = "订单ID",required = true)@RequestParam Long orderId) {
+        List<MesOrderMaterialDTO> orderMaterial = smtOrderService.findOrderMaterial(orderId);
+        return  ControllerUtil.returnDataSuccess(orderMaterial,StringUtils.isEmpty(orderMaterial)?0:orderMaterial.size());
     }
 
     @PostMapping(value = "/export")
