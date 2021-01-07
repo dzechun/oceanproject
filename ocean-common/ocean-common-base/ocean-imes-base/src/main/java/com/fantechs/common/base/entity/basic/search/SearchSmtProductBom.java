@@ -16,9 +16,9 @@ public class SearchSmtProductBom extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -6961850550811090030L;
 
     /**
-     * 物料清单编号
+     * 产品BOM编码
      */
-    @ApiModelProperty(name="productBomCode" ,value="BOM ID")
+    @ApiModelProperty(name="productBomCode" ,value="产品BOM编码")
     private String productBomCode;
 
     /**

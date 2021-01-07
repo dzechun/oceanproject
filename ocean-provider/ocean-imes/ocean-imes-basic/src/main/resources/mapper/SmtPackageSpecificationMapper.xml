@@ -41,7 +41,7 @@
 
   <sql id="Base_Column_List">
     sps.package_specification_id, sps.package_specification_code, sps.package_specification_name,
-    sps.package_specification_desc, sps.package_specification_quantity, sps.material_id, sps.processId, sps.barcode_rule_id,
+    sps.package_specification_desc, sps.package_specification_quantity, sps.material_id, sps.process_id, sps.barcode_rule_id,
     sps.packing_unit_id, sps.status, sps.create_user_id, sps.create_time, sps.modified_user_id, sps.modified_time,
     sps.is_delete, sps.option1, sps.option2, sps.option3, sps.organization_id, sps.remark
   </sql>

@@ -64,14 +64,12 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         if (StringUtils.isEmpty(smtProductBom.getParentBomId())){
             //没有父BOM则为顶级BOM，判断同一产品的BOM是否已经存在
             Example.Criteria criteria1 = example.createCriteria();
-            criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
-
-            Example.Criteria criteria2 = example.createCriteria();
-            criteria1.andEqualTo("parentBomId",null);
+            criteria1.andEqualTo("materialId",smtProductBom.getMaterialId())
+                    .andEqualTo("parentBomId",null);
 
             List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtProductBoms)){
-                throw new BizErrorException("BOM ID或物料编码信息已存在");
+                throw new BizErrorException("该物料的产品BOM已存在");
             }
         }else {
             materialRepeat(smtProductBom);
@@ -125,14 +123,13 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         if (StringUtils.isEmpty(smtProductBom.getParentBomId())){
             //没有父BOM则为顶级BOM，判断同一产品的BOM是否已经存在
             Example.Criteria criteria1 = example.createCriteria();
-            criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
-
-            Example.Criteria criteria2 = example.createCriteria();
-            criteria2.andEqualTo("parentBomId",null);
+            criteria1.andEqualTo("materialId",smtProductBom.getMaterialId())
+                    .andEqualTo("parentBomId",null)
+                    .andNotEqualTo("productBomId",smtProductBom.getProductBomId());
 
             List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtProductBoms)){
-                throw new BizErrorException("BOM ID或物料编码信息已存在");
+                throw new BizErrorException("该物料的产品BOM已存在");
             }
         }else {
             materialRepeat(smtProductBom);

@@ -45,17 +45,20 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wha.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="warehouseAreaCode != null">
+      <if test="warehouseAreaCode != null and warehouseAreaCode != ''">
         and wha.warehouse_area_code like CONCAT('%', #{warehouseAreaCode}, '%')
       </if>
-      <if test="warehouseAreaName != null">
+      <if test="warehouseAreaName != null and warehouseAreaName != ''">
         and  wha.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
       </if>
-      <if test="warehouseAreaDesc != null">
+      <if test="warehouseAreaDesc != null and warehouseAreaDesc != ''">
         and wha.warehouse_area_desc like CONCAT('%', #{warehouseAreaDesc}, '%')
       </if>
-      <if test="warehouseId != null">
+      <if test="warehouseId != null and warehouseId != ''">
         and wha.warehouse_id = #{warehouseId}
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
       </if>
       <if test="status!=null and status!=''">
         and wha.status=#{status}
