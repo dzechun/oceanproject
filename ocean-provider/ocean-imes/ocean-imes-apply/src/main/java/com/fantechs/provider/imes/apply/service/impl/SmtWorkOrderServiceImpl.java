@@ -332,6 +332,11 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         return list;
     }
 
+    @Override
+    public List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder) {
+        return smtWorkOrderMapper.pdaFindList(searchSmtWorkOrder);
+    }
+
     /**
      * 获取当前登录用户
      * @return

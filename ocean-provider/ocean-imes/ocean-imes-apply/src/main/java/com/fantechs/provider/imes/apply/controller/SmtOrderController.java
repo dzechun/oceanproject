@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
+import com.fantechs.common.base.dto.apply.SaveOrderMaterialDTO;
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.entity.apply.SmtOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtOrder;
@@ -41,6 +42,12 @@ public class SmtOrderController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "订单对象信息",required = true)@RequestBody SmtOrder smtOrder) {
         return ControllerUtil.returnCRUD(smtOrderService.save(smtOrder));
+    }
+
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/save")
+    public ResponseEntity save(@ApiParam(value = "销售订单对象信息",required = true)@RequestBody SaveOrderMaterialDTO saveOrderMaterialDTO) {
+        return ControllerUtil.returnCRUD(smtOrderService.saveOrderMaterial(saveOrderMaterialDTO));
     }
 
     @ApiOperation("删除")

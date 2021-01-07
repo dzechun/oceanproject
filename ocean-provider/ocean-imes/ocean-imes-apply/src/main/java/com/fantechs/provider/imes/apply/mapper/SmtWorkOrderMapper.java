@@ -18,4 +18,6 @@ public interface SmtWorkOrderMapper extends MyMapper<SmtWorkOrder> {
     SmtWorkOrderDto selectByWorkOrderId(@Param(value = "workOrderId")Long workOrderId);
 
     List<SmtRouteProcess> selectRouteProcessByRouteId(@Param(value = "routeId")Long routeId);
+
+    List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder);
 }

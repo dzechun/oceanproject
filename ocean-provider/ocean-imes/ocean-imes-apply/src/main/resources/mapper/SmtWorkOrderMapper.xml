@@ -121,6 +121,48 @@
         order by swo.create_time desc
     </select>
 
+    <select id="pdaFindList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder"
+            resultMap="BaseResultMapDto">
+        SELECT
+        swo.work_order_id,
+        swo.work_order_code,
+        sm.material_id,
+        sm.material_code,
+        sm.material_desc,
+        spl.pro_line_id,
+        spl.pro_name,
+        sps.packing_unit_id AS 'packingUnitId',
+        sps.package_specification_id AS 'packageSpecificationId',
+        sps.package_specification_quantity AS 'packageSpecificationQuantity'
+        FROM
+        smt_work_order swo
+        LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
+        LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+        LEFT JOIN smt_package_specification sps ON sps.material_id = sm.material_id
+        WHERE
+        sps.process_id = #{processId}
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="workOrderStatus!=null and workOrderStatus!=''">
+                and swo.work_order_status = #{workOrderStatus}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and swo.material_id=#{materialId}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+        </where>
+        order by swo.create_time desc
+    </select>
 
     <select id="selectProductBomDet" parameterType="java.lang.Long" resultMap="BomResultMap">
         select
