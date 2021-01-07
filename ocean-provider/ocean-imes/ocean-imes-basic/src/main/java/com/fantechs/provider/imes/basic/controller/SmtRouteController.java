@@ -110,4 +110,10 @@ public class SmtRouteController {
         List<SmtRouteProcess> list = smtRouteProcessService.findConfigureRout(routeId);
         return ControllerUtil.returnDataSuccess("查询成功",list);
     }
+
+    @PostMapping(value = "/addOrUpdateRoute")
+    @ApiOperation(value = "新增或更新工艺路线",notes = "新增或更新工艺路线")
+    public ResponseEntity addOrUpdateRoute(@ApiParam(value = "必传：routeId、routeCode、routeName",required = true)@RequestBody @Validated SmtRoute smtRoute){
+        return ControllerUtil.returnCRUD(smtRouteService.addOrUpdateRoute(smtRoute));
+    }
 }
