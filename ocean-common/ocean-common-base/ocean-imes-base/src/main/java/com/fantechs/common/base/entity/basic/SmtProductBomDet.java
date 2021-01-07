@@ -115,6 +115,7 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="processName" ,value="工序名称")
     @Excel(name = "工序名称", height = 20, width = 30)
     private String processName;
+
     /**
      * 用量
      */

@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtProductBom;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProductBomMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductBomMapper;
@@ -50,14 +52,29 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //判断编码是否重复
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
-        criteria.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
+        criteria.andEqualTo("productBomCode",smtProductBom.getProductBomCode());
+        SmtProductBom smtProductBom1 = smtProductBomMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(smtProductBom1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+        example.clear();
+        if (StringUtils.isEmpty(smtProductBom.getParentBomId())){
+            //没有父BOM则为顶级BOM，判断同一产品的BOM是否已经存在
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
 
-        List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(smtProductBoms)){
-            throw new BizErrorException("BOM ID或物料编码信息已存在");
+            Example.Criteria criteria2 = example.createCriteria();
+            criteria1.andEqualTo("parentBomId",null);
+
+            List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProductBoms)){
+                throw new BizErrorException("BOM ID或物料编码信息已存在");
+            }
+        }else {
+            materialRepeat(smtProductBom);
         }
 
         smtProductBom.setCreateUserId(currentUser.getUserId());
@@ -73,6 +90,20 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         return i;
     }
 
+    //往上追溯，判断物料是否被上级引用
+    public void materialRepeat(SmtProductBom smtProductBom){
+        Example example = new Example(SmtProductBom.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("productBomId",smtProductBom.getParentBomId());
+        SmtProductBom smtProductBom1 = smtProductBomMapper.selectOneByExample(example);
+        if (smtProductBom.getMaterialId().equals(smtProductBom1.getMaterialId())){
+            throw new BizErrorException("该物料被父级引用");
+        }
+        if (StringUtils.isNotEmpty(smtProductBom1.getParentBomId())){
+            materialRepeat(smtProductBom1);
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(SmtProductBom smtProductBom) {
@@ -81,17 +112,30 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //判断编码是否重复
         Example example = new Example(SmtProductBom.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("materialId",smtProductBom.getMaterialId());
-        criteria1.orEqualTo("productBomCode",smtProductBom.getProductBomCode());
-        example.and(criteria1);
-        criteria.andNotEqualTo("productBomId",smtProductBom.getProductBomId());
-        List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
+        criteria.andEqualTo("productBomCode",smtProductBom.getProductBomCode())
+                .andNotEqualTo("productBomId",smtProductBom.getProductBomId());
+        SmtProductBom smtProductBom1 = smtProductBomMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(smtProductBom1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+        example.clear();
+        if (StringUtils.isEmpty(smtProductBom.getParentBomId())){
+            //没有父BOM则为顶级BOM，判断同一产品的BOM是否已经存在
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria.andEqualTo("materialId",smtProductBom.getMaterialId());
 
-        if(StringUtils.isNotEmpty(smtProductBoms)){
-            throw new BizErrorException("BOM ID或物料编码信息已存在");
+            Example.Criteria criteria2 = example.createCriteria();
+            criteria2.andEqualTo("parentBomId",null);
+
+            List<SmtProductBom> smtProductBoms = smtProductBomMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(smtProductBoms)){
+                throw new BizErrorException("BOM ID或物料编码信息已存在");
+            }
+        }else {
+            materialRepeat(smtProductBom);
         }
 
         smtProductBom.setModifiedUserId(currentUser.getUserId());
@@ -142,10 +186,16 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
     }
 
     @Override
-    public List<SmtProductBom> findList(SearchSmtProductBom searchSmtProductBom) {
+    public List<SmtProductBomDto> findList(Map<String,Object> map) {
 
-        List<SmtProductBom> smtProductBoms = smtProductBomMapper.findList(searchSmtProductBom);
+        //查询指定层级的产品BOM
+        List<SmtProductBomDto> smtProductBomDtos = smtProductBomMapper.findList(map);
 
+        for (SmtProductBomDto smtProductBomDto : smtProductBomDtos) {
+            map.put("productBomId",smtProductBomDto.getProductBomId());
+            List<SmtProductBomDto> list = findList(map);
+            smtProductBomDto.setSmtProductBomDtos(list);
+        }
         /*if (StringUtils.isNotEmpty(smtProductBoms)){
             Example example = new Example(SmtProductBomDet.class);
             for (SmtProductBom smtProductBom : smtProductBoms) {
@@ -162,7 +212,7 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
                 }
             }
         }*/
-        return smtProductBoms;
+        return smtProductBomDtos;
     }
 
     public void findNextLevelProductBomDet(SmtProductBomDet smtProductBomDet){
@@ -173,7 +223,7 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtProductBomDets)){
             //将子级明细放进父级实体中返回
-            smtProductBomDet.setNextLevelProductBomDet(smtProductBomDets);
+            smtProductBomDet.setSmtProductBomDets(smtProductBomDets);
             for (SmtProductBomDet productBomDet : smtProductBomDets) {
                 findNextLevelProductBomDet(productBomDet);
             }
