@@ -21,6 +21,7 @@ import java.util.List;
 @Data
 public class SmtProductBom extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 8177452637204613229L;
+
     /**
      * 产品BOM ID
      */
@@ -52,6 +53,44 @@ public class SmtProductBom extends ValidGroup implements Serializable {
     @Column(name = "pro_line_id")
     @ApiModelProperty(name = "proLineId", value = "线别ID")
     private Long proLineId;
+
+    /**
+     * 代用物料ID
+     */
+    @Column(name = "sub_material_id")
+    @ApiModelProperty(name="subMaterialId" ,value="代用物料ID")
+    private Long subMaterialId;
+
+    /**
+     * 用量
+     */
+    @ApiModelProperty(name="quantity" ,value="用量")
+    @Excel(name = "用量", height = 20, width = 30)
+    @Column(name = "quantity")
+    private BigDecimal quantity;
+
+    /**
+     * 基准数量
+     */
+    @ApiModelProperty(name="baseQuantity" ,value="基准数量")
+    @Excel(name = "基准数量", height = 20, width = 30)
+    @Column(name = "base_quantity")
+    private BigDecimal baseQuantity;
+
+    /**
+     * 位置
+     */
+    @ApiModelProperty(name="position" ,value="位置")
+    @Excel(name = "位置", height = 20, width = 30)
+    private String position;
+
+    /**
+     * 工序ID
+     */
+    @Column(name = "process_id")
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    @NotNull(message = "工序ID不能为空")
+    private Long processId;
 
     /**
      * 配送方式

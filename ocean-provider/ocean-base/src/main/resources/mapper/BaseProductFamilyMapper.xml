@@ -42,7 +42,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    bpf.organization_name
+    bo.organization_name
     FROM fantech_imes.base_product_family AS bpf
     LEFT JOIN ocean.sys_user su ON bpf.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON bpf.modified_user_id = sus.user_id

@@ -3,6 +3,7 @@
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBomDet">
         <id column="product_bom_det_id" jdbcType="BIGINT" property="productBomDetId"/>
+        <result column="unique_tag" jdbcType="VARCHAR" property="uniqueTag"/>
         <result column="product_bom_id" jdbcType="BIGINT" property="productBomId"/>
         <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId"/>
         <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId"/>
@@ -32,7 +33,7 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-        <collection property="nextLevelProductBomDet"
+        <collection property="smtProductBomDets"
                     ofType="com.fantechs.common.base.entity.basic.SmtProductBomDet"
                     select="com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper.findNextLevelProductBomDet"
                     column="product_bom_det_id"/>
@@ -41,6 +42,7 @@
     <sql id="Base_Column_List">
     spbd.product_bom_det_id,
 	spbd.product_bom_id,
+	spbd.unique_tag,
 	spbd.part_material_id,
 	spbd.sub_material_id,
 	spbd.process_id,
@@ -112,7 +114,7 @@
         left join ocean.sys_user u on spbd.create_user_id=u.user_id
         left join ocean.sys_user s on spbd.modified_user_id=s.user_id
         LEFT JOIN fantech_imes.base_organization bo ON spbd.organization_id = bo.organization_id
-        where parent_id is null and product_bom_id = #{productBomId}
+        where parent_id = #{productBomId}
     </select>
 
     <select id="findNextLevelProductBomDet" parameterType="long" resultMap="BaseResultMap">

@@ -14,4 +14,6 @@ import java.util.List;
 public interface SmtProductBomDetService extends IService<SmtProductBomDet> {
 
     List<SmtProductBomDet> findList(SearchSmtProductBomDet searchSmtProductBomDet);
+
+    List<SmtProductBomDet> findNextLevelProductBomDet(Long productBomDetId);
 }
