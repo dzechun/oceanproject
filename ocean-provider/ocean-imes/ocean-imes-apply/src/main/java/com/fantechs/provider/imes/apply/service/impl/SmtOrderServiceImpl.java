@@ -8,15 +8,18 @@ import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.entity.apply.MesOrderMaterial;
 import com.fantechs.common.base.entity.apply.SmtOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
+import com.fantechs.common.base.entity.apply.history.SmtHtOrder;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtOrderService;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
+import com.fantechs.provider.imes.apply.service.ht.SmtHtOrderService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -33,6 +36,8 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
 
     @Resource
     private SmtOrderMapper smtOrderMapper;
+    @Resource
+    private SmtHtOrderService smtHtOrderService;
 
     @Override
     public int save(SmtOrder smtOrder) {
@@ -52,7 +57,11 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         smtOrder.setCreateUserId(currentUserInfo.getUserId());
         smtOrder.setModifiedTime(new Date());
         smtOrder.setModifiedUserId(currentUserInfo.getUserId());
-        return smtOrderMapper.insertSelective(smtOrder);
+        if(smtOrderMapper.insertSelective(smtOrder)<=0){
+            return 0;
+        }
+        recordHistory(smtOrder.getOrderId(),"新增");
+        return 1;
     }
 
     @Override
@@ -69,7 +78,13 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
         }
-        return smtOrderMapper.deleteByIds(ids);
+        if(smtOrderMapper.deleteByIds(ids)<=0){
+            return 0;
+        }
+        for (String s : idArray) {
+            recordHistory(Long.parseLong(s),"删除");
+        }
+        return 1;
     }
 
     @Override
@@ -90,7 +105,11 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
 
         smtOrder.setModifiedUserId(currentUserInfo.getUserId());
         smtOrder.setModifiedTime(new Date());
-        return smtOrderMapper.updateByPrimaryKey(smtOrder);
+        if(smtOrderMapper.updateByPrimaryKey(smtOrder)<=0){
+            return 0;
+        }
+        recordHistory(smtOrder.getOrderId(),"更新");
+        return 1;
     }
 
     @Override
@@ -132,5 +151,21 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     @Override
     public List<MesOrderMaterialDTO> findOrderMaterial(Long orderId) {
         return smtOrderMapper.findOrderMaterial(orderId);
+    }
+
+    /**
+     * 记录操作历史
+     * @param id
+     * @param operation
+     */
+    private void recordHistory(Long id,String operation){
+        SmtHtOrder smtHtOrder = new SmtHtOrder();
+        smtHtOrder.setOption1(operation);
+        SmtOrder smtOrder = this.selectByKey(id);
+        if (StringUtils.isEmpty(smtOrder)){
+            return;
+        }
+        BeanUtils.autoFillEqFields(smtOrder,smtHtOrder);
+        smtHtOrderService.save(smtHtOrder);
     }
 }

@@ -70,7 +70,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         smtWorkOrder.setCreateUserId(currentUser.getUserId());
         smtWorkOrder.setCreateTime(new Date());
-        if(smtWorkOrderMapper.insertUseGeneratedKeys(smtWorkOrder)<=0){
+        if(smtWorkOrderMapper.insertSelective(smtWorkOrder)<=0){
             return 0;
         }
 
@@ -184,7 +184,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
         Integer workOrderStatus = order.getWorkOrderStatus();
-        if (workOrderStatus != 3) {
+        if (workOrderStatus != 4) {
             Example example = new Example(SmtWorkOrder.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
@@ -207,7 +207,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
             //工单的工单数量改变,重新计算零件的工单用量
             if (!order.getWorkOrderQuantity().equals(smtWorkOrder.getWorkOrderQuantity()) &&
-                    (workOrderStatus == 0 || workOrderStatus == 2)) {
+                    (workOrderStatus == 0 || workOrderStatus == 3)) {
 
                 Example example1 = new Example(SmtWorkOrderBom.class);
                 Example.Criteria criteria1 = example1.createCriteria();
@@ -335,6 +335,23 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     @Override
     public List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder) {
         return smtWorkOrderMapper.pdaFindList(searchSmtWorkOrder);
+    }
+
+    @Override
+    public int saveWorkOrderDTO(SmtWorkOrder smtWorkOrder) {
+        if(StringUtils.isNotEmpty(smtWorkOrder.getWorkOrderId())){
+            return this.update(smtWorkOrder);
+        }else{
+            return this.save(smtWorkOrder);
+        }
+    }
+
+    @Override
+    public int updateWorkOrderStatus(Long workOrderId,int status) {
+        SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
+        smtWorkOrder.setWorkOrderId(workOrderId);
+        smtWorkOrder.setWorkOrderStatus(status);
+        return smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
     }
 
     /**

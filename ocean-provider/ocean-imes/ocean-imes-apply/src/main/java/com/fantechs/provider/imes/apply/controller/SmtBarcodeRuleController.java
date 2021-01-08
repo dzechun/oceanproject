@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtBarcodeRuleService;
 import com.fantechs.provider.imes.apply.service.SmtHtBarcodeRuleService;
+import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -99,4 +100,6 @@ public class SmtBarcodeRuleController {
     public ResponseEntity preserve(@RequestBody @Validated SmtBarcodeRule smtBarcodeRule) {
         return ControllerUtil.returnCRUD(smtBarcodeRuleService.preserve(smtBarcodeRule));
     }
+
+
 }

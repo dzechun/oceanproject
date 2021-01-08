@@ -27,6 +27,13 @@ public class SmtOrderDto extends SmtOrder implements Serializable {
     private String materialName;
 
     /**
+     * 物料型号
+     */
+    @Transient
+    @ApiModelProperty(name="productModelName" ,value="物料型号")
+    private String productModelName;
+
+    /**
      * 版本
      */
     @Transient
