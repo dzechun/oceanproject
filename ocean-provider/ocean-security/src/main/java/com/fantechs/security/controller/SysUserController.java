@@ -55,6 +55,7 @@ public class SysUserController {
             @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysUser searchSysUser ) {
         Page<Object> page = PageHelper.startPage(searchSysUser.getStartPage(),searchSysUser.getPageSize());
         List<SysUser> sysUsers = sysUserService.selectUsers(searchSysUser);
+        System.out.println(sysUsers.get(0).getDeptName());
         return  ControllerUtil.returnDataSuccess(sysUsers, (int)page.getTotal());
     }
 

@@ -1,88 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.security.mapper.SysUserMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.SysUser">
-    <id column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="user_name" jdbcType="VARCHAR" property="userName" />
-    <result column="user_code" jdbcType="VARCHAR" property="userCode" />
-    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
-    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
-    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
-    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
-    <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.SysUser">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="dept_id" jdbcType="BIGINT" property="deptId"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
 
-    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
-    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <resultMap id="DeptResultMap" type="com.fantechs.common.base.entity.basic.SmtDept">
-    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
-    <result column="dept_code" jdbcType="VARCHAR" property="deptCode" />
-    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
-    <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
-    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
-    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
-    <result column="status" jdbcType="BIT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete" />
-  </resultMap>
+    <resultMap id="DeptResultMap" type="com.fantechs.common.base.entity.basic.SmtDept">
+        <result column="dept_id" jdbcType="BIGINT" property="deptId"/>
+        <result column="dept_code" jdbcType="VARCHAR" property="deptCode"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    user_id, user_name, user_code, nick_name, password, status, factory_id, dept_id, 
-    telephone, mobile, email, create_user_id, create_time, modified_user_id, modified_time, 
-    is_delete, organization_id, remark
+    <sql id="Base_Column_List">
+    su.user_id,
+	su.user_code,
+	su.user_name,
+	su.nick_name,
+	su.`password`,
+	su.`status`,
+	su.organization_id,
+	su.remark,
+	su.factory_id,
+	su.dept_id,
+	su.telephone,
+	su.mobile,
+	su.email,
+	su.create_user_id,
+	su.create_time,
+	su.modified_user_id,
+	su.modified_time,
+	su.is_delete
   </sql>
 
-  <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser" resultMap="BaseResultMap">
-    select su.user_id, su.user_name, su.user_code, su.nick_name, su.password, su.status, su.factory_id,f.factory_name,su.dept_id,
-    d.dept_name,su.telephone,su.mobile, su.email, su.create_user_id,u.user_name as createUserName,su.create_time, su.modified_user_id,
-    s.user_name as modifiedUserName, su.modified_time, su.organization_id, su.remark, bo.organization_name
-    from ocean.sys_user su
-    left join ocean.sys_user u on su.create_user_id=u.user_id
-    left join ocean.sys_user s on su.modified_user_id=s.user_id
-    left join fantech_imes.smt_factory f on su.factory_id=f.factory_id
-    left join fantech_imes.smt_dept d on su.dept_id=d.dept_id
-    LEFT JOIN fantech_imes.base_organization bo ON su.organization_id = bo.organization_id
-    <where>
-      1=1
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(su.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="userCode!=null and userCode!=''">
-        and su.user_code like CONCAT('%', #{userCode}, '%')
-      </if>
-      <if test="nickName!=null and nickName!=''">
-        and su.nick_name like CONCAT('%', #{nickName}, '%')
-      </if>
-      <if test="searchType==1 and roleId!=null and roleId!=''">
-        AND   su.user_id  IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
-        AND    su.status=1
-      </if>
-      <if test="status!=null and status!=''">
-        and su.status=#{status}
-      </if>
-      <if test="searchType==0 and roleId!=null and roleId!=''">
-        AND   su.user_id NOT IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
-        AND  su.status=1
-      </if>
-    </where>
-  </select>
+    <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        sf.factory_name,
+        sd.dept_name,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from ocean.sys_user su
+        left join ocean.sys_user u on su.create_user_id=u.user_id
+        left join ocean.sys_user s on su.modified_user_id=s.user_id
+        left join fantech_imes.smt_factory sf on su.factory_id= sf.factory_id
+        left join fantech_imes.smt_dept sd on su.dept_id=sd.dept_id
+        LEFT JOIN fantech_imes.base_organization bo ON su.organization_id = bo.organization_id
+        <where>
+            1=1
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(su.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userCode!=null and userCode!=''">
+                and su.user_code like CONCAT('%', #{userCode}, '%')
+            </if>
+            <if test="nickName!=null and nickName!=''">
+                and su.nick_name like CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="searchType==1 and roleId!=null and roleId!=''">
+                AND su.user_id IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
+                AND su.status=1
+            </if>
+            <if test="status!=null and status!=''">
+                and su.status=#{status}
+            </if>
+            <if test="searchType==0 and roleId!=null and roleId!=''">
+                AND su.user_id NOT IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
+                AND su.status=1
+            </if>
+        </where>
+    </select>
 
-  <select id="selectDept" parameterType="java.lang.String" resultMap="DeptResultMap">
+    <select id="selectDept" parameterType="java.lang.String" resultMap="DeptResultMap">
     select sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id,f.factory_name as factoryName,
     sd.status, sd.create_user_id,sd.create_time,sd.modified_user_id, sd.modified_time,sd.is_delete
     from fantech_imes.smt_dept sd
