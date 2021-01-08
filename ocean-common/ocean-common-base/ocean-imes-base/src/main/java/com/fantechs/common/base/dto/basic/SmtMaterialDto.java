@@ -2,6 +2,7 @@ package com.fantechs.common.base.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -73,4 +74,5 @@ public class SmtMaterialDto extends SmtMaterial implements Serializable {
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
 }

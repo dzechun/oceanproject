@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -87,14 +88,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialSource" ,value="物料来源(0.自制件 1.虚拟件 2.采购件)")
     @Excel(name = "物料来源", height = 20, width = 30,replace = {"自制件_0", "虚拟件_1","采购件_2"})
     private Integer materialSource;
-
-    /**
-     * 物料属性(0.半成品 1.成品)
-     */
-    @Column(name = "material_property")
-    @ApiModelProperty(name="materialProperty" ,value="物料属性(0.半成品 1.成品)")
-    @Excel(name = "物料属性", height = 20, width = 30,replace = {"半成品_0", "成品_1"})
-    private Integer materialProperty;
 
     /**
      * 条码规则集合ID
@@ -237,4 +230,10 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @Column(name = "option3")
     private String option3;
 
+    /**
+     * 页签
+     */
+    @Transient
+    @ApiModelProperty(name = "baseTab",value = "页签")
+    private BaseTab baseTab;
 }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseTabMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseTab">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="tab_id" jdbcType="BIGINT" property="tabId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_property" jdbcType="TINYINT" property="materialProperty" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="is_batch" jdbcType="TINYINT" property="isBatch" />
+    <result column="is_quality_test" jdbcType="TINYINT" property="isQualityTest" />
+    <result column="is_case_code" jdbcType="TINYINT" property="isCaseCode" />
+    <result column="is_sequence_code" jdbcType="TINYINT" property="isSequenceCode" />
+    <result column="issue_method" jdbcType="TINYINT" property="issueMethod" />
+    <result column="if_compoboard" jdbcType="TINYINT" property="ifCompoboard" />
+    <result column="if_linking_board" jdbcType="TINYINT" property="ifLinkingBoard" />
+    <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber" />
+    <result column="takt" jdbcType="INTEGER" property="takt" />
+    <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
+    <result column="min_safety_stock" jdbcType="DECIMAL" property="minSafetyStock" />
+    <result column="max_safety_stock" jdbcType="DECIMAL" property="maxSafetyStock" />
+    <result column="purchase_cycle" jdbcType="BIGINT" property="purchaseCycle" />
+    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit" />
+    <result column="sub_unit" jdbcType="VARCHAR" property="subUnit" />
+    <result column="conversion_rate" jdbcType="DECIMAL" property="conversionRate" />
+    <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bt.tab_id,
+	bt.material_id,
+	bt.material_property,
+	bt.image,
+	bt.is_batch,
+	bt.is_quality_test,
+	bt.is_case_code,
+	bt.is_sequence_code,
+	bt.issue_method,
+	bt.if_compoboard,
+	bt.if_linking_board,
+	bt.linking_board_number,
+	bt.takt,
+	bt.transfer_quantity,
+	bt.min_safety_stock,
+	bt.max_safety_stock,
+	bt.purchase_cycle,
+	bt.main_unit,
+	bt.sub_unit,
+	bt.conversion_rate,
+	bt.customer_material_code,
+	bt.`status`,
+	bt.remark,
+	bt.organization_id,
+	bt.create_user_id,
+	bt.create_time,
+	bt.modified_user_id,
+	bt.is_delete,
+	bt.modified_time
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    FROM fantech_imes.base_tab bt
+    LEFT JOIN ocean.sys_user su ON bt.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bt.modified_user_id = sus.user_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialId != null and materialId!=''">
+        and bt.material_id = #{materialId}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+</mapper>
