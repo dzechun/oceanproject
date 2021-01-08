@@ -22,7 +22,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
-    @Excel(name = "工单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单号", height = 20, width = 30,orderNum="4")
     private String workOrderCode;
 
     /**
@@ -30,7 +30,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料料号")
-    @Excel(name = "产品料号", height = 20, width = 30,orderNum="")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="5")
     private String materialCode;
 
     /**
@@ -38,7 +38,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="version" ,value="版本")
-    @Excel(name = "产品料号版本", height = 20, width = 30,orderNum="")
+    @Excel(name = "产品料号版本", height = 20, width = 30,orderNum="6")
     private String version;
 
     /**
@@ -46,7 +46,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum="4")
+    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum="7")
     private String materialDesc;
 
     /**
@@ -54,7 +54,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "生产线", height = 20, width = 30,orderNum = "9")
+    @Excel(name = "线别名称", height = 20, width = 30,orderNum = "8")
     private String proName;
 
     /**
@@ -62,13 +62,14 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum = "9")
     private String warehouseName;
 
     /**
      * 创建账号名称
      */
     @Transient
-    @Excel(name = "创建账号", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum = "10")
     @ApiModelProperty(name="createUserName" ,value="创建账号名称")
     private String createUserName;
 
@@ -77,7 +78,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
-    @Excel(name = "修改账号", height = 20, width = 30)
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum = "12")
     private String modifiedUserName;
 
     /**
@@ -85,5 +86,6 @@ public class SmtStockDto extends SmtStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "生产线", height = 20, width = 30,orderNum = "14")
     private String organizationName;
 }
