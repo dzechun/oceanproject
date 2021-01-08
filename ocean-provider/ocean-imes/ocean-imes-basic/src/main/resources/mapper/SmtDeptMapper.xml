@@ -19,22 +19,25 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="factory_name" jdbcType="BIGINT" property="factoryName" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <collection property="depts" ofType="com.fantechs.common.base.entity.basic.SmtDept" select="com.fantechs.provider.imes.basic.mapper.SmtDeptMapper.findById" column="dept_id"/>
   </resultMap>
   <sql id="Base_Column_List">
-    dept_id, dept_code, dept_name, dept_desc, factory_id, parent_id,status, create_user_id, create_time,
-    modified_user_id, modified_time, is_delete, option1, option2, option3
+    sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id, sd.parent_id,sd.status, sd.create_user_id, sd.create_time,
+    sd.modified_user_id, sd.modified_time, sd.is_delete, sd.option1, sd.option2, sd.option3
   </sql>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
-    select sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id,f.factory_name as factoryName,
-    sd.status, sd.create_user_id,u.user_name as createUserName,sd.create_time,sd.modified_user_id,
-    s.user_name as modifiedUserName, sd.modified_time,sd.is_delete
+    select <include refid="Base_Column_List"></include>,
+    sf.factory_name,
+    u.user_name as createUserName,
+    s.user_name as modifiedUserName
     from fantech_imes.smt_dept sd
     left join ocean.sys_user u on sd.create_user_id=u.user_id
     left join ocean.sys_user s on sd.modified_user_id=s.user_id
-    left join fantech_imes.smt_factory f on sd.factory_id=f.factory_id
+    left join fantech_imes.smt_factory sf on sd.factory_id=sf.factory_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -63,8 +66,14 @@
   </select>
 
   <select id="findById" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"></include>,
+    sf.factory_name,
+    u.user_name as createUserName,
+    s.user_name as modifiedUserName
     from fantech_imes.smt_dept sd
+    left join ocean.sys_user u on sd.create_user_id=u.user_id
+    left join ocean.sys_user s on sd.modified_user_id=s.user_id
+    left join fantech_imes.smt_factory sf on sd.factory_id=sf.factory_id
     where sd.parent_id=#{parentId}
   </select>
 

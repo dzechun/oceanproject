@@ -77,22 +77,22 @@ public class BadRequestExceptionHandler {
 
     @ExceptionHandler(value = BizErrorException.class)
     public ResponseEntity bizErrorException(BizErrorException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = SQLExecuteException.class)
     public ResponseEntity sqlExecuteException(SQLExecuteException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = DataErrorException.class)
     public ResponseEntity dataErrorException(DataErrorException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = TokenValidationFailedException.class)
     public ResponseEntity dataErrorException(TokenValidationFailedException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = Exception.class)
