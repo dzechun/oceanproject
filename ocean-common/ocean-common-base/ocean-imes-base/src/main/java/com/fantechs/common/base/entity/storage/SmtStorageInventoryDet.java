@@ -56,7 +56,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialBarcodeCode",value = "物料条码编码")
     @Excel(name = "物料条码编码", height = 20, width = 30,orderNum="")
     @Column(name = "material_barcode_code")
-    private Long materialBarcodeCode;
+    private String materialBarcodeCode;
 
     /**
      * 入库单号
