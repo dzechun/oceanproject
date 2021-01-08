@@ -3,6 +3,7 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseCalendarWorkShiftDto;
 import com.fantechs.common.base.general.entity.basic.BaseCalendar;
 import com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift;
 import com.fantechs.common.base.support.BaseService;
@@ -17,6 +18,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by leifengzhi on 2020/12/21.
@@ -143,5 +145,10 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
             throw new BizErrorException("当日无可删除班次");
         }
         return baseCalendarWorkShiftMapper.deleteByExample(example);
+    }
+
+    @Override
+    public List<BaseCalendarWorkShiftDto> findList(Map<String, Object> map) {
+        return baseCalendarWorkShiftMapper.findList(map);
     }
 }

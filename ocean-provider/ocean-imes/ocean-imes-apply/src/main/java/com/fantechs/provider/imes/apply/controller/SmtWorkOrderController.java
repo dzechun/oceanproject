@@ -54,8 +54,17 @@ public class SmtWorkOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtWorkOrder.update.class) SmtWorkOrder smtWorkOrder) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtWorkOrder smtWorkOrder) {
         return ControllerUtil.returnCRUD(smtWorkOrderService.update(smtWorkOrder));
+    }
+
+    @ApiOperation("更新工单状态")
+    @PostMapping("/updateStatus")
+    public ResponseEntity updateStatus(
+            @ApiParam(value = "工单ID",required = true) @RequestParam Long workOrderID,
+            @ApiParam(value = "工单状态",required = true) @RequestParam Integer status
+                                       ) {
+        return ControllerUtil.returnCRUD(smtWorkOrderService.updateWorkOrderStatus(workOrderID,status));
     }
 
     @ApiOperation("获取详情")

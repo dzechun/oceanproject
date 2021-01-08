@@ -21,6 +21,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      * 工单ID
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     @Column(name = "work_order_id")
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
     @NotNull(groups = update.class,message = "工单ID不能为空")

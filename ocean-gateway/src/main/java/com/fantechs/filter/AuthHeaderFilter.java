@@ -78,7 +78,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 		if (request.getRequestURI().contains(SWAGGER_URI)|| LOGIN_URI.contains(request.getRequestURI())) {
 			return false;
 		}
-			return true;
+			return false;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 		HttpServletRequest request = requestContext.getRequest();
 
 		String token =request .getHeader("token");
-		boolean flag =false;
+		boolean flag =true;
 		ResponseEntity<String> result = new ResponseEntity<>();
 		if (StringUtils.isEmpty(token)) {
 			requestContext.setSendZuulResponse(false); //对该请求不进行路由

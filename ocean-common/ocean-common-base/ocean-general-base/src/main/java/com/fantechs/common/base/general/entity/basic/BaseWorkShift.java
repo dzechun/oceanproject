@@ -3,10 +3,10 @@ package com.fantechs.common.base.general.entity.basic;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -116,6 +116,13 @@ public class BaseWorkShift extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 班次时间集合
+     */
+    @ApiModelProperty(name="isDelete",value = "班次时间集合")
+    @Transient
+    private List<BaseWorkShiftTime> baseWorkShiftTimes;
 
     private static final long serialVersionUID = 1L;
 }

@@ -99,7 +99,7 @@ public class WmsInStorageBillsDetServiceImpl extends BaseService<WmsInStorageBil
     public int save(WmsInStorageBillsDet wmsStorageBillsDet) {
         wmsStorageBillsDet.setCreateUserId(null);
         wmsStorageBillsDet.setIsDelete((byte)1);
-        if(wmsStorageBillsDetMapper.insertUseGeneratedKeys(wmsStorageBillsDet)<=0){
+        if(wmsStorageBillsDetMapper.insertSelective(wmsStorageBillsDet)<=0){
             return 0;
         }
         recordHistory(wmsStorageBillsDet.getStorageBillsDetId(),"新增");

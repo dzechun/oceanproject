@@ -4,11 +4,14 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseCalendarDto;
-import com.fantechs.common.base.general.dto.basic.BaseWorkShiftTimeDto;
+import com.fantechs.common.base.general.dto.basic.BaseCalendarWorkShiftDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto;
 import com.fantechs.common.base.general.entity.basic.BaseCalendar;
 import com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift;
-import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseCalendarWorkShift;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShiftTime;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -18,9 +21,7 @@ import com.fantechs.provider.base.service.BaseCalendarWorkShiftService;
 import com.fantechs.provider.base.service.BaseWorkShiftService;
 import com.fantechs.provider.base.service.BaseWorkShiftTimeService;
 import org.junit.Test;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -90,7 +91,31 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
 
     @Override
     public List<BaseCalendarDto> findList(Map<String, Object> map) {
-        return baseCalendarMapper.findList(map);
+        //获取日历
+        List<BaseCalendarDto> baseCalendarDtos = baseCalendarMapper.findList(map);
+        for (BaseCalendarDto baseCalendarDto : baseCalendarDtos) {
+            if (StringUtils.isNotEmpty(baseCalendarDto)) {
+
+                //获取日历班次关系集合
+                SearchBaseCalendarWorkShift searchBaseCalendarWorkShift = new SearchBaseCalendarWorkShift();
+                searchBaseCalendarWorkShift.setCalendarId(baseCalendarDto.getCalendarId());
+                List<BaseCalendarWorkShiftDto> baseCalendarWorkShiftDtos = baseCalendarWorkShiftService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseCalendarWorkShift));
+
+
+                if (StringUtils.isNotEmpty(baseCalendarWorkShiftDtos)) {
+                    baseCalendarDto.setBaseCalendarWorkShiftDtos(baseCalendarWorkShiftDtos);
+                    for (BaseCalendarWorkShiftDto baseCalendarWorkShiftDto : baseCalendarWorkShiftDtos) {
+
+                        //通过日历班次关系集合获取班次时间信息
+                        SearchBaseWorkShiftTime searchBaseWorkShiftTime = new SearchBaseWorkShiftTime();
+                        searchBaseWorkShiftTime.setWorkShiftId(baseCalendarWorkShiftDto.getWorkShiftId());
+                        List<BaseWorkShiftTime> baseWorkShiftTimes = baseWorkShiftTimeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseCalendarWorkShift));
+                        baseCalendarWorkShiftDto.setBaseWorkShiftTimes(baseWorkShiftTimes);
+                    }
+                }
+            }
+        }
+        return baseCalendarDtos;
     }
 
     @Override
@@ -142,7 +167,7 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
             baseCalendarWorkShiftService.save(baseCalendarWorkShift);
         }
     }
-
+/*
     @Override
     public BaseCalendarDto findAllWorkShiftTime(Long proLineId, String date) {
 
@@ -199,5 +224,5 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
         baseCalendarDto.setBaseWorkShiftTimeDtos(workShiftTimeDtos);
 
         return baseCalendarDto;
-    }
+    }*/
 }

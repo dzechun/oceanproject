@@ -21,4 +21,6 @@ public class SearchMesPackageManagerListDTO extends BaseQuery implements Seriali
     private String packageManagerCode;
     @ApiModelProperty(value = "父级ID",example = "父级ID")
     private Long parentId;
+    @ApiModelProperty(value = "父级查询子级",example = "父级查询子级")
+    private Boolean isFindChildren=false;
 }

@@ -18,4 +18,45 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseCalendarWorkShiftDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bcws.calendar_work_shift_id,
+	bcws.work_shift_id,
+	bcws.calendar_id,
+	bcws.`day`,
+	bcws.`status`,
+	bcws.remark,
+	bcws.organization_id,
+	bcws.create_user_id,
+	bcws.create_time,
+	bcws.modified_user_id,
+	bcws.modified_time,
+	bcws.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM fantech_imes.base_calendar_work_shift bcws
+    LEFT JOIN ocean.sys_user su ON bcws.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bcws.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bcws.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bcws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="calendarId != null and calendarId!=''">
+        and bcws.calendar_id =#{calendarId}
+      </if>
+      <if test="status!=null and status!=''">
+        and bcws.status=#{status}
+      </if>
+    </where>
+    order by bcws.day desc
+  </select>
 </mapper>

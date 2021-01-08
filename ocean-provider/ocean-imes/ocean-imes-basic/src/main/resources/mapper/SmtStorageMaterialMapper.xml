@@ -50,7 +50,7 @@
         and ssm.warehouse_area_id=#{warehouseAreaId}
       </if>
       <if test="warehouseAreaName!=null and warehouseAreaName!=''">
-        and swa.warehouse_area_name=#{warehouseAreaName}
+        and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
       </if>
       <if test="storageId!=null and storageId!=''">
         and ssm.storage_id=#{storageId}

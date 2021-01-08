@@ -31,9 +31,6 @@
     <result column="work_shift_code" jdbcType="VARCHAR" property="workShiftCode" />
     <result column="work_shift_name" jdbcType="VARCHAR" property="workShiftName" />
     <result column="work_shift_desc" jdbcType="VARCHAR" property="workShiftDesc" />
-    <result column="start_time" jdbcType="TIME" property="startTime" />
-    <result column="end_time" jdbcType="TIME" property="endTime" />
-    <result column="day" jdbcType="TINYINT" property="day" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
@@ -57,14 +54,11 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spl.pro_code, spl.pro_name , spl.pro_desc,
-    bcws.day, bws.work_shift_id, bws.work_shift_code, bws.work_shift_name, bws.work_shift_desc, bws.start_time, bws.end_time,
     bo.organization_name
     FROM fantech_imes.base_calendar bc
     LEFT JOIN ocean.sys_user su ON bc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON bc.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.smt_pro_line spl ON bc.pro_line_id = spl.pro_line_id
-    LEFT JOIN fantech_imes.base_calendar_work_shift bcws ON bc.calendar_id = bcws.calendar_id
-    LEFT JOIN fantech_imes.base_work_shift bws ON bcws.work_shift_id = bws.work_shift_id
     LEFT JOIN fantech_imes.base_organization bo ON bc.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -77,9 +71,9 @@
         and bc.date =#{date}
       </if>
       <if test="status!=null and status!=''">
-        and bws.status=#{status}
+        and bc.status=#{status}
       </if>
     </where>
-    order by bcws.day desc
+    order by create_time desc
   </select>
 </mapper>

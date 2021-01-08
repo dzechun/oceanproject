@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @FeignClient(name = "ocean-imes-basic")
@@ -67,4 +68,9 @@ public interface BasicFeignApi {
     @ApiOperation("根据条件查询线别")
     @PostMapping("/smtProLine/findList")
     ResponseEntity<List<SmtProLine>> selectProLines(@RequestBody(required = false) SearchSmtProLine searchSmtProLine);
+
+    @ApiOperation("根据ID获取储位物料")
+    @PostMapping("/smtStorageMaterial/detail")
+    ResponseEntity<SmtStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) ;
+
 }

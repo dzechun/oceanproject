@@ -46,22 +46,29 @@
         mpm.is_delete,
         mpm.remark,
         mpm.create_user_id,
-        su1.user_name AS 'createUserName',
         mpm.create_time,
         mpm.modified_user_id,
-        su2.user_name AS 'modifiedUserName',
         mpm.modified_time,
-        bo.organization_name AS 'organizationName'
+        su1.user_name AS 'createUserName',
+        su2.user_name AS 'modifiedUserName',
+        bo.organization_name AS 'organizationName' swo.work_order_code AS 'workOrderCode',
+        sm.material_code AS 'materialCode',
+        sm.material_desc AS 'materialDesc',
+        spl.pro_name AS 'proName',
+        sps.package_specification_quantity AS 'packageSpecificationQuantity'
         FROM
         mes_package_manager AS mpm
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = mpm.create_user_id
         LEFT JOIN ocean.sys_user su2 ON su2.user_id = mpm.modified_user_id
         LEFT JOIN base_organization bo ON mpm.organization_id = bo.organization_id
-        <if test="workOrderCode != null and workOrderCode !=''">
-            LEFT JOIN smt_work_order swo on swo.work_order_id = mpm.work_order_id AND swo.work_order_code =
-            #{workOrderCode}
-        </if>
+        LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+        LEFT JOIN smt_material sm ON sm.material_id = mpm.material_id
+        LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
+        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mpm.package_specification_id
         <where>
+            <if test="workOrderCode != null and workOrderCode !=''">
+                AND swo.work_order_code = #{workOrderCode}
+            </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 AND mpm.create_time = #{startTime} AND mpm.modified_time = #{endTime}
             </if>
@@ -79,7 +86,7 @@
         order by mpm.modified_time desc
     </select>
 
-    <select id="findBarcodeRule">
+    <select id="findBarcodeRule" resultType="string">
         SELECT sbr.barcode_rule
         FROM smt_barcode_rule sbr
                  LEFT JOIN smt_package_specification sps ON sps.package_specification_id = #{packageSpecificationId}

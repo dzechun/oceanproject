@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -77,26 +79,45 @@ public class BadRequestExceptionHandler {
 
     @ExceptionHandler(value = BizErrorException.class)
     public ResponseEntity bizErrorException(BizErrorException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        log.error(getExceptionInfo(e));
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = SQLExecuteException.class)
     public ResponseEntity sqlExecuteException(SQLExecuteException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        log.error(getExceptionInfo(e));
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = DataErrorException.class)
     public ResponseEntity dataErrorException(DataErrorException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        log.error(getExceptionInfo(e));
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = TokenValidationFailedException.class)
     public ResponseEntity dataErrorException(TokenValidationFailedException e){
-        return ControllerUtil.returnFail(e.getMsg(), e.getCode());
+        log.error(getExceptionInfo(e));
+        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception e){
+        log.error(getExceptionInfo(e));
         return ControllerUtil.returnFail(ErrorCodeEnum.GL99990500.getMsg()+"："+e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+    }
+
+    private static String getExceptionInfo(Exception ex) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(out);
+        ex.printStackTrace(printStream);
+        String rs = new String(out.toByteArray());
+        try {
+            printStream.close();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
     }
 }

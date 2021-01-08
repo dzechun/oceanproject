@@ -16,6 +16,11 @@ public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
     private String workOrderCode;
     /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="workOrderId" ,value="工单ID")
+    private Long workOrderId;
+    /**
      * 工单状态
      */
     @ApiModelProperty(name="workOrderCode" ,value="工单状态")
@@ -44,4 +49,10 @@ public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="processId" ,value="工序ID")
     private Long processId;
+
+    /**
+     * 产线ID
+     */
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long proLineId;
 }

@@ -28,8 +28,8 @@ import java.util.List;
  * @Version: 1.0
  */
 @RestController
-@Api(tags = "包装管理管理",basePath = "mesPackageManager")
-@RequestMapping("mesPackageManager")
+@Api(tags = "包装管理管理",basePath = "pda/mesPackageManager")
+@RequestMapping("pda/mesPackageManager")
 @Slf4j
 public class PDAMesPackageManagerController {
 
@@ -41,6 +41,14 @@ public class PDAMesPackageManagerController {
     public ResponseEntity<List<MesPackageManagerDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO
     ){
+        //如果是需要查询子级数据，首先通过查询条件查询出父级数据
+        if (searchMesPackageManagerListDTO.getIsFindChildren()){
+            List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
+            if(StringUtils.isEmpty(mesPackageManagerDTOList)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            searchMesPackageManagerListDTO.setParentId(mesPackageManagerDTOList.get(0).getPackageManagerId());
+        }
         Page<Object> page = PageHelper.startPage(searchMesPackageManagerListDTO.getStartPage(), searchMesPackageManagerListDTO.getPageSize());
         List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
         return ControllerUtil.returnDataSuccess(mesPackageManagerDTOList,(int)page.getTotal());
@@ -55,8 +63,9 @@ public class PDAMesPackageManagerController {
 
     @ApiOperation("增加包装管理数据")
     @PostMapping("add")
-    public ResponseEntity add(@ApiParam(value = "包装管理对象",required = true)@RequestBody SaveMesPackageManagerDTO saveMesPackageManagerDTO){
-        return ControllerUtil.returnCRUD(mesPackageManagerService.saveChildren(saveMesPackageManagerDTO));
+    public ResponseEntity<MesPackageManager> add(@ApiParam(value = "包装管理对象",required = true)@RequestBody SaveMesPackageManagerDTO saveMesPackageManagerDTO){
+        MesPackageManager mesPackageManager = mesPackageManagerService.saveChildren(saveMesPackageManagerDTO);
+        return ControllerUtil.returnDataSuccess(mesPackageManager,1);
     }
 
     @ApiOperation("删除包装管理数据")

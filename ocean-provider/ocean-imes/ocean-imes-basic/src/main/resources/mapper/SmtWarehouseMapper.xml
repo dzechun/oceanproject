@@ -10,7 +10,7 @@
     <result column="capacity" jdbcType="DECIMAL" property="capacity" />
     <result column="temperature" jdbcType="DECIMAL" property="temperature" />
     <result column="complete_analysis" jdbcType="TINYINT" property="completeAnalysis" />
-    <result column="mrb_operation" jdbcType="TINYINT" property="MrbOperation" />
+    <result column="mrb_operation" jdbcType="TINYINT" property="mrbOperation" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />

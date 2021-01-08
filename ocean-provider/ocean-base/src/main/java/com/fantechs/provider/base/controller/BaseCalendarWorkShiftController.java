@@ -1,7 +1,9 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseCalendarWorkShiftDto;
 import com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseCalendarWorkShift;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -59,15 +61,15 @@ public class BaseCalendarWorkShiftController {
         return  ControllerUtil.returnDataSuccess(baseCalendarWorkShift,StringUtils.isEmpty(baseCalendarWorkShift)?0:1);
     }
 
-    /*@ApiOperation("列表")
+    @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<BaseCalendarWorkShift>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseCalendarWorkShift searchBaseCalendarWorkShift) {
+    public ResponseEntity<List<BaseCalendarWorkShiftDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseCalendarWorkShift searchBaseCalendarWorkShift) {
         Page<Object> page = PageHelper.startPage(searchBaseCalendarWorkShift.getStartPage(),searchBaseCalendarWorkShift.getPageSize());
-        List<BaseCalendarWorkShift> list = baseCalendarWorkShiftService.findList(searchBaseCalendarWorkShift);
+        List<BaseCalendarWorkShiftDto> list = baseCalendarWorkShiftService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseCalendarWorkShift));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("历史列表")
+    /*@ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseCalendarWorkShift>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseCalendarWorkShift searchBaseCalendarWorkShift) {
         Page<Object> page = PageHelper.startPage(searchBaseCalendarWorkShift.getStartPage(),searchBaseCalendarWorkShift.getPageSize());

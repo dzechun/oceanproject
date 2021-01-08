@@ -18,6 +18,7 @@ public class MesPackageManager implements Serializable {
     @Column(name = "package_manager_id")
     @Id
     @Excel(name = "包装管理id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     private Long packageManagerId;
 
     /**

@@ -27,7 +27,7 @@ public class BaseCalendarWorkShift extends ValidGroup implements Serializable {
     @Excel(name = "日历班次关系ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "calendar_work_shift_id")
-    @NotNull(groups = update.class,message = "日历班次关系ID")
+    @NotNull(groups = update.class,message = "日历班次关系ID不能为空")
     private Long calendarWorkShiftId;
 
     /**
@@ -45,7 +45,6 @@ public class BaseCalendarWorkShift extends ValidGroup implements Serializable {
     @ApiModelProperty(name="calendarId",value = "日历ID")
     @Excel(name = "日历ID", height = 20, width = 30,orderNum="") 
     @Column(name = "calendar_id")
-    @NotNull(message = "日历id不能为空")
     private Long calendarId;
 
     /**
@@ -53,7 +52,6 @@ public class BaseCalendarWorkShift extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="proLineId",value = "产线ID")
-    @NotNull(message = "产线id不能为空")
     private Long proLineId;
 
     /**

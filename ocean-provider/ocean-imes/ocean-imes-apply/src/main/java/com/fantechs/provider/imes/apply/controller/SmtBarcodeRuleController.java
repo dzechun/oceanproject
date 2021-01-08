@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.service.SmtBarcodeRuleService;
 import com.fantechs.provider.imes.apply.service.SmtHtBarcodeRuleService;
+import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -98,5 +100,12 @@ public class SmtBarcodeRuleController {
     @PostMapping("/preserve")
     public ResponseEntity preserve(@RequestBody @Validated SmtBarcodeRule smtBarcodeRule) {
         return ControllerUtil.returnCRUD(smtBarcodeRuleService.preserve(smtBarcodeRule));
+    }
+
+    public ResponseEntity<String> generate(
+            @ApiParam(value = "条码规则集合") List<SmtBarcodeRuleSpec> list,
+            String maxCode,
+            String code){
+        return null;
     }
 }
