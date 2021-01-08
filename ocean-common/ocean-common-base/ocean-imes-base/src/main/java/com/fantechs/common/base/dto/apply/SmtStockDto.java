@@ -61,7 +61,7 @@ public class SmtStockDto extends SmtStock implements Serializable {
      * 仓库名称
      */
     @Transient
-    @ApiModelProperty(name="proName" ,value="仓库名称")
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
     private String warehouseName;
 
     /**
