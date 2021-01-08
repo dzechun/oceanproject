@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRule;
 import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -101,5 +102,10 @@ public class SmtBarcodeRuleController {
         return ControllerUtil.returnCRUD(smtBarcodeRuleService.preserve(smtBarcodeRule));
     }
 
-
+    public ResponseEntity<String> generate(
+            @ApiParam(value = "条码规则集合") List<SmtBarcodeRuleSpec> list,
+            String maxCode,
+            String code){
+        return null;
+    }
 }
