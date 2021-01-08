@@ -55,6 +55,9 @@
       <if test="warehouseId != null">
         and wha.warehouse_id like CONCAT('%', #{warehouseId}, '%')
       </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
     </where>
     order by  wha.modified_time desc
   </select>

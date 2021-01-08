@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -172,7 +173,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
         String barcodeRule = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
-        barcodeRule="test";
+        barcodeRule=new Date().getTime()+"";
         mesPackageManager.setBarCode(barcodeRule);
         //调用打印程序进行条码打印
     }

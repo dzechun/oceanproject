@@ -86,7 +86,7 @@ public class BaseCalendarController {
         }
     }*/
 
-    @ApiOperation("获取详情")
+    /*@ApiOperation("获取详情")
     @PostMapping("/findAllWorkShiftTime")
     public ResponseEntity<BaseCalendarDto> findAllWorkShiftTime(
             @ApiParam(value = "proLineId", required = true) @RequestParam Long proLineId,
@@ -94,5 +94,5 @@ public class BaseCalendarController {
             ) {
         BaseCalendarDto baseCalendarDto = baseCalendarService.findAllWorkShiftTime(proLineId, date);
         return ControllerUtil.returnSuccess("操作成功",baseCalendarDto);
-    }
+    }*/
 }

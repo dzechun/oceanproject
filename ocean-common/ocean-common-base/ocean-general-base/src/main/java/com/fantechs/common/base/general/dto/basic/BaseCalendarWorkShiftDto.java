@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.basic;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
+import com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,14 +10,13 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class BaseWorkShiftDto extends BaseWorkShift implements Serializable{
+public class BaseCalendarWorkShiftDto extends BaseCalendarWorkShift implements Serializable {
 
     /**
      * 创建用户名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -26,19 +24,13 @@ public class BaseWorkShiftDto extends BaseWorkShift implements Serializable{
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="98")
     private String modifiedUserName;
 
     /**
-     * 组织名称
+     * 班次时间集合
      */
     @Transient
-    @ApiModelProperty(name = "organizationName",value = "组织名称")
-    private String organizationName;
+    @ApiModelProperty(name = "organizationName",value = "班次时间集合")
+    private List<BaseWorkShiftTime> baseWorkShiftTimes;
 
-    /**
-     * 日期-天
-     */
-    @ApiModelProperty(name="proLineId",value = "日期-天")
-    private Long day;
 }

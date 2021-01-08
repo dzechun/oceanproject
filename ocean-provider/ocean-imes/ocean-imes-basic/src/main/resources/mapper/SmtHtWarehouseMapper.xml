@@ -30,7 +30,7 @@
     shw.warehouse_category,shw.capacity,shw.temperature,shw.unit,
     u.user_name as createUserName,shw.create_time,shw.modified_user_id, s.user_name as modifiedUserName,
     shw.modified_time, shw.is_delete, shw.organization_id, shw.remark, bo.organization_name
-    from fantech_imes.smt_ht_warehouse shw
+    from fantech_imes.smt_ht_warehouBaseProductFamilyMapper.xmlse shw
     left join ocean.sys_user u on shw.create_user_id=u.user_id
     left join ocean.sys_user s on shw.modified_user_id=s.user_id
     LEFT JOIN fantech_imes.base_organization bo ON shw.organization_id = bo.organization_id
