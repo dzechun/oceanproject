@@ -109,7 +109,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         mesSchedule.setScheduleCode(CodeUtils.getId("SCHED"));
         mesSchedule.setCreateUserId(null);
         mesSchedule.setIsDelete((byte)1);
-        return mesScheduleMapper.insertUseGeneratedKeys(mesSchedule);
+        return mesScheduleMapper.insertSelective(mesSchedule);
     }
 
     @Override
@@ -151,11 +151,18 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int saveByOrderIdList(List<Long> orderIdList) {
+    public int saveByOrderIdList(Long proLineId,List<Long> orderIdList) {
         double total=0.0;
         List<MesScheduleDetail> mesScheduleDetailList=new LinkedList<>();
         for (Long orderId : orderIdList) {
-            //SmtOrder smtOrder = smtOrderService.selectByKey(orderId);
+            SmtOrder smtOrder = smtOrderService.selectByKey(orderId);
+            if(smtOrder.getStatus()!=0){
+                throw new BizErrorException("订单已排产");
+            }
+            smtOrder.setStatus((byte)1);
+            if(smtOrderService.update(smtOrder)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
             //根据销售订单找到所对应的产品信息及相关
             List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(orderId);
             if(StringUtils.isNotEmpty(mesOrderMaterialDTOList)){
@@ -163,6 +170,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
                     //根据产品信息生成工单
                     SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
                     smtWorkOrder.setOrderId(orderId);
+                    smtWorkOrder.setProLineId(proLineId);
                     smtWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
                     smtWorkOrder.setProductionQuantity(mesOrderMaterialDTO.getTotal());
                     smtWorkOrder.setRemark("华丰");

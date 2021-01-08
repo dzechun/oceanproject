@@ -6,7 +6,7 @@
         <id column="storage_inventory_det_id" jdbcType="BIGINT" property="storageInventoryDetId"/>
         <result column="storing_inventory_id" jdbcType="BIGINT" property="storingInventoryId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
-        <result column="material_barcode_code" jdbcType="BIGINT" property="materialBarcodeCode"/>
+        <result column="material_barcode_code" jdbcType="VARCHAR" property="materialBarcodeCode"/>
         <result column="godown_entry" jdbcType="VARCHAR" property="godownEntry"/>
         <result column="material_quantity" jdbcType="DECIMAL" property="materialQuantity"/>
         <result column="production_code" jdbcType="VARCHAR" property="productionCode"/>

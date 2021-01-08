@@ -117,7 +117,7 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
 //        wmsStorageBills.setCreateUserId(sysUser.getUserId());
         wmsStorageBills.setIsDelete((byte)1);
         wmsStorageBills.setStorageBillsCode(CodeUtils.getId("STB"));
-        if(wmsStorageBillsMapper.insertUseGeneratedKeys(wmsStorageBills)<=0){
+        if(wmsStorageBillsMapper.insertSelective(wmsStorageBills)<=0){
             return 0;
         }
         recordHistory(wmsStorageBills.getStorageBillsId(),"新增");

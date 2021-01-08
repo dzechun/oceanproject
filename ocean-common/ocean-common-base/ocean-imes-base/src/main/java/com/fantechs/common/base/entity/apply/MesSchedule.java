@@ -17,6 +17,7 @@ public class MesSchedule implements Serializable {
     @ApiModelProperty(value = "排产单id",example = "排产单id")
     @Column(name = "schedule_id")
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     @Excel(name = "排产单id")
     private Long scheduleId;
 

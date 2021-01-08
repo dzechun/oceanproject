@@ -131,11 +131,18 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     private Long packingUnitId;
 
     /**
+     * 包装单位-名称
+     */
+    @Transient
+    @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
+    private String packingUnitName;
+
+    /**
      * 包装规格-ID
      */
     @Transient
     @ApiModelProperty(name = "packageSpecificationId",value = "包装规格-ID")
-    private Long packageSpecificationQuantityId;
+    private Long packageSpecificationId;
 
     /**
      * 包装规格-数量

@@ -79,7 +79,7 @@
         order by mpm.modified_time desc
     </select>
 
-    <select id="findBarcodeRule">
+    <select id="findBarcodeRule" resultType="string">
         SELECT sbr.barcode_rule
         FROM smt_barcode_rule sbr
                  LEFT JOIN smt_package_specification sps ON sps.package_specification_id = #{packageSpecificationId}

@@ -16,6 +16,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -29,6 +30,12 @@ public interface ApplyFeignApi {
     @ApiOperation("工单列表")
     @PostMapping("/smtWorkOrder/findList")
     ResponseEntity<List<SmtWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrder searchSmtWorkOrder);
+
+    @ApiOperation("更新工单状态")
+    @PostMapping("/smtWorkOrder/updateStatus")
+    ResponseEntity updateStatus(
+            @ApiParam(value = "工单ID",required = true) @RequestParam Long workOrderID,
+            @ApiParam(value = "工单状态",required = true) @RequestParam Integer status);
 
     @ApiOperation(value = "新增工单",notes = "新增工单")
     @PostMapping("/smtWorkOrder/add")

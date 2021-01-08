@@ -20,6 +20,7 @@ public class WmsInStorageBills implements Serializable {
     @ApiModelProperty(value = "仓库清单id",example = "仓库清单id")
     @Column(name = "storage_bills_id")
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     private Long storageBillsId;
 
     /**
