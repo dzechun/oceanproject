@@ -8,9 +8,13 @@ import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtMaterialService;
 import org.springframework.beans.BeanUtils;
@@ -41,10 +45,24 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     private SmtProductBomDetMapper smtProductBomDetMapper;
     @Resource
     private SmtMaterialSupplierMapper smtMaterialSupplierMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<SmtMaterialDto> findList(Map<String, Object> map) {
-        return smtMaterialMapper.findList(map);
+        List<SmtMaterialDto> smtMaterialDtos = smtMaterialMapper.findList(map);
+        if (StringUtils.isNotEmpty()){
+            for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
+                SearchBaseTab searchBaseTab = new SearchBaseTab();
+                searchBaseTab.setMaterialId(smtMaterialDto.getMaterialId());
+                List<BaseTab> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
+                if (StringUtils.isNotEmpty(baseTabs)){
+                    BaseTab baseTab = baseTabs.get(0);
+                    smtMaterialDto.setBaseTab(baseTab);
+                }
+            }
+        }
+        return smtMaterialDtos;
     }
 
     @Override
@@ -65,11 +83,22 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         if (StringUtils.isNotEmpty(smtMaterials)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+
+
         smtMaterial.setCreateUserId(currentUser.getUserId());
         smtMaterial.setCreateTime(new Date());
         smtMaterial.setModifiedUserId(currentUser.getUserId());
         smtMaterial.setModifiedTime(new Date());
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
+
+        //新增物料页签信息
+        BaseTab baseTab = smtMaterial.getBaseTab();
+        baseTab.setMaterialId(smtMaterial.getMaterialId());
+        baseTab.setCreateUserId(currentUser.getUserId());
+        baseTab.setCreateTime(new Date());
+        baseTab.setModifiedUserId(currentUser.getUserId());
+        baseTab.setModifiedTime(new Date());
+        baseFeignApi.addTab(baseTab);
 
         //新增物料历史信息
         SmtHtMaterial smtHtMaterial = new SmtHtMaterial();
@@ -100,6 +129,14 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         smtMaterial.setModifiedTime(new Date());
         int i = smtMaterialMapper.updateByPrimaryKeySelective(smtMaterial);
 
+        //更新页签
+        BaseTab baseTab = smtMaterial.getBaseTab();
+        if (StringUtils.isNotEmpty(baseTab)){
+            baseTab.setModifiedTime(new Date());
+            baseTab.setModifiedUserId(currentUser.getUserId());
+            baseFeignApi.updateTab(baseTab);
+        }
+
         //新增物料历史信息
         SmtHtMaterial smtHtMaterial = new SmtHtMaterial();
         BeanUtils.copyProperties(smtMaterial, smtHtMaterial);
@@ -116,6 +153,9 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        List<BaseTab> baseTabs = new ArrayList<>();
+        SearchBaseTab searchBaseTab = new SearchBaseTab();
         String[] idsArr = ids.split(",");
         for (String materialId : idsArr) {
             SmtMaterial smtMaterial = smtMaterialMapper.selectByPrimaryKey(materialId);
@@ -159,7 +199,12 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 
-
+            //查询该物料对应的页签
+            searchBaseTab.setMaterialId(Long.valueOf(materialId));
+            List<BaseTab> baseTabs1 = baseFeignApi.findTabList(searchBaseTab).getData();
+            if (StringUtils.isNotEmpty(baseTabs1)){
+                baseTabs.add(baseTabs1.get(0));
+            }
             //新增物料历史信息
             SmtHtMaterial smtHtMaterial = new SmtHtMaterial();
             BeanUtils.copyProperties(smtMaterial, smtHtMaterial);
@@ -167,8 +212,12 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             smtHtMaterial.setModifiedTime(new Date());
             list.add(smtHtMaterial);
         }
-        smtMaterialMapper.deleteByIds(ids);
-        i = smtHtMaterialMapper.insertList(list);
+        //新增页签
+        baseFeignApi.deleteTab(baseTabs);
+
+        i = smtMaterialMapper.deleteByIds(ids);
+        //新增物料履历
+        smtHtMaterialMapper.insertList(list);
         return i;
     }
 
