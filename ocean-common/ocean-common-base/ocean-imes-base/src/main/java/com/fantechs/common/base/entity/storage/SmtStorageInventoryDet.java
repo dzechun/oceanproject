@@ -42,12 +42,21 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
     private Long storingInventoryId;
 
     /**
-     * 物料条码ID
+     * 储位ID
      */
-    @ApiModelProperty(name="materialBarcodeId",value = "物料条码ID")
-    @Excel(name = "物料条码ID", height = 20, width = 30,orderNum="")
-    @Column(name = "material_barcode_id")
-    private Long materialBarcodeId;
+    @ApiModelProperty(name="storageId",value = "储位ID")
+    @Excel(name = "储位ID", height = 20, width = 30,orderNum="")
+    @Column(name = "storage_id")
+    @NotNull(groups = update.class,message = "储位id不能为空")
+    private Long storageId;
+
+    /**
+     * 物料条码编码
+     */
+    @ApiModelProperty(name="materialBarcodeCode",value = "物料条码编码")
+    @Excel(name = "物料条码编码", height = 20, width = 30,orderNum="")
+    @Column(name = "material_barcode_code")
+    private String materialBarcodeCode;
 
     /**
      * 入库单号
@@ -98,6 +107,13 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
     private Long organizationId;
 
     /**
+     * 状态（0、无效 1、有效）
+     */
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
+    private Byte status;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
@@ -137,6 +153,14 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
+    @Column(name = "is_delete")
+    private Byte isDelete;
 
     private static final long serialVersionUID = 1L;
 }

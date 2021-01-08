@@ -75,6 +75,13 @@ public class SmtStorageInventory extends ValidGroup implements Serializable {
     private Long organizationId;
 
     /**
+     * 状态（0、无效 1、有效）
+     */
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
+    private Byte status;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
@@ -115,6 +122,14 @@ public class SmtStorageInventory extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
+    @Column(name = "is_delete")
+    private Byte isDelete;
 
     private static final long serialVersionUID = 1L;
 }

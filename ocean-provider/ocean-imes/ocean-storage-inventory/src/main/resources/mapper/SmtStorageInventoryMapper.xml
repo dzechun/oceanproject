@@ -7,12 +7,14 @@
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="level" jdbcType="VARCHAR" property="level"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
+        <result column="status" jdbcType="TINYINT" property="status" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDto">
@@ -28,7 +30,7 @@
     <sql id="Base_Column_List">
         ssi.storing_inventory_id,ssi.storage_id,ssi.material_id,ssi.level,ssi.quantity,
         ssi.create_user_id,ssi.create_time,ssi.modified_user_id,ssi.modified_time, ssi.organization_id,
-	    ssi.remark,
+	    ssi.remark,ssi.is_delete,ssi.status
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
