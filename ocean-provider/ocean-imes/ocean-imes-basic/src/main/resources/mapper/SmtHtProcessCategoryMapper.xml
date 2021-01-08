@@ -42,7 +42,7 @@
       LEFT JOIN fantech_imes.base_organization bo ON shpc.organization_id = bo.organization_id
       <where>
           <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-              and date_format(spc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+              and date_format(shpc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
           </if>
           <if test="processCategoryCode != null and processCategoryCode != ''">
               and shpc.process_category_code like CONCAT('%',#{processCategoryCode},'%')
