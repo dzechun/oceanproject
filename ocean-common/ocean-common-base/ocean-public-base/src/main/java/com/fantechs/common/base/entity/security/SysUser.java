@@ -99,7 +99,8 @@ public class SysUser extends ValidGroup implements Serializable {
      * 厂别名称
      */
     @Transient
-    @Excel(name = "厂别",height = 20, width = 30)
+    @Excel(name = "厂别名称",height = 20, width = 30)
+    @ApiModelProperty(name="factoryName" ,value="厂别名称")
     private String factoryName;
 
     /**
@@ -114,6 +115,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @Transient
     @Excel(name = "部门",height = 20, width = 30)
+    @ApiModelProperty(name="deptName" ,value="部门名称")
     private String deptName;
 
 

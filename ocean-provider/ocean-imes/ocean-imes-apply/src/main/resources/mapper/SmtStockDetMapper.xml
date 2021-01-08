@@ -36,7 +36,7 @@
     <sql id="Base_Column_List">
   ssd.stock_det_id, ssd.stock_id, ssd.material_id, ssd.plan_quantity, ssd.stock_quantity, ssd.status, ssd.create_user_id,
   ssd.create_time, ssd.modified_user_id, ssd.modified_time, ssd.is_delete, ssd.option1, ssd.option2, ssd.option3, ssd.organization_id,
-  ssd.remark,
+  ssd.remark
 </sql>
 
     <select id="findList" resultMap="BaseResultMapDto"
