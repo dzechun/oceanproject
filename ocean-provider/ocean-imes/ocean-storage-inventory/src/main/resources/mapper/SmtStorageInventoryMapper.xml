@@ -56,6 +56,12 @@
             <if test="level!= null and level !='' ">
                 and ssi.level like CONCAT('%', #{level}, '%')
             </if>
+            <if test="materialId!= null and materialId !='' ">
+                and ssi.material_id = #{materialId}
+            </if>
+            <if test="storageId!= null and storageId !='' ">
+                and ssi.storage_id = #{storageId}
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
