@@ -38,7 +38,7 @@
     <sql id="Base_Column_List">
   ss.stock_id, ss.stock_code, ss.work_order_id, ss.plan_stock_time, ss.delivery_mode, ss.status, ss.create_user_id,
   ss.create_time, ss.modified_user_id, ss.modified_time, ss.is_delete, ss.option1, ss.option2, ss.option3, ss.organization_id,
-  ss.remark,
+  ss.remark
 </sql>
 
     <select id="findList" resultMap="BaseResultMapDto"
