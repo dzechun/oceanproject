@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Data
@@ -90,37 +91,17 @@ public class BaseCalendarDto extends BaseCalendar implements Serializable {
     private String workShiftDesc;
 
     /**
-     * 开始时间
-     */
-    @Transient
-    @ApiModelProperty(name="startTime",value = "开始时间")
-    @Excel(name = "开始时间", height = 20, width = 30,orderNum="")
-    @JsonFormat(pattern="HH:mm")
-    private Date startTime;
-
-    /**
-     * 结束时间
-     */
-    @Transient
-    @ApiModelProperty(name="workShiftDesc",value = "结束时间")
-    @Excel(name = "结束时间", height = 20, width = 30,orderNum="")
-    @JsonFormat(pattern="HH:mm")
-    private Date endTime;
-
-    /**
-     * 日期-天
-     */
-    @ApiModelProperty(name="proLineId",value = "日期-天")
-    @Excel(name = "日期-天", height = 20, width = 30,orderNum="")
-    private Long day;
-
-    /**
      * 组织名称
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
-    @ApiModelProperty(name = "返回班次和时间日期")
-    private List<BaseWorkShiftTimeDto> baseWorkShiftTimeDtos;
+    /**
+     * 日历班次关系集合
+     */
+    @ApiModelProperty(name="baseCalendarWorkShiftDtos",value = "日历班次关系集合")
+    @Excel(name = "日历班次关系集合", height = 20, width = 30,orderNum="")
+    @Column(name = "baseCalendarWorkShiftDtos")
+    private List<BaseCalendarWorkShiftDto> baseCalendarWorkShiftDtos=new LinkedList<>();
 }

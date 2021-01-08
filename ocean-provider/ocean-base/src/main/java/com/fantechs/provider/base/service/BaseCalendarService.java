@@ -2,7 +2,6 @@ package com.fantechs.provider.base.service;
 
 
 import com.fantechs.common.base.general.dto.basic.BaseCalendarDto;
-import com.fantechs.common.base.general.dto.basic.BaseWorkShiftTimeDto;
 import com.fantechs.common.base.general.entity.basic.BaseCalendar;
 import com.fantechs.common.base.support.IService;
 
@@ -21,6 +20,6 @@ public interface BaseCalendarService extends IService<BaseCalendar> {
     //日历顺延
     void calendarPostpone();
 
-    //日历查询
-    BaseCalendarDto findAllWorkShiftTime(Long proLineId, String date);
+/*    //日历查询
+    BaseCalendarDto findAllWorkShiftTime(Long proLineId, String date);*/
 }

@@ -2,11 +2,13 @@ package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -134,6 +136,7 @@ public class BaseCalendar extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除(0-删除 1-正常)", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
 
     private static final long serialVersionUID = 1L;
 }
