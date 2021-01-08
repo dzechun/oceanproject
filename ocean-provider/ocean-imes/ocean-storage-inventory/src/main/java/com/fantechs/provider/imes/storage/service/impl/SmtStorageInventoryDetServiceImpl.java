@@ -11,6 +11,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper;
 import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper;
@@ -37,7 +38,7 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
     @Resource
     private SmtStorageInventoryMapper smtStorageInventoryMapper;
     @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BasicFeignApi basicFeignApi;
 
     @Override
     public List<SmtStorageInventoryDetDto> findList(Map<String, Object> map) {
@@ -52,7 +53,7 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        ResponseEntity<SmtStorageMaterial> detail = storageInventoryFeignApi.detail(smtStorageInventoryDet.getStorageId());
+        ResponseEntity<SmtStorageMaterial> detail = basicFeignApi.detailStorageMaterial(smtStorageInventoryDet.getStorageId());
         if (StringUtils.isEmpty(detail.getData())) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
@@ -65,7 +66,7 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
         int i = 0;
         if (StringUtils.isEmpty(smtStorageInventories)) {
             SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-            smtStorageInventory.setStorageId(smtStorageInventoryDet.getStorageId());
+            smtStorageInventory.setStorageId(detail.getData().getStorageId());
             smtStorageInventory.setMaterialId(detail.getData().getMaterialId());
             smtStorageInventory.setLevel(null);
             smtStorageInventory.setQuantity(smtStorageInventoryDet.getMaterialQuantity());
@@ -73,16 +74,18 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
             smtStorageInventory.setCreateTime(new Date());
             smtStorageInventory.setModifiedUserId(currentUser.getUserId());
             smtStorageInventory.setModifiedTime(new Date());
-            smtStorageInventoryMapper.insert(smtStorageInventory);
+            smtStorageInventoryMapper.insertUseGeneratedKeys(smtStorageInventory);
+            smtStorageInventoryDet.setStorageId(smtStorageInventory.getStorageId());
         } else {
             //刷新储位库存的数量
             Map<String,Object> map = new HashMap();
             map.put("quantity",smtStorageInventoryDet.getMaterialQuantity());
-            map.put("storageId",smtStorageInventoryDet.getStorageId());
+            map.put("storageId",detail.getData().getStorageId());
             smtStorageInventoryMapper.refreshQuantity(map);
+            smtStorageInventoryDet.setStorageId(smtStorageInventories.get(0).getStorageId());
         }
 
-        i = super.save(smtStorageInventoryDet);
+        i = smtStorageInventoryDetMapper.insertUseGeneratedKeys(smtStorageInventoryDet);
 
         return i;
     }

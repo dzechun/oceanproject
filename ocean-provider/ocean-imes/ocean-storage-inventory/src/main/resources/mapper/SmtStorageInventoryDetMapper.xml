@@ -5,18 +5,21 @@
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.SmtStorageInventoryDet">
         <id column="storage_inventory_det_id" jdbcType="BIGINT" property="storageInventoryDetId"/>
         <result column="storing_inventory_id" jdbcType="BIGINT" property="storingInventoryId"/>
-        <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="material_barcode_code" jdbcType="BIGINT" property="materialBarcodeCode"/>
         <result column="godown_entry" jdbcType="VARCHAR" property="godownEntry"/>
         <result column="material_quantity" jdbcType="DECIMAL" property="materialQuantity"/>
         <result column="production_code" jdbcType="VARCHAR" property="productionCode"/>
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="status" jdbcType="TINYINT" property="status" />
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -31,10 +34,10 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        ssid.storage_inventory_det_id,ssid.storing_inventory_id,ssid.material_barcode_id,ssid.godown_entry,
+        ssid.storage_inventory_det_id,ssid.storing_inventory_id,ssid.storage_id,ssid.material_barcode_code,ssid.godown_entry,
         ssid.material_quantity,ssid.production_code,ssid.production_date,ssid.supplier_id,
         ssid.create_user_id,ssid.create_time,ssid.modified_user_id,ssid.modified_time, ssid.organization_id,
-	    ssid.remark
+	    ssid.remark,ssid.is_delete,ssid.status
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">

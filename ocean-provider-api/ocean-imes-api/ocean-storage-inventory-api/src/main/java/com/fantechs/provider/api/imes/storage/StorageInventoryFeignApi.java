@@ -27,25 +27,24 @@ import java.util.List;
 @FeignClient(name = "ocean-imes-basic")
 public interface StorageInventoryFeignApi {
 
-    @PostMapping("/smtStorageMaterial/detail")
-    ResponseEntity<SmtStorageMaterial> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) ;
 
+    @ApiOperation("储位库存查询")
     @PostMapping("/smtStorageInventory/findList")
     ResponseEntity<List<SmtStorageInventoryDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageInventory searchSmtStorageInventory);
 
-
+    @ApiOperation("储位库存新增")
     @PostMapping("/smtStorageInventory/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody  SmtStorageInventory smtStorageInventory) ;
 
-
+    @ApiOperation("储位库存删除")
     @PostMapping("/smtStorageInventory/delete")
     ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) ;
 
-
+    @ApiOperation("储位库存更新")
     @PostMapping("/smtStorageInventory/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  SmtStorageInventory smtStorageInventory);
 
-
+    @ApiOperation("储位库存明细新增")
     @PostMapping("/smtStorageInventoryDet/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStorageInventoryDet smtStorageInventoryDet);
 }
