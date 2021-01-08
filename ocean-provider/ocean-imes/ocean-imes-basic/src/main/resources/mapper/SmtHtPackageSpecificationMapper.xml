@@ -49,7 +49,7 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spu.packing_unit_name, spu.packing_unit_desc,
     sm.material_code, sm.material_desc,sm.version,
-    sbr.barcode_rule, shps.organization_name
+    sbr.barcode_rule, bo.organization_name
     from fantech_imes.smt_ht_package_specification shps
     LEFT JOIN fantech_imes.smt_barcode_rule sbr ON shps.barcode_rule_id = sbr.barcode_rule_id
     LEFT JOIN fantech_imes.smt_material sm ON shps.material_id = sm.material_id
