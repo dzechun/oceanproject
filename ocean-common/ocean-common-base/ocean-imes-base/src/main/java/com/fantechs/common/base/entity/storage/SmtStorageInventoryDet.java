@@ -34,13 +34,12 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
     private Long storageInventoryDetId;
 
     /**
-     * 储位ID
+     * 储位库存ID
      */
-    @ApiModelProperty(name="storageId",value = "储位ID")
-    @Excel(name = "储位ID", height = 20, width = 30,orderNum="")
-    @Column(name = "storage_id")
-    @NotNull(groups = update.class,message = "储位id不能为空")
-    private Long storageId;
+    @ApiModelProperty(name="storingInventoryId",value = "储位库存ID")
+    @Excel(name = "储位库存ID", height = 20, width = 30,orderNum="")
+    @Column(name = "storing_inventory_id")
+    private Long storingInventoryId;
 
     /**
      * 物料条码ID
