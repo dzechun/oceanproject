@@ -20,6 +20,8 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
 
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <collection property="list" column="supplier_id" ofType="com.fantechs.common.base.dto.basic.SmtAddressDto"
+                select="com.fantechs.provider.imes.basic.mapper.SmtAddressMapper.findBySupplierId"></collection>
   </resultMap>
   <select id="findList" resultMap="BaseResultMap">
     select su.supplier_id, su.supplier_code, su.supplier_name, su.supplier_desc,su.supplier_type,

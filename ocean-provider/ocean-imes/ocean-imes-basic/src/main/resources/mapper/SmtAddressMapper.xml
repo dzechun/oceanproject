@@ -28,6 +28,7 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="if_default" jdbcType="TINYINT" property="ifDefault" />
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -68,4 +69,58 @@
         </where>
         order by sa.create_time desc
     </select>
+
+    <select id="findBySupplierId" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>,ssa.if_default
+        from fantech_imes.smt_supplier_address ssa
+        LEFT JOIN fantech_imes.smt_address sa ON sa.address_id = ssa.address_id
+        where ssa.supplier_id =#{supplierId}
+    </select>
+
+    <select id="findDelete" resultType="long">
+        select sa.address_id
+        from fantech_imes.smt_address sa
+        <where>
+            sa.address_id in (
+                select ssa.address_id
+                from fantech_imes.smt_supplier_address ssa where ssa.supplier_id = #{supplierId}
+                <foreach collection="list" index="index" item="item" open="and ssa.address_id not in (" close=")" separator=",">
+                    <if test="item.addressId != null and item.addressId != ''">
+                        #{item.addressId}
+                    </if>
+                </foreach>
+            )
+        </where>
+    </select>
+
+    <select id="findAdd" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>
+        from fantech_imes.smt_address sa
+        <where>
+            sa.address_id in (
+            select ssa.address_id
+            from fantech_imes.smt_supplier_address ssa where ssa.supplier_id = #{supplierId}
+            )
+        </where>
+    </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update fantech_imes.smt_address sa set
+            sa.province_code = #{item.provinceCode},
+            sa.city_code = #{item.cityCode},
+            sa.classify_code = #{item.classifyCode},
+            sa.address_detail = #{item.addressDetail},
+            sa.post_code = #{item.postCode},
+            sa.organization_id = #{item.organizationId},
+            sa.remark = #{item.remark},
+            sa.status = #{item.status},
+            sa.modified_user_id = #{item.modifiedUserId},
+            sa.modified_time = #{item.modifiedTime},
+            sa.is_delete = #{item.isDelete}
+            where sa.address_id = #{item.addressId}
+        </foreach>
+    </update>
+
+
 </mapper>

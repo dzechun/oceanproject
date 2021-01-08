@@ -1,22 +1,30 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtAddressDto;
+import com.fantechs.common.base.entity.basic.SmtAddress;
 import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.SmtSupplier;
+import com.fantechs.common.base.entity.basic.SmtSupplierAddress;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSupplier;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.imes.basic.mapper.SmtAddressMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtSignatureMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtSupplierAddressMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtSupplierMapper;
 import com.fantechs.provider.imes.basic.service.SmtSupplierService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +39,10 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
     private SmtSupplierMapper smtSupplierMapper;
     @Resource
     private SmtSignatureMapper smtSignatureMapper;
+    @Resource
+    private SmtSupplierAddressMapper smtSupplierAddressMapper;
+    @Resource
+    private SmtAddressMapper smtAddressMapper;
 
     @Override
     public List<SmtSupplier> findList(SearchSmtSupplier searchSmtSupplier) {
@@ -54,7 +66,23 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         record.setCreateUserId(currentUser.getUserId());
         record.setModifiedUserId(currentUser.getUserId());
         record.setModifiedTime(new Date());
-        int i = smtSupplierMapper.insertSelective(record);
+        int i = smtSupplierMapper.insertUseGeneratedKeys(record);
+
+        List<SmtAddressDto> address = record.getList();
+
+        if (address.size()!=0){
+            List<SmtSupplierAddress> supplierAddresses = new ArrayList<>();
+            //将新增的地址与供应商进行绑定
+            for (SmtAddressDto smtAddressDto : address) {
+                SmtSupplierAddress smtSupplierAddress = new SmtSupplierAddress();
+                smtSupplierAddress.setIfDefault(smtAddressDto.getIfDefault());
+                smtSupplierAddress.setSupplierId(record.getSupplierId());
+                smtSupplierAddress.setAddressId(smtAddressDto.getAddressId());
+                supplierAddresses.add(smtSupplierAddress);
+            }
+            smtSupplierAddressMapper.insertList(supplierAddresses);
+        }
+
         return i;
     }
 
@@ -74,6 +102,49 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(currentUser.getUserId());
         int i = smtSupplierMapper.updateByPrimaryKeySelective(entity);
+
+        //获取当前供应商的地址集合对象
+        List<SmtAddressDto> address = entity.getList();
+
+        //获取当前要删除的供应商地址ID
+        List<Long> delete = smtAddressMapper.findDelete(address, entity.getSupplierId());
+        if (delete.size()!=0){
+            smtAddressMapper.deleteByIds(org.apache.commons.lang3.StringUtils.join(delete,","));
+            //删除供应商与地址关联表中数据
+            Example example1 = new Example(SmtSupplierAddress.class);
+            example1.createCriteria().andIn("addressId",delete);
+            smtSupplierAddressMapper.deleteByExample(example1);
+        }
+
+        List<SmtSupplierAddress> supplierAddresses = new ArrayList<>();
+        List<SmtAddressDto> smtAddresses = new ArrayList<>();
+        //获取所有的地址
+        List<SmtAddressDto> add = smtAddressMapper.findAdd(entity.getSupplierId());
+
+        //获取新增的地址对象，并且保存
+        for (SmtAddressDto smtAddress : address) {
+            int record = 0;
+            for (SmtAddressDto smtAddressDto : add) {
+                if (smtAddressDto.getAddressId() == smtAddress.getAddressId()){
+                    record = 1;
+                }
+            }
+            if (record == 0){
+                smtAddresses.add(smtAddress);
+            }
+        }
+        if (smtAddresses.size()!=0){
+            //将新增地址与供应商关联，并且保存
+            for (SmtAddressDto smtAddress : smtAddresses) {
+                SmtSupplierAddress smtSupplierAddress = new SmtSupplierAddress();
+                smtSupplierAddress.setAddressId(smtAddress.getAddressId());
+                smtSupplierAddress.setSupplierId(entity.getSupplierId());
+                smtSupplierAddress.setIfDefault(smtAddress.getIfDefault());
+                supplierAddresses.add(smtSupplierAddress);
+            }
+            smtSupplierAddressMapper.insertList(supplierAddresses);
+        }
+
         return i;
     }
 

@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
@@ -9,11 +10,13 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtRouteMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtRouteMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtRouteProcessMapper;
+import com.fantechs.provider.imes.basic.service.SmtProductProcessRouteService;
 import com.fantechs.provider.imes.basic.service.SmtRouteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,8 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
       private SmtHtRouteMapper smtHtRouteMapper;
       @Resource
       private SmtRouteProcessMapper smtRouteProcessMapper;
+      @Resource
+      private SmtProductProcessRouteService smtProductProcessRouteService;
 
       @Override
       @Transactional(rollbackFor = Exception.class)
@@ -137,5 +142,29 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
     @Override
     public List<SmtRoute> findList(SearchSmtRoute searchSmtRoute) {
         return smtRouteMapper.findList(searchSmtRoute);
+    }
+
+    @Override
+    public int addOrUpdateRoute(SmtRoute smtRoute) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        SmtRoute smtRoute1 = smtRouteMapper.selectByPrimaryKey(smtRoute.getRouteId());
+        if (ClassCompareUtil.compareObject(smtRoute,smtRoute1)){
+            //两个对象相同不做任何操作
+            return 1;
+        }else {
+            //两个对象不同做新增操作
+            smtRoute.setRouteId(null);
+            int i = smtRouteMapper.insertUseGeneratedKeys(smtRoute);
+
+            //更新产品工艺路线绑定的工艺路线
+            SmtProductProcessRoute smtProductProcessRoute = smtRoute.getSmtProductProcessRoute();
+            smtProductProcessRoute.setRouteId(smtRoute.getRouteId());
+            smtProductProcessRouteService.update(smtProductProcessRoute);
+            return i;
+        }
     }
 }

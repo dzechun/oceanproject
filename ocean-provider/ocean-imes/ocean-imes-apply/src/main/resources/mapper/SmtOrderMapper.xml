@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtOrder">
         <id column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
         <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="order_quantity" jdbcType="INTEGER" property="orderQuantity"/>
@@ -12,6 +13,8 @@
         <result column="radium_carving" jdbcType="VARCHAR" property="radiumCarving"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate"/>
+        <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime"/>
+        <result column="sales_man_name" jdbcType="VARCHAR" property="salesManName"/>
         <result column="photo_url" jdbcType="VARCHAR" property="photoUrl"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -34,6 +37,26 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    </resultMap>
+
+    <resultMap id="MesOrderMaterialDTOMap" type="com.fantechs.common.base.dto.apply.MesOrderMaterialDTO">
+        <result column="order_material_id" jdbcType="BIGINT" property="orderMaterialId" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="total" jdbcType="DECIMAL" property="total" />
+        <result column="box_code" jdbcType="VARCHAR" property="boxCode" />
+        <result column="package_type" jdbcType="VARCHAR" property="packageType" />
+        <result column="size" jdbcType="DECIMAL" property="size" />
+        <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight" />
+        <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
+        <result column="spec_file" jdbcType="VARCHAR" property="specFile" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -73,5 +96,54 @@
             </if>
         </where>
         order by create_time desc
+    </select>
+
+    <insert id="batchAddOrderMaterial" parameterType="java.util.List" >
+        insert into mes_order_material(order_id,material_id,total,box_code,package_type,size,rough_weight,net_weight,spec_file)
+        <foreach collection="mesOrderMaterialList" item="mesOrderMaterial" separator="," index="index">
+            (#{orderId},#{materialId},#{total},#{boxCode},#{packageType},#{size},#{roughWeight},#{netWeight},#{specFile})
+        </foreach>
+    </insert>
+    <delete id="deleteMaterialByOrderId" parameterType="int">
+        delete from mes_order_material where order_id = #{orderId}
+    </delete>
+
+    <select id="findOrderMaterial" resultMap="MesOrderMaterialDTOMap">
+        SELECT
+            mom.order_material_id,
+            mom.organization_id,
+            mom.order_id,
+            mom.material_id,
+            mom.total,
+            mom.box_code,
+            mom.package_type,
+            mom.size,
+            mom.rough_weight,
+            mom.net_weight,
+            mom.spec_file,
+            mom.is_delete,
+            mom.remark,
+            mom.create_user_id,
+            mom.create_time,
+            mom.modified_user_id,
+            mom.modified_time,
+            su1.user_name AS 'createUserName',
+            su2.user_name AS 'modifiedUserName',
+            spm.product_model_name AS 'productModelName',
+            sm.material_code AS 'materialCode',
+            sm.version AS 'version',
+            sm.material_desc AS 'materialDesc'
+        FROM
+            mes_order_material AS mom
+                LEFT JOIN ocean.sys_user su1 ON su1.user_id = mom.create_user_id
+                LEFT JOIN ocean.sys_user su2 ON su2.user_id = mom.modified_user_id
+                LEFT JOIN fantech_imes.base_organization bo ON mom.organization_id = bo.organization_id
+                LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
+                LEFT JOIN smt_product_model spm ON spm.product_model_id = sm.product_model_id
+        WHERE
+            mom.order_id = #{orderId}
+            AND mom.is_delete = 1
+        ORDER BY
+            mom.modified_time desc
     </select>
 </mapper>

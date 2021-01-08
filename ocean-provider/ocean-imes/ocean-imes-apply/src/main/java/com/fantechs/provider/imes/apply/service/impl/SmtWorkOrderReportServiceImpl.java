@@ -50,7 +50,7 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByWorkOrderId(record.getWorkOrderId());
-        if(record.getCompletedQuantity()>smtWorkOrder.getWorkOrderQuantity()){
+        if(record.getCompletedQuantity().intValue()>smtWorkOrder.getWorkOrderQuantity().intValue()){
             throw new BizErrorException("报工数量大于工单数量");
         }
 

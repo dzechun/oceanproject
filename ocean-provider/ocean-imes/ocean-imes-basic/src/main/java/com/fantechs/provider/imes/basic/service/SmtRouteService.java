@@ -14,4 +14,7 @@ import java.util.List;
 public interface SmtRouteService extends IService<SmtRoute> {
 
     List<SmtRoute> findList(SearchSmtRoute searchSmtRoute);
+
+    //根据工艺路线是否被修改进行操作（有修改则做新增操作，无修改则不操作）
+    int addOrUpdateRoute(SmtRoute smtRoute);
 }

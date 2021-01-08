@@ -37,6 +37,18 @@ public class SearchSmtStorageInventory extends BaseQuery implements Serializable
     private String storageName;
 
     /**
+     * 物料ID
+     */
+    @ApiModelProperty(name = "storageCode",value = "物料ID")
+    private String materialId;
+
+    /**
+     * 储位ID
+     */
+    @ApiModelProperty(name = "storageName",value = "储位ID")
+    private String storageId;
+
+    /**
      * 等级
      */
     @ApiModelProperty(name = "level",value = "等级")

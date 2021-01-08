@@ -20,4 +20,10 @@ public class SearchSmtProcessCategory extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="processCategoryName" ,value="工序类别名称")
     private String processCategoryName;
+
+    /**
+     * 工序类别描述
+     */
+    @ApiModelProperty(name="processCategoryDesc" ,value="工序类别描述")
+    private String processCategoryDesc;
 }

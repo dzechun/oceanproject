@@ -33,4 +33,11 @@ public class SmtAddressDto extends SmtAddress implements Serializable {
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 是否默认（0、否 1、是）
+     */
+    @Transient
+    @ApiModelProperty(name="ifDefault",value = "是否默认（0、否 1、是）")
+    private Byte ifDefault;
 }

@@ -4,6 +4,8 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -14,9 +16,9 @@ public class SearchSmtProductBom extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -6961850550811090030L;
 
     /**
-     * 物料清单编号
+     * 产品BOM编码
      */
-    @ApiModelProperty(name="productBomCode" ,value="BOM ID")
+    @ApiModelProperty(name="productBomCode" ,value="产品BOM编码")
     private String productBomCode;
 
     /**
@@ -43,4 +45,5 @@ public class SearchSmtProductBom extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="productBomId" ,value="产品BOM ID")
     private Long productBomId;
+
 }

@@ -45,7 +45,7 @@
         and shd.dept_name like CONCAT('%', #{deptName}, '%')
       </if>
       <if test="parentId!=null and parentId!=''">
-        and sd.parent_id=#{parentId}
+        and shd.parent_id=#{parentId}
       </if>
       <if test="deptDesc!=null and deptDesc!=''">
         and shd.dept_desc like CONCAT('%', #{deptDesc}, '%')

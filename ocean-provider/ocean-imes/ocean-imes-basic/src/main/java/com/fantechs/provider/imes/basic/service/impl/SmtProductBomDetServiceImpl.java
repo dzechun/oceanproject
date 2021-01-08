@@ -26,126 +26,131 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * Created by wcz on 2020/10/12.
  */
 @Service
 public class SmtProductBomDetServiceImpl extends BaseService<SmtProductBomDet> implements SmtProductBomDetService {
 
-         @Resource
-         private SmtProductBomDetMapper smtProductBomDetMapper;
-         @Resource
-         private SmtHtProductBomDetMapper smtHtProductBomDetMapper;
-         @Resource
-         private SmtProductBomMapper smtProductBomMapper;
+    @Resource
+    private SmtProductBomDetMapper smtProductBomDetMapper;
+    @Resource
+    private SmtHtProductBomDetMapper smtHtProductBomDetMapper;
+    @Resource
+    private SmtProductBomMapper smtProductBomMapper;
 
-        @Override
-        @Transactional(rollbackFor = Exception.class)
-        public int save(SmtProductBomDet smtProductBomDet) {
-            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int save(SmtProductBomDet smtProductBomDet) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+
+        SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
+        if (smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())) {
+            throw new BizErrorException("零件料号不能选择产品料号");
+        }
+
+        Example example = new Example(SmtProductBomDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("productBomId", smtProductBomDet.getProductBomId());
+        criteria.andEqualTo("partMaterialId", smtProductBomDet.getPartMaterialId());
+        List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(smtProductBomDets)) {
+            throw new BizErrorException("零件料号已存在");
+        }
+
+        if (smtProductBom.getMaterialId().equals(smtProductBomDet.getSubMaterialId()) || smtProductBomDet.getPartMaterialId().equals(smtProductBomDet.getSubMaterialId())) {
+            throw new BizErrorException("代用料号不能选择产品料号或零件料号");
+        }
+        smtProductBomDet.setCreateUserId(currentUser.getUserId());
+        smtProductBomDet.setCreateTime(new Date());
+        smtProductBomDet.setModifiedUserId(currentUser.getUserId());
+        smtProductBomDet.setModifiedTime(new Date());
+        smtProductBomDetMapper.insertUseGeneratedKeys(smtProductBomDet);
+
+        //新增产品BOM详细历史信息
+        SmtHtProductBomDet smtHtProductBomDet = new SmtHtProductBomDet();
+        BeanUtils.copyProperties(smtProductBomDet, smtHtProductBomDet);
+        int i = smtHtProductBomDetMapper.insertSelective(smtHtProductBomDet);
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(SmtProductBomDet smtProductBomDet) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
+        if (smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())) {
+            throw new BizErrorException("零件料号不能选择产品料号");
+        }
+
+        Example example = new Example(SmtProductBomDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("productBomId", smtProductBomDet.getProductBomId());
+        criteria.andEqualTo("partMaterialId", smtProductBomDet.getPartMaterialId());
+        SmtProductBomDet productBomDet = smtProductBomDetMapper.selectOneByExample(example);
+
+        if (StringUtils.isNotEmpty(productBomDet) && !productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())) {
+            throw new BizErrorException("零件料号已存在");
+        }
+
+        if (smtProductBom.getMaterialId().equals(smtProductBomDet.getSubMaterialId()) || smtProductBomDet.getPartMaterialId().equals(smtProductBomDet.getSubMaterialId())) {
+            throw new BizErrorException("代用料号不能选择产品料号或零件料号");
+        }
+
+        smtProductBomDet.setModifiedUserId(currentUser.getUserId());
+        smtProductBomDet.setModifiedTime(new Date());
+        int i = smtProductBomDetMapper.updateByPrimaryKeySelective(smtProductBomDet);
+
+        //新增产品BOM详细历史信息
+        SmtHtProductBomDet smtHtProductBomDet = new SmtHtProductBomDet();
+        BeanUtils.copyProperties(smtProductBomDet, smtHtProductBomDet);
+        smtHtProductBomDetMapper.insertSelective(smtHtProductBomDet);
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        List<SmtHtProductBomDet> list = new ArrayList<>();
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        String[] productBomDetIds = ids.split(",");
+        for (String productBomDetId : productBomDetIds) {
+            SmtProductBomDet smtProductBomDet = smtProductBomDetMapper.selectByPrimaryKey(productBomDetId);
+            if (StringUtils.isEmpty(smtProductBomDet)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-
-
-            SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
-            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())){
-                throw new BizErrorException("零件料号不能选择产品料号");
-            }
-
-            Example example = new Example(SmtProductBomDet.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productBomId",smtProductBomDet.getProductBomId());
-            criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
-            List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.selectByExample(example);
-            if(StringUtils.isNotEmpty(smtProductBomDets)){
-                throw new BizErrorException("零件料号已存在");
-            }
-
-            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getSubMaterialId())||smtProductBomDet.getPartMaterialId().equals(smtProductBomDet.getSubMaterialId())){
-                throw new BizErrorException("代用料号不能选择产品料号或零件料号");
-            }
-            smtProductBomDet.setCreateUserId(currentUser.getUserId());
-            smtProductBomDet.setCreateTime(new Date());
-            smtProductBomDet.setModifiedUserId(currentUser.getUserId());
-            smtProductBomDet.setModifiedTime(new Date());
-            smtProductBomDetMapper.insertUseGeneratedKeys(smtProductBomDet);
-
             //新增产品BOM详细历史信息
-            SmtHtProductBomDet smtHtProductBomDet=new SmtHtProductBomDet();
-            BeanUtils.copyProperties(smtProductBomDet,smtHtProductBomDet);
-            int i = smtHtProductBomDetMapper.insertSelective(smtHtProductBomDet);
-            return i;
+            SmtHtProductBomDet smtHtProductBomDet = new SmtHtProductBomDet();
+            BeanUtils.copyProperties(smtProductBomDet, smtHtProductBomDet);
+            smtHtProductBomDet.setModifiedUserId(currentUser.getUserId());
+            smtHtProductBomDet.setModifiedTime(new Date());
+            list.add(smtHtProductBomDet);
         }
+        smtHtProductBomDetMapper.insertList(list);
 
-        @Override
-        @Transactional(rollbackFor = Exception.class)
-        public int update(SmtProductBomDet smtProductBomDet) {
-            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
+        return smtProductBomDetMapper.deleteByIds(ids);
+    }
 
-            SmtProductBom smtProductBom = smtProductBomMapper.selectByPrimaryKey(smtProductBomDet.getProductBomId());
-            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getPartMaterialId())){
-                throw new BizErrorException("零件料号不能选择产品料号");
-            }
+    @Override
+    public List<SmtProductBomDet> findList(SearchSmtProductBomDet searchSmtProductBomDet) {
+        return smtProductBomDetMapper.findList(searchSmtProductBomDet);
+    }
 
-            Example example = new Example(SmtProductBomDet.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productBomId",smtProductBomDet.getProductBomId());
-            criteria.andEqualTo("partMaterialId",smtProductBomDet.getPartMaterialId());
-            SmtProductBomDet productBomDet = smtProductBomDetMapper.selectOneByExample(example);
-
-            if(StringUtils.isNotEmpty(productBomDet)&&!productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())){
-                throw new BizErrorException("零件料号已存在");
-            }
-
-            if(smtProductBom.getMaterialId().equals(smtProductBomDet.getSubMaterialId())||smtProductBomDet.getPartMaterialId().equals(smtProductBomDet.getSubMaterialId())){
-                throw new BizErrorException("代用料号不能选择产品料号或零件料号");
-            }
-
-            smtProductBomDet.setModifiedUserId(currentUser.getUserId());
-            smtProductBomDet.setModifiedTime(new Date());
-            int i= smtProductBomDetMapper.updateByPrimaryKeySelective(smtProductBomDet);
-
-            //新增产品BOM详细历史信息
-            SmtHtProductBomDet smtHtProductBomDet=new SmtHtProductBomDet();
-            BeanUtils.copyProperties(smtProductBomDet,smtHtProductBomDet);
-            smtHtProductBomDetMapper.insertSelective(smtHtProductBomDet);
-            return i;
-        }
-
-        @Override
-        @Transactional(rollbackFor = Exception.class)
-        public int batchDelete(String ids) {
-            List<SmtHtProductBomDet> list=new ArrayList<>();
-
-            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
-
-            String[] productBomDetIds = ids.split(",");
-            for (String productBomDetId : productBomDetIds) {
-                SmtProductBomDet smtProductBomDet = smtProductBomDetMapper.selectByPrimaryKey(productBomDetId);
-                if(StringUtils.isEmpty(smtProductBomDet)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-                }
-                //新增产品BOM详细历史信息
-                SmtHtProductBomDet smtHtProductBomDet=new SmtHtProductBomDet();
-                BeanUtils.copyProperties(smtProductBomDet,smtHtProductBomDet);
-                smtHtProductBomDet.setModifiedUserId(currentUser.getUserId());
-                smtHtProductBomDet.setModifiedTime(new Date());
-                list.add(smtHtProductBomDet);
-            }
-            smtHtProductBomDetMapper.insertList(list);
-
-            return smtProductBomDetMapper.deleteByIds(ids);
-        }
-
-        @Override
-        public List<SmtProductBomDet> findList(SearchSmtProductBomDet searchSmtProductBomDet) {
-            return smtProductBomDetMapper.findList(searchSmtProductBomDet);
-        }
+    @Override
+    public List<SmtProductBomDet> findNextLevelProductBomDet(Long productBomDetId) {
+        List<SmtProductBomDet> smtProductBomDets = smtProductBomDetMapper.findNextLevelProductBomDet(productBomDetId);
+        return smtProductBomDets;
+    }
 }

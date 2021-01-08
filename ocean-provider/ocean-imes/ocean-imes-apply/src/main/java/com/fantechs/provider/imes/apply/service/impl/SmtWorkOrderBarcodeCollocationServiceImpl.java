@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,7 +81,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             }
         }
         //工单数量
-        Integer workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
+        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
 
         //产生数量
         Integer produceQuantity = record.getProduceQuantity();
@@ -94,9 +96,9 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
                 generatedQuantity+=barcodeCollocation.getProduceQuantity();
             }
         }
-        if(produceQuantity+generatedQuantity>workOrderQuantity){
+        if(produceQuantity+generatedQuantity>workOrderQuantity.intValue()){
             throw new BizErrorException("工单产生条码总数量不能大于工单数量");
-        }else if(produceQuantity+generatedQuantity==workOrderQuantity){
+        }else if(produceQuantity+generatedQuantity==workOrderQuantity.intValue()){
             record.setStatus((byte) 2);
         }else {
             record.setStatus((byte) 1);

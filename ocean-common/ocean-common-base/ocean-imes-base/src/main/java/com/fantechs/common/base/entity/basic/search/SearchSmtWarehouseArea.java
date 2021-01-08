@@ -36,4 +36,10 @@ public class SearchSmtWarehouseArea  extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="warehouseId" ,value="仓库ID")
     private Long warehouseId;
+
+    /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    private String warehouseName;
 }

@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,11 +30,19 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
     private Long productBomDetId;
 
     /**
+     * 唯一标识
+     */
+    @Column(name = "unique_tag")
+    @ApiModelProperty(name="uniqueTag" ,value="唯一标识")
+    @Excel(name = "uniqueTag", height = 20, width = 30)
+    private String uniqueTag;
+
+    /**
      * 产品BOM ID
      */
     @Column(name = "product_bom_id")
     @ApiModelProperty(name="productBomId" ,value="产品BOM ID")
-    @NotNull(message = "产品BOM ID不能为空")
+    //@NotNull(message = "产品BOM ID不能为空")
     private Long productBomId;
 
     /**
@@ -106,6 +115,7 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="processName" ,value="工序名称")
     @Excel(name = "工序名称", height = 20, width = 30)
     private String processName;
+
     /**
      * 用量
      */
@@ -153,6 +163,7 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
      */
     @Column(name = "parent_id")
     @ApiModelProperty(name="parentId" ,value="父ID")
+    @NotNull(message = "父ID不能为空")
     private Long parentId;
 
     /**
@@ -210,7 +221,7 @@ public class SmtProductBomDet extends ValidGroup implements Serializable {
 
     @Transient
     @ApiModelProperty(name = "nextLevelProductBomDet",value = "下一级明细")
-    private List<SmtProductBomDet> nextLevelProductBomDet;
+    private List<SmtProductBomDet> smtProductBomDets;
 
     /**
      * 扩展字段1

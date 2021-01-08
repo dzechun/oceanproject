@@ -11,7 +11,6 @@
         <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
         <result column="materiaxl_type" jdbcType="VARCHAR" property="materialType"/>
         <result column="material_source" jdbcType="INTEGER" property="materialSource"/>
-        <result column="material_property" jdbcType="INTEGER" property="materialProperty"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="if_compoboard" jdbcType="BIT" property="ifCompoboard"/>
         <result column="if_linking_board" jdbcType="BIT" property="ifLinkingBoard"/>
@@ -53,7 +52,6 @@
 	sm.product_model_id,
 	sm.material_type,
 	sm.material_source,
-	sm.material_property,
 	sm.barcode_rule_id,
 	sm.if_compoboard,
 	sm.if_linking_board,

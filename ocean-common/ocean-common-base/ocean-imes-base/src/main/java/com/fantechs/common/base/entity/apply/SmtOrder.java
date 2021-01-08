@@ -29,10 +29,17 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      * 订单号
      */
     @Column(name = "order_code")
-    @NotBlank(message = "订单号不能为空")
     @ApiModelProperty(name="orderCode" ,value="订单号")
     @Excel(name = "订单号", height = 20, width = 30,orderNum="1")
     private String orderCode;
+
+    /**
+     * 合同号
+     */
+    @Column(name = "contract_code")
+    @ApiModelProperty(name="contractCode" ,value="合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="1")
+    private String contractCode;
 
     /**
      * 客户ID
@@ -45,7 +52,6 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      * 产品料号ID
      */
     @Column(name = "material_id")
-    @NotNull(message = "产品料号id不能为空")
     @ApiModelProperty(name="materialId" ,value="产品料号id")
     private Long materialId;
 
@@ -53,7 +59,6 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      * 订单数量
      */
     @Column(name = "order_quantity")
-    @NotNull(message = "订单数量不能为空")
     @ApiModelProperty(name="orderQuantity" ,value="订单数量")
     @Excel(name = "订单数量", height = 20, width = 30,orderNum="6")
     private Integer orderQuantity;
@@ -94,8 +99,23 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "delivery_date")
     @ApiModelProperty(name="deliveryDate" ,value="交货日期")
-    @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="11")
+    @Excel(name = "交货日期", height = 20, width = 30,orderNum="11")
     private Date deliveryDate;
+
+    /**
+     * 排产交期
+     */
+    @Column(name = "schedule_time")
+    @ApiModelProperty(name="scheduleTime" ,value="排产交期")
+    @Excel(name = "排产交期", height = 20, width = 30,orderNum="11")
+    private Date scheduleTime;
+
+    /**
+     * 业务员名称
+     */
+    @Column(name = "sales_man_name")
+    @ApiModelProperty(name="salesManName" ,value="业务员名称")
+    private String salesManName;
 
     /**
      * 照片链接

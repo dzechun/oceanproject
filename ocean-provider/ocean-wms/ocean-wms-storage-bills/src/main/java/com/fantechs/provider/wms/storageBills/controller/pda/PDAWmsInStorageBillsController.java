@@ -31,7 +31,7 @@ import java.util.List;
 @Api(tags = "仓库清单表管理",basePath = "pda/wmsStorageBills")
 @RequestMapping("pda/wmsStorageBills")
 @Slf4j
-public class WmsInStorageBillsPDAController {
+public class PDAWmsInStorageBillsController {
 
     @Resource
     private WmsInStorageBillsService wmsStorageBillsService;

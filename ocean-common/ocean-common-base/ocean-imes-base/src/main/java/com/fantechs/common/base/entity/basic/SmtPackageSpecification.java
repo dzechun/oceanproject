@@ -73,6 +73,13 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
     private Long materialId;
 
     /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
+
+    /**
      * 条码规则ID
      */
     @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")

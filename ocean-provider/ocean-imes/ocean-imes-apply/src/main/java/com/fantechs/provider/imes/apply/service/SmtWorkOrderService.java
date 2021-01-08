@@ -15,4 +15,6 @@ import java.util.List;
 public interface SmtWorkOrderService extends IService<SmtWorkOrder> {
 
     List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder);
+
+    List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder);
 }

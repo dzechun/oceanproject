@@ -58,14 +58,15 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     public int save(SmtWorkOrder smtWorkOrder) {
         SysUser currentUser = currentUser();
 
-        Example example = new Example(SmtWorkOrder.class);
+        /*Example example = new Example(SmtWorkOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
 
         List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtWorkOrders)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        }*/
+        smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
 
         smtWorkOrder.setCreateUserId(currentUser.getUserId());
         smtWorkOrder.setCreateTime(new Date());
@@ -77,19 +78,22 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         recordHistory(smtWorkOrder.getWorkOrderId(),"新增");
 
 
-        //生成备料单
-        SmtStock smtStock = new SmtStock();
-        smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
-        smtStock.setDeliveryMode(new Byte("0"));
-        smtStock.setStatus(new Byte("1"));
-        smtStock.setStockCode(CodeUtils.getId("BLD-"));
-       // Date date = smtWorkOrder.getPlannedStartTime();
-       // Date afterDate = new Date(date.getTime() + 600000);
-        BeanUtils.copyProperties(smtWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
-        smtStockMapper.insertUseGeneratedKeys(smtStock);
-
         //根据产品BOM生成工单BOM
-        genWorkOrder(smtWorkOrder, smtStock);
+        //特殊声明是否产生BOM
+        if(!smtWorkOrder.getRemark().equals("华丰")){
+            //生成备料单
+            SmtStock smtStock = new SmtStock();
+            smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            smtStock.setDeliveryMode(new Byte("0"));
+            smtStock.setStatus(new Byte("1"));
+            smtStock.setStockCode(CodeUtils.getId("BLD-"));
+            // Date date = smtWorkOrder.getPlannedStartTime();
+            // Date afterDate = new Date(date.getTime() + 600000);
+            BeanUtils.copyProperties(smtWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
+            smtStockMapper.insertUseGeneratedKeys(smtStock);
+
+            genWorkOrder(smtWorkOrder, smtStock);
+        }
 
         return 1;
     }
@@ -326,6 +330,11 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
         }
         return list;
+    }
+
+    @Override
+    public List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder) {
+        return smtWorkOrderMapper.pdaFindList(searchSmtWorkOrder);
     }
 
     /**

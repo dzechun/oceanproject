@@ -25,11 +25,10 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- *
  * Created by wcz on 2020/10/12.
  */
 @RestController
-@Api(tags = "产品BOM祥细信息")
+@Api(tags = "产品BOM详细信息")
 @RequestMapping("/smtProductBomDet")
 @Validated
 public class SmtProductBomDetController {
@@ -39,16 +38,16 @@ public class SmtProductBomDetController {
     @Autowired
     private SmtHtProductBomDetService smtHtProductBomDetService;
 
-    @ApiOperation(value = "新增",notes = "新增")
+    @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：productBomId、partMaterialId、processId",required = true)@RequestBody @Validated SmtProductBomDet smtProductBomDet) {
+    public ResponseEntity add(@ApiParam(value = "必传：partMaterialId、processId", required = true) @RequestBody @Validated SmtProductBomDet smtProductBomDet) {
         return ControllerUtil.returnCRUD(smtProductBomDetService.save(smtProductBomDet));
     }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
-        if(StringUtils.isEmpty(ids)){
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids) {
+        if (StringUtils.isEmpty(ids)) {
             return ControllerUtil.returnFailByParameError();
         }
         return ControllerUtil.returnCRUD(smtProductBomDetService.batchDelete(ids));
@@ -56,8 +55,8 @@ public class SmtProductBomDetController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value = SmtProductBomDet.update.class) SmtProductBomDet smtProductBomDet) {
-        if(StringUtils.isEmpty(smtProductBomDet.getProductBomDetId())){
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = SmtProductBomDet.update.class) SmtProductBomDet smtProductBomDet) {
+        if (StringUtils.isEmpty(smtProductBomDet.getProductBomDetId())) {
             return ControllerUtil.returnFailByParameError();
         }
         return ControllerUtil.returnCRUD(smtProductBomDetService.update(smtProductBomDet));
@@ -65,40 +64,48 @@ public class SmtProductBomDetController {
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<SmtProductBomDet> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) {
-        if(StringUtils.isEmpty(id)){
+    public ResponseEntity<SmtProductBomDet> detail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id) {
+        if (StringUtils.isEmpty(id)) {
             return ControllerUtil.returnFailByParameError();
         }
-        SmtProductBomDet  smtProductBomDet = smtProductBomDetService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(smtProductBomDet,StringUtils.isEmpty(smtProductBomDet)?0:1);
+        SmtProductBomDet smtProductBomDet = smtProductBomDetService.selectByKey(id);
+        return ControllerUtil.returnDataSuccess(smtProductBomDet, StringUtils.isEmpty(smtProductBomDet) ? 0 : 1);
     }
 
-    @ApiOperation("产品BOM祥细信息列表")
+    @ApiOperation("产品BOM详细信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtProductBomDet>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBomDet searchSmtProductBomDet) {
-        Page<Object> page = PageHelper.startPage(searchSmtProductBomDet.getStartPage(),searchSmtProductBomDet.getPageSize());
+    public ResponseEntity<List<SmtProductBomDet>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtProductBomDet searchSmtProductBomDet) {
+        Page<Object> page = PageHelper.startPage(searchSmtProductBomDet.getStartPage(), searchSmtProductBomDet.getPageSize());
         List<SmtProductBomDet> list = smtProductBomDetService.findList(searchSmtProductBomDet);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
-    @ApiOperation("产品BOM祥细信息历史列表")
+    @ApiOperation("产品BOM详细信息历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SmtHtProductBomDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProductBomDet searchSmtProductBomDet) {
-        Page<Object> page = PageHelper.startPage(searchSmtProductBomDet.getStartPage(),searchSmtProductBomDet.getPageSize());
+    public ResponseEntity<List<SmtHtProductBomDet>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchSmtProductBomDet searchSmtProductBomDet) {
+        Page<Object> page = PageHelper.startPage(searchSmtProductBomDet.getStartPage(), searchSmtProductBomDet.getPageSize());
         List<SmtHtProductBomDet> list = smtHtProductBomDetService.findList(searchSmtProductBomDet);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    @ApiOperation(value = "导出excel", notes = "导出excel", produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchSmtProductBomDet searchSmtProductBomDet){
-    List<SmtProductBomDet> list = smtProductBomDetService.findList(searchSmtProductBomDet);
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出产品BOM祥细信息", "产品BOM祥细信息", SmtProductBomDet.class, "产品BOM祥细信息.xls", response);
+    @RequestBody(required = false) SearchSmtProductBomDet searchSmtProductBomDet) {
+        List<SmtProductBomDet> list = smtProductBomDetService.findList(searchSmtProductBomDet);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出产品BOM祥细信息", "产品BOM祥细信息", SmtProductBomDet.class, "产品BOM祥细信息.xls", response);
         } catch (Exception e) {
-        throw new BizErrorException(e);
+            throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("查询下级明细")
+    @PostMapping("/findNextLevelProductBomDet")
+    public ResponseEntity<List<SmtProductBomDet>> findNextLevelProductBomDet(@ApiParam(value = "查询对象") @RequestBody SearchSmtProductBomDet searchSmtProductBomDet) {
+        Page<Object> page = PageHelper.startPage(searchSmtProductBomDet.getStartPage(), searchSmtProductBomDet.getPageSize());
+        List<SmtProductBomDet> list = smtProductBomDetService.findNextLevelProductBomDet(searchSmtProductBomDet.getProductBomDetId());
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 }
