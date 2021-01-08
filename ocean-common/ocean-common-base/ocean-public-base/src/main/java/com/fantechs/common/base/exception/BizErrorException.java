@@ -27,6 +27,7 @@ public class BizErrorException extends RuntimeException{
 
     public BizErrorException(String message) {
         super(message);
+        this.code=ErrorCodeEnum.OPT20012002.getCode();
     }
 
     public BizErrorException(String message, Throwable cause) {

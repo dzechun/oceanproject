@@ -5,6 +5,8 @@ import com.fantechs.common.base.dto.apply.MesScheduleDTO;
 import com.fantechs.common.base.entity.apply.MesScheduleDetail;
 import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 

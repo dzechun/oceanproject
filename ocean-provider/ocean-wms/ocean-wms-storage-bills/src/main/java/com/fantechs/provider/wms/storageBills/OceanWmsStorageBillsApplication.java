@@ -11,11 +11,11 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.wms.storageBills","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.wms.storageBills.mapper","com.fantechs.provider.wms.storageBills.mapper.history"})
-@EnableFeignClients(basePackages = "com.fantechs.provider.api")
-public class OceanWmsInApplication {
+//@EnableFeignClients(basePackages = "com.fantechs.provider.api")
+public class OceanWmsStorageBillsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OceanWmsInApplication.class, args);
+        SpringApplication.run(OceanWmsStorageBillsApplication.class, args);
     }
 
 }

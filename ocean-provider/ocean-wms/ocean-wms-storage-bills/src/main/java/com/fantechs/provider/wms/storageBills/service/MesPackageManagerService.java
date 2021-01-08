@@ -29,7 +29,7 @@ public interface MesPackageManagerService extends IService<MesPackageManager>  {
     //以特定过滤条件查询
     List<MesPackageManagerDTO> selectFilterAll(Map<String,Object> map);
     //保存父级及子级
-    int saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO);
+    MesPackageManager saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO);
     //补打条码
     int printCode(Long packageManagerId);
 }

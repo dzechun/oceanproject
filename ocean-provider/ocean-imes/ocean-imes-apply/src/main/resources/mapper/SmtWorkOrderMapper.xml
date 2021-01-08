@@ -100,7 +100,6 @@
         left join ocean.sys_user s on swo.modified_user_id=s.user_id
         LEFT JOIN fantech_imes.base_organization bo ON swo.organization_id = bo.organization_id
         <where>
-            1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
@@ -116,7 +115,7 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-
+        and swo.is_delete = 1
         </where>
         order by swo.create_time desc
     </select>
@@ -126,12 +125,15 @@
         SELECT
         swo.work_order_id,
         swo.work_order_code,
+        swo.work_order_quantity,
         sm.material_id,
         sm.material_code,
         sm.material_desc,
+        sm.version,
         spl.pro_line_id,
         spl.pro_name,
         sps.packing_unit_id AS 'packingUnitId',
+        spu.packing_unit_name AS 'packingUnitName',
         sps.package_specification_id AS 'packageSpecificationId',
         sps.package_specification_quantity AS 'packageSpecificationQuantity'
         FROM
@@ -139,8 +141,7 @@
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
         LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
         LEFT JOIN smt_package_specification sps ON sps.material_id = sm.material_id
-        WHERE
-        sps.process_id = #{processId}
+        LEFT JOIN smt_packing_unit spu ON spu.packing_unit_id = sps.packing_unit_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -160,6 +161,10 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and spl.pro_line_id = #{proLineId}
+            </if>
+            and swo.is_delete = 1 and sps.process_id = #{processId}
         </where>
         order by swo.create_time desc
     </select>

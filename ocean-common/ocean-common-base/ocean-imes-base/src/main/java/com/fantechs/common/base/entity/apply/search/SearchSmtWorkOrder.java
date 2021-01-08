@@ -44,4 +44,10 @@ public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="processId" ,value="工序ID")
     private Long processId;
+
+    /**
+     * 产线ID
+     */
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long proLineId;
 }

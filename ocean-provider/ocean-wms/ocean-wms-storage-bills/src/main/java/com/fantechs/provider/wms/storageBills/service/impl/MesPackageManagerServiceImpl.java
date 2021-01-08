@@ -98,7 +98,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         mesPackageManager.setPackageManagerCode(CodeUtils.getId("PACKAGE"));
         mesPackageManager.setCreateUserId(null);
         mesPackageManager.setIsDelete((byte)1);
-        return mesPackageManagerMapper.insertUseGeneratedKeys(mesPackageManager);
+        return mesPackageManagerMapper.insertSelective(mesPackageManager);
     }
 
     @Override
@@ -140,12 +140,12 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO) {
+    public MesPackageManager saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO) {
         MesPackageManager mesPackageManager = saveMesPackageManagerDTO.getMesPackageManager();
         this.printCode(mesPackageManager);
 
         if(this.save(mesPackageManager)<=0){
-            return 0;
+            return null;
         }
         List<MesPackageManager> mesPackageManagerList = saveMesPackageManagerDTO.getMesPackageManagerList();
         if(StringUtils.isNotEmpty(mesPackageManagerList)){
@@ -156,7 +156,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                 }
             }
         }
-        return 1;
+        return mesPackageManager;
     }
 
     @Override
@@ -172,6 +172,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
         String barcodeRule = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
+        barcodeRule="test";
         mesPackageManager.setBarCode(barcodeRule);
         //调用打印程序进行条码打印
     }

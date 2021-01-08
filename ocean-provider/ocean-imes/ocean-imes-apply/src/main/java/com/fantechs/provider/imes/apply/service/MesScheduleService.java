@@ -28,7 +28,7 @@ public interface MesScheduleService extends IService<MesSchedule>  {
     //以特定过滤条件查询
     List<MesScheduleDTO> selectFilterAll(Map<String,Object> map);
     //根据销售订单生成排产单及相关
-    int saveByOrderIdList(List<Long> orderIdList);
+    int saveByOrderIdList(Long proLineId,List<Long> orderIdList);
     //生成排产单详情
 
 }
