@@ -71,9 +71,9 @@ public class MesHtScheduleServiceImpl extends BaseService<MesHtSchedule>  implem
     @Override
     public int deleteByKey(Object id) {
         MesHtSchedule mesHtSchedule = new MesHtSchedule();
-        mesHtSchedule.setId(id);
+        mesHtSchedule.setHtScheduleId((long)id);
         mesHtSchedule.setIsDelete((byte)0);
-        return updateById(mesHtSchedule);
+        return update(mesHtSchedule);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class MesHtScheduleServiceImpl extends BaseService<MesHtSchedule>  implem
         List<MesHtSchedule> mesHtSchedules = selectAll(map);
         if (StringUtils.isNotEmpty(mesHtSchedules)) {
             for (MesHtSchedule mesHtSchedule : mesHtSchedules) {
-                if(deleteByKey(mesHtSchedule.getId())<=0){
+                if(deleteByKey(mesHtSchedule.getHtScheduleId())<=0){
                     return 0;
                 }
             }
