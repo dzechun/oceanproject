@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsAndinStorageQuarantineMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsAndinStorageQuarantine">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="andin_storage_quarantine_id" jdbcType="BIGINT" property="andinStorageQuarantineId" />
+    <result column="pallet_id" jdbcType="BIGINT" property="palletId" />
+    <result column="inspection_waiting_area_id" jdbcType="BIGINT" property="inspectionWaitingAreaId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
+    <result column="inventory_quantity" jdbcType="DECIMAL" property="inventoryQuantity" />
+    <result column="cartons" jdbcType="DECIMAL" property="cartons"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qasq.andin_storage_quarantine_id,qasq.pallet_id,qasq.inspection_waiting_area_id,
+    qasq.status,qasq.create_user_id, bo.organization_name,qasq.create_time,
+    qasq.modified_user_id,qasq.modified_time,qasq.is_delete, qasq.organization_id,qasq.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    swo.work_order_code,wp.total AS cartons,sm.material_code AS product_code,sm.material_desc AS product_desc,swa.warehouse_area_name
+    from fantech_imes.qms_andin_storage_quarantine qasq
+    LEFT JOIN ocean.sys_user su ON qasq.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qasq.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qasq.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.mes_package_manager wp ON qasq.pallet_id = wp.package_manager_id
+    LEFT JOIN fantech_imes.smt_work_order swo ON wp.work_order_id = swo.work_order_id
+    LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swa ON qasq.inspection_waiting_area_id = swa.warehouse_area_id
+    <where>
+      <if test="andinStorageQuarantineId != null and andinStorageQuarantineId != ''">
+        and qasq.andin_storage_quarantine_id = #{andinStorageQuarantineId}
+      </if>
+      <if test="palletId != null and palletId != ''">
+        and qasq.pallet_id = #{palletId}
+      </if>
+      <if test="inspectionWaitingAreaId != null and inspectionWaitingAreaId != ''">
+        and qasq.inspection_waiting_area_id = #{inspectionWaitingAreaId}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

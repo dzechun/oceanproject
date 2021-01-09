@@ -166,7 +166,7 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
-    @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="15")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="15")
     private Date modifiedTime;
 
     /**
