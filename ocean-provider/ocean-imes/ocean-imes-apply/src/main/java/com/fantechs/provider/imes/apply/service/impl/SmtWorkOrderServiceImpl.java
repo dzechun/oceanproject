@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.apply.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.*;
+import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
@@ -354,6 +355,23 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         return smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
     }
 
+    @Override
+    public int finishedProduct(Long workOrderId,Double count) {
+        SmtWorkOrder smtWorkOrder = this.selectByKey(workOrderId);
+        if(StringUtils.isEmpty(smtWorkOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        double workOrderQuantity = smtWorkOrder.getWorkOrderQuantity().doubleValue();
+        double outputQuantity = smtWorkOrder.getOutputQuantity().doubleValue();
+        if((workOrderQuantity-outputQuantity)<count){
+            throw new BizErrorException("完工数据大于剩余完工数据");
+        }else if((workOrderQuantity-outputQuantity)==count){
+            smtWorkOrder.setWorkOrderStatus(4);
+        }
+        smtWorkOrder.setOutputQuantity(new BigDecimal(outputQuantity+count));
+        return this.update(smtWorkOrder);
+    }
+
     /**
      * 获取当前登录用户
      * @return
@@ -381,4 +399,6 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         BeanUtils.copyProperties(smtWorkOrder, smtHtWorkOrder);
         smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
     }
+
+
 }

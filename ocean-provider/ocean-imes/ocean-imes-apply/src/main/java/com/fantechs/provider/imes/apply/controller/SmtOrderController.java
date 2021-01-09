@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.apply.controller;
 
 import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
 import com.fantechs.common.base.dto.apply.SaveOrderMaterialDTO;
+import com.fantechs.common.base.dto.apply.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.entity.apply.SmtOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtOrder;
@@ -80,7 +81,9 @@ public class SmtOrderController {
     @ApiOperation("获取订单产品详情")
     @PostMapping("/orderMaterialDetail")
     public ResponseEntity<List<MesOrderMaterialDTO>> orderMaterialDetail(@ApiParam(value = "订单ID",required = true)@RequestParam Long orderId) {
-        List<MesOrderMaterialDTO> orderMaterial = smtOrderService.findOrderMaterial(orderId);
+        SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
+        searchMesOrderMaterialListDTO.setOrderId(orderId);
+        List<MesOrderMaterialDTO> orderMaterial = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
         return  ControllerUtil.returnDataSuccess(orderMaterial,StringUtils.isEmpty(orderMaterial)?0:orderMaterial.size());
     }
 

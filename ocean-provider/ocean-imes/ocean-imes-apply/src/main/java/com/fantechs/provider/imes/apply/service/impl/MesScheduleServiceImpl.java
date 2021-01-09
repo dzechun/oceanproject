@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
+import com.fantechs.common.base.dto.apply.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.entity.apply.MesSchedule;
 import com.fantechs.common.base.dto.apply.MesScheduleDTO;
 import com.fantechs.common.base.entity.apply.MesScheduleDetail;
@@ -164,7 +165,9 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
             //根据销售订单找到所对应的产品信息及相关
-            List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(orderId);
+            SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
+            searchMesOrderMaterialListDTO.setOrderId(orderId);
+            List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
             if(StringUtils.isNotEmpty(mesOrderMaterialDTOList)){
                 for (MesOrderMaterialDTO mesOrderMaterialDTO : mesOrderMaterialDTOList) {
                     //根据产品信息生成工单
@@ -197,6 +200,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             if(mesScheduleMapper.batchScheduleDetail(mesScheduleDetailList)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
+
         }
         return 1;
     }

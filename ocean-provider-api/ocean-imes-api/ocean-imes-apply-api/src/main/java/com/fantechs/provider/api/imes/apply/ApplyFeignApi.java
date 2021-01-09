@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,4 +54,10 @@ public interface ApplyFeignApi {
             @ApiParam(value = "最大条码数")@RequestParam String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)String code);
 
+    @ApiOperation("工单记录完工数量")
+    @GetMapping("finishedProduct")
+    ResponseEntity<Integer> finishedProduct(
+            @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
+            @ApiParam(value = "完工数量")@RequestParam Double count
+    );
 }

@@ -155,11 +155,17 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
         List<MesPackageManager> mesPackageManagerList = saveMesPackageManagerDTO.getMesPackageManagerList();
         if(StringUtils.isNotEmpty(mesPackageManagerList)){
+            double total=0.0;//包装箱打包的产品数量
             for (MesPackageManager packageManager : mesPackageManagerList) {
                 packageManager.setParentId(mesPackageManager.getPackageManagerId());
+                total+=packageManager.getTotal().doubleValue();
                 if(this.update(packageManager)<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006);
                 }
+            }
+            ResponseEntity<Integer> responseEntity = applyFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException("修改工单完工数出错");
             }
         }
         return mesPackageManager;

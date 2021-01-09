@@ -1,4 +1,4 @@
-package com.fantechs.provider.imes.apply.entity;
+package com.fantechs.common.base.entity.apply.history;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,15 +8,24 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 
-@Table(name = "mes_order_material")
+@Table(name = "mes_ht_order_material")
 @Data
-public class MesOrderMaterial implements Serializable {
+public class MesHtOrderMaterial implements Serializable {
+    /**
+    * 销售订单与物料id
+    */
+    @ApiModelProperty(value = "销售订单与物料id",example = "销售订单与物料id")
+    @Column(name = "ht_order_material_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
+    @Excel(name = "销售订单与物料id")
+    private Long htOrderMaterialId;
+
     /**
     * 销售订单与物料id
     */
     @ApiModelProperty(value = "销售订单与物料id",example = "销售订单与物料id")
     @Column(name = "order_material_id")
-    @Id
     @Excel(name = "销售订单与物料id")
     private Long orderMaterialId;
 
@@ -97,6 +106,13 @@ public class MesOrderMaterial implements Serializable {
     @Column(name = "spec_file")
     @Excel(name = "产品规格文件")
     private String specFile;
+
+    /**
+    * 操作记录描述
+    */
+    @ApiModelProperty(value = "操作记录描述",example = "操作记录描述")
+    @Excel(name = "操作记录描述")
+    private String operation;
 
     /**
     * 逻辑删除（0、删除 1、正常）

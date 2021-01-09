@@ -1,6 +1,6 @@
-package com.fantechs.provider.imes.apply.entity.dto;
+package com.fantechs.common.base.dto.apply.history;
 
-import com.fantechs.provider.imes.apply.entity.MesOrderMaterial;
+import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
 @Data
-public class MesOrderMaterialDTO extends MesOrderMaterial implements Serializable {
+public class MesHtOrderMaterialDTO extends MesHtOrderMaterial implements Serializable {
     /**
     * 创建用户名称
     */

@@ -16,6 +16,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -88,6 +89,15 @@ public class SmtWorkOrderController {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrder.getStartPage(),searchSmtWorkOrder.getPageSize());
         List<SmtHtWorkOrder> list = smtHtWorkOrderService.findList(searchSmtWorkOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("工单记录完工数量")
+    @GetMapping("finishedProduct")
+    public ResponseEntity<Integer> finishedProduct(
+            @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
+            @ApiParam(value = "完工数量")@RequestParam Double count
+    ){
+        return ControllerUtil.returnCRUD(smtWorkOrderService.finishedProduct(workOrderId, count));
     }
 
     @PostMapping(value = "/export")
