@@ -2,6 +2,7 @@ package com.fantechs.provider.api.imes.apply;
 
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.apply.search.SearchSmtOrder;
@@ -44,4 +45,12 @@ public interface ApplyFeignApi {
     @ApiOperation(value = "产生工单流转卡",notes = "产生工单流转卡")
     @PostMapping("/smtWorkOrderCardCollocation/generateWorkOrderCardCollocation")
     ResponseEntity generateWorkOrderCardCollocation(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtWorkOrderCardCollocation smtWorkOrderCardCollocation);
+
+    @ApiOperation("生成条码")
+    @PostMapping("/smtBarcodeRule/generateCode")
+    ResponseEntity<String> generateCode(
+            @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
+            @ApiParam(value = "最大条码数")@RequestParam String maxCode,
+            @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)String code);
+
 }
