@@ -142,9 +142,15 @@
                 LEFT JOIN fantech_imes.base_organization bo ON mom.organization_id = bo.organization_id
                 LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
                 LEFT JOIN smt_product_model spm ON spm.product_model_id = sm.product_model_id
-        WHERE
-            mom.order_id = #{orderId}
+        <where>
+            <if test="orderId != null and orderId !=''">
+                and mom.order_id = #{orderId}
+            </if>
+            <if test="orderMaterialId != null and orderMaterialId !=''">
+                and mom.order_material_id = #{orderMaterialId}
+            </if>
             AND mom.is_delete = 1
+        </where>
         ORDER BY
             mom.modified_time desc
     </select>

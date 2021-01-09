@@ -1,5 +1,6 @@
 package com.fantechs.security.service;
 
+import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.general.entity.security.SysCustomFormDet;
 import com.fantechs.common.base.support.IService;
 
@@ -12,5 +13,5 @@ import java.util.Map;
  */
 
 public interface SysCustomFormDetService extends IService<SysCustomFormDet> {
-    List<SysCustomFormDet> findList(Map<String, Object> map);
+    List<SysCustomFormDetDto> findList(Map<String, Object> map);
 }

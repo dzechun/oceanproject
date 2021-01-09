@@ -1,9 +1,9 @@
-package com.fantechs.common.base.dto.apply.history;
+package com.fantechs.common.base.dto.basic.history;
 
 import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import cn.afterturn.easypoi.excel.annotation.ExcelEntity;
-import com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO;
-import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDetDTO;
 import lombok.Data;
 
 import java.util.List;

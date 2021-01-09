@@ -1,4 +1,4 @@
-package com.fantechs.common.base.dto.apply.history;
+package com.fantechs.common.base.dto.basic.history;
 
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import io.swagger.annotations.ApiModelProperty;

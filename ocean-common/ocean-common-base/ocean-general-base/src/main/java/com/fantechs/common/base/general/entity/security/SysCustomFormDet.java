@@ -33,18 +33,26 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private Long customFormDetId;
 
     /**
+     * 自定义表单Id
+     */
+    @ApiModelProperty(name="customFormId",value = "自定义表单Id")
+    @Excel(name = "自定义表单Id", height = 20, width = 30,orderNum="")
+    @Column(name = "custom_form_id")
+    private Long customFormId;
+
+    /**
      * 字段名
      */
-    @ApiModelProperty(name="key",value = "字段名")
+    @ApiModelProperty(name="item_key",value = "字段名")
     @Excel(name = "字段名", height = 20, width = 30,orderNum="") 
-    private String key;
+    private String itemKey;
 
     /**
      * 字段中文名
      */
-    @ApiModelProperty(name="name",value = "字段中文名")
+    @ApiModelProperty(name="item_name",value = "字段中文名")
     @Excel(name = "字段中文名", height = 20, width = 30,orderNum="") 
-    private String name;
+    private String itemName;
 
     /**
      * 显示类型（0-全部 1-检索条件 2-列表页 3-详情页 4-检索加列表 5-列表加详情）
@@ -57,9 +65,9 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     /**
      * 搜索用默认值
      */
-    @ApiModelProperty(name="value",value = "搜索用默认值")
+    @ApiModelProperty(name="item_value",value = "搜索用默认值")
     @Excel(name = "搜索用默认值", height = 20, width = 30,orderNum="") 
-    private String value;
+    private String itemValue;
 
     /**
      * 列表字段属性（0-input 1-select  2-switch 3-data）

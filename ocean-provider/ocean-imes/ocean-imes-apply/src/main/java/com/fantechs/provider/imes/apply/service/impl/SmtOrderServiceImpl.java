@@ -4,10 +4,12 @@ package com.fantechs.provider.imes.apply.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
 import com.fantechs.common.base.dto.apply.SaveOrderMaterialDTO;
+import com.fantechs.common.base.dto.apply.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
+import com.fantechs.common.base.dto.apply.history.SearchMesHtOrderMaterialListDTO;
 import com.fantechs.common.base.entity.apply.MesOrderMaterial;
 import com.fantechs.common.base.entity.apply.SmtOrder;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
+import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
 import com.fantechs.common.base.entity.apply.history.SmtHtOrder;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -18,10 +20,9 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.SmtOrderMapper;
 import com.fantechs.provider.imes.apply.service.SmtOrderService;
-import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
+import com.fantechs.provider.imes.apply.service.ht.MesHtOrderMaterialService;
 import com.fantechs.provider.imes.apply.service.ht.SmtHtOrderService;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -38,6 +39,8 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     private SmtOrderMapper smtOrderMapper;
     @Resource
     private SmtHtOrderService smtHtOrderService;
+    @Resource
+    private MesHtOrderMaterialService mesHtOrderMaterialService;
 
     @Override
     public int save(SmtOrder smtOrder) {
@@ -149,8 +152,8 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     }
 
     @Override
-    public List<MesOrderMaterialDTO> findOrderMaterial(Long orderId) {
-        return smtOrderMapper.findOrderMaterial(orderId);
+    public List<MesOrderMaterialDTO> findOrderMaterial(SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO) {
+        return smtOrderMapper.findOrderMaterial(searchMesOrderMaterialListDTO);
     }
 
     /**
@@ -167,5 +170,22 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         }
         BeanUtils.autoFillEqFields(smtOrder,smtHtOrder);
         smtHtOrderService.save(smtHtOrder);
+    }
+
+    /**
+     * 记录订单物料操作历史
+     * @param id
+     * @param operation
+     */
+    private void recordOrderMaterialHistory(Long id,String operation){
+        MesHtOrderMaterial mesHtOrderMaterial = new MesHtOrderMaterial();
+        mesHtOrderMaterial.setOperation(operation);
+        SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
+        List<MesOrderMaterialDTO> orderMaterialDTOList = smtOrderMapper.findOrderMaterial(searchMesOrderMaterialListDTO);
+        if (StringUtils.isEmpty(orderMaterialDTOList)){
+            return;
+        }
+        BeanUtils.autoFillEqFields(orderMaterialDTOList.get(0),mesHtOrderMaterial);
+        mesHtOrderMaterialService.save(mesHtOrderMaterial);
     }
 }

@@ -27,7 +27,7 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
 
-<resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO" extends="BaseResultMap">
+<resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO" extends="BaseResultMap">
   <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
 </resultMap>
 
