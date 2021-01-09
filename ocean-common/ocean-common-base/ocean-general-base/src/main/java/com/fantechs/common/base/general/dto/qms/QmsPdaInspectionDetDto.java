@@ -34,12 +34,12 @@ public class QmsPdaInspectionDetDto extends QmsPdaInspectionDet implements Seria
 
 
     /**
-     * 储位名称
+     * 区域名称
      */
     @Transient
-    @ApiModelProperty(name = "workOrderCode",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30)
-    private String storageName;
+    @ApiModelProperty(name = "warehouseAreaName",value = "区域名称")
+    @Excel(name = "区域名称", height = 20, width = 30)
+    private String warehouseAreaName;
 
 
     /**
@@ -51,19 +51,19 @@ public class QmsPdaInspectionDetDto extends QmsPdaInspectionDet implements Seria
     private String productModelName;
 
     /**
-     * 栈板码
-     */
-    @Transient
-    @ApiModelProperty(name = "workOrderCode",value = "栈板码")
-    @Excel(name = "栈板码", height = 20, width = 30)
-    private String boxCode;
-
-    /**
      * 箱码
      */
     @Transient
     @ApiModelProperty(name = "workOrderCode",value = "箱码")
     @Excel(name = "箱码", height = 20, width = 30)
+    private String boxCode;
+
+    /**
+     * 栈板码
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderCode",value = "栈板码")
+    @Excel(name = "栈板码", height = 20, width = 30)
     private String palletCode;
 
     /**

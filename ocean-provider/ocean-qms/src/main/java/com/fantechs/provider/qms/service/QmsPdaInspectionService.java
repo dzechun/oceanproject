@@ -18,5 +18,5 @@ public interface QmsPdaInspectionService extends IService<QmsPdaInspection> {
 
     List<QmsPdaInspectionDto> findList(Map<String, Object> map);
 
-    MesPackageManagerDTO analysisCode(Map<String, Object> map);
+    QmsPdaInspectionDto analysisCode(Map<String, Object> map);
 }

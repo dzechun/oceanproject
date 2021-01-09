@@ -22,7 +22,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "workOrderCode",value = "生产工单号")
-    @Excel(name = "生产工单号", height = 20, width = 30,orderNum="13")
+    @Excel(name = "生产工单号", height = 20, width = 30,orderNum="2")
     private String workOrderCode;
 
     /**
@@ -30,7 +30,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "productCode",value = "产品编码")
-    @Excel(name = "产品编码", height = 20, width = 30,orderNum="13")
+    @Excel(name = "产品编码", height = 20, width = 30,orderNum="3")
     private String productCode;
 
     /**
@@ -38,7 +38,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "productDesc",value = "产品描述")
-    @Excel(name = "产品描述", height = 20, width = 30,orderNum="13")
+    @Excel(name = "产品描述", height = 20, width = 30,orderNum="4")
     private String productDesc;
 
     /**
@@ -46,7 +46,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "version",value = "物料版本")
-    @Excel(name = "物料版本", height = 20, width = 30,orderNum="13")
+    @Excel(name = "物料版本", height = 20, width = 30,orderNum="5")
     private String version;
 
     /**
@@ -54,7 +54,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "proName",value = "线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "线别名称", height = 20, width = 30,orderNum="6")
     private String proName;
 
     /**
@@ -62,7 +62,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "workOrderQuantity",value = "工单数量")
-    @Excel(name = "工单数量", height = 20, width = 30,orderNum="13")
+    @Excel(name = "工单数量", height = 20, width = 30,orderNum="7")
     private String workOrderQuantity;
 
 
@@ -71,7 +71,7 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "handler",value = "处理人")
-    @Excel(name = "处理人", height = 20, width = 30,orderNum="13")
+    @Excel(name = "处理人", height = 20, width = 30,orderNum="10")
     private String handlerName;
 
     /**
@@ -96,6 +96,13 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 组织代码
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationCode",value = "组织代码")
+    private String organizationCode;
 
     private static final long serialVersionUID = 1L;
 }

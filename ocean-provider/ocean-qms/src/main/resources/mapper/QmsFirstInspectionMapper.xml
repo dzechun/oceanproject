@@ -21,7 +21,7 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsDisqualification"
-                column="{checkoutId=first_inspection_id,checkoutType='0'}"
+                column="{checkoutId=first_inspection_id,checkoutType=checkout_type}"
                 select="com.fantechs.provider.qms.mapper.QmsDisqualificationMapper.findByCheckoutId"></collection>
   </resultMap>
 
@@ -29,6 +29,7 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
     <result column="product_desc" jdbcType="VARCHAR" property="productDesc" />
@@ -40,14 +41,14 @@
 
   <sql id="Base_Column_List">
     qfi.first_inspection_id,qfi.work_order_id,qfi.first_inspection_code,qfi.selected_total_quantity,qfi.handler,
-    qfi.inspection_result,qfi.documents_time,qfi.status,qfi.create_user_id, bo.organization_name,qfi.create_time,
+    qfi.inspection_result,qfi.documents_time,qfi.status,qfi.create_user_id, bo.organization_name, bo.organization_code,qfi.create_time,
     qfi.modified_user_id,qfi.modified_time,qfi.is_delete, qfi.organization_id,qfi.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     swo.work_order_code,swo.work_order_quantity,spl.pro_name,sm.material_code AS product_code,sm.material_desc AS product_desc,
-    sm.version,sys.user_name AS handler_name
+    sm.version,sys.user_name AS handler_name,0 AS checkout_type
     from fantech_imes.qms_first_inspection qfi
     LEFT JOIN ocean.sys_user su ON qfi.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qfi.modified_user_id = sus.user_id
@@ -57,8 +58,8 @@
     LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
     LEFT JOIN ocean.sys_user sys ON qfi.handler = sys.user_id
     <where>
-      <if test="andinStorageQuarantineCode != null and andinStorageQuarantineCode != ''">
-        and qfi.andin_storage_quarantine_code = #{andinStorageQuarantineCode}
+      <if test="firstInspectionCode != null and firstInspectionCode != ''">
+        and qfi.first_inspection_code = #{firstInspectionCode}
       </if>
       <if test="productionLine != null and productionLine != ''">
         and spl.pro_line_id = #{productionLine}

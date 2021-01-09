@@ -46,6 +46,14 @@ public class QmsAndinStorageQuarantineDto extends QmsAndinStorageQuarantine impl
     private String productDesc;
 
     /**
+     * 区域名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseAreaName",value = "区域名称")
+    @Excel(name = "区域名称", height = 20, width = 30,orderNum="13")
+    private String warehouseAreaName;
+
+    /**
      * 箱数
      */
     @Transient

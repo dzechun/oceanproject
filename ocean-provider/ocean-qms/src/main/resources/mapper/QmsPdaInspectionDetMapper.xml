@@ -20,7 +20,7 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsDisqualification"
-                column="{checkoutId=first_inspection_id,checkoutType='1'}"
+                column="{checkoutId=first_inspection_id,checkoutType=checkout_type}"
                 select="com.fantechs.provider.qms.mapper.QmsDisqualificationMapper.findByCheckoutId"></collection>
   </resultMap>
 
@@ -48,7 +48,7 @@
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     sm.material_code,sm.material_desc,ss.storage_name,spm.product_model_name,mpm.package_manager_code AS pallet_code,
-    bmpm.package_manager_code AS box_code,bmpm.total AS total_quantity,sm.unit
+    bmpm.package_manager_code AS box_code,bmpm.total AS total_quantity,sm.unit,1 AS checkout_type
     from fantech_imes.qms_pda_inspection_det qpid
     LEFT JOIN ocean.sys_user su ON qpid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qpid.modified_user_id = sus.user_id

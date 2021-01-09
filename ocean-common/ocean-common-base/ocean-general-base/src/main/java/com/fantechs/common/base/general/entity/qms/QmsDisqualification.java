@@ -32,7 +32,7 @@ public class QmsDisqualification implements Serializable {
      */
     @ApiModelProperty(name="firstInspectionIdId",value = "PDA首检明细ID")
     @Excel(name = "PDA首检明细ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`first_inspection_id _id`")
+    @Column(name = "`first_inspection_id`")
     private Long firstInspectionIdId;
 
     /**

@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="disqualification_id" jdbcType="BIGINT" property="disqualificationId" />
-    <result column="first_inspection_id _id" jdbcType="BIGINT" property="firstInspectionIdId" />
+    <result column="first_inspection_id" jdbcType="BIGINT" property="firstInspectionIdId" />
     <result column="level" jdbcType="BIGINT" property="level" />
     <result column="disqualification" jdbcType="BIGINT" property="disqualification" />
     <result column="checkout_type" jdbcType="TINYINT" property="checkoutType" />
@@ -22,7 +22,7 @@
 
   <sql id="Base_Column_List">
     qd.disqualification_id,qd.first_inspection_id,qd.level,qd.disqualification,qd.checkout_type,
-    qd.status,qd.create_user_id, bo.organization_name,qd.create_time,
+    qd.status,qd.create_user_id,qd.create_time,
     qd.modified_user_id,qd.modified_time,qd.is_delete, qd.organization_id,qd.remark
   </sql>
 

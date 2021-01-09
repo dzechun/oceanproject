@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @Date 2020/12/7 17:39
  */
-@FeignClient(name = "ocean-imes-basic")
+@FeignClient(name = "ocean-storage-inventory")
 public interface StorageInventoryFeignApi {
 
 

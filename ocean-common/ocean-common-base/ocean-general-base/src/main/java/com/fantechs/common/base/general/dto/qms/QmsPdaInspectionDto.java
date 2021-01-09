@@ -26,7 +26,7 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "workOrderCode",value = "生产工单号")
-    @Excel(name = "生产工单号", height = 20, width = 30,orderNum="13")
+    @Excel(name = "生产工单号", height = 20, width = 30,orderNum="2")
     private String workOrderCode;
 
 
@@ -35,7 +35,7 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="productionLine",value = "生产线")
-    @Excel(name = "生产线", height = 20, width = 30,orderNum="13")
+    @Excel(name = "生产线", height = 20, width = 30,orderNum="3")
     private String  productionLine;
 
     /**
@@ -43,7 +43,7 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="handlerName",value = "处理人名称")
-    @Excel(name = "处理人名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "处理人名称", height = 20, width = 30,orderNum="4")
     private String handlerName;
 
     /**
@@ -51,7 +51,7 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -59,7 +59,7 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="15")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
     /**
@@ -68,6 +68,13 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 组织代码
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationCode",value = "组织代码")
+    private String organizationCode;
 
     private static final long serialVersionUID = 1L;
 }
