@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.storageBills.controller.pda;
 
+import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
@@ -17,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.annotation.Resource;
@@ -52,6 +54,24 @@ public class PDAMesPackageManagerController {
         Page<Object> page = PageHelper.startPage(searchMesPackageManagerListDTO.getStartPage(), searchMesPackageManagerListDTO.getPageSize());
         List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
         return ControllerUtil.returnDataSuccess(mesPackageManagerDTOList,(int)page.getTotal());
+    }
+
+    @ApiOperation("根据箱码或栈板码查询")
+    @PostMapping("findByBarcode")
+    public ResponseEntity<MesPackageManagerInDTO> findByBarcode(
+            @ApiParam(value = "条码")@RequestParam String barcode
+    ){
+        MesPackageManagerInDTO mesPackageManagerInDTO = new MesPackageManagerInDTO();
+        List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicCondition("barCode",barcode));
+        if(StringUtils.isNotEmpty(mesPackageManagerDTOList)){
+            MesPackageManagerDTO mesPackageManagerDTO = mesPackageManagerDTOList.get(0);
+            BeanUtils.copyProperties(mesPackageManagerDTO,mesPackageManagerInDTO);
+            if(mesPackageManagerDTO.getParentId()!=0){
+                MesPackageManager mesPackageManager = mesPackageManagerService.selectByKey(mesPackageManagerDTO.getParentId());
+                mesPackageManagerDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
+            }
+        }
+        return ControllerUtil.returnDataSuccess(mesPackageManagerInDTO,1);
     }
 
     @ApiOperation("通过ID查询包装管理")

@@ -13,8 +13,14 @@ public class SearchSmtOrder extends BaseQuery implements Serializable {
     /**
      * 订单号
      */
-    @Column(name = "order_code")
+    @ApiModelProperty(name="orderCode" ,value="订单号")
     private String orderCode;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractCode" ,value="合同号")
+    private String contractCode;
 
     /**
      * 产品料号ID
