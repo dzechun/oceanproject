@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.storageBills.mapper.history;
 
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
-import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
 import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
 
