@@ -20,7 +20,7 @@ public class SearchSmtStorageMaterial extends BaseQuery implements Serializable 
      * 仓库名称
      */
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    private Long warehouseName;
+    private String warehouseName;
 
     /**
      * 仓库区域ID

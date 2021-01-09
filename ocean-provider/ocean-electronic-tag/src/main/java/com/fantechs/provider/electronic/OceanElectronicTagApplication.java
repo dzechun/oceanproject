@@ -9,7 +9,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan({"com.fantechs.provider.electronic","com.fantechs.common"})
+@ComponentScan({"com.fantechs.provider.electronic","com.fantechs.common","com.fantechs.common.base.electronic"})
 @MapperScan({"com.fantechs.provider.electronic.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
 public class OceanElectronicTagApplication {
