@@ -2,6 +2,8 @@ package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDetDto;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,51 +13,74 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+;
+
 /**
- * 不合格项目表
- * @date 2021-01-06 21:16:18
+ * PDA质检
+ * qms_pda_inspection
+ * @author jbb
+ * @date 2021-01-07 18:50:51
  */
 @Data
-@Table(name = "qms_disqualification")
-public class QmsDisqualification implements Serializable {
+@Table(name = "qms_pda_inspection")
+public class QmsPdaInspection extends ValidGroup implements Serializable {
     /**
-     * PDA不合格项ID
+     * PDA质检ID
      */
-    @ApiModelProperty(name="disqualificationId",value = "PDA不合格项ID")
-    @Excel(name = "PDA不合格项ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="andinStorageQuarantineId",value = "PDA质检ID")
+    @Excel(name = "PDA质检ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "disqualification_id")
-    private Long disqualificationId;
+    @Column(name = "andin_storage_quarantine_id")
+    private Long andinStorageQuarantineId;
 
     /**
-     * PDA首检明细ID
+     * PDA质检单号
      */
-    @ApiModelProperty(name="firstInspectionIdId",value = "PDA首检明细ID")
-    @Excel(name = "PDA首检明细ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`first_inspection_id _id`")
-    private Long firstInspectionIdId;
+    @ApiModelProperty(name="andinStorageQuarantineCode",value = "PDA质检单号")
+    @Excel(name = "PDA质检单号", height = 20, width = 30,orderNum="")
+    @Column(name = "andin_storage_quarantine_code")
+    private String andinStorageQuarantineCode;
 
     /**
-     * 不合格项等级
+     * 工单ID
      */
-    @ApiModelProperty(name="level",value = "不合格项等级")
-    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
-    private Long level;
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "`work_order _id`")
+    private Long workOrderId;
 
     /**
-     * 不合格项
+     * 栈板ID
      */
-    @ApiModelProperty(name="disqualification",value = "不合格项")
-    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
-    private Long disqualification;
+    @ApiModelProperty(name="packageManagerId",value = "栈板ID")
+    @Excel(name = "栈板ID", height = 20, width = 30,orderNum="")
+    @Column(name = "package_manager_id")
+    private Long packageManagerId;
 
     /**
-     * 检验类型（0、PDA首检 1、OOB检验）
+     * 检验人ID
      */
-    @ApiModelProperty(name="checkoutType",value = "检验类型（0、PDA首检 1、OOB检验）")
-    @Excel(name = "检验类型（0、PDA首检 1、OOB检验）", height = 20, width = 30,orderNum="")
-    @Column(name = "checkout_type")
-    private Byte checkoutType;
+    @ApiModelProperty(name="surveyorId",value = "检验人ID")
+    @Excel(name = "检验人ID", height = 20, width = 30,orderNum="")
+    @Column(name = "surveyor_id")
+    private Long surveyorId;
+
+    /**
+     * 单据时间
+     */
+    @ApiModelProperty(name="documentsTime",value = "单据时间")
+    @Excel(name = "单据时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "documents_time")
+    private Date documentsTime;
+
+    /**
+     * 单据类型（0、首检单 1、成品检验单）
+     */
+    @ApiModelProperty(name="documentsType",value = "单据类型（0、首检单 1、成品检验单）")
+    @Excel(name = "单据类型（0、首检单 1、成品检验单）", height = 20, width = 30,orderNum="")
+    @Column(name = "documents_type")
+    private Byte documentsType;
 
     /**
      * 备注
@@ -120,6 +145,12 @@ public class QmsDisqualification implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * PDA质检明细对象
+     */
+    @ApiModelProperty(name="qmsPdaInspectionDet",value = "PDA质检明细对象")
+    private QmsPdaInspectionDetDto qmsPdaInspectionDet;
 
     private static final long serialVersionUID = 1L;
 }

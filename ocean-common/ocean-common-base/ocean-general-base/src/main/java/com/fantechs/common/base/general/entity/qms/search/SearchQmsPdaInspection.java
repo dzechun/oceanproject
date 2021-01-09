@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.entity.qms.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,7 +7,14 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SearchQmsFirstInspection extends BaseQuery implements Serializable {
+public class SearchQmsPdaInspection extends BaseQuery implements Serializable {
+
+
+    /**
+     * PDA质检单号
+     */
+    @ApiModelProperty(name="andinStorageQuarantineCode",value = "PDA质检单号")
+    private String andinStorageQuarantineCode;
 
     /**
      * 生产工单号
@@ -16,11 +22,6 @@ public class SearchQmsFirstInspection extends BaseQuery implements Serializable 
     @ApiModelProperty(name = "workOrderCode",value = "生产工单号")
     private String workOrderCode;
 
-    /**
-     * 首检单号
-     */
-    @ApiModelProperty(name="firstInspectionCode",value = "首检单号")
-    private String firstInspectionCode;
 
     /**
      * 生产线

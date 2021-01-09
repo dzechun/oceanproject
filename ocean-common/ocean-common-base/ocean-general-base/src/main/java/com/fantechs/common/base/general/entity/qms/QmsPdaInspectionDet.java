@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,53 +10,66 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 
 /**
- * 不合格项目表
- * @date 2021-01-06 21:16:18
+ * PDA质检明细
+ * @date 2021-01-07 20:01:55
  */
 @Data
-@Table(name = "qms_disqualification")
-public class QmsDisqualification implements Serializable {
+@Table(name = "qms_pda_inspection_det")
+public class QmsPdaInspectionDet extends ValidGroup implements Serializable {
     /**
-     * PDA不合格项ID
+     * PDA质检明细ID
      */
-    @ApiModelProperty(name="disqualificationId",value = "PDA不合格项ID")
-    @Excel(name = "PDA不合格项ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="andinStorageQuarantineDetId",value = "PDA质检明细ID")
+    @Excel(name = "PDA质检明细ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "disqualification_id")
-    private Long disqualificationId;
+    @Column(name = "andin_storage_quarantine_det_id")
+    private Long andinStorageQuarantineDetId;
 
     /**
-     * PDA首检明细ID
+     * PDA质检ID
      */
-    @ApiModelProperty(name="firstInspectionIdId",value = "PDA首检明细ID")
-    @Excel(name = "PDA首检明细ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`first_inspection_id _id`")
-    private Long firstInspectionIdId;
+    @ApiModelProperty(name="andinStorageQuarantineId",value = "PDA质检ID")
+    @Excel(name = "PDA质检ID", height = 20, width = 30,orderNum="")
+    @Column(name = "andin_storage_quarantine_id")
+    private Long andinStorageQuarantineId;
 
     /**
-     * 不合格项等级
+     * 箱码ID
      */
-    @ApiModelProperty(name="level",value = "不合格项等级")
-    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
-    private Long level;
+    @ApiModelProperty(name="packageManagerId",value = "箱码ID")
+    @Excel(name = "箱码ID", height = 20, width = 30,orderNum="")
+    @Column(name = "package_manager_id")
+    private Long packageManagerId;
 
     /**
-     * 不合格项
+     * 检验数量
      */
-    @ApiModelProperty(name="disqualification",value = "不合格项")
-    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
-    private Long disqualification;
+    @ApiModelProperty(name="inspectionQuantity",value = "检验数量")
+    @Excel(name = "检验数量", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_quantity")
+    private BigDecimal inspectionQuantity;
 
     /**
-     * 检验类型（0、PDA首检 1、OOB检验）
+     * 合格数量
      */
-    @ApiModelProperty(name="checkoutType",value = "检验类型（0、PDA首检 1、OOB检验）")
-    @Excel(name = "检验类型（0、PDA首检 1、OOB检验）", height = 20, width = 30,orderNum="")
-    @Column(name = "checkout_type")
-    private Byte checkoutType;
+    @ApiModelProperty(name="qualifiedQuantity",value = "合格数量")
+    @Excel(name = "合格数量", height = 20, width = 30,orderNum="")
+    @Column(name = "qualified_quantity")
+    private BigDecimal qualifiedQuantity;
+
+    /**
+     * 检验结果（0、未知 1、合格 2、不合格）
+     */
+    @ApiModelProperty(name="inspectionResult",value = "检验结果（0、未知 1、合格 2、不合格）")
+    @Excel(name = "检验结果（0、未知 1、合格 2、不合格）", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_result")
+    private Byte inspectionResult;
 
     /**
      * 备注
@@ -120,6 +134,12 @@ public class QmsDisqualification implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 不良项目对象集合
+     */
+    @ApiModelProperty(name="isDelete",value = "不良项目集合")
+    private List<QmsDisqualification> list;
 
     private static final long serialVersionUID = 1L;
 }

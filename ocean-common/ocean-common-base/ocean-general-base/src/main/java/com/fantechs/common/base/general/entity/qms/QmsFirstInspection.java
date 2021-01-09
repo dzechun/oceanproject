@@ -9,7 +9,9 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -34,8 +36,24 @@ public class QmsFirstInspection  extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`work_order _id`")
+    @Column(name = "`work_order_id`")
     private Long workOrderId;
+
+    /**
+     * 首检单号
+     */
+    @ApiModelProperty(name="firstInspectionCode",value = "首检单号")
+    @Excel(name = "首检单号", height = 20, width = 30,orderNum="")
+    @Column(name = "`first_inspection_code`")
+    private String firstInspectionCode;
+
+    /**
+     * 挑选总数量
+     */
+    @ApiModelProperty(name = "selectedTotalQuantity",value = "挑选总数量")
+    @Excel(name = "挑选总数量", height = 20, width = 30,orderNum="")
+    @Column(name = "selected_total_quantity")
+    private BigDecimal selectedTotalQuantity;
 
     /**
      * 检验结果（0、未知 1、合格 2、不合格）
@@ -51,6 +69,23 @@ public class QmsFirstInspection  extends ValidGroup implements Serializable {
     @ApiModelProperty(name="handler",value = "处理人ID")
     @Excel(name = "处理人ID", height = 20, width = 30,orderNum="")
     private Long handler;
+
+    /**
+     * 单据日期
+     */
+    @ApiModelProperty(name="documentsTime",value = "单据日期")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "documents_time")
+    private Date documentsTime;
+
+    /**
+     * 单据类型
+     */
+    @ApiModelProperty(name="receiptsType",value = "单据类型")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "receipts_type")
+    private Byte receiptsType;
 
     /**
      * 备注

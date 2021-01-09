@@ -1,61 +1,45 @@
 package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.*;
+import lombok.Data;
 
 /**
- * 不合格项目表
- * @date 2021-01-06 21:16:18
+ * 入库待检表
+ * @date 2021-01-07 14:06:09
  */
 @Data
-@Table(name = "qms_disqualification")
-public class QmsDisqualification implements Serializable {
+@Table(name = "qms_andin_storage_quarantine")
+public class QmsAndinStorageQuarantine extends ValidGroup implements Serializable {
     /**
-     * PDA不合格项ID
+     * 入库待检ID
      */
-    @ApiModelProperty(name="disqualificationId",value = "PDA不合格项ID")
-    @Excel(name = "PDA不合格项ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="andinStorageQuarantineId",value = "入库待检ID")
+    @Excel(name = "入库待检ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "disqualification_id")
-    private Long disqualificationId;
+    @Column(name = "andin_storage_quarantine_id")
+    private Long andinStorageQuarantineId;
 
     /**
-     * PDA首检明细ID
+     * 栈板ID
      */
-    @ApiModelProperty(name="firstInspectionIdId",value = "PDA首检明细ID")
-    @Excel(name = "PDA首检明细ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`first_inspection_id _id`")
-    private Long firstInspectionIdId;
+    @ApiModelProperty(name="palletId",value = "栈板ID")
+    @Excel(name = "栈板ID或箱码ID", height = 20, width = 30,orderNum="")
+    @Column(name = "pallet_id")
+    private Long palletId;
 
     /**
-     * 不合格项等级
+     * 待检区域ID
      */
-    @ApiModelProperty(name="level",value = "不合格项等级")
-    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
-    private Long level;
-
-    /**
-     * 不合格项
-     */
-    @ApiModelProperty(name="disqualification",value = "不合格项")
-    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
-    private Long disqualification;
-
-    /**
-     * 检验类型（0、PDA首检 1、OOB检验）
-     */
-    @ApiModelProperty(name="checkoutType",value = "检验类型（0、PDA首检 1、OOB检验）")
-    @Excel(name = "检验类型（0、PDA首检 1、OOB检验）", height = 20, width = 30,orderNum="")
-    @Column(name = "checkout_type")
-    private Byte checkoutType;
+    @ApiModelProperty(name="inspectionWaitingAreaId",value = "待检区域ID")
+    @Excel(name = "待检区域ID", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_waiting_area_id")
+    private Long inspectionWaitingAreaId;
 
     /**
      * 备注

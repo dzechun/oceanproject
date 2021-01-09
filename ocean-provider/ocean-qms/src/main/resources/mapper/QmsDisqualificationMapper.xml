@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsDisqualificationMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsDisqualification">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="disqualification_id" jdbcType="BIGINT" property="disqualificationId" />
+    <result column="first_inspection_id _id" jdbcType="BIGINT" property="firstInspectionIdId" />
+    <result column="level" jdbcType="BIGINT" property="level" />
+    <result column="disqualification" jdbcType="BIGINT" property="disqualification" />
+    <result column="checkout_type" jdbcType="TINYINT" property="checkoutType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qd.disqualification_id,qd.first_inspection_id,qd.level,qd.disqualification,qd.checkout_type,
+    qd.status,qd.create_user_id, bo.organization_name,qd.create_time,
+    qd.modified_user_id,qd.modified_time,qd.is_delete, qd.organization_id,qd.remark
+  </sql>
+
+  <select id="findByCheckoutId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from qms_disqualification qd
+    where qd.first_inspection_id = #{checkoutId} and qd.checkout_type = #{checkoutType}
+  </select>
+
+
+</mapper>

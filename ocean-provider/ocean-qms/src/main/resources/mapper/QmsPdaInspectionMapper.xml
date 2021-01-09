@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsPdaInspectionMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsPdaInspection">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="andin_storage_quarantine_id" jdbcType="BIGINT" property="andinStorageQuarantineId" />
+    <result column="andin_storage_quarantine_code" jdbcType="VARCHAR" property="andinStorageQuarantineCode" />
+    <result column="work_order _id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="package_manager_id" jdbcType="BIGINT" property="packageManagerId" />
+    <result column="surveyor_id" jdbcType="BIGINT" property="surveyorId" />
+    <result column="documents_time" jdbcType="TIMESTAMP" property="documentsTime" />
+    <result column="documents_type" jdbcType="TINYINT" property="documentsType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="production_line" jdbcType="VARCHAR" property="productionLine"/>
+    <result column="handler_name" jdbcType="VARCHAR" property="handlerName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qasq.andin_storage_quarantine_id,qasq.pallet_id,qasq.inspection_waiting_area_id,
+    qasq.status,qasq.create_user_id, bo.organization_name,qasq.create_time,
+    qasq.modified_user_id,qasq.modified_time,qasq.is_delete, qasq.organization_id,qasq.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    swo.work_order_code,spl.pro_name AS production_line,sys.user_name AS handler_name
+    from qms_pda_inspection qpi
+    LEFT JOIN ocean.sys_user su ON qpi.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qpi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qpi.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_work_order swo ON qpi.work_order_id = swo.work_order_id
+    LEFT JOIN fantech_imes.smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+    LEFT JOIN ocean.sys_user sys ON qpi.surveyor_id = sys.user_id
+    <where>
+      <if test="firstInspectionCode != null and firstInspectionCode != ''">
+        and qfi.first_inspection_code = #{firstInspectionCode}
+      </if>
+      <if test="productionLine != null and productionLine != ''">
+        and spl.pro_line_id = #{productionLine}
+      </if>
+      <if test="handler != null and handler != ''">
+        and sys.user_id = #{handler}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

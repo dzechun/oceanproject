@@ -2,7 +2,7 @@ package com.fantechs.common.base.general.dto.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.qms.QmsFirstInspection;
+import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,8 +14,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 
+/**
+ * PDA质检
+ * @date 2021-01-07 18:50:51
+ */
 @Data
-public class QmsFirstInspectionDto extends QmsFirstInspection implements Serializable {
+public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializable {
 
     /**
      * 生产工单号
@@ -25,53 +29,21 @@ public class QmsFirstInspectionDto extends QmsFirstInspection implements Seriali
     @Excel(name = "生产工单号", height = 20, width = 30,orderNum="13")
     private String workOrderCode;
 
-    /**
-     * 产品编码
-     */
-    @Transient
-    @ApiModelProperty(name = "productCode",value = "产品编码")
-    @Excel(name = "产品编码", height = 20, width = 30,orderNum="13")
-    private String productCode;
 
     /**
-     * 产品描述
+     * 生产线
      */
     @Transient
-    @ApiModelProperty(name = "productDesc",value = "产品描述")
-    @Excel(name = "产品描述", height = 20, width = 30,orderNum="13")
-    private String productDesc;
-
-    /**
-     * 物料版本
-     */
-    @Transient
-    @ApiModelProperty(name = "version",value = "物料版本")
-    @Excel(name = "物料版本", height = 20, width = 30,orderNum="13")
-    private String version;
-
-    /**
-     * 线别名称
-     */
-    @Transient
-    @ApiModelProperty(name = "proName",value = "线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30,orderNum="13")
-    private String proName;
-
-    /**
-     * 工单数量
-     */
-    @Transient
-    @ApiModelProperty(name = "workOrderQuantity",value = "工单数量")
-    @Excel(name = "工单数量", height = 20, width = 30,orderNum="13")
-    private String workOrderQuantity;
-
+    @ApiModelProperty(name="productionLine",value = "生产线")
+    @Excel(name = "生产线", height = 20, width = 30,orderNum="13")
+    private String  productionLine;
 
     /**
      * 处理人名称
      */
     @Transient
-    @ApiModelProperty(name = "handler",value = "处理人")
-    @Excel(name = "处理人", height = 20, width = 30,orderNum="13")
+    @ApiModelProperty(name="handlerName",value = "处理人名称")
+    @Excel(name = "处理人名称", height = 20, width = 30,orderNum="13")
     private String handlerName;
 
     /**
