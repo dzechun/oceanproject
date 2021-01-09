@@ -78,7 +78,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 		if (request.getRequestURI().contains(SWAGGER_URI)|| LOGIN_URI.contains(request.getRequestURI())) {
 			return false;
 		}
-			return false;
+			return true;
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			result.setMessage(ErrorCodeEnum.UAC10010002.getMsg());
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
-			return null;
+			return requestContext;
 
 		}
 		SysUser user = TokenUtil.load(token);
@@ -112,7 +112,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			result.setMessage(ErrorCodeEnum.UAC10011039.getMsg());
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
-			return null;
+			return requestContext;
 		}else{
 			if(StringUtils.isNotEmpty(user.getAuthority())){
 				StringBuffer sb = new StringBuffer();
@@ -145,7 +145,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			requestContext.setResponseStatusCode(HttpStatus.OK.value());
 
 		}
-		return null;
+		return requestContext;
 	}
 
 
