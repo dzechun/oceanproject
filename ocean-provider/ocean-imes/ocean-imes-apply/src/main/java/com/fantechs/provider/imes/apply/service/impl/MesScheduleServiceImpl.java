@@ -1,11 +1,14 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
+import com.fantechs.common.base.dto.apply.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.entity.apply.MesSchedule;
 import com.fantechs.common.base.dto.apply.MesScheduleDTO;
 import com.fantechs.common.base.entity.apply.MesScheduleDetail;
 import com.fantechs.common.base.entity.apply.SmtOrder;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
+import com.fantechs.common.base.entity.apply.history.MesHtSchedule;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.imes.apply.service.MesScheduleService;
 import com.fantechs.provider.imes.apply.mapper.MesScheduleMapper;
@@ -16,6 +19,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.imes.apply.service.SmtOrderService;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
+import com.fantechs.provider.imes.apply.service.ht.MesHtScheduleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -41,6 +45,8 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
      private SmtOrderService smtOrderService;
      @Resource
      private SmtWorkOrderService smtWorkOrderService;
+     @Resource
+     private MesHtScheduleService mesHtScheduleService;
 
     @Override
     public List<MesSchedule> selectAll(Map<String,Object> map) {
@@ -109,7 +115,11 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         mesSchedule.setScheduleCode(CodeUtils.getId("SCHED"));
         mesSchedule.setCreateUserId(null);
         mesSchedule.setIsDelete((byte)1);
-        return mesScheduleMapper.insertSelective(mesSchedule);
+        if(mesScheduleMapper.insertSelective(mesSchedule)<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        recordHistory(mesSchedule.getScheduleId(),"新增");
+        return 1;
     }
 
     @Override
@@ -136,7 +146,11 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
     @Override
     public int update(MesSchedule mesSchedule) {
         mesSchedule.setModifiedUserId(null);
-        return mesScheduleMapper.updateByPrimaryKeySelective(mesSchedule);
+        if(mesScheduleMapper.updateByPrimaryKeySelective(mesSchedule)<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        recordHistory(mesSchedule.getScheduleId(),"更新");
+        return 1;
     }
 
     @Override
@@ -164,7 +178,9 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
             //根据销售订单找到所对应的产品信息及相关
-            List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(orderId);
+            SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
+            searchMesOrderMaterialListDTO.setOrderId(orderId);
+            List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
             if(StringUtils.isNotEmpty(mesOrderMaterialDTOList)){
                 for (MesOrderMaterialDTO mesOrderMaterialDTO : mesOrderMaterialDTOList) {
                     //根据产品信息生成工单
@@ -197,6 +213,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             if(mesScheduleMapper.batchScheduleDetail(mesScheduleDetailList)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
+
         }
         return 1;
     }
@@ -220,13 +237,13 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
      * @param operation
      */
     private void recordHistory(Long id,String operation){
-        /*HT ht= new HT();
-        ht.setOperation(operation);
+        MesHtSchedule mesHtSchedule = new MesHtSchedule();
+        mesHtSchedule.setOperation(operation);
         MesSchedule mesSchedule = selectByKey(id);
         if (StringUtils.isEmpty(mesSchedule)){
             return;
         }
-        BeanUtils.autoFillEqFields(mesSchedule,ht);
-        htService.save(ht);*/
+        BeanUtils.autoFillEqFields(mesSchedule,mesHtSchedule);
+        mesHtScheduleService.save(mesHtSchedule);
     }
 }

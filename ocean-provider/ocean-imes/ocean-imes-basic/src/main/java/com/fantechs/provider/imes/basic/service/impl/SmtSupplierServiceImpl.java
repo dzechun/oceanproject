@@ -70,7 +70,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
 
         List<SmtAddressDto> address = record.getList();
 
-        if (address.size()!=0){
+        if (StringUtils.isNotEmpty(address)){
             List<SmtSupplierAddress> supplierAddresses = new ArrayList<>();
             //将新增的地址与供应商进行绑定
             for (SmtAddressDto smtAddressDto : address) {
@@ -80,7 +80,9 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
                 smtSupplierAddress.setAddressId(smtAddressDto.getAddressId());
                 supplierAddresses.add(smtSupplierAddress);
             }
-            smtSupplierAddressMapper.insertList(supplierAddresses);
+            if(StringUtils.isNotEmpty(supplierAddresses)){
+                smtSupplierAddressMapper.insertList(supplierAddresses);
+            }
         }
 
         return i;

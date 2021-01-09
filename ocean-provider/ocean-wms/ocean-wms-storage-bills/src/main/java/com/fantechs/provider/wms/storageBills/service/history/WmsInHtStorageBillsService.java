@@ -2,7 +2,7 @@ package com.fantechs.provider.wms.storageBills.service.history;
 
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.support.IService;
-import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
 
 import java.util.List;
 import java.util.Map;

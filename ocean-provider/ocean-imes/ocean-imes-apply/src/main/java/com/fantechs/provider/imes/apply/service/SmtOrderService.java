@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.apply.service;
 
 import com.fantechs.common.base.dto.apply.MesOrderMaterialDTO;
 import com.fantechs.common.base.dto.apply.SaveOrderMaterialDTO;
+import com.fantechs.common.base.dto.apply.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.dto.apply.SmtOrderDto;
 import com.fantechs.common.base.entity.apply.MesOrderMaterial;
 import com.fantechs.common.base.entity.apply.SmtOrder;
@@ -24,5 +25,5 @@ public interface SmtOrderService extends IService<SmtOrder> {
     //保存销售订单与产品相关
     int saveOrderMaterial(SaveOrderMaterialDTO saveOrderMaterialDTO);
     //根据销售订单找到产品相关信息
-    List<MesOrderMaterialDTO> findOrderMaterial(Long orderId);
+    List<MesOrderMaterialDTO> findOrderMaterial(SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO);
 }

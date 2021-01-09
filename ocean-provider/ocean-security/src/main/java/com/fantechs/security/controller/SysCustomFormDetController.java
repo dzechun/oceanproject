@@ -1,6 +1,7 @@
 package com.fantechs.security.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.general.entity.security.SysCustomFormDet;
 import com.fantechs.common.base.general.entity.security.search.SearchSysCustomFormDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/01/08.
  */
 @RestController
-@Api(tags = "sysCustomFormDet控制器")
+@Api(tags = "自定义表单明细控制器")
 @RequestMapping("/sysCustomFormDet")
 @Validated
 public class SysCustomFormDetController {
@@ -62,17 +63,9 @@ public class SysCustomFormDetController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SysCustomFormDet>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomFormDet searchSysCustomFormDet) {
+    public ResponseEntity<List<SysCustomFormDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomFormDet searchSysCustomFormDet) {
         Page<Object> page = PageHelper.startPage(searchSysCustomFormDet.getStartPage(),searchSysCustomFormDet.getPageSize());
-        List<SysCustomFormDet> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
-
-    @ApiOperation("历史列表")
-    @PostMapping("/findHtList")
-    public ResponseEntity<List<SysCustomFormDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomFormDet searchSysCustomFormDet) {
-        Page<Object> page = PageHelper.startPage(searchSysCustomFormDet.getStartPage(),searchSysCustomFormDet.getPageSize());
-        List<SysCustomFormDet> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
+        List<SysCustomFormDetDto> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -80,7 +73,7 @@ public class SysCustomFormDetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSysCustomFormDet searchSysCustomFormDet){
-        List<SysCustomFormDet> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
+        List<SysCustomFormDetDto> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "SysCustomFormDet信息", SysCustomFormDet.class, "SysCustomFormDet.xls", response);

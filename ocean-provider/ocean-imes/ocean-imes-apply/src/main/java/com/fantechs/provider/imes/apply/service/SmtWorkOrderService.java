@@ -22,4 +22,7 @@ public interface SmtWorkOrderService extends IService<SmtWorkOrder> {
 
     //更新工单状态
     int updateWorkOrderStatus(Long workOrderId,int status);
+
+    //工单完工产品
+    int finishedProduct(Long workOrderId,Double count);
 }

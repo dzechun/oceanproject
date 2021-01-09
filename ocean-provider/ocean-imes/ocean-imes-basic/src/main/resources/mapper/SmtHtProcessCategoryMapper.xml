@@ -28,9 +28,22 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    shpc.ht_process_category_id, shpc.process_category_id, shpc.process_category_code, shpc.process_category_name, shpc.process_category_desc,
-    shpc.status, shpc.create_user_id, shpc.create_time, shpc.modified_user_id, shpc.modified_time, shpc.is_delete, shpc.option1, shpc.option2, shpc.option3,
-    shpc.organization_id, shpc.remark
+    shpc.ht_process_category_id,
+    shpc.process_category_id,
+    shpc.process_category_code,
+    shpc.process_category_name,
+    shpc.process_category_desc,
+    shpc.status,
+    shpc.create_user_id,
+    shpc.create_time,
+    shpc.modified_user_id,
+    shpc.modified_time,
+    shpc.is_delete,
+    shpc.option1,
+    shpc.option2,
+    shpc.option3,
+    shpc.organization_id,
+    shpc.remark
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">

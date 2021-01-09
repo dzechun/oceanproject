@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.custom.SysCustomFormMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.model.custom.SysCustomForm">
+<mapper namespace="com.fantechs.security.mapper.SysCustomFormMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.security.SysCustomForm">
     <!--
       WARNING - @mbg.generated
     -->
@@ -9,7 +9,6 @@
     <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode" />
     <result column="custom_form_name" jdbcType="VARCHAR" property="customFormName" />
     <result column="from_rout" jdbcType="VARCHAR" property="fromRout" />
-    <result column="item_width" jdbcType="VARCHAR" property="itemWidth" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -17,4 +16,39 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.security.SysCustomFormDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    </resultMap>
+
+  <sql id="Base_Column_List">
+    cf.custom_form_id,cf.custom_form_code,cf.custom_form_name,
+	cf.from_rout,cf.`status`,cf.create_user_id,
+	cf.create_time,cf.modified_user_id,cf.modified_time,cf.is_delete
+  </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+        from sys_custom_form cf
+        LEFT JOIN sys_user su ON cf.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON cf.modified_user_id = sus.user_id
+
+        <where>
+            <if test="customFormId!=null and customFormId!=''">
+                and cf.custom_form_id=#{customFormId}
+            </if>
+            <if test="customFormCode!=null and customFormCode!=''">
+                and cf.custom_form_code=#{customFormCode}
+            </if>
+            <if test="fromRout!=null and fromRout!=''">
+                and cf.from_rout=#{fromRout}
+            </if>
+            <if test="status!=null and status!=''">
+                and cf.status=#{status}
+            </if>
+        </where>
+    </select>
+
 </mapper>
