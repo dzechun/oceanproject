@@ -9,7 +9,6 @@
     <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode" />
     <result column="custom_form_name" jdbcType="VARCHAR" property="customFormName" />
     <result column="from_rout" jdbcType="VARCHAR" property="fromRout" />
-    <result column="item_width" jdbcType="VARCHAR" property="itemWidth" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -25,7 +24,7 @@
 
   <sql id="Base_Column_List">
     cf.custom_form_id,cf.custom_form_code,cf.custom_form_name,
-	cf.from_rout,cf.`item_width`,cf.`status`,cf.create_user_id,
+	cf.from_rout,cf.`status`,cf.create_user_id,
 	cf.create_time,cf.modified_user_id,cf.modified_time,cf.is_delete
   </sql>
 
@@ -35,6 +34,7 @@
         from sys_custom_form cf
         LEFT JOIN sys_user su ON cf.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON cf.modified_user_id = sus.user_id
+
         <where>
             <if test="customFormId!=null and customFormId!=''">
                 and cf.custom_form_id=#{customFormId}
@@ -42,11 +42,13 @@
             <if test="customFormCode!=null and customFormCode!=''">
                 and cf.custom_form_code=#{customFormCode}
             </if>
+            <if test="fromRout!=null and fromRout!=''">
+                and cf.from_rout=#{fromRout}
+            </if>
             <if test="status!=null and status!=''">
                 and cf.status=#{status}
             </if>
         </where>
-        order by order_num
     </select>
 
 </mapper>

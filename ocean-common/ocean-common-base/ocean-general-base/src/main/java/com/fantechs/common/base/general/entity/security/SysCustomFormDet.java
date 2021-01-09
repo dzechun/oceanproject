@@ -70,9 +70,17 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private String itemValue;
 
     /**
-     * 列表字段属性（0-input 1-select  2-switch 3-data）
+     * 表单列宽
      */
-    @ApiModelProperty(name="itemListType",value = "列表字段属性（0-input 1-select  2-switch 3-data）")
+    @ApiModelProperty(name="itemWidth",value = "表单列宽")
+    @Excel(name = "表单列宽", height = 20, width = 30,orderNum="")
+    @Column(name = "item_width")
+    private String itemWidth;
+
+    /**
+     * 列表字段属性（0-input 1-select  2-switch 3-date）
+     */
+    @ApiModelProperty(name="itemListType",value = "列表字段属性（0-input 1-select  2-switch 3-date）")
     @Excel(name = "列表字段属性（0-input 1-select  2-switch 3-data）", height = 20, width = 30,orderNum="") 
     @Column(name = "item_list_type")
     private Byte itemListType;
@@ -108,6 +116,13 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @Excel(name = "是否枚举（0-否 1-是）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_enum")
     private Byte isEnum;
+
+    /**
+     * 枚举Json
+     */
+    @ApiModelProperty(name="enumData",value = "枚举Json")
+    @Column(name = "enum_data")
+    private String enumData;
 
     /**
      * 是否必填（0-否 1-是）

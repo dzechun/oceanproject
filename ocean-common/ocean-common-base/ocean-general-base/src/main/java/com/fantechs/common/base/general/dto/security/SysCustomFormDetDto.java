@@ -25,4 +25,11 @@ public class SysCustomFormDetDto  extends SysCustomFormDet implements Serializab
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
     private String modifiedUserName;
+
+    /**
+     * 所属对象
+     */
+    @Transient
+    @ApiModelProperty(name = "customFormCode",value = "所属对象")
+    private String customFormCode;
 }

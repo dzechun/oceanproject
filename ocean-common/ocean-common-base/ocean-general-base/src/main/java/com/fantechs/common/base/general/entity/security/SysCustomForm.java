@@ -56,13 +56,6 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
     @Column(name = "from_rout")
     private String fromRout;
 
-    /**
-     * 表单列宽
-     */
-    @ApiModelProperty(name="itemWidth",value = "表单列宽")
-    @Excel(name = "表单列宽", height = 20, width = 30,orderNum="") 
-    @Column(name = "item_width")
-    private String itemWidth;
 
     /**
      * 创建人id
