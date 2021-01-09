@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.custom.SysCustomFormMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.model.custom.SysCustomForm">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="custom_form_id" jdbcType="BIGINT" property="customFormId" />
+    <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode" />
+    <result column="custom_form_name" jdbcType="VARCHAR" property="customFormName" />
+    <result column="from_rout" jdbcType="VARCHAR" property="fromRout" />
+    <result column="item_width" jdbcType="VARCHAR" property="itemWidth" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+</mapper>
