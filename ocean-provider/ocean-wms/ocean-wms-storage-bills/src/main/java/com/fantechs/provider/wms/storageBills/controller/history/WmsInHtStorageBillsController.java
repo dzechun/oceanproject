@@ -1,9 +1,9 @@
 package com.fantechs.provider.wms.storageBills.controller.history;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.apply.history.ExportHtBillsDTO;
-import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO;
-import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDetDTO;
+import com.fantechs.common.base.dto.basic.history.ExportHtBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDetDTO;
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.EasyPoiUtils;

@@ -12,7 +12,6 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper;
 import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper;
 import com.fantechs.provider.imes.storage.service.SmtStorageInventoryDetService;

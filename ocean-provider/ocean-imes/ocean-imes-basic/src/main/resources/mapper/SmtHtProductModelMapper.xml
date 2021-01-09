@@ -7,6 +7,7 @@
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
     <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -34,7 +35,7 @@
 
   <select id="selectHtProductModels" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductModel" resultMap="BaseResultMap">
     select shpm.ht_product_model_id, shpm.product_model_id,shpm.product_model_code, shpm.product_model_name, shpm.product_model_desc,
-    shpm.product_family_id, bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
+    shpm.product_family_id, bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,shpm.version,
     shpm.status, shpm.create_user_id, u.user_name as createUserName,shpm.create_time, shpm.modified_user_id,
     s.user_name as modifiedUserName,shpm.modified_time, shpm.organization_id, shpm.remark, bo.organization_name
     from fantech_imes.smt_ht_product_model shpm

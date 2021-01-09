@@ -118,6 +118,14 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     private String routeName;
 
     /**
+     * 工艺路线名称
+     */
+    @Transient
+    @ApiModelProperty(name="routeName" ,value="工艺路线名称")
+    @Excel(name = "工艺路线名称", height = 20, width = 30)
+    private String routeCode;
+
+    /**
      * 工艺路线描述
      */
     @Transient

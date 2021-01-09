@@ -1,9 +1,14 @@
 package com.fantechs.provider.wms.storageBills.service.impl;
 
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.provider.api.imes.apply.ApplyFeignApi;
 import com.fantechs.provider.wms.storageBills.service.MesPackageManagerService;
 import com.fantechs.provider.wms.storageBills.mapper.MesPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -11,12 +16,12 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.provider.wms.storageBills.service.history.MesHtPackageManagerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +36,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
      @Resource
      private MesPackageManagerMapper mesPackageManagerMapper;
+     @Resource
+     private ApplyFeignApi applyFeignApi;
+     @Resource
+     private MesHtPackageManagerService mesHtPackageManagerService;
 
     @Override
     public List<MesPackageManager> selectAll(Map<String,Object> map) {
@@ -99,7 +108,11 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         mesPackageManager.setPackageManagerCode(CodeUtils.getId("PACKAGE"));
         mesPackageManager.setCreateUserId(null);
         mesPackageManager.setIsDelete((byte)1);
-        return mesPackageManagerMapper.insertSelective(mesPackageManager);
+        if(mesPackageManagerMapper.insertSelective(mesPackageManager)<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        recordHistory(mesPackageManager.getPackageManagerId(),"新增");
+        return 1;
     }
 
     @Override
@@ -126,7 +139,11 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     @Override
     public int update(MesPackageManager mesPackageManager) {
         mesPackageManager.setModifiedUserId(null);
-        return mesPackageManagerMapper.updateByPrimaryKeySelective(mesPackageManager);
+        if(mesPackageManagerMapper.updateByPrimaryKeySelective(mesPackageManager)<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        recordHistory(mesPackageManager.getPackageManagerId(),"更新");
+        return 1;
     }
 
     @Override
@@ -150,11 +167,17 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
         List<MesPackageManager> mesPackageManagerList = saveMesPackageManagerDTO.getMesPackageManagerList();
         if(StringUtils.isNotEmpty(mesPackageManagerList)){
+            double total=0.0;//包装箱打包的产品数量
             for (MesPackageManager packageManager : mesPackageManagerList) {
                 packageManager.setParentId(mesPackageManager.getPackageManagerId());
+                total+=packageManager.getTotal().doubleValue();
                 if(this.update(packageManager)<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006);
                 }
+            }
+            ResponseEntity<Integer> responseEntity = applyFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException("修改工单完工数出错");
             }
         }
         return mesPackageManager;
@@ -172,9 +195,14 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
-        String barcodeRule = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
-        barcodeRule=new Date().getTime()+"";
-        mesPackageManager.setBarCode(barcodeRule);
+        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
+        //取总共条码生成数
+        int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
+        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012008);
+        }
+        mesPackageManager.setBarCode(responseEntity.getData());
         //调用打印程序进行条码打印
     }
 
@@ -196,13 +224,13 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
      * @param operation
      */
     private void recordHistory(Long id,String operation){
-        /*HT ht= new HT();
-        ht.setOperation(operation);
-        MesSchedule mesSchedule = selectByKey(id);
-        if (StringUtils.isEmpty(mesSchedule)){
+        MesHtPackageManager mesHtPackageManager = new MesHtPackageManager();
+        mesHtPackageManager.setOperation(operation);
+        MesPackageManager mesPackageManager = this.selectByKey(id);
+        if (StringUtils.isEmpty(mesPackageManager)){
             return;
         }
-        BeanUtils.autoFillEqFields(mesSchedule,ht);
-        htService.save(ht);*/
+        BeanUtils.autoFillEqFields(mesPackageManager,mesHtPackageManager);
+        mesHtPackageManagerService.save(mesHtPackageManager);
     }
 }

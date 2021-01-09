@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.storageBills.service.history.impl;
 
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
-import com.fantechs.common.base.dto.apply.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
 import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsService;
 import com.fantechs.provider.wms.storageBills.mapper.history.WmsInHtStorageBillsMapper;
 import com.fantechs.common.base.exception.BizErrorException;

@@ -32,8 +32,22 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    sa.address_id, sa.province_code, sa.city_code, sa.classify_code, sa.address_detail, sa.post_code, sa.status, sa.create_user_id,
-    sa.create_time, sa.modified_user_id, sa.modified_time, sa.is_delete, sa.option1, sa.option2, sa.option3, sa.organization_id,
+    sa.address_id,
+    sa.province_code,
+    sa.city_code,
+    sa.classify_code,
+    sa.address_detail,
+    sa.post_code,
+    sa.status,
+    sa.create_user_id,
+    sa.create_time,
+    sa.modified_user_id,
+    sa.modified_time,
+    sa.is_delete,
+    sa.option1,
+    sa.option2,
+    sa.option3,
+    sa.organization_id,
 	sa.remark
   </sql>
 

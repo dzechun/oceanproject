@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.security.mapper.SysCustomFormDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.security.SysCustomFormDet">
+    <id column="custom_form_det_id" jdbcType="BIGINT" property="customFormDetId" />
+    <id column="custom_form_id" jdbcType="BIGINT" property="customFormId" />
+    <result column="item_key" jdbcType="VARCHAR" property="itemKey" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="show_type" jdbcType="TINYINT" property="showType" />
+    <result column="item_value" jdbcType="VARCHAR" property="itemValue" />
+    <result column="item_width" jdbcType="VARCHAR" property="itemWidth" />
+    <result column="item_list_type" jdbcType="TINYINT" property="itemListType" />
+    <result column="item_search_type" jdbcType="TINYINT" property="itemSearchType" />
+    <result column="item_detail_type" jdbcType="TINYINT" property="itemDetailType" />
+    <result column="is_hide" jdbcType="TINYINT" property="isHide" />
+    <result column="is_enum" jdbcType="TINYINT" property="isEnum" />
+    <result column="enum_data" jdbcType="VARCHAR" property="enumData" />
+    <result column="is_required" jdbcType="TINYINT" property="isRequired" />
+    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.security.SysCustomFormDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    cfd.custom_form_det_id, cfd.custom_form_id, cfd.item_key, cfd.item_name, cfd.show_type,
+    cfd.item_value,cfd.item_width,cfd.item_list_type,cfd.item_search_type,cfd.item_detail_type,cfd.is_hide,
+    cfd.is_enum,cfd.enum_data,cfd.is_required,cfd.order_num,cfd.create_user_id,cfd.create_time,cfd.modified_time,
+    cfd.modified_time,cfd.status,cfd.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    cf.custom_form_code ,cf.custom_form_name ,cf.from_rout
+    from sys_custom_form_det cfd
+    LEFT JOIN sys_user su ON cfd.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON cfd.modified_user_id = sus.user_id
+    LEFT JOIN sys_custom_form cf on cf.custom_form_id = cfd.custom_form_id
+    <where>
+      <if test="customFormId!=null and customFormId!=''">
+        and cfd.custom_form_id=#{customFormId}
+      </if>
+      <if test="customFormCode!=null and customFormCode!=''">
+        and cf.custom_form_code=#{customFormCode}
+      </if>
+      <if test="fromRout!=null and fromRout!=''">
+        and cf.from_rout=#{fromRout}
+      </if>
+      <if test="status!=null and status!=''">
+        and cfd.status=#{status}
+      </if>
+    </where>
+    order by cfd.order_num
+  </select>
+</mapper>

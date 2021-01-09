@@ -73,6 +73,7 @@ public class SmtStorageMaterialController {
     @PostMapping("/findList")
     public ResponseEntity<List<SmtStorageMaterial>> findList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtStorageMaterial searchSmtStorageMaterial) {
         Page<Object> page = PageHelper.startPage(searchSmtStorageMaterial.getStartPage(),searchSmtStorageMaterial.getPageSize());
+        searchSmtStorageMaterial.setCodeQueryMark(2);
         List<SmtStorageMaterial> list = smtStorageMaterialService.findList(searchSmtStorageMaterial);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
@@ -81,6 +82,7 @@ public class SmtStorageMaterialController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<SmtHtStorageMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtStorageMaterial searchSmtStorageMaterial) {
         Page<Object> page = PageHelper.startPage(searchSmtStorageMaterial.getStartPage(),searchSmtStorageMaterial.getPageSize());
+        searchSmtStorageMaterial.setCodeQueryMark(2);
         List<SmtHtStorageMaterial> list = smtHtStorageMaterialService.findHtList(searchSmtStorageMaterial);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
