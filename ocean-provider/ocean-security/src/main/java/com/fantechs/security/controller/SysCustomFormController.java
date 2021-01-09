@@ -1,6 +1,7 @@
 package com.fantechs.security.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.security.SysCustomFormDto;
 import com.fantechs.common.base.general.entity.security.SysCustomForm;
 import com.fantechs.common.base.general.entity.security.search.SearchSysCustomForm;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/01/08.
  */
 @RestController
-@Api(tags = "sysCustomForm控制器")
+@Api(tags = "自定义表单控制器")
 @RequestMapping("/sysCustomForm")
 @Validated
 public class SysCustomFormController {
@@ -62,17 +63,9 @@ public class SysCustomFormController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SysCustomForm>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomForm searchSysCustomForm) {
+    public ResponseEntity<List<SysCustomFormDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomForm searchSysCustomForm) {
         Page<Object> page = PageHelper.startPage(searchSysCustomForm.getStartPage(),searchSysCustomForm.getPageSize());
-        List<SysCustomForm> list = sysCustomFormService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomForm));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
-
-    @ApiOperation("历史列表")
-    @PostMapping("/findHtList")
-    public ResponseEntity<List<SysCustomForm>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomForm searchSysCustomForm) {
-        Page<Object> page = PageHelper.startPage(searchSysCustomForm.getStartPage(),searchSysCustomForm.getPageSize());
-        List<SysCustomForm> list = sysCustomFormService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomForm));
+        List<SysCustomFormDto> list = sysCustomFormService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomForm));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -80,7 +73,7 @@ public class SysCustomFormController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSysCustomForm searchSysCustomForm){
-        List<SysCustomForm> list = sysCustomFormService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomForm));
+        List<SysCustomFormDto> list = sysCustomFormService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomForm));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "SysCustomForm信息", SysCustomForm.class, "SysCustomForm.xls", response);
