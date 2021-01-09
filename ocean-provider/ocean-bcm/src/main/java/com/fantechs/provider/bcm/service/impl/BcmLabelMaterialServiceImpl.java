@@ -58,6 +58,10 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
+
+        BcmHtLabelMaterial bcmHtLabelMaterial = new BcmHtLabelMaterial();
+        BeanUtils.copyProperties(record,bcmHtLabelMaterial);
+        bcmHtLabelMaterialMapper.insertSelective(bcmHtLabelMaterial);
         return bcmLabelMaterialMapper.insertUseGeneratedKeys(record);
     }
 
@@ -72,6 +76,7 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
         criteria.andEqualTo("materialId",entity.getMaterialId());
         criteria.andEqualTo("labelId",entity.getLabelId());
         criteria.andEqualTo("processId",entity.getProcessId());
+        criteria.andNotEqualTo("labelMaterialId",entity.getLabelMaterialId());
         BcmLabelMaterial bcmLabelMaterial = bcmLabelMaterialMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(bcmLabelMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -80,10 +85,10 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
         entity.setModifiedUserId(currentUserInfo.getUserId());
 
         BcmHtLabelMaterial bcmHtLabelMaterial = new BcmHtLabelMaterial();
-        BeanUtils.copyProperties(bcmLabelMaterial,bcmHtLabelMaterial);
+        BeanUtils.copyProperties(entity,bcmHtLabelMaterial);
         bcmHtLabelMaterialMapper.insertSelective(bcmHtLabelMaterial);
 
-        return bcmLabelMaterialMapper.insertUseGeneratedKeys(entity);
+        return bcmLabelMaterialMapper.updateByPrimaryKeySelective(entity);
     }
 
     @Override

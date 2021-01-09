@@ -93,6 +93,10 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
 
+        BcmHtLabel bcmHtLabel = new BcmHtLabel();
+        BeanUtils.copyProperties(record,bcmHtLabel);
+        bcmHtLabelMapper.insertSelective(bcmHtLabel);
+
         return bcmLabelMapper.insertUseGeneratedKeys(record);
     }
 
@@ -107,6 +111,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         Example example = new Example(BcmLabel.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCode",entity.getLabelCode());
+        criteria.andNotEqualTo("labelId",entity.getLabelId());
         BcmLabel bcmLabel = bcmLabelMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(bcmLabel)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -130,7 +135,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         entity.setModifiedTime(new Date());
 
         BcmHtLabel bcmHtLabel = new BcmHtLabel();
-        BeanUtils.copyProperties(bcmLabel,bcmHtLabel);
+        BeanUtils.copyProperties(entity,bcmHtLabel);
         bcmHtLabelMapper.insertSelective(bcmHtLabel);
 
         return bcmLabelMapper.updateByPrimaryKeySelective(entity);

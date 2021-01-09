@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.entity.bcm.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -23,4 +25,18 @@ public class SearchBcmLabelMaterial extends BaseQuery implements Serializable {
     private String labelId;
     @ApiModelProperty("工序")
     private String processId;
+    @ApiModelProperty("工序名称")
+    private String processName;
+    @ApiModelProperty(name = "materialCode",value = "产品料号")
+    private String materialCode;
+    @ApiModelProperty("产品版本")
+    private String materialVersion;
+    @ApiModelProperty("标签编码")
+    private String labelCode;
+    @ApiModelProperty("标签名称")
+    private String labelName;
+    @ApiModelProperty("标签版本")
+    private String labelVersion;
+    @ApiModelProperty("标签类别名称")
+    private String labelCategoryName;
 }

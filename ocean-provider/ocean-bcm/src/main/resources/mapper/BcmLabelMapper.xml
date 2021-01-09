@@ -56,7 +56,7 @@
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name, bo.organization_name
         as modified_user_name FROM bcm_label bl
-        INNER JOIN bcm_label_category blc ON blc.`label_category_id`= bl.label_category_id
+        LEFT JOIN bcm_label_category blc ON blc.`label_category_id`= bl.label_category_id
         LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON bl.organization_id = bo.organization_id

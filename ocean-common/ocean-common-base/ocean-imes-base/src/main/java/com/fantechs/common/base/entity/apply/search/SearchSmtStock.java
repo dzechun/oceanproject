@@ -23,8 +23,6 @@ public class SearchSmtStock extends BaseQuery implements Serializable {
     @Column(name = "stock_code")
     private String stockCode;
 
-    @ApiModelProperty(name = "workOrderId",value = "工单号")
-    private String workOrderId;
 
     @ApiModelProperty(name = "workOrderCode",value = "工单号")
     private String workOrderCode;
