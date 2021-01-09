@@ -84,6 +84,13 @@ public class SmtProductModel extends ValidGroup implements Serializable {
     private String productFamilyDesc;
 
     /**
+     * 版本
+     */
+    @ApiModelProperty(name="version",value = "版本")
+    @Column(name = "version")
+    private String version;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

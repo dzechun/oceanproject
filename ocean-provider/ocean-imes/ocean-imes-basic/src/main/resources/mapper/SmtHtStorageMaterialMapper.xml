@@ -54,8 +54,11 @@
       <if test="storageName!=null and storageName!=''">
         and ss.storage_name like CONCAT('%', #{storageName}, '%')
       </if>
-      <if test="materialId!=null and materialId!=''">
-        and shsm.material_id=#{materialId}
+      <if test="materialCode!=null and materialCode!='' and (codeQueryMark == '' or codeQueryMark == null)">
+        and sm.material_code=#{materialCode}
+      </if>
+      <if test="materialCode!=null and materialCode!='' and codeQueryMark == 2">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')

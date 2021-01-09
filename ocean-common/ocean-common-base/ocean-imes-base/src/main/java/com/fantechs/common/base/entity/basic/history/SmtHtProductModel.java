@@ -82,6 +82,13 @@ public class SmtHtProductModel implements Serializable {
     private String productFamilyDesc;
 
     /**
+     * 版本
+     */
+    @ApiModelProperty(name="version",value = "版本")
+    @Column(name = "version")
+    private String version;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
