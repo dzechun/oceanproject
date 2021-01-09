@@ -256,6 +256,7 @@ public enum ErrorCodeEnum {
 
     OPT20012007(20012007,"未找到能导出的数据"),
 
+    OPT20012008(20012008,"条码生成错误"),
     ;
 
     private Integer code;
