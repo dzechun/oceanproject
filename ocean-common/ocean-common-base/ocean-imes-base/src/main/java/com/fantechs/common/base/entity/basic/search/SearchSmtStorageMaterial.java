@@ -69,4 +69,10 @@ public class SearchSmtStorageMaterial extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="storageCode" ,value="储位编码")
     private String storageCode;
+
+    /**
+     * 编码查询标记(1.等值查询 2.模糊查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }
