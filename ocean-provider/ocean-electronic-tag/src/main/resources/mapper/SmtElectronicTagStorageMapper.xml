@@ -15,10 +15,10 @@
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
         <result column="warehouse_area_id" jdbcType="VARCHAR" property="warehouseAreaId"/>
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
-        <result column="material_id" jdbcType="VARCHAR" property="materialId" />
-        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="material_id" jdbcType="VARCHAR" property="materialId"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -36,16 +36,16 @@
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
-        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
-        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
         <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
         <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
         <result column="equipment_port" jdbcType="VARCHAR" property="equipmentPort"/>
-        <result column="queue_name" jdbcType="VARCHAR" property="queueName" />
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="queue_name" jdbcType="VARCHAR" property="queueName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <sql id="Base_column_List">
@@ -99,40 +99,40 @@
         LEFT JOIN smt_material sm ON sets.material_id = sm.material_id
         LEFT JOIN smt_warehouse sw ON sets.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sets.warehouse_area_id = swa.warehouse_area_id
-        LEFT JOIN fantech_imes.base_organization bo ON bc.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes.base_organization bo ON sets.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="storageId != null">
+            <if test="storageId != null and storageId != ''">
                 and sets.storage_id =#{storageId}
             </if>
-            <if test="storageName != null">
+            <if test="storageName != null and storageName != ''">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
             </if>
-            <if test="warehouseName != null">
+            <if test="warehouseName != null and warehouseName != ''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
-            <if test="warehouseAreaName != null">
+            <if test="warehouseAreaName != null and warehouseAreaName != ''">
                 and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
             </if>
-            <if test="equipmentName != null">
+            <if test="equipmentName != null and equipmentName != ''">
                 and se.equipment_name like CONCAT('%', #{equipmentName}, '%')
             </if>
-            <if test="equipmentId != null">
+            <if test="equipmentId != null and equipmentId != ''">
                 and se.equipment_Id = #{equipmentId}
             </if>
-            <if test="equipmentIp != null">
+            <if test="equipmentIp != null and equipmentIp != ''">
                 and se.equipment_ip like CONCAT('%', #{equipmentIp}, '%')
             </if>
-            <if test="electronicTagId != null">
+            <if test="electronicTagId != null and electronicTagId != ''">
                 and sets.electronic_tag_id like CONCAT('%', #{electronicTagId}, '%')
             </if>
             <if test="status!=null and status!=''">
                 and sets.status=#{status}
             </if>
             <if test="materialId!=null and materialId!=''">
-                and  sm.material_id=#{materialId}
+                and sm.material_id=#{materialId}
             </if>
         </where>
         order by sets.create_time desc

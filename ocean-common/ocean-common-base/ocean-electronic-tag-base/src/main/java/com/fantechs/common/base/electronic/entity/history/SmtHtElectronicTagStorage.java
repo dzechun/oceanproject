@@ -40,8 +40,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
      */
     @ApiModelProperty(name="electronicTagStorageId",value = "标签Id绑定储位关系Id")
     @Column(name = "electronic_tag_storage_id")
-    @NotNull(groups = ValidGroup.update.class,message = "标签Id绑定储位关系Id不能为空")
-    private String electronicTagStorageId;
+    private Long electronicTagStorageId;
 
     /**
      * 储位id
@@ -57,15 +56,15 @@ public class SmtHtElectronicTagStorage implements Serializable {
     @ApiModelProperty(name = "storageCode",value = "储位名称")
     @Excel(name = "储位名称", height = 20, width = 30,orderNum = "1")
     @Transient
-    private String storageCode;
+    private String storageName;
 
     /**
      * 储位编码
      */
     @ApiModelProperty(name = "storageName",value = "储位编码")
     @Excel(name = "储位编码", height = 20, width = 30,orderNum = "2")
-    @Column(name = "storage_name")
-    private String storageName;
+    @Column(name = "storage_Code")
+    private String storageCode;
 
     /**
      * 储位描述
