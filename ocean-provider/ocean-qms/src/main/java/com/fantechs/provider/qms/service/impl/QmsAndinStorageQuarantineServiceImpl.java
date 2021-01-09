@@ -15,6 +15,7 @@ import com.fantechs.provider.api.wms.bills.StorageBillsFeignApi;
 import com.fantechs.provider.qms.mapper.QmsAndinStorageQuarantineMapper;
 import com.fantechs.provider.qms.service.QmsAndinStorageQuarantineService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -49,21 +50,16 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         search.setBarcode(barcode.toString());
         ResponseEntity<List<MesPackageManagerDTO>> list = storageBillsFeignApi.list(search);
         Long parentId = 0L;
-        Object code = "";
-        System.out.println("第一次数量："+list.getData().size());
         //判断是箱码还是栈板码
         if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
             parentId = list.getData().get(0).getParentId();
         }else{
             parentId = list.getData().get(0).getPackageManagerId();
-            code = barcode;
         }
 
         search.setBarcode("");
         search.setParentId(parentId);
         list = storageBillsFeignApi.list(search);
-
-
 
         int total = 0;
         if (StringUtils.isNotEmpty(list.getData())){
@@ -73,20 +69,25 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         }
 
         if (StringUtils.isNotEmpty(list.getData()) && list.getData().size() != 0){
+
             search.setParentId(null);
-            search.setBarcode(code.toString());
+            search.setPackageManagerId(parentId);
             list = storageBillsFeignApi.list(search);
+
+            Example example = new Example(QmsAndinStorageQuarantine.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("palletId", parentId);
+            List<QmsAndinStorageQuarantine> qmsAndinStorageQuarantines = qmsAndinStorageQuarantineMapper.selectByExample(example);
+            if (qmsAndinStorageQuarantines.size()!=0){
+                throw new BizErrorException("该栈板已绑定待检区域");
+            }
 
             managerDTO.setMaterialCode(list.getData().get(0).getMaterialCode());
             managerDTO.setWorkOrderCode(list.getData().get(0).getWorkOrderCode());
             managerDTO.setMaterialDesc(list.getData().get(0).getMaterialDesc());
+            managerDTO.setBarCode(list.getData().get(0).getBarCode());
 
-            managerDTO.setPackageManagerCode(list.getData().get(0).getPackageManagerCode());
             managerDTO.setPackageSpecificationQuantity(list.getData().get(0).getTotal().toString());
-
-            System.out.println("栈板码："+list.getData().get(0).getPackageManagerCode());
-
-
         }
 
         managerDTO.setPackageManagerId(parentId);
@@ -95,32 +96,26 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(QmsAndinStorageQuarantine qmsAndinStorageQuarantine) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         qmsAndinStorageQuarantine.setCreateTime(new Date());
-        qmsAndinStorageQuarantine.setCreateUserId(user.getUserId());
+//        qmsAndinStorageQuarantine.setCreateUserId(user.getUserId());
         qmsAndinStorageQuarantine.setModifiedTime(new Date());
-        qmsAndinStorageQuarantine.setModifiedUserId(user.getUserId());
+//        qmsAndinStorageQuarantine.setModifiedUserId(user.getUserId());
         qmsAndinStorageQuarantine.setStatus(StringUtils.isEmpty(qmsAndinStorageQuarantine.getStatus())?1:qmsAndinStorageQuarantine.getStatus());
 
         //判断是否是栈板码逻辑
         SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
-        searchMesPackageManagerListDTO.setParentId(qmsAndinStorageQuarantine.getPalletId());
+        searchMesPackageManagerListDTO.setPackageManagerId(qmsAndinStorageQuarantine.getPalletId());
         ResponseEntity<List<MesPackageManagerDTO>> list = storageBillsFeignApi.list(searchMesPackageManagerListDTO);
-        if (StringUtils.isNotEmpty(list) && list.getData().size()!=0){
-            qmsAndinStorageQuarantine.setPalletId(list.getData().get(0).getPackageManagerId());
-        }
 
-        Example example = new Example(QmsAndinStorageQuarantine.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("palletId", qmsAndinStorageQuarantine.getPalletId());
-        List<QmsAndinStorageQuarantine> qmsAndinStorageQuarantines = qmsAndinStorageQuarantineMapper.selectByExample(example);
-        if (qmsAndinStorageQuarantines.size()!=0){
-            throw new BizErrorException("该栈板已绑定待检区域");
+        if (StringUtils.isNotEmpty(list) && list.getData().size()!=0 && list.getData().get(0).getParentId() > 0){
+            qmsAndinStorageQuarantine.setPalletId(list.getData().get(0).getPackageManagerId());
         }
 
         int i = qmsAndinStorageQuarantineMapper.insert(qmsAndinStorageQuarantine);

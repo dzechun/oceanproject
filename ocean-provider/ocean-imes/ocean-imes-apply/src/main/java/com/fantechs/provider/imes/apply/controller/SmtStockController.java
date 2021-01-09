@@ -59,7 +59,7 @@ public class SmtStockController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @PostMapping(value = "/export")
+    @PostMapping(value = "/export",produces = "application/octet-stream")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSmtStock searchSmtStock){

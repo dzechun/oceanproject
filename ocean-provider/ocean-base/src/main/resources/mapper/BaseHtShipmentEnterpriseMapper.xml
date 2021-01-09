@@ -65,7 +65,7 @@
                 and bhse.shipment_enterprise_desc like CONCAT('%', #{shipmentEnterpriseDesc}, '%')
             </if>
             <if test="transportCategoryId != null and transportCategoryId!=''">
-                and bse.transport_category_id = #{transportCategoryId}
+                and bhse.transport_category_id = #{transportCategoryId}
             </if>
             <if test="status!=null and status!=''">
                 and bhse.status=#{status}

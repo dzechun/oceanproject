@@ -65,13 +65,13 @@
         and date_format(bc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="proLineId != null and proLineId!=''">
-        and bc.pro_line_id =#{proLineId}
+        and bc.pro_line_id = #{proLineId}
       </if>
       <if test="date!= null and date!= ''">
-        and bc.date =#{date}
+        and bc.date = #{date}
       </if>
       <if test="status!=null and status!=''">
-        and bc.status=#{status}
+        and bc.status= #{status}
       </if>
     </where>
     order by create_time desc

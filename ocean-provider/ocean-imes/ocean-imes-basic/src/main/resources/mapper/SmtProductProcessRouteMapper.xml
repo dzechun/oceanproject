@@ -26,6 +26,7 @@
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="route_code" jdbcType="VARCHAR" property="routeCode" />
     <result column="route_desc" jdbcType="VARCHAR" property="routeDesc" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
@@ -37,7 +38,7 @@
     sppr.material_id,sm.material_code,sm.material_desc,sm.version,sppr.route_id,
     sppr.status, sppr.create_user_id,u.user_name as createUserName,sppr.create_time, sppr.modified_user_id,s.user_name as modifiedUserName,
     sppr.modified_time,sppr.is_delete, sppr.organization_id, sppr.remark, bo.organization_name,
-    sr.route_name, sr.route_desc
+    sr.route_name,sr.route_name, sr.route_desc
     from fantech_imes.smt_product_process_route sppr
     left join fantech_imes.smt_pro_line spl on sppr.pro_line_id=spl.pro_line_id
     left join fantech_imes.smt_product_model spm on sppr.product_model_id=spm.product_model_id

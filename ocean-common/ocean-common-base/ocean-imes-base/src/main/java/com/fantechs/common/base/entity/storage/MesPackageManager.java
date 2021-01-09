@@ -93,6 +93,14 @@ public class MesPackageManager implements Serializable {
     private Long parentId;
 
     /**
+     * 条码打印次数
+     */
+    @ApiModelProperty(value = "条码打印次数",example = "条码打印次数")
+    @Column(name = "print_barcode_count")
+    @Excel(name = "条码打印次数")
+    private Integer printBarcodeCount;
+
+    /**
     * 逻辑删除（0、删除 1、正常）
     */
     @ApiModelProperty(value = "逻辑删除（0、删除 1、正常）",example = "逻辑删除（0、删除 1、正常）")

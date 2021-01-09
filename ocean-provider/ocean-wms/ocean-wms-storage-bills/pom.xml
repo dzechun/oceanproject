@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.fantechs.provider.wms.storageBills</groupId>
-    <artifactId>ocean-wms-storageBills</artifactId>
+    <artifactId>ocean-wms-storage-bills</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-wms-storage-bills</name>
     <description>Demo project for Spring Boot</description>
@@ -27,6 +27,11 @@
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-imes-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.imes.apply</groupId>
+            <artifactId>ocean-imes-apply-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

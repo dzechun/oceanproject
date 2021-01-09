@@ -164,7 +164,13 @@
             <if test="proLineId!=null and proLineId!=''">
                 and spl.pro_line_id = #{proLineId}
             </if>
-            and swo.is_delete = 1 and sps.process_id = #{processId}
+            <if test="workOrderId!=null and workOrderId!=''">
+                and swo.work_order_id = #{workOrderId}
+            </if>
+            <if test="processId!=null and processId!=''">
+                and sps.process_id = #{processId}
+            </if>
+            and swo.is_delete = 1
         </where>
         order by swo.create_time desc
     </select>

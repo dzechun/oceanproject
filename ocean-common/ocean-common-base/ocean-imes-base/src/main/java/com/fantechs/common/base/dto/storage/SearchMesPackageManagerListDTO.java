@@ -13,6 +13,8 @@ import java.io.Serializable;
  */
 @Data
 public class SearchMesPackageManagerListDTO extends BaseQuery implements Serializable  {
+    @ApiModelProperty(value = "包装管理ID",example = "包装管理ID")
+    private Long packageManagerId;
     @ApiModelProperty(value = "条码",example = "条码")
     private String barcode;
     @ApiModelProperty(value = "工单编码",example = "工单编码")

@@ -18,13 +18,16 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.apply.ApplyFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.bills.StorageBillsFeignApi;
 import com.fantechs.provider.qms.mapper.QmsDisqualificationMapper;
 import com.fantechs.provider.qms.mapper.QmsFirstInspectionMapper;
 import com.fantechs.provider.qms.service.QmsFirstInspectionService;
 import org.json.JSONException;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
@@ -47,6 +50,8 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
     private QmsDisqualificationMapper qmsDisqualificationMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private ApplyFeignApi applyFeignApi;
 
 
     @Override
@@ -55,31 +60,31 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
     }
 
 
-
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(QmsFirstInspection qmsFirstInspection) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         Example example = new Example(QmsFirstInspection.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("work_order_id", qmsFirstInspection.getWorkOrderId()).andEqualTo("inspectionResult",1);
+        criteria.andEqualTo("workOrderId", qmsFirstInspection.getWorkOrderId()).andEqualTo("inspectionResult",1);
         List<QmsFirstInspection> qmsFirstInspections = qmsFirstInspectionMapper.selectByExample(example);
         if (qmsFirstInspections.size()!=0){
             throw new BizErrorException("首检已通过，首检失败");
         }
 
         qmsFirstInspection.setCreateTime(new Date());
-        qmsFirstInspection.setCreateUserId(user.getUserId());
+//        qmsFirstInspection.setCreateUserId(user.getUserId());
         qmsFirstInspection.setModifiedTime(new Date());
         qmsFirstInspection.setDocumentsTime(new Date());
-        qmsFirstInspection.setModifiedUserId(user.getUserId());
+//        qmsFirstInspection.setModifiedUserId(user.getUserId());
         qmsFirstInspection.setStatus(StringUtils.isEmpty(qmsFirstInspection.getStatus())?1:qmsFirstInspection.getStatus());
         qmsFirstInspection.setFirstInspectionCode(CodeUtils.getId("PDASJ"));
 
-        int i = qmsFirstInspectionMapper.insert(qmsFirstInspection);
+        int i = qmsFirstInspectionMapper.insertUseGeneratedKeys(qmsFirstInspection);
 
         List<QmsDisqualification> list = qmsFirstInspection.getList();
 
@@ -89,9 +94,9 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
                 qmsDisqualification.setCheckoutType((byte) 0);
                 qmsDisqualification.setFirstInspectionIdId(qmsFirstInspection.getFirstInspectionId());
                 qmsDisqualification.setCreateTime(new Date());
-                qmsDisqualification.setCreateUserId(user.getUserId());
+//                qmsDisqualification.setCreateUserId(user.getUserId());
                 qmsDisqualification.setModifiedTime(new Date());
-                qmsDisqualification.setModifiedUserId(user.getUserId());
+//                qmsDisqualification.setModifiedUserId(user.getUserId());
                 qmsDisqualification.setStatus(StringUtils.isEmpty(qmsDisqualification.getStatus())?1:qmsDisqualification.getStatus());
                 qmsDisqualification.setCheckoutType((byte) 0);
                 if (qmsDisqualification.getLevel() > maxLevel){
@@ -110,7 +115,7 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
                 for (String s : split) {
                     if (s.equals(maxLevel.toString())){
                         Long workOrderId = qmsFirstInspection.getWorkOrderId();
-                        int i1 = 0;
+                        applyFeignApi.updateStatus(workOrderId,3);
                     }
                 }
 

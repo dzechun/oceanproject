@@ -102,10 +102,13 @@ public class SmtBarcodeRuleController {
         return ControllerUtil.returnCRUD(smtBarcodeRuleService.preserve(smtBarcodeRule));
     }
 
-    public ResponseEntity<String> generate(
-            @ApiParam(value = "条码规则集合") List<SmtBarcodeRuleSpec> list,
-            String maxCode,
-            String code){
-        return null;
+    @ApiOperation(value = "生成条码")
+    @PostMapping("/generateCode")
+    public ResponseEntity<String> generateCode(
+            @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
+            @ApiParam(value = "最大条码数")@RequestParam String maxCode,
+            @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)String code){
+        String analysisCode = BarcodeRuleUtils.analysisCode(list, maxCode, code);
+        return ControllerUtil.returnDataSuccess(analysisCode,1);
     }
 }

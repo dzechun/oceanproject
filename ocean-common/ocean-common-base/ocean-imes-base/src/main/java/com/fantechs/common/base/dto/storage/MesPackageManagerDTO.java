@@ -52,6 +52,27 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     @Excel(name = "物料描述")
     private String materialDesc;
     /**
+     * 物料单位
+     */
+    @Transient
+    @ApiModelProperty(value = "物料单位",example = "物料单位")
+    @Excel(name = "物料单位")
+    private String unit;
+    /**
+     * 物料型号
+     */
+    @Transient
+    @ApiModelProperty(value = "物料型号",example = "物料型号")
+    @Excel(name = "物料型号")
+    private String productModelName;
+    /**
+     * 储位名称
+     */
+    @Transient
+    @ApiModelProperty(value = "储位名称",example = "储位名称")
+    @Excel(name = "储位名称")
+    private String storageName;
+    /**
      * 产线名称
      */
     @Transient

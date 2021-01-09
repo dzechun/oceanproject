@@ -65,9 +65,9 @@ public class QmsPdaInspectionController {
 
     @ApiOperation("解析传入的箱码")
     @PostMapping("/analysisCode")
-    public ResponseEntity<MesPackageManagerDTO> analysisCode(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO) {
-        MesPackageManagerDTO  mesPackageManagerDTO = qmsPdaInspectionService.analysisCode(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
-        return  ControllerUtil.returnDataSuccess(mesPackageManagerDTO,StringUtils.isEmpty(mesPackageManagerDTO)?0:1);
+    public ResponseEntity<QmsPdaInspectionDto> analysisCode(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO) {
+        QmsPdaInspectionDto  qmsPdaInspectionDto = qmsPdaInspectionService.analysisCode(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
+        return  ControllerUtil.returnDataSuccess(qmsPdaInspectionDto,StringUtils.isEmpty(qmsPdaInspectionDto)?0:1);
     }
 
     @ApiOperation("列表")
@@ -86,16 +86,16 @@ public class QmsPdaInspectionController {
 //        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
 //    }
 //
-//    @PostMapping(value = "/export")
-//    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-//    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-//    @RequestBody(required = false) SearchQmsPdaInspection searchQmsPdaInspection){
-//    List<QmsPdaInspection> list = qmsPdaInspectionService.findList(searchQmsPdaInspection);
-//    try {
-//        // 导出操作
-//        EasyPoiUtils.exportExcel(list, "导出信息", "QmsPdaInspection信息", QmsPdaInspection.class, "QmsPdaInspection.xls", response);
-//        } catch (Exception e) {
-//        throw new BizErrorException(e);
-//        }
-//    }
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchQmsPdaInspection searchQmsPdaInspection){
+    List<QmsPdaInspectionDto> list = qmsPdaInspectionService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsPdaInspection));
+    try {
+        // 导出操作
+        EasyPoiUtils.exportExcel(list, "PDA质检导出信息", "PDA质检信息", QmsPdaInspectionDto.class, "PDA质检.xls", response);
+        } catch (Exception e) {
+        throw new BizErrorException(e);
+        }
+    }
 }

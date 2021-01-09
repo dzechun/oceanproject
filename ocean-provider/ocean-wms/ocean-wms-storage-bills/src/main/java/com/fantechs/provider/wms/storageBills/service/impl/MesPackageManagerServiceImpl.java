@@ -1,9 +1,12 @@
 package com.fantechs.provider.wms.storageBills.service.impl;
 
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
+import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.provider.api.imes.apply.ApplyFeignApi;
 import com.fantechs.provider.wms.storageBills.service.MesPackageManagerService;
 import com.fantechs.provider.wms.storageBills.mapper.MesPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -31,6 +34,8 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
      @Resource
      private MesPackageManagerMapper mesPackageManagerMapper;
+     @Resource
+     private ApplyFeignApi applyFeignApi;
 
     @Override
     public List<MesPackageManager> selectAll(Map<String,Object> map) {
@@ -172,9 +177,14 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
-        String barcodeRule = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
-        barcodeRule=new Date().getTime()+"";
-        mesPackageManager.setBarCode(barcodeRule);
+        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
+        //取总共条码生成数
+        int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
+        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012008);
+        }
+        mesPackageManager.setBarCode(responseEntity.getData());
         //调用打印程序进行条码打印
     }
 
