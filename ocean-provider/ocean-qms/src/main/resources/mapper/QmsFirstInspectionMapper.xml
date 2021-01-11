@@ -7,8 +7,11 @@
     -->
     <id column="first_inspection_id" jdbcType="BIGINT" property="firstInspectionId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="first_inspection_code" jdbcType="VARCHAR" property="firstInspectionCode" />
+    <result column="selected_total_quantity" jdbcType="DECIMAL" property="selectedTotalQuantity" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="handler" jdbcType="BIGINT" property="handler" />
+    <result column="documents_time" jdbcType="TIMESTAMP" property="documentsTime" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -17,41 +20,56 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsDisqualification"
+                column="{checkoutId=first_inspection_id,checkoutType=checkout_type}"
+                select="com.fantechs.provider.qms.mapper.QmsDisqualificationMapper.findByCheckoutId"></collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsFirstInspectionDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
-    <result column="product_des" jdbcType="VARCHAR" property="productDes" />
-    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-    <result column="selected_total_quantity" jdbcType="DECIMAL" property="selectedTotalQuantity"/>
+    <result column="product_desc" jdbcType="VARCHAR" property="productDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName" />
     <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
     <result column="handler_name" jdbcType="VARCHAR" property="handlerName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    qfi.first_inspection_id,qfi.work_order_id,qfi.inspection_result,qfi.status,qfi.create_user_id, bo.organization_name,
-    qfi.create_time,qfi.modified_user_id,qfi.modified_time,qfi.is_delete, qfi.organization_id,qfi.remark
+    qfi.first_inspection_id,qfi.work_order_id,qfi.first_inspection_code,qfi.selected_total_quantity,qfi.handler,
+    qfi.inspection_result,qfi.documents_time,qfi.status,qfi.create_user_id, bo.organization_name, bo.organization_code,qfi.create_time,
+    qfi.modified_user_id,qfi.modified_time,qfi.is_delete, qfi.organization_id,qfi.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    swo.work_order_quantity,spl.pro_name,sm.material_code AS product_code,sm.material_des AS product_des,
-    spm.product_model_name,sys.user_name AS handler_name
+    swo.work_order_code,swo.work_order_quantity,spl.pro_name,sm.material_code AS product_code,sm.material_desc AS product_desc,
+    sm.version,sys.user_name AS handler_name,0 AS checkout_type
     from fantech_imes.qms_first_inspection qfi
     LEFT JOIN ocean.sys_user su ON qfi.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qfi.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qmr.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.base_organization bo ON qfi.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_work_order swo ON qfi.work_order_id = swo.work_order_id
     LEFT JOIN fantech_imes.smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
     LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
-    LEFT JOIN fantech_imes.smt_product_model spm ON sm.product_model_id = spm.product_model_id
     LEFT JOIN ocean.sys_user sys ON qfi.handler = sys.user_id
     <where>
+      <if test="firstInspectionCode != null and firstInspectionCode != ''">
+        and qfi.first_inspection_code = #{firstInspectionCode}
+      </if>
+      <if test="productionLine != null and productionLine != ''">
+        and spl.pro_line_id = #{productionLine}
+      </if>
+      <if test="handler != null and handler != ''">
+        and sys.user_id = #{handler}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

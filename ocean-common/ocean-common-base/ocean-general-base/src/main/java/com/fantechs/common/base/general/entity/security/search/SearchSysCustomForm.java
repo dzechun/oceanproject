@@ -13,4 +13,7 @@ import java.io.Serializable;
 public class SearchSysCustomForm extends BaseQuery implements Serializable {
     @ApiModelProperty(name="customFormCode",value = "所属对象")
     private String customFormCode;
+
+    @ApiModelProperty(name="fromRout",value = "表单路由")
+    private String fromRout;
 }

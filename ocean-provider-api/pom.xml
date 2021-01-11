@@ -21,6 +21,8 @@
         <module>ocean-electronic-tag-api</module>
         <module>ocean-imes-api</module>
         <module>ocean-base-api</module>
+        <module>ocean-om-api</module>
+        <module>ocean-wms-api</module>
     </modules>
 
 </project>

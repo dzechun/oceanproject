@@ -27,7 +27,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 自定义表单Id
      */
     @ApiModelProperty(name="customFormId",value = "自定义表单Id")
-    @Excel(name = "自定义表单Id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "自定义表单Id", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "custom_form_id")
     private Long customFormId;
@@ -36,7 +36,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 所属对象
      */
     @ApiModelProperty(name="customFormCode",value = "所属对象")
-    @Excel(name = "所属对象", height = 20, width = 30,orderNum="") 
+    @Excel(name = "所属对象", height = 20, width = 30,orderNum="")
     @Column(name = "custom_form_code")
     private String customFormCode;
 
@@ -44,7 +44,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 所属表单
      */
     @ApiModelProperty(name="customFormName",value = "所属表单")
-    @Excel(name = "所属表单", height = 20, width = 30,orderNum="") 
+    @Excel(name = "所属表单", height = 20, width = 30,orderNum="")
     @Column(name = "custom_form_name")
     private String customFormName;
 
@@ -52,23 +52,16 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 表单路由
      */
     @ApiModelProperty(name="fromRout",value = "表单路由")
-    @Excel(name = "表单路由", height = 20, width = 30,orderNum="") 
+    @Excel(name = "表单路由", height = 20, width = 30,orderNum="")
     @Column(name = "from_rout")
     private String fromRout;
 
-    /**
-     * 表单列宽
-     */
-    @ApiModelProperty(name="itemWidth",value = "表单列宽")
-    @Excel(name = "表单列宽", height = 20, width = 30,orderNum="") 
-    @Column(name = "item_width")
-    private String itemWidth;
 
     /**
      * 创建人id
      */
     @ApiModelProperty(name="createUserId",value = "创建人id")
-    @Excel(name = "创建人id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人id", height = 20, width = 30,orderNum="")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -76,7 +69,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -85,7 +78,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 修改人id
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人id")
-    @Excel(name = "修改人id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人id", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -93,7 +86,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -109,7 +102,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 

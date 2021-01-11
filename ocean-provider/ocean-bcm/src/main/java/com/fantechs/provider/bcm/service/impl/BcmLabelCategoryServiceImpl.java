@@ -60,6 +60,11 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
 
+        //新增历史记录
+        BcmHtLabelCategory bcmHtLabelCategory = new BcmHtLabelCategory();
+        BeanUtils.copyProperties(record,bcmHtLabelCategory);
+        bcmHtLabelCategoryMapper.updateByPrimaryKeySelective(bcmHtLabelCategory);
+
         return bcmLabelCategoryMapper.insertUseGeneratedKeys(record);
     }
 
@@ -73,6 +78,7 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         Example example = new Example(BcmLabelCategory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCategoryCode",entity.getLabelCategoryCode());
+        criteria.andNotEqualTo("labelCategoryId",entity.getLabelCategoryId());
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectOneByExample(example);
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
@@ -81,7 +87,7 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
 
         //新增历史记录
         BcmHtLabelCategory bcmHtLabelCategory = new BcmHtLabelCategory();
-        BeanUtils.copyProperties(bcmLabelCategory,bcmHtLabelCategory);
+        BeanUtils.copyProperties(entity,bcmHtLabelCategory);
         bcmHtLabelCategoryMapper.updateByPrimaryKeySelective(bcmHtLabelCategory);
 
         return num;

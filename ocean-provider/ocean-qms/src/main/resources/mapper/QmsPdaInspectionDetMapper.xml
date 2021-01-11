@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsPdaInspectionDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsPdaInspectionDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="andin_storage_quarantine_det_id" jdbcType="BIGINT" property="andinStorageQuarantineDetId" />
+    <result column="andin_storage_quarantine_id" jdbcType="BIGINT" property="andinStorageQuarantineId" />
+    <result column="package_manager_id" jdbcType="BIGINT" property="packageManagerId" />
+    <result column="inspection_quantity" jdbcType="DECIMAL" property="inspectionQuantity" />
+    <result column="qualified_quantity" jdbcType="DECIMAL" property="qualifiedQuantity" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsDisqualification"
+                column="{checkoutId=first_inspection_id,checkoutType=checkout_type}"
+                select="com.fantechs.provider.qms.mapper.QmsDisqualificationMapper.findByCheckoutId"></collection>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="unit" jdbcType="VARCHAR" property="unit"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="total_quantity" jdbcType="DECIMAL" property="totalQuantity"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qpid.andin_storage_quarantine_det_id,qpid.andin_storage_quarantine_id,qpid.package_manager_id,
+    qpid.inspection_quantity,qpid.qualified_quantity,qpid.inspection_result,
+    qpid.status,qpid.create_user_id, bo.organization_name,qpid.create_time,
+    qpid.modified_user_id,qpid.modified_time,qpid.is_delete, qpid.organization_id,qpid.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    sm.material_code,sm.material_desc,ss.storage_name,spm.product_model_name,mpm.package_manager_code AS pallet_code,
+    bmpm.package_manager_code AS box_code,bmpm.total AS total_quantity,sm.unit,1 AS checkout_type
+    from fantech_imes.qms_pda_inspection_det qpid
+    LEFT JOIN ocean.sys_user su ON qpid.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qpid.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qpid.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.qms_pda_inspection qpi ON qpid.andin_storage_quarantine_id = qpi.andin_storage_quarantine_id
+    LEFT JOIN fantech_imes.mes_package_manager mpm ON qpi.package_manager_id = mpm.package_manager_id
+    LEFT JOIN fantech_imes.mes_package_manager bmpm ON qpid.package_manager_id = bmpm.package_manager_id
+    LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+    LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = sm.product_model_id
+    LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.material_id = sm.material
+    LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssm.storage_id
+    <where>
+      <if test="andinStorageQuarantineId != null and andinStorageQuarantineId != ''">
+        and qpid.andin_storage_quarantine_id = #{andinStorageQuarantineId}
+      </if>
+      <if test="packageManagerId != null and packageManagerId != ''">
+        and qpid.package_manager_id = #{packageManagerId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>
