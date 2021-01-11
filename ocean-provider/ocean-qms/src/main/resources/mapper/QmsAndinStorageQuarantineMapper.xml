@@ -62,7 +62,7 @@
         and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(qasq.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
     order by create_time desc

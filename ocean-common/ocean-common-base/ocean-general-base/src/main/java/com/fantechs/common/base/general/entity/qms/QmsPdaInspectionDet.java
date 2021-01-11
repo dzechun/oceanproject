@@ -25,19 +25,19 @@ public class QmsPdaInspectionDet extends ValidGroup implements Serializable {
     /**
      * PDA质检明细ID
      */
-    @ApiModelProperty(name="andinStorageQuarantineDetId",value = "PDA质检明细ID")
+    @ApiModelProperty(name="pdaInspectionDetId",value = "PDA质检明细ID")
     @Excel(name = "PDA质检明细ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "andin_storage_quarantine_det_id")
-    private Long andinStorageQuarantineDetId;
+    @Column(name = "pda_inspection_det_id")
+    private Long pdaInspectionDetId;
 
     /**
      * PDA质检ID
      */
-    @ApiModelProperty(name="andinStorageQuarantineId",value = "PDA质检ID")
+    @ApiModelProperty(name="pdaInspectionId",value = "PDA质检ID")
     @Excel(name = "PDA质检ID", height = 20, width = 30,orderNum="")
-    @Column(name = "andin_storage_quarantine_id")
-    private Long andinStorageQuarantineId;
+    @Column(name = "pda_inspection_id")
+    private Long pdaInspectionId;
 
     /**
      * 箱码ID

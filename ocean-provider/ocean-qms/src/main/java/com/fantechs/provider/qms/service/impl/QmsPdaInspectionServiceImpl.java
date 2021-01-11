@@ -69,8 +69,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           SearchMesPackageManagerListDTO search = new SearchMesPackageManagerListDTO();
           search.setBarcode(barcode.toString());
           ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(search);
-          System.out.println(list.getData());
-          System.out.println(list.getData().get(0).getParentId());
+
           //判断是否是箱码
           if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
                Example example = new Example(QmsPdaInspectionDet.class);
@@ -118,9 +117,9 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      @Transactional(rollbackFor = Exception.class)
      public int save(QmsPdaInspection qmsPdaInspection) {
           SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-          if(StringUtils.isEmpty(user)){
-               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-          }
+//          if(StringUtils.isEmpty(user)){
+//               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//          }
           Map<String, Object> map = new HashMap();
           map.put("palletId",qmsPdaInspection.getPackageManagerId());
           List<QmsAndinStorageQuarantineDto> qmsAndinStorageQuarantines = qmsAndinStorageQuarantineMapper.findList(map);
@@ -136,11 +135,11 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           int i = 1;
           if (StringUtils.isEmpty(list) || (StringUtils.isNotEmpty(list)&&list.size() == 0)){
                qmsPdaInspection.setCreateTime(new Date());
-               qmsPdaInspection.setCreateUserId(user.getUserId());
+//               qmsPdaInspection.setCreateUserId(user.getUserId());
                qmsPdaInspection.setModifiedTime(new Date());
-               qmsPdaInspection.setModifiedUserId(user.getUserId());
+//               qmsPdaInspection.setModifiedUserId(user.getUserId());
                qmsPdaInspection.setStatus(StringUtils.isEmpty(qmsPdaInspection.getStatus())?1:qmsPdaInspection.getStatus());
-               qmsPdaInspection.setAndinStorageQuarantineCode(CodeUtils.getId("ZLJC"));
+               qmsPdaInspection.setPdaInspectionCode(CodeUtils.getId("ZLJC"));
                i = qmsPdaInspectionMapper.insertUseGeneratedKeys(qmsPdaInspection);
 
                QmsHtPdaInspection qmsHtPdaInspection = new QmsHtPdaInspection();
@@ -150,11 +149,11 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           }
           QmsPdaInspectionDet qmsPdaInspectionDet = qmsPdaInspection.getQmsPdaInspectionDet();
           qmsPdaInspectionDet.setCreateTime(new Date());
-          qmsPdaInspectionDet.setCreateUserId(user.getUserId());
+//          qmsPdaInspectionDet.setCreateUserId(user.getUserId());
           qmsPdaInspectionDet.setModifiedTime(new Date());
-          qmsPdaInspectionDet.setModifiedUserId(user.getUserId());
+//          qmsPdaInspectionDet.setModifiedUserId(user.getUserId());
           qmsPdaInspectionDet.setStatus(StringUtils.isEmpty(qmsPdaInspectionDet.getStatus())?1:qmsPdaInspectionDet.getStatus());
-          qmsPdaInspectionDet.setAndinStorageQuarantineId(StringUtils.isNotEmpty(qmsPdaInspection.getAndinStorageQuarantineId())?qmsPdaInspection.getAndinStorageQuarantineId():list.get(0).getAndinStorageQuarantineId());
+          qmsPdaInspectionDet.setPdaInspectionId(StringUtils.isNotEmpty(qmsPdaInspection.getPdaInspectionId())?qmsPdaInspection.getPdaInspectionId():list.get(0).getPdaInspectionId());
 
           qmsPdaInspectionDetMapper.insertUseGeneratedKeys(qmsPdaInspectionDet);
 
@@ -163,11 +162,11 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                Long maxLevel = 0L;
                for (QmsDisqualification qmsDisqualification : qmsDisqualifications) {
                     qmsDisqualification.setCheckoutType((byte) 0);
-                    qmsDisqualification.setFirstInspectionIdId(qmsPdaInspectionDet.getAndinStorageQuarantineDetId());
+                    qmsDisqualification.setFirstInspectionIdId(qmsPdaInspectionDet.getPdaInspectionDetId());
                     qmsDisqualification.setCreateTime(new Date());
-                    qmsDisqualification.setCreateUserId(user.getUserId());
+//                    qmsDisqualification.setCreateUserId(user.getUserId());
                     qmsDisqualification.setModifiedTime(new Date());
-                    qmsDisqualification.setModifiedUserId(user.getUserId());
+//                    qmsDisqualification.setModifiedUserId(user.getUserId());
                     qmsDisqualification.setStatus(StringUtils.isEmpty(qmsDisqualification.getStatus())?1:qmsDisqualification.getStatus());
                     qmsDisqualification.setCheckoutType((byte) 1);
                     if (qmsDisqualification.getLevel() > maxLevel){

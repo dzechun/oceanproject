@@ -25,34 +25,34 @@ public class QmsHtPdaInspection implements Serializable {
     /**
      * PDA质检历史ID
      */
-    @ApiModelProperty(name="htAndinStorageQuarantineId",value = "PDA质检历史ID")
+    @ApiModelProperty(name="htPdaInspectionDetId",value = "PDA质检历史ID")
     @Excel(name = "PDA质检历史ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "ht_andin_storage_quarantine_id")
-    private Long htAndinStorageQuarantineId;
+    @Column(name = "ht_pda_inspection_id")
+    private Long htPdaInspectionId;
 
     /**
      * PDA质检ID
      */
-    @ApiModelProperty(name="andinStorageQuarantineId",value = "PDA质检ID")
+    @ApiModelProperty(name="pdaInspectionDetId",value = "PDA质检ID")
     @Excel(name = "PDA质检ID", height = 20, width = 30,orderNum="")
-    @Column(name = "andin_storage_quarantine_id")
-    private Long andinStorageQuarantineId;
+    @Column(name = "pda_inspection_id")
+    private Long pdaInspectionId;
 
     /**
      * PDA质检单号
      */
-    @ApiModelProperty(name="andinStorageQuarantineCode",value = "PDA质检单号")
+    @ApiModelProperty(name="pdaInspectionCode",value = "PDA质检单号")
     @Excel(name = "PDA质检单号", height = 20, width = 30,orderNum="")
-    @Column(name = "andin_storage_quarantine_code")
-    private String andinStorageQuarantineCode;
+    @Column(name = "pda_inspection_code")
+    private String pdaInspectionCode;
 
     /**
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`work_order _id`")
+    @Column(name = "`work_order_id`")
     private Long workOrderId;
 
     /**
