@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.service;
 
+import com.fantechs.common.base.dto.apply.SaveWorkOrderAndBom;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
@@ -18,7 +19,7 @@ public interface SmtWorkOrderService extends IService<SmtWorkOrder> {
 
     List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder);
 
-    int saveWorkOrderDTO(SmtWorkOrder smtWorkOrder);
+    int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom);
 
     //更新工单状态
     int updateWorkOrderStatus(Long workOrderId,int status);

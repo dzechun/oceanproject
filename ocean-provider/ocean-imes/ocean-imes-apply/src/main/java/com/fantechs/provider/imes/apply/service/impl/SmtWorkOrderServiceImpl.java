@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SaveWorkOrderAndBom;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.*;
 import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
@@ -18,6 +19,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.*;
+import com.fantechs.provider.imes.apply.service.SmtWorkOrderBomService;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
 import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import org.springframework.beans.BeanUtils;
@@ -53,6 +55,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     private SmtStockMapper smtStockMapper;
     @Resource
     private SmtStockDetMapper smtStockDetMapper;
+    @Resource
+    private SmtWorkOrderBomService smtWorkOrderBomService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -339,12 +343,21 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     }
 
     @Override
-    public int saveWorkOrderDTO(SmtWorkOrder smtWorkOrder) {
+    public int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom) {
+        SmtWorkOrder smtWorkOrder = saveWorkOrderAndBom.getSmtWorkOrder();
         if(StringUtils.isNotEmpty(smtWorkOrder.getWorkOrderId())){
-            return this.update(smtWorkOrder);
+            if(this.update(smtWorkOrder)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
         }else{
-            return this.save(smtWorkOrder);
+            if(this.save(smtWorkOrder)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
         }
+        if(smtWorkOrderBomService.save(saveWorkOrderAndBom.getSmtWorkOrderBomList())<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        return 1;
     }
 
     @Override

@@ -22,7 +22,7 @@ public class SmtWorkOrderBom extends ValidGroup implements Serializable {
     @Column(name = "work_order_bom_id")
     @ApiModelProperty(name="workOrderBomId" ,value="工单BOM ID")
     @NotNull(groups = update.class,message = "工单BOM ID不能为空")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     private Long workOrderBomId;
 
     /**

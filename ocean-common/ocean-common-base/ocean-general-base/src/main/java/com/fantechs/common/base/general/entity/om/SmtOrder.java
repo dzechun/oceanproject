@@ -5,9 +5,7 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -23,6 +21,7 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "order_id")
     @NotNull(groups = update.class,message = "订单id不能为空")
     @ApiModelProperty(name="orderId" ,value="订单ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     private Long orderId;
 
     /**
@@ -105,10 +104,18 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     /**
      * 排产交期
      */
-    @Column(name = "schedule_time")
-    @ApiModelProperty(name="scheduleTime" ,value="排产交期")
+    @Column(name = "schedule_date")
+    @ApiModelProperty(name="schedule_date" ,value="排产交期")
     @Excel(name = "排产交期", height = 20, width = 30,orderNum="11")
-    private Date scheduleTime;
+    private Date scheduleDate;
+
+    /**
+     * 下单日期
+     */
+    @Column(name = "order_date")
+    @ApiModelProperty(name="order_date" ,value="下单日期")
+    @Excel(name = "下单日期", height = 20, width = 30,orderNum="11")
+    private Date orderDate;
 
     /**
      * 业务员名称

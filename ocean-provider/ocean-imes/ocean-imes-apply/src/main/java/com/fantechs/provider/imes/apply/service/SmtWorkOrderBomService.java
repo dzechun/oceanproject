@@ -15,4 +15,6 @@ import java.util.List;
 public interface SmtWorkOrderBomService extends IService<SmtWorkOrderBom> {
 
     List<SmtWorkOrderBomDto> findList(SearchSmtWorkOrderBom searchSmtWorkOrderBom);
+    //新增或更新工单BOM
+    int save(List<SmtWorkOrderBom> smtWorkOrderBomList);
 }

@@ -13,7 +13,8 @@
         <result column="radium_carving" jdbcType="VARCHAR" property="radiumCarving"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate"/>
-        <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime"/>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
         <result column="sales_man_name" jdbcType="VARCHAR" property="salesManName"/>
         <result column="photo_url" jdbcType="VARCHAR" property="photoUrl"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
