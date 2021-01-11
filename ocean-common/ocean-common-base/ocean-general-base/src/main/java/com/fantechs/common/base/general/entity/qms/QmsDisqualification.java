@@ -28,12 +28,19 @@ public class QmsDisqualification implements Serializable {
     private Long disqualificationId;
 
     /**
-     * PDA首检ID
+     * PDA首检明细ID
      */
-    @ApiModelProperty(name="firstInspectionIdId",value = "PDA首检ID")
-    @Excel(name = "PDA首检ID", height = 20, width = 30,orderNum="")
-    @Column(name = "`first_inspection_id _id`")
+    @ApiModelProperty(name="firstInspectionIdId",value = "PDA首检明细ID")
+    @Excel(name = "PDA首检明细ID", height = 20, width = 30,orderNum="")
+    @Column(name = "`first_inspection_id`")
     private Long firstInspectionIdId;
+
+    /**
+     * 不合格项等级
+     */
+    @ApiModelProperty(name="level",value = "不合格项等级")
+    @Excel(name = "不合格项", height = 20, width = 30,orderNum="")
+    private Long level;
 
     /**
      * 不合格项

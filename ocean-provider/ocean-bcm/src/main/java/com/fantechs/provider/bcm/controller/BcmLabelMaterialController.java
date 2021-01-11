@@ -89,7 +89,7 @@ public class BcmLabelMaterialController {
     List<BcmLabelMaterialDto> list = bcmLabelMaterialService.findList(searchBcmLabelMaterial);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BcmLabelMaterial信息", BcmLabelMaterialDto.class, "BcmLabelMaterial.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "标签关联物料信息", BcmLabelMaterialDto.class, "标签关联物料信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
