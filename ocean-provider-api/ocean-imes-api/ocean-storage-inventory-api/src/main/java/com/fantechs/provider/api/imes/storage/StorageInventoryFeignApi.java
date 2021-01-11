@@ -1,10 +1,13 @@
 package com.fantechs.provider.api.imes.storage;
 
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
 import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.entity.storage.SmtStoragePallet;
+import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.github.pagehelper.Page;
@@ -24,7 +27,7 @@ import java.util.List;
 /**
  * @Date 2020/12/7 17:39
  */
-@FeignClient(name = "ocean-imes-basic")
+@FeignClient(name = "ocean-storage-inventory")
 public interface StorageInventoryFeignApi {
 
 
@@ -47,4 +50,12 @@ public interface StorageInventoryFeignApi {
     @ApiOperation("储位库存明细新增")
     @PostMapping("/smtStorageInventoryDet/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStorageInventoryDet smtStorageInventoryDet);
+
+    @ApiOperation("储位栈板关系表新增")
+    @PostMapping("/smtStoragePallet/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStoragePallet smtStoragePallet);
+
+    @ApiOperation("储位与栈板列表")
+    @PostMapping("/smtStoragePallet/findList")
+    ResponseEntity<List<SmtStoragePalletDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStoragePallet searchSmtStoragePallet);
 }

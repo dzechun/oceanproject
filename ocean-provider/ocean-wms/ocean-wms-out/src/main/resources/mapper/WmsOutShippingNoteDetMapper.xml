@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="shipping_note_det_id" jdbcType="BIGINT" property="shippingNoteDetId" />
+    <result column="shipping_note_id" jdbcType="BIGINT" property="shippingNoteId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="move_storage_id" jdbcType="BIGINT" property="moveStorageId" />
+    <result column="plan_carton_qty" jdbcType="DECIMAL" property="planCartonQty" />
+    <result column="plan_total_qty" jdbcType="DECIMAL" property="planTotalQty" />
+    <result column="reality_carton_qty" jdbcType="DECIMAL" property="realityCartonQty" />
+    <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
+    <result column="out_status" jdbcType="TINYINT" property="outStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDetDto">
+    <result column="product_material_code" jdbcType="VARCHAR" property="productMaterialCode"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="product_material_desc" jdbcType="VARCHAR" property="productMaterialDesc" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="move_warehouse_name" jdbcType="VARCHAR" property="moveWarehouseName"/>
+    <result column="move_warehouse_area_name" jdbcType="VARCHAR" property="moveWarehouseAreaName"/>
+    <result column="move_storage_name" jdbcType="VARCHAR" property="moveStorageName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+	snd.shipping_note_det_id,
+	snd.shipping_note_id,
+	snd.product_model_id,
+	snd.storage_id,
+	snd.move_storage_id,
+	snd.plan_carton_qty,
+	snd.plan_total_qty,
+	snd.reality_carton_qty,
+	snd.reality_total_qty,
+	snd.out_status,
+	snd.`status`,
+	snd.remark,
+	snd.organization_id,
+	snd.create_user_id,
+	snd.create_time,
+	snd.modified_user_id,
+	snd.modified_time,
+	snd.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name AS organization_name,
+    pm.product_model_code AS product_material_code,
+    pm.version AS version,
+    pm.product_model_desc AS product_material_desc,
+    w.warehouse_name AS warehouse_name,
+    wa.warehouse_area_name AS warehouse_area_name,
+    s.storage_name AS storage_name,
+    ww.warehouse_name AS move_warehouse_name,
+    waw.warehouse_area_name AS move_warehouse_area_name,
+    st.storage_name AS move_storage_name
+    from
+    wms_out_shipping_note_det AS snd
+    LEFT JOIN ocean.sys_user su ON snd.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON snd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON snd.organization_id = bo.organization_id
+    LEFT JOIN smt_product_model pm ON snd.product_model_id = pm.product_model_id
+    LEFT JOIN smt_storage s ON snd.storage_id = s.storage_id
+    LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id
+    LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id
+    LEFT JOIN smt_storage st ON snd.move_storage_id = st.storage_id
+    LEFT JOIN smt_warehouse ww ON st.warehouse_id = ww.warehouse_id
+    LEFT JOIN smt_warehouse_area waw ON st.warehouse_area_id = waw.warehouse_area_id
+    <where>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and date_format(sn.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="shippingNoteId != null and shippingNoteId != ''">
+            and snd.shipping_note_id = #{shippingNoteId}
+        </if>
+    </where>
+  </select>
+</mapper>

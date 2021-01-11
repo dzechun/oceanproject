@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInFinishedProductMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="finished_product_id" jdbcType="BIGINT" property="finishedProductId" />
+    <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
+    <result column="in_type" jdbcType="TINYINT" property="inType" />
+    <result column="in_status" jdbcType="TINYINT" property="inStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto">
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    fp.finished_product_id,
+    fp.finished_product_code,
+    fp.work_order_id,
+    fp.operator_user_id,
+    fp.in_time,
+    fp.in_type,
+    fp.in_status,
+    fp.`status`,
+    fp.remark,
+    fp.organization_id,
+    fp.create_user_id,
+    fp.create_time,
+    fp.modified_user_id,
+    fp.modified_time,
+    fp.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+    SELECT <include refid="Base_Column_List"></include>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    sy.user_name AS operator_user_name,
+    bo.organization_code AS organization_code,
+    swo.work_order_code AS work_order_code
+    FROM
+        wms_in_finished_product AS fp
+    LEFT JOIN ocean.sys_user su ON fp.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON fp.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user sy ON fp.operator_user_id = sy.user_id
+    LEFT JOIN base_organization bo ON fp.organization_id = bo.organization_id
+    LEFT JOIN smt_work_order swo ON fp.work_order_id = swo.work_order_id
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="finishedProductCode != null and finishedProductCode != ''">
+        and fp.finished_product_code like CONCAT('%', #{finishedProductCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="operatorUserId != null and operatorUserId != ''">
+        and fp.operator_user_id = #{operatorUserId}
+      </if>
+      <if test="operatorUserName != null and operatorUserName != ''">
+        and sy.user_name like CONCAT('%', #{operatorUserName}, '%')
+      </if>
+    </where>
+
+  </select>
+</mapper>
