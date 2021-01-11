@@ -5,8 +5,8 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="andin_storage_quarantine_det_id" jdbcType="BIGINT" property="andinStorageQuarantineDetId" />
-    <result column="andin_storage_quarantine_id" jdbcType="BIGINT" property="andinStorageQuarantineId" />
+    <id column="pda_inspection_det_id" jdbcType="BIGINT" property="pdaInspectionDetId" />
+    <result column="pda_inspection_id" jdbcType="BIGINT" property="pdaInspectionId" />
     <result column="package_manager_id" jdbcType="BIGINT" property="packageManagerId" />
     <result column="inspection_quantity" jdbcType="DECIMAL" property="inspectionQuantity" />
     <result column="qualified_quantity" jdbcType="DECIMAL" property="qualifiedQuantity" />
@@ -20,7 +20,7 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsDisqualification"
-                column="{checkoutId=first_inspection_id,checkoutType=checkout_type}"
+                column="{checkoutId=pda_inspection_det_id,checkoutType=checkout_type}"
                 select="com.fantechs.provider.qms.mapper.QmsDisqualificationMapper.findByCheckoutId"></collection>
   </resultMap>
 
@@ -31,7 +31,6 @@
     <result column="unit" jdbcType="VARCHAR" property="unit"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
@@ -39,7 +38,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    qpid.andin_storage_quarantine_det_id,qpid.andin_storage_quarantine_id,qpid.package_manager_id,
+    qpid.pda_inspection_det_id,qpid.pda_inspection_id,qpid.package_manager_id,
     qpid.inspection_quantity,qpid.qualified_quantity,qpid.inspection_result,
     qpid.status,qpid.create_user_id, bo.organization_name,qpid.create_time,
     qpid.modified_user_id,qpid.modified_time,qpid.is_delete, qpid.organization_id,qpid.remark
@@ -53,23 +52,23 @@
     LEFT JOIN ocean.sys_user su ON qpid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qpid.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qpid.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.qms_pda_inspection qpi ON qpid.andin_storage_quarantine_id = qpi.andin_storage_quarantine_id
+    LEFT JOIN fantech_imes.qms_pda_inspection qpi ON qpid.pda_inspection_id = qpi.pda_inspection_id
     LEFT JOIN fantech_imes.mes_package_manager mpm ON qpi.package_manager_id = mpm.package_manager_id
     LEFT JOIN fantech_imes.mes_package_manager bmpm ON qpid.package_manager_id = bmpm.package_manager_id
     LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = mpm.work_order_id
     LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo.material_id
     LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = sm.product_model_id
-    LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.material_id = sm.material
+    LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssm.storage_id
     <where>
-      <if test="andinStorageQuarantineId != null and andinStorageQuarantineId != ''">
-        and qpid.andin_storage_quarantine_id = #{andinStorageQuarantineId}
+      <if test="pdaInspectionId != null and pdaInspectionId != ''">
+        and qpid.pda_inspection_id = #{pdaInspectionId}
       </if>
       <if test="packageManagerId != null and packageManagerId != ''">
         and qpid.package_manager_id = #{packageManagerId}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(qpid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
     order by create_time desc

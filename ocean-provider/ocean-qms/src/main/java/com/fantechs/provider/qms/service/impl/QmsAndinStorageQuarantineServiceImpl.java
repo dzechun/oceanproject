@@ -57,7 +57,9 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(search);
         Long parentId = 0L;
         //判断是箱码还是栈板码
-        if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
+        if (StringUtils.isEmpty(list.getData())){
+            throw new BizErrorException("该条码不存在");
+        }else if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
             parentId = list.getData().get(0).getParentId();
         }else{
             parentId = list.getData().get(0).getPackageManagerId();

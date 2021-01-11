@@ -5,10 +5,10 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="ht_andin_storage_quarantine_id" jdbcType="BIGINT" property="htAndinStorageQuarantineId" />
-    <result column="andin_storage_quarantine_id" jdbcType="BIGINT" property="andinStorageQuarantineId" />
-    <result column="andin_storage_quarantine_code" jdbcType="VARCHAR" property="andinStorageQuarantineCode" />
-    <result column="work_order _id" jdbcType="BIGINT" property="workOrderId" />
+    <id column="ht_pda_inspection_id" jdbcType="BIGINT" property="htPdaInspectionId" />
+    <result column="pda_inspection_id" jdbcType="BIGINT" property="pdaInspectionId" />
+    <result column="pda_inspection_code" jdbcType="VARCHAR" property="pdaInspectionCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="package_manager_id" jdbcType="BIGINT" property="packageManagerId" />
     <result column="surveyor_id" jdbcType="BIGINT" property="surveyorId" />
     <result column="documents_time" jdbcType="TIMESTAMP" property="documentsTime" />
@@ -25,9 +25,9 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    qhpi.ht_andin_storage_quarantine_id,
-    qhpi.andin_storage_quarantine_id,
-    qhpi.andin_storage_quarantine_code,
+    qhpi.ht_pda_inspection_id,
+    qhpi.pda_inspection_id,
+    qhpi.pda_inspection_code,
     qhpi.work_order_id,
     qhpi.package_manager_id,
     qhpi.surveyor_id,
@@ -44,11 +44,11 @@
     LEFT JOIN ocean.sys_user sus ON qhpi.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qhpi.organization_id = bo.organization_id
     <where>
-      <if test="andinStorageQuarantineCode != null and andinStorageQuarantineCode != ''">
-        and qfi.andin_storage_quarantine_code = #{andinStorageQuarantineCode}
+      <if test="pdaInspectionCode != null and pdaInspectionCode != ''">
+        and qfi.pda_inspection_code = #{pdaInspectionCode}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(qhpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
     order by create_time desc
