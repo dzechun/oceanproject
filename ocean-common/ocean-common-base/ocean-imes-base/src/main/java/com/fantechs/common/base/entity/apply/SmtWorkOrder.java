@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "smt_work_order")
@@ -58,7 +59,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="workOrderQuantity" ,value="工单数量")
     @NotNull(message = "工单数量不能为空")
     @Excel(name = "工单数量", height = 20, width = 30,orderNum="5")
-    private java.math.BigDecimal workOrderQuantity;
+    private BigDecimal workOrderQuantity;
 
     /**
      * 投产数量
@@ -66,7 +67,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "production_quantity")
     @ApiModelProperty(name="productionQuantity" ,value="投产数量")
     @Excel(name = "投产数量", height = 20, width = 30,orderNum="6")
-    private java.math.BigDecimal productionQuantity;
+    private BigDecimal productionQuantity;
 
     /**
      * 完工数量
@@ -74,7 +75,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "output_quantity")
     @ApiModelProperty(name="outputQuantity" ,value="完工数量")
     @Excel(name = "完工数量", height = 20, width = 30,orderNum="7")
-    private java.math.BigDecimal outputQuantity;
+    private BigDecimal outputQuantity;
 
     /**
      * 排产数量
@@ -82,7 +83,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "scheduled_quantity")
     @ApiModelProperty(name="scheduledQuantity" ,value="排产数量")
     @Excel(name = "排产数量", height = 20, width = 30,orderNum="7")
-    private java.math.BigDecimal scheduledQuantity;
+    private BigDecimal scheduledQuantity;
 
     /**
      * 工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)

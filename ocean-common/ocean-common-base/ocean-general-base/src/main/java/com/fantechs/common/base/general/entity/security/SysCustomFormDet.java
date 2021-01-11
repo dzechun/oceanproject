@@ -118,6 +118,13 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private Byte isEnum;
 
     /**
+     * 配置项Code
+     */
+    @ApiModelProperty(name="specCode",value = "配置项Code")
+    @Column(name = "spec_code")
+    private String specCode;
+
+    /**
      * 枚举Json
      */
     @ApiModelProperty(name="enumData",value = "枚举Json")
