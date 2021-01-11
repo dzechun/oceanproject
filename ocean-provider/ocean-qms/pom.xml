@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.wms.bills</groupId>
-            <artifactId>ocean-wms-storage-bills-api</artifactId>
+            <artifactId>ocean-wms-in-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

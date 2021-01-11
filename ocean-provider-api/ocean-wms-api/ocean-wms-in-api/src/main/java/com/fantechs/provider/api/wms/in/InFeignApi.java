@@ -1,4 +1,4 @@
-package com.fantechs.provider.api.wms.bills;
+package com.fantechs.provider.api.wms.in;
 
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * @Date 2021/1/7 19:28
  */
-@FeignClient(name = "ocean-wms-storage-bills")
-public interface StorageBillsFeignApi {
+@FeignClient(name = "ocean-wms-in")
+public interface InFeignApi {
 
     @PostMapping("/pda/mesPackageManager/list")
     ResponseEntity<List<MesPackageManagerDTO>> list(@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO);

@@ -7,19 +7,23 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto;
 import com.fantechs.common.base.general.entity.qms.QmsAndinStorageQuarantine;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtAndinStorageQuarantine;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.wms.bills.StorageBillsFeignApi;
+import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.qms.mapper.QmsAndinStorageQuarantineMapper;
+import com.fantechs.provider.qms.mapper.QmsHtAndinStorageQuarantineMapper;
 import com.fantechs.provider.qms.service.QmsAndinStorageQuarantineService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +38,9 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
     @Resource
     private QmsAndinStorageQuarantineMapper qmsAndinStorageQuarantineMapper;
     @Resource
-    private StorageBillsFeignApi storageBillsFeignApi;
+    private InFeignApi inFeignApi;
+    @Resource
+    private QmsHtAndinStorageQuarantineMapper qmsHtAndinStorageQuarantineMapper;
 
     @Override
     public List<QmsAndinStorageQuarantineDto> findList(Map<String, Object> map) {
@@ -48,7 +54,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         Object barcode = map.get("barcode");
         SearchMesPackageManagerListDTO search = new SearchMesPackageManagerListDTO();
         search.setBarcode(barcode.toString());
-        ResponseEntity<List<MesPackageManagerDTO>> list = storageBillsFeignApi.list(search);
+        ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(search);
         Long parentId = 0L;
         //判断是箱码还是栈板码
         if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
@@ -59,7 +65,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
 
         search.setBarcode("");
         search.setParentId(parentId);
-        list = storageBillsFeignApi.list(search);
+        list = inFeignApi.list(search);
 
         int total = 0;
         if (StringUtils.isNotEmpty(list.getData())){
@@ -72,7 +78,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
 
             search.setParentId(null);
             search.setPackageManagerId(parentId);
-            list = storageBillsFeignApi.list(search);
+            list = inFeignApi.list(search);
 
             Example example = new Example(QmsAndinStorageQuarantine.class);
             Example.Criteria criteria = example.createCriteria();
@@ -99,27 +105,74 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
     @Transactional(rollbackFor = Exception.class)
     public int save(QmsAndinStorageQuarantine qmsAndinStorageQuarantine) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         qmsAndinStorageQuarantine.setCreateTime(new Date());
-//        qmsAndinStorageQuarantine.setCreateUserId(user.getUserId());
+        qmsAndinStorageQuarantine.setCreateUserId(user.getUserId());
         qmsAndinStorageQuarantine.setModifiedTime(new Date());
-//        qmsAndinStorageQuarantine.setModifiedUserId(user.getUserId());
+        qmsAndinStorageQuarantine.setModifiedUserId(user.getUserId());
         qmsAndinStorageQuarantine.setStatus(StringUtils.isEmpty(qmsAndinStorageQuarantine.getStatus())?1:qmsAndinStorageQuarantine.getStatus());
 
         //判断是否是栈板码逻辑
         SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
         searchMesPackageManagerListDTO.setPackageManagerId(qmsAndinStorageQuarantine.getPalletId());
-        ResponseEntity<List<MesPackageManagerDTO>> list = storageBillsFeignApi.list(searchMesPackageManagerListDTO);
+        ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(searchMesPackageManagerListDTO);
 
         if (StringUtils.isNotEmpty(list) && list.getData().size()!=0 && list.getData().get(0).getParentId() > 0){
             qmsAndinStorageQuarantine.setPalletId(list.getData().get(0).getPackageManagerId());
         }
 
-        int i = qmsAndinStorageQuarantineMapper.insert(qmsAndinStorageQuarantine);
+        int i = qmsAndinStorageQuarantineMapper.insertUseGeneratedKeys(qmsAndinStorageQuarantine);
+
+        QmsHtAndinStorageQuarantine qmsHtAndinStorageQuarantine = new QmsHtAndinStorageQuarantine();
+        BeanUtils.copyProperties(qmsAndinStorageQuarantine,qmsHtAndinStorageQuarantine);
+        qmsHtAndinStorageQuarantine.setOperation("新增");
+        qmsHtAndinStorageQuarantineMapper.insert(qmsHtAndinStorageQuarantine);
 
         return i;
+    }
+
+    @Override
+    public int update(QmsAndinStorageQuarantine qmsAndinStorageQuarantine) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        qmsAndinStorageQuarantine.setModifiedTime(new Date());
+        qmsAndinStorageQuarantine.setModifiedUserId(user.getUserId());
+
+        QmsHtAndinStorageQuarantine qmsHtAndinStorageQuarantine = new QmsHtAndinStorageQuarantine();
+        BeanUtils.copyProperties(qmsAndinStorageQuarantine,qmsHtAndinStorageQuarantine);
+        qmsHtAndinStorageQuarantine.setOperation("修改");
+        qmsHtAndinStorageQuarantineMapper.insert(qmsHtAndinStorageQuarantine);
+
+        return qmsAndinStorageQuarantineMapper.updateByPrimaryKeySelective(qmsAndinStorageQuarantine);
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        List<QmsHtAndinStorageQuarantine> list = new ArrayList<>();
+        String[] idsArr  = ids.split(",");
+        for (String id : idsArr) {
+            QmsAndinStorageQuarantine qmsAndinStorageQuarantine = qmsAndinStorageQuarantineMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(qmsAndinStorageQuarantine)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            QmsHtAndinStorageQuarantine qmsHtAndinStorageQuarantine = new QmsHtAndinStorageQuarantine();
+            BeanUtils.copyProperties(qmsAndinStorageQuarantine,qmsHtAndinStorageQuarantine);
+            qmsHtAndinStorageQuarantine.setOperation("删除");
+            list.add(qmsHtAndinStorageQuarantine);
+        }
+
+        qmsHtAndinStorageQuarantineMapper.insertList(list);
+
+        return qmsAndinStorageQuarantineMapper.deleteByIds(ids);
     }
 }

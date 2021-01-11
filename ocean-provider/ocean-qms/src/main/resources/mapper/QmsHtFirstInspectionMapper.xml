@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsHtFirstInspectionMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.history.QmsHtFirstInspection">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_first_inspection_id" jdbcType="BIGINT" property="htFirstInspectionId" />
+    <result column="first_inspection_id" jdbcType="BIGINT" property="firstInspectionId" />
+    <result column="first_inspection_code" jdbcType="VARCHAR" property="firstInspectionCode" />
+    <result column="work_order _id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="selected_total_quantity" jdbcType="DECIMAL" property="selectedTotalQuantity" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="handler" jdbcType="BIGINT" property="handler" />
+    <result column="documents_time" jdbcType="TIMESTAMP" property="documentsTime" />
+    <result column="operation" jdbcType="VARCHAR" property="operation" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qhfi.ht_first_inspection_id,qhfi.first_inspection_id,qhfi.work_order_id,qhfi.first_inspection_code,qhfi.selected_total_quantity,qhfi.handler,
+    qhfi.inspection_result,qhfi.documents_time,qhfi.status,qhfi.create_user_id,qhfi.create_time,
+    qhfi.modified_user_id,qhfi.modified_time,qhfi.is_delete, qhfi.organization_id,qhfi.remark
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from fantech_imes.qms_ht_first_inspection qhfi
+    LEFT JOIN ocean.sys_user su ON qhfi.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qhfi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qhfi.organization_id = bo.organization_id
+    <where>
+      <if test="firstInspectionCode != null and firstInspectionCode != ''">
+        and qhfi.first_inspection_code = #{firstInspectionCode}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qhfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+</mapper>

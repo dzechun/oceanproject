@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.in.config;
+package com.fantechs.provider.wms.storageBills.config;
 /**注意导入包是否齐全**/
 
 import com.google.common.base.Function;

@@ -1,5 +1,5 @@
 server:
-  port: 8504
+  port: 8501
   max-http-header-size: 10000000
 
 spring:

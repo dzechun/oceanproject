@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsMapper">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsInStorageBills">
+        <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="storage_bills_code" jdbcType="VARCHAR" property="storageBillsCode" />
+        <result column="bills_type" jdbcType="INTEGER" property="billsType" />
+        <result column="total" jdbcType="DECIMAL" property="total" />
+        <result column="material_type_total" jdbcType="DECIMAL" property="materialTypeTotal" />
+        <result column="finished_total" jdbcType="DECIMAL" property="finishedTotal" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+        <result column="allow_batch" jdbcType="TINYINT" property="allowBatch" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="send_user_name" jdbcType="VARCHAR" property="sendUserName" />
+        <result column="accept_user_id" jdbcType="BIGINT" property="acceptUserId" />
+        <result column="bills_time" jdbcType="TIMESTAMP" property="billsTime" />
+        <result column="note" jdbcType="VARCHAR" property="note" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    </resultMap>
+  <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.WmsInStorageBillsDTO" extends="BaseResultMap">
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <select id="selectUserName" resultType="string">
+    select su.user_name from ocean.sys_user su where su.user_id = #{id}
+  </select>
+  <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
+    SELECT
+    wsb.storage_bills_id,
+    wsb.storage_bills_code,
+    wsb.bills_type,
+    wsb.total,
+    wsb.material_type_total,
+    wsb.finished_total,
+    wsb.type,
+    wsb.supplier_id,
+    smts.supplier_name as supplierName,
+    smts.supplier_code as supplierCode,
+    wsb.allow_batch,
+    wsb.`status`,
+    wsb.is_delete,
+    wsb.send_user_name,
+    wsb.accept_user_id,
+    su1.user_name as acceptUserName,
+    wsb.bills_time,
+    wsb.note,
+    wsb.create_user_id,
+    su2.user_name as createUserName,
+    wsb.create_time,
+    wsb.modified_user_id,
+    su3.user_name as modifiedUserName,
+    wsb.modified_time,
+    bo.organization_name,
+    wsb.remark
+    FROM
+    wms_in_storage_bills AS wsb
+    LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
+    LEFT JOIN ocean.sys_user su1 on su1.user_id = wsb.accept_user_id
+    LEFT JOIN ocean.sys_user su2 on su2.user_id = wsb.create_user_id
+    LEFT JOIN ocean.sys_user su3 on su3.user_id = wsb.modified_user_id
+    LEFT JOIN fantech_imes.base_organization bo ON wsb.organization_id = bo.organization_id
+    <where>
+      <if test="billsType != null and billsType>0">
+        AND wsb.bills_type = #{billsType}
+      </if>
+      <if test="type != null and type>0">
+        AND wsb.type = #{type}
+      </if>
+      <if test="storageBillsCode != null and storageBillsCode != ''">
+        AND wsb.storage_bills_code = #{storageBillsCode}
+      </if>
+      <if test="status != null and status>0 and status != 5">
+        AND wsb.status = #{status}
+      </if>
+      <if test="status != null and status == 5">
+        AND (wsb.status = 1 or wsb.status = 2)
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        AND wsb.create_time = #{startTime} AND wsb.modified_time = #{endTime}
+      </if>
+      <if test="supplierCode != null and supplierCode != ''">
+        AND smts.supplier_code = #{supplierCode}
+      </if>
+      <if test="supplierName != null and supplierName != ''">
+        AND smts.supplier_name = #{supplierName}
+      </if>
+        AND wsb.is_delete=1
+    </where>
+    order by wsb.modified_time desc
+  </select>
+
+
+
+
+
+  <select id="pdaSelectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
+    SELECT
+    wsb.storage_bills_id,
+    wsb.storage_bills_code,
+    wsb.bills_type,
+    wsb.total,
+    wsb.material_type_total,
+    wsb.finished_total,
+    wsb.type,
+    wsb.supplier_id,
+    smts.supplier_name as supplierName,
+    wsb.allow_batch,
+    wsb.`status`,
+    wsb.is_delete
+    FROM
+    wms_in_storage_bills AS wsb
+    LEFT JOIN smt_supplier smts on smts.supplier_id = wsb.supplier_id
+    <where>
+      <if test="billsType != null and billsType>0">
+        AND wsb.bills_type = #{billsType}
+      </if>
+      <if test="type != null and type>0">
+        AND wsb.type = #{type}
+      </if>
+      <if test="storageBillsCode != null and storageBillsCode != ''">
+        AND wsb.storage_bills_code = #{storageBillsCode}
+      </if>
+      <if test="status != null and status>0 and status != 5">
+        AND wsb.status = #{status}
+      </if>
+      <if test="status != null and status == 5">
+        AND (wsb.status = 1 or wsb.status = 2)
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        AND wsb.create_time = #{startTime} AND wsb.modified_time = #{endTime}
+      </if>
+        AND wsb.is_delete=1
+    </where>
+    order by wsb.modified_time desc
+  </select>
+</mapper>
