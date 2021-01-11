@@ -32,23 +32,23 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    fp.finished_product_id,
-    fp.finished_product_code,
-    fp.supplier_id,
-    fp.plan_outtime,
-    fp.reality_outtime,
-    fp.plan_outquantity,
-    fp.reality_outquantity,
-    fp.traffic_type,
-    fp.out_status,
-    fp.`status`,
-    fp.organization_id,
-	fp.remark,
-    fp.create_user_id,
-    fp.create_time,
-    fp.modified_user_id,
-    fp.modified_time,
-    fp.is_delete
+        fp.finished_product_id,
+        fp.finished_product_code,
+        fp.supplier_id,
+        fp.plan_outtime,
+        fp.reality_outtime,
+        fp.plan_outquantity,
+        fp.reality_outquantity,
+        fp.traffic_type,
+        fp.out_status,
+        fp.`status`,
+        fp.organization_id,
+        fp.remark,
+        fp.create_user_id,
+        fp.create_time,
+        fp.modified_user_id,
+        fp.modified_time,
+        fp.is_delete
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
