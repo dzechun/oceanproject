@@ -7,10 +7,10 @@
         <artifactId>ocean-wms</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.fantechs.provider.wms.storageBills</groupId>
-    <artifactId>ocean-wms-storage-bills</artifactId>
+    <groupId>com.fantechs.provider.wms.in</groupId>
+    <artifactId>ocean-wms-in</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-wms-storage-bills</name>
+    <name>ocean-wms-in</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>

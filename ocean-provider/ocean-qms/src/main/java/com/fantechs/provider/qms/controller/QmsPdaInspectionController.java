@@ -5,11 +5,13 @@ import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtPdaInspection;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsPdaInspection;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.qms.service.QmsHtPdaInspectionService;
 import com.fantechs.provider.qms.service.QmsPdaInspectionService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -37,6 +40,8 @@ public class QmsPdaInspectionController {
 
     @Autowired
     private QmsPdaInspectionService qmsPdaInspectionService;
+    @Resource
+    private QmsHtPdaInspectionService qmsHtPdaInspectionService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -77,15 +82,15 @@ public class QmsPdaInspectionController {
         List<QmsPdaInspectionDto> list = qmsPdaInspectionService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsPdaInspection));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
-//
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<QmsPdaInspection>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsPdaInspection searchQmsPdaInspection) {
-//        Page<Object> page = PageHelper.startPage(searchQmsPdaInspection.getStartPage(),searchQmsPdaInspection.getPageSize());
-//        List<QmsPdaInspection> list = qmsPdaInspectionService.findList(searchQmsPdaInspection);
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
-//
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<QmsHtPdaInspection>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsPdaInspection searchQmsPdaInspection) {
+        Page<Object> page = PageHelper.startPage(searchQmsPdaInspection.getStartPage(),searchQmsPdaInspection.getPageSize());
+        List<QmsHtPdaInspection> list = qmsHtPdaInspectionService.findHtList(ControllerUtil.dynamicConditionByEntity(searchQmsPdaInspection));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
