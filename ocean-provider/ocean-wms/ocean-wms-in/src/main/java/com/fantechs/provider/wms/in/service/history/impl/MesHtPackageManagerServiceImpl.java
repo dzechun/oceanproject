@@ -1,9 +1,9 @@
-package com.fantechs.provider.wms.storageBills.service.history.impl;
+package com.fantechs.provider.wms.in.service.history.impl;
 
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.dto.basic.history.MesHtPackageManagerDTO;
-import com.fantechs.provider.wms.storageBills.service.history.MesHtPackageManagerService;
-import com.fantechs.provider.wms.storageBills.mapper.MesHtPackageManagerMapper;
+import com.fantechs.provider.wms.in.service.history.MesHtPackageManagerService;
+import com.fantechs.provider.wms.in.mapper.MesHtPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;

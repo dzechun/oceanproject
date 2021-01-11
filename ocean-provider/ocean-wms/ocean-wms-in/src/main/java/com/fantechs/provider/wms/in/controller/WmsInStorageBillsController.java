@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.controller;
+package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.*;
@@ -6,8 +6,8 @@ import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.SQLExecuteException;
 import com.fantechs.common.base.utils.EasyPoiUtils;
-import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsDetService;
-import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsService;
+import com.fantechs.provider.wms.in.service.WmsInStorageBillsDetService;
+import com.fantechs.provider.wms.in.service.WmsInStorageBillsService;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;

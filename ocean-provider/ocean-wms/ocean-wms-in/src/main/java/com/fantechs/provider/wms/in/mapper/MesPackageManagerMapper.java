@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.mapper;
+package com.fantechs.provider.wms.in.mapper;
 
 import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.storage.MesPackageManager;

@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.service.history;
+package com.fantechs.provider.wms.in.service.history;
 
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.support.IService;

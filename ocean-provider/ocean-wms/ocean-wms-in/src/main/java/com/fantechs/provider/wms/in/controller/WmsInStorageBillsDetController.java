@@ -1,8 +1,8 @@
-package com.fantechs.provider.wms.storageBills.controller;
+package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
 import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
-import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsDetService;
+import com.fantechs.provider.wms.in.service.WmsInStorageBillsDetService;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsDetListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;

@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.service.impl;
+package com.fantechs.provider.wms.in.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
@@ -8,10 +8,10 @@ import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsDetService;
-import com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsDetMapper;
+import com.fantechs.provider.wms.in.service.WmsInStorageBillsDetService;
+import com.fantechs.provider.wms.in.mapper.WmsInStorageBillsDetMapper;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.wms.storageBills.service.history.WmsInHtStorageBillsDetService;
+import com.fantechs.provider.wms.in.service.history.WmsInHtStorageBillsDetService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.WmsInStorageBillsMapper">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInStorageBillsMapper">
       <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.WmsInStorageBills">
         <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />
         <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -74,7 +74,7 @@
         AND wsb.type = #{type}
       </if>
       <if test="storageBillsCode != null and storageBillsCode != ''">
-        AND wsb.storage_bills_code = #{storageBillsCode}
+        AND wsb.storage_bills_code like CONCAT('%', #{storageBillsCode}, '%')
       </if>
       <if test="status != null and status>0 and status != 5">
         AND wsb.status = #{status}
@@ -86,10 +86,10 @@
         AND wsb.create_time = #{startTime} AND wsb.modified_time = #{endTime}
       </if>
       <if test="supplierCode != null and supplierCode != ''">
-        AND smts.supplier_code = #{supplierCode}
+        AND smts.supplier_code like CONCAT('%', #{supplierCode}, '%')
       </if>
       <if test="supplierName != null and supplierName != ''">
-        AND smts.supplier_name = #{supplierName}
+        AND smts.supplier_name like CONCAT('%', #{supplierName}, '%')
       </if>
         AND wsb.is_delete=1
     </where>

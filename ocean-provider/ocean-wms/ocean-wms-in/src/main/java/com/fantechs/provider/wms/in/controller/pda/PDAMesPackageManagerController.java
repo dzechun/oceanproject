@@ -1,10 +1,10 @@
-package com.fantechs.provider.wms.storageBills.controller.pda;
+package com.fantechs.provider.wms.in.controller.pda;
 
 import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
-import com.fantechs.provider.wms.storageBills.service.MesPackageManagerService;
+import com.fantechs.provider.wms.in.service.MesPackageManagerService;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -68,7 +68,8 @@ public class PDAMesPackageManagerController {
             BeanUtils.copyProperties(mesPackageManagerDTO,mesPackageManagerInDTO);
             if(mesPackageManagerDTO.getParentId()!=0){
                 MesPackageManager mesPackageManager = mesPackageManagerService.selectByKey(mesPackageManagerDTO.getParentId());
-                mesPackageManagerDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
+                mesPackageManagerInDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
+                mesPackageManagerInDTO.setBoxCount(mesPackageManager.getTotal());
             }
         }
         return ControllerUtil.returnDataSuccess(mesPackageManagerInDTO,1);

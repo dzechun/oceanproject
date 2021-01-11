@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.controller.pda;
+package com.fantechs.provider.wms.in.controller.pda;
 
 import com.fantechs.common.base.dto.storage.SaveBillsDetDTO;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsListDTO;
@@ -8,7 +8,7 @@ import com.fantechs.common.base.exception.SQLExecuteException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.wms.storageBills.service.WmsInStorageBillsService;
+import com.fantechs.provider.wms.in.service.WmsInStorageBillsService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;

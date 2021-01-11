@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.storageBills.mapper.history.WmsInHtStorageBillsMapper">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.history.WmsInHtStorageBillsMapper">
       <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills">
         <result column="ht_storage_bills_id" jdbcType="BIGINT" property="htStorageBillsId" />
         <result column="storage_bills_id" jdbcType="BIGINT" property="storageBillsId" />

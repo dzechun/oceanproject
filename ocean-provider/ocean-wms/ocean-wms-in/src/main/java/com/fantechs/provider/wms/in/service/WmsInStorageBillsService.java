@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.service;
+package com.fantechs.provider.wms.in.service;
 
 import com.fantechs.common.base.dto.storage.SaveBillsDetDTO;
 import com.fantechs.common.base.dto.storage.SaveDoubleBillsDTO;

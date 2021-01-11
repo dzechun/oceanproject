@@ -1,4 +1,4 @@
-package com.fantechs.provider.wms.storageBills.mapper.history;
+package com.fantechs.provider.wms.in.mapper.history;
 
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
