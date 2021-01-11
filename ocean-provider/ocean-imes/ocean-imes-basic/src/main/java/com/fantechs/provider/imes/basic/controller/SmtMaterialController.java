@@ -59,7 +59,7 @@ public class SmtMaterialController {
 
     @ApiOperation("增加物料信息")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：materialCode、productModelId",required = true)@RequestBody @Validated SmtMaterial smtMaterial){
+    public ResponseEntity add(@ApiParam(value = "必传：materialCode、productModelId、transferQuantity",required = true)@RequestBody @Validated SmtMaterial smtMaterial){
         return ControllerUtil.returnCRUD(smtMaterialService.save(smtMaterial));
 
     }
