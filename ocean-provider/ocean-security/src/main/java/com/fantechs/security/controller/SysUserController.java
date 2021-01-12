@@ -10,7 +10,6 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.common.base.utils.TemplateFileUtil;
 import com.fantechs.security.service.SysHtUserService;
 import com.fantechs.security.service.SysUserService;
 import com.github.pagehelper.Page;
@@ -55,7 +54,6 @@ public class SysUserController {
             @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysUser searchSysUser ) {
         Page<Object> page = PageHelper.startPage(searchSysUser.getStartPage(),searchSysUser.getPageSize());
         List<SysUser> sysUsers = sysUserService.selectUsers(searchSysUser);
-        System.out.println(sysUsers.get(0).getDeptName());
         return  ControllerUtil.returnDataSuccess(sysUsers, (int)page.getTotal());
     }
 
