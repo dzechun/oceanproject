@@ -71,7 +71,7 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
         if (qmsFirstInspections.size()!=0){
             throw new BizErrorException("首检已通过，首检失败");
         }
-
+        Integer status = 2;
         qmsFirstInspection.setCreateTime(new Date());
         qmsFirstInspection.setCreateUserId(user.getUserId());
         qmsFirstInspection.setModifiedTime(new Date());
@@ -81,7 +81,7 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
         qmsFirstInspection.setFirstInspectionCode(CodeUtils.getId("PDASJ"));
 
         int i = qmsFirstInspectionMapper.insertUseGeneratedKeys(qmsFirstInspection);
-        applyFeignApi.updateStatus(qmsFirstInspection.getWorkOrderId(),2);
+
 
         QmsHtFirstInspection qmsHtFirstInspection = new QmsHtFirstInspection();
         BeanUtils.copyProperties(qmsFirstInspection,qmsHtFirstInspection);
@@ -116,12 +116,14 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
                 String[] split = paraValue.split(",");
                 for (String s : split) {
                     if (maxLevel >= Long.valueOf(s)){
-                        applyFeignApi.updateStatus( qmsFirstInspection.getWorkOrderId(),3);
+                        status = 3;
+                        break;
                     }
                 }
 
             }
         }
+        applyFeignApi.updateStatus(qmsFirstInspection.getWorkOrderId(),status);
         return i;
     }
 
