@@ -85,7 +85,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         //根据产品BOM生成工单BOM
         //特殊声明是否产生BOM
-        if(!smtWorkOrder.getRemark().equals("华丰")){
+        if(StringUtils.isEmpty(smtWorkOrder.getRemark()) || !smtWorkOrder.getRemark().equals("华丰")){
             //生成备料单
             SmtStock smtStock = new SmtStock();
             smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
@@ -279,6 +279,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
             smtWorkOrder.setModifiedUserId(currentUser.getUserId());
             smtWorkOrder.setModifiedTime(new Date());
+            smtWorkOrder.setCreateTime(null);
             i = smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
 
 

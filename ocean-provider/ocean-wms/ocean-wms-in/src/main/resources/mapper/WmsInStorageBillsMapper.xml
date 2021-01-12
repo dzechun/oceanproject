@@ -83,7 +83,7 @@
         AND (wsb.status = 1 or wsb.status = 2)
       </if>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-        AND wsb.create_time = #{startTime} AND wsb.modified_time = #{endTime}
+        AND wsb.create_time between #{startTime} AND #{endTime}
       </if>
       <if test="supplierCode != null and supplierCode != ''">
         AND smts.supplier_code like CONCAT('%', #{supplierCode}, '%')

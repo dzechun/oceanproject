@@ -74,7 +74,7 @@
         swo.work_order_code AS 'workOrderCode',
         sm.material_code AS 'materialCode',
         sm.material_desc AS 'materialDesc',
-        sm.unit,
+        bt.main_unit AS 'unit',
         ss.storage_name as 'storageName',
         spm.product_model_name as 'productModelName',
         spl.pro_name AS 'proName',
@@ -88,7 +88,8 @@
         LEFT JOIN smt_material sm ON sm.material_id = mpm.material_id
         LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
         LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mpm.package_specification_id
-        LEFT JOIN smt_product_model spm on spm.product_model_id = sm.product_model_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN smt_product_model spm on spm.product_model_id = bt.product_model_id
         LEFT JOIN smt_storage_material ssm on ssm.material_id = sm.material_id
         LEFT JOIN smt_storage ss on ss.storage_id = ssm.storage_id
         <where>
@@ -96,7 +97,7 @@
                 AND swo.work_order_code = #{workOrderCode}
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND mpm.create_time = #{startTime} AND mpm.modified_time = #{endTime}
+                AND mpm.create_time between #{startTime} AND #{endTime}
             </if>
             <if test="barcode != null and barcode != ''">
                 AND mpm.bar_code = #{barcode}

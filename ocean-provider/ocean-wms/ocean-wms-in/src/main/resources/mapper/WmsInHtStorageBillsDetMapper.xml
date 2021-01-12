@@ -47,7 +47,7 @@
          sm.material_name AS 'materialName',
          sm.material_desc AS 'materialDesc',
          spm.product_model_name AS 'productModelName',
-         sm.unit,
+         bt.main_unit AS 'unit',
          ss.storage_name AS 'storageName',
          ss.storage_code AS 'storageCode',
          su1.user_name AS createUserName,
@@ -60,7 +60,8 @@
      FROM
          wms_in_ht_storage_bills_det AS whsbd
              LEFT JOIN `smt_material` sm ON whsbd.material_id = sm.material_id
-             LEFT JOIN `smt_product_model` spm ON spm.product_model_id = sm.product_model_id
+             LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+             LEFT JOIN `smt_product_model` spm ON spm.product_model_id = bt.product_model_id
              LEFT JOIN `smt_storage_material` ssm ON ssm.material_id = sm.material_id
              LEFT JOIN `smt_storage` ss ON ss.storage_id = ssm.storage_id
              LEFT JOIN ocean.sys_user su1 on su1.user_id = whsbd.create_user_id

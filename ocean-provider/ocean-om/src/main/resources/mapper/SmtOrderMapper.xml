@@ -76,7 +76,8 @@
         left join ocean.sys_user s on so.modified_user_id = s.user_id
         left join smt_material sm on so.material_id = sm.material_id
         left join smt_customer sc on so.customer_id = sc.customer_id
-        left join smt_product_model spm on spm.product_model_id = sm.product_model_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
         LEFT JOIN base_organization bo ON so.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -146,7 +147,8 @@
                 LEFT JOIN ocean.sys_user su2 ON su2.user_id = mom.modified_user_id
                 LEFT JOIN fantech_imes.base_organization bo ON mom.organization_id = bo.organization_id
                 LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
-                LEFT JOIN smt_product_model spm ON spm.product_model_id = sm.product_model_id
+                LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+                LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
         <where>
             <if test="orderId != null and orderId !=''">
                 and mom.order_id = #{orderId}
