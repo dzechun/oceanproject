@@ -39,8 +39,8 @@ public class SmtStorageInventoryController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventory smtStorageInventory) {
-        System.out.println(smtStorageInventory);
-        return ControllerUtil.returnCRUD(smtStorageInventoryService.save(smtStorageInventory));
+        smtStorageInventoryService.save(smtStorageInventory);
+        return ControllerUtil.returnDataSuccess(smtStorageInventory, StringUtils.isEmpty(smtStorageInventory)?0:1);
     }
 
     @ApiOperation("删除")
