@@ -63,9 +63,9 @@ public class SearchSysSpecItem  extends BaseQuery implements Serializable {
     private Byte orderNum;
 
     /**
-     * 所属模块
+     * 菜单ID
      */
-    @ApiModelProperty(name="affiliationModule" ,value="所属模块")
-    private String affiliationModule;
+    @ApiModelProperty(name="menuId" ,value="菜单ID")
+    private String menuId;
 
 }
