@@ -17,7 +17,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ocean-wms-storage-bills-api</module>
+        <module>ocean-wms-in-api</module>
     </modules>
 
 </project>

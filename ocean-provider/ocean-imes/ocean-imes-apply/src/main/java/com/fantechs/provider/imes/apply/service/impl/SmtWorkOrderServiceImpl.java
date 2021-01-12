@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.apply.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.apply.SaveWorkOrderAndBom;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.*;
 import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
@@ -18,6 +19,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.apply.mapper.*;
+import com.fantechs.provider.imes.apply.service.SmtWorkOrderBomService;
 import com.fantechs.provider.imes.apply.service.SmtWorkOrderService;
 import com.fantechs.provider.imes.apply.utils.BarcodeRuleUtils;
 import org.springframework.beans.BeanUtils;
@@ -53,6 +55,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     private SmtStockMapper smtStockMapper;
     @Resource
     private SmtStockDetMapper smtStockDetMapper;
+    @Resource
+    private SmtWorkOrderBomService smtWorkOrderBomService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -215,9 +219,13 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 criteria1.andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
                 List<SmtWorkOrderBom> workOrderBoms = smtWorkOrderBomMapper.selectByExample(example1);
 
-                Example example2 = new Example(SmtStockDet.class);
-                example2.createCriteria().andEqualTo("stockId", smtStock.getStockId());
-                List<SmtStockDet> smtStockDets = smtStockDetMapper.selectByExample(example2);
+                List<SmtStockDet> smtStockDets=null;
+                if(StringUtils.isNotEmpty(smtStock)){
+                    Example example2 = new Example(SmtStockDet.class);
+                    example2.createCriteria().andEqualTo("stockId", smtStock.getStockId());
+                    smtStockDets= smtStockDetMapper.selectByExample(example2);
+                }
+
 
                 if (StringUtils.isNotEmpty(workOrderBoms)) {
                     for (SmtWorkOrderBom smtWorkOrderBom : workOrderBoms) {
@@ -225,7 +233,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                         BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
                         BigDecimal baseQuantity = smtWorkOrderBom.getBaseQuantity();
                         //重新计算后的零件工单用量
-                        smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity).multiply(baseQuantity));
+                        if(StringUtils.isEmpty(baseQuantity))
+                        {
+                            smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+                        }else{
+                            smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity).multiply(baseQuantity));
+                        }
                         list.add(smtWorkOrderBom);
 
                         //新增工单BOM历史信息
@@ -236,14 +249,18 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                         htList.add(smtHtWorkOrderBom);
 
                         //修改备料数量
-                        List<SmtStockDet> smtStockDet = smtStockDets.stream().filter(st -> st.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())).collect(Collectors.toList());
-                        if (StringUtils.isNotEmpty(smtStockDet)) {
-                            for (SmtStockDet stockDet : smtStockDet) {
-                                stockDet.setStockId(smtStock.getStockId());
-                                stockDet.setMaterialId(smtWorkOrderBom.getPartMaterialId());
-                                stockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
-                                stockDet.setStockQuantity(smtWorkOrderBom.getBaseQuantity());
-                                smtStockDetList.add(stockDet);
+                        if(StringUtils.isNotEmpty(smtStockDets)){
+                            List<SmtStockDet> smtStockDet = smtStockDets.stream().filter(st -> st.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())).collect(Collectors.toList());
+                            if (StringUtils.isNotEmpty(smtStockDet)) {
+                                for (SmtStockDet stockDet : smtStockDet) {
+                                    stockDet.setStockId(smtStock.getStockId());
+                                    stockDet.setMaterialId(smtWorkOrderBom.getPartMaterialId());
+                                    stockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
+                                    if(StringUtils.isNotEmpty(smtWorkOrderBom.getBaseQuantity())){
+                                        stockDet.setStockQuantity(smtWorkOrderBom.getBaseQuantity());
+                                    }
+                                    smtStockDetList.add(stockDet);
+                                }
                             }
                         }
                     }
@@ -339,12 +356,21 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     }
 
     @Override
-    public int saveWorkOrderDTO(SmtWorkOrder smtWorkOrder) {
+    public int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom) {
+        SmtWorkOrder smtWorkOrder = saveWorkOrderAndBom.getSmtWorkOrder();
         if(StringUtils.isNotEmpty(smtWorkOrder.getWorkOrderId())){
-            return this.update(smtWorkOrder);
+            if(this.update(smtWorkOrder)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
         }else{
-            return this.save(smtWorkOrder);
+            if(this.save(smtWorkOrder)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
         }
+        if(smtWorkOrderBomService.save(saveWorkOrderAndBom.getSmtWorkOrderBomList())<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        return 1;
     }
 
     @Override

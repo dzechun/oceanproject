@@ -13,7 +13,7 @@ import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.entity.qms.QmsDisqualification;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspectionDet;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsAndinStorageQuarantine;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtPdaInspection;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -21,23 +21,16 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.apply.ApplyFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.api.wms.bills.StorageBillsFeignApi;
-import com.fantechs.provider.qms.mapper.QmsAndinStorageQuarantineMapper;
-import com.fantechs.provider.qms.mapper.QmsDisqualificationMapper;
-import com.fantechs.provider.qms.mapper.QmsPdaInspectionDetMapper;
-import com.fantechs.provider.qms.mapper.QmsPdaInspectionMapper;
+import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsPdaInspectionService;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -57,9 +50,11 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      @Resource
      private QmsAndinStorageQuarantineMapper qmsAndinStorageQuarantineMapper;
      @Resource
-     private StorageBillsFeignApi storageBillsFeignApi;
+     private InFeignApi inFeignApi;
      @Resource
      private ApplyFeignApi applyFeignApi;
+     @Resource
+     private QmsHtPdaInspectionMapper qmsHtPdaInspectionMapper;
 
      @Override
      public List<QmsPdaInspectionDto> findList(Map<String, Object> map) {
@@ -73,9 +68,8 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           Object barcode = map.get("barcode");
           SearchMesPackageManagerListDTO search = new SearchMesPackageManagerListDTO();
           search.setBarcode(barcode.toString());
-          ResponseEntity<List<MesPackageManagerDTO>> list = storageBillsFeignApi.list(search);
-          System.out.println(list.getData());
-          System.out.println(list.getData().get(0).getParentId());
+          ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(search);
+
           //判断是否是箱码
           if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
                Example example = new Example(QmsPdaInspectionDet.class);
@@ -97,7 +91,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                qmsPdaInspectionDet.setPackageManagerId(list.getData().get(0).getPackageManagerId());
                search.setPackageManagerId(mesPackageManagerDTO.getParentId());
                search.setBarcode("");
-               list = storageBillsFeignApi.list(search);
+               list = inFeignApi.list(search);
 
                map.put("palletId",list.getData().get(0).getParentId());
                List<QmsAndinStorageQuarantineDto> quarantineDtos = qmsAndinStorageQuarantineMapper.findList(map);
@@ -145,8 +139,13 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                qmsPdaInspection.setModifiedTime(new Date());
 //               qmsPdaInspection.setModifiedUserId(user.getUserId());
                qmsPdaInspection.setStatus(StringUtils.isEmpty(qmsPdaInspection.getStatus())?1:qmsPdaInspection.getStatus());
-               qmsPdaInspection.setAndinStorageQuarantineCode(CodeUtils.getId("ZLJC"));
+               qmsPdaInspection.setPdaInspectionCode(CodeUtils.getId("ZLJC"));
                i = qmsPdaInspectionMapper.insertUseGeneratedKeys(qmsPdaInspection);
+
+               QmsHtPdaInspection qmsHtPdaInspection = new QmsHtPdaInspection();
+               BeanUtils.copyProperties(qmsPdaInspection,qmsHtPdaInspection);
+               qmsHtPdaInspection.setOperation("新增");
+               qmsHtPdaInspectionMapper.insert(qmsHtPdaInspection);
           }
           QmsPdaInspectionDet qmsPdaInspectionDet = qmsPdaInspection.getQmsPdaInspectionDet();
           qmsPdaInspectionDet.setCreateTime(new Date());
@@ -154,7 +153,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           qmsPdaInspectionDet.setModifiedTime(new Date());
 //          qmsPdaInspectionDet.setModifiedUserId(user.getUserId());
           qmsPdaInspectionDet.setStatus(StringUtils.isEmpty(qmsPdaInspectionDet.getStatus())?1:qmsPdaInspectionDet.getStatus());
-          qmsPdaInspectionDet.setAndinStorageQuarantineId(StringUtils.isNotEmpty(qmsPdaInspection.getAndinStorageQuarantineId())?qmsPdaInspection.getAndinStorageQuarantineId():list.get(0).getAndinStorageQuarantineId());
+          qmsPdaInspectionDet.setPdaInspectionId(StringUtils.isNotEmpty(qmsPdaInspection.getPdaInspectionId())?qmsPdaInspection.getPdaInspectionId():list.get(0).getPdaInspectionId());
 
           qmsPdaInspectionDetMapper.insertUseGeneratedKeys(qmsPdaInspectionDet);
 
@@ -163,7 +162,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                Long maxLevel = 0L;
                for (QmsDisqualification qmsDisqualification : qmsDisqualifications) {
                     qmsDisqualification.setCheckoutType((byte) 0);
-                    qmsDisqualification.setFirstInspectionIdId(qmsPdaInspectionDet.getAndinStorageQuarantineDetId());
+                    qmsDisqualification.setFirstInspectionIdId(qmsPdaInspectionDet.getPdaInspectionDetId());
                     qmsDisqualification.setCreateTime(new Date());
 //                    qmsDisqualification.setCreateUserId(user.getUserId());
                     qmsDisqualification.setModifiedTime(new Date());
@@ -195,5 +194,45 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           return i;
      }
 
+     @Override
+     public int update(QmsPdaInspection qmsPdaInspection) {
+          SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+          if(StringUtils.isEmpty(user)){
+               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+          }
+          qmsPdaInspection.setModifiedTime(new Date());
+          qmsPdaInspection.setModifiedUserId(user.getUserId());
 
+          QmsHtPdaInspection qmsHtPdaInspection = new QmsHtPdaInspection();
+          BeanUtils.copyProperties(qmsPdaInspection,qmsHtPdaInspection);
+          qmsHtPdaInspection.setOperation("修改");
+          qmsHtPdaInspectionMapper.insert(qmsHtPdaInspection);
+
+          return qmsPdaInspectionMapper.updateByPrimaryKeySelective(qmsPdaInspection);
+     }
+
+     @Override
+     public int batchDelete(String ids) {
+          SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+          if(StringUtils.isEmpty(user)){
+               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+          }
+          List<QmsHtPdaInspection> list = new ArrayList<>();
+          String[] idsArr  = ids.split(",");
+          for (String id : idsArr) {
+               QmsPdaInspection qmsPdaInspection = qmsPdaInspectionMapper.selectByPrimaryKey(id);
+               if (StringUtils.isEmpty(qmsPdaInspection)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+               }
+
+               QmsHtPdaInspection qmsHtPdaInspection = new QmsHtPdaInspection();
+               BeanUtils.copyProperties(qmsPdaInspection,qmsHtPdaInspection);
+               qmsHtPdaInspection.setOperation("删除");
+               list.add(qmsHtPdaInspection);
+          }
+
+          qmsHtPdaInspectionMapper.insertList(list);
+
+          return qmsPdaInspectionMapper.deleteByIds(ids);
+     }
 }

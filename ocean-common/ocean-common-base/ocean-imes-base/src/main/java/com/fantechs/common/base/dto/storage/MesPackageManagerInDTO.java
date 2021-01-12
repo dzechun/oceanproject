@@ -49,12 +49,12 @@ public class MesPackageManagerInDTO {
      * 箱数
      */
     @ApiModelProperty(value = "箱数",example = "箱数")
-    private Double boxCount;
+    private java.math.BigDecimal boxCount;
     /**
      * 入库总数
      */
     @ApiModelProperty(value = "入库总数",example = "入库总数")
-    private Double total;
+    private java.math.BigDecimal total;
     /**
      * 包装单位id
      */

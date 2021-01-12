@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.MesHtPackageManagerMapper">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.MesHtPackageManager">
+        <result column="ht_package_manager_id" jdbcType="BIGINT" property="htPackageManagerId" />
+        <result column="package_manager_id" jdbcType="BIGINT" property="packageManagerId" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="package_manager_code" jdbcType="VARCHAR" property="packageManagerCode" />
+        <result column="bar_code" jdbcType="VARCHAR" property="barCode" />
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="total" jdbcType="DECIMAL" property="total" />
+        <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
+        <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
+        <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+        <result column="print_barcode_count" jdbcType="INTEGER" property="printBarcodeCount" />
+        <result column="operation" jdbcType="VARCHAR" property="operation" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    </resultMap>
+
+<resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.basic.history.MesHtPackageManagerDTO" extends="BaseResultMap">
+
+</resultMap>
+
+ <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
+   SELECT
+   mhpm.ht_package_manager_id,
+   mhpm.package_manager_id,
+   mhpm.organization_id,
+   mhpm.package_manager_code,
+   mhpm.bar_code,
+   mhpm.work_order_id,
+   mhpm.material_id,
+   mhpm.total,
+   mhpm.packing_unit_id,
+   mhpm.package_specification_id,
+   mhpm.parent_id,
+   mhpm.operation,
+   mhpm.is_delete,
+   mhpm.remark,
+   mhpm.create_user_id,
+   mhpm.create_time,
+   mhpm.modified_user_id,
+   mhpm.modified_time,
+   su1.user_name AS 'createUserName',
+   su2.user_name AS 'modifiedUserName',
+   bo.organization_name AS 'organizationName',
+   swo.work_order_code AS 'workOrderCode',
+   sm.material_code AS 'materialCode',
+   sm.material_desc AS 'materialDesc',
+   sm.unit,
+   ss.storage_name as 'storageName',
+   spm.product_model_name as 'productModelName',
+   spl.pro_name AS 'proName',
+   sps.package_specification_quantity AS 'packageSpecificationQuantity'
+   FROM
+   mes_ht_package_manager AS mhpm
+   LEFT JOIN ocean.sys_user su1 ON su1.user_id = mhpm.create_user_id
+   LEFT JOIN ocean.sys_user su2 ON su2.user_id = mhpm.modified_user_id
+   LEFT JOIN base_organization bo ON mhpm.organization_id = bo.organization_id
+   LEFT JOIN smt_work_order swo ON swo.work_order_id = mhpm.work_order_id
+   LEFT JOIN smt_material sm ON sm.material_id = mhpm.material_id
+   LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
+   LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mhpm.package_specification_id
+   LEFT JOIN smt_product_model spm on spm.product_model_id = sm.product_model_id
+   LEFT JOIN smt_storage_material ssm on ssm.material_id = sm.material_id
+   LEFT JOIN smt_storage ss on ss.storage_id = ssm.storage_id
+   <where>
+     <if test="workOrderCode != null and workOrderCode !=''">
+       AND swo.work_order_code = #{workOrderCode}
+     </if>
+     <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+       AND mhpm.create_time = #{startTime} AND mhpm.modified_time = #{endTime}
+     </if>
+     <if test="barcode != null and barcode != ''">
+       AND mhpm.bar_code = #{barcode}
+     </if>
+     <if test="packageManagerCode != null and packageManagerCode !=''">
+       AND mhpm.package_manager_code = #{packageManagerCode}
+     </if>
+     <if test="parentId != null and parentId !=''">
+       AND mhpm.parent_id = #{parentId}
+     </if>
+     <if test="packageManagerId != null and packageManagerId !=''">
+       AND mhpm.package_manager_id = #{packageManagerId}
+     </if>
+     AND mhpm.is_delete=1
+   </where>
+   order by mhpm.modified_time desc
+ </select>
+
+</mapper>

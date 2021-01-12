@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 ;
 
@@ -158,6 +159,10 @@ public class WmsOutFinishedProduct extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty(name="wmsOutFinishedProductDetList",value = "子表明细")
+    private List<WmsOutFinishedProductDet> wmsOutFinishedProductDetList;
+
 
     private static final long serialVersionUID = 1L;
 }

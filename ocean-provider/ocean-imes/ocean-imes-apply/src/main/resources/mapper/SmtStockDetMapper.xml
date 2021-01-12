@@ -60,10 +60,7 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update smt_stock_det
             <set>
-                plan_quantity = #{item.planQuantity}
-            </set>
-            <set>
-                stock_quantity = #{item.stockQuantity}
+                plan_quantity = #{item.planQuantity} and stock_quantity = #{item.stockQuantity}
             </set>
             where stock_det_id = ${item.stockDetId}
         </foreach>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsHtAndinStorageQuarantineMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.history.QmsHtAndinStorageQuarantine">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_andin_storage_quarantine_id" jdbcType="BIGINT" property="htAndinStorageQuarantineId" />
+    <result column="andin_storage_quarantine_id" jdbcType="BIGINT" property="andinStorageQuarantineId" />
+    <result column="pallet_id" jdbcType="BIGINT" property="palletId" />
+    <result column="inspection_waiting_area_id" jdbcType="BIGINT" property="inspectionWaitingAreaId" />
+    <result column="operation" jdbcType="VARCHAR" property="operation" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qhasq.ht_andin_storage_quarantine_id,qhasq.andin_storage_quarantine_id,qhasq.pallet_id,qhasq.inspection_waiting_area_id,
+    qhasq.status,qhasq.create_user_id,qhasq.create_time,
+    qhasq.modified_user_id,qhasq.modified_time,qhasq.is_delete, qhasq.organization_id,qhasq.remark
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from fantech_imes.qms_ht_andin_storage_quarantine qhasq
+    LEFT JOIN ocean.sys_user su ON qhasq.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qhasq.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qhasq.organization_id = bo.organization_id
+    <where>
+      <if test="andinStorageQuarantineId != null and andinStorageQuarantineId != ''">
+        and qhasq.andin_storage_quarantine_id = #{andinStorageQuarantineId}
+      </if>
+      <if test="palletId != null and palletId != ''">
+        and qhasq.pallet_id = #{palletId}
+      </if>
+      <if test="inspectionWaitingAreaId != null and inspectionWaitingAreaId != ''">
+        and qhasq.inspection_waiting_area_id = #{inspectionWaitingAreaId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qfi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>
