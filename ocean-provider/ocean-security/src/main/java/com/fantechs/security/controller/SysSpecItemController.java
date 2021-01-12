@@ -111,30 +111,5 @@ public class SysSpecItemController {
         return  ControllerUtil.returnDataSuccess(SysHtSpecItems, (int)page.getTotal());
     }
 
-    @PostMapping("/findModule")
-    @ApiOperation(value = "根据条件查询所有模块名称",notes = "根据条件查询所有模块名称")
-    public ResponseEntity<List<SysSpecItem>> findModule() {
-        List<SysSpecItem> list = sysSpecItemService.findModule();
-        return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
-    }
-
-    @PostMapping("/addModule")
-    @ApiOperation(value = "添加模块",notes = "添加模块")
-    public ResponseEntity addModule(@RequestParam(required = false)@NotBlank(message = "affiliationModule不能为空") String affiliationModule) {
-        return ControllerUtil.returnCRUD(sysSpecItemService.addModule(affiliationModule));
-    }
-
-    @PostMapping("/updateModule")
-    @ApiOperation(value = "修改模块名称",notes = "修改模块名称")
-    public ResponseEntity updateModule(@ApiParam(value = "必传ID和模块名称",required = true)@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem) {
-        return ControllerUtil.returnCRUD(sysSpecItemService.updateModule(ControllerUtil.dynamicConditionByEntity(searchSysSpecItem)));
-    }
-
-    @PostMapping("/deleteModule")
-    @ApiOperation(value = "删除模块名称",notes = "删除模块名称")
-    public ResponseEntity deleteModule(@RequestParam @NotBlank(message = "ids不能为空") String ids) {
-        return ControllerUtil.returnCRUD(sysSpecItemService.deleteModule(ids));
-    }
-
 }
 

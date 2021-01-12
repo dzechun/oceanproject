@@ -64,7 +64,8 @@
     <sql id="Base_Column_List">
     so.order_id, so.order_code, so.customer_id, so.material_id, so.order_quantity, so.delivered_quantity, so.Inkjet_paint,
     so.radium_carving, so.status, so.delivery_date, so.photo_url, so.create_user_id, so.create_time, so.modified_user_id,
-    so.modified_time, so.is_delete, so.option1, so.option2, so.option3,so.organization_id, so.remark
+    so.modified_time, so.is_delete, so.option1, so.option2, so.option3,so.organization_id, so.remark, so.sales_man_name,so.schedule_date,
+    so.contract_code,so.order_date
   </sql>
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>,sm.material_name, sm.material_code,sm.version,sm.material_desc,spm.product_model_name,
