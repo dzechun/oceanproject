@@ -49,69 +49,12 @@ public class SmtHtMaterial implements Serializable {
     @Column(name = "material_desc")
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
-    /**
-     * 单位
-     */
-    @ApiModelProperty(name="unit" ,value="单位")
-    private String unit;
 
     /**
      * 版本
      */
     @ApiModelProperty(name="version" ,value="版本")
     private String version;
-
-    /**
-     *  产品型号ID
-     */
-    @Column(name = "product_model_id")
-    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
-    private Long productModelId;
-
-    /**
-     *  产品型号编码
-     */
-    @Transient
-    @ApiModelProperty(name="productModelCode" ,value="产品型号")
-    private String productModelCode;
-
-    /**
-     * 产品族id
-     */
-    @ApiModelProperty(name="productFamilyId",value = "产品族id")
-    @Column(name = "product_family_id")
-    private Long productFamilyId;
-
-    /**
-     * 产品族编码
-     */
-    @Transient
-    @ApiModelProperty(name="productFamilyCode",value = "产品族编码")
-    @Excel(name = "产品族编码", height = 20, width = 30)
-    private String productFamilyCode;
-
-    /**
-     * 产品族名称
-     */
-    @Transient
-    @ApiModelProperty(name="productFamilyName",value = "产品族名称")
-    @Excel(name = "产品族名称", height = 20, width = 30)
-    private String productFamilyName;
-
-    /**
-     * 产品族描述
-     */
-    @Transient
-    @ApiModelProperty(name="productFamilyDesc",value = "产品族描述")
-    @Excel(name = "产品族描述", height = 20, width = 30)
-    private String productFamilyDesc;
-
-    /**
-     * 物料类别
-     */
-    @Column(name = "material_type")
-    @ApiModelProperty(name="materialType" ,value="物料类别")
-    private String materialType;
 
     /**
      * 物料来源
@@ -123,50 +66,16 @@ public class SmtHtMaterial implements Serializable {
     /**
      * 条码规则集合ID
      */
-    @Column(name = "barcode_rule_id")
-    @ApiModelProperty(name="barcodeRuleId" ,value="条码规则集合ID")
-    private Long barcodeRuleId;
+    @Column(name = "barcode_rule_set_id")
+    @ApiModelProperty(name="barcodeRuleSetId" ,value="条码规则集合ID")
+    private Long barcodeRuleSetId;
 
     /**
-     * 条码规则集合ID
+     * 条码规则集合名称
      */
     @Transient
-    @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
-    private String barcodeRuleName;
-
-    /**
-     * 是否组合板(0.否 1.是)
-     */
-    @Column(name = "if_compoboard")
-    @ApiModelProperty(name="ifCompoboard" ,value="是否组合板")
-    private Integer ifCompoboard;
-
-    /**
-     * 是否连板(0.否 1.是)
-     */
-    @Column(name = "if_linking_board")
-    @ApiModelProperty(name="ifLinkingBoard" ,value="是否连板")
-    private Integer ifLinkingBoard;
-
-    /**
-     * 连板数
-     */
-    @Column(name = "linking_board_number")
-    @ApiModelProperty(name="linkingBoardNumber" ,value="连板数")
-    private Integer linkingBoardNumber;
-
-    /**
-     * 节拍数量(秒)
-     */
-    @ApiModelProperty(name="takt" ,value="节拍数量(秒)")
-    private Integer takt;
-
-    /**
-     * 移转数量
-     */
-    @Column(name = "transfer_quantity")
-    @ApiModelProperty(name="transferQuantity" ,value="移转数量")
-    private Integer transferQuantity;
+    @ApiModelProperty(name="barcodeRuleSetName" ,value="条码规则集合名称")
+    private String barcodeRuleSetName;
 
     /**
      * 组织id
@@ -194,13 +103,6 @@ public class SmtHtMaterial implements Serializable {
      */
     @ApiModelProperty(name="status" ,value="状态")
     private Integer status;
-
-    /**
-     * 客户料号
-     */
-    @Column(name = "customer_material_code")
-    @ApiModelProperty(name="customerMaterialCode" ,value="客户料号")
-    private String customerMaterialCode;
 
     /**
      * 最小包装数

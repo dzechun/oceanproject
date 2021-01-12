@@ -6,19 +6,9 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-        <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
-        <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
-        <result column="materiaxl_type" jdbcType="VARCHAR" property="materialType"/>
         <result column="material_source" jdbcType="INTEGER" property="materialSource"/>
-        <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
-        <result column="if_compoboard" jdbcType="BIT" property="ifCompoboard"/>
-        <result column="if_linking_board" jdbcType="BIT" property="ifLinkingBoard"/>
-        <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber"/>
-        <result column="takt" jdbcType="INTEGER" property="takt"/>
-        <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
         <result column="status" jdbcType="BIT" property= "status"/>
-        <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode"/>
         <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -35,10 +25,6 @@
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtMaterialDto" extends="BaseResultMap">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode"/>
-        <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName"/>
-        <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc"/>
-        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
         <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     </resultMap>
@@ -47,21 +33,12 @@
 	sm.material_code,
 	sm.material_name,
 	sm.material_desc,
-	sm.unit,
 	sm.version,
-	sm.product_model_id,
-	sm.material_type,
 	sm.material_source,
-	sm.barcode_rule_id,
-	sm.if_compoboard,
-	sm.if_linking_board,
-	sm.linking_board_number,
-	sm.takt,
-	sm.transfer_quantity,
+	sm.barcode_rule_set_id,
 	sm.`status`,
 	sm.organization_id,
 	sm.remark,
-	sm.customer_material_code,
 	sm.min_package_number,
 	sm.create_user_id,
 	sm.create_time,
@@ -76,17 +53,12 @@
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterial"
             resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>,
-        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        spm.product_model_code,
-        bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc, bo.organization_name
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name, bo.organization_name
         from fantech_imes.smt_material sm
         left join ocean.sys_user su on sm.create_user_id=su.user_id
         left join ocean.sys_user sus on sm.modified_user_id=sus.user_id
-        left join fantech_imes.smt_product_model spm on sm.product_model_id=spm.product_model_id
-        left join fantech_imes.base_product_family bpf on spm.product_family_id = bpf.product_family_id
         LEFT JOIN fantech_imes.base_organization bo ON sm.organization_id = bo.organization_id
         <where>
-            1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
@@ -124,19 +96,10 @@
                 material_code =#{item.materialCode},
                 material_name =#{item.materialName},
                 material_desc =#{item.materialDesc},
-                unit =#{item.unit},
                 version =#{item.version},
-                product_model_id =#{item.productModelId},
-                material_type =#{item.materialType},
                 material_source =#{item.materialSource},
-                barcode_rule_id =#{item.barcodeRuleId},
-                if_compoboard =#{item.ifCompoboard},
-                if_linking_board =#{item.ifLinkingBoard},
-                linking_board_number =#{item.linkingBoardNumber},
-                takt =#{item.takt},
-                transfer_quantity =#{item.transferQuantity},
+                barcode_rule_set_id =#{item.barcodeRuleSetId},
                 status =#{item.status},
-                customer_material_code =#{item.customerMaterialCode},
                 min_package_number =#{item.minPackageNumber},
                 create_user_id =#{item.createUserId},
                 create_time =#{item.createTime},

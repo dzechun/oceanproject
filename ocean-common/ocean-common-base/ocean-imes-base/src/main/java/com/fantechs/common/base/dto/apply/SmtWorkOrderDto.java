@@ -64,6 +64,7 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @ApiModelProperty(name="proName" ,value="线别名称")
     @Excel(name = "生产线", height = 20, width = 30,orderNum = "9")
     private String proName;
+
     /**
      * 工艺路线名称
      */

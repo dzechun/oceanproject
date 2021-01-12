@@ -11,7 +11,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="if_pass_station" jdbcType="CHAR" property="ifPassStation" />
+    <result column="if_pass_station" jdbcType="TINYINT" property="ifPassStation" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />

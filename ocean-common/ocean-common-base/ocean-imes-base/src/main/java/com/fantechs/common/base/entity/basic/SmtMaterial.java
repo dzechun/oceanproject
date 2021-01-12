@@ -50,12 +50,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     @Excel(name = "物料描述", height = 20, width = 30)
     private String materialDesc;
-    /**
-     * 单位
-     */
-    @ApiModelProperty(name="unit" ,value="单位")
-    @Excel(name = "单位", height = 20, width = 30)
-    private String unit;
 
     /**
      * 版本
@@ -63,22 +57,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="version" ,value="版本")
     @Excel(name = "版本", height = 20, width = 30)
     private String version;
-
-    /**
-     *  产品型号ID
-     */
-    @Column(name = "product_model_id")
-    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
-    private Long productModelId;
-
-
-    /**
-     * 物料类别
-     */
-    @Column(name = "material_type")
-    @ApiModelProperty(name="materialType" ,value="物料类别")
-    @Excel(name = "物料类别", height = 20, width = 30)
-    private String materialType;
 
     /**
      * 物料来源(0.自制件 1.虚拟件 2.采购件)
@@ -91,49 +69,9 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     /**
      * 条码规则集合ID
      */
-    @Column(name = "barcode_rule_id")
-    @ApiModelProperty(name="barcodeRuleId" ,value="条码规则集合ID")
-    private Long barcodeRuleId;
-
-
-    /**
-     * 是否组合板(0.否 1.是)
-     */
-    @Column(name = "if_compoboard")
-    @ApiModelProperty(name="ifCompoboard" ,value="是否组合板")
-    @Excel(name = "是否组合板", height = 20, width = 30,replace = {"否_0", "是_1"})
-    private Integer ifCompoboard;
-
-    /**
-     * 是否连板(0.否 1.是)
-     */
-    @Column(name = "if_linking_board")
-    @ApiModelProperty(name="ifLinkingBoard" ,value="是否连板")
-    @Excel(name = "是否连板", height = 20, width = 30,replace = {"否_0", "是_1"})
-    private Integer ifLinkingBoard;
-
-    /**
-     * 连板数
-     */
-    @Column(name = "linking_board_number")
-    @ApiModelProperty(name="linkingBoardNumber" ,value="连板数")
-    @Excel(name = "连板数", height = 20, width = 30)
-    private Integer linkingBoardNumber;
-
-    /**
-     * 节拍数量(秒)
-     */
-    @Column(name = "takt")
-    @ApiModelProperty(name="takt" ,value="节拍数量(秒)")
-    private Integer takt;
-
-    /**
-     * 移转数量
-     */
-    @Column(name = "transfer_quantity")
-    @ApiModelProperty(name="transferQuantity" ,value="移转数量")
-    @NotNull(message = "移转数量不能为空")
-    private Integer transferQuantity;
+    @Column(name = "barcode_rule_set_id")
+    @ApiModelProperty(name="barcodeRuleSetId" ,value="条码规则集合ID")
+    private Long barcodeRuleSetId;
 
     /**
      * 组织id
@@ -156,14 +94,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     @Column(name = "status")
     private Integer status;
-
-    /**
-     * 客户料号
-     */
-    @Column(name = "customer_material_code")
-    @ApiModelProperty(name="customerMaterialCode" ,value="客户料号")
-    @Excel(name = "客户料号", height = 20, width = 30)
-    private String customerMaterialCode;
 
     /**
      * 最小包装数

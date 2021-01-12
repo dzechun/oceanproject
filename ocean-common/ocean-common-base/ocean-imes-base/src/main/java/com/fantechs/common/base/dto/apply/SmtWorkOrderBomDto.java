@@ -20,6 +20,7 @@ public class SmtWorkOrderBomDto extends SmtWorkOrderBom implements Serializable 
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
     @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
+
     /**
      * 物料编码
      */
