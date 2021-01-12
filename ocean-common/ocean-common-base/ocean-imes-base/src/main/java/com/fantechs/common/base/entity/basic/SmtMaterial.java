@@ -69,7 +69,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "product_model_id")
     @ApiModelProperty(name="productModelId" ,value="产品型号ID")
-    @NotNull(message = "产品型号ID不能为空")
     private Long productModelId;
 
 
