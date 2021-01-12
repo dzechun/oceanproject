@@ -21,7 +21,7 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.wms.bills</groupId>
+            <groupId>com.fantechs.provider.api.wms.in</groupId>
             <artifactId>ocean-wms-in-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

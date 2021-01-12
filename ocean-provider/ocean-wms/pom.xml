@@ -19,7 +19,6 @@
         <module>ocean-wms-in</module>
         <module>ocean-wms-inner</module>
         <module>ocean-wms-out</module>
-        <module>ocean-wms-in</module>
     </modules>
 
 </project>

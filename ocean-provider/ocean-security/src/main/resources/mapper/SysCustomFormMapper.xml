@@ -8,6 +8,7 @@
     <id column="custom_form_id" jdbcType="BIGINT" property="customFormId" />
     <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode" />
     <result column="custom_form_name" jdbcType="VARCHAR" property="customFormName" />
+    <result column="sub_id" jdbcType="BIGINT" property="subId" />
     <result column="from_rout" jdbcType="VARCHAR" property="fromRout" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -20,20 +21,24 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.security.SysCustomFormDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+        <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+        <result column="sub_name" jdbcType="VARCHAR" property="subName" />
     </resultMap>
 
   <sql id="Base_Column_List">
     cf.custom_form_id,cf.custom_form_code,cf.custom_form_name,
-	cf.from_rout,cf.`status`,cf.create_user_id,
+	cf.sub_id,cf.from_rout,cf.`status`,cf.create_user_id,
 	cf.create_time,cf.modified_user_id,cf.modified_time,cf.is_delete
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select
         <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+        ,scf.custom_form_name AS sub_name,scf.custom_form_code AS sub_code
         from sys_custom_form cf
         LEFT JOIN sys_user su ON cf.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON cf.modified_user_id = sus.user_id
+        LEFT JOIN sys_custom_form scf on scf.sub_id = cf.custom_form_id
 
         <where>
             <if test="customFormId!=null and customFormId!=''">

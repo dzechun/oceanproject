@@ -49,6 +49,15 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
     private String customFormName;
 
     /**
+     * 自定义表单Id
+     */
+    @ApiModelProperty(name="subId",value = "关联表单")
+    @Excel(name = "关联表单", height = 20, width = 30,orderNum="")
+    @Id
+    @Column(name = "sub_id")
+    private Long subId;
+
+    /**
      * 表单路由
      */
     @ApiModelProperty(name="fromRout",value = "表单路由")
