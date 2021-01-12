@@ -30,7 +30,6 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     /**
      * 配置所属菜单ID
      */
-    @Id
     @Column(name = "menu_id")
     @ApiModelProperty(name="menuId" ,value="配置所属菜单ID")
     private Long menuId;
