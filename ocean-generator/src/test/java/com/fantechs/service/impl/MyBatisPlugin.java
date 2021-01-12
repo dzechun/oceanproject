@@ -31,6 +31,7 @@ public class MyBatisPlugin extends PluginAdapter {
     private static final String API_MODEL_PROPERTY_FULL_CLASS_NAME = "io.swagger.annotations.ApiModelProperty";
     private static final String MODEL_EXCEL_FULL_CLASS_NAME = "cn.afterturn.easypoi.excel.annotation.Excel";
     private static final String MODEL_JSONFIEL_FULL_CLASS_NAME = "com.alibaba.fastjson.annotation.JSONField;";
+    private static final String MODEL_VALIDGROUP_FULL_CLASS_NAME = "com.fantechs.common.base.support.ValidGroup;";
 
 
 
@@ -49,7 +50,7 @@ public class MyBatisPlugin extends PluginAdapter {
         topLevelClass.addAnnotation("@Data");
 
         topLevelClass.addJavaDocLine("/**");
-
+        topLevelClass.setSuperClass("ValidGroup");
         String remarks = introspectedTable.getRemarks();
         if (StringUtility.stringHasValue(remarks)) {
             String[] remarkLines = remarks.split(System.getProperty("line.separator"));
@@ -75,6 +76,7 @@ public class MyBatisPlugin extends PluginAdapter {
             topLevelClass.addImportedType(new FullyQualifiedJavaType(API_MODEL_PROPERTY_FULL_CLASS_NAME));
             topLevelClass.addImportedType(new FullyQualifiedJavaType(MODEL_EXCEL_FULL_CLASS_NAME));
             topLevelClass.addImportedType(new FullyQualifiedJavaType(MODEL_JSONFIEL_FULL_CLASS_NAME));
+            topLevelClass.addImportedType(new FullyQualifiedJavaType(MODEL_VALIDGROUP_FULL_CLASS_NAME));
         }
         if (addLombok) {
                 topLevelClass.addImportedType(new FullyQualifiedJavaType(LOMBOK_DATA));
