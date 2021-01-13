@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.pm.mapper.SmtStockMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtStock">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="stock_id" jdbcType="BIGINT" property="stockId"/>
+        <result column="stock_code" jdbcType="VARCHAR" property="stockCode"/>
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="plan_stock_time" jdbcType="TIMESTAMP" property="planStockTime"/>
+        <result column="delivery_mode" jdbcType="TINYINT" property="deliveryMode"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtStockDto">
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+  ss.stock_id, ss.stock_code, ss.work_order_id, ss.plan_stock_time, ss.delivery_mode, ss.status, ss.create_user_id,
+  ss.create_time, ss.modified_user_id, ss.modified_time, ss.is_delete, ss.option1, ss.option2, ss.option3, ss.organization_id,
+  ss.remark
+</sql>
+
+    <select id="findList" resultMap="BaseResultMapDto"
+            parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtStock">
+        select<include refid="Base_Column_List"/>
+        ,wo.work_order_code,spl.pro_name,sm.material_code,sm.version,sm.material_desc,sw.warehouse_name,su.user_name as
+        createName,su.user_name, bo.organization_name
+        FROM smt_stock ss
+        LEFT JOIN smt_work_order wo ON ss.work_order_id = wo.work_order_id
+        LEFT JOIN smt_pro_line spl ON wo.pro_line_id = spl.pro_line_id
+        LEFT JOIN smt_material sm ON wo.material_id = sm.material_id
+        LEFT JOIN smt_storage_material ssm ON sm.material_id
+        LEFT JOIN smt_warehouse sw ON ssm.warehouse_id = sw.warehouse_id
+        LEFT JOIN ocean.sys_user su ON ss.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON ss.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON ss.organization_id = bo.organization_id
+        <where>
+            <if test="stockCode!=null and stockCode!=''">
+                and ss.stock_code like CONCAT('%',#{stockCode},'%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and wo.work_order_code like CONCAT('%',#{workOrderCode},'%')
+            </if>
+        </where>
+    </select>
+</mapper>
