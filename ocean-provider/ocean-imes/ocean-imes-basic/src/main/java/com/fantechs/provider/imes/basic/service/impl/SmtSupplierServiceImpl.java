@@ -111,7 +111,6 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         //获取当前要删除的供应商地址ID
         List<Long> delete = smtAddressMapper.findDelete(address, entity.getSupplierId());
         if (delete.size()!=0){
-            smtAddressMapper.deleteByIds(org.apache.commons.lang3.StringUtils.join(delete,","));
             //删除供应商与地址关联表中数据
             Example example1 = new Example(SmtSupplierAddress.class);
             example1.createCriteria().andIn("addressId",delete);
