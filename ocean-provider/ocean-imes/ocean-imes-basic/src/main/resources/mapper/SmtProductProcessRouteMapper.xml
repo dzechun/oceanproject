@@ -62,7 +62,7 @@
     sm.material_code,sm.material_desc,sm.version,sppr.route_id,
     bo.organization_name,
     sr.route_name, sr.route_code, sr.route_desc,
-    u.user_name as createUserName,s.user_name as modifiedUserName,
+    u.user_name as createUserName,s.user_name as modifiedUserName
     from fantech_imes.smt_product_process_route sppr
     left join fantech_imes.smt_pro_line spl on sppr.pro_line_id=spl.pro_line_id
     left join fantech_imes.smt_product_model spm on sppr.product_model_id=spm.product_model_id
