@@ -80,7 +80,7 @@ public class QmsFirstInspection  extends ValidGroup implements Serializable {
      * 单据类型
      */
     @ApiModelProperty(name="receiptsType",value = "单据类型")
-    @Excel(name = "单据日期", height = 20, width = 30,orderNum="12")
+    @Excel(name = "单据类型", height = 20, width = 30,orderNum="12")
     @Column(name = "receipts_type")
     private Byte receiptsType;
 

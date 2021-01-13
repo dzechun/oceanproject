@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ocean-wms-storage-bills</module>
+        <module>ocean-wms-in</module>
         <module>ocean-wms-inner</module>
         <module>ocean-wms-out</module>
     </modules>

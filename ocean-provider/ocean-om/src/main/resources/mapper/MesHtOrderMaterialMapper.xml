@@ -59,7 +59,8 @@
        LEFT JOIN ocean.sys_user su2 ON su2.user_id = mhom.modified_user_id
        LEFT JOIN fantech_imes.base_organization bo ON mhom.organization_id = bo.organization_id
        LEFT JOIN smt_material sm ON sm.material_id = mhom.material_id
-       LEFT JOIN smt_product_model spm ON spm.product_model_id = sm.product_model_id
+       LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+       LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
    WHERE
      mhom.order_id = #{orderId}
      AND mhom.is_delete = 1

@@ -13,7 +13,7 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
 
     private static final long serialVersionUID = 5293503265879392765L;
     /**
-     * 物料编码
+     * 物料编码.
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料编码")
@@ -64,6 +64,7 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @ApiModelProperty(name="proName" ,value="线别名称")
     @Excel(name = "生产线", height = 20, width = 30,orderNum = "9")
     private String proName;
+
     /**
      * 工艺路线名称
      */

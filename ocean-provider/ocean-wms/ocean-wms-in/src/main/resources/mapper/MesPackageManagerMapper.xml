@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.MesPackageManagerMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.MesPackageManager">
+        <result column="package_manager_id" jdbcType="BIGINT" property="packageManagerId"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="package_manager_code" jdbcType="VARCHAR" property="packageManagerCode"/>
+        <result column="bar_code" jdbcType="VARCHAR" property="barCode"/>
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="total" jdbcType="DECIMAL" property="total"/>
+        <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId"/>
+        <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="print_barcode_count" jdbcType="INTEGER" property="printBarcodeCount"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.MesPackageManagerDTO"
+               extends="BaseResultMap">
+
+    </resultMap>
+    <resultMap id="SmtBarcodeRuleSpecResultMap" type="com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec">
+        <id column="barcode_rule_spec_id" jdbcType="BIGINT" property="barcodeRuleSpecId"/>
+        <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
+        <result column="spec_id" jdbcType="BIGINT" property="specId"/>
+        <result column="specification" jdbcType="VARCHAR" property="specification"/>
+        <result column="barcode_length" jdbcType="INTEGER" property="barcodeLength"/>
+        <result column="initial_value" jdbcType="INTEGER" property="initialValue"/>
+        <result column="step" jdbcType="INTEGER" property="step"/>
+        <result column="fill_operator" jdbcType="VARCHAR" property="fillOperator"/>
+        <result column="fill_direction" jdbcType="TINYINT" property="fillDirection"/>
+        <result column="customize_name" jdbcType="VARCHAR" property="customizeName"/>
+        <result column="intercept_length" jdbcType="INTEGER" property="interceptLength"/>
+        <result column="intercept_position" jdbcType="INTEGER" property="interceptPosition"/>
+        <result column="intercept_direction" jdbcType="TINYINT" property="interceptDirection"/>
+        <result column="customize_value" jdbcType="LONGVARCHAR" property="customizeValue"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+    <select id="selectUserName" resultType="string">
+        select su.user_name
+        from ocean.sys_user su
+        where su.user_id = #{id}
+    </select>
+
+    <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
+        SELECT
+        mpm.package_manager_id,
+        mpm.organization_id,
+        mpm.package_manager_code,
+        mpm.bar_code,
+        mpm.work_order_id,
+        mpm.material_id,
+        mpm.total,
+        mpm.packing_unit_id,
+        mpm.package_specification_id,
+        mpm.parent_id,
+        mpm.is_delete,
+        mpm.remark,
+        mpm.create_user_id,
+        mpm.create_time,
+        mpm.modified_user_id,
+        mpm.modified_time,
+        su1.user_name AS 'createUserName',
+        su2.user_name AS 'modifiedUserName',
+        bo.organization_name AS 'organizationName',
+        swo.work_order_code AS 'workOrderCode',
+        sm.material_code AS 'materialCode',
+        sm.material_desc AS 'materialDesc',
+        bt.main_unit AS 'unit',
+        ss.storage_name as 'storageName',
+        spm.product_model_name as 'productModelName',
+        spl.pro_name AS 'proName',
+        sps.package_specification_quantity AS 'packageSpecificationQuantity'
+        FROM
+        mes_package_manager AS mpm
+        LEFT JOIN ocean.sys_user su1 ON su1.user_id = mpm.create_user_id
+        LEFT JOIN ocean.sys_user su2 ON su2.user_id = mpm.modified_user_id
+        LEFT JOIN base_organization bo ON mpm.organization_id = bo.organization_id
+        LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+        LEFT JOIN smt_material sm ON sm.material_id = mpm.material_id
+        LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
+        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mpm.package_specification_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN smt_product_model spm on spm.product_model_id = bt.product_model_id
+        LEFT JOIN smt_storage_material ssm on ssm.material_id = sm.material_id
+        LEFT JOIN smt_storage ss on ss.storage_id = ssm.storage_id
+        <where>
+            <if test="workOrderCode != null and workOrderCode !=''">
+                AND swo.work_order_code = #{workOrderCode}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND mpm.create_time between #{startTime} AND #{endTime}
+            </if>
+            <if test="barcode != null and barcode != ''">
+                AND mpm.bar_code = #{barcode}
+            </if>
+            <if test="packageManagerCode != null and packageManagerCode !=''">
+                AND mpm.package_manager_code = #{packageManagerCode}
+            </if>
+            <if test="parentId != null and parentId !=''">
+                AND mpm.parent_id = #{parentId}
+            </if>
+            <if test="packageManagerId != null and packageManagerId !=''">
+                AND mpm.package_manager_id = #{packageManagerId}
+            </if>
+            AND mpm.is_delete=1
+        </where>
+        order by mpm.modified_time desc
+    </select>
+
+    <select id="findBarcodeRule" resultMap="SmtBarcodeRuleSpecResultMap">
+        SELECT sbrs.barcode_rule_spec_id,
+               sbrs.barcode_rule_id,
+               sbrs.spec_id,
+               sbrs.specification,
+               sbrs.barcode_length,
+               sbrs.initial_value,
+               sbrs.step,
+               sbrs.fill_operator,
+               sbrs.fill_direction,
+               sbrs.customize_name,
+               sbrs.customize_value,
+               sbrs.intercept_length,
+               sbrs.intercept_position,
+               sbrs.intercept_direction,
+               sbrs.organization_id,
+               sbrs.remark
+        FROM smt_barcode_rule_spec AS sbrs
+                 LEFT JOIN smt_barcode_rule sbr ON sbr.barcode_rule_id = sbrs.barcode_rule_id
+                 LEFT JOIN smt_package_specification sps ON sps.package_specification_id = #{packageSpecificationId}
+        WHERE sbr.barcode_rule_id = sps.barcode_rule_id
+    </select>
+
+    <select id="findPrintBarcodeCount" resultType="int">
+        SELECT
+            sum( mpm.print_barcode_count )
+        FROM
+            mes_package_manager mpm
+    </select>
+</mapper>

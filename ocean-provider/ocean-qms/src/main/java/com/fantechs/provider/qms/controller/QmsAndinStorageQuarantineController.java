@@ -5,12 +5,16 @@ import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto;
 import com.fantechs.common.base.general.entity.qms.QmsAndinStorageQuarantine;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtAndinStorageQuarantine;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsAndinStorageQuarantine;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.service.QmsAndinStorageQuarantineService;
+import com.fantechs.provider.qms.service.QmsHtAndinStorageQuarantineService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -20,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -37,6 +42,8 @@ public class QmsAndinStorageQuarantineController {
 
     @Autowired
     private QmsAndinStorageQuarantineService qmsAndinStorageQuarantineService;
+    @Resource
+    private QmsHtAndinStorageQuarantineService qmsHtAndinStorageQuarantineService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -75,6 +82,14 @@ public class QmsAndinStorageQuarantineController {
     public ResponseEntity<List<QmsAndinStorageQuarantineDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsAndinStorageQuarantine searchQmsAndinStorageQuarantine) {
         Page<Object> page = PageHelper.startPage(searchQmsAndinStorageQuarantine.getStartPage(),searchQmsAndinStorageQuarantine.getPageSize());
         List<QmsAndinStorageQuarantineDto> list = qmsAndinStorageQuarantineService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsAndinStorageQuarantine));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<QmsHtAndinStorageQuarantine>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsAndinStorageQuarantine searchQmsAndinStorageQuarantine) {
+        Page<Object> page = PageHelper.startPage(searchQmsAndinStorageQuarantine.getStartPage(),searchQmsAndinStorageQuarantine.getPageSize());
+        List<QmsHtAndinStorageQuarantine> list = qmsHtAndinStorageQuarantineService.findHtList(ControllerUtil.dynamicConditionByEntity(searchQmsAndinStorageQuarantine));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

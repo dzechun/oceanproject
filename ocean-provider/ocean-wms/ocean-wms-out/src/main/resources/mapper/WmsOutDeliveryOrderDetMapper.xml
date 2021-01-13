@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="delivery_order_det_id" jdbcType="BIGINT" property="deliveryOrderDetId" />
+    <result column="delivery_order_id" jdbcType="BIGINT" property="deliveryOrderId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
+    <result column="out_total_qty" jdbcType="DECIMAL" property="outTotalQty" />
+    <result column="out_status" jdbcType="TINYINT" property="outStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto">
+    <result column="product_material_code" jdbcType="VARCHAR" property="productMaterialCode"/>
+    <result column="product_material_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    dod.delivery_order_det_id,
+    dod.delivery_order_id,
+    dod.product_model_id,
+    dod.reality_total_qty,
+    dod.out_total_qty,
+    dod.out_status,
+    dod.remark,
+    dod.organization_id,
+    dod.create_user_id,
+    dod.create_time,
+    dod.modified_user_id,
+    dod.modified_time,
+    dod.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+    select<include refid="Base_Column_List"/>,
+      su.user_name AS create_user_name,
+      sus.user_name AS modified_user_name,
+      pm.product_material_code AS product_material_code,
+      pm.product_material_desc AS product_material_desc
+    from
+        wms_out_delivery_order_det AS dod
+    LEFT JOIN ocean.sys_user su ON dod.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON dod.modified_user_id = sus.user_id
+    LEFT JOIN smt_product_model pm ON dod.product_model_id = pm.product_model_id
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(doo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="deliveryOrderId != null">
+        and dod.delivery_order_id = #{deliveryOrderId}
+      </if>
+    </where>
+  </select>
+</mapper>

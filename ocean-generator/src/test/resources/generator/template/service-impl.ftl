@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ${modelNameUpperCamel}ServiceImpl  extends BaseService<${modelNameUpperCamel}> implements ${modelNameUpperCamel}Service {
 
-         @Resource
-         private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
+    @Resource
+    private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
+
+    @Override
+    public List< ${modelNameUpperCamel}Dto> findList(Map<String, Object> map) {
+        return ${modelNameLowerCamel}Mapper.findList(map);
+    }
 }

@@ -112,12 +112,12 @@ public class SmtStation extends ValidGroup implements Serializable {
     private Integer status;
 
     /**
-     * 是否过站(Y.是  N.否)
+     * 是否过站(0.否  1.是)
      */
     @Column(name = "if_pass_station")
     @ApiModelProperty(name = "ifPassStation",value = "是否过站")
     @Excel(name = "是否过站", height = 20, width = 30)
-    private String ifPassStation;
+    private Integer ifPassStation;
 
     /**
      * 创建人ID

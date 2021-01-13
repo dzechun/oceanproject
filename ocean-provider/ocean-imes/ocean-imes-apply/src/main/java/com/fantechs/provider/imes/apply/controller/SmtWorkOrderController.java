@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.apply.controller;
 
+import com.fantechs.common.base.dto.apply.SaveWorkOrderAndBom;
 import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
@@ -45,6 +46,12 @@ public class SmtWorkOrderController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：materialId、workOrderQuantity、proLineId、routeId",required = true)@RequestBody @Validated SmtWorkOrder smtWorkOrder) {
         return ControllerUtil.returnCRUD(smtWorkOrderService.save(smtWorkOrder));
+    }
+
+    @ApiOperation(value = "新增及更新工单及BOM",notes = "新增及更新工单及BOM")
+    @PostMapping("/save")
+    public ResponseEntity save(@ApiParam(value = "保存工单及工单BOM",required = true)@RequestBody SaveWorkOrderAndBom saveWorkOrderAndBom) {
+        return ControllerUtil.returnCRUD(smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom));
     }
 
     @ApiOperation("删除")

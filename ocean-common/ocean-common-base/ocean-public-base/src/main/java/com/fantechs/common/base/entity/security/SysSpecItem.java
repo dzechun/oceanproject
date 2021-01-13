@@ -28,6 +28,13 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     private Long specId;
 
     /**
+     * 配置所属菜单ID
+     */
+    @Column(name = "menu_id")
+    @ApiModelProperty(name="menuId" ,value="配置所属菜单ID")
+    private Long menuId;
+
+    /**
      * 配置项代码
      */
     @Column(name = "spec_code")
@@ -77,14 +84,6 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="orderNum" ,value="配置顺序")
     @Excel(name = "配置顺序", height = 20, width = 30)
     private Byte orderNum;
-
-    /**
-     * 所属模块
-     */
-    @Column(name = "affiliation_module")
-    @ApiModelProperty(name="affiliationModule" ,value="所属模块")
-    @Excel(name = "所属模块", height = 20, width = 30)
-    private String affiliationModule;
 
     /**
      * 是否隐藏(0、是 1、否 )

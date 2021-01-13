@@ -10,13 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ocean-wms-api</artifactId>
-    <modules>
-        <module>ocean-wms-storage-bills-api</module>
-    </modules>
-    <groupId>com.fantechs.provider.api.imes</groupId>
+    <groupId>com.fantechs.provider.api.wms</groupId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-wms-api</name>
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>ocean-wms-in-api</module>
+    </modules>
 
 </project>

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 ;
 
@@ -147,6 +148,9 @@ public class WmsOutPurchaseReturn extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty(name="wmsOutPurchaseReturnDetList",value = "子表明细")
+    private List<WmsOutPurchaseReturnDet> wmsOutPurchaseReturnDetList;
 
     private static final long serialVersionUID = 1L;
 }

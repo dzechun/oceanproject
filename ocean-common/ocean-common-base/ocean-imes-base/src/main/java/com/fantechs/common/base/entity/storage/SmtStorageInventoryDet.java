@@ -36,10 +36,10 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
     /**
      * 储位库存ID
      */
-    @ApiModelProperty(name="storingInventoryId",value = "储位库存ID")
+    @ApiModelProperty(name="storageInventoryId",value = "储位库存ID")
     @Excel(name = "储位库存ID", height = 20, width = 30,orderNum="")
-    @Column(name = "storing_inventory_id")
-    private Long storingInventoryId;
+    @Column(name = "storage_inventory_id")
+    private Long storageInventoryId;
 
     /**
      * 储位ID

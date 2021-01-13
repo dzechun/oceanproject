@@ -13,8 +13,8 @@ public class SearchQmsPdaInspection extends BaseQuery implements Serializable {
     /**
      * PDA质检单号
      */
-    @ApiModelProperty(name="andinStorageQuarantineCode",value = "PDA质检单号")
-    private String andinStorageQuarantineCode;
+    @ApiModelProperty(name="pdaInspectionCode",value = "PDA质检单号")
+    private String pdaInspectionCode;
 
     /**
      * 生产工单号
@@ -32,7 +32,7 @@ public class SearchQmsPdaInspection extends BaseQuery implements Serializable {
     /**
      * 处理人
      */
-    @ApiModelProperty(name="handler",value = "处理人名称")
+    @ApiModelProperty(name="handler",value = "处理人")
     private String handler;
 
     private static final long serialVersionUID = 1L;

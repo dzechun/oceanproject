@@ -48,13 +48,14 @@
             resultMap="BaseResultMapDto">
         select
         swobp.work_order_barcode_pool_id,swobp.task_code,swobp.work_order_card_pool_id,swobp.work_order_id,swo.work_order_code,swo.work_order_type,swo.material_id,sm.material_code,
-        sm.version,sm.transfer_quantity,swo.work_order_quantity,swo.production_quantity,swo.route_id,sr.route_name,swo.order_id,
+        sm.version,bt.transfer_quantity,swo.work_order_quantity,swo.production_quantity,swo.route_id,sr.route_name,swo.order_id,
         so.order_code, so.customer_id,sp.supplier_name,
         swobp.barcode_rule_id,sbr.barcode_rule,swo.planned_end_time,swobp.barcode,swobp.task_status,swobp.status,swobp.create_user_id,swobp.create_time,
         swobp.modified_user_id,swobp.modified_time, swobp.is_delete, swobp.organization_id, swobp.remark, bo.organization_name
         from fantech_imes.smt_work_order_barcode_pool swobp
         left join fantech_imes.smt_work_order swo on swobp.work_order_id=swo.work_order_id
         left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
         left join fantech_imes.smt_barcode_rule sbr on swobp.barcode_rule_id=sbr.barcode_rule_id
         left join fantech_imes.smt_order so on swo.order_id=so.order_id

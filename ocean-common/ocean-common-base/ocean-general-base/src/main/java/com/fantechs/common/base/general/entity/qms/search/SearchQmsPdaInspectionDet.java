@@ -25,8 +25,8 @@ public class SearchQmsPdaInspectionDet extends BaseQuery implements Serializable
     /**
      * PDA质检ID
      */
-    @ApiModelProperty(name="andinStorageQuarantineId",value = "PDA质检ID")
-    private Long andinStorageQuarantineId;
+    @ApiModelProperty(name="pdaInspectionId",value = "PDA质检ID")
+    private Long pdaInspectionId;
 
     /**
      * 箱码ID

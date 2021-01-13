@@ -3,12 +3,14 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtOrganization;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.service.BaseHtOrganizationService;
 import com.fantechs.provider.base.service.BaseHtProductFamilyService;
 import com.fantechs.provider.base.service.BaseOrganizationService;
 import com.github.pagehelper.Page;
@@ -38,7 +40,7 @@ public class BaseOrganizationController {
     @Autowired
     private BaseOrganizationService baseOrganizationService;
     @Resource
-    private BaseHtProductFamilyService baseHtProductFamilyService;
+    private BaseHtOrganizationService baseHtOrganizationService;
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
@@ -75,9 +77,9 @@ public class BaseOrganizationController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BaseHtProductFamily>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchBaseOrganization searchBaseOrganization) {
+    public ResponseEntity<List<BaseHtOrganization>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchBaseOrganization searchBaseOrganization) {
         Page<Object> page = PageHelper.startPage(searchBaseOrganization.getStartPage(), searchBaseOrganization.getPageSize());
-        List<BaseHtProductFamily> list = baseHtProductFamilyService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
+        List<BaseHtOrganization> list = baseHtOrganizationService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 

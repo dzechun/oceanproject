@@ -73,7 +73,7 @@
         SELECT
         sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sp.process_name,sw.planned_end_time,sps.process_name
         as next_process_name,
-        so.order_code,sc.customer_name,sm.transfer_quantity,blm.label_material_id,bl.print_mode,bl.save_path,br.barcode_rule_code,
+        so.order_code,sc.customer_name,bt.transfer_quantity,blm.label_material_id,bl.print_mode,bl.save_path,br.barcode_rule_code,
         <if test="barCodeType==1">
             wobp.barcode
         </if>
@@ -84,6 +84,7 @@
         LEFT JOIN smt_order so ON sw.order_id = so.order_id
         LEFT JOIN smt_customer sc ON so.customer_id = sc.customer_id
         LEFT JOIN smt_material sm ON sm.material_id = sw.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         LEFT JOIN smt_route sr ON sw.route_id = sr.route_id
         LEFT JOIN smt_route_process srp ON sr.route_id = srp.route_id
         LEFT JOIN smt_process sp ON srp.process_id = sp.process_id

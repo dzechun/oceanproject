@@ -16,49 +16,34 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-public-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.common.base.general</groupId>
-            <artifactId>ocean-general-base</artifactId>
+            <groupId>com.fantechs.provider.api.wms.in</groupId>
+            <artifactId>ocean-wms-in-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.wms.bills</groupId>
-            <artifactId>ocean-wms-storage-bills-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.security</groupId>
             <artifactId>ocean-security-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-imes-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.imes.apply</groupId>
             <artifactId>ocean-imes-apply-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>${artifactId}</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <!--打包时去除第三方依赖-->

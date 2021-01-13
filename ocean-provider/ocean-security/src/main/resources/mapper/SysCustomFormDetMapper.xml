@@ -14,6 +14,7 @@
     <result column="item_detail_type" jdbcType="TINYINT" property="itemDetailType" />
     <result column="is_hide" jdbcType="TINYINT" property="isHide" />
     <result column="is_enum" jdbcType="TINYINT" property="isEnum" />
+    <result column="spec_code" jdbcType="VARCHAR" property="specCode" />
     <result column="enum_data" jdbcType="VARCHAR" property="enumData" />
     <result column="is_required" jdbcType="TINYINT" property="isRequired" />
     <result column="order_num" jdbcType="INTEGER" property="orderNum" />
@@ -29,22 +30,25 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
     <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="sub_name" jdbcType="VARCHAR" property="subName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     cfd.custom_form_det_id, cfd.custom_form_id, cfd.item_key, cfd.item_name, cfd.show_type,
     cfd.item_value,cfd.item_width,cfd.item_list_type,cfd.item_search_type,cfd.item_detail_type,cfd.is_hide,
-    cfd.is_enum,cfd.enum_data,cfd.is_required,cfd.order_num,cfd.create_user_id,cfd.create_time,cfd.modified_time,
+    cfd.is_enum,cfd.spec_code,cfd.enum_data,cfd.is_required,cfd.order_num,cfd.create_user_id,cfd.create_time,cfd.modified_time,
     cfd.modified_time,cfd.status,cfd.is_delete
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select
     <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    cf.custom_form_code ,cf.custom_form_name ,cf.from_rout
+    cf.custom_form_code ,cf.custom_form_name ,cf.from_rout ,scf.custom_form_name AS sub_name,scf.custom_form_code AS sub_code
     from sys_custom_form_det cfd
     LEFT JOIN sys_user su ON cfd.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON cfd.modified_user_id = sus.user_id
     LEFT JOIN sys_custom_form cf on cf.custom_form_id = cfd.custom_form_id
+    LEFT JOIN sys_custom_form scf on cf.sub_id = scf.custom_form_id
     <where>
       <if test="customFormId!=null and customFormId!=''">
         and cfd.custom_form_id=#{customFormId}

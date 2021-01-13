@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -101,11 +102,12 @@ public class SmtHtStation {
     private Integer status;
 
     /**
-     * 是否过站(Y.是  N.否)
+     * 是否过站(0.否  1.是)
      */
     @Column(name = "if_pass_station")
     @ApiModelProperty(name = "ifPassStation",value = "是否过站")
-    private String ifPassStation;
+    @Excel(name = "是否过站", height = 20, width = 30)
+    private Integer ifPassStation;
 
     /**
      * 创建人ID

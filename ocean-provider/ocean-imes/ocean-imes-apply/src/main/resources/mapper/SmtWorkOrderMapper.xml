@@ -83,15 +83,16 @@
     <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder"
             resultMap="BaseResultMapDto">
         select
-        swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,sm.transfer_quantity,
+        swo.work_order_id,swo.work_order_code,swo.order_id,swo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,bt.transfer_quantity,
         swo.work_order_quantity,swo.production_quantity,swo.output_quantity,swo.scheduled_quantity,swo.work_order_status,swo.pro_line_id,spl.pro_name,swo.route_id,sr.route_name,
         swo.barcode_rule_set_id,sbrs.barcode_rule_set_name,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,swo.create_user_id,
         u.user_name as create_user_name,swo.create_time,
         swo.modified_user_id,s.user_name as
         modified_user_name,swo.modified_time,so.order_code, swo.is_delete, swo.organization_id, swo.remark,
-        bo.organization_name
+        bo.organization_name,swo.contract_no
         from fantech_imes.smt_work_order swo
         left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
         left join fantech_imes.smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
         left join fantech_imes.smt_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
@@ -117,7 +118,7 @@
             </if>
         and swo.is_delete = 1
         </where>
-        order by swo.create_time desc
+        order by swo.modified_time desc
     </select>
 
     <select id="pdaFindList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder"
@@ -198,7 +199,7 @@
                sm.material_name,
                sm.version,
                sm.material_desc,
-               sm.transfer_quantity,
+               bt.transfer_quantity,
                swo.work_order_quantity,
                swo.production_quantity,
                swo.output_quantity,
@@ -222,6 +223,7 @@
                so.order_code
         from fantech_imes.smt_work_order swo
                  left join fantech_imes.smt_material sm on swo.material_id = sm.material_id
+                 LEFT JOIN base_tab bt on bt.material_id = sm.material_id
                  left join fantech_imes.smt_route sr on swo.route_id = sr.route_id
                  left join fantech_imes.smt_pro_line spl on swo.pro_line_id = spl.pro_line_id
                  left join smt_order so on so.order_id = swo.order_id

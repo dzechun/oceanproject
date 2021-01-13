@@ -13,7 +13,8 @@
         <result column="radium_carving" jdbcType="VARCHAR" property="radiumCarving"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate"/>
-        <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime"/>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
         <result column="sales_man_name" jdbcType="VARCHAR" property="salesManName"/>
         <result column="photo_url" jdbcType="VARCHAR" property="photoUrl"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
@@ -63,7 +64,8 @@
     <sql id="Base_Column_List">
     so.order_id, so.order_code, so.customer_id, so.material_id, so.order_quantity, so.delivered_quantity, so.Inkjet_paint,
     so.radium_carving, so.status, so.delivery_date, so.photo_url, so.create_user_id, so.create_time, so.modified_user_id,
-    so.modified_time, so.is_delete, so.option1, so.option2, so.option3,so.organization_id, so.remark
+    so.modified_time, so.is_delete, so.option1, so.option2, so.option3,so.organization_id, so.remark, so.sales_man_name,so.schedule_date,
+    so.contract_code,so.order_date
   </sql>
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>,sm.material_name, sm.material_code,sm.version,sm.material_desc,spm.product_model_name,
@@ -74,7 +76,8 @@
         left join ocean.sys_user s on so.modified_user_id = s.user_id
         left join smt_material sm on so.material_id = sm.material_id
         left join smt_customer sc on so.customer_id = sc.customer_id
-        left join smt_product_model spm on spm.product_model_id = sm.product_model_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
         LEFT JOIN base_organization bo ON so.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -144,7 +147,8 @@
                 LEFT JOIN ocean.sys_user su2 ON su2.user_id = mom.modified_user_id
                 LEFT JOIN fantech_imes.base_organization bo ON mom.organization_id = bo.organization_id
                 LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
-                LEFT JOIN smt_product_model spm ON spm.product_model_id = sm.product_model_id
+                LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+                LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
         <where>
             <if test="orderId != null and orderId !=''">
                 and mom.order_id = #{orderId}

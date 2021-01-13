@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import lombok.EqualsAndHashCode;
 
 @Data
 public class WmsInHtStorageBillsDTO extends WmsInHtStorageBills implements Serializable {

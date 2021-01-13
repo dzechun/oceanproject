@@ -12,8 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-;
 
 /**
  * PDA质检
@@ -27,18 +27,18 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
     /**
      * PDA质检ID
      */
-    @ApiModelProperty(name="andinStorageQuarantineId",value = "PDA质检ID")
+    @ApiModelProperty(name="pdaInspectionId",value = "PDA质检ID")
     @Id
-    @Column(name = "andin_storage_quarantine_id")
-    private Long andinStorageQuarantineId;
+    @Column(name = "pda_inspection_id")
+    private Long pdaInspectionId;
 
     /**
      * PDA质检单号
      */
-    @ApiModelProperty(name="andinStorageQuarantineCode",value = "PDA质检单号")
+    @ApiModelProperty(name="pdaInspectionCode",value = "PDA质检单号")
     @Excel(name = "PDA质检单号", height = 20, width = 30,orderNum="1")
-    @Column(name = "andin_storage_quarantine_code")
-    private String andinStorageQuarantineCode;
+    @Column(name = "pda_inspection_code")
+    private String pdaInspectionCode;
 
     /**
      * 工单ID
@@ -141,6 +141,12 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="qmsPdaInspectionDet",value = "PDA质检明细对象")
     private QmsPdaInspectionDetDto qmsPdaInspectionDet;
+
+    /**
+     * PDA质检明细对象集合
+     */
+    @ApiModelProperty(name="list",value = "PDA质检明细对象集合")
+    private List<QmsPdaInspectionDetDto> list;
 
     private static final long serialVersionUID = 1L;
 }

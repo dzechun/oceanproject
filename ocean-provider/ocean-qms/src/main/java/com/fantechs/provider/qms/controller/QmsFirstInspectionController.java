@@ -5,12 +5,14 @@ import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsFirstInspectionDto;
 import com.fantechs.common.base.general.entity.qms.QmsFirstInspection;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtFirstInspection;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsFirstInspection;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.service.QmsFirstInspectionService;
+import com.fantechs.provider.qms.service.QmsHtFirstInspectionService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,6 +37,8 @@ public class QmsFirstInspectionController {
 
     @Autowired
     private QmsFirstInspectionService qmsFirstInspectionService;
+    @Resource
+    private QmsHtFirstInspectionService qmsHtFirstInspectionService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -65,6 +70,14 @@ public class QmsFirstInspectionController {
     public ResponseEntity<List<QmsFirstInspectionDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsFirstInspection searchQmsFirstInspection) {
         Page<Object> page = PageHelper.startPage(searchQmsFirstInspection.getStartPage(),searchQmsFirstInspection.getPageSize());
         List<QmsFirstInspectionDto> list = qmsFirstInspectionService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsFirstInspection));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<QmsHtFirstInspection>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsFirstInspection searchQmsFirstInspection) {
+        Page<Object> page = PageHelper.startPage(searchQmsFirstInspection.getStartPage(),searchQmsFirstInspection.getPageSize());
+        List<QmsHtFirstInspection> list = qmsHtFirstInspectionService.findHtList(ControllerUtil.dynamicConditionByEntity(searchQmsFirstInspection));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
