@@ -16,6 +16,11 @@ import javax.persistence.Transient;
 @Data
 public class MesPackageManagerInDTO {
     /**
+     * 包装管理id
+     */
+    @ApiModelProperty(value = "包装管理id",example = "包装管理id")
+    private Long packageManagerId;
+    /**
      * 栈板号
      */
     @ApiModelProperty(value = "栈板号",example = "栈板号")
