@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDetDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.entity.qms.QmsDisqualification;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspectionDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtPdaInspection;
@@ -233,6 +234,12 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           }
 
           qmsHtPdaInspectionMapper.insertList(list);
+
+          Example example = new Example(QmsPdaInspectionDet.class);
+          Example.Criteria criteria = example.createCriteria();
+          String[] split = ids.split(",");
+          criteria.andIn("pdaInspectionId",Arrays.asList(split));
+          qmsPdaInspectionDetMapper.deleteByExample(example);
 
           return qmsPdaInspectionMapper.deleteByIds(ids);
      }

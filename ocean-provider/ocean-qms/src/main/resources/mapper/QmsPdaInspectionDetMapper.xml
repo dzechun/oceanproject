@@ -32,8 +32,10 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
     <result column="total_quantity" jdbcType="DECIMAL" property="totalQuantity"/>
   </resultMap>
 
@@ -47,7 +49,8 @@
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     sm.material_code,sm.material_desc,ss.storage_name,spm.product_model_name,mpm.package_manager_code AS pallet_code,
-    bmpm.package_manager_code AS box_code,bmpm.total AS total_quantity,bt.main_unit AS unit,1 AS checkout_type
+    bmpm.package_manager_code AS box_code,bmpm.total AS total_quantity,bt.main_unit AS unit,1 AS checkout_type,
+    swa.warehouse_area_name
     from fantech_imes.qms_pda_inspection_det qpid
     LEFT JOIN ocean.sys_user su ON qpid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qpid.modified_user_id = sus.user_id
@@ -61,6 +64,7 @@
     LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
     LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssm.storage_id
+    left join smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
     <where>
       <if test="pdaInspectionId != null and pdaInspectionId != ''">
         and qpid.pda_inspection_id = #{pdaInspectionId}
