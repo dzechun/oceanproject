@@ -57,7 +57,7 @@ public class SearchSysSpecItem  extends BaseQuery implements Serializable {
     private Byte category;
 
     /**
-     * 配置顺序
+     * 配置顺序（0-升序 ，1.降序）默认0
      */
     @ApiModelProperty(name="orderNum" ,value="配置顺序")
     private Byte orderNum;
