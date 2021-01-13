@@ -3,7 +3,7 @@
 <mapper namespace="com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper">
 
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.SmtStorageInventory">
-        <id column="storing_inventory_id" jdbcType="BIGINT" property="storingInventoryId"/>
+        <id column="storage_inventory_id" jdbcType="BIGINT" property="storageInventoryId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="level" jdbcType="VARCHAR" property="level"/>
@@ -29,7 +29,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        ssi.storing_inventory_id,ssi.storage_id,ssi.material_id,ssi.level,ssi.quantity,
+        ssi.storage_inventory_id,ssi.storage_id,ssi.material_id,ssi.level,ssi.quantity,
         ssi.create_user_id,ssi.create_time,ssi.modified_user_id,ssi.modified_time, ssi.organization_id,
 	    ssi.remark,ssi.is_delete,ssi.status
     </sql>
@@ -64,6 +64,9 @@
             </if>
             <if test="storageId!= null and storageId !='' ">
                 and ssi.storage_id = #{storageId}
+            </if>
+            <if test="storageInventoryId!= null and storageInventoryId !='' ">
+                and ssi.storage_inventory_id = #{storageInventoryId}
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
