@@ -4,24 +4,25 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsQualityInspectionDto;
+import com.fantechs.common.base.general.entity.qms.QmsPdaInspectionDet;
 import com.fantechs.common.base.general.entity.qms.QmsQualityInspection;
+import com.fantechs.common.base.general.entity.qms.QmsQualityInspectionDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtQualityInspection;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.mapper.QmsHtQualityInspectionMapper;
+import com.fantechs.provider.qms.mapper.QmsQualityInspectionDetMapper;
 import com.fantechs.provider.qms.mapper.QmsQualityInspectionMapper;
 import com.fantechs.provider.qms.service.QmsQualityInspectionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -34,6 +35,8 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
     private QmsQualityInspectionMapper qmsQualityInspectionMapper;
     @Resource
     private QmsHtQualityInspectionMapper qmsHtQualityInspectionMapper;
+    @Resource
+    private QmsQualityInspectionDetMapper qmsQualityInspectionDetMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -100,7 +103,14 @@ public class QmsQualityInspectionServiceImpl extends BaseService<QmsQualityInspe
         }
 
         qmsHtQualityInspectionMapper.insertList(qmsHtQualityInspections);
-        qmsQualityInspectionMapper.deleteDetail(ids);
+
+        Example example = new Example(QmsQualityInspectionDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        String[] split = ids.split(",");
+        criteria.andIn("qualityInspectionId", Arrays.asList(split));
+        qmsQualityInspectionDetMapper.deleteByExample(example);
+
+
         return qmsQualityInspectionMapper.deleteByIds(ids);
     }
 
