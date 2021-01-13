@@ -66,7 +66,7 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
             smtMaterial.setMaterialCode(info.get料品编码());
             smtMaterial.setMaterialName(info.get品名());
             smtMaterial.setMaterialDesc(info.get描述());
-            smtMaterial.setMaterialType(StringUtils.isEmpty(info.get物料分类()) ? null : info.get物料分类());
+            //smtMaterial.setMaterialType(StringUtils.isEmpty(info.get物料分类()) ? null : info.get物料分类());
 
             //保存物料信息
             searchSmtMaterial.setMaterialCode(info.get料品编码());

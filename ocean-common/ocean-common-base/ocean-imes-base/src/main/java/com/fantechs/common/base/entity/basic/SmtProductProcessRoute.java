@@ -56,6 +56,13 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="proName" ,value="线别名称")
     private String proName;
+
+    /**
+     * 线别编码
+     */
+    @Transient
+    @ApiModelProperty(name="proName" ,value="线别名称")
+    private String proCode;
     /**
      *  产品型号ID
      */
@@ -69,6 +76,13 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
     private String productModelCode;
+
+    /**
+     *  产品型号名称
+     */
+    @Transient
+    @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
+    private String productModelName;
 
     /**
      *  物料ID

@@ -21,7 +21,9 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
 
     <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="version" jdbcType="VARCHAR" property="version" />
@@ -33,12 +35,34 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
+  <sql id="Base_Column_List">
+    sppr.product_process_route_id,
+	sppr.product_type,
+	sppr.pro_line_id,
+	sppr.material_id,
+	sppr.product_model_id,
+	sppr.route_id,
+	sppr.`status`,
+	sppr.remark,
+	sppr.organization_id,
+	sppr.create_user_id,
+	sppr.create_time,
+	sppr.modified_user_id,
+	sppr.modified_time,
+	sppr.is_delete,
+	sppr.option1,
+	sppr.option2,
+	sppr.option3
+  </sql>
+
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute" resultMap="BaseResultMap">
-    select sppr.product_process_route_id,sppr.product_type,sppr.pro_line_id,spl.pro_name,sppr.product_model_id,spm.product_model_code,
-    sppr.material_id,sm.material_code,sm.material_desc,sm.version,sppr.route_id,
-    sppr.status, sppr.create_user_id,u.user_name as createUserName,sppr.create_time, sppr.modified_user_id,s.user_name as modifiedUserName,
-    sppr.modified_time,sppr.is_delete, sppr.organization_id, sppr.remark, bo.organization_name,
-    sr.route_name,sr.route_name, sr.route_desc
+    select <include refid="Base_Column_List"></include>,
+    spl.pro_name, spl.pro_code,
+    spm.product_model_code, spm.product_model_name,
+    sm.material_code,sm.material_desc,sm.version,sppr.route_id,
+    bo.organization_name,
+    sr.route_name, sr.route_code, sr.route_desc,
+    u.user_name as createUserName,s.user_name as modifiedUserName,
     from fantech_imes.smt_product_process_route sppr
     left join fantech_imes.smt_pro_line spl on sppr.pro_line_id=spl.pro_line_id
     left join fantech_imes.smt_product_model spm on sppr.product_model_id=spm.product_model_id
