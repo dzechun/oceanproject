@@ -177,7 +177,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }
             ResponseEntity<Integer> responseEntity = applyFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
             if(responseEntity.getCode()!=0){
-                throw new BizErrorException("修改工单完工数出错");
+                throw new BizErrorException(responseEntity.getMessage());
             }
         }
         return mesPackageManager;
