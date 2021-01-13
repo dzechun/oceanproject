@@ -14,6 +14,7 @@
     <result column="plan_total_qty" jdbcType="DECIMAL" property="planTotalQty" />
     <result column="reality_carton_qty" jdbcType="DECIMAL" property="realityCartonQty" />
     <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
+    <result column="stock_status" jdbcType="TINYINT" property="stockStatus" />
     <result column="out_status" jdbcType="TINYINT" property="outStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -26,9 +27,9 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDetDto">
-    <result column="product_material_code" jdbcType="VARCHAR" property="productMaterialCode"/>
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     <result column="version" jdbcType="VARCHAR" property="version"/>
-    <result column="product_material_desc" jdbcType="VARCHAR" property="productMaterialDesc" />
+    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
@@ -47,6 +48,7 @@
 	snd.plan_total_qty,
 	snd.reality_carton_qty,
 	snd.reality_total_qty,
+	snd.stock_status,
 	snd.out_status,
 	snd.`status`,
 	snd.remark,
@@ -63,9 +65,9 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name AS organization_name,
-    pm.product_model_code AS product_material_code,
+    pm.product_model_code AS product_model_code,
     pm.version AS version,
-    pm.product_model_desc AS product_material_desc,
+    pm.product_model_desc AS product_model_desc,
     w.warehouse_name AS warehouse_name,
     wa.warehouse_area_name AS warehouse_area_name,
     s.storage_name AS storage_name,

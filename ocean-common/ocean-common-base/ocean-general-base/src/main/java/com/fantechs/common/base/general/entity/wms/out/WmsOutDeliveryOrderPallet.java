@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.wms.in;
+package com.fantechs.common.base.general.entity.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -12,75 +12,43 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
+;
 ;
 
 /**
- * 其他入库单
- * wms_in_otherin
+ * 出货单明细与栈板关系表
+ * wms_out_delivery_order_pallet
  * @author hyc
- * @date 2021-01-12 15:27:37
+ * @date 2021-01-13 15:21:33
  */
 @Data
-@Table(name = "wms_in_otherin")
-public class WmsInOtherin extends ValidGroup implements Serializable {
+@Table(name = "wms_out_delivery_order_pallet")
+public class WmsOutDeliveryOrderPallet extends ValidGroup implements Serializable {
     /**
-     * 其他入库单ID
+     * 关系表ID
      */
-    @ApiModelProperty(name="otherinId",value = "其他入库单ID")
-    @NotNull(groups = update.class,message = "其他入库单ID")
+    @ApiModelProperty(name="deliveryOrderPalletId",value = "关系表ID")
+    @NotNull(groups = update.class,message = "关系表ID不能为空")
     @Id
-    @Column(name = "otherin_id")
-    private Long otherinId;
+    @Column(name = "delivery_order_pallet_id")
+    private Long deliveryOrderPalletId;
 
     /**
-     * 其他入库单号
+     * 出货单明细ID
      */
-    @ApiModelProperty(name="otherinCode",value = "其他入库单号")
-    @Excel(name = "其他入库单号", height = 20, width = 30,orderNum="") 
-    @Column(name = "otherin_code")
-    private String otherinCode;
+    @ApiModelProperty(name="deliveryOrderDetId",value = "出货单明细ID")
+    @Excel(name = "出货单明细ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "delivery_order_det_id")
+    private Long deliveryOrderDetId;
 
     /**
-     * 工单ID
+     * 栈板编码
      */
-    @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_id")
-    private Long workOrderId;
-
-    /**
-     * 处理人
-     */
-    @ApiModelProperty(name="operatorUserId",value = "处理人")
-    @Excel(name = "处理人", height = 20, width = 30,orderNum="") 
-    @Column(name = "operator_user_id")
-    private Long operatorUserId;
-
-    /**
-     * 单据日期
-     */
-    @ApiModelProperty(name="inTime",value = "单据日期")
-    @Excel(name = "单据日期", height = 20, width = 30,orderNum="") 
-    @Column(name = "in_time")
-    private Date inTime;
-
-    /**
-     * 单据类型（0-杂入）
-     */
-    @ApiModelProperty(name="inType",value = "单据类型（0-杂入）")
-    @Excel(name = "单据类型（0-杂入）", height = 20, width = 30,orderNum="") 
-    @Column(name = "in_type")
-    private Byte inType;
-
-    /**
-     * 单据状态（0-待入库 1-入库中 2-入库完成）
-     */
-    @ApiModelProperty(name="inStatus",value = "单据状态（0-待入库 1-入库中 2-入库完成）")
-    @Excel(name = "单据状态（0-待入库 1-入库中 2-入库完成）", height = 20, width = 30,orderNum="") 
-    @Column(name = "in_status")
-    private Byte inStatus;
+    @ApiModelProperty(name="palletCode",value = "栈板编码")
+    @Excel(name = "栈板编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "pallet_code")
+    private String palletCode;
 
     /**
      * 是否有效（0、无效 1、有效）
@@ -145,9 +113,6 @@ public class WmsInOtherin extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
-
-    @ApiModelProperty(name="wmsInOtherinDetList",value = "其他出库明细")
-    private List<WmsInOtherinDet> wmsInOtherinDetList;
 
     private static final long serialVersionUID = 1L;
 }

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 ;
 
@@ -41,6 +42,14 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "出库单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "delivery_order_id")
     private Long deliveryOrderId;
+
+    /**
+     * 出货通知单明细ID
+     */
+    @ApiModelProperty(name="shippingNoteDetId",value = "出货通知单明细ID")
+    @Excel(name = "出货通知单明细ID", height = 20, width = 30,orderNum="")
+    @Column(name = "shipping_note_det_id")
+    private Long shippingNoteDetId;
 
     /**
      * 成品ID
@@ -130,6 +139,10 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
+
+    @ApiModelProperty(name="outPalletList",value = "已出库栈板集合")
+    private List<String> outPalletList;
 
     private static final long serialVersionUID = 1L;
 }

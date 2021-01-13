@@ -14,16 +14,16 @@ public class WmsInFinishedProductDetDto extends WmsInFinishedProductDet implemen
     private static final long serialVersionUID = 1L;
 
     @Excel(name = "成品编码", height = 20, width = 30,orderNum="1")
-    @ApiModelProperty(name="productMaterialCode" ,value="成品编码")
-    private String productMaterialCode;
+    @ApiModelProperty(name="productModelCode" ,value="成品编码")
+    private String productModelCode;
 
     @Excel(name = "成品名称", height = 20, width = 30,orderNum="2")
-    @ApiModelProperty(name="productMaterialName" ,value="成品名称")
-    private String productMaterialName;
+    @ApiModelProperty(name="productModelName" ,value="成品名称")
+    private String productModelName;
 
     @Excel(name = "成品描述", height = 20, width = 30,orderNum="3")
-    @ApiModelProperty(name="productMaterialDesc" ,value="成品描述（规格？）")
-    private String productMaterialDesc;
+    @ApiModelProperty(name="productModelDesc" ,value="成品描述（规格？）")
+    private String productModelDesc;
 
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="7")
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")

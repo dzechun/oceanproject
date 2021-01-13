@@ -47,7 +47,7 @@ public class WmsInPalletCarton extends ValidGroup implements Serializable {
     @ApiModelProperty(name="cartonCode",value = "箱号")
     @Excel(name = "箱号", height = 20, width = 30,orderNum="") 
     @Column(name = "carton_code")
-    private Long cartonCode;
+    private String cartonCode;
 
     /**
      * 是否有效（0、无效 1、有效）

@@ -18,11 +18,11 @@ import java.util.Map;
 @Service
 public class WmsInOtherinDetServiceImpl  extends BaseService<WmsInOtherinDet> implements WmsInOtherinDetService {
 
-         @Resource
-         private WmsInOtherinDetMapper wmsInOtherinDetMapper;
+    @Resource
+    private WmsInOtherinDetMapper wmsInOtherinDetMapper;
 
     @Override
-    public List<WmsInOtherinDetDto> findList(Map<String, Object> dynamicConditionByEntity) {
-        return null;
+    public List<WmsInOtherinDetDto> findList(Map<String, Object> map) {
+        return wmsInOtherinDetMapper.findList(map);
     }
 }

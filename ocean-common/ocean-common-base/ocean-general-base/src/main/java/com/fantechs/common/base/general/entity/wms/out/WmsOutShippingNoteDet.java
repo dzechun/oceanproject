@@ -96,10 +96,18 @@ public class WmsOutShippingNoteDet extends ValidGroup implements Serializable {
     private BigDecimal realityTotalQty;
 
     /**
-     * 单据状态（0-待备料 1-备料中 2- 备料完成）
+     * 备料状态（0-待备料 1-备料中 2- 备料完成）
      */
-    @ApiModelProperty(name="outStatus",value = "单据状态（0-待备料 1-备料中 2- 备料完成）")
-    @Excel(name = "单据状态（0-待备料 1-备料中 2- 备料完成）", height = 20, width = 30,orderNum="14", replace = {"待备料_0","备料中_1","备料完成_2"})
+    @ApiModelProperty(name="stockStatus",value = "备料状态（0-待备料 1-备料中 2- 备料完成）")
+    @Excel(name = "备料状态（0-待备料 1-备料中 2- 备料完成）", height = 20, width = 30,orderNum="14",replace = {"待备料_0","备料中_1","备料完成_2"})
+    @Column(name = "stock_status")
+    private Byte stockStatus;
+
+    /**
+     * 出库状态（0-待出库 1-出库中 2- 出库完成）
+     */
+    @ApiModelProperty(name="outStatus",value = "出库状态（0-待出库 1-出库中 2- 出库完成）")
+    @Excel(name = "出库状态（0-待出库 1-出库中 2- 出库完成）", height = 20, width = 30,orderNum="15", replace = {"待出库_0","出库中_1","出库完成_2"})
     @Column(name = "out_status")
     private Byte outStatus;
 
@@ -167,8 +175,11 @@ public class WmsOutShippingNoteDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    @ApiModelProperty(name="palletList",value = "栈板集合")
-    private List<String> palletList;
+    @ApiModelProperty(name="stockPalletList",value = "已调拨栈板集合")
+    private List<String> stockPalletList;
+
+//    @ApiModelProperty(name="outPalletList",value = "已出库栈板集合")
+//    private List<String> outPalletList;
 
     private static final long serialVersionUID = 1L;
 }

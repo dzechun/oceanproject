@@ -7,6 +7,7 @@
     -->
     <id column="delivery_order_det_id" jdbcType="BIGINT" property="deliveryOrderDetId" />
     <result column="delivery_order_id" jdbcType="BIGINT" property="deliveryOrderId" />
+    <result column="shipping_note_det_id" jdbcType="BIGINT" property="shippingNoteDetId" />
     <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
     <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
     <result column="out_total_qty" jdbcType="DECIMAL" property="outTotalQty" />
@@ -30,6 +31,7 @@
   <sql id="Base_Column_List">
     dod.delivery_order_det_id,
     dod.delivery_order_id,
+    dod.shipping_note_det_id,
     dod.product_model_id,
     dod.reality_total_qty,
     dod.out_total_qty,
@@ -47,8 +49,8 @@
     select<include refid="Base_Column_List"/>,
       su.user_name AS create_user_name,
       sus.user_name AS modified_user_name,
-      pm.product_material_code AS product_material_code,
-      pm.product_material_desc AS product_material_desc
+      pm.product_model_code AS product_model_code,
+      pm.product_model_desc AS product_model_desc
     from
         wms_out_delivery_order_det AS dod
     LEFT JOIN ocean.sys_user su ON dod.create_user_id = su.user_id

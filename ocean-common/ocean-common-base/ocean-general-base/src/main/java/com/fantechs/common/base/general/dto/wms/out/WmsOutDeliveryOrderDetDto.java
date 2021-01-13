@@ -13,12 +13,12 @@ import java.io.Serializable;
 public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements Serializable {
 
     @Excel(name = "成品编码", height = 20, width = 30,orderNum="")
-    @ApiModelProperty(name="productMaterialCode" ,value="成品编码")
-    private String productMaterialCode;
+    @ApiModelProperty(name="productModelCode" ,value="成品编码")
+    private String productModelCode;
 
     @Excel(name = "成品描述", height = 20, width = 30,orderNum="")
-    @ApiModelProperty(name="productMaterialName" ,value="成品描述（规格？）")
-    private String productMaterialDesc;
+    @ApiModelProperty(name="productModelDesc" ,value="成品描述（规格？）")
+    private String productModelDesc;
 
     /**
      * 创建用户名称

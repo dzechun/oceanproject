@@ -23,9 +23,9 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInOtherinDetDto">
-    <result column="product_material_code" jdbcType="VARCHAR" property="productMaterialCode"/>
-    <result column="product_material_name" jdbcType="VARCHAR" property="productMaterialName"/>
-    <result column="product_material_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
