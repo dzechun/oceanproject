@@ -67,6 +67,9 @@
             <if test="storageInventoryId!= null and storageInventoryId !='' ">
                 and ssid.stoage_inventory_id = #{storageInventoryId}
             </if>
+            <if test="godownEntry!= null and godownEntry !='' ">
+                and ssid.godown_entry = #{godownEntry}
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
