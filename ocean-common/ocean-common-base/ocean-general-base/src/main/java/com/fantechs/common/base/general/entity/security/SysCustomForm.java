@@ -49,7 +49,7 @@ public class SysCustomForm  extends ValidGroup implements  Serializable {
     private String customFormName;
 
     /**
-     * 自定义表单Id
+     * 关联表单
      */
     @ApiModelProperty(name="subId",value = "关联表单")
     @Excel(name = "关联表单", height = 20, width = 30,orderNum="")
