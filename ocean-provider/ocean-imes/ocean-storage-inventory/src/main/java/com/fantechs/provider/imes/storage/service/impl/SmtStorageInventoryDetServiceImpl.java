@@ -52,41 +52,13 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        ResponseEntity<SmtStorageMaterial> detail = basicFeignApi.detailStorageMaterial(smtStorageInventoryDet.getStorageId());
-        if (StringUtils.isEmpty(detail.getData())) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-        }
+        smtStorageInventoryDet.setCreateTime(new Date());
+        smtStorageInventoryDet.setCreateUserId(currentUser.getUserId());
+        smtStorageInventoryDet.setModifiedTime(new Date());
+        smtStorageInventoryDet.setModifiedUserId(currentUser.getUserId());
+        smtStorageInventoryDet.setStatus(StringUtils.isEmpty(smtStorageInventoryDet.getStatus())?1:smtStorageInventoryDet.getStatus());
 
-        Example storageInventoryExample = new Example(SmtStorageInventory.class);
-        Example.Criteria storageInventoryCriteria = storageInventoryExample.createCriteria();
-        storageInventoryCriteria.andEqualTo("storageId", smtStorageInventoryDet.getStorageId());
-
-        List<SmtStorageInventory> smtStorageInventories = smtStorageInventoryMapper.selectByExample(storageInventoryExample);
-        int i = 0;
-        if (StringUtils.isEmpty(smtStorageInventories)) {
-            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-            smtStorageInventory.setStorageId(detail.getData().getStorageId());
-            smtStorageInventory.setMaterialId(detail.getData().getMaterialId());
-            smtStorageInventory.setLevel(null);
-            smtStorageInventory.setQuantity(smtStorageInventoryDet.getMaterialQuantity());
-            smtStorageInventory.setCreateUserId(currentUser.getUserId());
-            smtStorageInventory.setCreateTime(new Date());
-            smtStorageInventory.setModifiedUserId(currentUser.getUserId());
-            smtStorageInventory.setModifiedTime(new Date());
-            smtStorageInventoryMapper.insertUseGeneratedKeys(smtStorageInventory);
-            smtStorageInventoryDet.setStorageId(smtStorageInventory.getStorageId());
-        } else {
-            //刷新储位库存的数量
-            Map<String,Object> map = new HashMap();
-            map.put("quantity",smtStorageInventoryDet.getMaterialQuantity());
-            map.put("storageId",detail.getData().getStorageId());
-            smtStorageInventoryMapper.refreshQuantity(map);
-            smtStorageInventoryDet.setStorageId(smtStorageInventories.get(0).getStorageId());
-        }
-
-        i = smtStorageInventoryDetMapper.insertUseGeneratedKeys(smtStorageInventoryDet);
-
-        return i;
+        return smtStorageInventoryDetMapper.insertUseGeneratedKeys(smtStorageInventoryDet);
     }
 
     @Override
