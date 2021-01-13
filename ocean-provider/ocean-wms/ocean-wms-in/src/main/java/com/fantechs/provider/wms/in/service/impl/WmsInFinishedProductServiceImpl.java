@@ -1,6 +1,8 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.entity.apply.SmtWorkOrder;
 import com.fantechs.common.base.entity.basic.*;
@@ -22,6 +24,8 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.wms.in.controller.pda.PDAMesPackageManagerController;
+import com.fantechs.provider.wms.in.controller.pda.PDAWmsInStorageBillsController;
 import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtFinishedProductMapper;
@@ -53,6 +57,8 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
     private StorageInventoryFeignApi storageInventoryFeignApi;
     @Resource
     private WmsInFinishedProductDetMapper wmsInFinishedProductDetMapper;
+    @Resource
+    private PDAMesPackageManagerController pdaMesPackageManagerController;
 
 
     @Override
@@ -94,18 +100,25 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
             wmsInFinishedProductDetMapper.insertSelective(wmsInFinishedProductDet);
 
             //存入库时栈板与包箱关系
-            /*for(){
-                //循环栈板上的包装数，等栈板打标模块出来后才能写
-            }*/
-            WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
-//            wmsInPalletCarton.setCartonCode();
-            wmsInPalletCarton.setPalletCode(wmsInFinishedProductDet.getPalletCode());
-            wmsInPalletCarton.setStatus((byte)1);
-            wmsInPalletCarton.setIsDelete((byte)1);
-            wmsInPalletCarton.setCreateTime(new Date());
-            wmsInPalletCarton.setCreateUserId(user.getCreateUserId());
-            //栈板与包箱关系表
-            wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
+            SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
+            searchMesPackageManagerListDTO.setIsFindChildren(true);
+            searchMesPackageManagerListDTO.setBarcode(wmsInFinishedProductDet.getPalletCode());
+            List<MesPackageManagerDTO> mesPackageManagerDTOS = pdaMesPackageManagerController.list(searchMesPackageManagerListDTO).getData();
+            if(StringUtils.isEmpty(mesPackageManagerDTOS)){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            }
+            for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
+                WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
+                wmsInPalletCarton.setCartonCode(mesPackageManagerDTO.getBarCode());
+                wmsInPalletCarton.setPalletCode(wmsInFinishedProductDet.getPalletCode());
+                wmsInPalletCarton.setStatus((byte)1);
+                wmsInPalletCarton.setIsDelete((byte)1);
+                wmsInPalletCarton.setCreateTime(new Date());
+                wmsInPalletCarton.setCreateUserId(user.getCreateUserId());
+                //栈板与包箱关系表
+                wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
+
+            }
 
             SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
             smtStoragePallet.setPalletCode(wmsInFinishedProductDet.getPalletCode());

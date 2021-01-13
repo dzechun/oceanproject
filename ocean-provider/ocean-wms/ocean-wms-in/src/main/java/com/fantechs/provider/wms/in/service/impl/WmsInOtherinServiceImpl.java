@@ -2,6 +2,8 @@ package com.fantechs.provider.wms.in.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -19,6 +21,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.wms.in.controller.pda.PDAMesPackageManagerController;
 import com.fantechs.provider.wms.in.mapper.WmsInHtOtherinMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInOtherinDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInOtherinMapper;
@@ -50,6 +53,8 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
     private StorageInventoryFeignApi storageInventoryFeignApi;
     @Resource
     private WmsInPalletCartonMapper wmsInPalletCartonMapper;
+    @Resource
+    private PDAMesPackageManagerController pdaMesPackageManagerController;
 
     @Override
     public List<WmsInOtherinDto> findList(Map<String, Object> map) {
@@ -88,9 +93,6 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
         BeanUtils.copyProperties(wmsInOtherin,wmsInHtOtherin);
         wmsInHtOtherinMapper.insertSelective(wmsInHtOtherin);
 
-        //查询工单信息
-//        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(wmsInFinishedProduct.getWorkOrderId());
-
         for (WmsInOtherinDet wmsInOtherinDet : wmsInOtherin.getWmsInOtherinDetList()) {
 
             wmsInOtherinDet.setOtherinId(String.valueOf(result));
@@ -100,18 +102,25 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
             wmsInOtherinDetMapper.insertSelective(wmsInOtherinDet);
 
             //存入库时栈板与包箱关系
-            /*for(){
-                //循环栈板上的包装数，等栈板打标模块出来后才能写
-            }*/
-            WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
-//            wmsInPalletCarton.setCartonCode();
-            wmsInPalletCarton.setPalletCode(wmsInOtherinDet.getPalletCode());
-            wmsInPalletCarton.setStatus((byte)1);
-            wmsInPalletCarton.setIsDelete((byte)1);
-            wmsInPalletCarton.setCreateTime(new Date());
-            wmsInPalletCarton.setCreateUserId(user.getCreateUserId());
-            //栈板与包箱关系表
-            wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
+            SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
+            searchMesPackageManagerListDTO.setIsFindChildren(true);
+            searchMesPackageManagerListDTO.setBarcode(wmsInOtherinDet.getPalletCode());
+            List<MesPackageManagerDTO> mesPackageManagerDTOS = pdaMesPackageManagerController.list(searchMesPackageManagerListDTO).getData();
+            if(StringUtils.isEmpty(mesPackageManagerDTOS)){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            }
+            for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
+                WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
+                wmsInPalletCarton.setCartonCode(mesPackageManagerDTO.getBarCode());
+                wmsInPalletCarton.setPalletCode(wmsInOtherinDet.getPalletCode());
+                wmsInPalletCarton.setStatus((byte)1);
+                wmsInPalletCarton.setIsDelete((byte)1);
+                wmsInPalletCarton.setCreateTime(new Date());
+                wmsInPalletCarton.setCreateUserId(user.getCreateUserId());
+                //栈板与包箱关系表
+                wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
+            }
+
 
             SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
             smtStoragePallet.setPalletCode(wmsInOtherinDet.getPalletCode());

@@ -44,11 +44,11 @@ public class SmtStoragePalletController {
         return ControllerUtil.returnCRUD(smtStoragePalletService.save(smtStoragePallet));
     }
 
-//    @ApiOperation("删除")
-//    @PostMapping("/delete")
-//    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
-//        return ControllerUtil.returnCRUD(smtStoragePalletService.batchDelete(ids));
-//    }
+    @ApiOperation("删除")
+    @PostMapping("/delete")
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(smtStoragePalletService.batchDelete(ids));
+    }
 
     @ApiOperation("修改")
     @PostMapping("/update")

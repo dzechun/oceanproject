@@ -89,4 +89,8 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
         return i;
     }
 
+    @Override
+    public int update(SmtStorageInventoryDet smtStorageInventoryDet) {
+        return smtStorageInventoryDetMapper.updateByPrimaryKeySelective(smtStorageInventoryDet);
+    }
 }

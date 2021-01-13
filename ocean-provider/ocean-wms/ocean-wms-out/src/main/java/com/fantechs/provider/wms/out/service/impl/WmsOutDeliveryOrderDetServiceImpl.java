@@ -23,7 +23,7 @@ public class WmsOutDeliveryOrderDetServiceImpl  extends BaseService<WmsOutDelive
     private WmsOutDeliveryOrderDetMapper wmsOutDeliveryOrderDetMapper;
 
     @Override
-    public List<WmsOutDeliveryOrderDetDto> findList(Map<String, Object> dynamicConditionByEntity) {
-        return null;
+    public List<WmsOutDeliveryOrderDetDto> findList(Map<String, Object> map) {
+        return wmsOutDeliveryOrderDetMapper.findList(map);
     }
 }

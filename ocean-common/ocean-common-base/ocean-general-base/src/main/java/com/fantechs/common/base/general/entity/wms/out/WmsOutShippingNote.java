@@ -88,10 +88,18 @@ public class WmsOutShippingNote extends ValidGroup implements Serializable {
     private Long processorUserId;
 
     /**
-     * 单据状态（0-待备料 1-备料中 2- 备料完成）
+     * 备料状态（0-待备料 1-备料中 2- 备料完成）
      */
-    @ApiModelProperty(name="outStatus",value = "单据状态（0-待备料 1-备料中 2- 备料完成）")
-    @Excel(name = "单据状态（0-待备料 1-备料中 2- 备料完成）", height = 20, width = 30,orderNum="9",replace = {"待备料_0","备料中_1","备料完成_2"})
+    @ApiModelProperty(name="stockStatus",value = "备料状态（0-待备料 1-备料中 2- 备料完成）")
+    @Excel(name = "备料状态（0-待备料 1-备料中 2- 备料完成）", height = 20, width = 30,orderNum="9",replace = {"待备料_0","备料中_1","备料完成_2"})
+    @Column(name = "stock_status")
+    private Byte stockStatus;
+
+    /**
+     * 出库状态（0-待出库 1-出库中 2- 出库完成）
+     */
+    @ApiModelProperty(name="outStatus",value = "出库状态（0-待出库 1-出库中 2- 出库完成）")
+    @Excel(name = "出库状态（0-待出库 1-出库中 2- 出库完成）", height = 20, width = 30,orderNum="10",replace = {"待出库_0","出库料中_1","出库完成_2"})
     @Column(name = "out_status")
     private Byte outStatus;
 
@@ -99,7 +107,7 @@ public class WmsOutShippingNote extends ValidGroup implements Serializable {
      * 单据日期
      */
     @ApiModelProperty(name="orderTime",value = "单据日期")
-    @Excel(name = "单据日期", height = 20, width = 30,orderNum="10")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="11")
     @Column(name = "order_time")
     private Date orderTime;
 
@@ -107,7 +115,7 @@ public class WmsOutShippingNote extends ValidGroup implements Serializable {
      * 出货日期
      */
     @ApiModelProperty(name="outTime",value = "出货日期")
-    @Excel(name = "出货日期", height = 20, width = 30,orderNum="11")
+    @Excel(name = "出货日期", height = 20, width = 30,orderNum="12")
     @Column(name = "out_time")
     private Date outTime;
 
@@ -115,7 +123,7 @@ public class WmsOutShippingNote extends ValidGroup implements Serializable {
      * 开船日期
      */
     @ApiModelProperty(name="sailTime",value = "开船日期")
-    @Excel(name = "开船日期", height = 20, width = 30,orderNum="12")
+    @Excel(name = "开船日期", height = 20, width = 30,orderNum="13")
     @Column(name = "sail_time")
     private Date sailTime;
 

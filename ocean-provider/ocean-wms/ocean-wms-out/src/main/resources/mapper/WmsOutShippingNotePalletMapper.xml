@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInPalletCartonMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInPalletCarton">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutShippingNotePalletMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNotePallet">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="pallet_carton_id" jdbcType="BIGINT" property="palletCartonId" />
+    <id column="shipping_note_pallet_id" jdbcType="BIGINT" property="shippingNotePalletId" />
+    <result column="shipping_note_det_id" jdbcType="BIGINT" property="shippingNoteDetId" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
-    <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />

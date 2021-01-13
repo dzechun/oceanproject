@@ -13,6 +13,7 @@
     <result column="currency_type" jdbcType="TINYINT" property="currencyType" />
     <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
     <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
+    <result column="stock_status" jdbcType="TINYINT" property="stockStatus" />
     <result column="out_status" jdbcType="TINYINT" property="outStatus" />
     <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="out_time" jdbcType="TIMESTAMP" property="outTime" />
@@ -42,6 +43,7 @@
     sn.currency_type,
     sn.operator_user_id,
     sn.processor_user_id,
+    sn.stock_status,
     sn.out_status,
     sn.order_time,
     sn.out_time,
@@ -86,8 +88,8 @@
       <if test="processorUserName != null and processorUserName != ''">
         and suser.user_name like CONCAT('%', #{processorUserName}, '%')
       </if>
-      <if test="outStatus!=null and outStatus!=''">
-        and sn.out_status= #{outStatus}
+      <if test="stockStatus!=null and stockStatus!=''">
+        and sn.stock_status= #{stockStatus}
       </if>
     </where>
   </select>

@@ -1,6 +1,5 @@
 package com.fantechs.common.base.entity.basic.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,6 +7,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
+
+;
 
 /**
  * @date 2020-12-04 14:39:37
@@ -51,5 +52,10 @@ public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializa
     @ApiModelProperty(name="godownEntry",value = "入库单号")
     private String godownEntry;
 
+    /**
+     * 物料条码编码
+     */
+    @ApiModelProperty(name="materialBarcodeCode",value = "物料条码编码")
+    private String materialBarcodeCode;
 
 }

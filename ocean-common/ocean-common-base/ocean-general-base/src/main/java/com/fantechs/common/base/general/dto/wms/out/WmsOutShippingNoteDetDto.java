@@ -11,16 +11,16 @@ import java.io.Serializable;
 public class WmsOutShippingNoteDetDto extends WmsOutShippingNoteDet implements Serializable {
 
     @Excel(name = "成品编码", height = 20, width = 30,orderNum="1")
-    @ApiModelProperty(name="productMaterialCode" ,value="成品编码")
-    private String productMaterialCode;
+    @ApiModelProperty(name="productModelCode" ,value="成品编码")
+    private String productModelCode;
 
     @Excel(name = "版本", height = 20, width = 30,orderNum="2")
     @ApiModelProperty(name="version" ,value="版本")
     private String version;
 
     @Excel(name = "成品描述", height = 20, width = 30,orderNum="3")
-    @ApiModelProperty(name="productMaterialName" ,value="成品描述（规格？）")
-    private String productMaterialDesc;
+    @ApiModelProperty(name="productModelDesc" ,value="成品描述（规格？）")
+    private String productModelDesc;
 
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")

@@ -66,6 +66,9 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="materialBarcodeCode!= null and materialBarcodeCode !='' ">
+                and ssid.material_barcode_code = #{materialBarcodeCode}
+            </if>
         </where>
         order by ssid.create_time desc
     </select>

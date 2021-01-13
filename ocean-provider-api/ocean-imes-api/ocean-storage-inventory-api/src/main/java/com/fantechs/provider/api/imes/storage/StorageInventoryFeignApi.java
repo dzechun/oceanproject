@@ -1,9 +1,11 @@
 package com.fantechs.provider.api.imes.storage;
 
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
 import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
@@ -51,6 +53,14 @@ public interface StorageInventoryFeignApi {
     @PostMapping("/smtStorageInventoryDet/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStorageInventoryDet smtStorageInventoryDet);
 
+    @ApiOperation("储位库存明细列表")
+    @PostMapping("/smtStorageInventoryDet/findList")
+    ResponseEntity<List<SmtStorageInventoryDetDto>> findStorageInventoryDetList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageInventoryDet searchSmtStorageInventoryDet);
+
+    @ApiOperation("储位库存明细修改")
+    @PostMapping("/smtStorageInventoryDet/update")
+    ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtStorageInventoryDet.update.class) SmtStorageInventoryDet smtStorageInventoryDet);
+
     @ApiOperation("储位栈板关系表新增")
     @PostMapping("/smtStoragePallet/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStoragePallet smtStoragePallet);
@@ -62,4 +72,8 @@ public interface StorageInventoryFeignApi {
     @ApiOperation("储位栈板关系表修改")
     @PostMapping("/smtStoragePallet/update")
     ResponseEntity update(@ApiParam(value = "必传：",required = true)@RequestBody SmtStoragePallet smtStoragePallet);
+
+    @ApiOperation("储位栈板关系表删除")
+    @PostMapping("/smtStoragePallet/delete")
+    ResponseEntity deleteSmtStoragePallet(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
 }
