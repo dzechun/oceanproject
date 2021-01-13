@@ -66,8 +66,4 @@
     from qms_quality_inspection qqi ORDER BY qqi.quality_inspection_id desc limit 1
   </select>
 
-  <delete id="deleteDetail" parameterType="java.lang.String" >
-    delete from qms_quality_inspection_det qqid where qqid.quality_inspection_id in (#{ids})
-  </delete>
-
 </mapper>

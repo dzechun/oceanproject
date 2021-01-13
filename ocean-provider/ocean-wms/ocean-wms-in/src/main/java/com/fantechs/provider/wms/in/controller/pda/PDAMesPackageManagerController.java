@@ -43,15 +43,16 @@ public class PDAMesPackageManagerController {
     public ResponseEntity<List<MesPackageManagerDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO
     ){
+        Page<Object> page = PageHelper.startPage(searchMesPackageManagerListDTO.getStartPage(), searchMesPackageManagerListDTO.getPageSize());
         //如果是需要查询子级数据，首先通过查询条件查询出父级数据
         if (searchMesPackageManagerListDTO.getIsFindChildren()){
             List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
             if(StringUtils.isEmpty(mesPackageManagerDTOList)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            searchMesPackageManagerListDTO=new SearchMesPackageManagerListDTO();
             searchMesPackageManagerListDTO.setParentId(mesPackageManagerDTOList.get(0).getPackageManagerId());
         }
-        Page<Object> page = PageHelper.startPage(searchMesPackageManagerListDTO.getStartPage(), searchMesPackageManagerListDTO.getPageSize());
         List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesPackageManagerListDTO));
         return ControllerUtil.returnDataSuccess(mesPackageManagerDTOList,(int)page.getTotal());
     }
@@ -62,13 +63,14 @@ public class PDAMesPackageManagerController {
             @ApiParam(value = "条码")@RequestParam String barcode
     ){
         MesPackageManagerInDTO mesPackageManagerInDTO = new MesPackageManagerInDTO();
-        List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicCondition("barCode",barcode));
+        List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicCondition("barcode",barcode));
         if(StringUtils.isNotEmpty(mesPackageManagerDTOList)){
             MesPackageManagerDTO mesPackageManagerDTO = mesPackageManagerDTOList.get(0);
             BeanUtils.copyProperties(mesPackageManagerDTO,mesPackageManagerInDTO);
             if(mesPackageManagerDTO.getParentId()!=0){
                 MesPackageManager mesPackageManager = mesPackageManagerService.selectByKey(mesPackageManagerDTO.getParentId());
                 mesPackageManagerInDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
+                mesPackageManagerInDTO.setPackageManagerId(mesPackageManager.getPackageManagerId());
                 mesPackageManagerInDTO.setBoxCount(mesPackageManager.getTotal());
             }
         }
