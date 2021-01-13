@@ -32,6 +32,13 @@ public class SysHtSpecItem implements Serializable {
     private Long specId;
 
     /**
+     * 配置所属菜单ID
+     */
+    @Column(name = "menu_id")
+    @ApiModelProperty(name="menuId" ,value="配置所属菜单ID")
+    private Long menuId;
+
+    /**
      * 配置项代码
      */
     @Column(name = "spec_code")
