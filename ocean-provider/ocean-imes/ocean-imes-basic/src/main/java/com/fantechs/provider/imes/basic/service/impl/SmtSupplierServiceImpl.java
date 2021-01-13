@@ -133,6 +133,10 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             if (record == 0){
                 smtAddresses.add(smtAddress);
             }
+            //更新最新的默认地址
+            if (StringUtils.isNotEmpty(smtAddress.getIfDefault())){
+                smtSupplierAddressMapper.updateIfDefault(smtAddress.getAddressId(),entity.getSupplierId());
+            }
         }
         if (smtAddresses.size()!=0){
             //将新增地址与供应商关联，并且保存

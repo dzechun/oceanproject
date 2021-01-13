@@ -45,4 +45,9 @@
     order by create_time desc
   </select>
 
+  <update id="updateIfDefault" parameterType="int">
+    update smt_supplier_address set if_default = 0 where supplier_id = #{supplierId},
+    update smt_supplier_address set if_default = 1 where supplier_id = #{supplierId} and address_id = #{addressId}
+  </update>
+
 </mapper>
