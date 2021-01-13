@@ -78,6 +78,10 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
             wmsOutDeliveryOrderDet.setCreateUserId(user.getUserId());
             wmsOutDeliveryOrderDetMapper.insertSelective(wmsOutDeliveryOrderDet);
         }
+
+        //修改库存
+
+
         return result;
     }
 }

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 ;
 
@@ -165,6 +166,9 @@ public class WmsOutShippingNoteDet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty(name="palletList",value = "栈板集合")
+    private List<String> palletList;
 
     private static final long serialVersionUID = 1L;
 }

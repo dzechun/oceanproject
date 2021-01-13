@@ -16,4 +16,6 @@ import java.util.Map;
 public interface WmsOutShippingNoteService extends IService<WmsOutShippingNote> {
 
     List<WmsOutShippingNoteDto> findList(Map<String, Object> dynamicConditionByEntity);
+
+    int submit(WmsOutShippingNote wmsOutShippingNote);
 }

@@ -5,6 +5,7 @@ import com.fantechs.common.base.mybatis.MyMapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
+
 @Mapper
 public interface WmsOutHtShippingNoteMapper extends MyMapper<WmsOutHtShippingNote> {
 }

@@ -58,6 +58,9 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(doo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="deliveryOrderId != null">
+        and dod.delivery_order_id = #{deliveryOrderId}
+      </if>
     </where>
   </select>
 </mapper>
