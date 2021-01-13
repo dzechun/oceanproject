@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtWorkOrderReportMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrderReport">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="work_order_report_id" jdbcType="BIGINT" property="workOrderReportId"/>
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="completed_quantity" jdbcType="INTEGER" property="completedQuantity"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.apply.SmtWorkOrderReportDto">
+        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="work_order_quantity" jdbcType="INTEGER" property="workOrderQuantity"/>
+        <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity"/>
+        <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
+        <result column="process_name" jdbcType="VARCHAR" property="productionProcess"/>
+        <result column="output_quantity" jdbcType="INTEGER" property="outPutQuantity"/>
+        <result column="completed_quantity" jdbcType="INTEGER" property="completedQuantity"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderReport"
+            resultMap="BaseResultMapDto">
+        select
+        swor.work_order_report_id,swor.work_order_id,wo.work_order_code,wo.work_order_type,wo.material_id,sm.material_code,sm.version,bt.transfer_quantity,
+        wo.work_order_quantity,wo.output_quantity,wo.planned_end_time,sp.process_name,swor.completed_quantity,swor.create_time,swor.modified_user_id,swor.modified_time,
+        swor.is_delete, swor.organization_id, swor.remark, bo.organization_name
+        from fantech_imes.smt_work_order_report swor
+        LEFT JOIN smt_work_order wo on wo.work_order_id = swor.work_order_id
+        LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join fantech_imes.smt_route sr on wo.route_id=sr.route_id
+        LEFT JOIN smt_route_process srp ON srp.route_id = sr.route_id
+        LEFT JOIN smt_process sp ON srp.process_id = sp.process_id
+        LEFT JOIN fantech_imes.base_organization bo ON swor.organization_id = bo.organization_id
+        <where>
+            1=1
+            <if test="workOrderId!= null and workOrderId!= ''">
+                and swor.work_order_id=#{workOrderId}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and wo.work_order_code=#{workOrderCode}
+            </if>
+        </where>
+        order by swor.create_time desc
+    </select>
+</mapper>

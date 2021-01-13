@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtProcessListProcessMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtProcessListProcess">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="process_list_process_id" jdbcType="BIGINT" property="processListProcessId"/>
+        <result column="work_order_card_poo_id" jdbcType="BIGINT" property="workOrderCardPooId"/>
+        <result column="work_order_barcode_pool_id" jdbcType="BIGINT" property="workOrderBarcodePoolId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_hold" jdbcType="TINYINT" property="isHold"/>
+        <result column="inbound_time" jdbcType="TIMESTAMP" property="inboundTime"/>
+        <result column="outbound_time" jdbcType="TIMESTAMP" property="outboundTime"/>
+        <result column="package_num" jdbcType="VARCHAR" property="packageNum"/>
+        <result column="box_num" jdbcType="VARCHAR" property="boxNum"/>
+        <result column="filament_plate_num" jdbcType="VARCHAR" property="filamentPlateNum"/>
+        <result column="selective" jdbcType="VARCHAR" property="selective"/>
+        <result column="selective_result" jdbcType="VARCHAR" property="selectiveResult"/>
+        <result column="rework_id" jdbcType="BIGINT" property="reworkId"/>
+        <result column="operator" jdbcType="BIGINT" property="operator"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.apply.SmtProcessListProcessDto">
+        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="task_code" jdbcType="BIGINT" property="taskCode"/>
+        <result column="barcodeTaskCode" jdbcType="BIGINT" property="barcodeTaskCode"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_hold" jdbcType="TINYINT" property="isHold"/>
+        <result column="inbound_time" jdbcType="TIMESTAMP" property="inboundTime"/>
+        <result column="outbound_time" jdbcType="TIMESTAMP" property="outboundTime"/>
+        <result column="package_num" jdbcType="VARCHAR" property="packageNum"/>
+        <result column="box_num" jdbcType="VARCHAR" property="boxNum"/>
+        <result column="filament_plate_num" jdbcType="VARCHAR" property="filamentPlateNum"/>
+        <result column="selective" jdbcType="VARCHAR" property="selective"/>
+        <result column="selective_result" jdbcType="VARCHAR" property="selectiveResult"/>
+        <result column="rework_id" jdbcType="BIGINT" property="reworkId"/>
+        <result column="operator" jdbcType="BIGINT" property="operator"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <resultMap id="SmtRouteProcess" type="com.fantechs.common.base.entity.basic.SmtRouteProcess">
+        <id column="route_process_id" jdbcType="BIGINT" property="routeProcessId"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId"/>
+        <result column="previous_process_id" jdbcType="BIGINT" property="previousProcessId"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="is_pass" jdbcType="TINYINT" property="isPass"/>
+        <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass"/>
+        <result column="inspection_time" jdbcType="INTEGER" property="inspectionTime"/>
+        <result column="qualification_id" jdbcType="BIGINT" property="qualificationId"/>
+    </resultMap>
+
+    <resultMap id="ProcessListMapDto" type="com.fantechs.common.base.dto.apply.ProcessListDto">
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId"/>
+        <result column="previous_process_id" jdbcType="BIGINT" property="previousProcessId"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="is_pass" jdbcType="TINYINT" property="isPass"/>
+        <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass"/>
+        <result column="inspection_time" jdbcType="INTEGER" property="inspectionTime"/>
+        <result column="qualification_id" jdbcType="BIGINT" property="qualificationId"/>
+    </resultMap>
+    <select id="findList" resultMap="BaseResultMapDto"
+            parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtProcessListProcess">
+        select wo.work_order_code,swocp.task_code,swobp.task_code as
+        barcodeTaskCode,wo.material_id,sm.material_code,sm.material_name,sm.version,wo.route_id,sr.route_name,sml.pro_name,splp.process_id,sp.process_name,
+        splp.`status`,splp.is_hold,splp.inbound_time,splp.outbound_time,splp.package_num,splp.box_num,splp.filament_plate_num,
+        splp.selective,splp.selective_result,splp.rework_id,splp.operator,splp.organization_id, splp.remark, bo.organization_name
+        from fantech_imes.smt_process_list_process splp
+        LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_poo_id
+        LEFT JOIN smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
+        splp.work_order_barcode_pool_id
+        LEFT JOIN smt_work_order wo ON wo.work_order_id = swocp.work_order_id
+        LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
+        left join smt_route sr on wo.route_id=sr.route_id
+        left join smt_order so on wo.order_id=so.order_id
+        LEFT JOIN smt_station ss ON ss.process_id = splp.process_id
+        LEFT JOIN smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
+        LEFT JOIN smt_process sp ON sp.process_id = splp.process_id
+        LEFT JOIN fantech_imes.base_organization bo ON splp.organization_id = bo.organization_id
+        <where>
+            1=1
+        </where>
+    </select>
+
+    <select id="select_smt_route_process" resultMap="SmtRouteProcess"
+            parameterType="com.fantechs.common.base.entity.basic.SmtRouteProcess">
+        select
+        route_process_id,route_id,section_id,process_id,next_process_id,previous_process_id,order_num,is_pass,is_must_pass,inspection_time,qualification_id
+        <where>
+            route_id = #{routdId}
+        </where>
+    </select>
+
+
+    <select id="findProcess" parameterType="Long" resultMap="ProcessListMapDto">
+        SELECT
+          wo.work_order_id,
+          wo.route_id,
+          rp.section_id,
+          rp.process_id,
+          rp.next_process_id,
+          rp.previous_process_id,
+          rp.order_num,
+          rp.is_pass,
+          rp.is_must_pass,
+          rp.inspection_time,
+          rp.qualification_id
+        FROM
+            smt_work_order wo
+        LEFT JOIN smt_route_process rp ON wo.route_id = rp.route_id
+        where wo.work_order_id=#{workOrderId}
+  </select>
+</mapper>

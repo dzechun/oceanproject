@@ -10,7 +10,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.mes.pm","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.imes.pm.mapper"})
+@MapperScan({"com.fantechs.provider.mes.pm.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
 public class OceanMesPmApplication {
 
