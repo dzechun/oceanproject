@@ -19,15 +19,12 @@ import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
 import com.fantechs.provider.imes.basic.service.SmtFactoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * Created by lfz on 2020/9/1.
@@ -35,13 +32,13 @@ import java.util.Map;
 @Service
 @Slf4j
 public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements SmtFactoryService {
-    @Autowired
+    @Resource
     private SmtFactoryMapper smtFactoryMapper;
-    @Autowired
+    @Resource
     private SmtHtFactoryMapper smtHtFactoryMapper;
-    @Autowired
+    @Resource
     private SmtDeptMapper smtDeptMapper;
-    @Autowired
+    @Resource
     private SmtWorkShopMapper smtWorkShopMapper;
 
 
@@ -154,5 +151,60 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         smtHtFactoryMapper.insert(smtHtFactory);
 
         return smtFactoryMapper.updateByPrimaryKeySelective(smtFactory);
+    }
+
+    @Override
+    public Map<String, Object> importExcel(List<SmtFactoryDto> smtFactoryDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtFactory> list = new LinkedList<>();
+        LinkedList<SmtHtFactory> htList = new LinkedList<>();
+        for (int i = 0; i < smtFactoryDtos.size(); i++) {
+            SmtFactoryDto smtFactoryDto = smtFactoryDtos.get(i);
+            String factoryCode = smtFactoryDto.getFactoryCode();
+            String factoryName = smtFactoryDto.getFactoryName();
+            if (StringUtils.isEmpty(
+                    factoryCode,factoryName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtFactory.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("factoryCode",smtFactoryDto.getFactoryCode());
+            if (StringUtils.isNotEmpty(smtFactoryMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            SmtFactory smtFactory = new SmtFactory();
+            BeanUtils.copyProperties(smtFactoryDto,smtFactory);
+            smtFactory.setCreateTime(new Date());
+            smtFactory.setCreateUserId(currentUser.getUserId());
+            smtFactory.setModifiedTime(new Date());
+            smtFactory.setModifiedUserId(currentUser.getUserId());
+            list.add(smtFactory);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtFactoryMapper.insertList(list);
+        }
+
+        for (SmtFactory smtFactory : list) {
+            SmtHtFactory smtHtFactory = new SmtHtFactory();
+            BeanUtils.copyProperties(smtFactory,smtHtFactory);
+            htList.add(smtHtFactory);
+        }
+        smtHtFactoryMapper.insertList(htList);
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

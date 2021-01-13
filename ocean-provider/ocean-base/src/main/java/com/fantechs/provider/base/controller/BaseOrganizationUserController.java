@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/29.
  */
 @RestController
-@Api(tags = "baseOrganizationUser控制器")
+@Api(tags = "用户组织信息管理")
 @RequestMapping("/baseOrganizationUser")
 @Validated
 public class BaseOrganizationUserController {

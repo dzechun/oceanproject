@@ -47,13 +47,16 @@
     LEFT JOIN ocean.sys_user sus ON bcws.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON bcws.organization_id = bo.organization_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+      <if test="startTime!= null and startTime!= '' and endTime != null and endTime != ''">
         and date_format(bcws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="calendarId != null and calendarId!=''">
+      <if test="calendarId != null and calendarId !=''">
         and bcws.calendar_id =#{calendarId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="day != null and day !=''">
+        and bcws.`day` = #{day}
+      </if>
+      <if test="status!=null and status !=''">
         and bcws.status=#{status}
       </if>
     </where>

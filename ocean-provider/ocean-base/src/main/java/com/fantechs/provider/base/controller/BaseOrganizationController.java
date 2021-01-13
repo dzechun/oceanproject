@@ -96,4 +96,12 @@ public class BaseOrganizationController {
         }
     }
 
+    @ApiOperation("绑定用户")
+    @PostMapping("/addUser")
+    public ResponseEntity addUser(
+            @ApiParam(value = "组织Id",required = true)@RequestParam @NotNull(message = "角色Id不能为空") Long organizationId,
+            @ApiParam(value = "用户Id",required = true)@RequestBody @NotNull(message = "userIds不能为空") List<Long> userIds){
+        return ControllerUtil.returnCRUD(baseOrganizationService.addUser(organizationId,userIds));
+    }
+
 }

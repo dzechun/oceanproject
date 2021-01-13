@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseCalendar;
 import com.fantechs.common.base.general.entity.basic.BaseCalendarWorkShift;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseCalendarWorkShift;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShift;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShiftTime;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -109,8 +110,14 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
                         //通过日历班次关系集合获取班次时间信息
                         SearchBaseWorkShiftTime searchBaseWorkShiftTime = new SearchBaseWorkShiftTime();
                         searchBaseWorkShiftTime.setWorkShiftId(baseCalendarWorkShiftDto.getWorkShiftId());
-                        List<BaseWorkShiftTime> baseWorkShiftTimes = baseWorkShiftTimeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseCalendarWorkShift));
+                        List<BaseWorkShiftTime> baseWorkShiftTimes = baseWorkShiftTimeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkShiftTime));
                         baseCalendarWorkShiftDto.setBaseWorkShiftTimes(baseWorkShiftTimes);
+
+                        //查询班次信息
+                        SearchBaseWorkShift searchBaseWorkShift = new SearchBaseWorkShift();
+                        searchBaseWorkShift.setWorkShiftId(baseCalendarWorkShiftDto.getWorkShiftId());
+                        BaseWorkShiftDto baseWorkShiftDto = baseWorkShiftServicel.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkShift)).get(0);
+                        baseCalendarWorkShiftDto.setWorkShiftName(baseWorkShiftDto.getWorkShiftName());
                     }
                 }
             }
