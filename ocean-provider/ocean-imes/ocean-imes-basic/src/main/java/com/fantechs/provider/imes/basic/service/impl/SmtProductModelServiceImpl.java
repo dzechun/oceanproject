@@ -10,9 +10,13 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtProductModel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProductModelMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtMaterialMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductModelMapper;
@@ -39,6 +43,8 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Resource
     private SmtMaterialMapper smtMaterialMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Resource
     private SmtProductProcessRouteMapper smtProductProcessRouteMapper;
@@ -119,19 +125,25 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             }
 
             //被物料引用
-            Example example = new Example(SmtMaterial.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productModelId",productModelId);
-            List<SmtMaterial> smtMaterials = smtMaterialMapper.selectByExample(example);
+            SearchBaseTab searchBaseTab = new SearchBaseTab();
+            searchBaseTab.setProductModelId(Long.valueOf(productModelId));
+            List<BaseTab> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
+            if (StringUtils.isNotEmpty(baseTabs)){
+                BaseTab baseTab = baseTabs.get(0);
+                if (StringUtils.isNotEmpty(baseTab)){
+                    throw new BizErrorException("数据被引用，无法删除");
+                }
 
-            //被产品工艺路线引用
-            Example example1 = new Example(SmtProductProcessRoute.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("productModelId",productModelId);
-            List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example1);
-            if(StringUtils.isNotEmpty(smtMaterials)||StringUtils.isNotEmpty(smtProductProcessRoutes)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+                //被产品工艺路线引用
+                Example example1 = new Example(SmtProductProcessRoute.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("productModelId",productModelId);
+                List<SmtProductProcessRoute> smtProductProcessRoutes = smtProductProcessRouteMapper.selectByExample(example1);
+                if(StringUtils.isNotEmpty(baseTab)||StringUtils.isNotEmpty(smtProductProcessRoutes)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+                }
             }
+
 
             //新增产品型号历史信息
             SmtHtProductModel smtHtProductModel=new SmtHtProductModel();

@@ -5,80 +5,148 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="tab_id" jdbcType="BIGINT" property="tabId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="material_property" jdbcType="TINYINT" property="materialProperty" />
-    <result column="image" jdbcType="VARCHAR" property="image" />
-    <result column="is_batch" jdbcType="TINYINT" property="isBatch" />
-    <result column="is_quality_test" jdbcType="TINYINT" property="isQualityTest" />
-    <result column="is_case_code" jdbcType="TINYINT" property="isCaseCode" />
-    <result column="is_sequence_code" jdbcType="TINYINT" property="isSequenceCode" />
-    <result column="issue_method" jdbcType="TINYINT" property="issueMethod" />
-    <result column="if_compoboard" jdbcType="TINYINT" property="ifCompoboard" />
-    <result column="if_linking_board" jdbcType="TINYINT" property="ifLinkingBoard" />
-    <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber" />
-    <result column="takt" jdbcType="INTEGER" property="takt" />
-    <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
-    <result column="min_safety_stock" jdbcType="DECIMAL" property="minSafetyStock" />
-    <result column="max_safety_stock" jdbcType="DECIMAL" property="maxSafetyStock" />
-    <result column="purchase_cycle" jdbcType="BIGINT" property="purchaseCycle" />
-    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit" />
-    <result column="sub_unit" jdbcType="VARCHAR" property="subUnit" />
-    <result column="conversion_rate" jdbcType="DECIMAL" property="conversionRate" />
-    <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+      <id column="tab_id" jdbcType="BIGINT" property="tabId" />
+      <result column="material_id" jdbcType="BIGINT" property="materialId" />
+      <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
+      <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
+      <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+      <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
+      <result column="label_id" jdbcType="BIGINT" property="labelId" />
+      <result column="inspection_type_id" jdbcType="BIGINT" property="inspectionTypeId" />
+      <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+      <result column="simple_name" jdbcType="VARCHAR" property="simpleName" />
+      <result column="english_describe" jdbcType="VARCHAR" property="englishDescribe" />
+      <result column="material_property" jdbcType="TINYINT" property="materialProperty" />
+      <result column="image" jdbcType="VARCHAR" property="image" />
+      <result column="is_batch" jdbcType="TINYINT" property="isBatch" />
+      <result column="is_quality_test" jdbcType="TINYINT" property="isQualityTest" />
+      <result column="is_case_code" jdbcType="TINYINT" property="isCaseCode" />
+      <result column="is_sequence_code" jdbcType="TINYINT" property="isSequenceCode" />
+      <result column="issue_method" jdbcType="TINYINT" property="issueMethod" />
+      <result column="if_compoboard" jdbcType="TINYINT" property="ifCompoboard" />
+      <result column="if_linking_board" jdbcType="TINYINT" property="ifLinkingBoard" />
+      <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber" />
+      <result column="takt" jdbcType="INTEGER" property="takt" />
+      <result column="min_safety_stock" jdbcType="DECIMAL" property="minSafetyStock" />
+      <result column="max_safety_stock" jdbcType="DECIMAL" property="maxSafetyStock" />
+      <result column="purchase_cycle" jdbcType="BIGINT" property="purchaseCycle" />
+      <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
+      <result column="main_unit" jdbcType="VARCHAR" property="mainUnit" />
+      <result column="sub_unit" jdbcType="VARCHAR" property="subUnit" />
+      <result column="conversion_rate" jdbcType="DECIMAL" property="conversionRate" />
+      <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
+      <result column="supply_mode" jdbcType="INTEGER" property="supplyMode" />
+      <result column="color" jdbcType="VARCHAR" property="color" />
+      <result column="length" jdbcType="DECIMAL" property="length" />
+      <result column="width" jdbcType="DECIMAL" property="width" />
+      <result column="height" jdbcType="DECIMAL" property="height" />
+      <result column="volume" jdbcType="DECIMAL" property="volume" />
+      <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
+      <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight" />
+      <result column="material_type" jdbcType="VARCHAR" property="materialType" />
+      <result column="purchase_quantity" jdbcType="DECIMAL" property="purchaseQuantity" />
+      <result column="storage_temperature" jdbcType="VARCHAR" property="storageTemperature" />
+      <result column="storage_humidity" jdbcType="VARCHAR" property="storageHumidity" />
+      <result column="storage_require_desc" jdbcType="VARCHAR" property="storageRequireDesc" />
+      <result column="packing_method" jdbcType="INTEGER" property="packingMethod" />
+      <result column="status" jdbcType="TINYINT" property="status" />
+      <result column="remark" jdbcType="VARCHAR" property="remark" />
+      <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+      <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+      <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+      <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+      <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
+      <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
   </resultMap>
 
   <sql id="Base_Column_List">
     bt.tab_id,
 	bt.material_id,
+	bt.inspection_item_id,
+	bt.package_specification_id,
+	bt.product_model_id,
+	bt.label_category_id,
+	bt.label_id,
+	bt.inspection_type_id,
+	bt.supplier_id,
+	bt.simple_name,
+	bt.english_describe,
 	bt.material_property,
 	bt.image,
-	bt.is_batch,
 	bt.is_quality_test,
+	bt.is_batch,
 	bt.is_case_code,
 	bt.is_sequence_code,
-	bt.issue_method,
 	bt.if_compoboard,
+	bt.issue_method,
 	bt.if_linking_board,
 	bt.linking_board_number,
 	bt.takt,
-	bt.transfer_quantity,
 	bt.min_safety_stock,
 	bt.max_safety_stock,
 	bt.purchase_cycle,
+	bt.transfer_quantity,
 	bt.main_unit,
 	bt.sub_unit,
 	bt.conversion_rate,
 	bt.customer_material_code,
+	bt.color,
+	bt.supply_mode,
+	bt.length,
+	bt.width,
+	bt.height,
+	bt.volume,
+	bt.net_weight,
+	bt.gross_weight,
+	bt.material_type,
+	bt.purchase_quantity,
+	bt.storage_temperature,
+	bt.storage_humidity,
+	bt.storage_require_desc,
+	bt.packing_method,
 	bt.`status`,
 	bt.remark,
 	bt.organization_id,
 	bt.create_user_id,
-	bt.create_time,
 	bt.modified_user_id,
+	bt.create_time,
+	bt.modified_time,
 	bt.is_delete,
-	bt.modified_time
+	bt.is_wet_sensitive,
+	bt.wet_sensitive_level
   </sql>
 
   <select id="findList" resultMap="BaseResultMap" parameterType="map">
-    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+      qii.inspection_item_code,qii.inspection_item_name,
+      qit.inspection_type_code,qit.inspection_type_name,
+      sps.package_specification_code,sps.package_specification_name,
+      spm.product_model_code,spm.product_model_name,
+      blc.label_category_code,blc.label_category_name,
+      bl.label_code,bl.label_name,
+      ss.supplier_name,ss.supplier_code
     FROM fantech_imes.base_tab bt
+    LEFT JOIN fantech_imes.qms_inspection_item qii ON bt.inspection_item_id = qii.inspection_item_id
+    LEFT JOIN fantech_imes.qms_inspection_type qit ON bt.inspection_type_id = qit.inspection_type_id
+    LEFT JOIN fantech_imes.smt_package_specification sps ON bt.package_specification_id = sps.package_specification_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes.bcm_label_category blc ON bt.label_category_id = blc.label_category_id
+    LEFT JOIN fantech_imes.bcm_label bl ON bt.label_id = bl.label_id
+    LEFT JOIN fantech_imes.smt_supplier ss ON bt.supplier_id = ss.supplier_id
     LEFT JOIN ocean.sys_user su ON bt.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON bt.modified_user_id = sus.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="materialId != null and materialId!=''">
+      <if test="materialId != null and materialId !=''">
         and bt.material_id = #{materialId}
+      </if>
+      <if test="productModelId != null and productModelId !=''">
+        and bt.product_model_id = #{productModelId}
       </if>
     </where>
     order by create_time desc

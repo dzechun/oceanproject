@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,4 +20,9 @@ public class SearchBaseTab extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "materialId",value = "物料ID")
     private Long materialId;
 
+    /**
+     * 产品型号id
+     */
+    @ApiModelProperty(name="productModelId",value = "产品型号id")
+    private Long productModelId;
 }

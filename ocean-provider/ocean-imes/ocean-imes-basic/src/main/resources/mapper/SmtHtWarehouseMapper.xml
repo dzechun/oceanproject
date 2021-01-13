@@ -25,17 +25,38 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
+  <sql id="Base_Column_List">
+    shw.ht_warehouse_id,
+	shw.warehouse_id,
+	shw.warehouse_code,
+	shw.warehouse_name,
+	shw.warehouse_desc,
+	shw.warehouse_category,
+	shw.temperature,
+	shw.capacity,
+	shw.unit,
+	shw.`status`,
+	shw.remark,
+	shw.organization_id,
+	shw.create_user_id,
+	shw.create_time,
+	shw.modified_user_id,
+	shw.modified_time,
+	shw.is_delete,
+	shw.option1,
+	shw.option2,
+	shw.option3
+  </sql>
+
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse" resultMap="BaseResultMap">
-    select  shw.ht_warehouse_id,shw.warehouse_id,shw.warehouse_code,shw.warehouse_name,shw.warehouse_desc,shw.status,shw.create_user_id,
-    shw.warehouse_category,shw.capacity,shw.temperature,shw.unit,
-    u.user_name as createUserName,shw.create_time,shw.modified_user_id, s.user_name as modifiedUserName,
-    shw.modified_time, shw.is_delete, shw.organization_id, shw.remark, bo.organization_name
-    from fantech_imes.smt_ht_warehouBaseProductFamilyMapper.xmlse shw
+    select  <include refid="Base_Column_List"></include>,
+    u.user_name as createUserName, s.user_name as modifiedUserName,
+    bo.organization_name
+    from fantech_imes.smt_ht_warehouse shw
     left join ocean.sys_user u on shw.create_user_id=u.user_id
     left join ocean.sys_user s on shw.modified_user_id=s.user_id
     LEFT JOIN fantech_imes.base_organization bo ON shw.organization_id = bo.organization_id
     <where>
-      1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

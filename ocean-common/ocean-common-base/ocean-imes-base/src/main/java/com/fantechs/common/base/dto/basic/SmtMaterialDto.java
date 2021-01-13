@@ -16,9 +16,9 @@ public class SmtMaterialDto extends SmtMaterial implements Serializable {
      * 条码规则集合名称
      */
     @Transient
-    @ApiModelProperty(name="barcodeRuleName" ,value="条码规则集合")
+    @ApiModelProperty(name="barcodeRuleSetName" ,value="条码规则集合名称")
     @Excel(name = "条码规则集合名称", height = 20, width = 30)
-    private String barcodeRuleName;
+    private String barcodeRuleSetName;
 
     /**
      * 创建账号名称

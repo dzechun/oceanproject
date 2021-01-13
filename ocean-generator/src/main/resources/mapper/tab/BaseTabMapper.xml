@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.mapper.tab.BaseTabMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.model.tab.BaseTab">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseTab">
     <!--
       WARNING - @mbg.generated
     -->
     <id column="tab_id" jdbcType="BIGINT" property="tabId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
+    <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
+    <result column="label_id" jdbcType="BIGINT" property="labelId" />
+    <result column="inspection_type_id" jdbcType="BIGINT" property="inspectionTypeId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="simple_name" jdbcType="VARCHAR" property="simpleName" />
+    <result column="english_describe" jdbcType="VARCHAR" property="englishDescribe" />
     <result column="material_property" jdbcType="TINYINT" property="materialProperty" />
     <result column="image" jdbcType="VARCHAR" property="image" />
     <result column="is_batch" jdbcType="TINYINT" property="isBatch" />
@@ -18,21 +27,37 @@
     <result column="if_linking_board" jdbcType="TINYINT" property="ifLinkingBoard" />
     <result column="linking_board_number" jdbcType="INTEGER" property="linkingBoardNumber" />
     <result column="takt" jdbcType="INTEGER" property="takt" />
-    <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
     <result column="min_safety_stock" jdbcType="DECIMAL" property="minSafetyStock" />
     <result column="max_safety_stock" jdbcType="DECIMAL" property="maxSafetyStock" />
     <result column="purchase_cycle" jdbcType="BIGINT" property="purchaseCycle" />
+    <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity" />
     <result column="main_unit" jdbcType="VARCHAR" property="mainUnit" />
     <result column="sub_unit" jdbcType="VARCHAR" property="subUnit" />
     <result column="conversion_rate" jdbcType="DECIMAL" property="conversionRate" />
     <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
+    <result column="supply_mode" jdbcType="INTEGER" property="supplyMode" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+    <result column="length" jdbcType="DECIMAL" property="length" />
+    <result column="width" jdbcType="DECIMAL" property="width" />
+    <result column="height" jdbcType="DECIMAL" property="height" />
+    <result column="volume" jdbcType="DECIMAL" property="volume" />
+    <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
+    <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight" />
+    <result column="material_type" jdbcType="VARCHAR" property="materialType" />
+    <result column="purchase_quantity" jdbcType="DECIMAL" property="purchaseQuantity" />
+    <result column="storage_temperature" jdbcType="VARCHAR" property="storageTemperature" />
+    <result column="storage_humidity" jdbcType="VARCHAR" property="storageHumidity" />
+    <result column="storage_require_desc" jdbcType="VARCHAR" property="storageRequireDesc" />
+    <result column="packing_method" jdbcType="INTEGER" property="packingMethod" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
+    <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
   </resultMap>
 </mapper>
