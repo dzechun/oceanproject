@@ -2,7 +2,9 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
@@ -15,13 +17,11 @@ import com.fantechs.provider.base.mapper.BaseOrganizationMapper;
 import com.fantechs.provider.base.service.BaseOrganizationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2020/12/29.
@@ -33,6 +33,7 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     private BaseOrganizationMapper baseOrganizationMapper;
     @Resource
     private BaseHtOrganizationMapper baseHtOrganizationMapper;
+
 
     @Override
     public int save(BaseOrganization baseOrganization) {
@@ -116,5 +117,26 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     @Override
     public List<BaseOrganizationDto> findList(Map<String, Object> map) {
         return baseOrganizationMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addUser(Long organizationId, List<Long> userIds) {
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        baseOrganizationMapper.deleteUserByOrganization(organizationId);
+
+        List<SysOrganizationUser> list = new ArrayList<>();
+        for (Long userId : userIds) {
+            SysOrganizationUser sysOrganizationUser = new SysOrganizationUser();
+            sysOrganizationUser.setOrganizationId(organizationId);
+            sysOrganizationUser.setUserId(userId);
+            list.add(sysOrganizationUser);
+        }
+        return baseOrganizationMapper.insertUser(list);
     }
 }

@@ -15,4 +15,6 @@ import java.util.Map;
 public interface BaseOrganizationService extends IService<BaseOrganization> {
 
     List<BaseOrganizationDto> findList(Map<String, Object> map);
+
+    int addUser(Long roleId, List<Long> userIds);
 }

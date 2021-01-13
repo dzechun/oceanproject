@@ -64,4 +64,16 @@
     </where>
     order by create_time desc
   </select>
+
+  <delete id="deleteUserByOrganization" parameterType="long">
+    DELETE FROM ocean.sys_organization_user WHERE organization_user_id = #{organizationId}
+  </delete>
+
+  <insert id="insertUser" parameterType="java.util.List">
+    INSERT INTO ocean.sys_organization_user(organization_id, user_id)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.organizationId},#{item.userId})
+    </foreach>
+  </insert>
 </mapper>

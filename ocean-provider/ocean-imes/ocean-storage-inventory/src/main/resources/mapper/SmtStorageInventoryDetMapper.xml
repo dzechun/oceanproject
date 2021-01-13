@@ -4,8 +4,7 @@
 
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.SmtStorageInventoryDet">
         <id column="storage_inventory_det_id" jdbcType="BIGINT" property="storageInventoryDetId"/>
-        <result column="storage_inventory_id" jdbcType="BIGINT" property="storageInventoryId"/>
-        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="storing_inventory_id" jdbcType="BIGINT" property="storingInventoryId"/>
         <result column="material_barcode_code" jdbcType="VARCHAR" property="materialBarcodeCode"/>
         <result column="godown_entry" jdbcType="VARCHAR" property="godownEntry"/>
         <result column="material_quantity" jdbcType="DECIMAL" property="materialQuantity"/>
@@ -34,7 +33,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        ssid.storage_inventory_det_id,ssid.storage_inventory_id,ssid.storage_id,ssid.material_barcode_code,ssid.godown_entry,
+        ssid.storage_inventory_det_id,ssid.storing_inventory_id,ssid.storage_id,ssid.material_barcode_code,ssid.godown_entry,
         ssid.material_quantity,ssid.production_code,ssid.production_date,ssid.supplier_id,
         ssid.create_user_id,ssid.create_time,ssid.modified_user_id,ssid.modified_time, ssid.organization_id,
 	    ssid.remark,ssid.is_delete,ssid.status
@@ -63,12 +62,6 @@
             </if>
             <if test="materialCode!= null and materialCode !='' ">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
-            </if>
-            <if test="storageInventoryId!= null and storageInventoryId !='' ">
-                and ssid.stoage_inventory_id = #{storageInventoryId}
-            </if>
-            <if test="godownEntry!= null and godownEntry !='' ">
-                and ssid.godown_entry = #{godownEntry}
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

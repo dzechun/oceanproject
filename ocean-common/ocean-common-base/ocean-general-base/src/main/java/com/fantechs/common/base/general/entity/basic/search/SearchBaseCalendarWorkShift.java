@@ -19,4 +19,10 @@ public class SearchBaseCalendarWorkShift extends BaseQuery implements Serializab
      */
     @ApiModelProperty(name="calendarId",value = "日历ID")
     private Long calendarId;
+
+    /**
+     * 日期-天
+     */
+    @ApiModelProperty(name="proLineId",value = "日期-天")
+    private Long day;
 }
