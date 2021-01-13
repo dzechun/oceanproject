@@ -37,8 +37,11 @@
     from fantech_imes.qms_sampling_plan qsp
     LEFT JOIN fantech_imes.base_organization bo ON qsp.organization_id = bo.organization_id
     <where>
-      <if test="batch != null and batch != ''">
+      <if test="batch != null and batch != '' and batch &lt;= 500000">
         and qsp.minimum_quantity &lt;= #{batch} and  qsp.maximum_quantity &gt;= #{batch}
+      </if>
+      <if test="batch != null and batch != '' and batch > 500000">
+        and qsp.minimum_quantity &lt;= 500001
       </if>
       <if test="level != null and level != ''">
         and qsp.level = #{level}

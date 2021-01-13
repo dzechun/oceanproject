@@ -67,8 +67,6 @@
     bc.modified_user_id,
     bc.modified_time,
     bc.is_delete,
-    bc.organization_id,
-	bc.remark,
   </sql>
     <!--  <select id="sel_work_order" resultType="com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto">-->
     <select id="sel_work_order" resultMap="BaseResultMapWorkDto">
@@ -116,7 +114,7 @@
         </where>
     </select>
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>,bl.print_mode,bl.save_path,su.user_name as
+        SELECT<include refid="Base_Column_List"/>bl.print_mode,bl.save_path,su.user_name as
         create_user_name,sus.user_name as modified_user_name, bo.organization_name
         FROM bcm_bar_code bc
         LEFT JOIN bcm_label_material blm ON bc.label_material_id = blm.label_material_id
