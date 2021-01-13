@@ -76,7 +76,7 @@
        AND swo.work_order_code = #{workOrderCode}
      </if>
      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-       AND mhpm.create_time between #{startTime} AND #{endTime}
+       AND DATE_FORMAT(mhpm.create_time,'%Y-%m-%d') between #{startTime} AND #{endTime}
      </if>
      <if test="barcode != null and barcode != ''">
        AND mhpm.bar_code = #{barcode}

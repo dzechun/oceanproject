@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "ocean-imes-apply")
+@FeignClient(name = "ocean-mes-pm")
 public interface ApplyFeignApi {
 
     @ApiOperation("订单列表")
@@ -52,7 +52,7 @@ public interface ApplyFeignApi {
             @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)String code);
 
     @ApiOperation("工单记录完工数量")
-    @GetMapping("finishedProduct")
+    @GetMapping("/smtWorkOrder/finishedProduct")
     ResponseEntity<Integer> finishedProduct(
             @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
             @ApiParam(value = "完工数量")@RequestParam Double count
