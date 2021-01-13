@@ -14,4 +14,6 @@ import java.util.Map;
  */
 public interface SmtFactoryService  extends IService<SmtFactory>{
     List<SmtFactoryDto> findList(Map<String, Object> map);
+
+    Map<String, Object> importExcel(List<SmtFactoryDto> smtFactoryDtos);
 }

@@ -58,6 +58,9 @@
       <if test="workShiftDesc != null and workShiftDesc!=''">
         and bws.work_shift_desc like CONCAT('%', #{workShiftDesc}, '%')
       </if>
+      <if test="workShiftId != null and workShiftId!=''">
+        and bws.work_shift_id = #{workShiftId}
+      </if>
       <if test="status!=null and status!=''">
         and bws.status=#{status}
       </if>

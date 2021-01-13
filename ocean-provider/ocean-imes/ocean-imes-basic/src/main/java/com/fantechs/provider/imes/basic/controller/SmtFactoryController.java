@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
@@ -21,11 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: leifengzhi
@@ -102,6 +105,27 @@ public class SmtFactoryController {
             EasyPoiUtils.exportExcel(smtFactoryDtos, "导出工厂信息", "工厂信息", SmtFactoryDto.class, "工厂信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                                        @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtFactoryDto> smtFactoryDtos = EasyPoiUtils.importExcel(file,SmtFactoryDto.class);
+            Map<String, Object> resultMap = smtFactoryService.importExcel(smtFactoryDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 

@@ -17,6 +17,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,17 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
             baseCalendar.setProLineId(baseCalendarWorkShift.getProLineId());
             baseCalendarService.save(baseCalendar);
             baseCalendarWorkShift.setCalendarId(baseCalendar.getCalendarId());
+        }
+
+        //判断该日历的班次是否存在
+        Map<String, Object> map = new HashMap<>();
+        map.put("calendarId",baseCalendarWorkShift.getCalendarId());
+        map.put("day",baseCalendarWorkShift.getDay());
+        List<BaseCalendarWorkShiftDto> list = findList(map);
+        if (StringUtils.isNotEmpty(list)){
+            //执行更新操作
+            baseCalendarWorkShift.setCalendarWorkShiftId(list.get(0).getCalendarWorkShiftId());
+            return update(baseCalendarWorkShift);
         }
 
         //新增日历和班次关系
