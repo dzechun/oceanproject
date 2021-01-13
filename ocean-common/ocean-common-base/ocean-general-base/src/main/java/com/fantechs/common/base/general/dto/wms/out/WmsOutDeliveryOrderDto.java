@@ -15,14 +15,14 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
      * 处理人
      */
     @ApiModelProperty(name="processorUserName",value = "处理人")
-    @Excel(name = "处理人", height = 20, width = 30,orderNum="")
+    @Excel(name = "处理人", height = 20, width = 30,orderNum="3")
     private String processorUserName;
 
     /**
      * 组织代码
      */
     @ApiModelProperty(name="organizationCode",value = "组织代码")
-    @Excel(name = "组织代码", height = 20, width = 30,orderNum="")
+    @Excel(name = "组织代码", height = 20, width = 30,orderNum="6")
     private String organizationCode;
 
     /**
@@ -30,7 +30,7 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**

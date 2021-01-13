@@ -1,32 +1,29 @@
 package com.fantechs.provider.wms.in.service.impl;
 
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.basic.*;
-import com.fantechs.common.base.entity.basic.search.*;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
-import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
-import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInPalletCarton;
+import com.fantechs.common.base.general.dto.wms.in.WmsInOtherinDto;
+import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.in.history.WmsInHtFinishedProduct;
+import com.fantechs.common.base.general.entity.wms.in.history.WmsInHtOtherin;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
-import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductDetMapper;
-import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductMapper;
-import com.fantechs.provider.wms.in.mapper.WmsInHtFinishedProductMapper;
+import com.fantechs.provider.wms.in.mapper.WmsInHtOtherinMapper;
+import com.fantechs.provider.wms.in.mapper.WmsInOtherinDetMapper;
+import com.fantechs.provider.wms.in.mapper.WmsInOtherinMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInPalletCartonMapper;
-import com.fantechs.provider.wms.in.service.WmsInFinishedProductService;
+import com.fantechs.provider.wms.in.service.WmsInOtherinService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,60 +35,69 @@ import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2021/01/07.
+ * Created by leifengzhi on 2021/01/12.
  */
 @Service
-public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedProduct> implements WmsInFinishedProductService {
+public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implements WmsInOtherinService {
 
     @Resource
-    private WmsInFinishedProductMapper wmsInFinishedProductMapper;
+    private WmsInOtherinMapper wmsInOtherinMapper;
     @Resource
-    private WmsInHtFinishedProductMapper wmsInHtFinishedProductMapper;
+    private WmsInHtOtherinMapper wmsInHtOtherinMapper;
     @Resource
-    private WmsInPalletCartonMapper wmsInPalletCartonMapper;
+    private WmsInOtherinDetMapper wmsInOtherinDetMapper;
     @Resource
     private StorageInventoryFeignApi storageInventoryFeignApi;
     @Resource
-    private WmsInFinishedProductDetMapper wmsInFinishedProductDetMapper;
+    private WmsInPalletCartonMapper wmsInPalletCartonMapper;
 
+    @Override
+    public List<WmsInOtherinDto> findList(Map<String, Object> map) {
+        return wmsInOtherinMapper.findList(map);
+    }
+
+    @Override
+    public List<WmsInOtherinDto> findHtList(Map<String, Object> map) {
+        return wmsInHtOtherinMapper.findHtList(map);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int save(WmsInFinishedProduct wmsInFinishedProduct) {
+    public int save(WmsInOtherin wmsInOtherin) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        if(StringUtils.isEmpty(wmsInFinishedProduct.getWmsInFinishedProductDetList())){
+        if(StringUtils.isEmpty(wmsInOtherin.getWmsInOtherinDetList())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
 
-        wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("CPRK-"));
-        wmsInFinishedProduct.setInType(StringUtils.isEmpty(wmsInFinishedProduct.getInType()) ? 0 :wmsInFinishedProduct.getInType());
-        wmsInFinishedProduct.setInStatus(StringUtils.isEmpty(wmsInFinishedProduct.getInStatus()) ? 0 :wmsInFinishedProduct.getInStatus());
-        wmsInFinishedProduct.setStatus((byte)1);
-        wmsInFinishedProduct.setIsDelete((byte)1);
-        wmsInFinishedProduct.setCreateTime(new Date());
-        wmsInFinishedProduct.setCreateUserId(user.getUserId());
+        wmsInOtherin.setOtherinCode(CodeUtils.getId("QTRK-"));
+        wmsInOtherin.setInType(StringUtils.isEmpty(wmsInOtherin.getInType()) ? 0 :wmsInOtherin.getInType());
+        wmsInOtherin.setInStatus(StringUtils.isEmpty(wmsInOtherin.getInStatus()) ? 0 :wmsInOtherin.getInStatus());
+        wmsInOtherin.setStatus((byte)1);
+        wmsInOtherin.setIsDelete((byte)1);
+        wmsInOtherin.setCreateTime(new Date());
+        wmsInOtherin.setCreateUserId(user.getUserId());
 
-        int result = wmsInFinishedProductMapper.insertUseGeneratedKeys(wmsInFinishedProduct);
+        int result = wmsInOtherinMapper.insertUseGeneratedKeys(wmsInOtherin);
 
         //履历
-        WmsInHtFinishedProduct wmsInHtFinishedProduct = new WmsInHtFinishedProduct();
-        BeanUtils.copyProperties(wmsInFinishedProduct,wmsInHtFinishedProduct);
-        wmsInHtFinishedProductMapper.insertSelective(wmsInHtFinishedProduct);
+        WmsInHtOtherin wmsInHtOtherin = new WmsInHtOtherin();
+        BeanUtils.copyProperties(wmsInOtherin,wmsInHtOtherin);
+        wmsInHtOtherinMapper.insertSelective(wmsInHtOtherin);
 
         //查询工单信息
 //        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(wmsInFinishedProduct.getWorkOrderId());
 
-        for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
+        for (WmsInOtherinDet wmsInOtherinDet : wmsInOtherin.getWmsInOtherinDetList()) {
 
-            wmsInFinishedProductDet.setFinishedProductId(String.valueOf(result));
-            wmsInFinishedProductDet.setOrganizationId(user.getOrganizationId());
-            wmsInFinishedProductDet.setCreateTime(new Date());
-            wmsInFinishedProductDet.setCreateUserId(user.getCreateUserId());
-            wmsInFinishedProductDetMapper.insertSelective(wmsInFinishedProductDet);
+            wmsInOtherinDet.setOtherinId(String.valueOf(result));
+            wmsInOtherinDet.setOrganizationId(user.getOrganizationId());
+            wmsInOtherinDet.setCreateTime(new Date());
+            wmsInOtherinDet.setCreateUserId(user.getCreateUserId());
+            wmsInOtherinDetMapper.insertSelective(wmsInOtherinDet);
 
             //存入库时栈板与包箱关系
             /*for(){
@@ -99,7 +105,7 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
             }*/
             WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
 //            wmsInPalletCarton.setCartonCode();
-            wmsInPalletCarton.setPalletCode(wmsInFinishedProductDet.getPalletCode());
+            wmsInPalletCarton.setPalletCode(wmsInOtherinDet.getPalletCode());
             wmsInPalletCarton.setStatus((byte)1);
             wmsInPalletCarton.setIsDelete((byte)1);
             wmsInPalletCarton.setCreateTime(new Date());
@@ -108,15 +114,15 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
             wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
 
             SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
-            smtStoragePallet.setPalletCode(wmsInFinishedProductDet.getPalletCode());
-            smtStoragePallet.setStorageId(wmsInFinishedProductDet.getStorageId());
+            smtStoragePallet.setPalletCode(wmsInOtherinDet.getPalletCode());
+            smtStoragePallet.setStorageId(wmsInOtherinDet.getStorageId());
             //存储位与栈板关系表smt
             storageInventoryFeignApi.add(smtStoragePallet);
 
             //查询储位库存表，有库存累加，无库存新增
             SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId().toString());
-            searchSmtStorageInventory.setMaterialId(wmsInFinishedProductDet.getProductModelId().toString());
+            searchSmtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId().toString());
+            searchSmtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId().toString());
             ResponseEntity<List<SmtStorageInventoryDto>> storageInventoryFeignApiList = storageInventoryFeignApi.findList(searchSmtStorageInventory);
             if(storageInventoryFeignApiList.getCode() == 0){
                 List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApiList.getData();
@@ -125,16 +131,16 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
                     SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                     storageInventory = smtStorageInventoryDto.getStoringInventoryId();
                     //累加库存
-                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInFinishedProductDet.getInQuantity()));
+                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInOtherinDet.getInQuantity()));
                     smtStorageInventoryDto.setModifiedTime(new Date());
                     smtStorageInventoryDto.setModifiedUserId(user.getUserId());
                     storageInventoryFeignApi.update(smtStorageInventoryDto);
                 } else {
                     //新增库存
                     SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                    smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
-                    smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getProductModelId());
-                    smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
+                    smtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
+                    smtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId());
+                    smtStorageInventory.setQuantity(wmsInOtherinDet.getInQuantity());
                     smtStorageInventory.setOrganizationId(user.getOrganizationId());
                     smtStorageInventory.setCreateTime(new Date());
                     smtStorageInventory.setCreateUserId(user.getCreateUserId());
@@ -145,9 +151,9 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
                 //增加库位库存明细
                 SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
                 smtStorageInventoryDet.setStoringInventoryId(storageInventory);
-                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
-                smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
-                smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
+                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInOtherinDet.getPalletCode());
+                smtStorageInventoryDet.setGodownEntry(wmsInOtherin.getOtherinCode());
+                smtStorageInventoryDet.setMaterialQuantity(wmsInOtherinDet.getInQuantity());
                 //生产批号，生产日期，供应商ID无
                 storageInventoryFeignApi.add(smtStorageInventoryDet);
             }else{
@@ -158,13 +164,5 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
         return result;
     }
 
-    @Override
-    public List<WmsInFinishedProductDto> findList(Map<String, Object> map) {
-        return wmsInFinishedProductMapper.findList(map);
-    }
 
-    @Override
-    public List<WmsInHtFinishedProduct> findHtList(Map<String, Object> map) {
-        return wmsInHtFinishedProductMapper.findHtList(map);
-    }
 }

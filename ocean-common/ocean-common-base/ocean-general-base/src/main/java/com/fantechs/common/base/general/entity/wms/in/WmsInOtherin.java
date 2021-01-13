@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.wms.out;
+package com.fantechs.common.base.general.entity.wms.in;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -17,62 +17,70 @@ import java.util.List;
 ;
 
 /**
- * 出库单
- * wms_out_delivery_order
+ * 其他入库单
+ * wms_in_otherin
  * @author hyc
- * @date 2021-01-09 20:01:32
+ * @date 2021-01-12 15:27:37
  */
 @Data
-@Table(name = "wms_out_delivery_order")
-public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
+@Table(name = "wms_in_otherin")
+public class WmsInOtherin extends ValidGroup implements Serializable {
     /**
-     * 出库单ID
+     * 其他入库单ID
      */
-    @ApiModelProperty(name="deliveryOrderId",value = "出库单ID")
+    @ApiModelProperty(name="otherinId",value = "其他入库单ID")
+    @NotNull(groups = update.class,message = "其他入库单ID")
     @Id
-    @Column(name = "delivery_order_id")
-    @NotNull(groups = update.class,message = "出库单ID不能为空")
-    private Long deliveryOrderId;
+    @Column(name = "otherin_id")
+    private Long otherinId;
 
     /**
-     * 出库单号
+     * 其他入库单号
      */
-    @ApiModelProperty(name="deliveryOrderCode",value = "出库单号")
-    @Excel(name = "出库单号", height = 20, width = 30,orderNum="1")
-    @Column(name = "delivery_order_code")
-    private String deliveryOrderCode;
+    @ApiModelProperty(name="otherinCode",value = "其他入库单号")
+    @Excel(name = "其他入库单号", height = 20, width = 30,orderNum="") 
+    @Column(name = "otherin_code")
+    private String otherinCode;
 
     /**
-     * 出货通知单
+     * 工单ID
      */
-    @ApiModelProperty(name="shippingNoteCode",value = "出货通知单")
-    @Excel(name = "出货通知单", height = 20, width = 30,orderNum="2")
-    @Column(name = "shipping_note_code")
-    private String shippingNoteCode;
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "work_order_id")
+    private Long workOrderId;
 
     /**
      * 处理人
      */
-    @ApiModelProperty(name="processorUserId",value = "处理人")
+    @ApiModelProperty(name="operatorUserId",value = "处理人")
     @Excel(name = "处理人", height = 20, width = 30,orderNum="") 
-    @Column(name = "processor_user_id")
-    private Long processorUserId;
+    @Column(name = "operator_user_id")
+    private Long operatorUserId;
 
     /**
      * 单据日期
      */
-    @ApiModelProperty(name="outTime",value = "单据日期")
-    @Excel(name = "单据日期", height = 20, width = 30,orderNum="4")
-    @Column(name = "out_time")
-    private Date outTime;
+    @ApiModelProperty(name="inTime",value = "单据日期")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="") 
+    @Column(name = "in_time")
+    private Date inTime;
 
     /**
-     * 单据状态（0-待出库 1-出库中 2-出库完成）
+     * 单据类型（0-杂入）
      */
-    @ApiModelProperty(name="outStatus",value = "单据状态（0-待出库 1-出库中 2-出库完成）")
-    @Excel(name = "单据状态（0-待出库 1-出库中 2-出库完成）", height = 20, width = 30,orderNum="5")
-    @Column(name = "out_status")
-    private Byte outStatus;
+    @ApiModelProperty(name="inType",value = "单据类型（0-杂入）")
+    @Excel(name = "单据类型（0-杂入）", height = 20, width = 30,orderNum="") 
+    @Column(name = "in_type")
+    private Byte inType;
+
+    /**
+     * 单据状态（0-待入库 1-入库中 2-入库完成）
+     */
+    @ApiModelProperty(name="inStatus",value = "单据状态（0-待入库 1-入库中 2-入库完成）")
+    @Excel(name = "单据状态（0-待入库 1-入库中 2-入库完成）", height = 20, width = 30,orderNum="") 
+    @Column(name = "in_status")
+    private Byte inStatus;
 
     /**
      * 是否有效（0、无效 1、有效）
@@ -85,7 +93,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
@@ -108,7 +116,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -125,7 +133,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -138,8 +146,8 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    @ApiModelProperty(name="wmsOutDeliveryOrderDetList",value = "出库单明细")
-    private List<WmsOutDeliveryOrderDet> wmsOutDeliveryOrderDetList;
+    @ApiModelProperty(name="wmsInOtherinDets",value = "其他出库明细")
+    private List<WmsInOtherinDet> wmsInOtherinDetList;
 
     private static final long serialVersionUID = 1L;
 }

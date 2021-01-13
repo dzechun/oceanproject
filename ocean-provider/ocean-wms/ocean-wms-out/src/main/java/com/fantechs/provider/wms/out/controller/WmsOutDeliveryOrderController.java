@@ -85,7 +85,7 @@ public class WmsOutDeliveryOrderController {
     List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutDeliveryOrder信息", WmsOutDeliveryOrderDto.class, "WmsOutDeliveryOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "出库单信息", WmsOutDeliveryOrderDto.class, "出库单.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
