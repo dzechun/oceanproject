@@ -11,5 +11,5 @@ import java.util.Map;
  */
 
 public interface ${modelNameUpperCamel}Service extends IService<${modelNameUpperCamel}> {
-
+    List<${modelNameUpperCamel}Dto> findList(Map<String, Object> map);
 }
