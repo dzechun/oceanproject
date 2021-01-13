@@ -90,7 +90,7 @@
        AND (whsb.status = 1 or whsb.status = 2)
      </if>
      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-       AND whsb.create_time = #{startTime} AND whsb.modified_time = #{endTime}
+       AND whsb.create_time between #{startTime} AND #{endTime}
      </if>
      <if test="supplierCode != null and supplierCode != ''">
        AND smts.supplier_code = #{supplierCode}

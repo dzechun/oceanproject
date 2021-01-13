@@ -86,14 +86,6 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     private Byte orderNum;
 
     /**
-     * 所属模块
-     */
-    @Column(name = "affiliation_module")
-    @ApiModelProperty(name="affiliationModule" ,value="所属模块")
-    @Excel(name = "所属模块", height = 20, width = 30)
-    private String affiliationModule;
-
-    /**
      * 是否隐藏(0、是 1、否 )
      */
     @Column(name = "is_hide")

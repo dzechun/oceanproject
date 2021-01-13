@@ -190,6 +190,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
                     smtWorkOrder.setProLineId(proLineId);
                     smtWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
                     smtWorkOrder.setProductionQuantity(mesOrderMaterialDTO.getTotal());
+                    smtWorkOrder.setContractNo(smtOrder.getContractCode());
                     smtWorkOrder.setRemark("华丰");
                     ResponseEntity responseEntity = applyFeignApi.addWorkOrder(smtWorkOrder);
                     if(responseEntity.getCode()!=0){

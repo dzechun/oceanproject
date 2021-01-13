@@ -46,7 +46,8 @@
         LEFT JOIN smt_work_order swo on swo.work_order_id = msd.work_order_id
         LEFT JOIN smt_order so on so.order_id = msd.order_id
         LEFT JOIN smt_material sm on sm.material_id = swo.material_id
-        LEFT JOIN smt_product_model spm on spm.product_model_id = sm.product_model_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN smt_product_model spm on spm.product_model_id = bt.product_model_id
         <where>
             <if test="scheduleId != null and scheduleId != ''">
                 and msd.schedule_id = #{scheduleId}

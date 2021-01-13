@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInOtherinDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInOtherinDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="otherin_det_id" jdbcType="BIGINT" property="otherinDetId" />
+    <result column="otherin_id" jdbcType="VARCHAR" property="otherinId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="carton_quantity" jdbcType="DECIMAL" property="cartonQuantity" />
+    <result column="in_quantity" jdbcType="DECIMAL" property="inQuantity" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInOtherinDetDto">
+    <result column="product_material_code" jdbcType="VARCHAR" property="productMaterialCode"/>
+    <result column="product_material_name" jdbcType="VARCHAR" property="productMaterialName"/>
+    <result column="product_material_desc" jdbcType="VARCHAR" property="productMaterialDesc"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode"/>
+    <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    oid.otherin_det_id,
+    oid.otherin_id,
+    oid.product_model_id,
+    oid.storage_id,
+    oid.pallet_code,
+    oid.carton_quantity,
+    oid.in_quantity,
+    oid.`status`,
+    oid.remark,
+    oid.organization_id,
+    oid.create_user_id,
+    oid.create_time,
+    oid.modified_user_id,
+    oid.modified_time,
+    oid.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+    SELECT <include refid="Base_Column_List"></include>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_code AS organization_code,
+    pm.product_model_code AS product_model_code,
+    pm.product_model_name AS product_model_name,
+    pm.product_model_desc AS product_model_desc,
+    s.storage_name AS storage_name,
+    wa.warehouse_area_name AS warehouse_area_name,
+    w.warehouse_name AS warehouse_name
+    FROM
+    wms_in_otherin_det AS oid
+    LEFT JOIN ocean.sys_user su ON oid.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON oid.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON oid.organization_id = bo.organization_id
+    LEFT JOIN smt_product_model pm ON oid.product_model_id = pm.product_model_id
+    LEFT JOIN smt_storage s ON oid.storage_id = s.storage_id
+    LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id
+    LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(oid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="otherinId != null and otherinId != ''">
+        and oid.otherin_id = #{otherinId}
+      </if>
+
+    </where>
+
+  </select>
+</mapper>

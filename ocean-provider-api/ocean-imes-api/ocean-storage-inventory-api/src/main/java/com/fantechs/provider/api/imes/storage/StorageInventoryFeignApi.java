@@ -58,4 +58,8 @@ public interface StorageInventoryFeignApi {
     @ApiOperation("储位与栈板列表")
     @PostMapping("/smtStoragePallet/findList")
     ResponseEntity<List<SmtStoragePalletDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStoragePallet searchSmtStoragePallet);
+
+    @ApiOperation("储位栈板关系表修改")
+    @PostMapping("/smtStoragePallet/update")
+    ResponseEntity update(@ApiParam(value = "必传：",required = true)@RequestBody SmtStoragePallet smtStoragePallet);
 }

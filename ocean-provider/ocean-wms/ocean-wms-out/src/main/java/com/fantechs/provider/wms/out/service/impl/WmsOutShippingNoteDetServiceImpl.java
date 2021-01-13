@@ -22,7 +22,7 @@ public class WmsOutShippingNoteDetServiceImpl  extends BaseService<WmsOutShippin
     private WmsOutShippingNoteDetMapper wmsOutShippingNoteDetMapper;
 
     @Override
-    public List<WmsOutShippingNoteDetDto> findList(Map<String, Object> dynamicConditionByEntity) {
-        return null;
+    public List<WmsOutShippingNoteDetDto> findList(Map<String, Object> map) {
+        return wmsOutShippingNoteDetMapper.findList(map);
     }
 }

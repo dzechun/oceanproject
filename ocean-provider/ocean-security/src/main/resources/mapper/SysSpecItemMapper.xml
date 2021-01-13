@@ -29,11 +29,10 @@
   <select id="findList" parameterType="com.fantechs.common.base.entity.security.search.SearchSysSpecItem" resultMap="BaseResultMap">
     select  si.spec_id, si.spec_code, si.spec_name, si.para, si.para_value, si.is_hide,si.create_user_id, u.user_name as createUserName,
     si.create_time, si.modified_user_id,s.user_name as modifiedUserName,
-    si.modified_time,si.is_delete,si.category,si.order_num,ssi.affiliation_module
+    si.modified_time,si.is_delete,si.category,si.order_num,si.menu_id
     from sys_spec_item si
     left join sys_user u on si.create_user_id=u.user_id
     left join sys_user s on si.modified_user_id=s.user_id
-    left join sys_spec_item ssi on si.affiliation_module = ssi.spec_id
     <where>
       1=1
       <if test="specCode!=null and specCode!=''">
@@ -51,10 +50,15 @@
       <if test="menuId != null and menuId != '' ">
         and si.menu_id = #{menuId}
       </if>
-      <if test="category != null and category">
+      <if test="category != null and category != ''">
         and si.category = #{category}
       </if>
-      and si.category IS NOT NULL
+      <if test="orderNum != null and orderNum != '' and orderNum == 1">
+        order by order_num desc
+      </if>
+      <if test="orderNum != null and orderNum and orderNum == 0">
+        order by order_num
+      </if>
     </where>
 
   </select>

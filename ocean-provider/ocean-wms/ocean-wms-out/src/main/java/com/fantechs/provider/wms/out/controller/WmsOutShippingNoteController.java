@@ -90,4 +90,12 @@ public class WmsOutShippingNoteController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("PDA-提交")
+    @PostMapping("/submit")
+    public ResponseEntity submit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutShippingNote wmsOutShippingNote) {
+        return ControllerUtil.returnCRUD(wmsOutShippingNoteService.submit(wmsOutShippingNote));
+    }
+
+
 }
