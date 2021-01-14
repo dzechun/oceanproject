@@ -57,7 +57,8 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         Example example = new Example(SmtSupplier.class);
-        example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode());
+        example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode())
+                                .andNotEqualTo("supplierId",record.getSupplierId());
         List<SmtSupplier> list = smtSupplierMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(list)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -134,7 +135,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
                 smtAddresses.add(smtAddress);
             }
             //更新最新的默认地址
-            if (StringUtils.isNotEmpty(smtAddress.getIfDefault())){
+            if (StringUtils.isNotEmpty(smtAddress.getIfDefault()) && smtAddress.getIfDefault() == 1){
                 smtSupplierAddressMapper.updateIfDefault(smtAddress.getAddressId(),entity.getSupplierId());
             }
         }
