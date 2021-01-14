@@ -108,7 +108,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
 
             wmsOutShippingNoteDet.setModifiedTime(new Date());
             wmsOutShippingNoteDet.setModifiedUserId(user.getUserId());
-            wmsOutShippingNoteDet.setOutStatus((byte) 1);
+            wmsOutShippingNoteDet.setStockStatus((byte) 1);
             wmsOutShippingNoteDetMapper.updateByPrimaryKeySelective(wmsOutShippingNoteDet);
         }
         //判断单据状态
