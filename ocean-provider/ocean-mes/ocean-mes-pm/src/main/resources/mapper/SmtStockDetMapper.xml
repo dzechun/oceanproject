@@ -41,11 +41,11 @@
 
     <select id="findList" resultMap="BaseResultMapDto"
             parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtStockDet">
-        select<include refid="Base_Column_List"/>,sm.material_code,sm.version,sm.material_desc,sm.unit,su.user_name as
-        createName,su.user_name, bo.organization_name
+        select<include refid="Base_Column_List"/>,sm.material_code,sm.version,sm.material_desc,su.user_name as
+        createName,su.user_name, bo.organization_name,bt.main_unit AS unit
         FROM smt_stock_det ssd
         LEFT JOIN smt_material sm ON ssd.material_id = sm.material_id
-        LEFT JOIN ocean.sys_user su ON ssd.create_user_id = su.user_id
+        LEFT JOIN base_tab  bt ON bt.`material_id`  = ssd.`material_id`
         LEFT JOIN ocean.sys_user sus ON ssd.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON ssd.organization_id = bo.organization_id
         <where>

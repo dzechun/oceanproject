@@ -114,7 +114,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         if (delete.size()!=0){
             //删除供应商与地址关联表中数据
             Example example1 = new Example(SmtSupplierAddress.class);
-            example1.createCriteria().andIn("addressId",delete);
+            example1.createCriteria().andIn("supplierAddressId",delete);
             smtSupplierAddressMapper.deleteByExample(example1);
         }
 

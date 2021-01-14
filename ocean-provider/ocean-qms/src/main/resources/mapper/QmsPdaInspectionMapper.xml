@@ -58,10 +58,10 @@
     LEFT JOIN ocean.sys_user sys ON qpi.surveyor_id = sys.user_id
     <where>
       <if test="pdaInspectionCode != null and pdaInspectionCode != ''">
-        and qpi.pda_inspection_code = #{pdaInspectionCode}
+        and qpi.pda_inspection_code like CONCAT('%', #{pdaInspectionCode}, '%')
       </if>
       <if test="productionLine != null and productionLine != ''">
-        and spl.pro_line_id = #{productionLine}
+        and spl.pro_line_name like CONCAT('%', #{productionLine}, '%')
       </if>
       <if test="handler != null and handler != ''">
         and sys.user_id = #{handler}
