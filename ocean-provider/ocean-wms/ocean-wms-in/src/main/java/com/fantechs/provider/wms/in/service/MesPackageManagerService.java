@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.in.service;
 
+import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
@@ -32,4 +33,6 @@ public interface MesPackageManagerService extends IService<MesPackageManager>  {
     MesPackageManager saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO);
     //补打条码
     int printCode(Long packageManagerId);
+    //根据条码查询信息，返回父级信息及子级数量
+    MesPackageManagerInDTO findParentByBarcode(String barcode);
 }

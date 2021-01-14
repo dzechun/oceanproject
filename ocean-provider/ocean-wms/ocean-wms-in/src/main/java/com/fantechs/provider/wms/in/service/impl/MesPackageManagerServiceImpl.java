@@ -1,10 +1,12 @@
 package com.fantechs.provider.wms.in.service.impl;
 
+import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -191,6 +194,43 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             return 0;
         }
         return 1;
+    }
+
+    @Override
+    public MesPackageManagerInDTO findParentByBarcode(String barcode) {
+        MesPackageManagerInDTO mesPackageManagerInDTO = new MesPackageManagerInDTO();
+        List<MesPackageManagerDTO> mesPackageManagerDTOList = this.selectFilterAll(ControllerUtil.dynamicCondition("barcode",barcode));
+        if(StringUtils.isEmpty(mesPackageManagerDTOList)){
+            return null;
+        }
+        MesPackageManagerDTO mesPackageManagerDTO = mesPackageManagerDTOList.get(0);
+        org.springframework.beans.BeanUtils.copyProperties(mesPackageManagerDTO,mesPackageManagerInDTO);
+        if(mesPackageManagerDTO.getType() == 1){
+            //扫描的包箱
+            if(mesPackageManagerDTO.getParentId() != 0){
+                MesPackageManager mesPackageManager = this.selectByKey(mesPackageManagerDTO.getParentId());
+                mesPackageManagerInDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
+                mesPackageManagerInDTO.setPackageManagerId(mesPackageManager.getPackageManagerId());
+                mesPackageManagerInDTO.setBarCode(mesPackageManager.getBarCode());
+                mesPackageManagerInDTO.setType(mesPackageManager.getType());
+                mesPackageManagerInDTO.setBoxCount(mesPackageManager.getTotal());//设置父级绑定了多少子级
+            }else{
+                //没有绑定父级不返回数据
+                return null;
+            }
+        }else if(mesPackageManagerDTO.getType() == 2){
+            mesPackageManagerInDTO.setBoxCount(mesPackageManagerInDTO.getTotal());//设置父级绑定了多少子级
+        }
+        //查询所有的子级
+        mesPackageManagerDTOList = this.selectFilterAll(ControllerUtil.dynamicCondition("parentId",mesPackageManagerInDTO.getPackageManagerId()));
+        //=====设置子级的总数
+        double total=0.0;
+        for (MesPackageManagerDTO packageManagerDTO : mesPackageManagerDTOList) {
+            total+=packageManagerDTO.getTotal().doubleValue();
+        }
+        mesPackageManagerInDTO.setTotal(new BigDecimal(total));
+        //=====
+        return mesPackageManagerInDTO;
     }
 
     private void printCode(MesPackageManager mesPackageManager){
