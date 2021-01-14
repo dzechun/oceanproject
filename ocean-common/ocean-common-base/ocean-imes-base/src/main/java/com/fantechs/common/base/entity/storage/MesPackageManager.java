@@ -101,6 +101,14 @@ public class MesPackageManager implements Serializable {
     private Integer printBarcodeCount;
 
     /**
+     *  包装类型（1、包箱 2、栈板）
+     */
+    @ApiModelProperty(value = " 包装类型（1、包箱 2、栈板）",example = " 包装类型（1、包箱 2、栈板）")
+    @Column(name = "type")
+    @Excel(name = " 包装类型（1、包箱 2、栈板）")
+    private Byte type;
+
+    /**
     * 逻辑删除（0、删除 1、正常）
     */
     @ApiModelProperty(value = "逻辑删除（0、删除 1、正常）",example = "逻辑删除（0、删除 1、正常）")

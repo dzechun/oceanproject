@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.imes.apply.mapper.SmtHtBarcodeRuleSetMapper">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtHtBarcodeRuleSetMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRuleSet">
         <id column="ht_barcode_rule_set_id" jdbcType="BIGINT" property="htBarcodeRuleSetId"/>
         <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
