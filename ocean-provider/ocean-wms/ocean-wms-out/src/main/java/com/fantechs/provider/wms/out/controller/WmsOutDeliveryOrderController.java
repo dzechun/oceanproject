@@ -90,4 +90,12 @@ public class WmsOutDeliveryOrderController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("PDA扫码判断栈板是否重复出库")
+    @PostMapping("/checkPallet")
+    public ResponseEntity<String> checkPallet(@ApiParam(value = "palletCode:栈板编码 \b 返回值：true 可出库，false 重复出库",required = true)@RequestParam String palletCode) {
+        return ControllerUtil.returnDataSuccess(wmsOutDeliveryOrderService.checkPallet(palletCode),0);
+    }
+
+
 }

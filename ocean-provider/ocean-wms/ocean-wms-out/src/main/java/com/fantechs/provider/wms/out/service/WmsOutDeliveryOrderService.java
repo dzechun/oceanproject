@@ -18,4 +18,6 @@ public interface WmsOutDeliveryOrderService extends IService<WmsOutDeliveryOrder
     List<WmsOutDeliveryOrderDto> findList(Map<String, Object> dynamicConditionByEntity);
 
     List<WmsOutDeliveryOrderDto> findHtList(Map<String, Object> dynamicConditionByEntity);
+
+    String checkPallet(String palletCode);
 }

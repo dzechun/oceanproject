@@ -19,6 +19,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderPallet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -66,6 +67,20 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
     @Override
     public List<WmsOutDeliveryOrderDto> findHtList(Map<String, Object> map) {
         return wmsOutHtDeliveryOrderMapper.findHtList(map);
+    }
+
+    @Override
+    public String checkPallet(String palletCode) {
+
+        Example example = new Example(WmsOutDeliveryOrderPallet.class);
+        example.createCriteria().andEqualTo("palletCode",palletCode);
+        List<WmsOutDeliveryOrderPallet> wmsOutDeliveryOrderPallets = wmsOutDeliveryOrderPalletMapper.selectByExample(example);
+
+        if(wmsOutDeliveryOrderPallets.size() > 0){
+            return "false";
+        }else{
+            return "true";
+        }
     }
 
     @Override
