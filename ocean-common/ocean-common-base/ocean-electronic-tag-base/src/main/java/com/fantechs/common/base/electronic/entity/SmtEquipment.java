@@ -35,8 +35,8 @@ public class SmtEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="clientId",value = "客户端id")
     @Column(name = "client_id")
-    @NotBlank(message = "客户端id不能为空")
-    private String clientId;
+    @NotNull(message = "客户端id不能为空")
+    private Long clientId;
 
     /**
      * 设备编号
