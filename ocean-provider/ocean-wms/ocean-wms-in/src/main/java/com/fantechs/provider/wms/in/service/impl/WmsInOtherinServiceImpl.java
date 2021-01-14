@@ -128,47 +128,24 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
             //存储位与栈板关系表smt
             storageInventoryFeignApi.add(smtStoragePallet);
 
-            //查询储位库存表，有库存累加，无库存新增
-            SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId().toString());
-            searchSmtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId().toString());
-            ResponseEntity<List<SmtStorageInventoryDto>> storageInventoryFeignApiList = storageInventoryFeignApi.findList(searchSmtStorageInventory);
-            if(storageInventoryFeignApiList.getCode() == 0){
-                List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApiList.getData();
-                long storageInventory = 0;
-                if(smtStorageInventoryDtos.size() > 0){
-                    SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
-                    storageInventory = smtStorageInventoryDto.getStorageInventoryId();
-                    //累加库存
-                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInOtherinDet.getInQuantity()));
-                    smtStorageInventoryDto.setModifiedTime(new Date());
-                    smtStorageInventoryDto.setModifiedUserId(user.getUserId());
-                    storageInventoryFeignApi.update(smtStorageInventoryDto);
-                } else {
-                    //新增库存
-                    SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                    smtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
-                    smtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId());
-                    smtStorageInventory.setQuantity(wmsInOtherinDet.getInQuantity());
-                    smtStorageInventory.setOrganizationId(user.getOrganizationId());
-                    smtStorageInventory.setCreateTime(new Date());
-                    smtStorageInventory.setCreateUserId(user.getCreateUserId());
-                    smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
-                    storageInventory = smtStorageInventory.getStorageInventoryId();
-                }
+            //新增库存
+            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+            smtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
+            smtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId());
+            smtStorageInventory.setQuantity(wmsInOtherinDet.getInQuantity());
+            smtStorageInventory.setOrganizationId(user.getOrganizationId());
+            smtStorageInventory.setCreateTime(new Date());
+            smtStorageInventory.setCreateUserId(user.getCreateUserId());
+            smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
 
-                //增加库位库存明细
-                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-                smtStorageInventoryDet.setStorageInventoryId(storageInventory);
-                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInOtherinDet.getPalletCode());
-                smtStorageInventoryDet.setGodownEntry(wmsInOtherin.getOtherinCode());
-                smtStorageInventoryDet.setMaterialQuantity(wmsInOtherinDet.getInQuantity());
-                //生产批号，生产日期，供应商ID无
-                storageInventoryFeignApi.add(smtStorageInventoryDet);
-            }else{
-                //查询失败
-                throw new BizErrorException(ErrorCodeEnum.GL9999404);
-            }
+            //增加库位库存明细
+            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+            smtStorageInventoryDet.setMaterialBarcodeCode(wmsInOtherinDet.getPalletCode());
+            smtStorageInventoryDet.setGodownEntry(wmsInOtherin.getOtherinCode());
+            smtStorageInventoryDet.setMaterialQuantity(wmsInOtherinDet.getInQuantity());
+            //生产批号，生产日期，供应商ID无
+            storageInventoryFeignApi.add(smtStorageInventoryDet);
         }
         return result;
     }
