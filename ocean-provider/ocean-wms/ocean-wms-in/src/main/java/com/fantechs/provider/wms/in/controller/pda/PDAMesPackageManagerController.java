@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 /**
  * @Auther: bingo.ren
@@ -57,26 +58,13 @@ public class PDAMesPackageManagerController {
         return ControllerUtil.returnDataSuccess(mesPackageManagerDTOList,(int)page.getTotal());
     }
 
-    @ApiOperation("根据箱码或栈板码查询")
-    @PostMapping("findByBarcode")
-    public ResponseEntity<MesPackageManagerInDTO> findByBarcode(
+    @ApiOperation("根据条码查询信息，返回父级信息及子级数量")
+    @PostMapping("findParentByBarcode")
+    public ResponseEntity<MesPackageManagerInDTO> findParentByBarcode(
             @ApiParam(value = "条码")@RequestParam String barcode
     ){
-        MesPackageManagerInDTO mesPackageManagerInDTO = new MesPackageManagerInDTO();
-        List<MesPackageManagerDTO> mesPackageManagerDTOList = mesPackageManagerService.selectFilterAll(ControllerUtil.dynamicCondition("barcode",barcode));
-        if(StringUtils.isNotEmpty(mesPackageManagerDTOList)){
-            MesPackageManagerDTO mesPackageManagerDTO = mesPackageManagerDTOList.get(0);
-            BeanUtils.copyProperties(mesPackageManagerDTO,mesPackageManagerInDTO);
-            if(mesPackageManagerDTO.getParentId()!=0){
-                MesPackageManager mesPackageManager = mesPackageManagerService.selectByKey(mesPackageManagerDTO.getParentId());
-                mesPackageManagerInDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
-                mesPackageManagerInDTO.setPackageManagerId(mesPackageManager.getPackageManagerId());
-                mesPackageManagerInDTO.setBarCode(mesPackageManager.getBarCode());
-                mesPackageManagerInDTO.setType(mesPackageManager.getType());
-                mesPackageManagerInDTO.setBoxCount(mesPackageManager.getTotal());
-            }
-        }
-        return ControllerUtil.returnDataSuccess(mesPackageManagerInDTO,1);
+        MesPackageManagerInDTO mesPackageManagerInDTO = mesPackageManagerService.findParentByBarcode(barcode);
+        return ControllerUtil.returnDataSuccess(mesPackageManagerInDTO,StringUtils.isEmpty(mesPackageManagerInDTO)?0:1);
     }
 
     @ApiOperation("通过ID查询包装管理")
