@@ -59,10 +59,10 @@
     LEFT JOIN ocean.sys_user sys ON qfi.handler = sys.user_id
     <where>
       <if test="firstInspectionCode != null and firstInspectionCode != ''">
-        and qfi.first_inspection_code = #{firstInspectionCode}
+        and qfi.first_inspection_code like CONCAT('%', #{firstInspectionCode}, '%')
       </if>
       <if test="productionLine != null and productionLine != ''">
-        and spl.pro_line_id = #{productionLine}
+        and spl.pro_line_name like CONCAT('%', #{productionLine}, '%')
       </if>
       <if test="handler != null and handler != ''">
         and sys.user_id = #{handler}
