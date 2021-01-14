@@ -241,8 +241,8 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
                         wmsStorageBillsDet.setStatus((byte)4);
                     }else{
                         wmsStorageBillsDet.setStatus((byte)2);
+                        finished=false;
                     }
-                    finished=false;
                 }else{
                     wmsStorageBillsDet.setStatus((byte)3);
                 }
