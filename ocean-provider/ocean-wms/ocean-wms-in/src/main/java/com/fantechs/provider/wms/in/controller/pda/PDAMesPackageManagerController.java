@@ -72,6 +72,7 @@ public class PDAMesPackageManagerController {
                 mesPackageManagerInDTO.setPackageManagerCode(mesPackageManager.getPackageManagerCode());
                 mesPackageManagerInDTO.setPackageManagerId(mesPackageManager.getPackageManagerId());
                 mesPackageManagerInDTO.setBarCode(mesPackageManager.getBarCode());
+                mesPackageManagerInDTO.setType(mesPackageManager.getType());
                 mesPackageManagerInDTO.setBoxCount(mesPackageManager.getTotal());
             }
         }

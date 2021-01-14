@@ -202,6 +202,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008);
         }
+        mesPackageManager.setPrintBarcodeCount(printBarcodeCount+1);
         mesPackageManager.setBarCode(responseEntity.getData());
         //调用打印程序进行条码打印
     }

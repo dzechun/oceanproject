@@ -26,6 +26,11 @@ public class MesPackageManagerInDTO {
     @ApiModelProperty(value = "包装管理号",example = "包装管理号")
     private String packageManagerCode;
     /**
+     * 包装类型（1、包箱 2、栈板）
+     */
+    @ApiModelProperty(value = "包装类型（1、包箱 2、栈板）",example = "包装类型（1、包箱 2、栈板）")
+    private Byte type;
+    /**
      * 条码
      */
     @ApiModelProperty(value = "条码",example = "条码")

@@ -13,6 +13,7 @@
         <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
         <result column="print_barcode_count" jdbcType="INTEGER" property="printBarcodeCount"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -62,6 +63,7 @@
         mpm.packing_unit_id,
         mpm.package_specification_id,
         mpm.parent_id,
+        mpm.type,
         mpm.is_delete,
         mpm.remark,
         mpm.create_user_id,
