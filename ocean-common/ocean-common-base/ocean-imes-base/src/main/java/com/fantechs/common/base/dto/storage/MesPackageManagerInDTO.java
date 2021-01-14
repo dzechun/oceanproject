@@ -21,10 +21,15 @@ public class MesPackageManagerInDTO {
     @ApiModelProperty(value = "包装管理id",example = "包装管理id")
     private Long packageManagerId;
     /**
-     * 栈板号
+     * 包装管理号
      */
-    @ApiModelProperty(value = "栈板号",example = "栈板号")
+    @ApiModelProperty(value = "包装管理号",example = "包装管理号")
     private String packageManagerCode;
+    /**
+     * 条码
+     */
+    @ApiModelProperty(value = "条码",example = "条码")
+    private String barCode;
     /**
      * 工单id
      */
