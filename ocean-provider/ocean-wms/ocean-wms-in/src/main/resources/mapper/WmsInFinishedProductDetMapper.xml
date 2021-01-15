@@ -7,7 +7,7 @@
     -->
     <id column="finished_product_det_id" jdbcType="BIGINT" property="finishedProductDetId" />
     <result column="finished_product_id" jdbcType="VARCHAR" property="finishedProductId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="carton_quantity" jdbcType="DECIMAL" property="cartonQuantity" />
@@ -23,10 +23,10 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto">
-    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
-    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode"/>
@@ -37,7 +37,7 @@
   <sql id="Base_Column_List">
     fpd.finished_product_det_id,
     fpd.finished_product_id,
-    fpd.product_model_id,
+    fpd.material_id,
     fpd.storage_id,
     fpd.pallet_code,
     fpd.carton_quantity,
@@ -57,9 +57,7 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_code AS organization_code,
-    pm.product_model_code AS product_model_code,
-    pm.product_model_name AS product_model_name,
-    pm.product_model_desc AS product_model_desc,
+    sm.material_code, sm.material_name, sm.material_desc,
     s.storage_name AS storage_name,
     wa.warehouse_area_name AS warehouse_area_name,
     w.warehouse_name AS warehouse_name
@@ -68,7 +66,7 @@
     LEFT JOIN ocean.sys_user su ON fpd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON fpd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON fpd.organization_id = bo.organization_id
-    LEFT JOIN smt_product_model pm ON fpd.product_model_id = pm.product_model_id
+    LEFT JOIN smt_material sm ON fpd.material_id = sm.material_id
     LEFT JOIN smt_storage s ON fpd.storage_id = s.storage_id
     LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id
     LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id
@@ -76,10 +74,9 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="finishedProductId != null and finishedProductId != ''">
-        and fpd.finished_product_id = #{finishedProductId}
+      <if test="materialId != null and materialId != ''">
+        and fpd.material_id = #{materialId}
       </if>
-
     </where>
 
   </select>

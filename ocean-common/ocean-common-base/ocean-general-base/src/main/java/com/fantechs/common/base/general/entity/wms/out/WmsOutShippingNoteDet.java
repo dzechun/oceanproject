@@ -43,11 +43,10 @@ public class WmsOutShippingNoteDet extends ValidGroup implements Serializable {
     private Long shippingNoteId;
 
     /**
-     * 产品ID
+     * 物料ID
      */
-    @ApiModelProperty(name="productModelId",value = "产品ID")
-    @Column(name = "product_model_id")
-    private Long productModelId;
+    @Column(name = "material_id")
+    private Long materialId;
 
     /**
      * 储位ID

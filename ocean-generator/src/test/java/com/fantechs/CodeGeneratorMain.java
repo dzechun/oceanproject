@@ -4,12 +4,12 @@ import com.fantechs.service.CodeGeneratorManager;
 
 class CodeGeneratorMain {
 
-    private static final String TABLE = "wms_out_purchase_return_det";
+    private static final String TABLE = "sys_organization_user";
 
     private static final String MODEL_NAME = "ITest";
 
     private static final String[] TABLES = {
-            "wms_out_purchase_return", "wms_out_purchase_return_det"
+            "smt_ht_factory", "smt_factory"
     };
 
     /**
@@ -27,7 +27,7 @@ class CodeGeneratorMain {
     public static void main(String[] args) {
         CodeGeneratorManager cgm = new CodeGeneratorManager();
 
-        cgm.genCodeWithSimpleName(TABLES);
+        cgm.genCodeWithSimpleName(TABLE);
 
 //		cgm.genCodeWithDetailName(TABLES);
 

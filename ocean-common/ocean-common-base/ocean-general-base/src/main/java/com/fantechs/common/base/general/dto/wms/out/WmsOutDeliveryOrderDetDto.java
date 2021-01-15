@@ -12,28 +12,28 @@ import java.io.Serializable;
 @Data
 public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements Serializable {
 
-    @Excel(name = "成品编码", height = 20, width = 30,orderNum="")
-    @ApiModelProperty(name="productModelCode" ,value="成品编码")
-    private String productModelCode;
-
-    @Excel(name = "成品描述", height = 20, width = 30,orderNum="")
-    @ApiModelProperty(name="productModelDesc" ,value="成品描述（规格？）")
-    private String productModelDesc;
-
-    /**
-     * 创建用户名称
-     */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
     @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
     private String createUserName;
 
-    /**
-     * 修改用户名称
-     */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
     private String modifiedUserName;
+
+    @Transient
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30)
+    private String materialCode;
+
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    @Transient
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "物料描述", height = 20, width = 30)
+    private String materialDesc;
 
 }

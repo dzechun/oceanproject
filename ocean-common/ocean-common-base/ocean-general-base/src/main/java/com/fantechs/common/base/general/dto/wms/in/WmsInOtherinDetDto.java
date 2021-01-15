@@ -13,18 +13,6 @@ public class WmsInOtherinDetDto extends WmsInOtherinDet implements Serializable 
 
     private static final long serialVersionUID = 1L;
 
-    @Excel(name = "成品编码", height = 20, width = 30,orderNum="1")
-    @ApiModelProperty(name="productModelCode" ,value="成品编码")
-    private String productModelCode;
-
-    @Excel(name = "成品名称", height = 20, width = 30,orderNum="2")
-    @ApiModelProperty(name="productModelName" ,value="成品名称")
-    private String productModelName;
-
-    @Excel(name = "成品描述", height = 20, width = 30,orderNum="3")
-    @ApiModelProperty(name="productModelDesc" ,value="成品描述（规格？）")
-    private String productModelDesc;
-
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="7")
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
     private String warehouseName;
@@ -37,24 +25,30 @@ public class WmsInOtherinDetDto extends WmsInOtherinDet implements Serializable 
     @ApiModelProperty(name="storageName" ,value="储位名称")
     private String storageName;
 
-    /**
-     * 组织编码
-     */
     @ApiModelProperty(name="organizationCode" ,value="组织编码")
     @Excel(name = "组织编码", height = 20, width = 30,orderNum="10")
     private String organizationCode;
 
-    /**
-     * 创建用户名称
-     */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
     private String createUserName;
 
-    /**
-     * 修改用户名称
-     */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     private String modifiedUserName;
+
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30)
+    @Transient
+    private String materialCode;
+
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Transient
+    @Excel(name = "物料编码", height = 20, width = 30)
+    private String materialName;
+
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "物料描述", height = 20, width = 30)
+    @Transient
+    private String materialDesc;
 }
