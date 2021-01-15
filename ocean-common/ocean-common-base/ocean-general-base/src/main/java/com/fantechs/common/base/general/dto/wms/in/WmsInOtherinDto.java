@@ -31,7 +31,7 @@ public class WmsInOtherinDto extends WmsInOtherin implements Serializable {
      * 组织编码
      */
     @ApiModelProperty(name="organizationCode" ,value="组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30,orderNum="8")
+    @Excel(name = "组织编码", height = 20, width = 30,orderNum="7")
     private String organizationCode;
 
     /**

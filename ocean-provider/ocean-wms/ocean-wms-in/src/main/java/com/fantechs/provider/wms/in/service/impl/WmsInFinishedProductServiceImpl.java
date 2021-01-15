@@ -76,6 +76,7 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
         wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("CPRK-"));
         wmsInFinishedProduct.setInType(StringUtils.isEmpty(wmsInFinishedProduct.getInType()) ? 0 :wmsInFinishedProduct.getInType());
         wmsInFinishedProduct.setInStatus(StringUtils.isEmpty(wmsInFinishedProduct.getInStatus()) ? 0 :wmsInFinishedProduct.getInStatus());
+        wmsInFinishedProduct.setInStatus((byte)2);
         wmsInFinishedProduct.setStatus((byte)1);
         wmsInFinishedProduct.setIsDelete((byte)1);
         wmsInFinishedProduct.setCreateTime(new Date());
@@ -93,7 +94,7 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
 
         for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
 
-            wmsInFinishedProductDet.setFinishedProductId(String.valueOf(result));
+            wmsInFinishedProductDet.setFinishedProductId(String.valueOf(wmsInFinishedProduct.getFinishedProductId()));
             wmsInFinishedProductDet.setOrganizationId(user.getOrganizationId());
             wmsInFinishedProductDet.setCreateTime(new Date());
             wmsInFinishedProductDet.setCreateUserId(user.getCreateUserId());

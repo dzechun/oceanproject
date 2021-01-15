@@ -58,7 +58,7 @@
     sn.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="java.util.Map">
     select<include refid="Base_Column_List"/>,
       su.user_name AS create_user_name,
       sus.user_name AS modified_user_name,
@@ -88,8 +88,17 @@
       <if test="processorUserName != null and processorUserName != ''">
         and suser.user_name like CONCAT('%', #{processorUserName}, '%')
       </if>
-      <if test="stockStatus!=null and stockStatus!=''">
-        and sn.stock_status= #{stockStatus}
+      <if test="stockStatus != null">
+        and sn.stock_status = #{stockStatus}
+      </if>
+      <if test="stockStatusIn !=null">
+        AND sn.stock_status  IN
+        <foreach collection="stockStatusIn" item="ulist"  open="(" separator="," close=")">
+          #{ulist}
+        </foreach>
+      </if>
+      <if test="outStatus != null">
+        and sn.out_status = #{outStatus}
       </if>
     </where>
   </select>
