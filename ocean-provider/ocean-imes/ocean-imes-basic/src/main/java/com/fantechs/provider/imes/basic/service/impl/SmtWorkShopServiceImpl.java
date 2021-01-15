@@ -8,9 +8,13 @@ import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkShop;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.SmtHtWorkShopMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProLineMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,12 +37,14 @@ import java.util.Map;
 @Service
 public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements SmtWorkShopService {
 
-    @Autowired
+    @Resource
     private SmtWorkShopMapper smtWorkShopMapper;
-    @Autowired
+    @Resource
     private SmtHtWorkShopMapper smtHtWorkShopMapper;
-    @Autowired
+    @Resource
     private SmtProLineMapper smtProLineMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<SmtWorkShopDto> findList(Map<String, Object> map) {
@@ -93,6 +100,14 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
             criteria.andEqualTo("workShopId",smtWorkShop.getWorkShopId());
             List<SmtProLine> smtProLines = smtProLineMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtProLines)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
+            //被班组引用
+            SearchBaseTeam searchBaseTeam = new SearchBaseTeam();
+            searchBaseTeam.setWorkShopId(Long.valueOf(id));
+            List<BaseTeamDto> baseTeamDtos = baseFeignApi.findTeamList(searchBaseTeam).getData();
+            if (StringUtils.isNotEmpty(baseTeamDtos)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 

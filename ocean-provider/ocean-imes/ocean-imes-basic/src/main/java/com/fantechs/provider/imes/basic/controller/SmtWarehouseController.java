@@ -29,7 +29,7 @@ import java.util.List;
  * Created by wcz on 2020/09/23.
  */
 @RestController
-@Api(tags = "仓库信息")
+@Api(tags = "仓库信息管理")
 @RequestMapping("/smtWarehouse")
 @Validated
 public class SmtWarehouseController {
@@ -42,7 +42,7 @@ public class SmtWarehouseController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：warehouseCode、warehouseName",required = true)@RequestBody SmtWarehouse smtWarehouse) {
+    public ResponseEntity add(@ApiParam(value = "必传：warehouseCode、warehouseName",required = true)@RequestBody @Validated SmtWarehouse smtWarehouse) {
         return ControllerUtil.returnCRUD(smtWarehouseService.save(smtWarehouse));
     }
 

@@ -4,7 +4,7 @@
 
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.SmtStorageInventoryDet">
         <id column="storage_inventory_det_id" jdbcType="BIGINT" property="storageInventoryDetId"/>
-        <result column="storing_inventory_id" jdbcType="BIGINT" property="storingInventoryId"/>
+        <result column="storage_inventory_id" jdbcType="BIGINT" property="storageInventoryId"/>
         <result column="material_barcode_code" jdbcType="VARCHAR" property="materialBarcodeCode"/>
         <result column="godown_entry" jdbcType="VARCHAR" property="godownEntry"/>
         <result column="material_quantity" jdbcType="DECIMAL" property="materialQuantity"/>

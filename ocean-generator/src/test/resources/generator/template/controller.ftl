@@ -11,12 +11,12 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,7 +32,7 @@ import java.util.List;
 @Validated
 public class ${modelNameUpperCamel}Controller {
 
-    @Autowired
+    @Resource
     private ${modelNameUpperCamel}Service ${modelNameLowerCamel}Service;
 
     @ApiOperation(value = "新增",notes = "新增")
@@ -62,9 +62,9 @@ public class ${modelNameUpperCamel}Controller {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<${modelNameUpperCamel}>> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
+    public ResponseEntity<List<${modelNameUpperCamel}Dto>> findList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
         Page<Object> page = PageHelper.startPage(search${modelNameUpperCamel}.getStartPage(),search${modelNameUpperCamel}.getPageSize());
-        List<${modelNameUpperCamel}> list =  ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
+        List<${modelNameUpperCamel}Dto> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -80,10 +80,10 @@ public class ${modelNameUpperCamel}Controller {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) Search${modelNameUpperCamel} search${modelNameUpperCamel}){
-    List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
+    List<${modelNameUpperCamel}Dto> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "${modelNameUpperCamel}信息", ${modelNameUpperCamel}.class, "${modelNameUpperCamel}.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "${modelNameUpperCamel}信息", ${modelNameUpperCamel}Dto.class, "${modelNameUpperCamel}.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

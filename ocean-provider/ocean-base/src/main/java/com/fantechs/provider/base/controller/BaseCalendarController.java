@@ -24,7 +24,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/21.
  */
 @RestController
-@Api(tags = "日历管理")
+@Api(tags = "日历信息管理")
 @RequestMapping("/baseCalendar")
 @Validated
 public class BaseCalendarController {

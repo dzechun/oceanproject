@@ -125,6 +125,8 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
 
             BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
             BeanUtils.copyProperties(baseProductFamily,baseHtProductFamily);
+            baseHtProductFamily.setModifiedTime(new Date());
+            baseHtProductFamily.setModifiedUserId(user.getUserId());
             baseHtProductFamilies.add(baseHtProductFamily);
         }
 

@@ -31,7 +31,7 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      */
     @Column(name = "supplier_code")
     @ApiModelProperty("供应商代码")
-    @Excel(name = "供应商代码", height = 20, width = 30)
+    @Excel(name = "供应商(客户)代码", height = 20, width = 30)
     @NotBlank(message = "供应商编码不能为空")
     private String supplierCode;
 
@@ -39,7 +39,7 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      * 供应商名称
      */
     @Column(name = "supplier_name")
-    @ApiModelProperty("供应商名称")
+    @ApiModelProperty("供应商(客户)名称")
     @Excel(name = "供应商名称", height = 20, width = 30)
     @NotBlank(message = "供应商名称不能为空")
     private String supplierName;
@@ -48,7 +48,7 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      * 供应商描述
      */
     @Column(name = "supplier_desc")
-    @ApiModelProperty("供应商描述")
+    @ApiModelProperty("供应商(客户)描述")
     @Excel(name = "供应商描述", height = 20, width = 30)
     private String supplierDesc;
 
@@ -77,7 +77,7 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty("状态(0无效，1有效)")
-    @Excel(name = "状态", height = 20, width = 30,replace = "(0_无效，1_有效)")
+    @Excel(name = "状态", height = 20, width = 30,replace = "(无效_0，有效_1)")
     private Byte status;
 
     /**
@@ -85,7 +85,7 @@ public class SmtSupplier extends ValidGroup implements Serializable {
      */
     @Column(name = "supplier_type")
     @ApiModelProperty("身份标识（1、供应商 2、客户）")
-    @Excel(name = "身份标识", height = 20, width = 30,replace = "(1_供应商，2_客户)")
+    @Excel(name = "身份标识", height = 20, width = 30,replace = "(供应商_1，客户_2)")
     private Byte supplierType;
 
     /**
