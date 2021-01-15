@@ -23,4 +23,6 @@ public class SearchSmtSupplier extends BaseQuery implements Serializable {
     private String supplierDesc;
     @ApiModelProperty("身份标识（1、供应商 2、客户）")
     private Byte supplierType;
+    @ApiModelProperty("供应商地址")
+    private String addressDetail;
 }

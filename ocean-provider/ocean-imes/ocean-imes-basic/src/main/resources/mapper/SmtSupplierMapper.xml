@@ -31,6 +31,10 @@
     left join ocean.sys_user u on su.create_user_id=u.user_id
     left join ocean.sys_user s on su.modified_user_id=s.user_id
     LEFT JOIN fantech_imes.base_organization bo ON su.organization_id = bo.organization_id
+    <if test="addressDetail!=null and addressDetail!=''">
+      LEFT JOIN fantech_imes.smt_supplier_address ssa ON ssa.supplier_id = su.supplier_id
+      LEFT JOIN fantech_imes.smt_address sa ON sa.address_id = ssa.address_id
+    </if>
     <where>
       1=1
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
@@ -50,6 +54,9 @@
       </if>
       <if test="status!=null and status!=''">
         and su.status=#{status}
+      </if>
+      <if test="addressDetail!=null and addressDetail!=''">
+        and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
       </if>
     </where>
     order by su.create_time desc
