@@ -1,9 +1,9 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderBomDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBomDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

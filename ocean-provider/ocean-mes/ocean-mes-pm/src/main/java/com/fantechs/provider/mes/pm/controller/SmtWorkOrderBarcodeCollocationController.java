@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodeCollocationDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodeCollocation;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodeCollocation;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodeCollocationDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodeCollocation;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

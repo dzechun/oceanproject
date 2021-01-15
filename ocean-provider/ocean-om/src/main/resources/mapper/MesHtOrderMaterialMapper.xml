@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.MesHtOrderMaterialMapper">
-      <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial">
+      <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.history.MesHtOrderMaterial">
         <result column="ht_order_material_id" jdbcType="BIGINT" property="htOrderMaterialId" />
         <result column="order_material_id" jdbcType="BIGINT" property="orderMaterialId" />
         <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -23,7 +23,7 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
 
-<resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.apply.history.MesHtOrderMaterialDTO" extends="BaseResultMap">
+<resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.general.dto.mes.pm.history.MesHtOrderMaterialDTO" extends="BaseResultMap">
 
 </resultMap>
 

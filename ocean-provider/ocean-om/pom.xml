@@ -20,8 +20,8 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.imes.apply</groupId>
-            <artifactId>ocean-imes-apply-api</artifactId>
+            <groupId>com.fantechs.provider.api.mes</groupId>
+            <artifactId>ocean-mes-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

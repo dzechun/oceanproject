@@ -11,7 +11,6 @@ import com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDetDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.entity.qms.QmsDisqualification;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspectionDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtPdaInspection;

@@ -1,28 +1,17 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.apply.SmtBarcodeRuleSpecDto;
-import com.fantechs.common.base.entity.apply.SmtBarcodeRule;
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSpec;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSpecDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleSpecMapper;
 import com.fantechs.provider.mes.pm.service.SmtBarcodeRuleSpecService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *

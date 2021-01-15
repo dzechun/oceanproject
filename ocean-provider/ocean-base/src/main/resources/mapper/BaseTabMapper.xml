@@ -49,6 +49,7 @@
       <result column="storage_humidity" jdbcType="VARCHAR" property="storageHumidity" />
       <result column="storage_require_desc" jdbcType="VARCHAR" property="storageRequireDesc" />
       <result column="packing_method" jdbcType="INTEGER" property="packingMethod" />
+      <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
       <result column="status" jdbcType="TINYINT" property="status" />
       <result column="remark" jdbcType="VARCHAR" property="remark" />
       <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -115,7 +116,8 @@
 	bt.modified_time,
 	bt.is_delete,
 	bt.is_wet_sensitive,
-	bt.wet_sensitive_level
+	bt.wet_sensitive_level,
+	bt.material_quality
   </sql>
 
   <select id="findList" resultMap="BaseResultMap" parameterType="map">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtHtWorkOrderBomMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom">
     <id column="ht_work_order_bom_id" jdbcType="BIGINT" property="htWorkOrderBomId" />
     <result column="work_order_bom_id" jdbcType="BIGINT" property="workOrderBomId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
@@ -35,7 +35,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom" resultMap="BaseResultMap">
+  <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom" resultMap="BaseResultMap">
     select  shwob.ht_work_order_bom_id,shwob.work_order_bom_id,shwob.work_order_id,swo.work_order_code,shwob.part_material_id,sm.material_code as part_material_code,
     sm.material_name,sm.version,sm.material_desc,shwob.sub_material_id,sml.material_code as sub_material_code,shwob.process_id,sp.process_name,shwob.single_quantity,
     shwob.quantity,shwob.base_quantity,shwob.position,shwob.create_user_id, u.user_name as create_user_name,shwob.create_time,shwob.modified_user_id,s.user_name as modified_user_name,

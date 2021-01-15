@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.pm.service;
 
-import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

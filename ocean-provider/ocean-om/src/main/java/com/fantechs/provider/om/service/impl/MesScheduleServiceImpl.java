@@ -1,13 +1,13 @@
 package com.fantechs.provider.om.service.impl;
 
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
-import com.fantechs.common.base.dto.apply.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.dto.om.MesScheduleDTO;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.history.MesHtSchedule;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;

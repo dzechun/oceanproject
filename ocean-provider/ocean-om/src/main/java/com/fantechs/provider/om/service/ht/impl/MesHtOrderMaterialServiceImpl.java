@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.ht.impl;
 
-import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
-import com.fantechs.common.base.dto.apply.history.MesHtOrderMaterialDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtOrderMaterial;
+import com.fantechs.common.base.general.dto.mes.pm.history.MesHtOrderMaterialDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;

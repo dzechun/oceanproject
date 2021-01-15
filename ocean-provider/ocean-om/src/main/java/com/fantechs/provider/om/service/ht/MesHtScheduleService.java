@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.ht;
 
-import com.fantechs.common.base.entity.apply.history.MesHtSchedule;
-import com.fantechs.common.base.dto.apply.history.MesHtScheduleDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
+import com.fantechs.common.base.general.dto.mes.pm.history.MesHtScheduleDTO;
 import com.fantechs.common.base.support.IService;
 import java.util.List;
 import java.util.Map;

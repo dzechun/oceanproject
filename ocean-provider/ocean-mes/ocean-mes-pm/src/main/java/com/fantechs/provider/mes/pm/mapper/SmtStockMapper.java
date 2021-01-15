@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.mapper;
 
-import com.fantechs.common.base.dto.apply.SmtStockDto;
-import com.fantechs.common.base.entity.apply.SmtStock;
-import com.fantechs.common.base.entity.apply.search.SearchSmtStock;
+import com.fantechs.common.base.general.dto.mes.pm.SmtStockDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStock;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 
-import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.mes.pm.mapper.SmtHtWorkOrderBomMapper;
 import com.fantechs.provider.mes.pm.service.SmtHtWorkOrderBomService;

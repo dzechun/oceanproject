@@ -1,13 +1,13 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.apply.ProcessListDto;
-import com.fantechs.common.base.dto.apply.SmtProcessListProcessDto;
-import com.fantechs.common.base.entity.apply.*;
-import com.fantechs.common.base.entity.apply.search.SearchSmtProcessListProcess;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;

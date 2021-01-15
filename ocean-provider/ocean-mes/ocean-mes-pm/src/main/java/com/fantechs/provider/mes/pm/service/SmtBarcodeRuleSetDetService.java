@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.service;
 
-import com.fantechs.common.base.dto.apply.SmtBarcodeRuleSetDetDto;
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSetDet;
-import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSetDet;
+import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSetDet;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

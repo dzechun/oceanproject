@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.mapper;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.mybatis.MyMapper;

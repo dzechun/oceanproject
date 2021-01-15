@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.in.mapper;
 
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import org.apache.ibatis.annotations.Mapper;

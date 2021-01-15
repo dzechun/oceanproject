@@ -9,7 +9,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.provider.wms.in.service.history.WmsInHtStorageBillsDetService;
 import com.fantechs.provider.wms.in.service.history.WmsInHtStorageBillsService;
-import com.fantechs.common.base.dto.apply.history.SearchWmsInHtStorageBillsListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchWmsInHtStorageBillsListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;

@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.ht.impl;
 
-import com.fantechs.common.base.entity.apply.history.MesHtSchedule;
-import com.fantechs.common.base.dto.apply.history.MesHtScheduleDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
+import com.fantechs.common.base.general.dto.mes.pm.history.MesHtScheduleDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;

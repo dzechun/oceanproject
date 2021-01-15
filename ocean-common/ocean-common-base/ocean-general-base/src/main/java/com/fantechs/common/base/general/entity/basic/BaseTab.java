@@ -370,6 +370,15 @@ public class BaseTab extends ValidGroup implements Serializable {
     private Integer packingMethod;
 
     /**
+     * 材质
+     */
+    @ApiModelProperty(name="materialQuality",value = "材质")
+    @Excel(name = "材质", height = 20, width = 30,orderNum="")
+    @Column(name = "material_quality")
+    private String materialQuality;
+
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

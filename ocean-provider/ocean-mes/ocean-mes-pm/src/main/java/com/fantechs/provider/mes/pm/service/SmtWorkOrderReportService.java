@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.service;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderReportDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderReport;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderReport;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderReportDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderReport;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderReport;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

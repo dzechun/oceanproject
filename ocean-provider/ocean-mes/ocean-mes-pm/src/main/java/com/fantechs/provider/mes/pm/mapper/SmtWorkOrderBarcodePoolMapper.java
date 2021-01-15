@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.mapper;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderBarcodePoolDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBarcodePool;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBarcodePool;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

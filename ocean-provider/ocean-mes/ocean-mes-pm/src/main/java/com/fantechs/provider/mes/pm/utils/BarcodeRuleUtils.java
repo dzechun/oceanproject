@@ -1,15 +1,13 @@
 package com.fantechs.provider.mes.pm.utils;
 
 
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
