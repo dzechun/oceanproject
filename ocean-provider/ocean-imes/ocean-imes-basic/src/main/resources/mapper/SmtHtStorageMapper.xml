@@ -58,8 +58,14 @@
       <if test="warehouseId!=null and warehouseId!=''">
         and shs.warehouse_id=#{warehouseId}
       </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
       <if test="warehouseAreaId!=null and warehouseAreaId!=''">
         and shs.warehouseAreaId=#{warehouseAreaId}
+      </if>
+      <if test="warehouseAreaName!=null and warehouseAreaName!=''">
+        and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
       </if>
     </where>
     order by shs.modified_time desc

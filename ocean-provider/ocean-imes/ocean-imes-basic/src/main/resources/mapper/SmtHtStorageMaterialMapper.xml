@@ -45,14 +45,23 @@
       <if test="warehouseId!=null and warehouseId!=''">
         and shsm.warehouse_id=#{warehouseId}
       </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and sw.warehouse_name = like CONCAT('%', #{warehouseName}, '%')
+      </if>
       <if test="warehouseAreaId!=null and warehouseAreaId!=''">
         and shsm.warehouse_area_id=#{warehouseAreaId}
+      </if>
+      <if test="warehouseAreaName!=null and warehouseAreaName!=''">
+        and swa.warehouse_area_name = like CONCAT('%', #{warehouseAreaName}, '%')
       </if>
       <if test="storageId!=null and storageId!=''">
         and shsm.storage_id=#{storageId}
       </if>
       <if test="storageName!=null and storageName!=''">
         and ss.storage_name like CONCAT('%', #{storageName}, '%')
+      </if>
+      <if test="storageCode!=null and storageCode!=''">
+        and ss.storage_code like CONCAT('%', #{storageCode}, '%')
       </if>
       <if test="materialCode!=null and materialCode!='' and (codeQueryMark == '' or codeQueryMark == null)">
         and sm.material_code=#{materialCode}

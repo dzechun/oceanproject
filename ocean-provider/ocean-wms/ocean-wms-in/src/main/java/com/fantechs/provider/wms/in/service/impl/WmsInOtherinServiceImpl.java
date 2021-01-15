@@ -86,6 +86,7 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
         wmsInOtherin.setCreateTime(new Date());
         wmsInOtherin.setCreateUserId(user.getUserId());
 
+        //新增入库单
         int result = wmsInOtherinMapper.insertUseGeneratedKeys(wmsInOtherin);
 
         //履历
@@ -130,8 +131,8 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
 
             //查询储位库存表，有库存累加，无库存新增
             SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId().toString());
-            searchSmtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId().toString());
+            searchSmtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
+            searchSmtStorageInventory.setMaterialId(wmsInOtherinDet.getProductModelId());
             ResponseEntity<List<SmtStorageInventoryDto>> storageInventoryFeignApiList = storageInventoryFeignApi.findList(searchSmtStorageInventory);
             if(storageInventoryFeignApiList.getCode() == 0){
                 List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApiList.getData();

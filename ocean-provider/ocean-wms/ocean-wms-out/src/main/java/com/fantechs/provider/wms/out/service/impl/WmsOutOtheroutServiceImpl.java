@@ -1,10 +1,18 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderPallet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
@@ -14,8 +22,11 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderPalletMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtOtheroutMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutOtheroutMapper;
+import com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutDetService;
 import com.fantechs.provider.wms.out.service.WmsOutOtheroutService;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +53,12 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
     private WmsOutHtOtheroutMapper wmsOutHtOtheroutMapper;
     @Resource
     private WmsOutOtheroutDetService wmsOutOtheroutDetService;
+    @Resource
+    private StorageInventoryFeignApi storageInventoryFeignApi;
+    @Resource
+    private WmsOutDeliveryOrderPalletMapper wmsOutDeliveryOrderPalletMapper;
+    @Resource
+    private WmsOutShippingNoteDetMapper wmsOutShippingNoteDetMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -73,6 +91,50 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
                 }
                 wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
                 wmsOutOtheroutDetService.save(wmsOutOtheroutDet);
+
+                for (String s : wmsOutOtheroutDet.getOutPalletList()) {
+                    /*SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
+                    searchSmtStoragePallet.setPalletCode(s);
+
+                    List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+                    if (smtStoragePallets.size() <= 0) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                    }*/
+                    //删除栈板与储位关系
+                    //storageInventoryFeignApi.deleteSmtStoragePallet(String.valueOf(smtStoragePallets.get(0).getStoragePalletId()));
+
+                    //添加杂出单明细与栈板关系表
+                    WmsOutDeliveryOrderPallet wmsOutDeliveryOrderPallet = new WmsOutDeliveryOrderPallet();
+                    wmsOutDeliveryOrderPallet.setDeliveryOrderDetId(wmsOutOtheroutDet.getOtheroutDetId());
+                    wmsOutDeliveryOrderPallet.setPalletCode(s);
+                    wmsOutDeliveryOrderPallet.setCreateTime(new Date());
+                    wmsOutDeliveryOrderPallet.setCreateUserId(user.getCreateUserId());
+                    wmsOutDeliveryOrderPallet.setOrganizationId(user.getOrganizationId());
+                    wmsOutDeliveryOrderPalletMapper.insertSelective(wmsOutDeliveryOrderPallet);
+
+                    //修改库存明细表库存数
+                    SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
+                    searchSmtStorageInventoryDet.setMaterialBarcodeCode(s);
+
+                    //根据物料条码编码查询储位库存明细
+                    List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
+                    SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                    smtStorageInventoryDet.setStorageInventoryDetId(smtStorageInventoryDetDtos.get(0).getStorageInventoryDetId());
+                    smtStorageInventoryDet.setMaterialQuantity(BigDecimal.valueOf(0));
+                    storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
+                }
+
+                //修改库存表
+                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
+                searchSmtStorageInventory.setStorageId(wmsOutOtheroutDet.getStorageId());
+                searchSmtStorageInventory.setMaterialId(wmsOutOtheroutDet.getMaterialId());
+                List<SmtStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+                SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
+                System.out.println(wmsOutOtheroutDet.getRealityOutquantity());
+                System.out.println(smtStorageInventoryDto.getQuantity());
+                smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutOtheroutDet.getRealityOutquantity()));
+                storageInventoryFeignApi.update(smtStorageInventoryDto);
+
             }
         }
         return i;

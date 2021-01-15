@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -43,6 +44,13 @@ public class WmsOutOtheroutDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Column(name = "material_id")
     private Long materialId;
+
+    /**
+     * 储位ID
+     */
+    @ApiModelProperty(name="storageId",value = "储位ID")
+    @Column(name = "storage_id")
+    private Long storageId;
 
     /**
      * 申请数量
@@ -148,6 +156,9 @@ public class WmsOutOtheroutDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty(name="outPalletList",value = "已出库栈板集合")
+    private List<String> outPalletList;
 
     private static final long serialVersionUID = 1L;
 }
