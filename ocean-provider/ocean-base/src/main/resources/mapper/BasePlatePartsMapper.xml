@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BasePlatePartsMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BasePlateParts">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="plate_parts_id" jdbcType="BIGINT" property="platePartsId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="if_customized" jdbcType="TINYINT" property="ifCustomized" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BasePlatePartsDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="color" jdbcType="VARCHAR" property="color"/>
+    <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode"/>
+    <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
+    <result column="material_quality" jdbcType="VARCHAR" property="materialQuality"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+	bpp.plate_parts_id,
+	bpp.if_customized,
+	bpp.material_id,
+	bpp.organization_id,
+	bpp.remark,
+	bpp.`status`,
+	bpp.create_user_id,
+	bpp.create_time,
+	bpp.modified_user_id,
+	bpp.modified_time,
+	bpp.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    sm.material_code,sm.material_name,spm.product_model_name
+    from fantech_imes.base_plate_parts bpp
+    LEFT JOIN ocean.sys_user su ON bpp.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bpp.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bpp.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = bpp.material_id
+    LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+    LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id = bt.package_specification_id
+    <where>
+      <if test="platePartsId != null and platePartsId!=''">
+        and bpp.plate_parts_id like CONCAT('%', #{platePartsId}, '%')
+      </if>
+      <if test="materialCode != null and materialCode!=''">
+        and bpp.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName != null and materialName!=''">
+        and bpp.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

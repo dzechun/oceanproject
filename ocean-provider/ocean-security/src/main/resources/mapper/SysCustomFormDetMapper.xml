@@ -14,6 +14,7 @@
     <result column="item_detail_type" jdbcType="TINYINT" property="itemDetailType" />
     <result column="is_hide" jdbcType="TINYINT" property="isHide" />
     <result column="is_enum" jdbcType="TINYINT" property="isEnum" />
+    <result column="is_edit_display" jdbcType="TINYINT" property="isEditDisplay" />
     <result column="spec_code" jdbcType="VARCHAR" property="specCode" />
     <result column="enum_data" jdbcType="VARCHAR" property="enumData" />
     <result column="is_required" jdbcType="TINYINT" property="isRequired" />
@@ -36,7 +37,7 @@
 
   <sql id="Base_Column_List">
     cfd.custom_form_det_id, cfd.custom_form_id, cfd.item_key, cfd.item_name, cfd.show_type,
-    cfd.item_value,cfd.item_width,cfd.item_list_type,cfd.item_search_type,cfd.item_detail_type,cfd.is_hide,
+    cfd.item_value,cfd.item_width,cfd.item_list_type,cfd.item_search_type,cfd.item_detail_type,cfd.is_hide,cfd.is_edit_display,
     cfd.is_enum,cfd.spec_code,cfd.enum_data,cfd.is_required,cfd.order_num,cfd.create_user_id,cfd.create_time,cfd.modified_time,
     cfd.modified_time,cfd.status,cfd.is_delete
   </sql>
