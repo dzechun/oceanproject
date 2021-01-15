@@ -36,7 +36,7 @@
      mhom.material_id,
      mhom.total,
      mhom.box_code,
-     mhom.package_type,
+     mhom.packing_unit_name,
      mhom.size,
      mhom.rough_weight,
      mhom.net_weight,
