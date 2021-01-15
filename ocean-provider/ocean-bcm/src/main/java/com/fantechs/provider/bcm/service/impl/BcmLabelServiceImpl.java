@@ -84,9 +84,9 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
         map.put("savePath","/"+bcmLabelCategory.getLabelCategoryName());
         boolean success = uploadFile(map,file);
-        if(!success){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
-        }
+//        if(!success){
+//            throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
+//        }
 
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
