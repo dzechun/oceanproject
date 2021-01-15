@@ -19,7 +19,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.apply.ApplyFeignApi;
+import com.fantechs.provider.api.mes.pm.ApplyFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.qms.mapper.*;
