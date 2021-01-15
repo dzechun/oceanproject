@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderCardPoolDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderCardPool;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardPool;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

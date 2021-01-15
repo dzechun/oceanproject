@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtWorkOrderBomMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrderBom">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom">
         <id column="work_order_bom_id" jdbcType="BIGINT" property="workOrderBomId"/>
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId"/>
@@ -24,7 +24,7 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-               type="com.fantechs.common.base.dto.apply.SmtWorkOrderBomDto">
+               type="com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBomDto">
         <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
         <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
@@ -38,7 +38,7 @@
     </resultMap>
 
 
-    <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderBom"
+    <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom"
             resultMap="BaseResultMapDto">
         select swob.work_order_bom_id,swob.work_order_id,swo.work_order_code,swob.part_material_id,sm.material_code as
         part_material_code,sm.material_name,

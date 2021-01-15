@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtStockMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtStock">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtStock">
         <!--
           WARNING - @mbg.generated
         -->
@@ -23,7 +23,7 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtStockDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.SmtStockDto">
         <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -42,7 +42,7 @@
 </sql>
 
     <select id="findList" resultMap="BaseResultMapDto"
-            parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtStock">
+            parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStock">
         select<include refid="Base_Column_List"/>
         ,wo.work_order_code,spl.pro_name,sm.material_code,sm.version,sm.material_desc,sw.warehouse_name,su.user_name as
         createName,su.user_name, bo.organization_name

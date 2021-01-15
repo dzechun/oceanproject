@@ -1,10 +1,10 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.apply.SmtWorkOrderReportDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderReport;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderReport;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderReportDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderReport;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderReport;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;

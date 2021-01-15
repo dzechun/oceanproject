@@ -26,7 +26,7 @@
                extends="BaseResultMap">
 
     </resultMap>
-    <resultMap id="SmtBarcodeRuleSpecResultMap" type="com.fantechs.common.base.entity.apply.SmtBarcodeRuleSpec">
+    <resultMap id="SmtBarcodeRuleSpecResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec">
         <id column="barcode_rule_spec_id" jdbcType="BIGINT" property="barcodeRuleSpecId"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="spec_id" jdbcType="BIGINT" property="specId"/>

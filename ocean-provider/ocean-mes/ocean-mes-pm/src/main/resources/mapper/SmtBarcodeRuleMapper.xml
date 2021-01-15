@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtBarcodeRule">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRule">
     <id column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
     <result column="barcode_rule_code" jdbcType="VARCHAR" property="barcodeRuleCode" />
     <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
@@ -22,14 +22,14 @@
   </resultMap>
 
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.apply.SmtBarcodeRuleDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleDto">
     <result column="barcode_rule_category_name" jdbcType="VARCHAR" property="barcodeRuleCategoryName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRule" resultMap="BaseResultMapDto">
+  <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRule" resultMap="BaseResultMapDto">
     select sbr.barcode_rule_id,sbr.barcode_rule_code,sbr.barcode_rule_name,sbr.barcode_rule_desc,sbr.barcode_rule_category_id,ssi.spec_name as barcode_rule_category_name,
     sbr.barcode_rule, sbr.organization_id, sbr.remark,sbr.status,sbr.create_user_id, u.user_name as create_user_name,sbr.create_time,sbr.modified_user_id,s.user_name as modified_user_name,sbr.modified_time,
     sbr.is_delete

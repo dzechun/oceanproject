@@ -1,9 +1,9 @@
 package com.fantechs.provider.mes.pm.service;
 
-import com.fantechs.common.base.dto.apply.SaveWorkOrderAndBom;
-import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

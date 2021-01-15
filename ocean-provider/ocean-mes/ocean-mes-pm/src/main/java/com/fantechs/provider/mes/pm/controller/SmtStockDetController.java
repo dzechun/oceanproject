@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.dto.apply.SmtStockDetDto;
-import com.fantechs.common.base.entity.apply.SmtStockDet;
-import com.fantechs.common.base.entity.apply.search.SearchSmtStockDet;
+import com.fantechs.common.base.general.dto.mes.pm.SmtStockDetDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStockDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.dto.apply.SmtWorkOrderCardCollocationDto;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderCardCollocation;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardCollocation;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardCollocationDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardCollocation;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

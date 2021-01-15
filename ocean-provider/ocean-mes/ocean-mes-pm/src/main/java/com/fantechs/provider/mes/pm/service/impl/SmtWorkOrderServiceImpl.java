@@ -1,15 +1,15 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.apply.SaveWorkOrderAndBom;
-import com.fantechs.common.base.dto.apply.SmtWorkOrderDto;
-import com.fantechs.common.base.entity.apply.SmtStock;
-import com.fantechs.common.base.entity.apply.SmtStockDet;
-import com.fantechs.common.base.entity.apply.SmtWorkOrder;
-import com.fantechs.common.base.entity.apply.SmtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrder;
-import com.fantechs.common.base.entity.apply.history.SmtHtWorkOrderBom;
-import com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;

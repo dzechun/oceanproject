@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.mapper;
 
-import com.fantechs.common.base.entity.apply.history.MesHtOrderMaterial;
-import com.fantechs.common.base.dto.apply.history.MesHtOrderMaterialDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtOrderMaterial;
+import com.fantechs.common.base.general.dto.mes.pm.history.MesHtOrderMaterialDTO;
 import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
 import java.util.List;

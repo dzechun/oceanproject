@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
-import com.fantechs.common.base.entity.apply.history.SmtHtBarcodeRuleSet;
-import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSet;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtBarcodeRuleSet;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.mes.pm.mapper.SmtHtBarcodeRuleSetMapper;
 import com.fantechs.provider.mes.pm.service.SmtHtBarcodeRuleSetService;

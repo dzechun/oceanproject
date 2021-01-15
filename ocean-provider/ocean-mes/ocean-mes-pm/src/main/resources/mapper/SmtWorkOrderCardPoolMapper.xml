@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.apply.SmtWorkOrderCardPool">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool">
         <id column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
         <result column="task_code" jdbcType="VARCHAR" property="taskCode"/>
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
@@ -22,7 +22,7 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-               type="com.fantechs.common.base.dto.apply.SmtWorkOrderCardPoolDto">
+               type="com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto">
         <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
         <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
@@ -43,7 +43,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
-    <select id="findList" parameterType="com.fantechs.common.base.entity.apply.search.SearchSmtWorkOrderCardPool"
+    <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool"
             resultMap="BaseResultMapDto">
         select
         swocp.work_order_card_pool_id,swocp.task_code,swocp.work_order_id,swo.work_order_code,swo.work_order_type,swo.material_id,sm.material_code,sm.version,bt.transfer_quantity,

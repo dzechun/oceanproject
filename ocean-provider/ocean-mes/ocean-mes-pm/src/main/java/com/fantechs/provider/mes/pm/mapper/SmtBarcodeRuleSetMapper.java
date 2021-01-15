@@ -1,8 +1,8 @@
 package com.fantechs.provider.mes.pm.mapper;
 
-import com.fantechs.common.base.dto.apply.SmtBarcodeRuleSetDto;
-import com.fantechs.common.base.entity.apply.SmtBarcodeRuleSet;
-import com.fantechs.common.base.entity.apply.search.SearchSmtBarcodeRuleSet;
+import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSet;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSet;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

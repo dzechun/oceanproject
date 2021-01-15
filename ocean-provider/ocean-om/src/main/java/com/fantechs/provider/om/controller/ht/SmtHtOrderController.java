@@ -1,8 +1,8 @@
 package com.fantechs.provider.om.controller.ht;
 
-import com.fantechs.common.base.entity.apply.history.SmtHtOrder;
-import com.fantechs.common.base.dto.apply.history.SmtHtOrderDTO;
-import com.fantechs.common.base.dto.apply.history.SearchSmtHtOrderListDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtOrder;
+import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchSmtHtOrderListDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
