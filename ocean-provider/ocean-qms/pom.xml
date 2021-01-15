@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.mes</groupId>
-            <artifactId>ocean-mes-api</artifactId>
+            <artifactId>ocean-mes-pm-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
