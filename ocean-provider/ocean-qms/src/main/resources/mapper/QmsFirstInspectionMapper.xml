@@ -62,7 +62,7 @@
         and qfi.first_inspection_code like CONCAT('%', #{firstInspectionCode}, '%')
       </if>
       <if test="productionLine != null and productionLine != ''">
-        and spl.pro_line_name like CONCAT('%', #{productionLine}, '%')
+        and spl.pro_name like CONCAT('%', #{productionLine}, '%')
       </if>
       <if test="handler != null and handler != ''">
         and sys.user_id = #{handler}

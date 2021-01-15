@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BasePlatePartsDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BasePlatePartsDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="plate_parts_det_id" jdbcType="BIGINT" property="platePartsDetId" />
+    <result column="plate_parts_id" jdbcType="BIGINT" property="platePartsId" />
+    <result column="parts_information_id" jdbcType="BIGINT" property="partsInformationId" />
+    <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="specification" jdbcType="VARCHAR" property="specification" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+    <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto">
+    <result column="parts_information_code" jdbcType="VARCHAR" property="partsInformationCode"/>
+    <result column="parts_information_name" jdbcType="VARCHAR" property="partsInformationName"/>
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bppd.plate_parts_det_id,
+	bppd.plate_parts_id,
+	bppd.parts_information_id,
+	bppd.route_id,
+	bppd.specification,
+	bppd.unit,
+	bppd.quantity,
+	bppd.color,
+	bppd.material_quality,
+	bppd.organization_id,
+	bppd.remark,
+	bppd.`status`,
+	bppd.create_user_id,
+	bppd.create_time,
+	bppd.modified_user_id,
+	bppd.modified_time,
+	bppd.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    bpi.parts_information_code,bpi.parts_information_name,sr.route_name
+    from fantech_imes.base_plate_parts_det bppd
+    LEFT JOIN ocean.sys_user su ON bppd.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bppd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bppd.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
+    LEFT JOIN fantech_imes.smt_route sr ON sr.route_id = bppd.route_id
+    <where>
+      <if test="platePartsId != null and platePartsId!=''">
+        and bppd.plate_parts_id = #{platePartsId}
+      </if>
+      <if test="partsInformationName != null and partsInformationName!=''">
+        and bpi.parts_information_code like CONCAT('%', #{partsInformationName}, '%')
+      </if>
+      <if test="partsInformationCode != null and partsInformationCode!=''">
+        and bpi.parts_information_name like CONCAT('%', #{partsInformationCode}, '%')
+      </if>
+      <if test="routeId != null and routeId!=''">
+        and sr.route_id = #{routeId}
+      </if>
+      <if test="routeName != null and routeName!=''">
+        and sr.route_name like CONCAT('%', #{routeName}, '%')
+      </if>
+
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bppd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>
