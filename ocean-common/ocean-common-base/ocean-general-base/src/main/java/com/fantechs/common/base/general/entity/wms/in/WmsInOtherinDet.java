@@ -45,12 +45,12 @@ public class WmsInOtherinDet extends ValidGroup implements Serializable {
     private String otherinId;
 
     /**
-     * 产品ID
+     * 物料ID
      */
-    @ApiModelProperty(name="productModelId",value = "产品ID")
-    @Excel(name = "产品ID", height = 20, width = 30,orderNum="")
-    @Column(name = "product_model_id")
-    private Long productModelId;
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
+    @Column(name = "material_id")
+    private Long materialId;
 
     /**
      * 储位ID

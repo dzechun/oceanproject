@@ -129,7 +129,7 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
             //新增库存
             SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
             smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
-            smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getProductModelId());
+            smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
             smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
 
             smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();

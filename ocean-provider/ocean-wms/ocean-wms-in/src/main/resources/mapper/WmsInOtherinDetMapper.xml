@@ -7,7 +7,7 @@
     -->
     <id column="otherin_det_id" jdbcType="BIGINT" property="otherinDetId" />
     <result column="otherin_id" jdbcType="VARCHAR" property="otherinId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="carton_quantity" jdbcType="DECIMAL" property="cartonQuantity" />
@@ -23,9 +23,9 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInOtherinDetDto">
-    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
-    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
@@ -37,7 +37,7 @@
   <sql id="Base_Column_List">
     oid.otherin_det_id,
     oid.otherin_id,
-    oid.product_model_id,
+    oid.material_id,
     oid.storage_id,
     oid.pallet_code,
     oid.carton_quantity,
@@ -57,9 +57,7 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_code AS organization_code,
-    pm.product_model_code AS product_model_code,
-    pm.product_model_name AS product_model_name,
-    pm.product_model_desc AS product_model_desc,
+    sm.material_code, sm.material_name, sm.material_desc,
     s.storage_name AS storage_name,
     wa.warehouse_area_name AS warehouse_area_name,
     w.warehouse_name AS warehouse_name
@@ -68,7 +66,7 @@
     LEFT JOIN ocean.sys_user su ON oid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON oid.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON oid.organization_id = bo.organization_id
-    LEFT JOIN smt_product_model pm ON oid.product_model_id = pm.product_model_id
+    LEFT JOIN smt_material sm ON oid.material_id = sm.material_id
     LEFT JOIN smt_storage s ON oid.storage_id = s.storage_id
     LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id
     LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id

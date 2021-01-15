@@ -8,7 +8,7 @@
     <id column="ht_finished_product_det_id" jdbcType="BIGINT" property="htFinishedProductDetId" />
     <result column="finished_product_det_id" jdbcType="BIGINT" property="finishedProductDetId" />
     <result column="finished_product_id" jdbcType="VARCHAR" property="finishedProductId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="carton_quantity" jdbcType="DECIMAL" property="cartonQuantity" />

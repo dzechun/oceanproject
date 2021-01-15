@@ -5,22 +5,16 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
 public class WmsOutShippingNoteDetDto extends WmsOutShippingNoteDet implements Serializable {
 
-    @Excel(name = "成品编码", height = 20, width = 30,orderNum="1")
-    @ApiModelProperty(name="productModelCode" ,value="成品编码")
-    private String productModelCode;
-
     @Excel(name = "版本", height = 20, width = 30,orderNum="2")
     @ApiModelProperty(name="version" ,value="版本")
     private String version;
-
-    @Excel(name = "成品描述", height = 20, width = 30,orderNum="3")
-    @ApiModelProperty(name="productModelDesc" ,value="成品描述（规格？）")
-    private String productModelDesc;
 
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
@@ -46,5 +40,14 @@ public class WmsOutShippingNoteDetDto extends WmsOutShippingNoteDet implements S
     @ApiModelProperty(name="moveStorageName" ,value="调入储位名称")
     private String moveStorageName;
 
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30)
+    private String materialCode;
 
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "物料描述", height = 20, width = 30)
+    private String materialDesc;
 }

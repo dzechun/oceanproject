@@ -52,12 +52,12 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private Long shippingNoteDetId;
 
     /**
-     * 成品ID
+     * 物料ID
      */
-    @ApiModelProperty(name="productModelId",value = "成品ID")
-    @Excel(name = "成品ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "product_model_id")
-    private Long productModelId;
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
+    @Column(name = "material_id")
+    private Long materialId;
 
     /**
      * 备料总数
