@@ -19,7 +19,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.mes.pm.ApplyFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.qms.mapper.*;
@@ -52,7 +52,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      @Resource
      private InFeignApi inFeignApi;
      @Resource
-     private ApplyFeignApi applyFeignApi;
+     private PMFeignApi applyFeignApi;
      @Resource
      private QmsHtPdaInspectionMapper qmsHtPdaInspectionMapper;
 

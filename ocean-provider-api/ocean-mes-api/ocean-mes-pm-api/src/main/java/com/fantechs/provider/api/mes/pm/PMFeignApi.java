@@ -1,12 +1,10 @@
 package com.fantechs.provider.api.mes.pm;
 
-import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,11 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(name = "ocean-mes-pm")
-public interface ApplyFeignApi {
-
-    @ApiOperation("订单列表")
-    @PostMapping("/smtOrder/findList")
-    ResponseEntity<List<SmtOrderDto>> findOrderList(@ApiParam(value = "查询对象")@RequestBody SearchSmtOrder searchSmtOrder);
+public interface PMFeignApi {
 
     @ApiOperation("工单列表")
     @PostMapping("/smtWorkOrder/findList")

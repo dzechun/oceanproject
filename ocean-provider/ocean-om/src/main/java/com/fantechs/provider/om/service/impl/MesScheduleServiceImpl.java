@@ -16,7 +16,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.api.mes.pm.ApplyFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.om.mapper.MesScheduleMapper;
 import com.fantechs.provider.om.service.MesScheduleService;
 import com.fantechs.provider.om.service.SmtOrderService;
@@ -47,7 +47,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
      @Resource
      private SmtOrderService smtOrderService;
      @Resource
-     private ApplyFeignApi applyFeignApi;
+     private PMFeignApi applyFeignApi;
 
     @Override
     public List<MesSchedule> selectAll(Map<String,Object> map) {
