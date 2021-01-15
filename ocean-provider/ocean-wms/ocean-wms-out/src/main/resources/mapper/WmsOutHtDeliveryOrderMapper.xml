@@ -9,7 +9,7 @@
     <result column="delivery_order_id" jdbcType="BIGINT" property="deliveryOrderId" />
     <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode" />
     <result column="shipping_note_code" jdbcType="VARCHAR" property="shippingNoteCode" />
-    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
     <result column="out_time" jdbcType="TIMESTAMP" property="outTime" />
     <result column="out_status" jdbcType="TINYINT" property="outStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -44,7 +44,7 @@
     doo.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select<include refid="Base_Column_List"/>,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,

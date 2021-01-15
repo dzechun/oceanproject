@@ -63,6 +63,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="outTime",value = "单据日期")
     @Excel(name = "单据日期", height = 20, width = 30,orderNum="4")
     @Column(name = "out_time")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date outTime;
 
     /**
