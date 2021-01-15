@@ -257,8 +257,18 @@ public enum ErrorCodeEnum {
     OPT20012007(20012007,"未找到能导出的数据"),
 
     OPT20012008(20012008,"条码生成错误"),
-    ;
 
+
+    /**
+     * operate 30012000 error code enum.
+     * 库存类相关报错
+     */
+    STO30012000(30012000,"库存不足"),
+
+    STO30012001(30012001,"库存不存在"),
+
+
+    ;
     private Integer code;
 
     private String msg;

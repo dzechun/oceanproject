@@ -118,6 +118,14 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private Byte isEnum;
 
     /**
+     * 是否编辑展示（0-否 1-是）
+     */
+    @ApiModelProperty(name="isEditDisplay",value = "是否编辑展示（0-否 1-是）")
+    @Excel(name = "是否编辑展示（0-否 1-是）", height = 20, width = 30,orderNum="")
+    @Column(name = "is_edit_display")
+    private Byte isEditDisplay;
+
+    /**
      * 配置项Code
      */
     @ApiModelProperty(name="specCode",value = "配置项Code")

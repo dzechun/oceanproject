@@ -12,6 +12,7 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.entity.wms.out.*;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderPallet;
@@ -53,6 +54,8 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
     private WmsOutDeliveryOrderPalletMapper wmsOutDeliveryOrderPalletMapper;
     @Resource
     private WmsOutShippingNoteDetMapper wmsOutShippingNoteDetMapper;
+    @Resource
+    private WmsOutShippingNoteMapper wmsOutShippingNoteMapper;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -104,6 +107,9 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
         BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
         wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
 
+        Boolean flag = true;
+        Long shippingNoteId = 0L;
+
         for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList()) {
             wmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
             wmsOutDeliveryOrderDet.setOutStatus((byte)2);
@@ -150,7 +156,35 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
             SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
             smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutDeliveryOrderDet.getOutTotalQty()));
             storageInventoryFeignApi.update(smtStorageInventoryDto);
+
+            //回写出货通知单出货状态
+            Example example = new Example(WmsOutDeliveryOrderDet.class);
+            example.createCriteria().andEqualTo("shippingNoteDetId",wmsOutDeliveryOrderDet.getShippingNoteDetId());
+            List<WmsOutDeliveryOrderDet> wmsOutDeliveryOrderDets = wmsOutDeliveryOrderDetMapper.selectByExample(example);
+            BigDecimal total = wmsOutDeliveryOrderDets.stream().map(WmsOutDeliveryOrderDet::getOutTotalQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+            WmsOutShippingNoteDet wmsOutShippingNoteDet = wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId());
+            shippingNoteId = wmsOutShippingNoteDet.getShippingNoteId();
+            if(wmsOutShippingNoteDet.getRealityTotalQty() == total){
+                wmsOutShippingNoteDet.setOutStatus((byte)2);
+            }else{
+                wmsOutShippingNoteDet.setOutStatus((byte)1);
+                flag = false;
+            }
+            wmsOutShippingNoteDetMapper.updateByPrimaryKeySelective(wmsOutShippingNoteDet);
         }
+
+        //修改出库通知单出库状态
+        WmsOutShippingNote wmsOutShippingNote = new WmsOutShippingNote();
+        wmsOutShippingNote.setShippingNoteId(shippingNoteId);
+        if(flag){
+            wmsOutShippingNote.setOutStatus((byte)1);
+        }else{
+            wmsOutShippingNote.setOutStatus((byte)2);
+        }
+        wmsOutShippingNoteMapper.updateByPrimaryKeySelective(wmsOutShippingNote);
+
+
+
         return result;
     }
 }

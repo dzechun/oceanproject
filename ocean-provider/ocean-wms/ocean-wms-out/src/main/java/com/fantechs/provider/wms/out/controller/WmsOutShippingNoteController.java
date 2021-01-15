@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,6 +70,15 @@ public class WmsOutShippingNoteController {
         List<WmsOutShippingNoteDto> list = wmsOutShippingNoteService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutShippingNote));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
+
+    @ApiOperation("列表")
+    @PostMapping("/PDAfindList")
+    public ResponseEntity<List<WmsOutShippingNoteDto>> PDAfindList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutShippingNote searchWmsOutShippingNote) {
+        Page<Object> page = PageHelper.startPage(searchWmsOutShippingNote.getStartPage(),searchWmsOutShippingNote.getPageSize());
+        List<WmsOutShippingNoteDto> list = wmsOutShippingNoteService.PDAfindList(searchWmsOutShippingNote);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
