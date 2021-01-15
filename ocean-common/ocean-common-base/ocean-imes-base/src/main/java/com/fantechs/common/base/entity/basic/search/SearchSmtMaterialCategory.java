@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class SearchSmtMaterialCategory extends BaseQuery implements Serializable {
 
     /**
-     * 物料类别ID
+     * ID
      */
     @ApiModelProperty(name="materialCategoryId",value = "物料类别ID")
     private Long materialCategoryId;

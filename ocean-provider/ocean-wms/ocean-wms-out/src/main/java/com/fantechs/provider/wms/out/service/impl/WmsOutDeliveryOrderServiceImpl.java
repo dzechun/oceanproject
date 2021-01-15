@@ -101,6 +101,7 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
         wmsOutDeliveryOrder.setCreateTime(new Date());
         wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
         wmsOutDeliveryOrder.setOrganizationId(user.getOrganizationId());
+        //新增出库单
         int result = wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
         //履历
@@ -113,6 +114,7 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
             wmsOutDeliveryOrderDet.setOutStatus((byte)2);
             wmsOutDeliveryOrderDet.setCreateTime(new Date());
             wmsOutDeliveryOrderDet.setCreateUserId(user.getUserId());
+            //新增成品出库单明细
             wmsOutDeliveryOrderDetMapper.insertSelective(wmsOutDeliveryOrderDet);
 
             for (String s : wmsOutDeliveryOrderDet.getOutPalletList()) {
@@ -147,8 +149,8 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
             }
             //修改库存表
             SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageId(String.valueOf(wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId()).getStorageId()));//出货通知单明细 储位ID
-            searchSmtStorageInventory.setMaterialId(String.valueOf(wmsOutDeliveryOrderDet.getProductModelId()));
+            searchSmtStorageInventory.setStorageId(wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId()).getStorageId());//出货通知单明细 储位ID
+            searchSmtStorageInventory.setMaterialId(wmsOutDeliveryOrderDet.getProductModelId());
             List<SmtStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
             SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
             smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutDeliveryOrderDet.getOutTotalQty()));

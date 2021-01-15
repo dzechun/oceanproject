@@ -8,6 +8,7 @@
         <id column="otherout_det_id" jdbcType="BIGINT" property="otheroutDetId"/>
         <result column="otherout_id" jdbcType="VARCHAR" property="otheroutId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="plan_outquantity" jdbcType="DECIMAL" property="planOutquantity"/>
         <result column="reality_outquantity" jdbcType="DECIMAL" property="realityOutquantity"/>
         <result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
