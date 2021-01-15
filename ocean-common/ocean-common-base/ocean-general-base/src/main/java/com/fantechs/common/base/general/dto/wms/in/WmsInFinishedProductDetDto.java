@@ -55,4 +55,16 @@ public class WmsInFinishedProductDetDto extends WmsInFinishedProductDet implemen
     @Excel(name = "物料描述", height = 20, width = 30)
     @Transient
     private String materialDesc;
+
+    @Excel(name = "产品型号编码", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
+    private String productModelCode;
+
+    @Excel(name = "产品型号名称", height = 20, width = 30,orderNum="2")
+    @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    private String productModelName;
+
+    @Excel(name = "产品型号描述", height = 20, width = 30,orderNum="3")
+    @ApiModelProperty(name="productModelDesc" ,value="产品型号描述")
+    private String productModelDesc;
 }

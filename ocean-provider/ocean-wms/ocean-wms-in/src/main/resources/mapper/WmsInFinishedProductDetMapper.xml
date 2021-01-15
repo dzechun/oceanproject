@@ -26,6 +26,9 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialNode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
@@ -53,13 +56,16 @@
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
-    SELECT <include refid="Base_Column_List"></include>,
+    SELECT <include refid="Base_Column_List" />,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_code AS organization_code,
     sm.material_code ,
     sm.material_name ,
     sm.material_desc,
+    pm.product_model_code AS product_model_code,
+    pm.product_model_name AS product_model_name,
+    pm.product_model_desc AS product_model_desc,
     s.storage_name AS storage_name,
     wa.warehouse_area_name AS warehouse_area_name,
     w.warehouse_name AS warehouse_name
@@ -69,6 +75,8 @@
     LEFT JOIN ocean.sys_user sus ON fpd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON fpd.organization_id = bo.organization_id
     LEFT JOIN smt_material sm ON fpd.material_id = sm.material_id
+    LEFT JOIN base_tab  bt ON bt.material_id =sm.material_id
+    LEFT JOIN smt_product_model pm ON bt.product_model_id  = pm.product_model_id
     LEFT JOIN smt_storage s ON fpd.storage_id = s.storage_id
     LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id
     LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id
