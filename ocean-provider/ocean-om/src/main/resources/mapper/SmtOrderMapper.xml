@@ -107,9 +107,9 @@
     </select>
 
     <insert id="batchAddOrderMaterial" parameterType="java.util.List" >
-        insert into mes_order_material(order_id,material_id,total,box_code,package_type,size,rough_weight,net_weight,spec_file)
+        insert into mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
         <foreach collection="mesOrderMaterialList" item="mesOrderMaterial" separator="," index="index">
-            (#{orderId},#{materialId},#{total},#{boxCode},#{packageType},#{size},#{roughWeight},#{netWeight},#{specFile})
+            (#{orderId},#{materialId},#{total},#{boxCode},#{packingUnitName},#{size},#{roughWeight},#{netWeight},#{specFile})
         </foreach>
     </insert>
     <delete id="deleteMaterialByOrderId" parameterType="int">
@@ -124,7 +124,7 @@
             mom.material_id,
             mom.total,
             mom.box_code,
-            mom.package_type,
+            mom.packing_unit_name,
             mom.size,
             mom.rough_weight,
             mom.net_weight,
