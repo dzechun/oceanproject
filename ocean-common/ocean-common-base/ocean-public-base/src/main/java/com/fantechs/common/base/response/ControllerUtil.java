@@ -141,10 +141,10 @@ public class ControllerUtil {
             for (Field field : clazz1.getDeclaredFields()) {
                 field.setAccessible(true);
                 String fieldName = field.getName();
-                String value = null;
+                Object value = null;
                 try {
                     Object o1 = field.get(o);
-                    value = o1==null?null:o1.toString();
+                    value = o1==null?null:o1;
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
