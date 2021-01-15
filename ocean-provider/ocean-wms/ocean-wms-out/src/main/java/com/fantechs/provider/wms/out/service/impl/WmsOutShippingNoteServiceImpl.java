@@ -2,8 +2,11 @@ package com.fantechs.provider.wms.out.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -12,6 +15,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDto;
 import com.fantechs.common.base.general.entity.wms.out.*;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtShippingNote;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutShippingNote;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -26,6 +30,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.util.StringUtil;
 
 
 import javax.annotation.Resource;
@@ -57,6 +62,15 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
     }
 
     @Override
+    public List<WmsOutShippingNoteDto> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote) {
+//        Example example = new Example(WmsOutShippingNote.class);
+//        example.createCriteria().andIn("stockStatus",searchWmsOutShippingNote)
+//
+//        return wmsOutShippingNoteMapper.selectByExample();
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int submit(WmsOutShippingNote wmsOutShippingNote) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -67,14 +81,35 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
 
+        WmsOutShippingNote dataShippingNote = wmsOutShippingNoteMapper.selectByPrimaryKey(wmsOutShippingNote.getShippingNoteId());
+
+
         for (WmsOutShippingNoteDet wmsOutShippingNoteDet : wmsOutShippingNote.getWmsOutShippingNoteDetList()) {
             if (StringUtils.isEmpty(wmsOutShippingNoteDet.getStockPalletList())) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100);
             }
 
-            //删除关系表
+            //判断库存
             Example example = new Example(WmsOutShippingNotePallet.class);
             example.createCriteria().andEqualTo("shippingNoteDetId",wmsOutShippingNoteDet.getShippingNoteDetId());
+            List<WmsOutShippingNoteDet> wmsOutShippingNoteDets = wmsOutShippingNoteDetMapper.selectByExample(example);
+
+            SearchSmtStorageInventory searchSmtStorageInventor = new SearchSmtStorageInventory();
+            searchSmtStorageInventor.setStorageId(wmsOutShippingNoteDets.get(0).getStorageId());
+            List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
+            if(StringUtils.isEmpty(smtStorageInventoryDtos)){
+                throw new BizErrorException(ErrorCodeEnum.STO30012001);
+            }
+            for (SmtStorageInventoryDto smtStorageInventoryDto : smtStorageInventoryDtos) {
+                if(smtStorageInventoryDto.getMaterialId() != wmsOutShippingNoteDets.get(0).getMaterialId()){
+                    throw new BizErrorException(ErrorCodeEnum.STO30012001);
+                }
+                if(smtStorageInventoryDto.getQuantity().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) < 0){
+                    throw new BizErrorException(ErrorCodeEnum.STO30012000);
+                }
+            }
+
+            //删除关系表
             wmsOutShippingNotePalletMapper.deleteByExample(example);
 
             for (String s : wmsOutShippingNoteDet.getStockPalletList()) {
@@ -82,6 +117,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
                 searchSmtStoragePallet.setPalletCode(s);
                 searchSmtStoragePallet.setIsBinding((byte) 1);
                 searchSmtStoragePallet.setIsDelete((byte) 1);
+                //判断栈板是否绑定区域
                 List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
                 if (smtStoragePallets.size() <= 0) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100);
@@ -117,8 +153,8 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
         List<WmsOutShippingNoteDetDto> wmsOutShippingNoteDets = wmsOutShippingNoteDetMapper.findList(map);
         boolean flag = true;
         for (WmsOutShippingNoteDetDto wmsOutShippingNoteDet : wmsOutShippingNoteDets) {
-            if (wmsOutShippingNoteDet.getPlanCartonQty() == wmsOutShippingNoteDet.getRealityCartonQty()) {
-                if (wmsOutShippingNoteDet.getPlanTotalQty() == wmsOutShippingNoteDet.getRealityTotalQty()) {
+            if (wmsOutShippingNoteDet.getPlanCartonQty().compareTo(wmsOutShippingNoteDet.getRealityCartonQty()) == 0) {
+                if (wmsOutShippingNoteDet.getPlanTotalQty().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) == 0) {
                     wmsOutShippingNoteDet.setStockStatus((byte) 2);//备料完成
                     wmsOutShippingNoteDetMapper.updateByPrimaryKeySelective(wmsOutShippingNoteDet);
                 } else {
@@ -134,7 +170,6 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
         } else {
             wmsOutShippingNote.setStockStatus((byte)1);//备料中
         }
-
 
         wmsOutShippingNote.setModifiedUserId(user.getUserId());
         wmsOutShippingNote.setModifiedTime(new Date());

@@ -38,7 +38,6 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
     private String modifiedUserName;
 
 

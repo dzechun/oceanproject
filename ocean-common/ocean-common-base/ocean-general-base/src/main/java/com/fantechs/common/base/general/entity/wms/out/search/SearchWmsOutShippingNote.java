@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
+import java.util.List;
 
 @Data
 public class SearchWmsOutShippingNote extends BaseQuery implements Serializable {
@@ -39,6 +40,12 @@ public class SearchWmsOutShippingNote extends BaseQuery implements Serializable 
     /**
      * 单据状态（0-待备料 1-备料中 2- 备料完成）
      */
-    @ApiModelProperty(name="outStatus",value = "单据状态（0-待备料 1-备料中 2- 备料完成）")
+    @ApiModelProperty(name="outStatus",value = "出库状态（0-待出库 1-出库中 2- 出库完成）")
     private Byte outStatus;
+
+    @ApiModelProperty(name="outStatus",value = "备料状态（0-待备料 1-备料中 2- 备料完成）")
+    private Byte stockStatus;
+
+    @ApiModelProperty(name="stockStatusIn",value = "备料状态集合")
+    private List<Integer> stockStatusIn;
 }
