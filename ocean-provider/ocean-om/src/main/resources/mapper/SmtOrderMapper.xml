@@ -48,7 +48,7 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
         <result column="total" jdbcType="DECIMAL" property="total" />
         <result column="box_code" jdbcType="VARCHAR" property="boxCode" />
-        <result column="package_type" jdbcType="VARCHAR" property="packageType" />
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
         <result column="size" jdbcType="DECIMAL" property="size" />
         <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight" />
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />

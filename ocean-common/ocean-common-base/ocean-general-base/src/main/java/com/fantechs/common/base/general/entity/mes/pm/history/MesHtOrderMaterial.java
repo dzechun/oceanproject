@@ -72,9 +72,9 @@ public class MesHtOrderMaterial implements Serializable {
     * 包装方式
     */
     @ApiModelProperty(value = "包装方式",example = "包装方式")
-    @Column(name = "package_type")
+    @Column(name = "packing_unit_name")
     @Excel(name = "包装方式")
-    private String packageType;
+    private String packingUnitName;
 
     /**
     * 尺码(CM)
