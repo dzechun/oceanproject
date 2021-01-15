@@ -60,11 +60,6 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
 
-        //新增历史记录
-        BcmHtLabelCategory bcmHtLabelCategory = new BcmHtLabelCategory();
-        BeanUtils.copyProperties(record,bcmHtLabelCategory);
-        bcmHtLabelCategoryMapper.updateByPrimaryKeySelective(bcmHtLabelCategory);
-
         return bcmLabelCategoryMapper.insertUseGeneratedKeys(record);
     }
 

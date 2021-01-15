@@ -59,9 +59,6 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
 
-        BcmHtLabelMaterial bcmHtLabelMaterial = new BcmHtLabelMaterial();
-        BeanUtils.copyProperties(record,bcmHtLabelMaterial);
-        bcmHtLabelMaterialMapper.insertSelective(bcmHtLabelMaterial);
         return bcmLabelMaterialMapper.insertUseGeneratedKeys(record);
     }
 
