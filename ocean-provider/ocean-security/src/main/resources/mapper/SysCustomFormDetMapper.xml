@@ -17,6 +17,8 @@
     <result column="is_edit_display" jdbcType="TINYINT" property="isEditDisplay" />
     <result column="spec_code" jdbcType="VARCHAR" property="specCode" />
     <result column="enum_data" jdbcType="VARCHAR" property="enumData" />
+    <result column="event_trigger_mode" jdbcType="TINYINT" property="eventTriggerMode" />
+    <result column="event_trigger_name" jdbcType="TINYINT" property="eventTriggerName" />
     <result column="is_required" jdbcType="TINYINT" property="isRequired" />
     <result column="order_num" jdbcType="INTEGER" property="orderNum" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -39,7 +41,7 @@
     cfd.custom_form_det_id, cfd.custom_form_id, cfd.item_key, cfd.item_name, cfd.show_type,
     cfd.item_value,cfd.item_width,cfd.item_list_type,cfd.item_search_type,cfd.item_detail_type,cfd.is_hide,cfd.is_edit_display,
     cfd.is_enum,cfd.spec_code,cfd.enum_data,cfd.is_required,cfd.order_num,cfd.create_user_id,cfd.create_time,cfd.modified_time,
-    cfd.modified_time,cfd.status,cfd.is_delete
+    cfd.modified_time,cfd.status,cfd.is_delete,cfd.event_trigger_mode,cfd.event_trigger_name
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select
