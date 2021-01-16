@@ -42,10 +42,10 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements BcmBarCodeService {
 
-         @Resource
-         private BcmBarCodeMapper bcmBarCodeMapper;
-         @Autowired
-         private FTPUtil ftpUtil;
+    @Resource
+    private BcmBarCodeMapper bcmBarCodeMapper;
+    @Autowired
+    private FTPUtil ftpUtil;
     @Resource
     private SecurityFeignApi securityFeignApi;
 
