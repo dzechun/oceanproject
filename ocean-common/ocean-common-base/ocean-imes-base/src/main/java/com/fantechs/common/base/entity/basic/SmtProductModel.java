@@ -42,6 +42,7 @@ public class SmtProductModel extends ValidGroup implements Serializable {
      */
     @Column(name = "product_model_name")
     @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    @Excel(name = "产品型号名称", height = 20, width = 30)
     private String productModelName;
 
     /**

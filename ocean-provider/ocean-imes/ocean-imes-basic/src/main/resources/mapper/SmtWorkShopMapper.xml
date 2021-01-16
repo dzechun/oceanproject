@@ -43,16 +43,16 @@
     LEFT JOIN fantech_imes.smt_factory sf ON sf.factory_id = ws.factory_id
     LEFT JOIN fantech_imes.base_organization bo ON ws.organization_id = bo.organization_id
     <where>
-      <if test="workShopCode != null">
+      <if test="workShopCode != null and workShopCode != ''">
         and  ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
       </if>
-      <if test="workShopName != null">
+      <if test="workShopName != null and workShopName != ''">
         and  ws.work_shop_name like CONCAT('%', #{workShopName}, '%')
       </if>
-      <if test="workShopDesc != null">
+      <if test="workShopDesc != null and workShopDesc != ''">
         and  ws.work_shop_desc like CONCAT('%', #{workShopDesc}, '%')
       </if>
-      <if test="factoryId != null">
+      <if test="factoryId != null and factoryId != ''">
         and  ws.factory_id = #{factoryId}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

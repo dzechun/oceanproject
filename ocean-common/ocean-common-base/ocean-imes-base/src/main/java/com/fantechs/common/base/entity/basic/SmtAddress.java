@@ -34,7 +34,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 省编码
      */
     @ApiModelProperty(name="provinceCode",value = "省编码")
-    @Excel(name = "省编码", height = 20, width = 30,orderNum="1")
     @Column(name = "province_code")
     private String provinceCode;
 
@@ -42,7 +41,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 市编码
      */
     @ApiModelProperty(name="cityCode",value = "市编码")
-    @Excel(name = "市编码", height = 20, width = 30,orderNum="2")
     @Column(name = "city_code")
     private String cityCode;
 
@@ -50,7 +48,6 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 区/县编码
      */
     @ApiModelProperty(name="classifyCode",value = "区/县编码")
-    @Excel(name = "区/县编码", height = 20, width = 30,orderNum="3")
     @Column(name = "classify_code")
     private String classifyCode;
 
@@ -58,7 +55,7 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 详细地址
      */
     @ApiModelProperty(name="addressDetail",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30,orderNum="4")
+    @Excel(name = "详细地址", height = 20, width = 30,orderNum="1")
     @Column(name = "address_detail")
     @NotBlank(message = "详细地址不能为空")
     private String addressDetail;
@@ -67,7 +64,7 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 邮政编码
      */
     @ApiModelProperty(name="postCode",value = "邮政编码")
-    @Excel(name = "邮政编码", height = 20, width = 30,orderNum="5")
+    @Excel(name = "邮政编码", height = 20, width = 30,orderNum="2")
     @Column(name = "post_code")
     private String postCode;
 
@@ -90,7 +87,7 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="7",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="3",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
@@ -103,7 +100,7 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="4",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -119,7 +116,7 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="5",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
