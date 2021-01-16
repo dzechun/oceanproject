@@ -45,7 +45,7 @@
       <if test="warehouseCode!=null and warehouseCode!='' and codeQueryMark==1">
         and sw.warehouse_code = #{warehouseCode}
       </if>
-      <if test="warehouseCode!=null and warehouseCode!='' and codeQueryMark!=1">
+      <if test="warehouseCode!=null and warehouseCode!='' and (codeQueryMark == null or codeQueryMark == '')">
         and sw.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
       </if>
       <if test="warehouseName!=null and warehouseName!=''">

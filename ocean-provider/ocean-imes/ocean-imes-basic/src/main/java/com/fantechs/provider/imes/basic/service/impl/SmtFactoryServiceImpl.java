@@ -145,8 +145,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
         SmtHtFactory smtHtFactory  = new SmtHtFactory();
         BeanUtils.copyProperties(smtFactory,smtHtFactory);
-        smtHtFactory.setCreateUserId(user.getUserId());
-        smtHtFactory.setCreateTime(new Date());
 
         smtHtFactoryMapper.insert(smtHtFactory);
 

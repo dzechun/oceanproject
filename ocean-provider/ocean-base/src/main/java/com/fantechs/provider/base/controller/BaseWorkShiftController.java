@@ -31,7 +31,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/21.
  */
 @RestController
-@Api(tags = "班次管理")
+@Api(tags = "班次信息管理")
 @RequestMapping("/baseWorkShift")
 @Validated
 public class BaseWorkShiftController {

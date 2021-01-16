@@ -10,7 +10,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.provider.api.mes.pm.ApplyFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.wms.in.service.MesPackageManagerService;
 import com.fantechs.provider.wms.in.mapper.MesPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -40,7 +40,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
      @Resource
      private MesPackageManagerMapper mesPackageManagerMapper;
      @Resource
-     private ApplyFeignApi applyFeignApi;
+     private PMFeignApi applyFeignApi;
      @Resource
      private MesHtPackageManagerService mesHtPackageManagerService;
 

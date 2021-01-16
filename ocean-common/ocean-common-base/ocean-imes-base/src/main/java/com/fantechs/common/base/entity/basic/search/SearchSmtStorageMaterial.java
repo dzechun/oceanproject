@@ -4,6 +4,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -26,7 +27,7 @@ public class SearchSmtStorageMaterial extends BaseQuery implements Serializable 
      * 仓库区域ID
      */
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
-    private String warehouseAreaId;
+    private Long warehouseAreaId;
 
     /**
      * 仓库区域名称

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtTeamMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtTeam">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_team_id" jdbcType="BIGINT" property="htTeamId"/>
+        <result column="team_id" jdbcType="BIGINT" property="teamId"/>
+        <result column="team_code" jdbcType="VARCHAR" property="teamCode"/>
+        <result column="team_name" jdbcType="VARCHAR" property="teamName"/>
+        <result column="team_desc" jdbcType="VARCHAR" property="teamDesc"/>
+        <result column="work_shop_id" jdbcType="BIGINT" property="workShopId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+        <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        bht.ht_team_id,
+        bht.team_id,
+        bht.team_code,
+        bht.team_name,
+        bht.team_desc,
+        bht.work_shop_id,
+        bht.`status`,
+        bht.remark,
+        bht.organization_id,
+        bht.create_time,
+        bht.create_user_id,
+        bht.modified_user_id,
+        bht.modified_time,
+        bht.is_delete
+    </sql>
+
+    <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,
+        sws.work_shop_code, sws.work_shop_name, sws.work_shop_desc
+        from fantech_imes.base_ht_team bht
+        LEFT JOIN fantech_imes.smt_work_shop sws on bht.work_shop_id = sws.work_shop_id
+        LEFT JOIN ocean.sys_user su ON bht.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON bht.modified_user_id = sus.user_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bht.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="workShopId != null and workShopId !=''">
+                and bht.work_shop_id = #{workShopId}
+            </if>
+            <if test="teamCode != null and teamCode!=''">
+                and bht.team_code like CONCAT('%', #{teamCode}, '%')
+            </if>
+            <if test="teamName != null and teamName!=''">
+                and bht.team_name like CONCAT('%', #{teamName}, '%')
+            </if>
+            <if test="teamDesc != null and teamDesc!=''">
+                and bht.team_desc like CONCAT('%', #{teamDesc}, '%')
+            </if>
+        </where>
+        order by modified_time desc
+    </select>
+</mapper>

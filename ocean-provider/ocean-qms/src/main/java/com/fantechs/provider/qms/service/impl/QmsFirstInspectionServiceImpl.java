@@ -14,7 +14,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.mes.pm.ApplyFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsDisqualificationMapper;
 import com.fantechs.provider.qms.mapper.QmsFirstInspectionMapper;
@@ -45,7 +45,7 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
-    private ApplyFeignApi applyFeignApi;
+    private PMFeignApi applyFeignApi;
     @Resource
     private QmsHtFirstInspectionMapper qmsHtFirstInspectionMapper;
 

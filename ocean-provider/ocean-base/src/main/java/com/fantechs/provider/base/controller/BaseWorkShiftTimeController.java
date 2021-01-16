@@ -27,7 +27,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/01/04.
  */
 @RestController
-@Api(tags = "班次时间管理")
+@Api(tags = "班次时间信息管理")
 @RequestMapping("/baseWorkShiftTime")
 @Validated
 public class BaseWorkShiftTimeController {

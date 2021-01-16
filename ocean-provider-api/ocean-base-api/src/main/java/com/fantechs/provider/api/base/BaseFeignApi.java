@@ -1,7 +1,9 @@
 package com.fantechs.provider.api.base;
 
+import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,4 +32,8 @@ public interface BaseFeignApi {
     @ApiOperation("修改页签")
     @PostMapping("/baseTab/update")
     ResponseEntity updateTab(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseTab.update.class) BaseTab baseTab);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseTeam/findList")
+    ResponseEntity<List<BaseTeamDto>> findTeamList(@ApiParam(value = "查询对象")@RequestBody SearchBaseTeam searchBaseTeam);
 }

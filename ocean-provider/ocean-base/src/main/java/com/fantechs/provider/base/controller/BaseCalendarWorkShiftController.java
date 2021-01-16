@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/12/21.
  */
 @RestController
-@Api(tags = "日历班次关系管理")
+@Api(tags = "日历班次关系信息管理")
 @RequestMapping("/baseCalendarWorkShift")
 @Validated
 public class BaseCalendarWorkShiftController {
