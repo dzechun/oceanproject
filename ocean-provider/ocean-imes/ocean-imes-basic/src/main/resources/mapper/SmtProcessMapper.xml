@@ -8,6 +8,12 @@
     <result column="process_desc" jdbcType="VARCHAR" property="processDesc" />
     <result column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="process_category_id" jdbcType="BIGINT" property="processCategoryId" />
+
+    <result column="is_job_scan" jdbcType="TINYINT" property="isJobScan" />
+    <result column="is_start_scan" jdbcType="TINYINT" property="isStartScan" />
+    <result column="is_quality" jdbcType="TINYINT" property="isQuality" />
+    <result column="finish_time" jdbcType="DECIMAL" property="finishTime" />
+
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -24,7 +30,8 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProcess" resultMap="BaseResultMap">
-    select  sp.process_id,sp.process_code,sp.process_name,sp.process_desc,sp.section_id,sws.section_name as sectionName,sp.process_category_id,
+    select  sp.process_id,sp.process_code,sp.process_name,sp.process_desc,sp.section_id,
+    sp.is_job_scan,sp.is_start_scan,sp.is_quality,sp.finish_time,sws.section_name as sectionName,sp.process_category_id,
     spc.process_category_name as processCategoryName,sp.status,sp.create_user_id,u.user_name as createUserName,sp.create_time,sp.modified_user_id,
     s.user_name as modifiedUserName,sp.modified_time, sp.is_delete, sp.organization_id, sp.remark, bo.organization_name
     from fantech_imes.smt_process sp
