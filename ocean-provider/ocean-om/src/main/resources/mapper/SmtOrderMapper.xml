@@ -108,11 +108,12 @@
 
     <insert id="batchAddOrderMaterial" parameterType="java.util.List" >
         insert into mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
-        <foreach collection="mesOrderMaterialList" item="mesOrderMaterial" separator="," index="index">
-            (#{orderId},#{materialId},#{total},#{boxCode},#{packingUnitName},#{size},#{roughWeight},#{netWeight},#{specFile})
+        values
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packingUnitName},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})
         </foreach>
     </insert>
-    <delete id="deleteMaterialByOrderId" parameterType="int">
+    <delete id="deleteMaterialByOrderId" parameterType="long">
         delete from mes_order_material where order_id = #{orderId}
     </delete>
 
