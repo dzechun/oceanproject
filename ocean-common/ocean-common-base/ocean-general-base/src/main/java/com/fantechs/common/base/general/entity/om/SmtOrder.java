@@ -2,8 +2,10 @@ package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -99,6 +101,8 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "delivery_date")
     @ApiModelProperty(name="deliveryDate" ,value="交货日期")
     @Excel(name = "交货日期", height = 20, width = 30,orderNum="11")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date deliveryDate;
 
     /**
@@ -107,6 +111,8 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "schedule_date")
     @ApiModelProperty(name="schedule_date" ,value="排产交期")
     @Excel(name = "排产交期", height = 20, width = 30,orderNum="11")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date scheduleDate;
 
     /**
@@ -115,6 +121,8 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "order_date")
     @ApiModelProperty(name="order_date" ,value="下单日期")
     @Excel(name = "下单日期", height = 20, width = 30,orderNum="11")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date orderDate;
 
     /**
@@ -159,6 +167,8 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @Excel(name = "镭雕信息", height = 20, width = 30,orderNum="13")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -174,6 +184,8 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="15")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
