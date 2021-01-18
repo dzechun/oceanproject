@@ -225,7 +225,40 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     public int batchUpdateByCode(List<SmtMaterial> smtMaterials) {
         int i=0;
         if (StringUtils.isNotEmpty(smtMaterials)){
+            for (SmtMaterial smtMaterial : smtMaterials) {
+                smtMaterial.setModifiedTime(new Date());
+
+                //更新页签
+                BaseTab baseTab = smtMaterial.getBaseTab();
+                if (StringUtils.isNotEmpty(baseTab)){
+                    baseTab.setModifiedTime(new Date());
+                    baseFeignApi.updateTab(baseTab);
+                }
+            }
             i = smtMaterialMapper.batchUpdateByCode(smtMaterials);
+
+
+        }
+        return i;
+    }
+
+    @Override
+    public int batchSave(List<SmtMaterial> smtMaterials) {
+        int i=0;
+        if (StringUtils.isNotEmpty(smtMaterials)){
+            for (SmtMaterial smtMaterial : smtMaterials) {
+                smtMaterial.setModifiedTime(new Date());
+
+                //新增物料页签信息
+                BaseTab baseTab = smtMaterial.getBaseTab();
+                if (StringUtils.isNotEmpty(baseTab)){
+                    baseTab.setMaterialId(smtMaterial.getMaterialId());
+                    baseTab.setCreateTime(new Date());
+                    baseTab.setModifiedTime(new Date());
+                    baseFeignApi.addTab(baseTab);
+                }
+            }
+            i = smtMaterialMapper.insertList(smtMaterials);
         }
         return i;
     }

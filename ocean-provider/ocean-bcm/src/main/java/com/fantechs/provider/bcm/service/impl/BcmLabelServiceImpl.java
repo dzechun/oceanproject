@@ -114,17 +114,19 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         }
 
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
-        //存放路径：标签类别+名称
-        entity.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getName());
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("FTP");
-        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
-        List<SysSpecItem> sysSpecItemList = itemList.getData();
-        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-        map.put("savePath",entity.getSavePath());
-        boolean success = uploadFile(map,file);
-        if(!success){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
+        if(!file.isEmpty()){
+            //存放路径：标签类别+名称
+            entity.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getName());
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("FTP");
+            ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
+            List<SysSpecItem> sysSpecItemList = itemList.getData();
+            Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+            map.put("savePath",entity.getSavePath());
+            boolean success = uploadFile(map,file);
+//            if(!success){
+//                throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
+//            }
         }
 
         entity.setModifiedUserId(currentUserInfo.getUserId());

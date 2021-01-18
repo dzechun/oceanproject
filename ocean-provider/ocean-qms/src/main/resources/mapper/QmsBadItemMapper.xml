@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsBadItemMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsBadItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="bad_item_id" jdbcType="BIGINT" property="badItemId" />
+    <result column="bad_item_code" jdbcType="VARCHAR" property="badItemCode" />
+    <result column="bad_cause" jdbcType="VARCHAR" property="badCause" />
+    <result column="bad_phenomenon" jdbcType="LONGVARCHAR" property="badPhenomenon" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsBadItemDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qbi.bad_item_id,qbi.bad_item_code,qbi.bad_cause,qbi.process_id,qbi.bad_phenomenon,
+    qbi.status,qbi.create_user_id, bo.organization_name,qbi.create_time,
+    qbi.modified_user_id,qbi.modified_time,qbi.is_delete, qbi.organization_id,qbi.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    sp.process_code,sp.process_name,sws.section_code,sws.section_name
+    from fantech_imes.qms_bad_item qbi
+    LEFT JOIN ocean.sys_user su ON qbi.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qbi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qbi.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = qbi.process_id
+    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+    <where>
+      <if test="badItemId != null and badItemId != ''">
+        and qbi.bad_item_id = #{badItemId}
+      </if>
+      <if test="processId != null and processId != ''">
+        and sp.process_id = #{processId}
+      </if>
+      <if test="sectionId != null and sectionId != ''">
+        and sws.section_id = #{sectionId}
+      </if>
+      <if test="badItemCode != null and badItemCode != ''">
+        and qbi.bad_item_code like CONCAT('%', #{badItemCode}, '%')
+      </if>
+      <if test="badCause != null and badCause != ''">
+        and qbi.bad_cause  like CONCAT('%', #{badCause}, '%')
+      </if>
+      <if test="badPhenomenon != null and badPhenomenon != ''">
+        and qbi.bad_phenomenon like CONCAT('%', #{badPhenomenon}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qbi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

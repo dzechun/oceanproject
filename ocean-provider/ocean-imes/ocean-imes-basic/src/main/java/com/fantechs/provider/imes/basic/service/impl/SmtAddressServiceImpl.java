@@ -80,7 +80,7 @@ public class SmtAddressServiceImpl extends BaseService<SmtAddress> implements Sm
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
-            SmtAddress smtAddress = smtAddressMapper.selectByPrimaryKey(id);
+            SmtAddress smtAddress = smtAddressMapper.selectByPrimaryKey(Long.valueOf(id));
             if (StringUtils.isEmpty(smtAddress)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }

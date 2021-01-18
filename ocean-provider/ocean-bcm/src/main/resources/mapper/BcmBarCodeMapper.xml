@@ -106,7 +106,7 @@
                 and bl.label_name =#{labelName}
             </if>
             <if test="printMode!=null and printMode!=''">
-                and bl.print_mode = #{printModl}
+                and bl.print_mode = #{printMode}
             </if>
             <if test="savePath!=null and savePath!=''">
                 and bl.save_path =#{savePath}
@@ -131,7 +131,7 @@
                 and bl.label_name =#{labelName}
             </if>
             <if test="printMode!=null and printMode!=''">
-                and bl.print_mode = #{printModl}
+                and bl.print_mode = #{printMode}
             </if>
             <if test="savePath!=null and savePath!=''">
                 and bl.save_path =#{savePath}

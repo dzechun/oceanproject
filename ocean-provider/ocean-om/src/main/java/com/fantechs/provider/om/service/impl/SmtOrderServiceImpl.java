@@ -133,9 +133,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         }
 
         //删除原有的关联产品信息
-        if(smtOrderMapper.deleteMaterialByOrderId(smtOrder.getOrderId())<=0){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
-        }
+        smtOrderMapper.deleteMaterialByOrderId(smtOrder.getOrderId());
 
         List<MesOrderMaterial> mesOrderMaterialList = saveOrderMaterialDTO.getMesOrderMaterialList();
         if(StringUtils.isNotEmpty(mesOrderMaterialList)){
