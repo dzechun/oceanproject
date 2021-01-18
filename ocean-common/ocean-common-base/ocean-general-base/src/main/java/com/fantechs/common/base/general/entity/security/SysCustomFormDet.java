@@ -144,7 +144,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="isRequired",value = "是否必填（0-否 1-是）")
     @Excel(name = "是否必填（0-否 1-是）", height = 20, width = 30,orderNum="")
-    @Column(name = "event_trigger_mode")
+    @Column(name = "is_required")
     private Byte isRequired;
 
     /**
