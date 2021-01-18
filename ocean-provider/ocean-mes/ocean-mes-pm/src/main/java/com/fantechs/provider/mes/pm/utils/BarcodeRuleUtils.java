@@ -115,7 +115,11 @@ public class BarcodeRuleUtils {
                 }else if("[F]".equals(specification)){
                     String customizeCode="0123456789ABCDEF";
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeCode));
-                }else if("[b]".equals(specification)||"[c]".equals(specification)){
+                }else if("[b]".equals(specification)){
+                    customizeValue="0123456789ABCDEFGHJKLMNPQRSTVWXYZ";
+                    maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
+                }else if("[c]".equals(specification)){
+                    customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);

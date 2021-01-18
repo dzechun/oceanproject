@@ -1,23 +1,25 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtProductBomDto;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
-import com.fantechs.common.base.entity.basic.SmtProductBomDet;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderBomService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
@@ -55,6 +57,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     private SmtStockDetMapper smtStockDetMapper;
     @Resource
     private SmtWorkOrderBomService smtWorkOrderBomService;
+    @Resource
+    private BasicFeignApi basicFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -69,7 +73,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         if (StringUtils.isNotEmpty(smtWorkOrders)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }*/
-        smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
+        if(StringUtils.isEmpty(smtWorkOrder.getWorkOrderCode())){
+            smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
+        }
+
 
         smtWorkOrder.setCreateUserId(currentUser.getUserId());
         smtWorkOrder.setCreateTime(new Date());
@@ -114,9 +121,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         List<SmtStockDet> stockDetList = new ArrayList<>();
         //根据物料ID查询产品BOM信息
-        List<SmtProductBomDet> smtProductBomDets = smtWorkOrderMapper.selectProductBomDet(smtWorkOrder.getMaterialId());
-        if (StringUtils.isNotEmpty(smtProductBomDets)) {
-            for (SmtProductBomDet smtProductBomDet : smtProductBomDets) {
+        SearchSmtProductBom searchSmtProductBom  = new SearchSmtProductBom();
+        searchSmtProductBom.setMaterialId(smtWorkOrder.getMaterialId());
+        searchSmtProductBom.setIsBomDet(new Byte("1"));
+        List<SmtProductBomDto> smtProductBoms = basicFeignApi.findProductBomList(searchSmtProductBom).getData();
+        if (StringUtils.isNotEmpty(smtProductBoms)) {
+            for (SmtProductBomDto smtProductBomDet : smtProductBoms) {
                 SmtWorkOrderBom smtWorkOrderBom = new SmtWorkOrderBom();
                 BeanUtils.copyProperties(smtProductBomDet, smtWorkOrderBom, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
                 BigDecimal workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();

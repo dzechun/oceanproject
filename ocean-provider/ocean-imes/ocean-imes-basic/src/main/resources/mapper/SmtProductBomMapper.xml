@@ -111,6 +111,10 @@
             <if test="materialId!=null and materialId!=''">
                 and spb.material_id=#{materialId}
             </if>
+            <if test="isBomDet!=null and isBomDet!='' and materialId!=null and materialId!=''">
+                and   spb.parent_bom_id IN  (SELECT product_bom_id FROM smt_product_bom
+                WHERE material_id =#{materialId})
+            </if>
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>

@@ -27,7 +27,7 @@ public class TokenUtil {
     /**
      * 调用RedisAPI
      */
-    public static int expire = 2*60*60;// 2h token过期时间
+    public static int expire = 12*60*60;// 2h token过期时间
     public static long refresh_expire = 30*24*60*60;//30天
     public static int REPLACEMENT_PROTECTION_TIMEOUT = 30*60;//30分钟 token置换保护时间
     public static int REPLACEMENT_DELAY=2*60;//2分钟 旧token延期失效时间
