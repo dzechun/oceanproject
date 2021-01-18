@@ -74,6 +74,14 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     private Long barcodeRuleSetId;
 
     /**
+     * 系统来源
+     */
+    @Column(name = "system_source")
+    @ApiModelProperty(name="systemSource" ,value="系统来源")
+    @Excel(name = "系统来源", height = 20, width = 30)
+    private String systemSource;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

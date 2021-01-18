@@ -8,6 +8,7 @@
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="system_source" jdbcType="VARCHAR" property="systemSource" />
     <result column="material_source" jdbcType="INTEGER" property="materialSource" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber" />
@@ -32,6 +33,7 @@
 	shm.material_name,
 	shm.material_desc,
 	shm.version,
+    shm.system_source,
 	shm.material_source,
 	shm.barcode_rule_set_id,
 	shm.`status`,
