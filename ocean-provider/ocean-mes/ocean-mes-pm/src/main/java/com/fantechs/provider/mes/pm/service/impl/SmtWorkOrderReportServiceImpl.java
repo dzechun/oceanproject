@@ -13,10 +13,12 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderReportMapper;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderReportService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
     private SmtWorkOrderReportMapper smtWorkOrderReportMapper;
     @Resource
     private SmtWorkOrderMapper smtWorkOrderMapper;
+    @Resource
+    private SmtWorkOrderService smtWorkOrderService;
 
 
     @Override
@@ -46,10 +50,14 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByWorkOrderId(record.getWorkOrderId());
-        if(record.getCompletedQuantity().intValue()>smtWorkOrder.getWorkOrderQuantity().intValue()){
+        if(record.getCompletedQuantity().intValue()>(smtWorkOrder.getWorkOrderQuantity().intValue()-smtWorkOrder.getOutputQuantity().intValue())){
             throw new BizErrorException("报工数量大于工单数量");
         }
 
+        smtWorkOrder.setOutputQuantity(new BigDecimal(smtWorkOrder.getOutputQuantity().intValue()+record.getCompletedQuantity().intValue()));
+        if(smtWorkOrderService.update(smtWorkOrder)<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
         //保留此功能
 //        Map<String,Object> map = new HashMap<>();
 //        map.put("specCode","orderReport");
