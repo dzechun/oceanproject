@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsQualityConfirmationMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="quality_confirmation_id" jdbcType="BIGINT" property="qualityConfirmationId" />
+    <result column="quality_confirmation_code" jdbcType="VARCHAR" property="qualityConfirmationCode" />
+    <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="quality_type" jdbcType="TINYINT" property="qualityType" />
+    <result column="qualified_quantity" jdbcType="DECIMAL" property="qualifiedQuantity" />
+    <result column="unqualified_quantity" jdbcType="DECIMAL" property="unqualifiedQuantity" />
+    <result column="affirm_status" jdbcType="TINYINT" property="affirmStatus" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsPoorQuality"
+                column="quality_confirmation_id" select="com.fantechs.provider.qms.mapper.QmsPoorQualityMapper.findById"></collection>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="unit" jdbcType="VARCHAR" property="unit"/>
+    <result column="parts_information_name" jdbcType="VARCHAR" property="partsInformationName"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="person_name" jdbcType="VARCHAR" property="personName"/>
+    <result column="quantity" jdbcType="VARCHAR" property="quantity"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
+    <result column="bad_item_code" jdbcType="VARCHAR" property="badItemCode"/>
+    <result column="bad_phenomenon" jdbcType="VARCHAR" property="badPhenomenon"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qqc.quality_confirmation_id,
+    qqc.quality_confirmation_code,
+    qqc.work_order_card_pool_id,
+    qqc.process_id,
+    qqc.qualified_quantity,
+    qqc.unqualified_quantity,
+    qqc.affirm_status,
+    qqc.status,qqc.create_user_id, bo.organization_name,qqc.create_time,
+    qqc.modified_user_id,qqc.modified_time,qqc.is_delete, qqc.organization_id,qqc.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
+    bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
+    sp.process_name,sws.section_name
+    from fantech_imes.qms_quality_confirmation qqc
+    LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qqc.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
+    LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
+    LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_work_order_card_pool sswocp ON sswocp.work_order_card_pool_id = swocp.parent_id
+    LEFT JOIN fantech_imes.smt_work_order sswo ON sswo.work_order_id = sswocp.work_order_id
+    LEFT JOIN fantech_imes.smt_material sm ON sswo.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_process sp ON qqc.process_id = sp.process_id
+    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+    LEFT JOIN fantech_imes.base_tab bt ON bt.tab_id = sm.tab_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+    LEFT JOIN fantech_imes.smt_dept sd ON sd.dept_id = su.dept_id
+    <where>
+      <if test="qualityConfirmationId != null and qualityConfirmationId != ''">
+        and qqc.quality_confirmation_id = #{qualityConfirmationId}
+      </if>
+      <if test="qualityConfirmationCode != null and qualityConfirmationCode != ''">
+        and qqc.quality_confirmation_code like CONCAT('%', #{qualityConfirmationCode}, '%')
+      </if>
+      <if test="workOrderCardPoolCode != null and workOrderCardPoolCode != ''">
+        and swocp.work_order_card_id like CONCAT('%', #{workOrderCardPoolCode}, '%')
+      </if>
+      <if test="parentWorkOrderCardPoolCode != null and parentWorkOrderCardPoolCode != ''">
+        and sswocp.work_order_card_id = #{parentWorkOrderCardPoolCode}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="affirmStatus != null and affirmStatus != ''">
+        and qqc.affirm_status = #{affirmStatus}
+      </if>
+      <if test="qualityType != null and qualityType != ''">
+        and qqc.quality_type = #{qualityType}
+      </if>
+
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+
+
+</mapper>
