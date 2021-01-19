@@ -225,7 +225,17 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     public int batchUpdateByCode(List<SmtMaterial> smtMaterials) {
         int i=0;
         if (StringUtils.isNotEmpty(smtMaterials)){
+            Example example = new Example(SmtMaterial.class);
             for (SmtMaterial smtMaterial : smtMaterials) {
+                example.clear();
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode())
+                        .andNotEqualTo("materialId",smtMaterial.getMaterialId());
+                SmtMaterial smtMaterial1 = smtMaterialMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(smtMaterial1)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                }
+
                 smtMaterial.setModifiedTime(new Date());
 
                 //更新页签
@@ -246,7 +256,16 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     public int batchSave(List<SmtMaterial> smtMaterials) {
         int i=0;
         if (StringUtils.isNotEmpty(smtMaterials)){
+            Example example = new Example(SmtMaterial.class);
             for (SmtMaterial smtMaterial : smtMaterials) {
+                example.clear();
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
+                SmtMaterial smtMaterial1 = smtMaterialMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(smtMaterial1)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                }
+
                 smtMaterial.setCreateTime(new Date());
                 smtMaterial.setModifiedTime(new Date());
 
