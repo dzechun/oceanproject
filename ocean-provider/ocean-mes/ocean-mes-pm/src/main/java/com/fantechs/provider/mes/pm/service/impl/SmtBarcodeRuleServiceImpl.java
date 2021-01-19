@@ -222,11 +222,11 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         }
 
         //判断S、F、b、c只能使用一个
-        boolean sCode = sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
-        boolean fCode = !sb.toString().contains("S") && sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
-        boolean bCode = !sb.toString().contains("S") && !sb.toString().contains("F") && sb.toString().contains("b") && !sb.toString().contains("c");
-        boolean cCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && sb.toString().contains("c");
-        boolean baseCode = !sb.toString().contains("S") && !sb.toString().contains("F") && !sb.toString().contains("b") && !sb.toString().contains("c");
+        boolean sCode = specs.contains("S") && !specs.contains("F") && !specs.contains("b") && !specs.contains("c");
+        boolean fCode = !specs.contains("S") && specs.contains("F") && !specs.contains("b") && !specs.contains("c");
+        boolean bCode = !specs.contains("S") && !specs.contains("F") && specs.contains("b") && !specs.contains("c");
+        boolean cCode = !specs.contains("S") && !specs.contains("F") && !specs.contains("b") && specs.contains("c");
+        boolean baseCode = !specs.contains("S") && !specs.contains("F") && !specs.contains("b") && !specs.contains("c");
         if(!sCode&&!fCode&&!bCode&&!cCode&&!baseCode){
             throw new BizErrorException("条码规则配置错误");
         }

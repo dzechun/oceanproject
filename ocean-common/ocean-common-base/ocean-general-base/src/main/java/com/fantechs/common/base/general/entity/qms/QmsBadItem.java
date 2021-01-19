@@ -2,15 +2,18 @@ package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.qms.QmsBadItemDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.annotation.Resource;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 不良项目表
@@ -42,14 +45,6 @@ public class QmsBadItem extends ValidGroup implements Serializable {
     @Excel(name = "不良原因", height = 20, width = 30,orderNum="2")
     @Column(name = "bad_cause")
     private String badCause;
-
-    /**
-     * 不良现象
-     */
-    @ApiModelProperty(name="badPhenomenon",value = "不良现象")
-    @Excel(name = "不良现象", height = 20, width = 30,orderNum="")
-    @Column(name = "bad_phenomenon")
-    private String badPhenomenon;
 
     /**
      * 工序ID
@@ -117,6 +112,12 @@ public class QmsBadItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 不良项目明细
+     */
+    @ApiModelProperty(name="list",value = "不良项目明细")
+    private List<QmsBadItemDetDto> list;
 
     private static final long serialVersionUID = 1L;
 }

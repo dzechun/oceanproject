@@ -102,8 +102,9 @@
             <if test="status!=null and status!=''">
                 and so.status=#{status}
             </if>
+        AND so.is_delete = 1
         </where>
-        order by create_time desc
+        order by so.modified_time desc
     </select>
 
     <insert id="batchAddOrderMaterial" parameterType="java.util.List" >

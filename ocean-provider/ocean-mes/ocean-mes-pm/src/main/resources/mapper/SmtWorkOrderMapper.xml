@@ -180,12 +180,12 @@
         select
         spbd.product_bom_det_id,spbd.product_bom_id,spbd.part_material_id,spbd.sub_material_id,spbd.process_id,spbd.base_quantity,spbd.quantity,
         spbd.position,spbd.create_user_id, spbd.create_time,spbd.modified_user_id,spbd.modified_time,
-        spbd.is_delete,spb.material_id
+        spbd.is_delete,spbd.material_id
         from fantech_imes.smt_product_bom_det spbd
-        left join fantech_imes.smt_product_bom spb on spbd.product_bom_id=spb.product_bom_id
         <where>
             <if test="materialId!=null and materialId!=''">
-                and spb.material_id=#{materialId}
+            and   parent_bom_id IN  (SELECT spb.product_bom_id FROM `smt_product_bom` spb
+                WHERE spb.`material_id` =#{materialId})
             </if>
         </where>
     </select>
