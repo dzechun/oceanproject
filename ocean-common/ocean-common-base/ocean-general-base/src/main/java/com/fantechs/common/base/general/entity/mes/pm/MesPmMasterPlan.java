@@ -40,6 +40,14 @@ public class MesPmMasterPlan implements Serializable {
     private Long workOrderId;
 
     /**
+     * 产线ID
+     */
+    @ApiModelProperty(value = "产线ID",example = "产线ID")
+    @Column(name = "pro_line_id")
+    @Excel(name = "产线ID")
+    private Long proLineId;
+
+    /**
     * 生产总数
     */
     @ApiModelProperty(value = "生产总数",example = "生产总数")

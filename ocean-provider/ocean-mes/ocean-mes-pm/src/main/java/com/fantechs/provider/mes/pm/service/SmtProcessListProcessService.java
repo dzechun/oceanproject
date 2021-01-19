@@ -16,4 +16,6 @@ public interface SmtProcessListProcessService extends IService<SmtProcessListPro
     List<SmtProcessListProcessDto> findList(SearchSmtProcessListProcess searchSmtProcessListProcess);
 
     int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
+    //工序报工
+    int finishedProduct();
 }

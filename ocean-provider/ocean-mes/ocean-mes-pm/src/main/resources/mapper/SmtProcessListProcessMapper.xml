@@ -6,13 +6,16 @@
           WARNING - @mbg.generated
         -->
         <id column="process_list_process_id" jdbcType="BIGINT" property="processListProcessId"/>
-        <result column="work_order_card_poo_id" jdbcType="BIGINT" property="workOrderCardPooId"/>
+        <result column="process_list_process_code" jdbcType="VARCHAR" property="processListProcessCode"/>
+        <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
         <result column="work_order_barcode_pool_id" jdbcType="BIGINT" property="workOrderBarcodePoolId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_hold" jdbcType="TINYINT" property="isHold"/>
         <result column="inbound_time" jdbcType="TIMESTAMP" property="inboundTime"/>
         <result column="outbound_time" jdbcType="TIMESTAMP" property="outboundTime"/>
+        <result column="output_quantity" jdbcType="DECIMAL" property="outputQuantity"/>
+        <result column="cur_output_qty" jdbcType="DECIMAL" property="curOutputQty"/>
         <result column="package_num" jdbcType="VARCHAR" property="packageNum"/>
         <result column="box_num" jdbcType="VARCHAR" property="boxNum"/>
         <result column="filament_plate_num" jdbcType="VARCHAR" property="filamentPlateNum"/>
@@ -32,30 +35,8 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto">
-        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
-        <result column="task_code" jdbcType="BIGINT" property="taskCode"/>
-        <result column="barcodeTaskCode" jdbcType="BIGINT" property="barcodeTaskCode"/>
-        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-        <result column="version" jdbcType="VARCHAR" property="version"/>
-        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
-        <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
-        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
-        <result column="process_id" jdbcType="BIGINT" property="processId"/>
-        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="is_hold" jdbcType="TINYINT" property="isHold"/>
-        <result column="inbound_time" jdbcType="TIMESTAMP" property="inboundTime"/>
-        <result column="outbound_time" jdbcType="TIMESTAMP" property="outboundTime"/>
-        <result column="package_num" jdbcType="VARCHAR" property="packageNum"/>
-        <result column="box_num" jdbcType="VARCHAR" property="boxNum"/>
-        <result column="filament_plate_num" jdbcType="VARCHAR" property="filamentPlateNum"/>
-        <result column="selective" jdbcType="VARCHAR" property="selective"/>
-        <result column="selective_result" jdbcType="VARCHAR" property="selectiveResult"/>
-        <result column="rework_id" jdbcType="BIGINT" property="reworkId"/>
-        <result column="operator" jdbcType="BIGINT" property="operator"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto" extends="BaseResultMap">
+
     </resultMap>
     <resultMap id="SmtRouteProcess" type="com.fantechs.common.base.entity.basic.SmtRouteProcess">
         <id column="route_process_id" jdbcType="BIGINT" property="routeProcessId"/>
@@ -85,16 +66,56 @@
     </resultMap>
     <select id="findList" resultMap="BaseResultMapDto"
             parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess">
-        select wo.work_order_code,swocp.task_code,swobp.task_code as
-        barcodeTaskCode,wo.material_id,sm.material_code,sm.material_name,sm.version,wo.route_id,sr.route_name,sml.pro_name,splp.process_id,sp.process_name,
-        splp.`status`,splp.is_hold,splp.inbound_time,splp.outbound_time,splp.package_num,splp.box_num,splp.filament_plate_num,
-        splp.selective,splp.selective_result,splp.rework_id,splp.operator,splp.organization_id, splp.remark, bo.organization_name
-        from fantech_imes.smt_process_list_process splp
-        LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_poo_id
-        LEFT JOIN smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
-        splp.work_order_barcode_pool_id
+        SELECT
+        wo.work_order_code AS 'workOrderCode',
+        wo.production_quantity AS 'productionQuantity',
+        swocp.task_code AS 'taskCode',
+        swobp.task_code AS 'barcodeTaskCode',
+        swocp.work_order_card_id AS 'workOrderCardId',
+        wo.material_id AS 'materialId',
+        sm.material_code AS 'materialCode',
+        sm.material_name AS 'materialName',
+        sm.version AS 'version',
+        wo.route_id AS 'routeId',
+        sr.route_name AS 'routeName',
+        sml.pro_name AS 'proName',
+        splp.process_list_process_id,
+        splp.process_list_process_code,
+        splp.work_order_card_pool_id,
+        splp.work_order_barcode_pool_id,
+        splp.process_id,
+        splp.STATUS,
+        splp.remark,
+        splp.organization_id,
+        splp.is_hold,
+        splp.inbound_time,
+        splp.outbound_time,
+        splp.output_quantity,
+        splp.cur_output_qty,
+        splp.package_num,
+        splp.box_num,
+        splp.filament_plate_num,
+        splp.selective,
+        splp.selective_result,
+        splp.rework_id,
+        splp.operator,
+        splp.create_user_id,
+        splp.create_time,
+        splp.modified_user_id,
+        splp.modified_time,
+        splp.is_delete,
+        splp.option1,
+        splp.option2,
+        splp.option3,
+        sp.process_name AS 'processName',
+        sm.material_desc  AS 'materialDesc '
+        FROM
+        fantech_imes.smt_process_list_process splp
+        LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_pool_id
+        LEFT JOIN smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id = splp.work_order_barcode_pool_id
         LEFT JOIN smt_work_order wo ON wo.work_order_id = swocp.work_order_id
         LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         left join smt_route sr on wo.route_id=sr.route_id
         left join smt_order so on wo.order_id=so.order_id
         LEFT JOIN smt_station ss ON ss.process_id = splp.process_id
@@ -102,8 +123,21 @@
         LEFT JOIN smt_process sp ON sp.process_id = splp.process_id
         LEFT JOIN fantech_imes.base_organization bo ON splp.organization_id = bo.organization_id
         <where>
-            1=1
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(splp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and wo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and sml.pro_line_id=#{proLineId}
+            </if>
+            and splp.is_delete = 1
         </where>
+        order by splp.modified_time desc
     </select>
 
     <select id="select_smt_route_process" resultMap="SmtRouteProcess"

@@ -25,8 +25,15 @@ public class SmtWorkOrderCardPool  implements Serializable {
     @ApiModelProperty(name="workOrderCardPoolId",value = "工单流转卡任务池ID")
     @Id
     @Column(name = "work_order_card_pool_id")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY,generator = "JDBC")
     private Long workOrderCardPoolId;
+
+    /**
+     * 父级ID
+     */
+    @ApiModelProperty(name="parentId",value = "父级ID")
+    @Column(name = "parent_id")
+    private Long parentId;
 
     /**
      * 任务单号
@@ -66,6 +73,12 @@ public class SmtWorkOrderCardPool  implements Serializable {
     @Excel(name = "流转卡状态(0-待投产 1-投产中 2-已完成)", height = 20, width = 30,orderNum="4")
     @Column(name = "card_status")
     private Byte cardStatus;
+
+    /**
+     * 流程卡类型（1、工单流转卡 2、部件流转卡）
+     */
+    @ApiModelProperty(name="type",value = "流程卡类型（1、工单流转卡 2、部件流转卡）")
+    private Byte type;
 
     /**
      * 组织id
