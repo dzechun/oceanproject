@@ -7,6 +7,7 @@
     <result column="route_code" jdbcType="VARCHAR" property="routeCode" />
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
     <result column="route_desc" jdbcType="VARCHAR" property="routeDesc" />
+    <result column="route_type" jdbcType="TINYINT" property="routeType" />
     <result column="standard_time" jdbcType="TIMESTAMP" property="standardTime" />
     <result column="readiness_time" jdbcType="TIMESTAMP" property="readinessTime" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -27,7 +28,7 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtRoute" resultMap="BaseResultMap">
-    select shr.ht_route_id,shr.route_id,shr.route_code,shr.route_name,shr.route_desc,shr.standard_time,shr.readiness_time, shr.status, shr.create_user_id,u.user_name as create_user_name,
+    select shr.ht_route_id,shr.route_id,shr.route_code,shr.route_name,shr.route_desc,shr.route_type,shr.standard_time,shr.readiness_time, shr.status, shr.create_user_id,u.user_name as create_user_name,
     shr.create_time, shr.modified_user_id,s.user_name as modified_user_name,shr.modified_time,shr.is_delete, shr.organization_id,
     shr.remark, bo.organization_name
     from fantech_imes.smt_ht_route shr
@@ -44,6 +45,9 @@
       </if>
       <if test="routeName!=null and routeName!=''">
         and shr.route_name like CONCAT('%', #{routeName}, '%')
+      </if>
+      <if test="routeType!=null and routeType!=''">
+        and sr.route_type = #{routeType}
       </if>
       <if test="routeDesc!=null and routeDesc!=''">
         and shr.route_desc like CONCAT('%', #{routeDesc}, '%')
