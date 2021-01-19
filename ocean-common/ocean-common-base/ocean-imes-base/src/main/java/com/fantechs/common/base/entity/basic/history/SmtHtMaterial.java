@@ -92,6 +92,13 @@ public class SmtHtMaterial implements Serializable {
     private String organizationName;
 
     /**
+     * 系统来源
+     */
+    @Column(name = "system_source")
+    @ApiModelProperty(name="systemSource" ,value="系统来源")
+    private String systemSource;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

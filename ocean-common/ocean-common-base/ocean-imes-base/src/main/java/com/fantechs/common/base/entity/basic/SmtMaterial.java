@@ -59,6 +59,13 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     private String version;
 
     /**
+     * 基数
+     */
+    @ApiModelProperty(name="base" ,value="基数")
+    @Excel(name = "基数", height = 20, width = 30)
+    private Integer base;
+
+    /**
      * 物料来源(0.自制件 1.虚拟件 2.采购件)
      */
     @Column(name = "material_source")
@@ -72,6 +79,14 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @Column(name = "barcode_rule_set_id")
     @ApiModelProperty(name="barcodeRuleSetId" ,value="条码规则集合ID")
     private Long barcodeRuleSetId;
+
+    /**
+     * 系统来源
+     */
+    @Column(name = "system_source")
+    @ApiModelProperty(name="systemSource" ,value="系统来源")
+    @Excel(name = "系统来源", height = 20, width = 30)
+    private String systemSource;
 
     /**
      * 组织id
