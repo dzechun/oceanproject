@@ -74,6 +74,11 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         return smtProcessListProcessMapper.insertList(list);
     }
 
+    @Override
+    public int finishedProduct() {
+        return 0;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public String generateCode(Long barcodeRuleId) {
         String maxCode=null;
