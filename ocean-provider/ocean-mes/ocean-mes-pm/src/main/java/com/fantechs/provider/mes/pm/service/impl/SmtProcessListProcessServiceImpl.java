@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
 import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
@@ -8,7 +9,9 @@ import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.mes.pm.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.*;
@@ -19,9 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
@@ -42,6 +47,37 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     @Override
     public List<SmtProcessListProcessDto> findList(SearchSmtProcessListProcess searchSmtProcessListProcess) {
         return smtProcessListProcessMapper.findList(searchSmtProcessListProcess);
+    }
+
+
+    private int saveOBJ(SmtProcessListProcess smtProcessListProcess) {
+        smtProcessListProcess.setCreateUserId(null);
+        smtProcessListProcess.setIsDelete((byte)1);
+        smtProcessListProcess.setProcessListProcessCode(CodeUtils.getId("SPLP"));
+        return smtProcessListProcessMapper.insertSelective(smtProcessListProcess);
+    }
+
+    private List<SmtProcessListProcess> selectAll(Map<String,Object> map) {
+        Example example = new Example(SmtProcessListProcess.class);
+        Example.Criteria criteria = example.createCriteria();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("isDelete",1).orIsNull("isDelete");
+        example.and(criteria1);
+        if(StringUtils.isNotEmpty(map)){
+            map.forEach((k,v)->{
+                if(StringUtils.isNotEmpty(v)){
+                    switch (k){
+                        case "Name":
+                            criteria.andLike(k,"%"+v+"%");
+                            break;
+                        default :
+                            criteria.andEqualTo(k,v);
+                            break;
+                    }
+                }
+            });
+        }
+        return smtProcessListProcessMapper.selectByExample(example);
     }
 
     @Override
@@ -72,6 +108,30 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         return smtProcessListProcessMapper.insertList(list);
+    }
+
+    @Override
+    public int finishedProduct(ProcessFinishedProductDTO processFinishedProductDTO) {
+        List<SmtProcessListProcess> smtProcessListProcesses = this.selectAll(ControllerUtil.dynamicCondition(
+                "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
+                "processId", processFinishedProductDTO.getProcessId()));
+        SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
+        smtProcessListProcess.setStatus((byte)processFinishedProductDTO.getOperation());
+        if(StringUtils.isEmpty(smtProcessListProcesses)){
+            smtProcessListProcess.setWorkOrderCardPoolId(processFinishedProductDTO.getWorkOrderCardPoolId());
+            smtProcessListProcess.setProcessId(processFinishedProductDTO.getProcessId());
+            smtProcessListProcess.setOutputQuantity(processFinishedProductDTO.getCurOutputQty());
+            smtProcessListProcess.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+            if(this.saveOBJ(smtProcessListProcess)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
+        }else{
+            smtProcessListProcess.setOutputQuantity(new BigDecimal(smtProcessListProcess.getOutputQuantity().doubleValue()+processFinishedProductDTO.getCurOutputQty().doubleValue()));
+            smtProcessListProcess.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+        }
+        //SmtProcessListProcess smtProcessListProcess = smtProcessListProcesses.get(0);
+
+        return 0;
     }
 
     @Transactional(rollbackFor = Exception.class)
