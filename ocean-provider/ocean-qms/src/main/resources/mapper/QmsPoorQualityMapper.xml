@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsPoorQualityMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsPoorQuality">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="poor_quality_id" jdbcType="BIGINT" property="poorQualityId" />
+    <result column="quality_id" jdbcType="BIGINT" property="qualityId" />
+    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
+    <result column="bad_item_det_id" jdbcType="BIGINT" property="badItemDetId" />
+    <result column="bad_quantity" jdbcType="DECIMAL" property="badQuantity" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qqc.poor_quality_id,
+    qqc.quality_id,
+    qqc.section_id,
+    qqc.bad_item_det_id,
+    qqc.bad_quantity,
+    qqc.status,qqc.create_user_id, bo.organization_name,qqc.create_time,
+    qqc.modified_user_id,qqc.modified_time,qqc.is_delete, qqc.organization_id,qqc.remark
+  </sql>
+
+  <select id="findById" parameterType="long" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.qms_poor_quality qpq
+    where qpq.quality_id = #{qualityId}
+  </select>
+</mapper>
