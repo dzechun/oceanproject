@@ -1,10 +1,12 @@
 package com.fantechs.provider.api.mes.pm;
 
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
@@ -60,6 +62,10 @@ public interface PMFeignApi {
             @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
             @ApiParam(value = "完工数量")@RequestParam Double count
     );
+
+    @ApiOperation("查询条码流转卡")
+    @GetMapping("/smtWorkOrderBarcodePool/findList")
+    ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findWorkOrderBarcodePoolList(@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
 
     @ApiOperation("查询工单流转卡任务池列表")
     @PostMapping("/smtWorkOrderCardPool/findList")

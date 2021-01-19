@@ -32,8 +32,8 @@ public class SearchSrmDeliveryNote extends BaseQuery implements Serializable {
     /**
      * 客户代码
      */
-    @ApiModelProperty(name="customerCode",value = "客户代码")
-    private String customerCode;
+    @ApiModelProperty(name="supplierCode",value = "客户代码")
+    private String supplierCode;
 
 
     private static final long serialVersionUID = 1L;
