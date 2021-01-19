@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.service;
 
+import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
@@ -17,5 +18,5 @@ public interface SmtProcessListProcessService extends IService<SmtProcessListPro
 
     int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
     //工序报工
-    int finishedProduct();
+    int finishedProduct(ProcessFinishedProductDTO processFinishedProductDTO);
 }
