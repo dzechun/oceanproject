@@ -11,4 +11,5 @@ import java.util.Map;
 @Mapper
 public interface BasePlatePartsDetMapper extends MyMapper<BasePlatePartsDet> {
     List<BasePlatePartsDetDto> findList(Map<String, Object> map);
+    List<BasePlatePartsDetDto> findById(Long platePartsId);
 }

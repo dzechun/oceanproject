@@ -27,11 +27,6 @@ public class SearchQmsBadItem extends BaseQuery implements Serializable {
     @ApiModelProperty(name="badCause",value = "不良原因")
     private String badCause;
 
-    /**
-     * 不良现象
-     */
-    @ApiModelProperty(name="badPhenomenon",value = "不良现象")
-    private String badPhenomenon;
 
     /**
      * 工序ID

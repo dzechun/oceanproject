@@ -3,6 +3,7 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.BasePlateParts;
@@ -63,6 +64,12 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         BeanUtils.copyProperties(basePlateParts,baseHtPlateParts);
         baseHtPlatePartsMapper.insert(baseHtPlateParts);
 
+        List<BasePlatePartsDetDto> list = basePlateParts.getList();
+        for (BasePlatePartsDet basePlatePartsDet : list) {
+            basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+        }
+        basePlatePartsDetMapper.insertList(list);
+
         return i;
     }
 
@@ -78,6 +85,13 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
         BeanUtils.copyProperties(basePlateParts,baseHtPlateParts);
         baseHtPlatePartsMapper.insert(baseHtPlateParts);
+
+        Example example = new Example(BasePlatePartsDet.class);
+        example.createCriteria().andEqualTo("platePartsId",basePlateParts.getPlatePartsId());
+        basePlatePartsDetMapper.deleteByExample(example);
+
+        System.out.println("数据："+basePlateParts.getList());
+        basePlatePartsDetMapper.insertList(basePlateParts.getList());
 
         return basePlatePartsMapper.updateByPrimaryKeySelective(basePlateParts);
     }
