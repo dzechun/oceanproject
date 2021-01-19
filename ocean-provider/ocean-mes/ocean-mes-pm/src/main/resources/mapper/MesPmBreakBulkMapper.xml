@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="break_bulk_id" jdbcType="BIGINT" property="breakBulkId" />
+    <result column="break_bulk_code" jdbcType="VARCHAR" property="breakBulkCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="batch_no" jdbcType="VARCHAR" property="batchNo"/>
+    <result column="break_bulk_batch_qty" jdbcType="DECIMAL" property="breakBulkBatchQty"/>
+    <result column="process_id" jdbcType="BIGINT" property="processId"/>
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="break_bulk_type" jdbcType="TINYINT" property="breakBulkType"/>
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto">
+      <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus"/>
+        <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+ <sql id="Base_Column_List">
+  pb.break_bulk_id,
+  pb.break_bulk_code,
+  pb.work_order_id,
+  pb.batch_no,
+  pb.break_bulk_batch_qty,
+  pb.status,
+  pb.process_id,
+  pb.organization_id,
+  pb.create_time,
+  pb.create_user_id,
+  pb.modified_time,
+  pb.modified_user_id,
+  pb.is_delete,
+  pb.break_bulk_type
+</sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk">
+    SELECT <include refid="Base_Column_List"/>,wo.work_order_code,sm.material_code,sm.material_name,sm.version,sm.material_desc,wo.production_quantity,spl.pro_name,wo.work_order_status,sr.route_name,sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,bo.organization_name FROM mes_pm_break_bulk pb
+        LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
+        LEFT join fantech_imes.smt_material sm on wo.material_id=sm.material_id
+        LEFT join fantech_imes.smt_route sr on wo.route_id=sr.route_id
+        LEFT join fantech_imes.smt_pro_line spl on wo.pro_line_id=spl.pro_line_id
+        LEFT JOIN smt_process sp on sp.process_id = pb.process_id
+        LEFT join ocean.sys_user u on pb.create_user_id=u.user_id
+        LEFT join ocean.sys_user s on pb.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON wo.organization_id = bo.organization_id
+    <where>
+        <if test="breakBulkType!=null and breakBulkType!=''">
+        and pb.break_bulk_type = #{breakBulkType}
+        </if>
+        <if test="workOrderCode!=null and workOrderCode!=''">
+            and wo.work_order_code LIKE CONCAT('%',#{workOrderCode},'%')
+        </if>
+        <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(pb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="materialCode!=null and materialCode!=null">
+                and sm.material_code LIKE CONCAT('%',#{materialCode},'%')
+        </if>
+    </where>
+  </select>
+  <select id="sleProcess" resultType="com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk">
+  select plp.process_id FROM smt_work_order_card_pool wocp
+  left join smt_process_list_process plp on plp.work_order_card_pool_id = wocp.work_order_card_pool_id
+  where wocp.work_order_card_id= #{workOrderCardId}
+</select>
+</mapper>

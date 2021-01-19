@@ -64,6 +64,9 @@
             <if test="workOrderId!= null and workOrderId!= ''">
                 and swocp.work_order_id=#{workOrderId}
             </if>
+            <if test="workOrderCardId!=null and workOrderCardId!=''">
+                and swocp.work_order_card_id = #{workOrderCardId}
+            </if>
         </where>
         order by swocp.create_time desc
     </select>

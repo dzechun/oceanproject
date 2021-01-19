@@ -16,4 +16,7 @@ public class SearchSmtWorkOrderCardPool extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
     private Long workOrderId;
+
+    @ApiModelProperty(name = "workOrderCardId",value = "工单流转卡编码")
+    private String workOrderCardId;
 }
