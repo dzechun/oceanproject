@@ -59,6 +59,13 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     private String version;
 
     /**
+     * 基数
+     */
+    @ApiModelProperty(name="base" ,value="基数")
+    @Excel(name = "基数", height = 20, width = 30)
+    private Integer base;
+
+    /**
      * 物料来源(0.自制件 1.虚拟件 2.采购件)
      */
     @Column(name = "material_source")
