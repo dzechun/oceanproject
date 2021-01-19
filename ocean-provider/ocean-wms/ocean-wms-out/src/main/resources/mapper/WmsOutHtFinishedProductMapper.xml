@@ -8,7 +8,7 @@
     <id column="ht_finished_product_id" jdbcType="BIGINT" property="htFinishedProductId" />
     <result column="finished_product_id" jdbcType="BIGINT" property="finishedProductId" />
     <result column="finished_product_code" jdbcType="VARCHAR" property="finishedProductCode" />
-    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="plan_outtime" jdbcType="TIMESTAMP" property="planOuttime" />
     <result column="reality_outtime" jdbcType="TIMESTAMP" property="realityOuttime" />
     <result column="plan_outquantity" jdbcType="DECIMAL" property="planOutquantity" />

@@ -108,8 +108,8 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
      * 客户名称
      */
     @Transient
-    @ApiModelProperty(name="customerName" ,value="客户名称")
-    private String customerName;
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
 
     /**
      * 订单号

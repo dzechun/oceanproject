@@ -23,6 +23,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BasePlatePartsDto">
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
     <result column="color" jdbcType="VARCHAR" property="color"/>
     <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode"/>
@@ -49,7 +50,8 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    sm.material_code,sm.material_name,spm.product_model_name
+    sm.material_code,sm.material_name,sm.material_desc,spm.product_model_name,bt.color,spm.product_model_name,
+    sps.package_specification_code,sps.package_specification_name
     from fantech_imes.base_plate_parts bpp
     LEFT JOIN ocean.sys_user su ON bpp.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON bpp.modified_user_id = sus.user_id

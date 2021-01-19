@@ -29,7 +29,6 @@
         <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="work_order_quantity" jdbcType="INTEGER" property="workOrderQuantity"/>
         <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity"/>
@@ -44,7 +43,6 @@
         <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
         <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     </resultMap>
 
     <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool"

@@ -1,11 +1,21 @@
 package com.fantechs.provider.api.mes.pm;
 
+import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @FeignClient(name = "ocean-mes-pm")
@@ -51,4 +62,20 @@ public interface PMFeignApi {
             @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
             @ApiParam(value = "完工数量")@RequestParam Double count
     );
+
+    @ApiOperation("查询条码流转卡")
+    @GetMapping("/smtWorkOrderBarcodePool/findList")
+    ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findWorkOrderBarcodePoolList(@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
+
+    @ApiOperation("查询工单流转卡任务池列表")
+    @PostMapping("/smtWorkOrderCardPool/findList")
+    ResponseEntity<List<SmtWorkOrderCardPoolDto>> findSmtWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
+
+    @ApiOperation("查询过站信息列表")
+    @PostMapping("/smtProcessListProcess/findList")
+    ResponseEntity<List<SmtProcessListProcessDto>> findSmtProcessListProcessList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProcessListProcess searchSmtProcessListProcess);
+
+    @ApiOperation("获取工单的详情")
+    @PostMapping("/smtWorkOrder/detail")
+    ResponseEntity<SmtWorkOrder> workOrderDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
 }

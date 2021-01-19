@@ -47,10 +47,10 @@ public class WmsOutHtFinishedProduct implements Serializable {
     /**
      * 客户ID
      */
-    @ApiModelProperty(name="customerId",value = "客户ID")
+    @ApiModelProperty(name="supplierId",value = "客户ID")
     @Excel(name = "客户ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "customer_id")
-    private Long customerId;
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     /**
      * 预计出库时间

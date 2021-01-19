@@ -1,9 +1,11 @@
 package com.fantechs.common.base.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -30,4 +32,11 @@ public class SearchSmtRoute extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="routeDesc" ,value="工艺路线描述")
     private String routeDesc;
+
+    /**
+     * 工艺路线类型（1、成品 2、半成品 3、部件）
+     */
+    @ApiModelProperty(name="routeType" ,value="工艺路线类型")
+    private Integer routeType;
+
 }

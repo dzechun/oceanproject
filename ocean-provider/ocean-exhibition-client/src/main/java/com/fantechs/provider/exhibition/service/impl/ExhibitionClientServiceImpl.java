@@ -1,9 +1,12 @@
 package com.fantechs.provider.exhibition.service.impl;
 
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -57,6 +60,17 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             smtWorkOrderCardCollocation.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
             smtWorkOrderCardCollocation.setProduceQuantity(smtWorkOrderDto.getWorkOrderQuantity().intValue());
             pmFeignApi.generateWorkOrderCardCollocation(smtWorkOrderCardCollocation);
+
+
+            //根据条码流转卡生产过站明细
+            SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool = new SearchSmtWorkOrderBarcodePool();
+            searchSmtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
+            searchSmtWorkOrderBarcodePool.setTaskStatus((byte)1);
+            List<SmtWorkOrderBarcodePoolDto>  smtWorkOrderBarcodePoolDtoList=pmFeignApi.findWorkOrderBarcodePoolList(searchSmtWorkOrderBarcodePool).getData();
+            for(SmtWorkOrderBarcodePoolDto smtWorkOrderBarcodePoolDto:smtWorkOrderBarcodePoolDtoList){
+                SmtProcessListProcess  smtProcessListProcess = new SmtProcessListProcess();
+
+            }
         }
 
         return 1;

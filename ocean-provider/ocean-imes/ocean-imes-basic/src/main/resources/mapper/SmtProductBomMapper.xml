@@ -108,7 +108,7 @@
             <if test="productBomCode!=null and productBomCode!=''">
                 and spb.product_bom_code like CONCAT('%', #{productBomCode}, '%')
             </if>
-            <if test="materialId!=null and materialId!=''">
+            <if test="materialId!=null and materialId!='' and (isBomDet==null or isBomDet=='')">
                 and spb.material_id=#{materialId}
             </if>
             <if test="isBomDet!=null and isBomDet!='' and materialId!=null and materialId!=''">
@@ -124,11 +124,11 @@
             <if test="productBomId!=null and productBomId!=''">
                 and spb.parent_bom_id=#{productBomId}
             </if>
-            <if test="productBomId == null or productBomId ==''">
+            <if test="(productBomId == null or productBomId =='') and (isBomDet==null or isBomDet=='')">
                 and spb.parent_bom_id is null
             </if>
             <if test="status!=null and status!=''">
-                and spb.status=#{status}smt_material_supplier
+                and spb.status=#{status}
             </if>
         </where>
         order by spb.create_time desc

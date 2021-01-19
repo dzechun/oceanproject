@@ -58,8 +58,8 @@
       <if test="orderId != null and orderId != ''">
         and shdn.order_id like CONCAT('%', #{orderId}, '%')
       </if>
-      <if test="customerCode != null and customerCode != ''">
-        and shdn.customer_code like CONCAT('%', #{customerCode}, '%')
+      <if test="supplierCode != null and supplierCode != ''">
+        and shdn.supplier_code like CONCAT('%', #{supplierCode}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shdn.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
