@@ -42,6 +42,13 @@ public class SmtWorkOrderCardPoolDto extends SmtWorkOrderCardPool implements Ser
     private String materialCode;
 
     /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    private String materialDesc;
+
+    /**
      * 版本
      */
     @Transient
@@ -152,4 +159,11 @@ public class SmtWorkOrderCardPoolDto extends SmtWorkOrderCardPool implements Ser
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 产线名称
+     */
+    @Transient
+    @ApiModelProperty(name = "proName",value = "产线名称")
+    private String proName;
 }

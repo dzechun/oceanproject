@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.mes.pm.history;
+package com.fantechs.common.base.general.entity.om;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,7 +51,7 @@ public class SmtHtOrder implements Serializable {
     @ApiModelProperty(value = "客户ID",example = "客户ID")
     @Column(name = "customer_id")
     @Excel(name = "客户ID")
-    private Long customerId;
+    private Long supplierId;
 
     /**
     * 产品料号ID

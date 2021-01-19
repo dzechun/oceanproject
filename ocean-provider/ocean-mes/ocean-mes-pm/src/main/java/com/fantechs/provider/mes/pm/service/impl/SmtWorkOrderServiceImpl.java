@@ -277,9 +277,11 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     smtWorkOrderBomMapper.updateBatch(list);
 
                     //批量新增工单BOM历史信息
+                    if(StringUtils.isNotEmpty(htList))
                     smtHtWorkOrderBomMapper.insertList(htList);
 
                     //批量修改备料明细
+                    if(StringUtils.isNotEmpty(smtStockDetList))
                     smtStockDetMapper.updateBatch(smtStockDetList);
                 }
             }

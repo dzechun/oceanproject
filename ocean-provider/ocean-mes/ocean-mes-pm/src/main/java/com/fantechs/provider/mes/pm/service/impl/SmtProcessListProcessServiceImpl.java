@@ -56,7 +56,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             for (ProcessListDto processListDto : processListDtos) {
                 SmtProcessListProcess smtProcessListProcess=new SmtProcessListProcess();
                 Long processId = processListDto.getProcessId();
-                smtProcessListProcess.setWorkOrderCardPooId(smtWorkOrderBarcodePool.getWorkOrderCardPoolId());
+                smtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderBarcodePool.getWorkOrderCardPoolId());
                 smtProcessListProcess.setWorkOrderBarcodePoolId(smtWorkOrderBarcodePool.getWorkOrderBarcodePoolId());
                 smtProcessListProcess.setProcessId(processId);
                 smtProcessListProcess.setStatus((byte) 0);
@@ -94,7 +94,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolMapper.selectByPrimaryKey(record.getWorkOrderCardPooId());
+        SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolMapper.selectByPrimaryKey(record.getWorkOrderCardPoolId());
         if(StringUtils.isEmpty(smtWorkOrderCardPool)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
