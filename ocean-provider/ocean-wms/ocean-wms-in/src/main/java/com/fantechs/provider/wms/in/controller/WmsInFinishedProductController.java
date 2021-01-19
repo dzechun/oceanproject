@@ -58,6 +58,12 @@ public class WmsInFinishedProductController {
 //        return ControllerUtil.returnCRUD(wmsInFinishedProductService.update(wmsInFinishedProduct));
 //    }
 
+    @ApiOperation("PDA-提交")
+    @PostMapping("/PDASubmit")
+    public ResponseEntity<WmsInFinishedProduct> PDASubmit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {
+        return  ControllerUtil.returnCRUD(wmsInFinishedProductService.PDASubmit(wmsInFinishedProduct));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<WmsInFinishedProduct> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {

@@ -63,8 +63,8 @@ public class WmsInFinishedProduct extends ValidGroup implements Serializable {
     /**
      * 单据类型（0-成品入库）
      */
-    @ApiModelProperty(name="inType",value = "单据类型（0-成品入库）")
-    @Excel(name = "单据类型（0-成品入库）", height = 20, width = 30,orderNum="5",replace = {"成品入库_0"})
+    @ApiModelProperty(name="inType",value = "单据类型（0-成品入库,1-半成品入库）")
+    @Excel(name = "单据类型（0-成品入库）", height = 20, width = 30,orderNum="5",replace = {"成品入库_0","半成品入库_1"})
     @Column(name = "in_type")
     private Byte inType;
 
@@ -137,6 +137,9 @@ public class WmsInFinishedProduct extends ValidGroup implements Serializable {
 
     @ApiModelProperty(name="wmsInFinishedProductDetList",value = "入库明细")
     private List<WmsInFinishedProductDet> wmsInFinishedProductDetList;
+
+    @ApiModelProperty(name="projectType",value = "项目类型(东鹏-dp,华峰-hf)")
+    private String projectType;
 
     private static final long serialVersionUID = 1L;
 }

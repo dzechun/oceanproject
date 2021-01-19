@@ -48,4 +48,7 @@ public class SearchWmsOutShippingNote extends BaseQuery implements Serializable 
 
     @ApiModelProperty(name="stockStatusIn",value = "备料状态集合")
     private List<Integer> stockStatusIn;
+
+    @ApiModelProperty(name="outStatusIn",value = "出库状态集合")
+    private List<Integer> outStatusIn;
 }

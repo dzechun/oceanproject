@@ -34,10 +34,7 @@ import tk.mybatis.mapper.util.StringUtil;
 
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2021/01/09.
@@ -62,12 +59,16 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
     }
 
     @Override
-    public List<WmsOutShippingNoteDto> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote) {
-//        Example example = new Example(WmsOutShippingNote.class);
-//        example.createCriteria().andIn("stockStatus",searchWmsOutShippingNote)
-//
-//        return wmsOutShippingNoteMapper.selectByExample();
-        return null;
+    public List<WmsOutShippingNote> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote) {
+        Example example = new Example(WmsOutShippingNote.class);
+        if(searchWmsOutShippingNote.getStockStatusIn() != null){
+            example.createCriteria().andIn("stockStatus",searchWmsOutShippingNote.getStockStatusIn());
+        }
+        if(searchWmsOutShippingNote.getOutStatusIn() != null){
+            example.createCriteria().andIn("outStatus",searchWmsOutShippingNote.getOutStatusIn()).andEqualTo("stockStatus",2);
+        }
+
+        return wmsOutShippingNoteMapper.selectByExample(example);
     }
 
     @Override

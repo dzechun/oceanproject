@@ -71,11 +71,11 @@ public class WmsOutShippingNoteController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("列表")
+    @ApiOperation("PDA列表")
     @PostMapping("/PDAfindList")
-    public ResponseEntity<List<WmsOutShippingNoteDto>> PDAfindList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutShippingNote searchWmsOutShippingNote) {
+    public ResponseEntity<List<WmsOutShippingNote>> PDAfindList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutShippingNote searchWmsOutShippingNote) {
         Page<Object> page = PageHelper.startPage(searchWmsOutShippingNote.getStartPage(),searchWmsOutShippingNote.getPageSize());
-        List<WmsOutShippingNoteDto> list = wmsOutShippingNoteService.PDAfindList(searchWmsOutShippingNote);
+        List<WmsOutShippingNote> list = wmsOutShippingNoteService.PDAfindList(searchWmsOutShippingNote);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
