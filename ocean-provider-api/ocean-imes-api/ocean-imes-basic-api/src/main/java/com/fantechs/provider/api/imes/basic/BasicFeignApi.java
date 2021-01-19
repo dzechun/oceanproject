@@ -1,5 +1,6 @@
 package com.fantechs.provider.api.imes.basic;
 
+import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -72,5 +73,9 @@ public interface BasicFeignApi {
     @ApiOperation("根据ID获取储位物料")
     @PostMapping("/smtStorageMaterial/detail")
     ResponseEntity<SmtStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) ;
+
+    @ApiOperation("根据条件查询产品BOM")
+    @PostMapping("/smtProductBom/findList")
+    ResponseEntity<List<SmtProductBomDto>> findProductBomList(@RequestBody SearchSmtProductBom searchSmtProductBom);
 
 }

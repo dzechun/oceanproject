@@ -16,6 +16,8 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto"
+                column="plate_parts_id" select="com.fantechs.provider.base.mapper.BasePlatePartsDetMapper.findById"></collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BasePlatePartsDto">
@@ -61,10 +63,10 @@
         and bpp.plate_parts_id like CONCAT('%', #{platePartsId}, '%')
       </if>
       <if test="materialCode != null and materialCode!=''">
-        and bpp.material_code like CONCAT('%', #{materialCode}, '%')
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
       <if test="materialName != null and materialName!=''">
-        and bpp.material_name like CONCAT('%', #{materialName}, '%')
+        and sm.material_name like CONCAT('%', #{materialName}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bpp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

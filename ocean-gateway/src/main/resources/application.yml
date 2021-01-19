@@ -53,6 +53,12 @@ zuul:
     ocean-fileserver:
         path: /ocean-fileserver/**
         serviceId: ocean-fileserver
+    ocean-mes-pm:
+      path: /ocean-mes-pm/**
+      serviceId: ocean-mes-pm
+    ocean-mes-om:
+      path: /ocean-om/**
+      serviceId: ocean-om
   sensitive-headers: Access-Control-Allow-Origin
   ignored-headers: Access-Control-Allow-Origin
 
