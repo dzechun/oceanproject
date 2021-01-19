@@ -1,8 +1,11 @@
 package com.fantechs.common.base.general.dto.mes.pm.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -13,6 +16,10 @@ import java.io.Serializable;
  */
 @Data
 public class SearchMesPmProcessPlanListDTO extends BaseQuery implements Serializable  {
-    @ApiModelProperty(value = "查询预留字段",example = "查询预留字段")
-    private String str;
+    /**
+     * 总计划ID
+     */
+    @ApiModelProperty(value = "总计划ID",example = "总计划ID")
+    @Excel(name = "总计划ID")
+    private Long masterPlanId;
 }

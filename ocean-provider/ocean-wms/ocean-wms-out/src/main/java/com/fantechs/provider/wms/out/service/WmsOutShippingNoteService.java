@@ -20,5 +20,5 @@ public interface WmsOutShippingNoteService extends IService<WmsOutShippingNote> 
 
     int submit(WmsOutShippingNote wmsOutShippingNote);
 
-    List<WmsOutShippingNoteDto> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote);
+    List<WmsOutShippingNote> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote);
 }

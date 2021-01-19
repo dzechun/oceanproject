@@ -9,7 +9,7 @@ import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesHtOrderMaterial;
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtOrder;
+import com.fantechs.common.base.general.entity.om.SmtHtOrder;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
@@ -54,7 +54,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         if (StringUtils.isNotEmpty(order)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }*/
-        smtOrder.setContractCode(CodeUtils.getId("ORDER"));
+        smtOrder.setOrderCode(CodeUtils.getId("ORDER"));
         smtOrder.setCreateTime(new Date());
         smtOrder.setCreateUserId(currentUserInfo.getUserId());
         smtOrder.setModifiedTime(new Date());

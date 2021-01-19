@@ -3,10 +3,12 @@
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool">
         <id column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
         <result column="task_code" jdbcType="VARCHAR" property="taskCode"/>
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="card_status" jdbcType="TINYINT" property="cardStatus"/>
@@ -45,29 +47,60 @@
 
     <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool"
             resultMap="BaseResultMapDto">
-        select
-        swocp.work_order_card_pool_id,swocp.task_code,swocp.work_order_id,swo.work_order_code,swo.work_order_type,swo.material_id,sm.material_code,sm.version,bt.transfer_quantity,
-        swo.work_order_quantity,swo.production_quantity,swo.route_id,sr.route_name,swo.order_id, so.order_code,
-        so.customer_id,sp.supplier_name,swocp.barcode_rule_id,sbr.barcode_rule,
-        swo.planned_end_time,swocp.work_order_card_id,swocp.card_status,swocp.status,swocp.create_user_id,swocp.create_time,swocp.modified_user_id,swocp.modified_time,
-        swocp.is_delete, swocp.organization_id, swocp.remark, bo.organization_name
-        from fantech_imes.smt_work_order_card_pool swocp
-        left join fantech_imes.smt_work_order swo on swocp.work_order_id=swo.work_order_id
-        left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
-        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
-        left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
-        left join fantech_imes.smt_barcode_rule sbr on swocp.barcode_rule_id=sbr.barcode_rule_id
-        left join fantech_imes.smt_order so on swo.order_id=so.order_id
-        left join fantech_imes.smt_supplier sp on so.customer_id = sp.supplier_id
+        SELECT
+        swocp.work_order_card_pool_id,
+        swocp.task_code,
+        swocp.work_order_id,
+        swo.work_order_code,
+        swo.work_order_type,
+        swo.material_id,
+        sm.material_code,
+        sm.material_desc,
+        sm.version,
+        bt.transfer_quantity,
+        swo.work_order_quantity,
+        swo.production_quantity,
+        swo.route_id,
+        sr.route_name,
+        swo.order_id,
+        so.order_code,
+        so.supplier_id,
+        sp.supplier_name,
+        swocp.barcode_rule_id,
+        sbr.barcode_rule,
+        swo.planned_end_time,
+        swocp.work_order_card_id,
+        swocp.card_status,
+        swocp.STATUS,
+        swocp.create_user_id,
+        swocp.create_time,
+        swocp.modified_user_id,
+        swocp.modified_time,
+        swocp.is_delete,
+        swocp.organization_id,
+        swocp.remark,
+        bo.organization_name,
+        spl.pro_name
+        FROM
+        fantech_imes.smt_work_order_card_pool swocp
+        LEFT JOIN fantech_imes.smt_work_order swo ON swocp.work_order_id = swo.work_order_id
+        LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
+        LEFT JOIN base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes.smt_route sr ON swo.route_id = sr.route_id
+        LEFT JOIN fantech_imes.smt_barcode_rule sbr ON swocp.barcode_rule_id = sbr.barcode_rule_id
+        LEFT JOIN fantech_imes.smt_order so ON swo.order_id = so.order_id
+        LEFT JOIN fantech_imes.smt_supplier sp ON so.supplier_id = sp.supplier_id
         LEFT JOIN fantech_imes.base_organization bo ON swocp.organization_id = bo.organization_id
+        LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
         <where>
             <if test="workOrderId!= null and workOrderId!= ''">
                 and swocp.work_order_id=#{workOrderId}
             </if>
-            <if test="workOrderCardId!=null and workOrderCardId!=''">
-                and swocp.work_order_card_id = #{workOrderCardId}
+            <if test="workOrderCardId!= null and workOrderCardId!= ''">
+                and swocp.work_order_card_id=#{workOrderCardId}
             </if>
+        and swocp.is_delete = 1
         </where>
-        order by swocp.create_time desc
+        order by swocp.modified_time desc
     </select>
 </mapper>

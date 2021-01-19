@@ -1,6 +1,6 @@
 package com.fantechs.provider.om.mapper;
 
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtOrder;
+import com.fantechs.common.base.general.entity.om.SmtHtOrder;
 import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;

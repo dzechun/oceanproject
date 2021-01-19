@@ -1,6 +1,6 @@
 package com.fantechs.provider.om.service.ht.impl;
 
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtOrder;
+import com.fantechs.common.base.general.entity.om.SmtHtOrder;
 import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;

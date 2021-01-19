@@ -48,5 +48,4 @@ public class WmsInFinishedProductDto extends WmsInFinishedProduct implements Ser
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     private String modifiedUserName;
 
-
 }

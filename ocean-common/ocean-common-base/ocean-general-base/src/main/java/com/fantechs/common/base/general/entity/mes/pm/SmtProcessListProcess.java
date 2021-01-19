@@ -3,8 +3,10 @@ package com.fantechs.common.base.general.entity.mes.pm;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
@@ -24,16 +26,25 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="processListProcessId",value = "流程单工序ID")
     @Excel(name = "流程单工序ID", height = 20, width = 30,orderNum="")
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     @Column(name = "process_list_process_id")
     private Long processListProcessId;
 
     /**
+     * 流程单工序编码
+     */
+    @ApiModelProperty(name="processListProcessCode",value = "流程单工序编码")
+    @Excel(name = "流程单工序编码", height = 20, width = 30,orderNum="")
+    @Column(name = "process_list_process_code")
+    private String processListProcessCode;
+
+    /**
      * 工单流程卡任务池ID
      */
-    @ApiModelProperty(name="workOrderCardPooId",value = "工单流程卡任务池ID")
+    @ApiModelProperty(name="workOrderCardPoolId",value = "工单流程卡任务池ID")
     @Excel(name = "工单流程卡任务池ID", height = 20, width = 30,orderNum="")
-    @Column(name = "work_order_card_poo_id")
-    private Long workOrderCardPooId;
+    @Column(name = "work_order_card_pool_id")
+    private Long workOrderCardPoolId;
 
     /**
      * 工单条码任务池ID
@@ -71,7 +82,7 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="inboundTime",value = "入站时间")
     @Excel(name = "入站时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "inbound_time")
     private Date inboundTime;
 
@@ -80,9 +91,25 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="outboundTime",value = "出站时间")
     @Excel(name = "出站时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "outbound_time")
     private Date outboundTime;
+
+    /**
+     * 报工数量
+     */
+    @ApiModelProperty(name="outputQuantity",value = "报工数量")
+    @Excel(name = "报工数量", height = 20, width = 30,orderNum="")
+    @Column(name = "output_quantity")
+    private BigDecimal outputQuantity;
+
+    /**
+     * 本次报工数量
+     */
+    @ApiModelProperty(name="curOutputQty",value = "本次报工数量")
+    @Excel(name = "本次报工数量", height = 20, width = 30,orderNum="")
+    @Column(name = "cur_output_qty")
+    private BigDecimal curOutputQty;
 
     /**
      * 彩盒号
@@ -166,7 +193,7 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -183,7 +210,7 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

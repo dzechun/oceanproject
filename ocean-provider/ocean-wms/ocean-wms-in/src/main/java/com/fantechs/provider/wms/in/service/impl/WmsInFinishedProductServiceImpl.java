@@ -35,11 +35,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * Created by leifengzhi on 2021/01/07.
  */
 @Service
-public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedProduct> implements WmsInFinishedProductService {
+public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedProduct> implements WmsInFinishedProductService {
 
     @Resource
     private WmsInFinishedProductMapper wmsInFinishedProductMapper;
@@ -60,19 +59,23 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
     public int save(WmsInFinishedProduct wmsInFinishedProduct) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        if(StringUtils.isEmpty(wmsInFinishedProduct.getWmsInFinishedProductDetList())){
+        if (StringUtils.isEmpty(wmsInFinishedProduct.getWmsInFinishedProductDetList())) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
 
-        wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("CPRK-"));
-        wmsInFinishedProduct.setInType(StringUtils.isEmpty(wmsInFinishedProduct.getInType()) ? 0 :wmsInFinishedProduct.getInType());
-        wmsInFinishedProduct.setInStatus(StringUtils.isEmpty(wmsInFinishedProduct.getInStatus()) ? 0 :wmsInFinishedProduct.getInStatus());
-        wmsInFinishedProduct.setInStatus((byte)2);
-        wmsInFinishedProduct.setStatus((byte)1);
-        wmsInFinishedProduct.setIsDelete((byte)1);
+        if (wmsInFinishedProduct.getProjectType().equals("dp")) {
+            wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("R-"));
+            wmsInFinishedProduct.setInStatus(StringUtils.isEmpty(wmsInFinishedProduct.getInStatus()) ? 0 : wmsInFinishedProduct.getInStatus());
+        } else {
+            wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("CPRK-"));
+            wmsInFinishedProduct.setInStatus((byte) 2);
+        }
+        wmsInFinishedProduct.setInType(StringUtils.isEmpty(wmsInFinishedProduct.getInType()) ? 0 : wmsInFinishedProduct.getInType());
+        wmsInFinishedProduct.setStatus((byte) 1);
+        wmsInFinishedProduct.setIsDelete((byte) 1);
         wmsInFinishedProduct.setCreateTime(new Date());
         wmsInFinishedProduct.setCreateUserId(user.getUserId());
 
@@ -80,11 +83,8 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
 
         //履历
         WmsInHtFinishedProduct wmsInHtFinishedProduct = new WmsInHtFinishedProduct();
-        BeanUtils.copyProperties(wmsInFinishedProduct,wmsInHtFinishedProduct);
+        BeanUtils.copyProperties(wmsInFinishedProduct, wmsInHtFinishedProduct);
         wmsInHtFinishedProductMapper.insertSelective(wmsInHtFinishedProduct);
-
-        //查询工单信息
-//        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(wmsInFinishedProduct.getWorkOrderId());
 
         for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
 
@@ -94,49 +94,52 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
             wmsInFinishedProductDet.setCreateUserId(user.getCreateUserId());
             wmsInFinishedProductDetMapper.insertSelective(wmsInFinishedProductDet);
 
-            //存入库时栈板与包箱关系
-            SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
-            searchMesPackageManagerListDTO.setIsFindChildren(true);
-            searchMesPackageManagerListDTO.setBarcode(wmsInFinishedProductDet.getPalletCode());
-            List<MesPackageManagerDTO> mesPackageManagerDTOS = pdaMesPackageManagerController.list(searchMesPackageManagerListDTO).getData();
-            if(StringUtils.isEmpty(mesPackageManagerDTOS)){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            if (wmsInFinishedProduct.getProjectType().equals("dp")) {
+
+            } else {//华峰内容
+                //存入库时栈板与包箱关系
+                SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
+                searchMesPackageManagerListDTO.setIsFindChildren(true);
+                searchMesPackageManagerListDTO.setBarcode(wmsInFinishedProductDet.getPalletCode());
+                List<MesPackageManagerDTO> mesPackageManagerDTOS = pdaMesPackageManagerController.list(searchMesPackageManagerListDTO).getData();
+                if (StringUtils.isEmpty(mesPackageManagerDTOS)) {
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100);
+                }
+                for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
+                    WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
+                    wmsInPalletCarton.setCartonCode(mesPackageManagerDTO.getBarCode());
+                    wmsInPalletCarton.setPalletCode(wmsInFinishedProductDet.getPalletCode());
+                    wmsInPalletCarton.setStatus((byte) 1);
+                    wmsInPalletCarton.setIsDelete((byte) 1);
+                    wmsInPalletCarton.setCreateTime(new Date());
+                    wmsInPalletCarton.setCreateUserId(user.getCreateUserId());
+                    //栈板与包箱关系表
+                    wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
+
+                }
+
+                SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
+                smtStoragePallet.setPalletCode(wmsInFinishedProductDet.getPalletCode());
+                smtStoragePallet.setStorageId(wmsInFinishedProductDet.getStorageId());
+                //存储位与栈板关系表smt
+                storageInventoryFeignApi.add(smtStoragePallet);
+
+                //新增库存
+                SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
+                smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
+                smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
+
+                smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
+
+                //增加库位库存明细
+                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
+                smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
+                smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
+                storageInventoryFeignApi.add(smtStorageInventoryDet);
             }
-            for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
-                WmsInPalletCarton wmsInPalletCarton = new WmsInPalletCarton();
-                wmsInPalletCarton.setCartonCode(mesPackageManagerDTO.getBarCode());
-                wmsInPalletCarton.setPalletCode(wmsInFinishedProductDet.getPalletCode());
-                wmsInPalletCarton.setStatus((byte)1);
-                wmsInPalletCarton.setIsDelete((byte)1);
-                wmsInPalletCarton.setCreateTime(new Date());
-                wmsInPalletCarton.setCreateUserId(user.getCreateUserId());
-                //栈板与包箱关系表
-                wmsInPalletCartonMapper.insertSelective(wmsInPalletCarton);
-
-            }
-
-            SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
-            smtStoragePallet.setPalletCode(wmsInFinishedProductDet.getPalletCode());
-            smtStoragePallet.setStorageId(wmsInFinishedProductDet.getStorageId());
-            //存储位与栈板关系表smt
-            storageInventoryFeignApi.add(smtStoragePallet);
-
-            //新增库存
-            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-            smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
-            smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
-            smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
-
-            smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
-
-            //增加库位库存明细
-            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
-            smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
-            smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
-            smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
-            //生产批号，生产日期，供应商ID无
-            storageInventoryFeignApi.add(smtStorageInventoryDet);
 
         }
         return result;
@@ -150,5 +153,10 @@ public class WmsInFinishedProductServiceImpl  extends BaseService<WmsInFinishedP
     @Override
     public List<WmsInHtFinishedProduct> findHtList(Map<String, Object> map) {
         return wmsInHtFinishedProductMapper.findHtList(map);
+    }
+
+    @Override
+    public int PDASubmit(WmsInFinishedProduct wmsInFinishedProduct) {
+        return 0;
     }
 }

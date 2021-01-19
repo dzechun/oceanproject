@@ -164,7 +164,7 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
             BigDecimal total = wmsOutDeliveryOrderDets.stream().map(WmsOutDeliveryOrderDet::getOutTotalQty).reduce(BigDecimal.ZERO, BigDecimal::add);
             WmsOutShippingNoteDet wmsOutShippingNoteDet = wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId());
             shippingNoteId = wmsOutShippingNoteDet.getShippingNoteId();
-            if(wmsOutShippingNoteDet.getRealityTotalQty() == total){
+            if(wmsOutShippingNoteDet.getRealityTotalQty().compareTo(total) == 0){
                 wmsOutShippingNoteDet.setOutStatus((byte)2);
             }else{
                 wmsOutShippingNoteDet.setOutStatus((byte)1);
@@ -177,14 +177,11 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
         WmsOutShippingNote wmsOutShippingNote = new WmsOutShippingNote();
         wmsOutShippingNote.setShippingNoteId(shippingNoteId);
         if(flag){
-            wmsOutShippingNote.setOutStatus((byte)1);
-        }else{
             wmsOutShippingNote.setOutStatus((byte)2);
+        }else{
+            wmsOutShippingNote.setOutStatus((byte)1);
         }
         wmsOutShippingNoteMapper.updateByPrimaryKeySelective(wmsOutShippingNote);
-
-
-
         return result;
     }
 }

@@ -45,9 +45,9 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     /**
      * 客户ID
      */
-    @Column(name = "customer_id")
-    @ApiModelProperty(name="customerId" ,value="客户id")
-    private Long customerId;
+    @Column(name = "supplier_id")
+    @ApiModelProperty(name="supplierId" ,value="客户id")
+    private Long supplierId;
 
     /**
      * 产品料号ID
