@@ -1,6 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.pm.history;
 
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtOrder;
+import com.fantechs.common.base.general.entity.om.SmtHtOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;

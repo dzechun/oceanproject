@@ -5,7 +5,7 @@
         <id column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-        <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="order_quantity" jdbcType="INTEGER" property="orderQuantity"/>
         <result column="delivered_quantity" jdbcType="INTEGER" property="deliveredQuantity"/>
@@ -35,7 +35,7 @@
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
-        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -62,20 +62,20 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    so.order_id, so.order_code, so.customer_id, so.material_id, so.order_quantity, so.delivered_quantity, so.Inkjet_paint,
+    so.order_id, so.order_code, so.supplier_id, so.material_id, so.order_quantity, so.delivered_quantity, so.Inkjet_paint,
     so.radium_carving, so.status, so.delivery_date, so.photo_url, so.create_user_id, so.create_time, so.modified_user_id,
     so.modified_time, so.is_delete, so.option1, so.option2, so.option3,so.organization_id, so.remark, so.sales_man_name,so.schedule_date,
     so.contract_code,so.order_date
   </sql>
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>,sm.material_name, sm.material_code,sm.version,sm.material_desc,spm.product_model_name,
-        sc.customer_name, bo.organization_name,
+        ss.supplier_name, bo.organization_name,
         u.user_name as create_user_name, s.user_name as modified_user_name
         from smt_order so
         left join ocean.sys_user u on so.create_user_id = u.user_id
         left join ocean.sys_user s on so.modified_user_id = s.user_id
         left join smt_material sm on so.material_id = sm.material_id
-        left join smt_customer sc on so.customer_id = sc.customer_id
+        left join smt_supplier ss on so.supplier_id = ss.supplier_id
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         left join smt_product_model spm on spm.product_model_id = bt.product_model_id
         LEFT JOIN base_organization bo ON so.organization_id = bo.organization_id
@@ -96,8 +96,8 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-            <if test="customerName != null and customerName != ''">
-                and sc.customer_name like CONCAT('%', #{customerName}, '%')
+            <if test="supplierName != null and supplierName != ''">
+                and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
             </if>
             <if test="status!=null and status!=''">
                 and so.status=#{status}

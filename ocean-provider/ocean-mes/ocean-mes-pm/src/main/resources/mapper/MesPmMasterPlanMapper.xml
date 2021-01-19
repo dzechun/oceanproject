@@ -5,6 +5,7 @@
         <result column="master_plan_id" jdbcType="BIGINT" property="masterPlanId"/>
         <result column="master_plan_code" jdbcType="VARCHAR" property="masterPlanCode"/>
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
         <result column="product_qty" jdbcType="DECIMAL" property="productQty"/>
         <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
         <result column="no_schedule_qty" jdbcType="DECIMAL" property="noScheduleQty"/>
@@ -32,6 +33,7 @@
         mpmp.master_plan_id,
         mpmp.master_plan_code,
         mpmp.work_order_id,
+        mpmp.pro_line_id,
         mpmp.product_qty,
         mpmp.scheduled_qty,
         mpmp.no_schedule_qty,
@@ -60,7 +62,7 @@
         FROM
         mes_pm_master_plan AS mpmp
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpmp.work_order_id
-        LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
+        LEFT JOIN smt_pro_line spl ON spl.pro_line_id = mpmp.pro_line_id
         LEFT JOIN smt_material sm ON sm.material_id = swo.material_id
         LEFT JOIN base_tab bt ON bt.material_id = sm.material_id
         LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id

@@ -1,6 +1,6 @@
 package com.fantechs.provider.om.service.ht;
 
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtOrder;
+import com.fantechs.common.base.general.entity.om.SmtHtOrder;
 import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import com.fantechs.common.base.support.IService;
 import java.util.List;

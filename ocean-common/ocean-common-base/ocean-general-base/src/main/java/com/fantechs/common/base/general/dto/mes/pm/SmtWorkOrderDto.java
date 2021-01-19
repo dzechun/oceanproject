@@ -151,4 +151,18 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name = "packageSpecificationQuantity",value = "包装规格-数量")
     private String packageSpecificationQuantity;
+
+    /**
+     * 产品颜色
+     */
+    @Transient
+    @ApiModelProperty(name = "color",value = "产品颜色")
+    private String color;
+
+    /**
+     * 产品型号
+     */
+    @Transient
+    @ApiModelProperty(name = "productModuleName",value = "产品型号")
+    private String productModuleName;
 }

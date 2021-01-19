@@ -89,10 +89,11 @@
         u.user_name as create_user_name,swo.create_time,
         swo.modified_user_id,s.user_name as
         modified_user_name,swo.modified_time,so.order_code, swo.is_delete, swo.organization_id, swo.remark,
-        bo.organization_name,swo.contract_no
+        bo.organization_name,swo.contract_no,bt.color,spm.product_model_name
         from fantech_imes.smt_work_order swo
         left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
         left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
         left join fantech_imes.smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
         left join fantech_imes.smt_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
