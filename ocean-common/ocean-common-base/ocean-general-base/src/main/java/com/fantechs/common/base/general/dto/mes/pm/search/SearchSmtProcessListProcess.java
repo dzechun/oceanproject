@@ -25,6 +25,4 @@ public class SearchSmtProcessListProcess extends BaseQuery implements Serializab
     private String workOrderCode;
     @ApiModelProperty(value = "产品编号",example = "产品编号")
     private String materialCode;
-    @ApiModelProperty(value = "工单流转卡编码",example = "工单流转卡编码")
-    private String workOrderCardId;
 }
