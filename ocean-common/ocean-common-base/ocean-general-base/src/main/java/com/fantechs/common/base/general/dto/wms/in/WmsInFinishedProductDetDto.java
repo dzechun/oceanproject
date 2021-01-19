@@ -67,4 +67,14 @@ public class WmsInFinishedProductDetDto extends WmsInFinishedProductDet implemen
     @Excel(name = "产品型号描述", height = 20, width = 30,orderNum="3")
     @ApiModelProperty(name="productModelDesc" ,value="产品型号描述")
     private String productModelDesc;
+
+    /**
+     * 入库部门
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "入库部门")
+    private String deptName;
+
+    //还少一个计量单位
+
 }

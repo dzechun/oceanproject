@@ -116,13 +116,19 @@ public class SmtMaterialController {
     @PostMapping("/addList")
     public ResponseEntity addList(@ApiParam(value = "物料信息集合")@RequestBody List<SmtMaterial> smtMaterials){
         return ControllerUtil.returnCRUD(smtMaterialService.batchSave(smtMaterials));
-
     }
 
     @ApiOperation("批量更新物料信息")
     @PostMapping("/batchUpdateByCode")
     public ResponseEntity batchUpdateByCode(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<SmtMaterial> smtMaterials){
         return ControllerUtil.returnCRUD(smtMaterialService.batchUpdateByCode(smtMaterials));
-
     }
+
+    @ApiOperation("批量更新物料信息")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<SmtMaterial> smtMaterials){
+        return ControllerUtil.returnCRUD(smtMaterialService.batchUpdate(smtMaterials));
+    }
+
+
 }

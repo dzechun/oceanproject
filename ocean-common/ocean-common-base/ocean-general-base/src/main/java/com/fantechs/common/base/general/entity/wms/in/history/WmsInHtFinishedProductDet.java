@@ -80,12 +80,43 @@ public class WmsInHtFinishedProductDet extends ValidGroup implements Serializabl
     private BigDecimal cartonQuantity;
 
     /**
+     * 计划入库数量
+     */
+    @ApiModelProperty(name="planInQuantity",value = "计划入库数量")
+//    @Excel(name = "计划入库数量", height = 20, width = 30,orderNum="6")
+    @Column(name = "plan_in_quantity")
+    private BigDecimal planInQuantity;
+
+    /**
      * 入库数量
      */
     @ApiModelProperty(name="inQuantity",value = "入库数量")
     @Excel(name = "入库数量", height = 20, width = 30,orderNum="") 
     @Column(name = "in_quantity")
     private BigDecimal inQuantity;
+
+    /**
+     * 入库时间
+     */
+    @ApiModelProperty(name="inTime",value = "入库时间")
+    @Excel(name = "入库时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "in_time")
+    private Date inTime;
+
+    /**
+     * 入库部门ID
+     */
+    @ApiModelProperty(name="deptId",value = "入库部门ID")
+//    @Excel(name = "入库部门ID", height = 20, width = 30,orderNum="")
+    @Column(name = "dept_id")
+    private Long deptId;
+
+    /**
+     * 入库状态（0-未入库 1-部分入库 2-已完成）
+     */
+    @ApiModelProperty(name="inStatus",value = "入库状态（0-未入库 1-部分入库 2-已完成）")
+    private Byte inStatus;
 
     /**
      * 是否有效（0、无效 1、有效）
@@ -197,6 +228,15 @@ public class WmsInHtFinishedProductDet extends ValidGroup implements Serializabl
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
     private String modifiedUserName;
+
+    /**
+     * 入库部门
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "入库部门")
+    private String deptName;
+
+    //还少一个计量单位
 
     private static final long serialVersionUID = 1L;
 }

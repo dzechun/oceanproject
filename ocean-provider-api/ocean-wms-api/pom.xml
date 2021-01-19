@@ -18,6 +18,7 @@
 
     <modules>
         <module>ocean-wms-in-api</module>
+        <module>ocean-wms-out-api</module>
     </modules>
 
 </project>

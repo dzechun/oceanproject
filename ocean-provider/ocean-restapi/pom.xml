@@ -17,5 +17,7 @@
 
     <modules>
         <module>ocean-imes-restapi</module>
+        <module>ocean-imes-materialapi</module>
     </modules>
+
 </project>

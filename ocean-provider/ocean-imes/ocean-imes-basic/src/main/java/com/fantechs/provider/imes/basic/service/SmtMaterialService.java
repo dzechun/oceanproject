@@ -17,4 +17,6 @@ public interface SmtMaterialService  extends IService<SmtMaterial>{
 
     //根据编码进行批量更新
     int batchUpdateByCode(List<SmtMaterial> smtMaterials);
+
+    int batchUpdate(List<SmtMaterial> smtMaterials);
 }
