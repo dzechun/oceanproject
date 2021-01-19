@@ -52,11 +52,11 @@ public class WmsInFinishedProductController {
 //        return ControllerUtil.returnCRUD(wmsInFinishedProductService.batchDelete(ids));
 //    }
 //
-//    @ApiOperation("修改")
-//    @PostMapping("/update")
-//    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInFinishedProduct.update.class) WmsInFinishedProduct wmsInFinishedProduct) {
-//        return ControllerUtil.returnCRUD(wmsInFinishedProductService.update(wmsInFinishedProduct));
-//    }
+    @ApiOperation("修改")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInFinishedProduct.update.class) WmsInFinishedProduct wmsInFinishedProduct) {
+        return ControllerUtil.returnCRUD(wmsInFinishedProductService.update(wmsInFinishedProduct));
+    }
 
     @ApiOperation("PDA-提交")
     @PostMapping("/PDASubmit")

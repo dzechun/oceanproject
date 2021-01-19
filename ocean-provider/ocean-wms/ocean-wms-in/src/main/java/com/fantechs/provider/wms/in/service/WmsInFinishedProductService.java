@@ -19,4 +19,5 @@ public interface WmsInFinishedProductService extends IService<WmsInFinishedProdu
     List<WmsInHtFinishedProduct> findHtList(Map<String, Object> dynamicConditionByEntity);
 
     int PDASubmit(WmsInFinishedProduct wmsInFinishedProduct);
+
 }
