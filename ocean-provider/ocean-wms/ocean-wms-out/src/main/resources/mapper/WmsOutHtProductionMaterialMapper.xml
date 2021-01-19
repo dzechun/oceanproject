@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutHtProductionMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtProductionMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_production_material_id" jdbcType="BIGINT" property="htProductionMaterialId" />
+    <result column="production_material_id" jdbcType="BIGINT" property="productionMaterialId" />
+    <result column="production_material_code" jdbcType="VARCHAR" property="productionMaterialCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="reality_qty" jdbcType="DECIMAL" property="realityQty" />
+    <result column="out_time" jdbcType="TIMESTAMP" property="outTime" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="out_status" jdbcType="TINYINT" property="outStatus" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    pm.ht_production_material_id,
+    pm.production_material_id,
+    pm.production_material_code,
+    pm.work_order_id,
+    pm.pro_line_id,
+    pm.material_id,
+    pm.plan_qty,
+    pm.reality_qty,
+    pm.out_time,
+    pm.storage_id,
+    pm.out_status,
+    pm.organization_id,
+    pm.remark,
+    pm.`status`,
+    pm.create_user_id,
+    pm.create_time,
+    pm.modified_user_id,
+    pm.modified_time,
+    pm.is_delete
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    SELECT<include refid="Base_Column_List"/>,
+    wo.work_order_code,
+    pl.pro_name AS pro_line_name,
+    m.material_code,
+    m.material_name,
+    s.storage_name,
+    s.storage_code,
+    w.warehouse_name,
+    w.warehouse_code
+    FROM
+    wms_out_ht_production_material AS pm
+    LEFT JOIN smt_work_order wo ON pm.work_order_id = wo.work_order_id
+    LEFT JOIN smt_pro_line pl ON pm.pro_line_id = pl.pro_line_id
+    LEFT JOIN smt_material m ON pm.material_id = m.material_id
+    LEFT JOIN smt_storage s ON pm.storage_id = s.storage_id
+    LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(pm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="productionMaterialCode != null and productionMaterialCode != ''">
+        and wo.work_order_code like CONCAT('%', #{productionMaterialCode}, '%')
+      </if>
+      <if test="outTimeStart != null and outTimeStart != ''">
+        and date_format(pm.out_time, '%Y-%m-%d') &gt;= #{outTimeStart}
+      </if>
+      <if test="outTimeEnd != null and outTimeEnd != ''">
+        and date_format(pm.out_time, '%Y-%m-%d') &lt;= #{outTimeEnd}
+      </if>
+      <if test="proLineName != null and proLineName != ''">
+        and pl.pro_name like CONCAT('%', #{proLineName}, '%')
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and  w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+    </where>
+    order by pm.create_time desc
+  </select>
+
+</mapper>

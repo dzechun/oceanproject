@@ -34,6 +34,10 @@ public interface BasicFeignApi {
     ResponseEntity addList(@ApiParam(value = "物料信息集合") @RequestBody List<SmtMaterial> smtMaterials);
 
     @ApiOperation("批量更新物料信息")
+    @PostMapping("/smtMaterial/batchUpdate")
+    ResponseEntity batchUpdateSmtMaterial(@ApiParam(value = "物料信息集合") @RequestBody List<SmtMaterial> smtMaterials);
+
+    @ApiOperation("批量更新物料信息")
     @PostMapping("/smtMaterial/batchUpdateByCode")
     ResponseEntity batchUpdateByCode(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<SmtMaterial> smtMaterials);
 

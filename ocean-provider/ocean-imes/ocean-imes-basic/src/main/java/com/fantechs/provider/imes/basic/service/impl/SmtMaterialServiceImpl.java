@@ -10,6 +10,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -23,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements SmtMaterialService {
@@ -51,12 +49,12 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     @Override
     public List<SmtMaterialDto> findList(Map<String, Object> map) {
         List<SmtMaterialDto> smtMaterialDtos = smtMaterialMapper.findList(map);
-        if (StringUtils.isNotEmpty()){
+        if (StringUtils.isNotEmpty()) {
             for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
                 SearchBaseTab searchBaseTab = new SearchBaseTab();
                 searchBaseTab.setMaterialId(smtMaterialDto.getMaterialId());
                 List<BaseTab> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
-                if (StringUtils.isNotEmpty(baseTabs)){
+                if (StringUtils.isNotEmpty(baseTabs)) {
                     BaseTab baseTab = baseTabs.get(0);
                     smtMaterialDto.setBaseTab(baseTab);
                 }
@@ -131,7 +129,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
         //更新页签
         BaseTab baseTab = smtMaterial.getBaseTab();
-        if (StringUtils.isNotEmpty(baseTab)){
+        if (StringUtils.isNotEmpty(baseTab)) {
             baseTab.setModifiedTime(new Date());
             baseTab.setModifiedUserId(currentUser.getUserId());
             baseFeignApi.updateTab(baseTab);
@@ -202,7 +200,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             //查询该物料对应的页签
             searchBaseTab.setMaterialId(Long.valueOf(materialId));
             List<BaseTab> baseTabs1 = baseFeignApi.findTabList(searchBaseTab).getData();
-            if (StringUtils.isNotEmpty(baseTabs1)){
+            if (StringUtils.isNotEmpty(baseTabs1)) {
                 baseTabs.add(baseTabs1.get(0));
             }
             //新增物料历史信息
@@ -223,24 +221,16 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
     @Override
     public int batchUpdateByCode(List<SmtMaterial> smtMaterials) {
-        int i=0;
-        if (StringUtils.isNotEmpty(smtMaterials)){
+        int i = 0;
+        if (StringUtils.isNotEmpty(smtMaterials)) {
             Example example = new Example(SmtMaterial.class);
             for (SmtMaterial smtMaterial : smtMaterials) {
-                example.clear();
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode())
-                        .andNotEqualTo("materialId",smtMaterial.getMaterialId());
-                SmtMaterial smtMaterial1 = smtMaterialMapper.selectOneByExample(example);
-                if (StringUtils.isNotEmpty(smtMaterial1)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-                }
 
                 smtMaterial.setModifiedTime(new Date());
 
                 //更新页签
                 BaseTab baseTab = smtMaterial.getBaseTab();
-                if (StringUtils.isNotEmpty(baseTab)){
+                if (StringUtils.isNotEmpty(baseTab)) {
                     baseTab.setModifiedTime(new Date());
                     baseFeignApi.updateTab(baseTab);
                 }
@@ -253,25 +243,60 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchUpdate(List<SmtMaterial> smtMaterials) {
+
+        List<SmtMaterial> smtMaterialAddList = new ArrayList<>();//物料新增集合
+        List<SmtMaterial> smtMaterialUpdateList = new ArrayList<>();//物料更新集合
+
+        int i = 0;
+        for (SmtMaterial smtMaterial : smtMaterials) {
+            if (StringUtils.isEmpty(smtMaterial.getMaterialCode())) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            }
+
+            Map<String,Object> map = new HashMap();
+            map.put("materialCode",smtMaterial.getMaterialCode());
+            map.put("codeQueryMark",1);
+            List<SmtMaterialDto> returnList = smtMaterialMapper.findList(map);
+            if (StringUtils.isEmpty(returnList)) {
+                smtMaterialAddList.add(smtMaterial);
+            } else {
+                smtMaterialUpdateList.add(smtMaterial);
+            }
+
+            if(smtMaterialAddList.size() == 1000){
+                i = batchSave(smtMaterialAddList);
+                smtMaterialAddList.clear();
+            }
+            if(smtMaterialUpdateList.size() == 1000){
+                i = batchUpdateByCode(smtMaterialUpdateList);
+                smtMaterialUpdateList.clear();
+            }
+        }
+
+        if(smtMaterialAddList.size() > 0){
+            i = batchSave(smtMaterialAddList);
+        }
+        if(smtMaterialUpdateList.size() > 0){
+            i = batchUpdateByCode(smtMaterialUpdateList);
+        }
+        return i;
+    }
+
+    @Override
     public int batchSave(List<SmtMaterial> smtMaterials) {
-        int i=0;
-        if (StringUtils.isNotEmpty(smtMaterials)){
+        int i = 0;
+        if (StringUtils.isNotEmpty(smtMaterials)) {
             Example example = new Example(SmtMaterial.class);
             for (SmtMaterial smtMaterial : smtMaterials) {
-                example.clear();
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("materialCode",smtMaterial.getMaterialCode());
-                SmtMaterial smtMaterial1 = smtMaterialMapper.selectOneByExample(example);
-                if (StringUtils.isNotEmpty(smtMaterial1)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-                }
 
                 smtMaterial.setCreateTime(new Date());
                 smtMaterial.setModifiedTime(new Date());
 
                 //新增物料页签信息
                 BaseTab baseTab = smtMaterial.getBaseTab();
-                if (StringUtils.isNotEmpty(baseTab)){
+                if (StringUtils.isNotEmpty(baseTab)) {
                     baseTab.setMaterialId(smtMaterial.getMaterialId());
                     baseTab.setCreateTime(new Date());
                     baseTab.setModifiedTime(new Date());
