@@ -42,7 +42,7 @@ public class WmsInFinishedProductController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {
+    public ResponseEntity<WmsInFinishedProduct> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {
         int i = wmsInFinishedProductService.save(wmsInFinishedProduct);
         return ControllerUtil.returnDataSuccess(wmsInFinishedProduct,i);
     }
