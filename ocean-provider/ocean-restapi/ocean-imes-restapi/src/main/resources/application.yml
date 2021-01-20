@@ -63,6 +63,7 @@ server-url:
 
 constant-base:
   defaultOrgId: 1001802050000491
+  newOrgId: 1002001095622859
   API_LASTUPDATE_TIME_CW: 2017
   defaultOrgNum: N
   defaultOrgName: 广东纽恩泰新能源科技发展有限公司

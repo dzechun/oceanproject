@@ -1,11 +1,12 @@
-package com.fantechs.common.base.general.entity.mes.pm;
+package com.fantechs.common.base.general.dto.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessCard;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,11 +14,15 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-@Table(name = "smt_work_order")
+/**
+ * @author Mr.Lei
+ * @create 2021/1/19
+ */
 @Data
-public class SmtWorkOrder extends ValidGroup implements Serializable {
-    private static final long serialVersionUID = -6958409644458668492L;
+public class MesPmProcessCardDto implements Serializable {
+
     /**
      * 工单ID
      */
@@ -25,6 +30,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     @Column(name = "work_order_id")
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
+    @NotNull(groups = ValidGroup.update.class,message = "工单ID不能为空")
     private Long workOrderId;
 
     /**
@@ -32,6 +38,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "work_order_code")
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
+    @NotBlank(message = "工单号不能为空")
     @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
 
@@ -96,6 +103,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "pro_line_id")
     @ApiModelProperty(name="proLineId" ,value="线别ID")
+    @NotNull(message = "线别ID不能为空")
     private Long proLineId;
 
     /**
@@ -103,6 +111,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "route_id")
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    @NotNull(message = "工艺路线ID不能为空")
     private Long routeId;
 
     /**
@@ -126,6 +135,7 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "planned_start_time")
     @ApiModelProperty(name="plannedStartTime" ,value="计划开始时间")
     @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="13",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @NotNull(message = "计划开始时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date plannedStartTime;
 
@@ -171,64 +181,166 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     private String contractNo;
 
     /**
-     * 备注
+     * 物料编码.
      */
-    @ApiModelProperty(name="remark",value = "备注")
-    @Column(name = "remark")
-    private String remark;
+    @Transient
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="2")
+    private String materialCode;
 
     /**
-     * 创建人ID
+     * 物料名称
      */
-    @Column(name = "create_user_id")
-    @ApiModelProperty(name="createUserId" ,value="创建人ID")
-    private Long createUserId;
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
 
     /**
-     * 创建时间
+     * 条码规则名称
      */
-    @Column(name = "create_time")
-    @ApiModelProperty(name="createTime" ,value="创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date createTime;
+    @Transient
+    @ApiModelProperty(name="barcodeRuleSetName" ,value="条码规则名称")
+    private String barcodeRuleSetName;
 
     /**
-     * 修改人ID
+     * 版本
      */
-    @Column(name = "modified_user_id")
-    @ApiModelProperty(name="modifiedUserId" ,value="修改人ID")
-    private Long modifiedUserId;
+    @Transient
+    @ApiModelProperty(name="version" ,value="版本")
+    @Excel(name = "产品料号版本", height = 20, width = 30,orderNum="3")
+    private String version;
 
     /**
-     * 修改时间
+     * 物料描述
      */
-    @Column(name = "modified_time")
-    @ApiModelProperty(name="modifiedTime" ,value="修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date modifiedTime;
+    @Transient
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum="4")
+    private String materialDesc;
 
     /**
-     * 逻辑删除（0、删除 1、正常）
+     * 转移批量
      */
-    @Column(name = "is_delete")
-    @ApiModelProperty(name="isDelete" ,value="逻辑删除")
-    private Byte isDelete;
+    @Transient
+    @ApiModelProperty(name="transferQuantity" ,value="转移批量")
+    private Integer transferQuantity;
 
     /**
-     * 扩展字段1
+     * 线别名称
      */
-    private String option1;
+    @Transient
+    @ApiModelProperty(name="proName" ,value="线别名称")
+    @Excel(name = "生产线", height = 20, width = 30,orderNum = "9")
+    private String proName;
 
     /**
-     * 扩展字段2
+     * 工艺路线名称
      */
-    private String option2;
+    @Transient
+    @ApiModelProperty(name="routeName" ,value="工艺路线名称")
+    @Excel(name = "工艺路线名称", height = 20, width = 30,orderNum="10")
+    private String routeName;
 
     /**
-     * 扩展字段3
+     * 创建用户名称
      */
-    private String option3;
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="17")
+    private String createUserName;
 
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="19")
+    private String modifiedUserName;
+
+    /**
+     * 投入工序
+     */
+    @Transient
+    @ApiModelProperty(name="putIntoProcessName" ,value="投入工序")
+    private String putIntoProcessName;
+
+    /**
+     * 产出工序
+     */
+    @Transient
+    @ApiModelProperty(name="productionProcessName" ,value="产出工序")
+    private String productionProcessName;
+
+    /**
+     * 流转卡规则解析码
+     */
+    @Transient
+    @ApiModelProperty(name="analysisCode" ,value="流转卡规则解析码")
+    private String analysisCode;
+
+    /**
+     * 订单号
+     */
+    @Transient
+    @ApiModelProperty(name="orderCode" ,value="订单号")
+    private String orderCode;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
+    /**
+     * 包装单位-ID
+     */
+    @Transient
+    @ApiModelProperty(name = "packingUnitId",value = "包装单位-ID")
+    private Long packingUnitId;
+
+    /**
+     * 包装单位-名称
+     */
+    @Transient
+    @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
+    private String packingUnitName;
+
+    /**
+     * 包装规格-ID
+     */
+    @Transient
+    @ApiModelProperty(name = "packageSpecificationId",value = "包装规格-ID")
+    private Long packageSpecificationId;
+
+    /**
+     * 包装规格-数量
+     */
+    @Transient
+    @ApiModelProperty(name = "packageSpecificationQuantity",value = "包装规格-数量")
+    private String packageSpecificationQuantity;
+
+    /**
+     * 产品颜色
+     */
+    @Transient
+    @ApiModelProperty(name = "color",value = "产品颜色")
+    private String color;
+
+    /**
+     * 产品型号
+     */
+    @Transient
+    @ApiModelProperty(name = "productModuleName",value = "产品型号")
+    private String productModuleName;
+
+
+    /**
+     * 工序过站信息
+     */
+    @ApiModelProperty(name = "smtProcessListProcessDtos",value = "工序过站集合")
+    private List<SmtProcessListProcessDto> smtProcessListProcessDtos;
+
+    @ApiModelProperty(name = "mesPmBreakBulkDets",value = "拆/合批集合")
+    private List<MesPmBreakBulkDet> mesPmBreakBulkDets;
 }

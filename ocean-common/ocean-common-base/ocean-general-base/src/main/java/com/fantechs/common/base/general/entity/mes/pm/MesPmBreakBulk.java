@@ -154,5 +154,6 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
 
     private List<MesPmBreakBulkDet> mesPmBreakBulkDets;
 
+
     private static final long serialVersionUID = 1L;
 }

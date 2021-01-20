@@ -59,6 +59,11 @@ public class ConstantBase {
     private String defaultOrgId;
 
     /**
+     *  新的组织ID
+     */
+    private String newOrgId;
+
+    /**
      *  默认的组织编码
      */
     private String defaultOrgNum;

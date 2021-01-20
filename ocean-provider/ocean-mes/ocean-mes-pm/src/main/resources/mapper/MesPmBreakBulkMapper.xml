@@ -79,6 +79,9 @@
         <if test="materialCode!=null and materialCode!=null">
                 and sm.material_code LIKE CONCAT('%',#{materialCode},'%')
         </if>
+        <if test="workOrderId != null">
+            and wo.work_order_id = #{workOrderCode}
+        </if>
     </where>
   </select>
   <select id="sleProcess" resultType="com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk">

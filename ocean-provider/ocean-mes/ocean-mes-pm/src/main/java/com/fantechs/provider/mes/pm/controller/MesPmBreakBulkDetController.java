@@ -29,7 +29,7 @@ import java.util.List;
  * Created by mr.lei on 2021/01/18.
  */
 @RestController
-@Api(tags = "mesPmBreakBulkDet控制器")
+@Api(tags = "拆/合批作业明细")
 @RequestMapping("/mesPmBreakBulkDet")
 @Validated
 public class MesPmBreakBulkDetController {

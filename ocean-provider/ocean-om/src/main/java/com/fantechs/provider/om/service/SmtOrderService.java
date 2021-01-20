@@ -3,7 +3,7 @@ package com.fantechs.provider.om.service;
 
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.om.SaveOrderMaterialDTO;
-import com.fantechs.common.base.general.dto.mes.pm.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.support.IService;
