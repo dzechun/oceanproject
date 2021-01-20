@@ -26,7 +26,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmDeliveryNoteDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
+    <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
     <result column="deliveryman_name" jdbcType="VARCHAR" property="deliverymanName"/>
     <result column="order_quantity" jdbcType="DECIMAL" property="orderQuantity"/>
     <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
@@ -42,7 +42,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,ssu.user_name AS deliveryman_name,
-    (CASE WHEN order_type = 0 THEN '客户代码' WHEN order_type = 1 THEN '客户代码' END) AS customer_code,
+    (CASE WHEN order_type = 0 THEN '客户代码' WHEN order_type = 1 THEN '客户代码' END) AS supplier_code,
     (CASE WHEN order_type = 0 THEN '订单数量' WHEN order_type = 1 THEN '订单数量' END) AS order_quantity,
     (CASE WHEN order_type = 0 THEN '计划交货日期' WHEN order_type = 1 THEN '计划交货日期' END) AS plan_delivery_date,
     (CASE WHEN order_type = 0 THEN '需用时间' WHEN order_type = 1 THEN '需用时间' END) AS need_time
@@ -60,8 +60,8 @@
       <if test="orderId != null and orderId != ''">
         and sdn.order_id like CONCAT('%', #{orderId}, '%')
       </if>
-      <if test="customerCode != null and customerCode != ''">
-        and sdn.customer_code like CONCAT('%', #{customerCode}, '%')
+      <if test="supplierCode != null and supplierCode != ''">
+        and sdn.supplier_code like CONCAT('%', #{supplierCode}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sdn.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

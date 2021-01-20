@@ -114,15 +114,15 @@ public class SmtWorkOrderBarcodePoolDto extends SmtWorkOrderBarcodePool implemen
      * 客户ID
      */
     @Transient
-    @ApiModelProperty(name="customerId" ,value="客户id")
-    private Long customerId;
+    @ApiModelProperty(name="supplierId" ,value="客户id")
+    private Long supplierId;
 
     /**
      * 客户名称
      */
     @Transient
-    @ApiModelProperty(name="customerName" ,value="客户名称")
-    private String customerName;
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
 
     /**
      * 移转数量

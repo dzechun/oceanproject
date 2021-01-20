@@ -1,19 +1,15 @@
 package com.fantechs.provider.api.mes.pm;
 
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
-import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -61,9 +57,17 @@ public interface PMFeignApi {
             @ApiParam(value = "完工数量")@RequestParam Double count
     );
 
+    @ApiOperation("查询条码流转卡")
+    @PostMapping("/smtWorkOrderBarcodePool/findList")
+    ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findWorkOrderBarcodePoolList(@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
+
     @ApiOperation("查询工单流转卡任务池列表")
     @PostMapping("/smtWorkOrderCardPool/findList")
     ResponseEntity<List<SmtWorkOrderCardPoolDto>> findSmtWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
+
+    @ApiOperation("查询工单流转卡任务池详情")
+    @PostMapping("/smtWorkOrderCardPool/detail")
+    ResponseEntity<SmtWorkOrderCardPool> findSmtWorkOrderCardPoolDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
 
     @ApiOperation("查询过站信息列表")
     @PostMapping("/smtProcessListProcess/findList")
@@ -72,4 +76,9 @@ public interface PMFeignApi {
     @ApiOperation("获取工单的详情")
     @PostMapping("/smtWorkOrder/detail")
     ResponseEntity<SmtWorkOrder> workOrderDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/smtProcessListProcess/startJob")
+    ResponseEntity  startJob(@ApiParam(value = "必传：",required = true)@RequestBody SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
+
 }

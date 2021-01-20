@@ -16,4 +16,10 @@ public class SearchSmtWorkOrderBarcodePool extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
     private Long workOrderId;
+
+    /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="taskStatus" ,value="任务状态(0-待投产 1-投产中 2-已完成)")
+    private Byte taskStatus;
 }

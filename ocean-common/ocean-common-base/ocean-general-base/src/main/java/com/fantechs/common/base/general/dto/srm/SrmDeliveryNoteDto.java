@@ -21,9 +21,9 @@ public class SrmDeliveryNoteDto extends SrmDeliveryNote implements Serializable 
      * 订单客户代码
      */
     @Transient
-    @ApiModelProperty(name="customerCode",value = "客户代码")
+    @ApiModelProperty(name="supplierCode",value = "客户代码")
     @Excel(name = "客户代码", height = 20, width = 30,orderNum="3")
-    private String customerCode;
+    private String supplierCode;
 
 
     /**

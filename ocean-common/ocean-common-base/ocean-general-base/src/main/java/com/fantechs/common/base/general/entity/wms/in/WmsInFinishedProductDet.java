@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
+import org.apache.poi.hpsf.Decimal;
 
 /**
  * 成品入库单明细
@@ -80,7 +81,7 @@ public class WmsInFinishedProductDet extends ValidGroup implements Serializable 
     /**
      * 入库数量
      */
-    @ApiModelProperty(name="inQuantity",value = "入库数量")
+    @ApiModelProperty(name="inQuantity",value = "入库数量(已完工数量)")
     @Excel(name = "入库数量", height = 20, width = 30,orderNum="6")
     @Column(name = "in_quantity")
     private BigDecimal inQuantity;
@@ -170,6 +171,9 @@ public class WmsInFinishedProductDet extends ValidGroup implements Serializable 
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty(name="count",value = "本次扫描数量")
+    private BigDecimal count;
 
     private static final long serialVersionUID = 1L;
 }

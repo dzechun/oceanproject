@@ -63,7 +63,8 @@ public class MesPmExplainProcessPlanServiceImpl extends BaseService<MesPmExplain
 
     @Override
     public int save(MesPmExplainProcessPlan mesPmExplainProcessPlan) {
-        mesPmExplainProcessPlan.setCreateUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmExplainProcessPlan.setCreateUserId(sysUser.getUserId());
         mesPmExplainProcessPlan.setIsDelete((byte)1);
         return mesPmExplainProcessPlanMapper.insertSelective(mesPmExplainProcessPlan);
     }
@@ -91,7 +92,8 @@ public class MesPmExplainProcessPlanServiceImpl extends BaseService<MesPmExplain
 
     @Override
     public int update(MesPmExplainProcessPlan mesPmExplainProcessPlan) {
-        mesPmExplainProcessPlan.setModifiedUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmExplainProcessPlan.setModifiedUserId(sysUser.getUserId());
         return mesPmExplainProcessPlanMapper.updateByPrimaryKeySelective(mesPmExplainProcessPlan);
     }
 

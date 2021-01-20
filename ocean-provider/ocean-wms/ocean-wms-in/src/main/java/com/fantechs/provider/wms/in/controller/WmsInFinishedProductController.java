@@ -42,8 +42,9 @@ public class WmsInFinishedProductController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {
-        return ControllerUtil.returnCRUD(wmsInFinishedProductService.save(wmsInFinishedProduct));
+    public ResponseEntity<WmsInFinishedProduct> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {
+        int i = wmsInFinishedProductService.save(wmsInFinishedProduct);
+        return ControllerUtil.returnDataSuccess(wmsInFinishedProduct,i);
     }
 
 //    @ApiOperation("删除")
@@ -52,11 +53,11 @@ public class WmsInFinishedProductController {
 //        return ControllerUtil.returnCRUD(wmsInFinishedProductService.batchDelete(ids));
 //    }
 //
-//    @ApiOperation("修改")
-//    @PostMapping("/update")
-//    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInFinishedProduct.update.class) WmsInFinishedProduct wmsInFinishedProduct) {
-//        return ControllerUtil.returnCRUD(wmsInFinishedProductService.update(wmsInFinishedProduct));
-//    }
+    @ApiOperation("修改")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInFinishedProduct.update.class) WmsInFinishedProduct wmsInFinishedProduct) {
+        return ControllerUtil.returnCRUD(wmsInFinishedProductService.update(wmsInFinishedProduct));
+    }
 
     @ApiOperation("PDA-提交")
     @PostMapping("/PDASubmit")

@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchWmsInFinishedProduct extends BaseQuery implements Serializable {
@@ -35,5 +36,12 @@ public class SearchWmsInFinishedProduct extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="operatorUserId",value = "处理人")
     private String operatorUserName;
+
+    @ApiModelProperty(name="inStatusIn",value = "单据状态集合（0-待入库 1-入库中 2-入库完成）")
+    private List<Integer> inStatusIn;
+
+    @ApiModelProperty(name="inType",value = "单据类型（0-成品入库，1-半成品入库）")
+    private Long inType;
+
 
 }

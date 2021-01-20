@@ -28,6 +28,7 @@ import com.fantechs.provider.wms.in.service.WmsInFinishedProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -95,7 +96,24 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
             wmsInFinishedProductDetMapper.insertSelective(wmsInFinishedProductDet);
 
             if (wmsInFinishedProduct.getProjectType().equals("dp")) {
+                if(wmsInFinishedProduct.getInType() == 1){
+                    //半成品入库 直接计算库存。
+                    //新增库存
+                    SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                    smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
+                    smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
+                    smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
 
+                    smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
+
+                    //增加库位库存明细
+                    SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                    smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+//                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
+                    smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
+                    smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
+                    storageInventoryFeignApi.add(smtStorageInventoryDet);
+                }
             } else {//华峰内容
                 //存入库时栈板与包箱关系
                 SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
@@ -157,6 +175,103 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
 
     @Override
     public int PDASubmit(WmsInFinishedProduct wmsInFinishedProduct) {
-        return 0;
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if (StringUtils.isEmpty(wmsInFinishedProduct.getWmsInFinishedProductDetList())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+
+
+        for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
+
+            wmsInFinishedProductDet.setModifiedTime(new Date());
+            wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
+            wmsInFinishedProductDet.setInTime(new Date());
+            wmsInFinishedProductDet.setDeptId(user.getDeptId());
+            if(!StringUtils.isEmpty(wmsInFinishedProductDet.getCount())){
+                Boolean flag2 = true;
+                if(StringUtils.isEmpty(wmsInFinishedProductDet.getInQuantity())){
+                    if (wmsInFinishedProductDet.getPlanInQuantity().compareTo(wmsInFinishedProductDet.getCount()) == 0) {
+                    }else{
+                        flag2 = false;
+                    }
+                }else{
+                    if (wmsInFinishedProductDet.getPlanInQuantity().compareTo(wmsInFinishedProductDet.getInQuantity().add(wmsInFinishedProductDet.getCount())) == 0) {
+                    }else{
+                        flag2 = false;
+                    }
+                }
+                wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
+
+                //新增库存
+                SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
+                smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
+                smtStorageInventory.setQuantity(wmsInFinishedProductDet.getCount());
+
+                smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
+
+                //增加库位库存明细
+                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+//                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
+                smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
+                smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getCount());
+                storageInventoryFeignApi.add(smtStorageInventoryDet);
+            }
+        }
+
+        //获取最新子表数据判断主表状态
+        Example example = new Example(WmsInFinishedProductDet.class);
+        example.createCriteria().andEqualTo("finishedProductId",wmsInFinishedProduct.getFinishedProductId());
+        List<WmsInFinishedProductDet> wmsInFinishedProductDets = wmsInFinishedProductDetMapper.selectByExample(example);
+
+        Boolean flag = true;
+        for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProductDets) {
+            if(wmsInFinishedProductDet.getInStatus() != 2){
+                flag = false;
+                break;
+            }
+        }
+
+        if (flag) {
+            wmsInFinishedProduct.setInStatus((byte) 2);
+        } else {
+            wmsInFinishedProduct.setInStatus((byte) 1);
+        }
+        wmsInFinishedProduct.setModifiedTime(new Date());
+        wmsInFinishedProduct.setModifiedUserId(user.getUserId());
+
+        return wmsInFinishedProductMapper.updateByPrimaryKeySelective(wmsInFinishedProduct);
+    }
+
+    @Override
+    public int update(WmsInFinishedProduct wmsInFinishedProduct) {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if (StringUtils.isEmpty(wmsInFinishedProduct.getWmsInFinishedProductDetList())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+
+        wmsInFinishedProduct.setModifiedUserId(user.getUserId());
+        wmsInFinishedProduct.setModifiedTime(new Date());
+
+        //履历
+        WmsInHtFinishedProduct wmsInHtFinishedProduct = new WmsInHtFinishedProduct();
+        BeanUtils.copyProperties(wmsInFinishedProduct, wmsInHtFinishedProduct);
+        wmsInHtFinishedProductMapper.insertSelective(wmsInHtFinishedProduct);
+
+        for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
+            wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
+            wmsInFinishedProductDet.setModifiedTime(new Date());
+            wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
+        }
+        return wmsInFinishedProductMapper.updateByPrimaryKeySelective(wmsInFinishedProduct);
     }
 }

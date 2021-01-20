@@ -64,7 +64,8 @@ public class MesPmProcessPlanServiceImpl extends BaseService<MesPmProcessPlan>  
 
     @Override
     public int save(MesPmProcessPlan mesPmProcessPlan) {
-        mesPmProcessPlan.setCreateUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmProcessPlan.setCreateUserId(sysUser.getUserId());
         mesPmProcessPlan.setIsDelete((byte)1);
         mesPmProcessPlan.setProcessPlanCode(CodeUtils.getId("MPPLAN"));
         return mesPmProcessPlanMapper.insertSelective(mesPmProcessPlan);

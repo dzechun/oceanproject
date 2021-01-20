@@ -19,8 +19,8 @@ import java.util.Map;
 @Service
 public class WmsInFinishedProductDetServiceImpl  extends BaseService<WmsInFinishedProductDet> implements WmsInFinishedProductDetService {
 
-         @Resource
-         private WmsInFinishedProductDetMapper wmsInFinishedProductDetMapper;
+    @Resource
+    private WmsInFinishedProductDetMapper wmsInFinishedProductDetMapper;
 
     @Override
     public List<WmsInFinishedProductDetDto> findList(Map<String, Object> map) {

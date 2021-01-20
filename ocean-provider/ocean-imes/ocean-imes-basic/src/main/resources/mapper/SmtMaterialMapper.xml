@@ -67,6 +67,9 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="materialId!=null and materialId!=''">
+                and sm.material_id =#{materialId}
+            </if>
             <if test="materialCode!=null and materialCode!='' and codeQueryMark==1">
                 and sm.material_code =#{materialCode}
             </if>

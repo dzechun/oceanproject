@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.dto.mes.pm;
+package com.fantechs.common.base.general.dto.mes.pm.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;

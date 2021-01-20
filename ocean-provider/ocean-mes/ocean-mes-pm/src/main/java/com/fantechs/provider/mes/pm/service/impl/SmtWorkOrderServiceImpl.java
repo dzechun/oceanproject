@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -90,7 +91,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         //根据产品BOM生成工单BOM
         //特殊声明是否产生BOM
-        if(StringUtils.isEmpty(smtWorkOrder.getRemark()) || !smtWorkOrder.getRemark().equals("华丰")){
+        if(StringUtils.isEmpty(smtWorkOrder.getRemark()) || !smtWorkOrder.getRemark().equals("无BOM")){
             //生成备料单
             SmtStock smtStock = new SmtStock();
             smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
@@ -378,9 +379,22 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }
-        if(smtWorkOrderBomService.save(saveWorkOrderAndBom.getSmtWorkOrderBomList())<=0){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+
+        List<SmtWorkOrderBom> smtWorkOrderBomList = saveWorkOrderAndBom.getSmtWorkOrderBomList();
+        //删除原本的BOM重新进行添加
+        smtWorkOrderBomService.deleteByMap(ControllerUtil.dynamicCondition("workOrderId",smtWorkOrder.getWorkOrderId()));
+        if(StringUtils.isNotEmpty(smtWorkOrderBomList)){
+            for (SmtWorkOrderBom smtWorkOrderBom : smtWorkOrderBomList) {
+                if(StringUtils.isEmpty(smtWorkOrderBom.getSingleQuantity())){
+                    smtWorkOrderBom.setSingleQuantity(new BigDecimal(1));
+                }
+                smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                if(smtWorkOrderBomService.save(smtWorkOrderBom)<=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+                }
+            }
         }
+
         return 1;
     }
 

@@ -36,8 +36,8 @@ public class SearchSmtOrder extends BaseQuery implements Serializable {
     /**
      * 客户名称
      */
-    @ApiModelProperty(name="customerName" ,value="客户名称")
-    private String customerName;
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
 
     /**
      * 状态（0、创建 1、下载完成 2、已完工 3、作废）

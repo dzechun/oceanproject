@@ -84,7 +84,8 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
 
     @Override
     public int save(MesPmMasterPlan mesPmMasterPlan) {
-        mesPmMasterPlan.setCreateUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmMasterPlan.setCreateUserId(sysUser.getUserId());
         mesPmMasterPlan.setIsDelete((byte)1);
         mesPmMasterPlan.setNoScheduleQty(mesPmMasterPlan.getProductQty());
         mesPmMasterPlan.setMasterPlanCode(CodeUtils.getId("MPLAIN"));
@@ -114,7 +115,8 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
 
     @Override
     public int update(MesPmMasterPlan mesPmMasterPlan) {
-        mesPmMasterPlan.setModifiedUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmMasterPlan.setModifiedUserId(sysUser.getUserId());
         return mesPmMasterPlanMapper.updateByPrimaryKeySelective(mesPmMasterPlan);
     }
 

@@ -75,6 +75,8 @@ public class WmsInFinishedProductDetDto extends WmsInFinishedProductDet implemen
     @ApiModelProperty(name = "deptName",value = "入库部门")
     private String deptName;
 
-    //还少一个计量单位
+    //计量单位（物料主单位）
+    @ApiModelProperty(name = "mainUnit",value = "计量单位（物料主单位）")
+    private String mainUnit;
 
 }

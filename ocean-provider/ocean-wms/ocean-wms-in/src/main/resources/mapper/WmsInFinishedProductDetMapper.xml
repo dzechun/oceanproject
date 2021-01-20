@@ -40,6 +40,7 @@
     <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -74,6 +75,7 @@
     pm.product_model_code AS product_model_code,
     pm.product_model_name AS product_model_name,
     pm.product_model_desc AS product_model_desc,
+    bt.main_unit As main_unit,
     s.storage_name AS storage_name,
     wa.warehouse_area_name AS warehouse_area_name,
     w.warehouse_name AS warehouse_name,
@@ -84,7 +86,7 @@
     LEFT JOIN ocean.sys_user sus ON fpd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON fpd.organization_id = bo.organization_id
     LEFT JOIN smt_material sm ON fpd.material_id = sm.material_id
---     LEFT JOIN base_tab  bt ON bt.material_id =sm.material_id
+    LEFT JOIN base_tab  bt ON bt.material_id =sm.material_id
     LEFT JOIN smt_product_model pm ON bt.product_model_id  = pm.product_model_id
     LEFT JOIN smt_storage s ON fpd.storage_id = s.storage_id
     LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id

@@ -45,7 +45,7 @@ public class SmtOrderDto extends SmtOrder implements Serializable {
      * 客户名称
      */
     @Transient
-    @ApiModelProperty(name="customerName" ,value="客户名称")
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
     @Excel(name = "客户名称", height = 20, width = 30,orderNum="2")
     private String supplierName;
 
