@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.slf4j.Logger;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
@@ -30,4 +31,7 @@ public class SearchMesPmBreakBulk extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "breakBulkType",value = "作业类型(1、拆批作业，2、合批作业)")
     @NotBlank
     private Byte breakBulkType;
+
+    @ApiModelProperty(name = "workOrderId",value = "工单id")
+    private Long workOrderId;
 }
