@@ -8,11 +8,14 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPalletCarton;
 import com.fantechs.common.base.general.entity.wms.in.history.WmsInHtFinishedProduct;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInFinishedProduct;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInFinishedProductDet;
 import com.fantechs.common.base.support.BaseService;
 
 import com.fantechs.common.base.utils.CodeUtils;
@@ -31,7 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -174,6 +179,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int PDASubmit(WmsInFinishedProduct wmsInFinishedProduct) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -204,14 +210,12 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                         flag2 = false;
                     }
                 }
-                wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
 
                 //新增库存
                 SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
                 smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
                 smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
                 smtStorageInventory.setQuantity(wmsInFinishedProductDet.getCount());
-
                 smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
 
                 //增加库位库存明细
@@ -221,13 +225,18 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                 smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getCount());
                 storageInventoryFeignApi.add(smtStorageInventoryDet);
+
+                wmsInFinishedProductDet.setInQuantity((StringUtils.isEmpty(wmsInFinishedProductDet.getInQuantity()) ? new BigDecimal(0) : wmsInFinishedProductDet.getInQuantity()).add(wmsInFinishedProductDet.getCount()));
+                wmsInFinishedProductDet.setCount(null);
+                wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
+
             }
         }
 
         //获取最新子表数据判断主表状态
-        Example example = new Example(WmsInFinishedProductDet.class);
-        example.createCriteria().andEqualTo("finishedProductId",wmsInFinishedProduct.getFinishedProductId());
-        List<WmsInFinishedProductDet> wmsInFinishedProductDets = wmsInFinishedProductDetMapper.selectByExample(example);
+        Map<String,Object> map = new HashMap();
+        map.put("finishedProductCode",wmsInFinishedProduct.getFinishedProductId());
+        List<WmsInFinishedProductDetDto> wmsInFinishedProductDets = wmsInFinishedProductDetMapper.findList(map);
 
         Boolean flag = true;
         for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProductDets) {
@@ -249,14 +258,12 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(WmsInFinishedProduct wmsInFinishedProduct) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        if (StringUtils.isEmpty(wmsInFinishedProduct.getWmsInFinishedProductDetList())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
 
         wmsInFinishedProduct.setModifiedUserId(user.getUserId());
@@ -267,10 +274,12 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
         BeanUtils.copyProperties(wmsInFinishedProduct, wmsInHtFinishedProduct);
         wmsInHtFinishedProductMapper.insertSelective(wmsInHtFinishedProduct);
 
-        for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
-            wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
-            wmsInFinishedProductDet.setModifiedTime(new Date());
-            wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
+        if(wmsInFinishedProduct.getWmsInFinishedProductDetList() != null){
+            for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
+                wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
+                wmsInFinishedProductDet.setModifiedTime(new Date());
+                wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
+            }
         }
         return wmsInFinishedProductMapper.updateByPrimaryKeySelective(wmsInFinishedProduct);
     }

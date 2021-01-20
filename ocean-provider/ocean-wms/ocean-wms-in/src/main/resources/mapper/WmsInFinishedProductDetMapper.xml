@@ -53,6 +53,7 @@
     fpd.plan_in_quantity,
     fpd.in_quantity,
     fpd.in_time,
+    fpd.dept_id,
     fpd.in_status,
     fpd.`status`,
     fpd.remark,

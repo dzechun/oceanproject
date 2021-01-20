@@ -76,8 +76,9 @@
         and fp.operator_user_id = #{operatorUserId}
       </if>
       <if test="inStatusIn != null">
+        and fp.in_status in
         <foreach collection="inStatusIn" item="item" close=")" open="(" separator=",">
-          and fp.in_status in #{item}
+           #{item}
         </foreach>
       </if>
       <if test="inType != null">

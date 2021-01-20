@@ -51,7 +51,7 @@ public interface StorageInventoryFeignApi {
 
     @ApiOperation("扣除储位库存")
     @PostMapping("/smtStorageInventory/out")
-    public ResponseEntity<SmtStorageInventory> out(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventory smtStorageInventory);
+    ResponseEntity<SmtStorageInventory> out(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventory smtStorageInventory);
 
     @ApiOperation("储位库存明细新增")
     @PostMapping("/smtStorageInventoryDet/add")

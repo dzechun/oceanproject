@@ -55,12 +55,12 @@ public class WmsInFinishedProductDetController {
 //        return ControllerUtil.returnCRUD(wmsInFinishedProductDetService.update(wmsInFinishedProductDet));
 //    }
 
-    @ApiOperation("获取详情")
-    @PostMapping("/detail")
-    public ResponseEntity<WmsInFinishedProductDet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        WmsInFinishedProductDet  wmsInFinishedProductDet = wmsInFinishedProductDetService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(wmsInFinishedProductDet,StringUtils.isEmpty(wmsInFinishedProductDet)?0:1);
-    }
+//    @ApiOperation("获取详情")
+//    @PostMapping("/detail")
+//    public ResponseEntity<WmsInFinishedProductDet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+//        WmsInFinishedProductDet  wmsInFinishedProductDet = wmsInFinishedProductDetService.selectByKey(id);
+//        return  ControllerUtil.returnDataSuccess(wmsInFinishedProductDet,StringUtils.isEmpty(wmsInFinishedProductDet)?0:1);
+//    }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
