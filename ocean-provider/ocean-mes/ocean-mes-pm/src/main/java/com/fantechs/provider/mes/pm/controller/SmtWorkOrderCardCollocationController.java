@@ -63,7 +63,7 @@ public class SmtWorkOrderCardCollocationController {
     }
 
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    @ApiOperation(value = "导出excgenerateWorkOrderCardCollocationel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSmtWorkOrderCardCollocation searchSmtWorkOrderCardCollocation){
         List<SmtWorkOrderCardCollocationDto> list = smtWorkOrderCardCollocationService.findList(searchSmtWorkOrderCardCollocation);

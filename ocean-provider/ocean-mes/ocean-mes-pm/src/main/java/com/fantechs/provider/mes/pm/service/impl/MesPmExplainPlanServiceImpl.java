@@ -72,7 +72,8 @@ public class MesPmExplainPlanServiceImpl extends BaseService<MesPmExplainPlan>  
 
     @Override
     public int save(MesPmExplainPlan mesPmExplainPlan) {
-        mesPmExplainPlan.setCreateUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmExplainPlan.setCreateUserId(sysUser.getUserId());
         mesPmExplainPlan.setIsDelete((byte)1);
         mesPmExplainPlan.setNoScheduleQty(mesPmExplainPlan.getProductQty());
         mesPmExplainPlan.setExplainPlanCode(CodeUtils.getId("EPLAIN"));
@@ -102,7 +103,8 @@ public class MesPmExplainPlanServiceImpl extends BaseService<MesPmExplainPlan>  
 
     @Override
     public int update(MesPmExplainPlan mesPmExplainPlan) {
-        mesPmExplainPlan.setModifiedUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesPmExplainPlan.setModifiedUserId(sysUser.getUserId());
         return mesPmExplainPlanMapper.updateByPrimaryKeySelective(mesPmExplainPlan);
     }
 

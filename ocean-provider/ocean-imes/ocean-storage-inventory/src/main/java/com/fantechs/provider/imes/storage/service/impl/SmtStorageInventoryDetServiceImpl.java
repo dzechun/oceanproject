@@ -2,12 +2,9 @@ package com.fantechs.provider.imes.storage.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -17,11 +14,9 @@ import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper;
 import com.fantechs.provider.imes.storage.service.SmtStorageInventoryDetService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +29,6 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
 
     @Resource
     private SmtStorageInventoryDetMapper smtStorageInventoryDetMapper;
-    @Resource
-    private SmtStorageInventoryMapper smtStorageInventoryMapper;
-    @Resource
-    private BasicFeignApi basicFeignApi;
 
     @Override
     public List<SmtStorageInventoryDetDto> findList(Map<String, Object> map) {

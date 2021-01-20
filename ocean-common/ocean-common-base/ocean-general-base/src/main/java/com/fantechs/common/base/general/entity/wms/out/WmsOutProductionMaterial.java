@@ -160,5 +160,8 @@ public class WmsOutProductionMaterial extends ValidGroup implements Serializable
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    @ApiModelProperty(name="finishedProductCode",value = "完工入库单号")
+    private String finishedProductCode;
+
     private static final long serialVersionUID = 1L;
 }

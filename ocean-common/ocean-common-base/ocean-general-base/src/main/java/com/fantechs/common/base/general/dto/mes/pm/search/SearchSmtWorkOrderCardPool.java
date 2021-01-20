@@ -21,4 +21,9 @@ public class SearchSmtWorkOrderCardPool extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="workOrderCardId" ,value="工单流转卡编码")
     private String workOrderCardId;
+    /**
+     * 流转卡状态(0-待投产 1-投产中 2-已完成 3-待投产及投产中)
+     */
+    @ApiModelProperty(name="cardStatus" ,value="流转卡状态(0-待投产 1-投产中 2-已完成)")
+    private Byte cardStatus;
 }

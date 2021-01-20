@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
-import com.fantechs.common.base.general.dto.mes.pm.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.dto.om.MesScheduleDTO;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
@@ -166,44 +166,46 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int saveByOrderIdList(Long proLineId,List<Long> orderIdList) {
+    public int saveByOrderMaterialIdList(Long proLineId,List<Long> orderMaterialIdList) {
         double total=0.0;
         List<MesScheduleDetail> mesScheduleDetailList=new LinkedList<>();
-        for (Long orderId : orderIdList) {
-            SmtOrder smtOrder = smtOrderService.selectByKey(orderId);
-            if(smtOrder.getStatus()!=0){
-                throw new BizErrorException("订单已排产");
+        for (Long orderMaterialId : orderMaterialIdList) {
+            SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
+            searchMesOrderMaterialListDTO.setOrderMaterialId(orderMaterialId);
+            List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
+            if(StringUtils.isEmpty(mesOrderMaterialDTOList)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"未找到订单物料数据");
+            }
+            MesOrderMaterialDTO mesOrderMaterialDTO = mesOrderMaterialDTOList.get(0);
+            SmtOrder smtOrder = smtOrderService.selectByKey(mesOrderMaterialDTO.getOrderId());
+            if(StringUtils.isEmpty(smtOrder)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"未找到订单数据");
+            }
+            if(smtOrder.getStatus()==2){
+                throw new BizErrorException("订单已完成排产");
             }
             smtOrder.setStatus((byte)1);
             if(smtOrderService.update(smtOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
-            //根据销售订单找到所对应的产品信息及相关
-            SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
-            searchMesOrderMaterialListDTO.setOrderId(orderId);
-            List<MesOrderMaterialDTO> mesOrderMaterialDTOList = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
-            if(StringUtils.isNotEmpty(mesOrderMaterialDTOList)){
-                for (MesOrderMaterialDTO mesOrderMaterialDTO : mesOrderMaterialDTOList) {
-                    //根据产品信息生成工单
-                    SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
-                    smtWorkOrder.setOrderId(orderId);
-                    smtWorkOrder.setProLineId(proLineId);
-                    smtWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
-                    smtWorkOrder.setProductionQuantity(mesOrderMaterialDTO.getTotal());
-                    smtWorkOrder.setContractNo(smtOrder.getContractCode());
-                    smtWorkOrder.setRemark("华丰");
-                    ResponseEntity responseEntity = applyFeignApi.addWorkOrder(smtWorkOrder);
-                    if(responseEntity.getCode()!=0){
-                        throw new BizErrorException(responseEntity.getMessage());
-                    }
-                    //生成排产详情
-                    MesScheduleDetail mesScheduleDetail = new MesScheduleDetail();
-                    mesScheduleDetail.setWorkOrderId(smtWorkOrder.getWorkOrderId());
-                    mesScheduleDetail.setOrderId(orderId);
-                    mesScheduleDetailList.add(mesScheduleDetail);
-                    total+=mesOrderMaterialDTO.getTotal().doubleValue();
-                }
+            //根据产品信息生成工单
+            SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
+            smtWorkOrder.setOrderId(smtOrder.getOrderId());
+            smtWorkOrder.setProLineId(proLineId);
+            smtWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
+            smtWorkOrder.setProductionQuantity(mesOrderMaterialDTO.getTotal());
+            smtWorkOrder.setContractNo(smtOrder.getContractCode());
+            smtWorkOrder.setRemark("无BOM");
+            ResponseEntity responseEntity = applyFeignApi.addWorkOrder(smtWorkOrder);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getMessage());
             }
+            //生成排产详情
+            MesScheduleDetail mesScheduleDetail = new MesScheduleDetail();
+            mesScheduleDetail.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            mesScheduleDetail.setOrderId(smtOrder.getOrderId());
+            mesScheduleDetailList.add(mesScheduleDetail);
+            total+=mesOrderMaterialDTO.getTotal().doubleValue();
         }
         //生成排产单
         MesSchedule mesSchedule = new MesSchedule();

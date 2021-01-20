@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 ;
 
@@ -130,6 +131,8 @@ public class SmtStorageInventory extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    private List<SmtStorageInventoryDet> smtStorageInventoryDets;
 
     private static final long serialVersionUID = 1L;
 }

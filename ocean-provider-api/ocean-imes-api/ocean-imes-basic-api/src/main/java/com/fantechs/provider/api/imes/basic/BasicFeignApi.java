@@ -3,6 +3,8 @@ package com.fantechs.provider.api.imes.basic;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -99,4 +101,8 @@ public interface BasicFeignApi {
     @PostMapping("/smtMaterial/batchUpdate")
     ResponseEntity batchUpdateSmtMaterial(@ApiParam(value = "物料信息集合") @RequestBody List<SmtMaterial> smtMaterials);
 
+
+    @ApiOperation("查询产品工艺路线")
+    @PostMapping("/smtRoute/findList")
+    ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId",required = true) @RequestParam Long routeId);
 }

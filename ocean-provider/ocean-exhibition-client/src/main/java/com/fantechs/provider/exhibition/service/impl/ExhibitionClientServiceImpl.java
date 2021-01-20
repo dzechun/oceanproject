@@ -1,5 +1,7 @@
 package com.fantechs.provider.exhibition.service.impl;
 
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
@@ -11,23 +13,27 @@ import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.om.OMFeignApi;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
 public class ExhibitionClientServiceImpl implements ExhibitionClientService {
-    @Autowired
+    @Resource
     private PMFeignApi pmFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
+    @Resource
+    private BasicFeignApi basicFeignApi;
 
     @Override
     public int makingOrders() {
@@ -54,6 +60,9 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             searchSmtWorkOrder.setWorkOrderCode(smtWorkOrder.getWorkOrderCode());
             List<SmtWorkOrderDto> smtWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
 
+            if(StringUtils.isEmpty(smtWorkOrderDtoList)){
+                throw new BizErrorException("该工单不存在");
+            }
             //根据工单信息生成工单流转卡、产品流转卡
             SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
             SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
@@ -61,15 +70,14 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             smtWorkOrderCardCollocation.setProduceQuantity(smtWorkOrderDto.getWorkOrderQuantity().intValue());
             pmFeignApi.generateWorkOrderCardCollocation(smtWorkOrderCardCollocation);
 
-
             //根据条码流转卡生产过站明细
             SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool = new SearchSmtWorkOrderBarcodePool();
             searchSmtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
-            searchSmtWorkOrderBarcodePool.setTaskStatus((byte)1);
+            searchSmtWorkOrderBarcodePool.setTaskStatus((byte)0);
+            searchSmtWorkOrderBarcodePool.setPageSize(99999);
             List<SmtWorkOrderBarcodePoolDto>  smtWorkOrderBarcodePoolDtoList=pmFeignApi.findWorkOrderBarcodePoolList(searchSmtWorkOrderBarcodePool).getData();
             for(SmtWorkOrderBarcodePoolDto smtWorkOrderBarcodePoolDto:smtWorkOrderBarcodePoolDtoList){
-                SmtProcessListProcess  smtProcessListProcess = new SmtProcessListProcess();
-
+                pmFeignApi.startJob(smtWorkOrderBarcodePoolDto);
             }
         }
 

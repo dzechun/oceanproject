@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -21,4 +22,6 @@ public class ProcessFinishedProductDTO {
     private BigDecimal curOutputQty;
     @ApiModelProperty(value = "操作方式(1、保存 2、提交)",example = "操作方式(1、保存 2、提交)")
     private int operation=1;
+    @ApiModelProperty(value = "工序操作类型（1、开工 2、报工）",example = "工序操作类型（1、开工 2、报工）")
+    private Byte processType;
 }

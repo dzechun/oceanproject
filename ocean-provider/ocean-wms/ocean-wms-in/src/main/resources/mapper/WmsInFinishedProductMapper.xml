@@ -75,6 +75,14 @@
       <if test="operatorUserId != null and operatorUserId != ''">
         and fp.operator_user_id = #{operatorUserId}
       </if>
+      <if test="inStatusIn != null">
+        <foreach collection="inStatusIn" item="item" close=")" open="(" separator=",">
+          and fp.in_status in #{item}
+        </foreach>
+      </if>
+      <if test="inType != null">
+        and fp.in_type = #{inType}
+      </if>
       <if test="operatorUserName != null and operatorUserName != ''">
         and sy.user_name like CONCAT('%', #{operatorUserName}, '%')
       </if>

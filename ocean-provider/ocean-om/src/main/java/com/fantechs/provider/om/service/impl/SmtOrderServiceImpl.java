@@ -4,7 +4,7 @@ package com.fantechs.provider.om.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.om.SaveOrderMaterialDTO;
-import com.fantechs.common.base.general.dto.mes.pm.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
@@ -122,6 +122,16 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     @Override
     public int saveOrderMaterial(SaveOrderMaterialDTO saveOrderMaterialDTO) {
         SmtOrder smtOrder = saveOrderMaterialDTO.getSmtOrder();
+        List<MesOrderMaterial> mesOrderMaterialList = saveOrderMaterialDTO.getMesOrderMaterialList();
+        //=====遍历累加物料的总数量
+        int total=0;//订单物料总共数量
+        if(StringUtils.isNotEmpty(mesOrderMaterialList)){
+            for (MesOrderMaterial mesOrderMaterial : mesOrderMaterialList) {
+                total+=mesOrderMaterial.getTotal().intValue();
+            }
+            smtOrder.setOrderQuantity(total);
+        }
+        //=====
         if(StringUtils.isEmpty(smtOrder.getOrderId())){
             if(this.save(smtOrder)<=0){
                 return 0;
@@ -131,11 +141,9 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
                 return 0;
             }
         }
-
         //删除原有的关联产品信息
         smtOrderMapper.deleteMaterialByOrderId(smtOrder.getOrderId());
 
-        List<MesOrderMaterial> mesOrderMaterialList = saveOrderMaterialDTO.getMesOrderMaterialList();
         if(StringUtils.isNotEmpty(mesOrderMaterialList)){
             for (MesOrderMaterial mesOrderMaterial : mesOrderMaterialList) {
                 mesOrderMaterial.setOrderId(smtOrder.getOrderId());
@@ -144,7 +152,6 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }
-
         return 1;
     }
 

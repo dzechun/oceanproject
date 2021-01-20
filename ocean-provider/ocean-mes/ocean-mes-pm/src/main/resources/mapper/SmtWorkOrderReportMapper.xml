@@ -27,7 +27,6 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="work_order_quantity" jdbcType="INTEGER" property="workOrderQuantity"/>
-        <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity"/>
         <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
         <result column="process_name" jdbcType="VARCHAR" property="productionProcess"/>
         <result column="output_quantity" jdbcType="INTEGER" property="outPutQuantity"/>

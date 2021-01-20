@@ -17,4 +17,5 @@ public interface SmtStorageInventoryService extends IService<SmtStorageInventory
 
     List<SmtStorageInventoryDto> findList(Map<String, Object> map);
 
+    int out(SmtStorageInventory smtStorageInventory);
 }

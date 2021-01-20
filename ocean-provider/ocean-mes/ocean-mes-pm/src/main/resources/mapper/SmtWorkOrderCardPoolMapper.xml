@@ -49,6 +49,7 @@
             resultMap="BaseResultMapDto">
         SELECT
         swocp.work_order_card_pool_id,
+        swocp.parent_id,
         swocp.task_code,
         swocp.work_order_id,
         swo.work_order_code,

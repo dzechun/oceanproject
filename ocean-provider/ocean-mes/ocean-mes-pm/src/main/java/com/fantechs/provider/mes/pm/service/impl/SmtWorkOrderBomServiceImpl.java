@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBomDto;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
@@ -26,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wcz on 2020/10/14.
@@ -55,14 +57,14 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
         Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
         if (workOrderStatus == 0 || workOrderStatus == 2) {
-            Example example = new Example(SmtWorkOrderBom.class);
+            /*Example example = new Example(SmtWorkOrderBom.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partMaterialId", smtWorkOrderBom.getPartMaterialId());
             criteria.andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
             List<SmtWorkOrderBom> smtWorkOrderBoms = smtWorkOrderBomMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(smtWorkOrderBoms)) {
                 throw new BizErrorException("零件料号已存在");
-            }
+            }*/
 
             if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
                 throw new BizErrorException("零件料号不能选择产品料号");
@@ -104,7 +106,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
         Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
         if (workOrderStatus == 0 || workOrderStatus == 2) {
-            Example example = new Example(SmtWorkOrderBom.class);
+            /*Example example = new Example(SmtWorkOrderBom.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partMaterialId", smtWorkOrderBom.getPartMaterialId());
             criteria.andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
@@ -112,7 +114,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
 
             if (StringUtils.isNotEmpty(workOrderBom) && !workOrderBom.getWorkOrderBomId().equals(smtWorkOrderBom.getWorkOrderBomId())) {
                 throw new BizErrorException("零件料号已存在");
-            }
+            }*/
 
             if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
                 throw new BizErrorException("零件料号不能选择产品料号");
@@ -190,6 +192,43 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
             }else{
                 if(this.update(smtWorkOrderBom)<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+                }
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    public List<SmtWorkOrderBom> selectAll(Map<String,Object> map) {
+        Example example = new Example(SmtWorkOrderBom.class);
+        Example.Criteria criteria = example.createCriteria();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("isDelete",1).orIsNull("isDelete");
+        example.and(criteria1);
+        if(StringUtils.isNotEmpty(map)){
+            map.forEach((k,v)->{
+                if(StringUtils.isNotEmpty(v)){
+                    switch (k){
+                        case "Name":
+                            criteria.andLike(k,"%"+v+"%");
+                            break;
+                        default :
+                            criteria.andEqualTo(k,v);
+                            break;
+                    }
+                }
+            });
+        }
+        return smtWorkOrderBomMapper.selectByExample(example);
+    }
+
+    @Override
+    public int deleteByMap(Map<String,Object> map){
+        List<SmtWorkOrderBom> smtWorkOrderBomList = selectAll(map);
+        if (StringUtils.isNotEmpty(smtWorkOrderBomList)) {
+            for (SmtWorkOrderBom smtWorkOrderBom : smtWorkOrderBomList) {
+                if(deleteByKey(smtWorkOrderBom.getWorkOrderBomId())<=0){
+                    return 0;
                 }
             }
         }

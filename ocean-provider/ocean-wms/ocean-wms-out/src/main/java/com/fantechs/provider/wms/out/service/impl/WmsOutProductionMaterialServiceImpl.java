@@ -2,6 +2,8 @@ package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.storage.SmtStorageInventory;
+import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
 
@@ -55,6 +57,15 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+        smtStorageInventory.setQuantity(wmsOutProductionMaterial.getRealityQty());
+        smtStorageInventory.setStorageId(wmsOutProductionMaterial.getStorageId());
+        smtStorageInventory.setMaterialId(wmsOutProductionMaterial.getMaterialId());
+
+        SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+        smtStorageInventoryDet.setMaterialQuantity(wmsOutProductionMaterial.getRealityQty());
+//        smtStorageInventoryDet.setGodownEntry();
 
         wmsOutProductionMaterial.setProductionMaterialCode(CodeUtils.getId("FL"));
         wmsOutProductionMaterial.setOrganizationId(user.getOrganizationId());

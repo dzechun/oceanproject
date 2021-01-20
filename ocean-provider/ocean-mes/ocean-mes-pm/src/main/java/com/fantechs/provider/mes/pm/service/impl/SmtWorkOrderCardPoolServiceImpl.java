@@ -1,14 +1,26 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessListWorkOrderDTO;
+import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper;
+import com.fantechs.provider.mes.pm.service.SmtProcessListProcessService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -16,8 +28,57 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
 
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
+    @Resource
+    private SmtWorkOrderService smtWorkOrderService;
+    @Resource
+    private SmtProcessListProcessService smtProcessListProcessService;
+
     @Override
     public List<SmtWorkOrderCardPoolDto> findList(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool) {
         return smtWorkOrderCardPoolMapper.findList(searchSmtWorkOrderCardPool);
+    }
+
+    @Override
+    public ProcessListWorkOrderDTO selectWorkOrderDtoByWorkOrderCardId(String workOrderCardId) {
+        Example example = new Example(SmtWorkOrderCardPool.class);
+        Example.Criteria criteria = example.createCriteria();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("isDelete",1).orIsNull("isDelete");
+        criteria.andEqualTo("workOrderCardId",workOrderCardId);
+        example.and(criteria1);
+        List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList = smtWorkOrderCardPoolMapper.selectByExample(example);
+        if(StringUtils.isEmpty(smtWorkOrderCardPoolList)){
+            return null;
+        }
+        SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolList.get(0);
+        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+        searchSmtWorkOrder.setWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
+        List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+        if(StringUtils.isEmpty(smtWorkOrderDtoList))
+        {
+            return null;
+        }
+        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+        ProcessListWorkOrderDTO processListWorkOrderDTO =new ProcessListWorkOrderDTO();
+        processListWorkOrderDTO.setWorkOrderCardId(workOrderCardId);
+        processListWorkOrderDTO.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+        BeanUtils.copyProperties(smtWorkOrderDto,processListWorkOrderDTO);
+
+        //=====查找当前流程单是否已经有过站信息，有则统计已报工总数
+        SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+        searchSmtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+        searchSmtProcessListProcess.setStatus((byte)2);
+        List<SmtProcessListProcessDto> smtProcessListProcessDtoList = smtProcessListProcessService.findList(searchSmtProcessListProcess);
+        double outputTotalQty=0.0;
+        if(StringUtils.isNotEmpty(smtProcessListProcessDtoList)){
+            for (SmtProcessListProcessDto smtProcessListProcessDto : smtProcessListProcessDtoList) {
+                outputTotalQty+=smtProcessListProcessDto.getOutputQuantity().doubleValue();
+            }
+            processListWorkOrderDTO.setPreQty(smtProcessListProcessDtoList.get(0).getOutputQuantity());
+        }
+
+        processListWorkOrderDTO.setOutputTotalQty(new BigDecimal(outputTotalQty));
+        //=====
+        return processListWorkOrderDTO;
     }
 }

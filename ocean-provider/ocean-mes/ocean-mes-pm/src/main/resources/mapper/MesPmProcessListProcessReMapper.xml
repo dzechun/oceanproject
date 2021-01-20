@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmProcessListProcessReMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmProcessListProcessRe">
+        <result column="process_list_process_re_id" jdbcType="BIGINT" property="processListProcessReId"/>
+        <result column="process_list_process_re_code" jdbcType="VARCHAR" property="processListProcessReCode"/>
+        <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
+        <result column="work_order_barcode_pool_id" jdbcType="BIGINT" property="workOrderBarcodePoolId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="re_process_id" jdbcType="BIGINT" property="reProcessId"/>
+        <result column="re_qty" jdbcType="DECIMAL" property="reQty"/>
+        <result column="pre_qty" jdbcType="DECIMAL" property="preQty"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListProcessReDTO"
+               extends="BaseResultMap">
+
+    </resultMap>
+
+    <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
+        SELECT
+        wo.work_order_code AS 'workOrderCode',
+        wo.production_quantity AS 'productionQuantity',
+        swocp.task_code AS 'taskCode',
+        swobp.task_code AS 'barcodeTaskCode',
+        swocp.work_order_card_id AS 'workOrderCardId',
+        wo.material_id AS 'materialId',
+        sm.material_code AS 'materialCode',
+        sm.material_name AS 'materialName',
+        sm.version AS 'version',
+        wo.route_id AS 'routeId',
+        sr.route_name AS 'routeName',
+        sml.pro_name AS 'proName',
+        mpplpr.process_list_process_re_id,
+        mpplpr.process_list_process_re_code,
+        mpplpr.work_order_card_pool_id,
+        mpplpr.work_order_barcode_pool_id,
+        mpplpr.process_id,
+        sp.process_name AS 'processName',
+        mpplpr.re_process_id,
+        sp1.process_name AS 'reProcessName',
+        mpplpr.re_qty,
+        mpplpr.pre_qty,
+        mpplpr.`status`,
+        mpplpr.organization_id,
+        mpplpr.remark,
+        mpplpr.is_delete,
+        mpplpr.create_user_id,
+        mpplpr.create_time,
+        mpplpr.modified_user_id,
+        mpplpr.modified_time
+        FROM
+        mes_pm_process_list_process_re mpplpr
+        LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = mpplpr.work_order_card_pool_id
+        LEFT JOIN smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
+        mpplpr.work_order_barcode_pool_id
+        LEFT JOIN smt_work_order wo ON wo.work_order_id = swocp.work_order_id
+        LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join smt_route sr on wo.route_id=sr.route_id
+        left join smt_order so on wo.order_id=so.order_id
+        LEFT JOIN smt_station ss ON ss.process_id = mpplpr.process_id
+        LEFT JOIN smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
+        LEFT JOIN smt_process sp ON sp.process_id = mpplpr.process_id
+        LEFT JOIN smt_process sp1 ON sp.process_id = mpplpr.re_process_id
+        LEFT JOIN base_organization bo ON mpplpr.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(mpplpr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and wo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and sml.pro_line_id=#{proLineId}
+            </if>
+            <if test="workOrderCardPoolId!=null and workOrderCardPoolId!=''">
+                and mpplpr.work_order_card_pool_id=#{workOrderCardPoolId}
+            </if>
+            <if test="processListProcessReCode!=null and processListProcessReCode!=''">
+                and mpplpr.process_list_process_re_code=#{processListProcessReCode}
+            </if>
+            <if test="processId!=null and processId!=''">
+                and mpplpr.process_id=#{processId}
+            </if>
+            <if test="reProcessId!=null and reProcessId!=''">
+                and mpplpr.re_process_id=#{reProcessId}
+            </if>
+            and mpplpr.is_delete = 1
+        </where>
+        order by mpplpr.modified_time desc
+    </select>
+
+</mapper>

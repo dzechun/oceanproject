@@ -58,8 +58,8 @@ public class MesScheduleController {
     @PostMapping("add")
     public ResponseEntity add(
             @ApiParam(value = "产线ID",required = true)@RequestParam Long proLineId,
-            @ApiParam(value = "订单ID集合",required = true)@RequestBody List<Long> orderIdList){
-        return ControllerUtil.returnCRUD(mesScheduleService.saveByOrderIdList(proLineId,orderIdList));
+            @ApiParam(value = "订单物料ID集合",required = true)@RequestBody List<Long> orderMaterialIdList){
+        return ControllerUtil.returnCRUD(mesScheduleService.saveByOrderMaterialIdList(proLineId,orderMaterialIdList));
     }
 
     @ApiOperation("删除工单排产表数据")
