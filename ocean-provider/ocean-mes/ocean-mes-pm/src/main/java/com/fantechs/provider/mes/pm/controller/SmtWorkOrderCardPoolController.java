@@ -1,6 +1,8 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.fantechs.common.base.general.dto.mes.pm.ProcessListWorkOrderDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -48,6 +50,15 @@ public class SmtWorkOrderCardPoolController {
         Page<Object> page = PageHelper.startPage(searchSmtWorkOrderCardPool.getStartPage(),searchSmtWorkOrderCardPool.getPageSize());
         List<SmtWorkOrderCardPoolDto> list = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("通过流程单获取工单相关信息")
+    @PostMapping("/findWO")
+    public ResponseEntity<ProcessListWorkOrderDTO> selectWorkOrderDtoByWorkOrderCardId(
+            @ApiParam(value = "流程单编码")@RequestParam String workOrderCardId
+    ){
+        ProcessListWorkOrderDTO processListWorkOrderDTO = smtWorkOrderCardPoolService.selectWorkOrderDtoByWorkOrderCardId(workOrderCardId);
+        return ControllerUtil.returnDataSuccess(processListWorkOrderDTO,StringUtils.isEmpty(processListWorkOrderDTO)?0:1);
     }
 
     @PostMapping(value = "/export")

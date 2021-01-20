@@ -89,6 +89,13 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     private String radiumCarving;
 
     /**
+     * 排产状态（0、待排产 1、排产中 2、排产完成 3、订单完工）
+     */
+    @ApiModelProperty(name="schedule_status" ,value="排产状态（0、待排产 1、排产中 2、排产完成 3、订单完工）")
+    @Excel(name = "排产状态", height = 20, width = 30,orderNum="10",replace = {"待排产_0","排产中_1","排产完成_2","订单完工_3"})
+    private Byte scheduleStatus;
+
+    /**
      * 状态（0、创建 1、下载完成 2、已完工 3、做废）
      */
     @ApiModelProperty(name="status" ,value="状态（0、创建 1、下载完成 2、已完工 3、做废）")

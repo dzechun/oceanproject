@@ -1,25 +1,37 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessListProcessRe;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
-/**
- * @author Mr.Lei
- * @create 2020/11/23
- */
+import cn.afterturn.easypoi.excel.annotation.Excel;
+
 @Data
-public class SmtProcessListProcessDto extends SmtProcessListProcess implements Serializable {
-    private static final long serialVersionUID = -8014622703067473837L;
-
+public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe implements Serializable {
+    /**
+    * 创建用户名称
+    */
+    @Transient
+    @ApiModelProperty(value = "创建用户名称",example = "创建用户名称")
+    @Excel(name = "创建用户名称")
+    private String createUserName;
+    /**
+    * 修改用户名称
+    */
+    @Transient
+    @ApiModelProperty(value = "修改用户名称",example = "修改用户名称")
+    @Excel(name = "修改用户名称")
+    private String modifiedUserName;
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(value = "组织名称",example = "组织名称")
+    @Excel(name = "组织名称")
+    private String organizationName;
     /**
      * 工单号
      */
@@ -58,13 +70,6 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     private String materialCode;
 
     /**
-     * 物料描述
-     */
-    @Transient
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    private String materialDesc;
-
-    /**
      * 版本
      */
     @Transient
@@ -98,20 +103,25 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     @Transient
     @ApiModelProperty(name="processName" ,value="工序名称")
     private String processName;
-
     /**
-     * 组织名称
+     * 退回工序名称
      */
     @Transient
-    @ApiModelProperty(name = "organizationName",value = "组织名称")
-    private String organizationName;
+    @ApiModelProperty(name="reProcessName" ,value="退回工序名称")
+    private String reProcessName;
+
     /**
      * 流程单号
      */
     @Transient
     @ApiModelProperty(name = "workOrderCardId",value = "流程单号")
     private String workOrderCardId;
-
+    /**
+     * 产品描述
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "产品描述")
+    private String materialDesc;
     /**
      * 生产数量
      */
@@ -130,10 +140,4 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     @Transient
     @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
     private String packingUnitName;
-    /**
-     * 已报工总数
-     */
-    @Transient
-    @ApiModelProperty(name = "outputTotalQty",value = "已报工总数")
-    private BigDecimal outputTotalQty;
 }

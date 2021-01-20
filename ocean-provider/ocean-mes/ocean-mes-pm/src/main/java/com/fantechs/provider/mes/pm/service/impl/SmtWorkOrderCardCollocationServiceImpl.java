@@ -78,9 +78,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         criteria.andEqualTo("workOrderId", smtWorkOrderCardCollocation.getWorkOrderId());
         List<SmtWorkOrderCardCollocation> cardCollocations = smtWorkOrderCardCollocationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(cardCollocations)) {
-            for (SmtWorkOrderCardCollocation cardCollocation : cardCollocations) {
-                generatedQuantity += cardCollocation.getProduceQuantity();
-            }
+            SmtWorkOrderCardCollocation workOrderCardCollocation = cardCollocations.get(0);
+            generatedQuantity = workOrderCardCollocation.getProduceQuantity();
         }
         if (produceQuantity + generatedQuantity > sumBatchQuantity) {
             throw new BizErrorException("工单产生流转卡总数量不能大于工单转移批次数量");
@@ -91,8 +90,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         }
 
         smtWorkOrderCardCollocation.setGeneratedQuantity(produceQuantity + generatedQuantity);
-        smtWorkOrderCardCollocation.setCreateUserId(currentUser.getUserId());
-        smtWorkOrderCardCollocation.setCreateTime(new Date());
         smtWorkOrderCardCollocation.setModifiedUserId(currentUser.getUserId());
         smtWorkOrderCardCollocation.setModifiedTime(new Date());
 
@@ -226,6 +223,8 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             smtWorkOrderCardPool.setWorkOrderId(smtWorkOrderCardCollocation.getWorkOrderId());
             smtWorkOrderCardPool.setBarcodeRuleId(barcodeRuleId);
             smtWorkOrderCardPool.setWorkOrderCardId(workOrderCardCode);
+            smtWorkOrderCardPool.setParentId((long)0);
+            smtWorkOrderCardPool.setIsDelete((byte)1);
             smtWorkOrderCardPool.setCardStatus((byte) 0);
             smtWorkOrderCardPool.setStatus((byte) 1);
             smtWorkOrderCardPool.setCreateUserId(currentUser.getUserId());

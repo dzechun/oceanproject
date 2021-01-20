@@ -3,6 +3,10 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -55,7 +59,8 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
 
     private int saveOBJ(SmtProcessListProcess smtProcessListProcess) {
-        smtProcessListProcess.setCreateUserId(null);
+        SysUser sysUser = this.currentUser();
+        smtProcessListProcess.setCreateUserId(sysUser.getUserId());
         smtProcessListProcess.setIsDelete((byte)1);
         smtProcessListProcess.setProcessListProcessCode(CodeUtils.getId("SPLP"));
         return smtProcessListProcessMapper.insertSelective(smtProcessListProcess);
@@ -148,9 +153,9 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         List<SmtProcessListProcess> smtProcessListProcesses = this.selectAll(ControllerUtil.dynamicCondition(
                 "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
                 "processId", processFinishedProductDTO.getProcessId()));
-        SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
-        smtProcessListProcess.setStatus((byte)processFinishedProductDTO.getOperation());
         if(StringUtils.isEmpty(smtProcessListProcesses)){
+            SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
+            smtProcessListProcess.setStatus((byte)processFinishedProductDTO.getOperation());
             smtProcessListProcess.setWorkOrderCardPoolId(processFinishedProductDTO.getWorkOrderCardPoolId());
             smtProcessListProcess.setProcessId(processFinishedProductDTO.getProcessId());
             smtProcessListProcess.setOutputQuantity(processFinishedProductDTO.getCurOutputQty());
@@ -159,12 +164,18 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }else{
+            SmtProcessListProcess smtProcessListProcess = smtProcessListProcesses.get(0);
+            if(smtProcessListProcess.getStatus()==2){
+                throw new BizErrorException("当前流程卡你已提交，请勿提交");
+            }
+            smtProcessListProcess.setStatus((byte)processFinishedProductDTO.getOperation());
             smtProcessListProcess.setOutputQuantity(new BigDecimal(smtProcessListProcess.getOutputQuantity().doubleValue()+processFinishedProductDTO.getCurOutputQty().doubleValue()));
             smtProcessListProcess.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+            if(this.update(smtProcessListProcess)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
         }
-        //SmtProcessListProcess smtProcessListProcess = smtProcessListProcesses.get(0);
-
-        return 0;
+        return 1;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -237,5 +248,17 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             }
         }
         return smtProcessListProcessMapper.deleteByIds(ids);
+    }
+
+    /**
+     * 获取当前登录用户
+     * @return
+     */
+    private SysUser currentUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
     }
 }

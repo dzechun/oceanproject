@@ -25,7 +25,6 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     @Column(name = "work_order_id")
     @ApiModelProperty(name="workOrderId" ,value="工单ID")
-    @NotNull(groups = update.class,message = "工单ID不能为空")
     private Long workOrderId;
 
     /**
@@ -33,7 +32,6 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "work_order_code")
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
-    @NotBlank(message = "工单号不能为空")
     @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
 
@@ -98,7 +96,6 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "pro_line_id")
     @ApiModelProperty(name="proLineId" ,value="线别ID")
-    @NotNull(message = "线别ID不能为空")
     private Long proLineId;
 
     /**
@@ -106,7 +103,6 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
      */
     @Column(name = "route_id")
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
-    @NotNull(message = "工艺路线ID不能为空")
     private Long routeId;
 
     /**
@@ -130,7 +126,6 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "planned_start_time")
     @ApiModelProperty(name="plannedStartTime" ,value="计划开始时间")
     @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="13",exportFormat = "yyyy-MM-dd HH:mm:ss")
-    @NotNull(message = "计划开始时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date plannedStartTime;
 

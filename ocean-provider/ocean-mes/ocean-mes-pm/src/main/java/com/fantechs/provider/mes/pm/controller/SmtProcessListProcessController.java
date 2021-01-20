@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
@@ -59,6 +60,12 @@ public class SmtProcessListProcessController {
         Page<Object> page = PageHelper.startPage(searchSmtProcessListProcess.getStartPage(),searchSmtProcessListProcess.getPageSize());
         List<SmtProcessListProcessDto> list = smtProcessListProcessService.findList(searchSmtProcessListProcess);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("工序报工")
+    @PostMapping("/finishedProduct")
+    public ResponseEntity finishedProduct(@ApiParam(value = "查询对象")@RequestBody ProcessFinishedProductDTO processFinishedProductDTO) {
+        return ControllerUtil.returnCRUD(smtProcessListProcessService.finishedProduct(processFinishedProductDTO));
     }
 
     @PostMapping(value = "/export")

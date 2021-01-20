@@ -63,6 +63,13 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
     private Long processId;
 
     /**
+     * 工序操作类型（1、开工 2、报工）
+     */
+    @ApiModelProperty(name="process_type",value = "工序操作类型（1、开工 2、报工）")
+    @Excel(name = "工序操作类型（1、开工 2、报工）", height = 20, width = 30,orderNum="")
+    private Byte processType;
+
+    /**
      * 过站状态(0-待开始 1-过站中 2-OK  3-NG)
      */
     @ApiModelProperty(name="status",value = "过站状态(0-待开始 1-过站中 2-OK  3-NG)")
