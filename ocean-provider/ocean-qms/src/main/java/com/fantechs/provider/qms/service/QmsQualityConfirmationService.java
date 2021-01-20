@@ -16,4 +16,6 @@ public interface QmsQualityConfirmationService extends IService<QmsQualityConfir
     List<QmsQualityConfirmationDto> findList(Map<String, Object> map);
 
     QmsQualityConfirmationDto analysis(String code,Byte type);
+
+    int save(QmsQualityConfirmationDto qmsQualityConfirmationDto);
 }

@@ -38,8 +38,8 @@ public class QmsQualityConfirmationController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsQualityConfirmation qmsQualityConfirmation) {
-        return ControllerUtil.returnCRUD(qmsQualityConfirmationService.save(qmsQualityConfirmation));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsQualityConfirmationDto qmsQualityConfirmationDto) {
+        return ControllerUtil.returnCRUD(qmsQualityConfirmationService.save(qmsQualityConfirmationDto));
     }
 
     @ApiOperation("删除")

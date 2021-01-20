@@ -14,6 +14,14 @@ import java.math.BigDecimal;
 public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements Serializable {
 
     /**
+     * 工单ID
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderId",value = "工单ID")
+    @Excel(name = "工单ID", height = 20, width = 30,orderNum="2")
+    private Long workOrderId;
+
+    /**
      * 工单号
      */
     @Transient
@@ -28,6 +36,22 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @ApiModelProperty(name = "workOrderCardId",value = "流程单号")
     @Excel(name = "流程单号", height = 20, width = 30,orderNum="2")
     private String workOrderCardId;
+
+    /**
+     * 产品Id
+     */
+    @Transient
+    @ApiModelProperty(name = "materialId",value = "产品Id")
+    @Excel(name = "产品Id", height = 20, width = 30,orderNum="2")
+    private Long materialId;
+
+    /**
+     * 线别Id
+     */
+    @Transient
+    @ApiModelProperty(name = "proLineId",value = "线别Id")
+    @Excel(name = "线别Id", height = 20, width = 30,orderNum="2")
+    private Long proLineId;
 
     /**
      * 产品描述
@@ -132,6 +156,14 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @ApiModelProperty(name = "badPhenomenon",value = "不良现象名称")
     @Excel(name = "不良现象名称", height = 20, width = 30,orderNum="2")
     private String badPhenomenon;
+
+    /**
+     * 用量
+     */
+    @Transient
+    @ApiModelProperty(name = "dosage",value = "用量")
+    @Excel(name = "用量", height = 20, width = 30,orderNum="2")
+    private BigDecimal dosage;
 
     /**
      * 创建用户名称

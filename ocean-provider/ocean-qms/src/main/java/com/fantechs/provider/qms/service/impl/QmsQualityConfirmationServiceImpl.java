@@ -1,11 +1,9 @@
 package com.fantechs.provider.qms.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtProcess;
-import com.fantechs.common.base.entity.basic.SmtProductModel;
-import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
+import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
@@ -18,6 +16,11 @@ import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.qms.QmsPoorQuality;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
+import com.fantechs.common.base.general.entity.qms.QmsRejectsMrbReview;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtRejectsMrbReview;
+import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
+import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -25,18 +28,18 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.qms.mapper.QmsPoorQualityMapper;
 import com.fantechs.provider.qms.mapper.QmsQualityConfirmationMapper;
 import com.fantechs.provider.qms.service.QmsQualityConfirmationService;
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.assertj.core.internal.BigDecimals;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -53,6 +56,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     private PMFeignApi pmFeignApi;
     @Resource
     private BasicFeignApi basicFeignApi;
+    @Resource
+    private InFeignApi inFeignApi;
+    @Resource
+    private OutFeignApi outFeignApi;
 
     @Override
     public List<QmsQualityConfirmationDto> findList(Map<String, Object> map) {
@@ -65,7 +72,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         //获取工单任务池对象
         SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-//        searchSmtWorkOrderCardPool.
+        searchSmtWorkOrderCardPool.setWorkOrderCardId(code);
         ResponseEntity<List<SmtWorkOrderCardPoolDto>> workOrderCardPoolResponse =
                 pmFeignApi.findSmtWorkOrderCardPoolList(searchSmtWorkOrderCardPool);
         List<SmtWorkOrderCardPoolDto> poolList = workOrderCardPoolResponse.getData();
@@ -73,6 +80,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("流程单号不正确");
         }
         SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = poolList.get(0);
+        ResponseEntity<SmtWorkOrderCardPool> workOrderCardPoolDetail = pmFeignApi.findSmtWorkOrderCardPoolDetail(smtWorkOrderCardPoolDto.getParentId());
+        SmtWorkOrderCardPool parentWorkOrderCardPool = workOrderCardPoolDetail.getData();
+
 
         //查询过站信息（报工数据）
         SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
@@ -95,7 +105,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         SmtWorkshopSection workshopSection = workshopSectionResponse.getData();
 
         //获取物料信息
-        ResponseEntity<SmtWorkOrder> workOrderResponse = pmFeignApi.workOrderDetail(smtWorkOrderCardPoolDto.getWorkOrderId());
+        ResponseEntity<SmtWorkOrder> workOrderResponse = pmFeignApi.workOrderDetail(parentWorkOrderCardPool.getWorkOrderId());
         SmtWorkOrder smtWorkOrder = workOrderResponse.getData();
         ResponseEntity<SmtMaterial> materialResponse = basicFeignApi.materialDetail(smtWorkOrder.getMaterialId());
         SmtMaterial material = materialResponse.getData();
@@ -110,19 +120,21 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         qmsQualityConfirmationDto.setWorkOrderCode(smtWorkOrderCardPoolDto.getWorkOrderCode());
         qmsQualityConfirmationDto.setMaterialDesc(material.getMaterialDesc());
         qmsQualityConfirmationDto.setMaterialCode(material.getMaterialCode());
-//        qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
+        qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
         qmsQualityConfirmationDto.setProductModelName(productModel.getProductModelName());
         qmsQualityConfirmationDto.setUnit(baseTab.getMainUnit());
         qmsQualityConfirmationDto.setProcessName(smtProcess.getProcessName());
         qmsQualityConfirmationDto.setProcessId(smtProcess.getProcessId());
         qmsQualityConfirmationDto.setSectionName(workshopSection.getSectionName());
         qmsQualityConfirmationDto.setSectionId(workshopSection.getSectionId());
+        qmsQualityConfirmationDto.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
+        qmsQualityConfirmationDto.setMaterialId(material.getMaterialId());
 
         return qmsQualityConfirmationDto;
     }
 
     @Override
-    public int save(QmsQualityConfirmation qmsQualityConfirmation) {
+    public int save(QmsQualityConfirmationDto qmsQualityConfirmation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -139,20 +151,100 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         int i = qmsQualityConfirmationMapper.insertUseGeneratedKeys(qmsQualityConfirmation);
 
         List<QmsPoorQuality> list = qmsQualityConfirmation.getList();
+        for (QmsPoorQuality qmsPoorQuality : list) {
+            qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
+        }
         qmsPoorQualityMapper.insertList(list);
 
+        if (qmsQualityConfirmation.getQualityType().equals(1)){
+            return i;
+        }
 
+        SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
+        searchSmtStorageMaterial.setMaterialId(qmsQualityConfirmation.getMaterialId());
+        ResponseEntity<List<SmtStorageMaterial>> storageMaterialList = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial);
+        List<SmtStorageMaterial> data = storageMaterialList.getData();
+        if (StringUtils.isEmpty(data)){
+            throw new BizErrorException("未找到该物料的储位");
+        }
+
+        //完工入库
+        WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();
+        wmsInFinishedProduct.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
+        wmsInFinishedProduct.setOperatorUserId(user.getUserId());
+        wmsInFinishedProduct.setInTime(new Date());
+        wmsInFinishedProduct.setInType(Byte.parseByte("1"));
+        wmsInFinishedProduct.setProjectType("dp");
+        wmsInFinishedProduct.setInStatus(Byte.parseByte("2"));
+        List<WmsInFinishedProductDet> wmsInFinishedProductDetList = new ArrayList<>();
+        WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();
+
+        wmsInFinishedProductDet.setMaterialId(qmsQualityConfirmation.getMaterialId());
+        wmsInFinishedProductDet.setStorageId(data.get(0).getStorageId());
+        wmsInFinishedProductDet.setPlanInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
+        wmsInFinishedProductDet.setInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
+        wmsInFinishedProductDet.setInTime(new Date());
+        wmsInFinishedProductDet.setDeptId(user.getDeptId());
+        wmsInFinishedProductDet.setInStatus(Byte.parseByte("2"));
+
+        wmsInFinishedProductDetList.add(wmsInFinishedProductDet);
+        wmsInFinishedProduct.setWmsInFinishedProductDetList(wmsInFinishedProductDetList);
+        inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
+
+        //生成领料计划
+        WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
+        wmsOutProductionMaterial.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
+        wmsOutProductionMaterial.setMaterialId(qmsQualityConfirmation.getMaterialId());
+        wmsOutProductionMaterial.setPlanQty(qmsQualityConfirmation.getQualifiedQuantity());
+        wmsOutProductionMaterial.setOutTime(new Date());
+        wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
+        wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
+        wmsOutProductionMaterial.setProLineId(qmsQualityConfirmation.getProLineId());
+        outFeignApi.outProductionMaterialAdd(wmsOutProductionMaterial);
 
         return i;
     }
 
     @Override
-    public int update(QmsQualityConfirmation entity) {
-        return super.update(entity);
+    public int update(QmsQualityConfirmation qmsQualityConfirmation) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        qmsQualityConfirmation.setModifiedTime(new Date());
+        qmsQualityConfirmation.setModifiedUserId(user.getUserId());
+
+//        QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
+//        BeanUtils.copyProperties(qmsQualityConfirmation,qmsHtRejectsMrbReview);
+//        qmsHtRejectsMrbReviewMapper.insert(qmsHtRejectsMrbReview);
+        return qmsQualityConfirmationMapper.updateByPrimaryKeySelective(qmsQualityConfirmation);
     }
 
     @Override
     public int batchDelete(String ids) {
-        return super.batchDelete(ids);
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+//        List<QmsHtRejectsMrbReview> qmsHtQualityInspections = new ArrayList<>();
+        String[] idsArr  = ids.split(",");
+        for (String id : idsArr) {
+            QmsQualityConfirmation qmsQualityConfirmation = qmsQualityConfirmationMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(qmsQualityConfirmation)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+//            QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
+//            BeanUtils.copyProperties(qmsQualityConfirmation,qmsHtRejectsMrbReview);
+//            qmsHtQualityInspections.add(qmsHtRejectsMrbReview);
+        }
+
+//        qmsHtRejectsMrbReviewMapper.insertList(qmsHtQualityInspections);
+        Example example = new Example(QmsPoorQuality.class);
+        example.createCriteria().andEqualTo("qualityId", Arrays.asList(ids.split(",")));
+        qmsPoorQualityMapper.deleteByExample(example);
+
+        return qmsQualityConfirmationMapper.deleteByIds(ids);
     }
 }

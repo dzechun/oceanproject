@@ -71,14 +71,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
     private BigDecimal qualifiedQuantity;
 
     /**
-     * 不合格数量
-     */
-    @ApiModelProperty(name="unqualifiedQuantity",value = "不合格数量")
-    @Excel(name = "不合格数量", height = 20, width = 30,orderNum="")
-    @Column(name = "unqualified_quantity")
-    private BigDecimal unqualifiedQuantity;
-
-    /**
      * 品质确认状态（0、待确认 1、确认中 2、已确认）
      */
     @ApiModelProperty(name="affirmStatus",value = "品质确认状态（0、待确认 1、确认中 2、已确认）")

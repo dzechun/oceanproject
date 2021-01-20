@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCard
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -70,6 +71,10 @@ public interface PMFeignApi {
     @ApiOperation("查询工单流转卡任务池列表")
     @PostMapping("/smtWorkOrderCardPool/findList")
     ResponseEntity<List<SmtWorkOrderCardPoolDto>> findSmtWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
+
+    @ApiOperation("查询工单流转卡任务池详情")
+    @PostMapping("/smtWorkOrderCardPool/detail")
+    ResponseEntity<SmtWorkOrderCardPool> findSmtWorkOrderCardPoolDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
 
     @ApiOperation("查询过站信息列表")
     @PostMapping("/smtProcessListProcess/findList")
