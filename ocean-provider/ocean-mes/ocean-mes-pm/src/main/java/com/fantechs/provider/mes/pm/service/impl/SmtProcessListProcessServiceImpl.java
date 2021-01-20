@@ -1,9 +1,8 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
-import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -35,14 +34,19 @@ import java.util.Map;
 @Service
 public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessListProcess> implements SmtProcessListProcessService {
 
-     @Resource
-     private SmtProcessListProcessMapper smtProcessListProcessMapper;
-     @Resource
-     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
-     @Resource
-     private SmtWorkOrderMapper smtWorkOrderMapper;
-     @Resource
-     private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+    @Resource
+    private SmtProcessListProcessMapper smtProcessListProcessMapper;
+    @Resource
+    private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
+    @Resource
+    private SmtWorkOrderMapper smtWorkOrderMapper;
+    @Resource
+    private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+    @Resource
+    private SmtBarcodeRuleSetDetMapper smtBarcodeRuleSetDetMapper;
+    @Resource
+    private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
+
 
     @Override
     public List<SmtProcessListProcessDto> findList(SearchSmtProcessListProcess searchSmtProcessListProcess) {
@@ -85,6 +89,31 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     public int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool) {
         List<SmtProcessListProcess> list=new ArrayList<>();
         Long workOrderId = smtWorkOrderBarcodePool.getWorkOrderId();
+        //获取工单信息
+        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+
+        Long packageNumRuleId =null;
+        //通过条码集合找到对应的条码规则、流转卡规则
+        SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet = new SearchSmtBarcodeRuleSetDet();
+        searchSmtBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
+        List<SmtBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = smtBarcodeRuleSetDetMapper.findList(searchSmtBarcodeRuleSetDet);
+        if (StringUtils.isEmpty(smtBarcodeRuleSetDetList)) {
+            throw new BizErrorException("没有找到相关的条码集合规则");
+        }
+        for (SmtBarcodeRuleSetDet smtBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
+            SmtBarcodeRule smtBarcodeRule = smtBarcodeRuleMapper.selectByPrimaryKey(smtBarcodeRuleSetDet.getBarcodeRuleId());
+            if (StringUtils.isEmpty(smtBarcodeRule)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            //彩盒条码规则
+            if (smtBarcodeRule.getBarcodeRuleCategoryId() == 3) {
+                packageNumRuleId = smtBarcodeRule.getBarcodeRuleId();
+                continue;
+            }
+
+
+        }
+
         Long barcodeRuleId = smtWorkOrderBarcodePool.getBarcodeRuleId();
         //查询该工单对应工艺路线下的工序
         List<ProcessListDto> processListDtos=smtProcessListProcessMapper.findProcess(workOrderId);
@@ -97,12 +126,16 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 smtProcessListProcess.setProcessId(processId);
                 smtProcessListProcess.setStatus((byte) 0);
                 smtProcessListProcess.setIsHold((byte) 0);
+                smtProcessListProcess.setProcessListProcessCode(CodeUtils.getId("SPLP"));
                 //彩盒号
-                String packageNum=generateCode(barcodeRuleId);
-                smtProcessListProcess.setPackageNum(packageNum);
+                if(StringUtils.isNotEmpty(packageNumRuleId)){
+                    String packageNum=generateCode(barcodeRuleId);
+                    smtProcessListProcess.setPackageNum(packageNum);
+                }
                 //箱号
                 //栈板号
                 smtProcessListProcess.setIsDelete((byte) 1);
+                list.add(smtProcessListProcess);
             }
         }else {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);

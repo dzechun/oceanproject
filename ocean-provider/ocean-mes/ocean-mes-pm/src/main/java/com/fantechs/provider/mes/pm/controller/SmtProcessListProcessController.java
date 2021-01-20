@@ -79,7 +79,7 @@ public class SmtProcessListProcessController {
      */
     @ApiOperation("开始作业")
     @PostMapping("/startJob")
-    public ResponseEntity startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool){
+    public ResponseEntity startJob(@RequestBody SmtWorkOrderBarcodePool smtWorkOrderBarcodePool){
         return ControllerUtil.returnCRUD(smtProcessListProcessService.startJob(smtWorkOrderBarcodePool));
     }
 
