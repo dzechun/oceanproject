@@ -21,6 +21,12 @@ public class SearchSmtMaterial extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -4397503096388466915L;
 
     /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId" ,value="物料ID")
+    private Long materialId;
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")

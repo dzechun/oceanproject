@@ -112,7 +112,8 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
         DynamicDataSourceHolder.putDataSouce("secondary");
         String lastUpdateDate = (String) redisUtil.get(ConstantBase.API_LASTUPDATE_TIME_MATERIAL);
         Example example = new Example(CustGetItemInfo.class);
-        Example.Criteria criteria = example.createCriteria().andEqualTo("组织id", constantBase.getDefaultOrgId());
+        Example.Criteria criteria = example.createCriteria().andEqualTo("组织id", constantBase.getDefaultOrgId())
+                .orEqualTo("组织id",constantBase.getNewOrgId());
         if (!StringUtils.isEmpty(lastUpdateDate)) {
             criteria.andGreaterThanOrEqualTo("最后更新时间", lastUpdateDate);
         }
