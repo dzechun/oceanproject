@@ -43,6 +43,14 @@ public class SmtStorageInventoryController {
         return ControllerUtil.returnDataSuccess(smtStorageInventory, StringUtils.isEmpty(smtStorageInventory)?0:1);
     }
 
+    @ApiOperation(value = "扣除库存",notes = "扣除库存")
+    @PostMapping("/out")
+    public ResponseEntity<SmtStorageInventory> out(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventory smtStorageInventory) {
+        return ControllerUtil.returnCRUD(smtStorageInventoryService.out(smtStorageInventory));
+    }
+
+
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
@@ -82,4 +90,6 @@ public class SmtStorageInventoryController {
         throw new BizErrorException(e);
         }
     }
+
+
 }
