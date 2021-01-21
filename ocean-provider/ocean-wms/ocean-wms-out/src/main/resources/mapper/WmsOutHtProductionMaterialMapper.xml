@@ -79,7 +79,7 @@
         and date_format(pm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="productionMaterialCode != null and productionMaterialCode != ''">
-        and wo.work_order_code like CONCAT('%', #{productionMaterialCode}, '%')
+        and pm.production_material_code like CONCAT('%', #{productionMaterialCode}, '%')
       </if>
       <if test="outTimeStart != null and outTimeStart != ''">
         and date_format(pm.out_time, '%Y-%m-%d') &gt;= #{outTimeStart}

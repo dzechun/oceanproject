@@ -21,8 +21,8 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutProductionMaterial/add")
     ResponseEntity outProductionMaterialAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsOutProductionMaterial wmsOutProductionMaterial);
 
-    @ApiOperation("发料计划修改")
-    @PostMapping("/wmsOutProductionMaterial/update")
-    ResponseEntity outProductionMaterialUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutProductionMaterial.update.class) WmsOutProductionMaterial wmsOutProductionMaterial);
+    @ApiOperation("根据工单和物料反写发料数量")
+    @PostMapping("/wmsOutProductionMaterial/updateByWorkOrderId")
+    ResponseEntity updateByWorkOrderId(@ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsOutProductionMaterial wmsOutProductionMaterial);
 
 }

@@ -17,4 +17,6 @@ public interface WmsOutProductionMaterialService extends IService<WmsOutProducti
     List<WmsOutProductionMaterialDto> findList(Map<String, Object> map);
 
     List<WmsOutProductionMaterial> findHtList(Map<String, Object> dynamicConditionByEntity);
+
+    int updateByWorkOrderId(WmsOutProductionMaterial wmsOutProductionMaterial);
 }
