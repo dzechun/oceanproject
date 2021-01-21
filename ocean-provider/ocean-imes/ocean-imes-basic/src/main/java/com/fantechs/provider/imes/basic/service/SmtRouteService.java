@@ -17,4 +17,6 @@ public interface SmtRouteService extends IService<SmtRoute> {
 
     //根据工艺路线是否被修改进行操作（有修改则做新增操作，无修改则不操作）
     int addOrUpdateRoute(SmtRoute smtRoute);
+
+    public int configureRout(SmtRoute smtRoute);
 }

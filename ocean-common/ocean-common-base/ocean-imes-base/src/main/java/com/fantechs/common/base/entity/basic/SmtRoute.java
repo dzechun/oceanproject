@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "smt_route")
 @Data
@@ -164,6 +165,10 @@ public class SmtRoute extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "产品工艺路线",notes = "产品工艺路线")
     private SmtProductProcessRoute smtProductProcessRoute;
+
+    @Transient
+    @ApiModelProperty(name = "工艺路线工序关系集合",notes = "工艺路线工序关系集合")
+    private List<SmtRouteProcess> smtRouteProcesses;
 
     /**
      * 扩展字段1
