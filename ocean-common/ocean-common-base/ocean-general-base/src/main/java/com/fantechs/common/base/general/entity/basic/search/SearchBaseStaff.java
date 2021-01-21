@@ -53,4 +53,17 @@ public class SearchBaseStaff extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "workShopName",value = "车间名称")
     private String workShopName;
+
+    /**
+     * 厂别编码
+     */
+    @ApiModelProperty(name = "factoryCode",value = "厂别编码")
+    private String factoryCode;
+
+    /**
+     * 厂别名称
+     */
+    @ApiModelProperty(name = "factoryName",value = "厂别名称")
+    private String factoryName;
+
 }

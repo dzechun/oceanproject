@@ -22,9 +22,18 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
 
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+      <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+      <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+      <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+      <result column="team_code" jdbcType="VARCHAR" property="teamCode"/>
+      <result column="team_name" jdbcType="VARCHAR" property="teamName"/>
+      <result column="team_desc" jdbcType="VARCHAR" property="teamDesc"/>
+      <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode" />
+      <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+      <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
+      <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+      <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+      <result column="factory_desc" jdbcType="VARCHAR" property="factoryDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -50,37 +59,48 @@
       select
       <include refid="Base_Column_List"></include>,
       su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-      bt.team_code,team_name,team_desc,
-      sws.work_shop_code,sws.work_shop_name,sws.work_shop_desc
-      from fantech_imes.base_staff bs
-      left join fantech_imes.base_team bt on bs.team_id = bt.team_id
+      bt.team_code,bt.team_name,bt.team_desc,
+      sws.work_shop_code,sws.work_shop_name,sws.work_shop_desc,
+      sf.factory_code,sf.factory_name,sf.factory_desc
+      from fantech_imes.base_ht_staff bhs
+      left join fantech_imes.base_team bt on bhs.team_id = bt.team_id
       left join fantech_imes.smt_work_shop sws on bt.work_shop_id = sws.work_shop_id
-      left join ocean.sys_user su on bs.create_user_id = su.user_id
-      left join ocean.sys_user sus on bs.modified_user_id = sus.user_id
+      left join fantech_imes.smt_factory sf on sws.factory_id = sf.factory_id
+      left join ocean.sys_user su on bhs.create_user_id = su.user_id
+      left join ocean.sys_user sus on bhs.modified_user_id = sus.user_id
       <where>
           <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-              and date_format(bs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+              and date_format(bhs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
           </if>
           <if test="staffCode != null and staffCode !=''">
-              and bs.staff_code like CONCAT('%', #{staffCode}, '%')
+              and bhs.staff_code like CONCAT('%', #{staffCode}, '%')
           </if>
           <if test="staffName != null and staffName !=''">
-              and bs.staff_name like CONCAT('%', #{staffName}, '%')
+              and bhs.staff_name like CONCAT('%', #{staffName}, '%')
           </if>
           <if test="staffDesc != null and staffDesc !=''">
-              and bs.staff_desc like CONCAT('%', #{staffDesc}, '%')
+              and bhs.staff_desc like CONCAT('%', #{staffDesc}, '%')
           </if>
           <if test="teamCode != null and teamCode !=''">
-              and bs.team_code like CONCAT('%', #{teamCode}, '%')
+              and bt.team_code like CONCAT('%', #{teamCode}, '%')
           </if>
           <if test="teamName != null and teamName !=''">
-              and bs.team_name like CONCAT('%', #{teamName}, '%')
+              and bt.team_name like CONCAT('%', #{teamName}, '%')
           </if>
           <if test="workShopCode != null and workShopCode !=''">
-              and bs.work_shop_code like CONCAT('%', #{workShopCode}, '%')
+              and sws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
           </if>
           <if test="workShopName != null and workShopName !=''">
-              and bs.work_shop_name like CONCAT('%', #{workShopName}, '%')
+              and sws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+          </if>
+          <if test="factoryCode != null and factoryCode !=''">
+              and sf.factory_code like CONCAT('%', #{factoryCode}, '%')
+          </if>
+          <if test="factoryName != null and factoryName !=''">
+              and sf.factory_name like CONCAT('%', #{factoryName}, '%')
+          </if>
+          <if test="status!=null and status!=''">
+              and bs.status=#{status}
           </if>
       </where>
       order by modified_time desc

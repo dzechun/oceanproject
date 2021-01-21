@@ -97,7 +97,13 @@
             <if test="workShopName != null and workShopName !=''">
                 and sws.work_shop_name like CONCAT('%', #{workShopName}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="factoryCode != null and factoryCode !=''">
+                and sf.factory_code like CONCAT('%', #{factoryCode}, '%')
+            </if>
+            <if test="factoryName != null and factoryName !=''">
+                and sf.factory_name like CONCAT('%', #{factoryName}, '%')
+            </if>
+            <if test="status !=null and status !=''">
                 and bs.status=#{status}
             </if>
         </where>
