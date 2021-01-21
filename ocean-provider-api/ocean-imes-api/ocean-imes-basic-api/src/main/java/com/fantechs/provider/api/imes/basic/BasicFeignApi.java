@@ -93,10 +93,6 @@ public interface BasicFeignApi {
     @PostMapping("/smtProductModel/detail")
     ResponseEntity<SmtProductModel> productModelDetail(@ApiParam(value = "型号ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 
-    @PostMapping(value = "/smtMaterial/detail")
-    @ApiOperation(value = "获取物料详情信息", notes = "获取物料详情信息")
-    ResponseEntity<SmtMaterial> materialDetail(@ApiParam(value = "物料ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
-
     @ApiOperation("批量更新物料信息")
     @PostMapping("/smtMaterial/batchUpdate")
     ResponseEntity batchUpdateSmtMaterial(@ApiParam(value = "物料信息集合") @RequestBody List<SmtMaterial> smtMaterials);

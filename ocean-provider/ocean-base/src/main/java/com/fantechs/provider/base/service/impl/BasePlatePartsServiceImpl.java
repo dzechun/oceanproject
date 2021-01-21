@@ -65,10 +65,12 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         baseHtPlatePartsMapper.insert(baseHtPlateParts);
 
         List<BasePlatePartsDetDto> list = basePlateParts.getList();
-        for (BasePlatePartsDet basePlatePartsDet : list) {
-            basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+        if (StringUtils.isNotEmpty(list)){
+            for (BasePlatePartsDet basePlatePartsDet : list) {
+                basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+            }
+            basePlatePartsDetMapper.insertList(list);
         }
-        basePlatePartsDetMapper.insertList(list);
 
         return i;
     }
