@@ -34,6 +34,7 @@ public class SmtRoute extends ValidGroup implements Serializable {
      */
     @Column(name = "route_code")
     @ApiModelProperty(name="routeCode" ,value="工艺路线代码")
+    @Excel(name = "工艺路线名称", height = 20, width = 30)
     @NotBlank(message = "工艺路线代码不能为空")
     private String routeCode;
 
@@ -67,7 +68,6 @@ public class SmtRoute extends ValidGroup implements Serializable {
      */
     @Column(name = "standard_time")
     @ApiModelProperty(name="standardTime" ,value="标准时间")
-    @Excel(name = "标准时间", height = 20, width = 30)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date standardTime;
 
@@ -76,7 +76,6 @@ public class SmtRoute extends ValidGroup implements Serializable {
      */
     @Column(name = "readiness_time")
     @ApiModelProperty(name="readinessTime" ,value="准备时间")
-    @Excel(name = "准备时间", height = 20, width = 30)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date readinessTime;
 

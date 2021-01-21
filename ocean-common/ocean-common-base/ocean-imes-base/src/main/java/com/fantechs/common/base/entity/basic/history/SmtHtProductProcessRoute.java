@@ -69,6 +69,13 @@ public class SmtHtProductProcessRoute {
     private String productModelCode;
 
     /**
+     *  产品型号名称
+     */
+    @Transient
+    @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    private String productModelName;
+
+    /**
      *  物料ID
      */
     @Column(name = "material_id")
@@ -102,6 +109,13 @@ public class SmtHtProductProcessRoute {
     @Column(name = "route_id")
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
     private Long routeId;
+
+    /**
+     * 工艺路线编码
+     */
+    @Transient
+    @ApiModelProperty(name="routeCode" ,value="工艺路线编码")
+    private String routeCode;
 
     /**
      * 工艺路线名称

@@ -33,11 +33,11 @@ public interface SecurityFeignApi {
     ResponseEntity logout();
 
     @GetMapping("/sysUser/detail")
-    @ApiOperation(value = "通过ID获取单个用户信息",notes = "通过ID获取单个用户信息")
-    ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId", required = true) @RequestParam(value="id") Long id);
+    @ApiOperation(value = "通过ID获取单个用户信息", notes = "通过ID获取单个用户信息")
+    ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId", required = true) @RequestParam(value = "id") Long id);
 
     @ApiOperation("根据条件查询程序配置项列表")
     @PostMapping("/sysSpecItem/findList")
-    ResponseEntity<List<SysSpecItem>> findSpecItemList(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem);
+    ResponseEntity<List<SysSpecItem>> findSpecItemList(@ApiParam(value = "查询条件，请参考Model说明") @RequestBody(required = false) SearchSysSpecItem searchSysSpecItem);
 
 }

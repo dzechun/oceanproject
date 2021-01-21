@@ -23,7 +23,7 @@ public interface InFeignApi {
     @PostMapping("/pda/mesPackageManager/list")
     ResponseEntity<List<MesPackageManagerDTO>> list(@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO);
 
-    @ApiOperation(value = "成品入库新增",notes = "成品入库新增")
+    @ApiOperation(value = "成品入库新增", notes = "成品入库新增")
     @PostMapping("/wmsInFinishedProduct/add")
-    ResponseEntity inFinishedProductAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct);
+    ResponseEntity inFinishedProductAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct);
 }

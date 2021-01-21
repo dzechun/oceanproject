@@ -37,11 +37,11 @@ public interface BasicFeignApi {
 
     @ApiOperation("批量更新物料信息")
     @PostMapping("/smtMaterial/batchUpdateByCode")
-    ResponseEntity batchUpdateByCode(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<SmtMaterial> smtMaterials);
+    ResponseEntity batchUpdateByCode(@ApiParam(value = "物料信息集合", required = true) @RequestBody List<SmtMaterial> smtMaterials);
 
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/smtMaterial/findList")
-    ResponseEntity<List<SmtMaterial>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtMaterial searchSmtMaterial );
+    ResponseEntity<List<SmtMaterial>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtMaterial searchSmtMaterial);
 
     @ApiOperation(value = "批量更新", notes = "批量更新")
     @PostMapping("/smtStorage/batchUpdate")
@@ -92,6 +92,10 @@ public interface BasicFeignApi {
     @ApiOperation("获取产品型号详情")
     @PostMapping("/smtProductModel/detail")
     ResponseEntity<SmtProductModel> productModelDetail(@ApiParam(value = "型号ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
+    @PostMapping(value = "/smtMaterial/detail")
+    @ApiOperation(value = "获取物料详情信息", notes = "获取物料详情信息")
+    ResponseEntity<SmtMaterial> materialDetail(@ApiParam(value = "物料ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("批量更新物料信息")
     @PostMapping("/smtMaterial/batchUpdate")

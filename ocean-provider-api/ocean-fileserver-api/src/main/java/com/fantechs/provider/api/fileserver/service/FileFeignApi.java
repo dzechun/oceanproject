@@ -17,9 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 @FeignClient(value = "ocean-fileserver")
 public interface FileFeignApi {
 
-    @PostMapping(value = "/file/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity fileUpload(@RequestPart("file") MultipartFile file);
 
     @GetMapping(value = "/file/download")
-    Response  download(@RequestParam(value = "fileUrl", required = true) String fileUrl);
+    Response download(@RequestParam(value = "fileUrl", required = true) String fileUrl);
 }
