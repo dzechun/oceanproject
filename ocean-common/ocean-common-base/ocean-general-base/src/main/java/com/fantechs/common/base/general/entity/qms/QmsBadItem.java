@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -115,7 +116,7 @@ public class QmsBadItem extends ValidGroup implements Serializable {
      * 不良项目明细
      */
     @ApiModelProperty(name="list",value = "不良项目明细")
-    private List<QmsBadItemDetDto> list;
+    private List<QmsBadItemDetDto> list = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

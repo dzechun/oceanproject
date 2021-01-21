@@ -37,6 +37,14 @@ public class QmsPoorQualityDto extends QmsPoorQuality implements Serializable {
     private String badTypeCause;
 
     /**
+     * 不良现象编码
+     */
+    @Transient
+    @ApiModelProperty(name = "badPhenomenonCode",value = "不良现象编码")
+    @Excel(name = "不良现象编码", height = 20, width = 30,orderNum="2")
+    private String badPhenomenonCode;
+    
+    /**
      * 不良现象名称
      */
     @Transient

@@ -9,6 +9,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,6 +104,6 @@ public interface BasicFeignApi {
 
 
     @ApiOperation("查询产品工艺路线")
-    @PostMapping("/smtRoute/findList")
+    @GetMapping("/smtRoute/findConfigureRout")
     ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId", required = true) @RequestParam Long routeId);
 }

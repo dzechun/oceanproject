@@ -76,6 +76,9 @@
       <if test="materialDesc != null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="productModelName != null and productModelName!=''">
+        and spm.product_model_name like CONCAT('%', #{productModelName}, '%')
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bpp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

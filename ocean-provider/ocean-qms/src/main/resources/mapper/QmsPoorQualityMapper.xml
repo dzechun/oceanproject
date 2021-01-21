@@ -28,6 +28,7 @@
     <result column="bad_item_id" jdbcType="BIGINT" property="badItemId"/>
     <result column="bad_type_code" jdbcType="VARCHAR" property="badTypeCode"/>
     <result column="bad_type_cause" jdbcType="VARCHAR" property="badTypeCause"/>
+    <result column="bad_phenomenon_code" jdbcType="VARCHAR" property="badPhenomenonCode"/>
     <result column="bad_phenomenon" jdbcType="VARCHAR" property="badPhenomenon"/>
     <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
   </resultMap>
@@ -45,7 +46,7 @@
 
   <select id="findById" parameterType="long" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    sws.section_name,qbi.bad_item_id,qbi.bad_type_code,qbi.bad_type_cause,qbid.bad_phenomenon
+    sws.section_name,qbi.bad_item_id,qbi.bad_type_code,qbi.bad_type_cause,qbid.bad_phenomenon,qbid.bad_phenomenon_code
     from fantech_imes.qms_poor_quality qpq
     LEFT JOIN ocean.sys_user su ON qpq.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qpq.modified_user_id = sus.user_id

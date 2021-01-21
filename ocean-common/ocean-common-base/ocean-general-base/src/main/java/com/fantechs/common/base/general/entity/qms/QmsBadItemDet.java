@@ -42,7 +42,7 @@ public class QmsBadItemDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="badPhenomenonCode",value = "不良现象编码")
     @Excel(name = "不良现象编码", height = 20, width = 30,orderNum="")
-    @Column(name = "bad_phenomenon")
+    @Column(name = "bad_phenomenon_code")
     private String badPhenomenonCode;
 
     /**
