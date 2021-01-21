@@ -16,7 +16,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.om.OMFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
 import org.springframework.stereotype.Service;
 

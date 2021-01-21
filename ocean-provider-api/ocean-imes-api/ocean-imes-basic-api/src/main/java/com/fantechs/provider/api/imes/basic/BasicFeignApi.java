@@ -57,15 +57,15 @@ public interface BasicFeignApi {
 
     @ApiOperation("根据仓库编码批量更新")
     @PostMapping("/smtWarehouse/batchUpdateByCode")
-    ResponseEntity batchUpdateWarehouseByCode(@ApiParam(value = "编码必传")@RequestBody List<SmtWarehouse> smtWarehouses);
+    ResponseEntity batchUpdateWarehouseByCode(@ApiParam(value = "编码必传") @RequestBody List<SmtWarehouse> smtWarehouses);
 
     @ApiOperation("批量新增")
     @PostMapping("/smtWarehouse/batchSave")
-    ResponseEntity batchSave(@ApiParam(value = "批量新增")@RequestBody List<SmtWarehouse> smtWarehouses);
+    ResponseEntity batchSave(@ApiParam(value = "批量新增") @RequestBody List<SmtWarehouse> smtWarehouses);
 
     @ApiOperation("根据条件查询信息列表")
     @PostMapping("/smtWarehouse/findList")
-    ResponseEntity<List<SmtWarehouse>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWarehouse searchSmtWarehouse);
+    ResponseEntity<List<SmtWarehouse>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtWarehouse searchSmtWarehouse);
 
 
     @ApiOperation("根据条件查询线别")
@@ -74,7 +74,7 @@ public interface BasicFeignApi {
 
     @ApiOperation("根据ID获取储位物料")
     @PostMapping("/smtStorageMaterial/detail")
-    ResponseEntity<SmtStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id) ;
+    ResponseEntity<SmtStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("根据条件查询产品BOM")
     @PostMapping("/smtProductBom/findList")
@@ -82,20 +82,20 @@ public interface BasicFeignApi {
 
     @ApiOperation("获取工序的详情")
     @PostMapping("/smtProcess/detail")
-    ResponseEntity<SmtProcess> processDetail(@ApiParam(value = "工序ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+    ResponseEntity<SmtProcess> processDetail(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("获取工序的详情")
     @PostMapping("/workshopSection/detail")
-    ResponseEntity<SmtWorkshopSection> sectionDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+    ResponseEntity<SmtWorkshopSection> sectionDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
 
     @ApiOperation("获取产品型号详情")
     @PostMapping("/smtProductModel/detail")
-    ResponseEntity<SmtProductModel> productModelDetail(@ApiParam(value = "型号ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+    ResponseEntity<SmtProductModel> productModelDetail(@ApiParam(value = "型号ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @PostMapping(value = "/smtMaterial/detail")
     @ApiOperation(value = "获取物料详情信息", notes = "获取物料详情信息")
-    ResponseEntity<SmtMaterial> materialDetail(@ApiParam(value = "物料ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+    ResponseEntity<SmtMaterial> materialDetail(@ApiParam(value = "物料ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("批量更新物料信息")
     @PostMapping("/smtMaterial/batchUpdate")
@@ -104,5 +104,5 @@ public interface BasicFeignApi {
 
     @ApiOperation("查询产品工艺路线")
     @PostMapping("/smtRoute/findList")
-    ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId",required = true) @RequestParam Long routeId);
+    ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId", required = true) @RequestParam Long routeId);
 }

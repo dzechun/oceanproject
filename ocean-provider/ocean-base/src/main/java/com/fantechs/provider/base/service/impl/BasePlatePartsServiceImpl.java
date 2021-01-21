@@ -93,8 +93,9 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         basePlatePartsDetMapper.deleteByExample(example);
 
         System.out.println("数据："+basePlateParts.getList());
-        basePlatePartsDetMapper.insertList(basePlateParts.getList());
-
+        if (StringUtils.isNotEmpty(basePlateParts.getList())){
+            basePlatePartsDetMapper.insertList(basePlateParts.getList());
+        }
         return basePlatePartsMapper.updateByPrimaryKeySelective(basePlateParts);
     }
 
