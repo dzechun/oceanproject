@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessCard;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -343,4 +344,10 @@ public class MesPmProcessCardDto implements Serializable {
 
     @ApiModelProperty(name = "mesPmBreakBulkDets",value = "拆/合批集合")
     private List<MesPmBreakBulkDet> mesPmBreakBulkDets;
+
+    /**
+     * 工单流转卡号
+     */
+    @ApiModelProperty(name = "workOrderCardId",value = "工单流转卡号")
+    private String workOrderCardId;
 }

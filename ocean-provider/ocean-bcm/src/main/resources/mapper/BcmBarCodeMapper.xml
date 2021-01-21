@@ -21,6 +21,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="bar_code_content" jdbcType="VARCHAR" property="barCodeContent"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -42,16 +43,17 @@
         <result column="work_order_quantity" jdbcType="INTEGER" property="workOrderQuantity"/>
         <result column="production_quantity" jdbcType="INTEGER" property="productionQuantity"/>
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
-        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+<!--        <result column="process_name" jdbcType="VARCHAR" property="processName"/>-->
         <result column="planned_end_time" jdbcType="VARCHAR" property="plannedEndTime"/>
-        <result column="next_process_name" jdbcType="VARCHAR" property="nextProcessName"/>
+<!--        <result column="next_process_name" jdbcType="VARCHAR" property="nextProcessName"/>-->
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="print_mode" jdbcType="VARCHAR" property="labelMode"/>
         <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
         <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
-        <result column="barcode_rule_code" jdbcType="VARCHAR" property="barcodeRuleCode"/>
+        <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRuleCode"/>
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="barcode_rule_id" jdbcType="VARCHAR" property="barcodeRuleId"/>
     </resultMap>
     <sql id="Base_Column_List">
     bc.bar_code_id,
@@ -67,18 +69,15 @@
     bc.modified_user_id,
     bc.modified_time,
     bc.is_delete,
+    bc.barCodeContent,
   </sql>
     <!--  <select id="sel_work_order" resultType="com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto">-->
     <select id="sel_work_order" resultMap="BaseResultMapWorkDto">
         SELECT
-        sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sp.process_name,sw.planned_end_time,sps.process_name
-        as next_process_name,
-        so.order_code,sc.supplier_name,bt.transfer_quantity,blm.label_material_id,bl.print_mode,bl.save_path,br.barcode_rule_code,
-        <if test="barCodeType==1">
-            wobp.barcode
-        </if>
+        sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sw.planned_end_time,
+        so.order_code,sc.supplier_name,bt.transfer_quantity,blm.label_material_id,bl.print_mode,bl.save_path,br.barcode_rule,br.barcode_rule_id
         <if test="barCodeType==2">
-            wobp.work_order_card_id as barcode
+            ,wobp.work_order_card_id as barcode
         </if>
         FROM smt_work_order sw
         LEFT JOIN smt_order so ON sw.order_id = so.order_id
@@ -87,10 +86,9 @@
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         LEFT JOIN smt_route sr ON sw.route_id = sr.route_id
         LEFT JOIN smt_route_process srp ON sr.route_id = srp.route_id
-        LEFT JOIN smt_process sp ON srp.process_id = sp.process_id
-        LEFT JOIN smt_process sps ON srp.next_process_id = sps.process_id
         <if test="barCodeType==1">
-            LEFT JOIN smt_work_order_barcode_pool wobp ON sw.work_order_id = wobp.work_order_id
+            left join fantech_imes.smt_barcode_rule_set wobps on sw.barcode_rule_set_id=wobps.barcode_rule_set_id
+            left join fantech_imes.smt_barcode_rule_set_det wobp on wobps.barcode_rule_set_id = wobp.barcode_rule_set_id
         </if>
         <if test="barCodeType==2">
             LEFT JOIN smt_work_order_card_pool wobp ON sw.work_order_id = wobp.work_order_id
@@ -110,6 +108,9 @@
             </if>
             <if test="savePath!=null and savePath!=''">
                 and bl.save_path =#{savePath}
+            </if>
+            <if test="barCodeType==1">
+                and br.barcode_rule_category_id=1
             </if>
         </where>
     </select>
@@ -140,5 +141,8 @@
                 and bc.bar_code_type = #{barCodeType}
             </if>
         </where>
+    </select>
+
+    <select id="ruleSpec" resultType="com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec">
     </select>
 </mapper>

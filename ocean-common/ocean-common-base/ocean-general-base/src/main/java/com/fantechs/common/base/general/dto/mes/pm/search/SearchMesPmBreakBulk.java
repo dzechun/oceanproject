@@ -34,4 +34,10 @@ public class SearchMesPmBreakBulk extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "workOrderId",value = "工单id")
     private Long workOrderId;
+
+    /**
+     * 母批次号
+     */
+    @ApiModelProperty(name = "batchNo",value = "母批次号")
+    private String batchNo;
 }
