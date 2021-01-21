@@ -29,11 +29,35 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
+  <sql id="Base_Column_List">
+    sp.process_id,
+	sp.process_code,
+	sp.process_name,
+	sp.process_desc,
+	sp.section_id,
+	sp.process_category_id,
+	sp.is_job_scan,
+	sp.is_start_scan,
+	sp.is_quality,
+	sp.finish_time,
+	sp.`status`,
+	sp.remark,
+	sp.organization_id,
+	sp.create_user_id,
+	sp.create_time,
+	sp.modified_user_id,
+	sp.modified_time,
+	sp.is_delete,
+	sp.option1,
+	sp.option2,
+	sp.option3
+  </sql>
+
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProcess" resultMap="BaseResultMap">
-    select  sp.process_id,sp.process_code,sp.process_name,sp.process_desc,sp.section_id,
-    sp.is_job_scan,sp.is_start_scan,sp.is_quality,sp.finish_time,sws.section_name as sectionName,sp.process_category_id,
-    spc.process_category_name as processCategoryName,sp.status,sp.create_user_id,u.user_name as createUserName,sp.create_time,sp.modified_user_id,
-    s.user_name as modifiedUserName,sp.modified_time, sp.is_delete, sp.organization_id, sp.remark, bo.organization_name
+    select <include refid="Base_Column_List"></include>,
+    sws.section_name as sectionName,
+    spc.process_category_name as processCategoryName,u.user_name as createUserName,
+    s.user_name as modifiedUserName, bo.organization_name
     from fantech_imes.smt_process sp
     left join fantech_imes.smt_workshop_section sws on sp.section_id=sws.section_id
     left join smt_process_category spc on sp.process_category_id=spc.process_category_id
@@ -57,8 +81,14 @@
       <if test="sectionId!=null and sectionId!=''">
         and sp.section_id=#{sectionId}
       </if>
+      <if test="sectionName!=null and sectionName!=''">
+        and sws.section_name like CONCAT('%', #{sectionName}, '%')
+      </if>
       <if test="processCategoryId!=null and processCategoryId!=''">
         and sp.process_category_id=#{processCategoryId}
+      </if>
+      <if test="processCategoryName!=null and processCategoryName!=''">
+        and spc.process_category_name like CONCAT('%', #{processCategoryName}, '%')
       </if>
       <if test="status!=null and status!=''">
         and sp.status=#{status}
