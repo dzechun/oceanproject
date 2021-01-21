@@ -129,5 +129,12 @@ public class BcmBarCode extends ValidGroup implements Serializable {
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
 
+    /**
+     * 条码内容
+     */
+    @ApiModelProperty(name="条码内容",value = "备注")
+    @Column(name = "bar_code_content")
+    private String barCodeContent;
+
     private static final long serialVersionUID = 1L;
 }

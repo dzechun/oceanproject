@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.dto.mes.pm.search;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.slf4j.Logger;
 
 import java.io.Serializable;
 
@@ -25,4 +26,7 @@ public class SearchMesPmProcessCard extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="typeCard",value = "流转卡类型：1：工序过站、2:工序过站物料明细、3:完工上报、4:不良品、5:绑定关键物料、6:拆批作业、7:合批作业")
     private Byte typeCard;
+
+    @ApiModelProperty(name = "workOrderId",value = "工单id")
+    private Long workOrderId;
 }

@@ -48,7 +48,7 @@ public class MesPmProcessCardServiceImpl extends BaseService<MesPmProcessCard> i
 
     @Override
     public MesPmProcessCardDto detial(SearchMesPmProcessCard searchMesPmProcessCard) {
-        if(StringUtils.isEmpty(searchMesPmProcessCard.getWorkOrderCardId())){
+        if(StringUtils.isEmpty(searchMesPmProcessCard.getWorkOrderCardId()) && StringUtils.isEmpty(searchMesPmProcessCard.getWorkOrderId())){
             throw new BizErrorException(ErrorCodeEnum.valueOf("流转卡编码不能空"));
         }
         MesPmProcessCardDto mesPmProcessCardDto = mesPmProcessCardMapper.findList(searchMesPmProcessCard);

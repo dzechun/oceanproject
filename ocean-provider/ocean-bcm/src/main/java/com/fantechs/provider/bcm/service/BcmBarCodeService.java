@@ -20,4 +20,8 @@ public interface BcmBarCodeService extends IService<BcmBarCode> {
     BcmBarCodeWorkDto work(SearchBcmBarCode searchBcmBarCode);
 
     void download(List<String> savePath, HttpServletResponse response) throws UnsupportedEncodingException;
+
+    int print(Long workOrderId);
+
+    int verifyQrCode(String QrCode,Long workOrderId);
 }

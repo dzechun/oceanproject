@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.bcm.service.BcmBarCodeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
@@ -65,5 +66,17 @@ public class BcmBarCodeController {
     @PostMapping("/download")
     public void downExcel(@RequestBody List<String> savePath, HttpServletResponse response) throws UnsupportedEncodingException {
         bcmBarCodeService.download(savePath,response);
+    }
+
+    @ApiModelProperty("/print")
+    @GetMapping("/print")
+    public ResponseEntity print(@ApiParam(value = "必传：workdOrderId",required = true)@RequestParam Long workOrderId){
+        return ControllerUtil.returnCRUD(bcmBarCodeService.print(workOrderId));
+    }
+
+    @ApiModelProperty("Pda条码对比")
+    @GetMapping("/verifyQrCode")
+    public ResponseEntity verifyQrCode(@RequestParam String QrCode,@RequestParam Long workOrderId){
+        return ControllerUtil.returnCRUD(bcmBarCodeService.verifyQrCode(QrCode,workOrderId));
     }
 }
