@@ -98,7 +98,7 @@ public class SmtStorageMaterialController {
         List<SmtStorageMaterial> list =smtStorageMaterialService.findList(searchSmtStorageMaterial);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出储位物料信息", "储位物料信息", SmtStorageMaterial.class, "储位物料信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "储位物料信息", "储位物料信息", SmtStorageMaterial.class, "储位物料信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
