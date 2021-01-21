@@ -88,7 +88,7 @@ public class BaseStaffController {
     List<BaseStaffDto> list = baseStaffService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStaff));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseStaff信息", BaseStaffDto.class, "BaseStaff.xls", response);
+        EasyPoiUtils.exportExcel(list, "员工信息表", "BaseStaff信息", BaseStaffDto.class, "BaseStaff.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
