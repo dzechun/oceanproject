@@ -178,4 +178,11 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name = "materialQuality",value = "产品材质")
     private String materialQuality;
+    /**
+     * 父工单编码
+     */
+    @Transient
+    @ApiModelProperty(value = "父工单编码",example = "父工单编码")
+    @Excel(name = "父工单编码")
+    private Byte parentWorkOrderCode;
 }

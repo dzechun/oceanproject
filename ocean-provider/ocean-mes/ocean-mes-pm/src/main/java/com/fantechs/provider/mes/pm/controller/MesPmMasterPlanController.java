@@ -1,11 +1,8 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
-import com.fantechs.common.base.general.dto.mes.pm.MasterPlanPrintWorkOrderDTO;
-import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMasterPlanDTO;
-import com.fantechs.common.base.general.dto.mes.pm.TurnExplainPlanDTO;
+import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmMasterPlanDTO;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmMasterPlanService;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmMasterPlanListDTO;
@@ -96,6 +93,12 @@ public class MesPmMasterPlanController {
     @PostMapping("turnExplainPlan")
     public ResponseEntity turnExplainPlan(@ApiParam(value = "对象",required = true)@RequestBody TurnExplainPlanDTO turnExplainPlanDTO){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.turnExplainPlan(turnExplainPlanDTO));
+    }
+
+    @ApiOperation("总计划表（月计划表）转流程卡")
+    @PostMapping("turnWorkOrderCardPool")
+    public ResponseEntity turnWorkOrderCardPool(@ApiParam(value = "对象",required = true)@RequestBody TurnWorkOrderCardPoolDTO turnWorkOrderCardPoolDTO){
+        return ControllerUtil.returnCRUD(mesPmMasterPlanService.turnWorkOrderCardPool(turnWorkOrderCardPoolDTO));
     }
 
     @ApiOperation("输出工单相关信息（总计划打印A4）")

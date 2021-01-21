@@ -79,4 +79,19 @@ public class MesPmMasterPlanDTO extends MesPmMasterPlan implements Serializable 
     @ApiModelProperty(value = "产线名称",example = "产线名称")
     @Excel(name = "产线名称")
     private String proName;
+    /**
+     * 工单生成数
+     */
+    @Transient
+    @ApiModelProperty(value = "工单生成数",example = "工单生成数")
+    @Excel(name = "工单生成数")
+    private String workOrderQuantity;
+    /**
+     * 工单状态
+     */
+    @Transient
+    @ApiModelProperty(value = "工单状态",example = "工单状态")
+    @Excel(name = "工单状态")
+    private Byte workOrderStatus;
+
 }

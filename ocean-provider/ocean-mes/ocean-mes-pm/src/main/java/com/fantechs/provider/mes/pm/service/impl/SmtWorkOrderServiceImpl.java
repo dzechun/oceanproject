@@ -368,6 +368,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom) {
         SmtWorkOrder smtWorkOrder = saveWorkOrderAndBom.getSmtWorkOrder();
         if(StringUtils.isNotEmpty(smtWorkOrder.getWorkOrderId())){

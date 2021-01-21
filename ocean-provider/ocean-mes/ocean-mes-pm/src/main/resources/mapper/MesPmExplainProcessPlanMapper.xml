@@ -77,8 +77,8 @@
         insert into mes_pm_explain_process_plan
         (explain_process_plan_code,explain_plan_id,process_id,planed_start_date,planed_end_date)
         values
-        <foreach collection="list" open="(" close=")" separator="," item="item">
-            #{explainProcessPlanCode},#{explainPlanId},#{processId},#{planedStartDate},#{planedEndDate}
+        <foreach collection="list" separator="," item="item">
+            (#{item.explainProcessPlanCode},#{item.explainPlanId},#{item.processId},#{item.planedStartDate},#{item.planedEndDate})
         </foreach>
     </insert>
 </mapper>

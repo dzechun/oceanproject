@@ -54,12 +54,13 @@
         su1.user_name AS 'createUserName',
         su2.user_name AS 'modifiedUserName',
         bo.organization_name AS 'organizationName',
-        swo.work_order_code AS 'workOrderCode ',
+        swo.work_order_code AS 'workOrderCode',
         sm.material_code AS 'materialCode',
+        sm.material_name AS 'materialName',
         spm.product_model_name AS 'productModelName',
         sps.package_specification_name AS 'packageSpecificationName',
         bt.color AS 'color',
-        spl.pro_name AS 'proName '
+        spl.pro_name AS 'proName'
         FROM
         mes_pm_explain_plan AS mpep
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpep.work_order_id

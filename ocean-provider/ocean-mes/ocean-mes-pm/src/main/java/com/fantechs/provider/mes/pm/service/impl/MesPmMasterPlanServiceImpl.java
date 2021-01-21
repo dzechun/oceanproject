@@ -152,6 +152,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             for (MesPmProcessPlan mesPmProcessPlan : mesPmProcessPlanList) {
                 if(StringUtils.isEmpty(mesPmProcessPlan.getProcessPlanId())){
                     mesPmProcessPlan.setMasterPlanId(mesPmMasterPlan.getMasterPlanId());
+                    mesPmProcessPlan.setProcessPlanCode(CodeUtils.getId("MPPP"));
                 }
             }
             if(mesPmProcessPlanService.batchAdd(mesPmProcessPlanList)<=0){
@@ -196,6 +197,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                 MesPmExplainProcessPlan mesPmExplainProcessPlan = new MesPmExplainProcessPlan();
                 BeanUtils.copyProperties(mesPmProcessPlan,mesPmExplainProcessPlan);
                 mesPmExplainProcessPlan.setExplainPlanId(mesPmExplainPlan.getExplainPlanId());
+                mesPmExplainProcessPlan.setExplainProcessPlanCode(CodeUtils.getId("MPEPP"));
                 mesPmExplainProcessPlanList.add(mesPmExplainProcessPlan);
             }
             if(mesPmExplainProcessPlanService.batchAdd(mesPmExplainProcessPlanList)<=0){
@@ -273,6 +275,9 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         if(StringUtils.isEmpty(smtWorkOrder)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
         }
+        if(StringUtils.isEmpty(turnWorkOrderCardPoolDTO.getGenerate())){
+            throw new BizErrorException("请求内容请带上是否生成工单流转卡字段");
+        }
         if(turnWorkOrderCardPoolDTO.getGenerate()){
             //=====查找部件组成信息
             SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
@@ -282,6 +287,9 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                 throw new BizErrorException("未找到部件组成信息");
             }
             List<BasePlatePartsDto> basePlatePartsDtoList = feignResult.getData();
+            if(StringUtils.isEmpty(basePlatePartsDtoList)){
+                throw new BizErrorException("未找到部件组成信息");
+            }
             BasePlatePartsDto basePlatePartsDto = basePlatePartsDtoList.get(0);
             List<BasePlatePartsDetDto> basePlatePartsDetDtoList = basePlatePartsDto.getList();
             if(StringUtils.isEmpty(basePlatePartsDetDtoList)){
@@ -314,7 +322,9 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             }
             //=====
         }
-        return 1;
+        mesPmMasterPlan.setScheduledQty(mesPmMasterPlan.getProductQty());
+        mesPmMasterPlan.setNoScheduleQty(new BigDecimal(0));
+        return this.update(mesPmMasterPlan);
     }
 
 

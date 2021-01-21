@@ -53,6 +53,7 @@
         su2.user_name AS 'modifiedUserName',
         bo.organization_name AS 'organizationName',
         swo.work_order_code AS 'workOrderCode',
+        swo.work_order_quantity AS 'workOrderQuantity',
         sm.material_name AS 'materialName',
         sm.material_code AS 'materialCode',
         spm.product_model_name AS 'productModelName',
@@ -86,8 +87,8 @@
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
-            <if test="planedStartDate!=null and planedStartDate!=''">
-                and date_format(mpmp.planed_start_date, '%Y-%m-%d') = #{planedStartDate}
+            <if test="planedStartDate!=null">
+                and date_format(mpmp.planed_start_date, '%Y-%m-%d') = date_format(#{planedStartDate}, '%Y-%m-%d')
             </if>
             <if test="proLineId!=null and proLineId!=''">
                 and spl.pro_line_id=#{proLineId}
