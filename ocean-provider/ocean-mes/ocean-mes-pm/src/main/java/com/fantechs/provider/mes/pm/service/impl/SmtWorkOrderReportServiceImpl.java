@@ -51,7 +51,7 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
         }
         SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByWorkOrderId(record.getWorkOrderId());
         if(record.getCompletedQuantity().intValue()>(smtWorkOrder.getWorkOrderQuantity().intValue()-smtWorkOrder.getOutputQuantity().intValue())){
-            throw new BizErrorException("报工数量大于工单数量");
+            throw new BizErrorException("报工数量大于剩余工单数量");
         }
 
         smtWorkOrder.setOutputQuantity(new BigDecimal(smtWorkOrder.getOutputQuantity().intValue()+record.getCompletedQuantity().intValue()));

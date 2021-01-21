@@ -130,10 +130,4 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     @Transient
     @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
     private String packingUnitName;
-    /**
-     * 已报工总数
-     */
-    @Transient
-    @ApiModelProperty(name = "outputTotalQty",value = "已报工总数")
-    private BigDecimal outputTotalQty;
 }

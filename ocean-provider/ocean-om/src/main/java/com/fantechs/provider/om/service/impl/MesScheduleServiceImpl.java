@@ -1,5 +1,6 @@
 package com.fantechs.provider.om.service.impl;
 
+import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
@@ -47,7 +48,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
      @Resource
      private SmtOrderService smtOrderService;
      @Resource
-     private PMFeignApi applyFeignApi;
+     private PMFeignApi pmFeignApi;
 
     @Override
     public List<MesSchedule> selectAll(Map<String,Object> map) {
@@ -196,7 +197,10 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             smtWorkOrder.setProductionQuantity(mesOrderMaterialDTO.getTotal());
             smtWorkOrder.setContractNo(smtOrder.getContractCode());
             smtWorkOrder.setRemark("无BOM");
-            ResponseEntity responseEntity = applyFeignApi.addWorkOrder(smtWorkOrder);
+            SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
+            saveWorkOrderAndBom.setSmtWorkOrder(smtWorkOrder);
+            saveWorkOrderAndBom.setGenerate(false);
+            ResponseEntity responseEntity = pmFeignApi.saveWorkOrder(saveWorkOrderAndBom);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getMessage());
             }

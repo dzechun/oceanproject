@@ -56,7 +56,8 @@
         mpplpr.create_user_id,
         mpplpr.create_time,
         mpplpr.modified_user_id,
-        mpplpr.modified_time
+        mpplpr.modified_time,
+        splp.output_quantity AS 'outputQuantity'
         FROM
         mes_pm_process_list_process_re mpplpr
         LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = mpplpr.work_order_card_pool_id
@@ -71,6 +72,7 @@
         LEFT JOIN smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
         LEFT JOIN smt_process sp ON sp.process_id = mpplpr.process_id
         LEFT JOIN smt_process sp1 ON sp.process_id = mpplpr.re_process_id
+        LEFT JOIN smt_process_list_process splp ON splp.work_order_card_pool_id = swocp.work_order_card_pool_id AND splp.process_id = mpplpr.re_process_id
         LEFT JOIN base_organization bo ON mpplpr.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -96,6 +98,9 @@
             </if>
             <if test="reProcessId!=null and reProcessId!=''">
                 and mpplpr.re_process_id=#{reProcessId}
+            </if>
+            <if test="status!=null and status!=''">
+                and mpplpr.status=#{status}
             </if>
             and mpplpr.is_delete = 1
         </where>

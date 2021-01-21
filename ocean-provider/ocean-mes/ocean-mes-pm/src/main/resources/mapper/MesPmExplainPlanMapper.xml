@@ -96,7 +96,7 @@
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status=#{workOrderStatus}
             </if>
-            and swo.is_delete = 1
+            and mpep.is_delete = 1
         </where>
         order by mpep.modified_time desc
     </select>

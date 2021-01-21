@@ -36,8 +36,8 @@
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
         <result column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
-        <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
-        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule"/>
         <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>

@@ -9,10 +9,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
-import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -23,6 +20,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderBomService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardCollocationService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -58,6 +56,8 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     private SmtStockDetMapper smtStockDetMapper;
     @Resource
     private SmtWorkOrderBomService smtWorkOrderBomService;
+    @Resource
+    private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
     @Resource
     private BasicFeignApi basicFeignApi;
 
@@ -378,6 +378,17 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             if(this.save(smtWorkOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
+            if(StringUtils.isEmpty(saveWorkOrderAndBom.getGenerate())){
+                throw new BizErrorException("请求内容请带上是否生成工单流转卡字段");
+            }
+            if(saveWorkOrderAndBom.getGenerate()){
+                SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
+                smtWorkOrderCardCollocation.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                smtWorkOrderCardCollocation.setProduceQuantity(1);
+                if(smtWorkOrderCardCollocationService.save(smtWorkOrderCardCollocation)<=0){
+                    throw new BizErrorException("生成工单流程卡失败");
+                }
+            }
         }
 
         List<SmtWorkOrderBom> smtWorkOrderBomList = saveWorkOrderAndBom.getSmtWorkOrderBomList();
@@ -394,15 +405,17 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 }
             }
         }
-
         return 1;
     }
 
     @Override
     public int updateWorkOrderStatus(Long workOrderId,int status) {
+        SysUser sysUser = this.currentUser();
         SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
         smtWorkOrder.setWorkOrderId(workOrderId);
         smtWorkOrder.setWorkOrderStatus(status);
+        smtWorkOrder.setModifiedUserId(sysUser.getUserId());
+        smtWorkOrder.setModifiedTime(new Date());
         return smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
     }
 

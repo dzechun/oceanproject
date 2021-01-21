@@ -1,24 +1,24 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
-import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMasterPlanDTO;
-import com.fantechs.common.base.general.dto.mes.pm.TurnExplainPlanDTO;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmExplainPlan;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmExplainProcessPlan;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmMasterPlanDTO;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
+import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
+import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.provider.mes.pm.service.MesPmExplainPlanService;
-import com.fantechs.provider.mes.pm.service.MesPmExplainProcessPlanService;
-import com.fantechs.provider.mes.pm.service.MesPmMasterPlanService;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.mes.pm.service.*;
 import com.fantechs.provider.mes.pm.mapper.MesPmMasterPlanMapper;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.mes.pm.service.MesPmProcessPlanService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +48,14 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
      private MesPmProcessPlanService mesPmProcessPlanService;
      @Resource
      private MesPmExplainProcessPlanService mesPmExplainProcessPlanService;
+     @Resource
+     private SmtWorkOrderService smtWorkOrderService;
+     @Resource
+     private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
+     @Resource
+     private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
+     @Resource
+     private BaseFeignApi baseFeignApi;
 
     @Override
     public List<MesPmMasterPlan> selectAll(Map<String,Object> map) {
@@ -193,6 +201,118 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             if(mesPmExplainProcessPlanService.batchAdd(mesPmExplainProcessPlanList)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
+        }
+        return 1;
+    }
+
+    @Override
+    public MasterPlanPrintWorkOrderDTO masterPlanPrintWorkOrder(Long masterPlanId) {
+        MesPmMasterPlan mesPmMasterPlan = this.selectByKey(masterPlanId);
+        if(StringUtils.isEmpty(mesPmMasterPlan)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+        }
+        Long workOrderId = mesPmMasterPlan.getWorkOrderId();
+        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(workOrderId);
+        if(StringUtils.isEmpty(smtWorkOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+        }
+        MasterPlanPrintWorkOrderDTO masterPlanPrintWorkOrderDTO = new MasterPlanPrintWorkOrderDTO();
+
+        //=====查找工单流程卡
+        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+        searchSmtWorkOrderCardPool.setWorkOrderId(workOrderId);
+        List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+        if(StringUtils.isNotEmpty(smtWorkOrderCardPoolDtoList)){
+            SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = smtWorkOrderCardPoolDtoList.get(0);
+            masterPlanPrintWorkOrderDTO.setWorkOrderCardId(smtWorkOrderCardPoolDto.getWorkOrderCardId());
+        }
+        //=====
+
+        //=====查找工单及产品信息
+        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+        searchSmtWorkOrder.setWorkOrderId(workOrderId);
+        List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+        if(StringUtils.isNotEmpty(smtWorkOrderDtoList)){
+            SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+            masterPlanPrintWorkOrderDTO.setProductModelName(smtWorkOrderDto.getProductModuleName());
+            masterPlanPrintWorkOrderDTO.setMaterialQuality(smtWorkOrderDto.getMaterialQuality());
+            masterPlanPrintWorkOrderDTO.setColor(smtWorkOrderDto.getColor());
+            masterPlanPrintWorkOrderDTO.setWorkOrderQuantity(smtWorkOrderDto.getWorkOrderQuantity());
+            masterPlanPrintWorkOrderDTO.setScheduleDate(smtWorkOrderDto.getScheduleDate());
+            masterPlanPrintWorkOrderDTO.setPlannedEndTime(smtWorkOrderDto.getPlannedEndTime());
+
+            //=====查找部件组成信息
+            SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
+            searchBasePlateParts.setMaterialId(smtWorkOrderDto.getMaterialId());
+            ResponseEntity<List<BasePlatePartsDto>> feignResult = baseFeignApi.findPlatePartsList(searchBasePlateParts);
+            if(StringUtils.isNotEmpty(feignResult)){
+                List<BasePlatePartsDto> basePlatePartsDtoList = feignResult.getData();
+                BasePlatePartsDto basePlatePartsDto = basePlatePartsDtoList.get(0);
+                masterPlanPrintWorkOrderDTO.setBasePlatePartsDetDtoList(basePlatePartsDto.getList());
+            }
+            //=====
+        }
+        //=====
+
+        //=====查找主计划对应工序计划
+        List<MesPmProcessPlan> mesPmProcessPlanList = mesPmProcessPlanService.selectAll(ControllerUtil.dynamicCondition("masterPlanId", masterPlanId));
+        masterPlanPrintWorkOrderDTO.setMesPmProcessPlanList(mesPmProcessPlanList);
+        //=====
+
+        return masterPlanPrintWorkOrderDTO;
+    }
+
+    @Override
+    public int turnWorkOrderCardPool(TurnWorkOrderCardPoolDTO turnWorkOrderCardPoolDTO) {
+        MesPmMasterPlan mesPmMasterPlan = this.selectByKey(turnWorkOrderCardPoolDTO.getMasterPlanId());
+        if(StringUtils.isEmpty(mesPmMasterPlan)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+        }
+        Long workOrderId = mesPmMasterPlan.getWorkOrderId();
+        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(workOrderId);
+        if(StringUtils.isEmpty(smtWorkOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+        }
+        if(turnWorkOrderCardPoolDTO.getGenerate()){
+            //=====查找部件组成信息
+            SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
+            searchBasePlateParts.setMaterialId(smtWorkOrder.getMaterialId());
+            ResponseEntity<List<BasePlatePartsDto>> feignResult = baseFeignApi.findPlatePartsList(searchBasePlateParts);
+            if(StringUtils.isEmpty(feignResult)){
+                throw new BizErrorException("未找到部件组成信息");
+            }
+            List<BasePlatePartsDto> basePlatePartsDtoList = feignResult.getData();
+            BasePlatePartsDto basePlatePartsDto = basePlatePartsDtoList.get(0);
+            List<BasePlatePartsDetDto> basePlatePartsDetDtoList = basePlatePartsDto.getList();
+            if(StringUtils.isEmpty(basePlatePartsDetDtoList)){
+                throw new BizErrorException("未找到部件详细信息");
+            }
+            for (BasePlatePartsDetDto basePlatePartsDetDto : basePlatePartsDetDtoList) {
+                //=====根据部件信息生成工单
+                SmtWorkOrder tempsmtWorkOrder = new SmtWorkOrder();
+                tempsmtWorkOrder.setParentId(workOrderId);
+                tempsmtWorkOrder.setProLineId(mesPmMasterPlan.getProLineId());
+                tempsmtWorkOrder.setMaterialId(basePlatePartsDetDto.getPartsInformationId());
+                tempsmtWorkOrder.setWorkOrderQuantity(turnWorkOrderCardPoolDTO.getScheduleQty());
+                tempsmtWorkOrder.setProductionQuantity(turnWorkOrderCardPoolDTO.getScheduleQty());
+                tempsmtWorkOrder.setRemark("无BOM");
+                SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
+                saveWorkOrderAndBom.setSmtWorkOrder(tempsmtWorkOrder);
+                saveWorkOrderAndBom.setGenerate(false);
+                if(smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom)<=0){
+                    throw new BizErrorException("新增部件工单错误");
+                }
+                //=====
+                //=====转流程卡
+                SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
+                smtWorkOrderCardCollocation.setWorkOrderId(tempsmtWorkOrder.getWorkOrderId());
+                smtWorkOrderCardCollocation.setProduceQuantity(turnWorkOrderCardPoolDTO.getScheduleQty().intValue());
+                if(smtWorkOrderCardCollocationService.save(smtWorkOrderCardCollocation)<=0){
+                    throw new BizErrorException("生成部件流程卡错误");
+                }
+                //=====
+            }
+            //=====
         }
         return 1;
     }

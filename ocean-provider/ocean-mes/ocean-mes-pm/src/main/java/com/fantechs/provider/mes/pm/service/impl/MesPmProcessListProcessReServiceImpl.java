@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListPr
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessListProcessRe;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListProcessReDTO;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmProcessListProcessReService;
 import com.fantechs.provider.mes.pm.mapper.MesPmProcessListProcessReMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -15,6 +16,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.mes.pm.service.SmtProcessListProcessService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
@@ -74,6 +76,7 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
         SysUser sysUser = this.currentUser();
         mesPmProcessListProcessRe.setCreateUserId(sysUser.getUserId());
         mesPmProcessListProcessRe.setIsDelete((byte)1);
+        mesPmProcessListProcessRe.setProcessListProcessReCode(CodeUtils.getId("MPPLPR"));
         return mesPmProcessListProcessReMapper.insertSelective(mesPmProcessListProcessRe);
     }
 
@@ -111,6 +114,7 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
    }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SaveProcessListProcessReDTO saveProcessListProcessReDTO) {
         List<MesPmProcessListProcessRe> mesPmProcessListProcessReList = this.selectAll(ControllerUtil.dynamicCondition(
                 "workOrderCardPoolId", saveProcessListProcessReDTO.getWorkOrderCardPoolId(),
@@ -127,7 +131,10 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }else{
-            mesPmProcessListProcessRe.setReQty(new BigDecimal(mesPmProcessListProcessRe.getReQty().doubleValue()+saveProcessListProcessReDTO.getReQty().doubleValue()));
+            mesPmProcessListProcessRe.setWorkOrderCardPoolId(saveProcessListProcessReDTO.getWorkOrderCardPoolId());
+            mesPmProcessListProcessRe.setProcessId(saveProcessListProcessReDTO.getProcessId());
+            mesPmProcessListProcessRe.setReProcessId(saveProcessListProcessReDTO.getReProcessId());
+            mesPmProcessListProcessRe.setReQty(new BigDecimal(saveProcessListProcessReDTO.getReQty().doubleValue()));
             mesPmProcessListProcessRe.setPreQty(saveProcessListProcessReDTO.getPreQty());
             mesPmProcessListProcessRe.setStatus(saveProcessListProcessReDTO.getOperation());
             if(this.save(mesPmProcessListProcessRe)<=0){
@@ -138,6 +145,7 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
             SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
             searchSmtProcessListProcess.setWorkOrderCardPoolId(saveProcessListProcessReDTO.getWorkOrderCardPoolId());
             searchSmtProcessListProcess.setProcessId(saveProcessListProcessReDTO.getReProcessId());
+            searchSmtProcessListProcess.setStatus((byte)2);
             List<SmtProcessListProcessDto> smtProcessListProcessServiceList = smtProcessListProcessService.findList(searchSmtProcessListProcess);
             if(StringUtils.isEmpty(smtProcessListProcessServiceList)){
                 throw new BizErrorException("没找到流程卡工序过站信息");

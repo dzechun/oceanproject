@@ -111,8 +111,7 @@
         splp.option2,
         splp.option3,
         sp.process_name AS 'processName',
-        sm.material_desc AS 'materialDesc ',
-        ( SELECT sum( splp1.output_quantity ) FROM smt_process_list_process splp1 WHERE splp1.process_list_process_code = splp.process_list_process_code ) AS 'outputTotalQty'
+        sm.material_desc AS 'materialDesc '
         FROM
         smt_process_list_process splp
         LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_pool_id

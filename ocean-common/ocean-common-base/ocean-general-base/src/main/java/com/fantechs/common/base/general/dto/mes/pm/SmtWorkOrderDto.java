@@ -58,6 +58,13 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     private Integer transferQuantity;
 
     /**
+     * 部件用量
+     */
+    @Transient
+    @ApiModelProperty(name="transferQuantity" ,value="部件用量")
+    private Integer quantity;
+
+    /**
      * 线别名称
      */
     @Transient
@@ -165,4 +172,10 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name = "productModuleName",value = "产品型号")
     private String productModuleName;
+    /**
+     * 产品材质
+     */
+    @Transient
+    @ApiModelProperty(name = "materialQuality",value = "产品材质")
+    private String materialQuality;
 }

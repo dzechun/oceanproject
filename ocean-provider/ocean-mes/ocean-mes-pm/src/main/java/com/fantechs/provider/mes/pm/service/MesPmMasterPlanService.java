@@ -1,9 +1,7 @@
 package com.fantechs.provider.mes.pm.service;
 
-import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMasterPlanDTO;
-import com.fantechs.common.base.general.dto.mes.pm.TurnExplainPlanDTO;
+import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmMasterPlanDTO;
 import com.fantechs.common.base.support.IService;
 import java.util.List;
 import java.util.Map;
@@ -27,4 +25,8 @@ public interface MesPmMasterPlanService extends IService<MesPmMasterPlan>  {
     int save(SaveMesPmMasterPlanDTO saveMesPmMasterPlanDTO);
     //转执行计划（周/日计划）
     int turnExplainPlan(TurnExplainPlanDTO turnExplainPlanDTO);
+    //输出工单相关信息（总计划打印A4）
+    MasterPlanPrintWorkOrderDTO masterPlanPrintWorkOrder(Long masterPlanId);
+    //转流程卡
+    int turnWorkOrderCardPool(TurnWorkOrderCardPoolDTO turnWorkOrderCardPoolDTO);
 }

@@ -58,7 +58,7 @@
         spm.product_model_name AS 'productModelName',
         sps.package_specification_name AS 'packageSpecificationName',
         bt.color AS 'color',
-        spl.pro_name AS 'proName '
+        spl.pro_name AS 'proName'
         FROM
         mes_pm_master_plan AS mpmp
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpmp.work_order_id
@@ -95,7 +95,7 @@
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status=#{workOrderStatus}
             </if>
-            and swo.is_delete = 1
+            and mpmp.is_delete = 1
         </where>
         order by mpmp.modified_time desc
     </select>

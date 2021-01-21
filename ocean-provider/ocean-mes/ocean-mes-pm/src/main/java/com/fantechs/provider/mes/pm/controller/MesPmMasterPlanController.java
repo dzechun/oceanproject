@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.general.dto.mes.pm.MasterPlanPrintWorkOrderDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMasterPlanDTO;
 import com.fantechs.common.base.general.dto.mes.pm.TurnExplainPlanDTO;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
@@ -95,6 +96,13 @@ public class MesPmMasterPlanController {
     @PostMapping("turnExplainPlan")
     public ResponseEntity turnExplainPlan(@ApiParam(value = "对象",required = true)@RequestBody TurnExplainPlanDTO turnExplainPlanDTO){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.turnExplainPlan(turnExplainPlanDTO));
+    }
+
+    @ApiOperation("输出工单相关信息（总计划打印A4）")
+    @GetMapping("masterPlanPrintWorkOrder")
+    public ResponseEntity<MasterPlanPrintWorkOrderDTO> masterPlanPrintWorkOrder(@ApiParam(value = "总计划表（月计划表）对象ID",required = true)@RequestParam Long masterPlanId){
+        MasterPlanPrintWorkOrderDTO masterPlanPrintWorkOrderDTO = mesPmMasterPlanService.masterPlanPrintWorkOrder(masterPlanId);
+        return ControllerUtil.returnDataSuccess(masterPlanPrintWorkOrderDTO,StringUtils.isEmpty(masterPlanPrintWorkOrderDTO)?0:1);
     }
 
     @PostMapping(value = "export",produces = "application/octet-stream")

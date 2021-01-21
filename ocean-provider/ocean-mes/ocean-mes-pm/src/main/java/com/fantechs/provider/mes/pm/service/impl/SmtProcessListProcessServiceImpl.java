@@ -160,6 +160,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             smtProcessListProcess.setProcessId(processFinishedProductDTO.getProcessId());
             smtProcessListProcess.setOutputQuantity(processFinishedProductDTO.getCurOutputQty());
             smtProcessListProcess.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+            smtProcessListProcess.setProcessType(processFinishedProductDTO.getProcessType());
             if(this.saveOBJ(smtProcessListProcess)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
@@ -171,6 +172,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             smtProcessListProcess.setStatus((byte)processFinishedProductDTO.getOperation());
             smtProcessListProcess.setOutputQuantity(new BigDecimal(smtProcessListProcess.getOutputQuantity().doubleValue()+processFinishedProductDTO.getCurOutputQty().doubleValue()));
             smtProcessListProcess.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+            smtProcessListProcess.setProcessType(processFinishedProductDTO.getProcessType());
             if(this.update(smtProcessListProcess)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }

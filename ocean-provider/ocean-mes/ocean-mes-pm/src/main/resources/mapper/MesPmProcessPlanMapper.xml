@@ -67,7 +67,7 @@
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}
             </if>
-            and swo.is_delete = 1
+            and mppp.is_delete = 1
         </where>
         order by mppp.modified_time desc
     </select>

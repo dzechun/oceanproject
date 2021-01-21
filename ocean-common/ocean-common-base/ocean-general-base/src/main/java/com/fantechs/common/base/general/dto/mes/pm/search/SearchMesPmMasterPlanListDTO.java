@@ -19,8 +19,7 @@ import java.io.Serializable;
 @Data
 public class SearchMesPmMasterPlanListDTO extends BaseQuery implements Serializable  {
     @ApiModelProperty(value = "计划开工时间",example = "计划开工时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern ="yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private java.util.Date planedStartDate;
     @ApiModelProperty(value = "产线ID",example = "产线ID")
     private Long proLineId;

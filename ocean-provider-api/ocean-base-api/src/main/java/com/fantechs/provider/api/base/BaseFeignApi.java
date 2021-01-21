@@ -1,10 +1,15 @@
 package com.fantechs.provider.api.base;
 
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -36,4 +41,8 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/baseTeam/findList")
     ResponseEntity<List<BaseTeamDto>> findTeamList(@ApiParam(value = "查询对象") @RequestBody SearchBaseTeam searchBaseTeam);
+
+    @ApiOperation("列表")
+    @PostMapping("/basePlateParts/findList")
+    ResponseEntity<List<BasePlatePartsDto>> findPlatePartsList(@ApiParam(value = "查询对象")@RequestBody SearchBasePlateParts searchBasePlateParts);
 }
