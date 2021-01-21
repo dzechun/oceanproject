@@ -81,8 +81,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             if (dosage.equals(BigDecimal.ZERO)) {
                 throw new BizErrorException("部件用量不能为0");
             }
-            System.out.println("=============");
-            System.out.println(qualifiedQuantity);
+            
             BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity,0, RoundingMode.HALF_UP); //最小齐套数
             minMatchingQuantitys.add(minMatchingQuantity);
         }
