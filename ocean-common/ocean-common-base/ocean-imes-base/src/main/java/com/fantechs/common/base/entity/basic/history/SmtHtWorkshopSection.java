@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -79,6 +80,14 @@ public class SmtHtWorkshopSection {
     private Long createUserId;
 
     /**
+     * 创建账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName" ,value="创建账号名称")
+    @Excel(name = "创建账号", height = 20, width = 30)
+    private String createUserName;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -91,6 +100,14 @@ public class SmtHtWorkshopSection {
     @Column(name = "modified_user_id")
     @ApiModelProperty("修改人ID")
     private Long modifiedUserId;
+
+    /**
+     * 修改账号名称
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
+    @Excel(name = "修改账号", height = 20, width = 30)
+    private String modifiedUserName;
 
     /**
      * 修改时间

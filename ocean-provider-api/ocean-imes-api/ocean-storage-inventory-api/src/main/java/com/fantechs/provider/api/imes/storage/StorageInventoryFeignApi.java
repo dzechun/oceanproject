@@ -35,19 +35,19 @@ public interface StorageInventoryFeignApi {
 
     @ApiOperation("储位库存查询")
     @PostMapping("/smtStorageInventory/findList")
-    ResponseEntity<List<SmtStorageInventoryDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageInventory searchSmtStorageInventory);
+    ResponseEntity<List<SmtStorageInventoryDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorageInventory searchSmtStorageInventory);
 
     @ApiOperation("储位库存新增")
     @PostMapping("/smtStorageInventory/add")
-    ResponseEntity<SmtStorageInventory> add(@ApiParam(value = "必传：",required = true)@RequestBody  SmtStorageInventory smtStorageInventory) ;
+    ResponseEntity<SmtStorageInventory> add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStorageInventory smtStorageInventory);
 
     @ApiOperation("储位库存删除")
     @PostMapping("/smtStorageInventory/delete")
-    ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) ;
+    ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
 
     @ApiOperation("储位库存更新")
     @PostMapping("/smtStorageInventory/update")
-    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  SmtStorageInventory smtStorageInventory);
+    ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody SmtStorageInventory smtStorageInventory);
 
     @ApiOperation("扣除储位库存")
     @PostMapping("/smtStorageInventory/out")
@@ -55,29 +55,29 @@ public interface StorageInventoryFeignApi {
 
     @ApiOperation("储位库存明细新增")
     @PostMapping("/smtStorageInventoryDet/add")
-    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStorageInventoryDet smtStorageInventoryDet);
+    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStorageInventoryDet smtStorageInventoryDet);
 
     @ApiOperation("储位库存明细列表")
     @PostMapping("/smtStorageInventoryDet/findList")
-    ResponseEntity<List<SmtStorageInventoryDetDto>> findStorageInventoryDetList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStorageInventoryDet searchSmtStorageInventoryDet);
+    ResponseEntity<List<SmtStorageInventoryDetDto>> findStorageInventoryDetList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorageInventoryDet searchSmtStorageInventoryDet);
 
     @ApiOperation("储位库存明细修改")
     @PostMapping("/smtStorageInventoryDet/update")
-    ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtStorageInventoryDet.update.class) SmtStorageInventoryDet smtStorageInventoryDet);
+    ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = SmtStorageInventoryDet.update.class) SmtStorageInventoryDet smtStorageInventoryDet);
 
     @ApiOperation("储位栈板关系表新增")
     @PostMapping("/smtStoragePallet/add")
-    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SmtStoragePallet smtStoragePallet);
+    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);
 
     @ApiOperation("储位与栈板列表")
     @PostMapping("/smtStoragePallet/findList")
-    ResponseEntity<List<SmtStoragePalletDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStoragePallet searchSmtStoragePallet);
+    ResponseEntity<List<SmtStoragePalletDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStoragePallet searchSmtStoragePallet);
 
     @ApiOperation("储位栈板关系表修改")
     @PostMapping("/smtStoragePallet/update")
-    ResponseEntity update(@ApiParam(value = "必传：",required = true)@RequestBody SmtStoragePallet smtStoragePallet);
+    ResponseEntity update(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);
 
     @ApiOperation("储位栈板关系表删除")
     @PostMapping("/smtStoragePallet/delete")
-    ResponseEntity deleteSmtStoragePallet(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
+    ResponseEntity deleteSmtStoragePallet(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
 }

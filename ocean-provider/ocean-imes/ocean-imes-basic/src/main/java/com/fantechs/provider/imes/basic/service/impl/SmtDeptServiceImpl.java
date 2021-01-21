@@ -13,6 +13,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtDeptMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtHtDeptMapper;
 import com.fantechs.provider.imes.basic.service.SmtDeptService;
+import javafx.scene.layout.BackgroundImage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -48,16 +49,20 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         }
 
         Example example = new Example(SmtDept.class);
-        Example.Criteria criteria1= example.createCriteria();
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("deptCode",smtDept.getDeptCode());
-        example.or(criteria);
-        criteria1.andEqualTo("factoryId",smtDept.getFactoryId());
-        criteria1.andEqualTo("deptName",smtDept.getDeptName());
+        SmtDept smtDept1 = smtDeptMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(smtDept1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
 
-        SmtDept dept = smtDeptMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(dept)){
-            throw new BizErrorException("部门代码或该工厂里面部门名称已存在");
+        example.clear();
+
+        criteria.andEqualTo("factoryId",smtDept.getFactoryId())
+                .andEqualTo("deptName",smtDept.getDeptName());
+        SmtDept smtDept2 = smtDeptMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(smtDept2)){
+            throw new BizErrorException("该工厂下的部门名称已存在");
         }
 
         smtDept.setCreateUserId(currentUser.getUserId());
@@ -81,18 +86,24 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(SmtDept.class);
-        Example.Criteria criteria1= example.createCriteria();
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("deptCode",smtDept.getDeptCode());
-        example.or(criteria);
-        criteria1.andEqualTo("factoryId",smtDept.getFactoryId());
-        criteria1.andEqualTo("deptName",smtDept.getDeptName());
 
-        SmtDept dept = smtDeptMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(dept)&&!dept.getDeptId().equals(smtDept.getDeptId())){
-            //throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            throw new BizErrorException("部门代码或该工厂里面部门名称已存在");
+        Example example = new Example(SmtDept.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("deptCode",smtDept.getDeptCode())
+                .andNotEqualTo("deptId",smtDept.getDeptId());
+        SmtDept smtDept1 = smtDeptMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(smtDept1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+
+        criteria.andEqualTo("factoryId",smtDept.getFactoryId())
+                .andEqualTo("deptName",smtDept.getDeptName())
+                .andNotEqualTo("deptId",smtDept.getDeptId());
+        SmtDept smtDept2 = smtDeptMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(smtDept2)){
+            throw new BizErrorException("该工厂下的部门名称已存在");
         }
 
         smtDept.setModifiedUserId(currentUser.getUserId());

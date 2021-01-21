@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "ocean-wms-out")
 public interface OutFeignApi {
 
-    @ApiOperation(value = "发料计划新增",notes = "发料计划新增")
+    @ApiOperation(value = "发料计划新增", notes = "发料计划新增")
     @PostMapping("/wmsOutProductionMaterial/add")
-    ResponseEntity outProductionMaterialAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutProductionMaterial wmsOutProductionMaterial);
+    ResponseEntity outProductionMaterialAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsOutProductionMaterial wmsOutProductionMaterial);
 
 
 }

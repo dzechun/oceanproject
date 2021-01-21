@@ -158,11 +158,11 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     private String badPhenomenon;
 
     /**
-     * 用量
+     * 部件用量
      */
     @Transient
-    @ApiModelProperty(name = "dosage",value = "用量")
-    @Excel(name = "用量", height = 20, width = 30,orderNum="2")
+    @ApiModelProperty(name = "dosage",value = "部件用量")
+    @Excel(name = "部件用量", height = 20, width = 30,orderNum="2")
     private BigDecimal dosage;
 
     /**

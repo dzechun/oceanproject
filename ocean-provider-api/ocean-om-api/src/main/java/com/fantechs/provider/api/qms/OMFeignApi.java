@@ -1,4 +1,4 @@
-package com.fantechs.provider.api.om;
+package com.fantechs.provider.api.qms;
 
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
@@ -23,9 +23,9 @@ public interface OMFeignApi {
 
     @ApiOperation("订单列表")
     @PostMapping("/smtOrder/findList")
-    ResponseEntity<List<SmtOrderDto>> findOrderList(@ApiParam(value = "查询对象")@RequestBody SearchSmtOrder searchSmtOrder);
+    ResponseEntity<List<SmtOrderDto>> findOrderList(@ApiParam(value = "查询对象") @RequestBody SearchSmtOrder searchSmtOrder);
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtOrder smtOrder);
+    ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody SmtOrder smtOrder);
 }

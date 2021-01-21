@@ -36,11 +36,11 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     private Integer productType;
 
     /**
-     *  名称
+     * 产品名称
      */
     @Transient
     @ApiModelProperty(name="productName" ,value="名称")
-    @Excel(name = "名称", height = 20, width = 30)
+    @Excel(name = "产品名称", height = 20, width = 30)
     private String productName;
 
     /**
@@ -63,6 +63,7 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="proName" ,value="线别名称")
     private String proCode;
+
     /**
      *  产品型号ID
      */
@@ -82,6 +83,7 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
+    @Excel(name = "产品型号名称", height = 20, width = 30)
     private String productModelName;
 
     /**
@@ -99,19 +101,19 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     private String materialCode;
 
     /**
-     * 版本
+     * 产品料号版本
      */
     @Transient
     @ApiModelProperty(name="version" ,value="版本")
-    @Excel(name = "版本", height = 20, width = 30)
+    @Excel(name = "产品料号版本", height = 20, width = 30)
     private String version;
 
     /**
-     * 物料描述
+     * 产品料号描述
      */
     @Transient
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30)
+    @Excel(name = "产品料号描述", height = 20, width = 30)
     private String materialDesc;
 
 
@@ -132,11 +134,11 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
     private String routeName;
 
     /**
-     * 工艺路线名称
+     * 工艺路线编码
      */
     @Transient
-    @ApiModelProperty(name="routeName" ,value="工艺路线名称")
-    @Excel(name = "工艺路线名称", height = 20, width = 30)
+    @ApiModelProperty(name="routeCode" ,value="工艺路线编码")
+    @Excel(name = "工艺路线编码", height = 20, width = 30)
     private String routeCode;
 
     /**
@@ -144,7 +146,6 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="routeDesc" ,value="工艺路线描述")
-    @Excel(name = "工艺路线描述", height = 20, width = 30)
     private String routeDesc;
 
     /**

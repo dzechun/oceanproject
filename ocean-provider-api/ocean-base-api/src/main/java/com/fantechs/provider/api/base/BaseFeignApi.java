@@ -19,21 +19,21 @@ public interface BaseFeignApi {
 
     @ApiOperation("页签信息列表")
     @PostMapping("/baseTab/findList")
-    ResponseEntity<List<BaseTab>> findTabList(@ApiParam(value = "查询对象")@RequestBody SearchBaseTab searchBaseTab);
+    ResponseEntity<List<BaseTab>> findTabList(@ApiParam(value = "查询对象") @RequestBody SearchBaseTab searchBaseTab);
 
-    @ApiOperation(value = "新增页签",notes = "新增页签")
+    @ApiOperation(value = "新增页签", notes = "新增页签")
     @PostMapping("/baseTab/add")
-    ResponseEntity addTab(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseTab baseTab);
+    ResponseEntity addTab(@ApiParam(value = "必传：", required = true) @RequestBody @Validated BaseTab baseTab);
 
     @ApiOperation("删除页签")
     @PostMapping("/baseTab/delete")
-    ResponseEntity deleteTab(@ApiParam(value = "页签集合")@RequestBody @Validated List<BaseTab> baseTabs);
+    ResponseEntity deleteTab(@ApiParam(value = "页签集合") @RequestBody @Validated List<BaseTab> baseTabs);
 
     @ApiOperation("修改页签")
     @PostMapping("/baseTab/update")
-    ResponseEntity updateTab(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseTab.update.class) BaseTab baseTab);
+    ResponseEntity updateTab(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = BaseTab.update.class) BaseTab baseTab);
 
     @ApiOperation("列表")
     @PostMapping("/baseTeam/findList")
-    ResponseEntity<List<BaseTeamDto>> findTeamList(@ApiParam(value = "查询对象")@RequestBody SearchBaseTeam searchBaseTeam);
+    ResponseEntity<List<BaseTeamDto>> findTeamList(@ApiParam(value = "查询对象") @RequestBody SearchBaseTeam searchBaseTeam);
 }

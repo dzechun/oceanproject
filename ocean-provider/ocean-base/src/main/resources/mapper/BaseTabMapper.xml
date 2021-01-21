@@ -43,7 +43,7 @@
       <result column="volume" jdbcType="DECIMAL" property="volume" />
       <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
       <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight" />
-      <result column="material_type" jdbcType="VARCHAR" property="materialType" />
+      <result column="material_type" jdbcType="TINYINT" property="materialType" />
       <result column="purchase_quantity" jdbcType="DECIMAL" property="purchaseQuantity" />
       <result column="storage_temperature" jdbcType="VARCHAR" property="storageTemperature" />
       <result column="storage_humidity" jdbcType="VARCHAR" property="storageHumidity" />
@@ -61,6 +61,23 @@
       <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
       <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
   </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseTabDto" extends="BaseResultMap">
+        <result column="inspection_item_code" jdbcType="VARCHAR" property="inspectionItemCode" />
+        <result column="inspection_item_name" jdbcType="VARCHAR" property="inspectionItemName" />
+        <result column="inspection_type_code" jdbcType="VARCHAR" property="inspectionTypeCode" />
+        <result column="inspection_type_name" jdbcType="VARCHAR" property="inspectionTypeName" />
+        <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode" />
+        <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+        <result column="label_category_code" jdbcType="VARCHAR" property="labelCategoryCode" />
+        <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
+        <result column="label_code" jdbcType="VARCHAR" property="labelCode"/>
+        <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    </resultMap>
 
   <sql id="Base_Column_List">
     bt.tab_id,
@@ -120,7 +137,7 @@
 	bt.material_quality
   </sql>
 
-  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
       qii.inspection_item_code,qii.inspection_item_name,

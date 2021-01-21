@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseStaffMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseStaff">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="staff_id" jdbcType="BIGINT" property="staffId"/>
+        <result column="team_id" jdbcType="BIGINT" property="teamId"/>
+        <result column="staff_code" jdbcType="VARCHAR" property="staffCode"/>
+        <result column="staff_name" jdbcType="VARCHAR" property="staffName"/>
+        <result column="staff_desc" jdbcType="VARCHAR" property="staffDesc"/>
+        <result column="identity_number" jdbcType="VARCHAR" property="identityNumber"/>
+        <result column="is_team_piecework" jdbcType="TINYINT" property="isTeamPiecework"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+
+        <collection property="baseStaffProcessList" column="staff_id"
+                    ofType="com.fantechs.common.base.general.entity.basic.BaseStaffProcess"
+                    select="com.fantechs.provider.base.mapper.BaseStaffProcessMapper.findByStaffId"></collection>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseStaffDto" extends="BaseResultMap">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="team_code" jdbcType="VARCHAR" property="teamCode"/>
+        <result column="team_name" jdbcType="VARCHAR" property="teamName"/>
+        <result column="team_desc" jdbcType="VARCHAR" property="teamDesc"/>
+        <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode" />
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+        <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="factory_desc" jdbcType="VARCHAR" property="factoryDesc"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        bs.staff_id,
+	bs.staff_code,
+	bs.staff_name,
+	bs.staff_desc,
+	bs.team_id,
+	bs.identity_number,
+	bs.is_team_piecework,
+	bs.`status`,
+	bs.remark,
+	bs.organization_id,
+	bs.create_user_id,
+	bs.create_time,
+	bs.modified_user_id,
+	bs.modified_time,
+	bs.is_delete
+    </sql>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select
+        <include refid="Base_Column_List"></include>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bt.team_code,bt.team_name,bt.team_desc,
+        sws.work_shop_code,sws.work_shop_name,sws.work_shop_desc,
+        sf.factory_code,sf.factory_name,sf.factory_desc
+        from fantech_imes.base_staff bs
+        left join fantech_imes.base_team bt on bs.team_id = bt.team_id
+        left join fantech_imes.smt_work_shop sws on bt.work_shop_id = sws.work_shop_id
+        left join fantech_imes.smt_factory sf on sws.factory_id = sf.factory_id
+        left join ocean.sys_user su on bs.create_user_id = su.user_id
+        left join ocean.sys_user sus on bs.modified_user_id = sus.user_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="staffCode != null and staffCode !=''">
+                and bs.staff_code like CONCAT('%', #{staffCode}, '%')
+            </if>
+            <if test="staffName != null and staffName !=''">
+                and bs.staff_name like CONCAT('%', #{staffName}, '%')
+            </if>
+            <if test="staffDesc != null and staffDesc !=''">
+                and bs.staff_desc like CONCAT('%', #{staffDesc}, '%')
+            </if>
+            <if test="teamCode != null and teamCode !=''">
+                and bt.team_code like CONCAT('%', #{teamCode}, '%')
+            </if>
+            <if test="teamName != null and teamName !=''">
+                and bt.team_name like CONCAT('%', #{teamName}, '%')
+            </if>
+            <if test="workShopCode != null and workShopCode !=''">
+                and sws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
+            </if>
+            <if test="workShopName != null and workShopName !=''">
+                and sws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and bs.status=#{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

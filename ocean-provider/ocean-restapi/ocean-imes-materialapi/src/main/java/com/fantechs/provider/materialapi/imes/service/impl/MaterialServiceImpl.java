@@ -30,7 +30,7 @@ public class MaterialServiceImpl implements MaterialService {
             return "fail";
         }
         //新增物料
-        basicFeignApi.batchUpdateSmtMaterial(smtMaterials);
+        //basicFeignApi.batchUpdateSmtMaterial(smtMaterials);
 
         return "success";
     }
