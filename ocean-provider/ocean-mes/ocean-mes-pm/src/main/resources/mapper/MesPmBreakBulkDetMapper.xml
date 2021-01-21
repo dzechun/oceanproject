@@ -51,9 +51,9 @@
   pbd.is_delete
 </sql>
 <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet">
-    SELECT <include refid="Base_Column_List"/>,pb.work_order_id,wo.work_order_code,sm.material_code,sm.material_name,sm.version,sm.material_desc,wo.production_quantity,spl.pro_name,wo.work_order_status,sr.route_name,pb.process_id,sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,bo.organization_name FROM mes_pm_break_bulk_det pbd
-        LEFT JOIN mes_pm_break_bulk pb ON pbd.break_bulk_id = pb.break_bulk_id
-        LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
+    SELECT <include refid="Base_Column_List"/>,pb.work_order_id,wo.work_order_code,sm.material_code,sm.material_name,sm.version,sm.material_desc,wo.production_quantity,spl.pro_name,wo.work_order_status,sr.route_name,sp.process_id,sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,bo.organization_name FROM mes_pm_break_bulk_det pbd
+         left join mes_pm_break_bulk pb on  pbd.break_bulk_id = pb.break_bulk_id
+         LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
         LEFT join fantech_imes.smt_material sm on wo.material_id=sm.material_id
         LEFT join fantech_imes.smt_route sr on wo.route_id=sr.route_id
         LEFT join fantech_imes.smt_pro_line spl on wo.pro_line_id=spl.pro_line_id
