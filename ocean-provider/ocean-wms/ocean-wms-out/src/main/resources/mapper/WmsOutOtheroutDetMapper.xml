@@ -66,7 +66,7 @@
         SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name, suss.user_name AS warehouse_user_name,
         woo.otherout_code,
-        sm.material_code, sm.material_name, sm.material_desc, sm.unit, sm.version,
+        sm.material_code, sm.material_name, sm.material_desc, sm.version,
         sw.warehouse_name, sw.warehouse_code, sw.warehouse_desc,
         bo.organization_name
         FROM wms_out_otherout_det wood

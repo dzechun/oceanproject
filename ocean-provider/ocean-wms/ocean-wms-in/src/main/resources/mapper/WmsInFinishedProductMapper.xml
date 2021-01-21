@@ -66,6 +66,9 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="startInTime != null and startInTime != '' and endInTime != null and endInTime != ''">
+        and date_format(fp.in_time, '%Y-%m-%d') BETWEEN #{startInTime} AND #{endInTime}
+      </if>
       <if test="finishedProductCode != null and finishedProductCode != ''">
         and fp.finished_product_code like CONCAT('%', #{finishedProductCode}, '%')
       </if>

@@ -1,12 +1,9 @@
 package com.fantechs.common.base.general.entity.wms.in.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
@@ -43,5 +40,16 @@ public class SearchWmsInFinishedProduct extends BaseQuery implements Serializabl
     @ApiModelProperty(name="inType",value = "单据类型（0-成品入库，1-半成品入库）")
     private Long inType;
 
+    /**
+     * 开始时间
+     */
+    @ApiModelProperty(name="startInTime" ,value="完工日期开始时间(YYYY-MM-DD)")
+    private String startInTime;
+
+    /**
+     * 结束时间
+     */
+    @ApiModelProperty(name="endInTime" ,value="完工日期结束时间(YYYY-MM-DD)")
+    private String endInTime;
 
 }

@@ -6,11 +6,7 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
-
-import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
-import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtProductionMaterial;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -55,12 +51,24 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
     }
 
     @Override
-    public int save(WmsOutProductionMaterial wmsOutProductionMaterial) {
-
+    public int updateByWorkOrderId(WmsOutProductionMaterial wmsOutProductionMaterial) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        if (StringUtils.isEmpty(wmsOutProductionMaterial.getRealityQty())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+        if (StringUtils.isEmpty(wmsOutProductionMaterial.getMaterialId())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+        if (StringUtils.isEmpty(wmsOutProductionMaterial.getWorkOrderId())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+
+        Example example = new Example(WmsOutProductionMaterial.class);
+        example.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterial.getMaterialId());
+        wmsOutProductionMaterial = wmsOutProductionMaterialMapper.selectByExample(example).get(0);
 
         //库存数据
         SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
@@ -76,6 +84,36 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
         smtStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
         //扣库存
         storageInventoryFeignApi.out(smtStorageInventory);
+
+        //累加总发料数，修改发料状态
+        WmsOutProductionMaterial dataResource = wmsOutProductionMaterialMapper.selectByPrimaryKey(wmsOutProductionMaterial.getProductionMaterialId());
+
+        if(StringUtils.isNotEmpty(dataResource.getRealityQty())){
+            wmsOutProductionMaterial.setRealityQty(dataResource.getRealityQty().add(wmsOutProductionMaterial.getRealityQty()));
+        }
+        if(wmsOutProductionMaterial.getRealityQty().compareTo(wmsOutProductionMaterial.getPlanQty()) == 0){
+            wmsOutProductionMaterial.setOutStatus((byte)2);
+        }
+
+
+        wmsOutProductionMaterial.setModifiedUserId(user.getCreateUserId());
+        wmsOutProductionMaterial.setModifiedTime(new Date());
+
+        //履历
+        WmsOutHtProductionMaterial wmsOutHtProductionMaterial = new WmsOutHtProductionMaterial();
+        BeanUtils.copyProperties(wmsOutProductionMaterial,wmsOutHtProductionMaterial);
+        wmsOutHtProductionMaterialMapper.insertSelective(wmsOutHtProductionMaterial);
+
+        return wmsOutProductionMaterialMapper.updateByPrimaryKeySelective(wmsOutProductionMaterial);
+    }
+
+    @Override
+    public int save(WmsOutProductionMaterial wmsOutProductionMaterial) {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         wmsOutProductionMaterial.setProductionMaterialCode(CodeUtils.getId("FL"));
         wmsOutProductionMaterial.setOrganizationId(user.getOrganizationId());
@@ -100,6 +138,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
         wmsOutProductionMaterial.setModifiedUserId(user.getCreateUserId());
         wmsOutProductionMaterial.setModifiedTime(new Date());
 
+        //履历
         WmsOutHtProductionMaterial wmsOutHtProductionMaterial = new WmsOutHtProductionMaterial();
         BeanUtils.copyProperties(wmsOutProductionMaterial,wmsOutHtProductionMaterial);
         wmsOutHtProductionMaterialMapper.insertSelective(wmsOutHtProductionMaterial);
