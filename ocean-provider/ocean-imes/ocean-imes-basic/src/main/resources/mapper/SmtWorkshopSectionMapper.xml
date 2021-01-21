@@ -22,21 +22,21 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        swe.section_id,
-	swe.section_code,
-	swe.section_name,
-	swe.section_desc,
-	swe.`status`,
-	swe.remark,
-	swe.organization_id,
-	swe.create_user_id,
-	swe.create_time,
-	swe.modified_user_id,
-	swe.modified_time,
-	swe.is_delete,
-	swe.option1,
-	swe.option2,
-	swe.option3
+        sws.section_id,
+	sws.section_code,
+	sws.section_name,
+	sws.section_desc,
+	sws.`status`,
+	sws.remark,
+	sws.organization_id,
+	sws.create_user_id,
+	sws.create_time,
+	sws.modified_user_id,
+	sws.modified_time,
+	sws.is_delete,
+	sws.option1,
+	sws.option2,
+	sws.option3
     </sql>
 
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection"
@@ -45,9 +45,9 @@
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
         from fantech_imes.smt_workshop_section sws
-        left join ocean.sys_user u on ws.create_user_id=u.user_id
-        left join ocean.sys_user s on ws.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes.base_organization bo ON ws.organization_id = bo.organization_id
+        left join ocean.sys_user u on sws.create_user_id=u.user_id
+        left join ocean.sys_user s on sws.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON sws.organization_id = bo.organization_id
         <where>
             1=1
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
