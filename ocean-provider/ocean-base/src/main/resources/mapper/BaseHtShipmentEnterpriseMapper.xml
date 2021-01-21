@@ -67,7 +67,7 @@
             <if test="transportCategoryId != null and transportCategoryId!=''">
                 and bhse.transport_category_id = #{transportCategoryId}
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and bhse.status=#{status}
             </if>
         </where>
