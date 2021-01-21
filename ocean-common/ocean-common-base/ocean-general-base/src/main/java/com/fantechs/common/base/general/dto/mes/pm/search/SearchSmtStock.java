@@ -16,6 +16,12 @@ public class SearchSmtStock extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -4687636312322002226L;
 
     /**
+     * 备料id
+     */
+    @ApiModelProperty(name="stockId",value = "备料id")
+    private Long stockId;
+
+    /**
      * 备料单号
      */
     @ApiModelProperty(name="stockCode",value = "备料单号")

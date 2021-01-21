@@ -33,6 +33,7 @@
         <module>ocean-qms</module>    <!-- 质量管理 -->
         <module>ocean-srm</module>    <!-- 供应商管理 -->
         <module>ocean-tem</module>
+        <module>ocean-agv</module>
         <!--<module>ocean-exhibition-client</module> -->   <!-- 展厅客户端 -->
     </modules>
 </project>

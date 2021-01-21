@@ -87,4 +87,22 @@ public class SmtStockDto extends SmtStock implements Serializable {
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     @Excel(name = "生产线", height = 20, width = 30,orderNum = "14")
     private String organizationName;
+
+    /**
+     * 喷绘信息
+     */
+    @ApiModelProperty(name="inkjetPaint" ,value="喷绘信息")
+    private String inkjetPaint;
+
+    /**
+     * 镭雕信息
+     */
+    @ApiModelProperty(name="radiumCarving" ,value="镭雕信息")
+    private String radiumCarving;
+
+    /**
+     * 照片链接
+     */
+    @ApiModelProperty(name="photoUrl" ,value="照片链接")
+    private String photoUrl;
 }

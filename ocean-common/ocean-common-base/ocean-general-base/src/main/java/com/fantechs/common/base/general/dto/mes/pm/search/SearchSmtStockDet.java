@@ -21,4 +21,16 @@ public class SearchSmtStockDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="stockId",value = "备料id")
     @Column(name = "stock_id")
     private Long stockId;
+
+    /**
+     * 配送状态(0、待配送 1、配送中 2、配送完成)
+     */
+    @ApiModelProperty(name="status",value = "配送状态(0、待配送 1、配送中 2、配送完成)")
+    private Byte status;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "agv任务单号")
+    private String remark;
 }
