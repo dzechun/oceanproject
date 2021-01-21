@@ -138,6 +138,7 @@ public class WmsInFinishedProduct extends ValidGroup implements Serializable {
     @ApiModelProperty(name="wmsInFinishedProductDetList",value = "入库明细")
     private List<WmsInFinishedProductDet> wmsInFinishedProductDetList;
 
+    @Transient
     @ApiModelProperty(name="projectType",value = "项目类型(东鹏-dp,华峰-hf)")
     private String projectType;
 

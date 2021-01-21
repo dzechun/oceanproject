@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -122,4 +123,6 @@ public class MesPmBreakBulkDetDto extends MesPmBreakBulkDet implements Serializa
     @Transient
     @ApiModelProperty(name = "processId",value = "工序id")
     private String processId;
+
+    private MesPmBreakBulk mesPmBreakBulk;
 }

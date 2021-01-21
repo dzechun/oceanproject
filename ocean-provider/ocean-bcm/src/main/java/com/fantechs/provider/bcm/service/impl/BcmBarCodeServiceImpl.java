@@ -8,8 +8,12 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -18,19 +22,22 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.bcm.mapper.BcmBarCodeMapper;
 import com.fantechs.provider.bcm.service.BcmBarCodeService;
 import com.fantechs.provider.bcm.util.FTPUtil;
+import com.fantechs.provider.bcm.util.SocketClient;
+import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleSpecMapper;
+import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.Socket;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -48,7 +55,10 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     private FTPUtil ftpUtil;
     @Resource
     private SecurityFeignApi securityFeignApi;
-
+    @Resource
+    SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+    @Resource
+    SmtWorkOrderMapper smtWorkOrderMapper;
     @Override
     public List<BcmBarCodeDto> findList(SearchBcmBarCode searchBcmBarCode) {
         return bcmBarCodeMapper.findList(searchBcmBarCode);
@@ -56,7 +66,23 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
 
     @Override
     public BcmBarCodeWorkDto work(SearchBcmBarCode searchBcmBarCode) {
-        return bcmBarCodeMapper.sel_work_order(searchBcmBarCode);
+        BcmBarCodeWorkDto bcmBarCodeWorkDto = bcmBarCodeMapper.sel_work_order(searchBcmBarCode);
+        //生成规则
+        Example example = new Example(SmtBarcodeRuleSpec.class);
+        example.createCriteria().andEqualTo("barcodeRuleId",bcmBarCodeWorkDto.getBarcodeRuleId());
+        List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecMapper.selectByExample(example);
+        Example example1 = new Example(BcmBarCode.class);
+        example1.createCriteria().andEqualTo("workOrderId",bcmBarCodeWorkDto.getWorkOrderId());
+        List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example1);
+        String maxQty = null;
+        if(bcmBarCodes.size()>0){
+            Integer num = bcmBarCodes.stream().mapToInt(BcmBarCode::getPrintQuantity).sum();
+            //maxQty = bcmBarCodes.get(0).getBarCodeContent().substring(0,bcmBarCodes.get(0).getBarCodeContent().length()-2);
+            maxQty = num.toString();
+        }
+        String code = BarcodeRuleUtils.analysisCode(list,maxQty,bcmBarCodeWorkDto.getMaterialCode());
+        bcmBarCodeWorkDto.setBarcode(code);
+        return bcmBarCodeWorkDto;
     }
 
     @Override
@@ -117,12 +143,47 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     }
 
     @Override
+    public int print(Long workOrderId) {
+        BcmBarCode bcmBarCode = new BcmBarCode();
+        bcmBarCode.setWorkOrderId(workOrderId);
+        bcmBarCode = bcmBarCodeMapper.selectOne(bcmBarCode);
+        if(StringUtils.isEmpty(bcmBarCode)){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成条码"));
+        }
+        //查询绑定标签
+        if(!SocketClient.isConnect){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("连接打印服务失败"));
+        }
+        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+        Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto);
+        map.put("QrCode",bcmBarCode.getBarCodeContent());
+        String json = JSON.toJSONString(map);
+        SocketClient.out(json);
+        return 1;
+    }
+
+    @Override
+    public int verifyQrCode(String QrCode, Long workOrderId) {
+        BcmBarCode bcmBarCode = new BcmBarCode();
+        bcmBarCode.setWorkOrderId(workOrderId);
+        bcmBarCode = bcmBarCodeMapper.selectOne(bcmBarCode);
+        if(StringUtils.isEmpty(bcmBarCode)){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成条码"));
+        }
+        if(bcmBarCode.getBarCodeContent().substring(0,bcmBarCode.getBarCodeContent().length()-2).equals(QrCode.substring(0,QrCode.length()-2))){
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BcmBarCode record) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        //生成条码
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());

@@ -3,11 +3,14 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -18,6 +21,7 @@ import com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmBreakBulkService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
@@ -42,7 +46,14 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
 
     @Override
     public List<MesPmBreakBulkDto> findList(SearchMesPmBreakBulk searchMesPmBreakBulk) {
-        return mesPmBreakBulkMapper.findList(searchMesPmBreakBulk);
+        List<MesPmBreakBulkDto> list = mesPmBreakBulkMapper.findList(searchMesPmBreakBulk);
+        list.forEach(li->{
+            Example example = new Example(MesPmBreakBulkDet.class);
+            example.createCriteria().andEqualTo("breakBulkId",li.getBreakBulkId());
+            List<MesPmBreakBulkDet> dtoList = mesPmBreakBulkDetMapper.selectByExample(example);
+            li.setMesPmBreakBulkDets(dtoList);
+        });
+        return list;
     }
 
     @Override

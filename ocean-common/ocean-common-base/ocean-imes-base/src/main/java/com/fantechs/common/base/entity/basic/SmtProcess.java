@@ -63,7 +63,7 @@ public class SmtProcess extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="sectionName" ,value="工段名称")
-    @Excel(name = "工段名称", height = 20, width = 30)
+    @Excel(name = "所属工段", height = 20, width = 30)
     private String sectionName;
 
     /**
@@ -79,7 +79,7 @@ public class SmtProcess extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="processCategoryName" ,value="工序类别名称")
-    @Excel(name = "工序类别名称",  height = 20, width = 30)
+    @Excel(name = "工序类别",  height = 20, width = 30)
     private String processCategoryName;
 
     /**
@@ -87,6 +87,7 @@ public class SmtProcess extends ValidGroup implements Serializable {
      */
     @Column(name = "is_job_scan")
     @ApiModelProperty(name="isJobScan" ,value="是否报工扫描")
+    @Excel(name = "是否报工扫描",  height = 20, width = 30,replace = {"否_0", "是_1"})
     private Byte isJobScan;
 
     /**
@@ -94,6 +95,7 @@ public class SmtProcess extends ValidGroup implements Serializable {
      */
     @Column(name = "is_start_scan")
     @ApiModelProperty(name= "isStartScan" ,value="是否开工工扫描")
+    @Excel(name = "是否开工工扫描",  height = 20, width = 30,replace = {"否_0", "是_1"})
     private Byte isStartScan;
 
     /**
@@ -101,6 +103,7 @@ public class SmtProcess extends ValidGroup implements Serializable {
      */
     @Column(name = "is_quality")
     @ApiModelProperty(name="isQuality" ,value="是否品质确认")
+    @Excel(name = "是否品质确认",  height = 20, width = 30,replace = {"否_0", "是_1"})
     private Byte isQuality;
 
     /**

@@ -54,6 +54,12 @@ public class WmsOutProductionMaterialController {
         return ControllerUtil.returnCRUD(wmsOutProductionMaterialService.update(wmsOutProductionMaterial));
     }
 
+    @ApiOperation("根据工单和物料反写发料数量")
+    @PostMapping("/updateByWorkOrderId")
+    public ResponseEntity updateByWorkOrderId(@ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsOutProductionMaterial wmsOutProductionMaterial) {
+        return ControllerUtil.returnCRUD(wmsOutProductionMaterialService.updateByWorkOrderId(wmsOutProductionMaterial));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<WmsOutProductionMaterial> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {

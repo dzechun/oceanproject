@@ -33,6 +33,7 @@
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
         <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus"/>
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="process_name" jdbcType="VARCHAR" property="processName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -82,6 +83,9 @@
         <if test="workOrderId != null">
             and wo.work_order_id = #{workOrderCode}
         </if>
+        <if test="batchNo != null and batchNo != ''">
+        and pb.batch_no = #{batchNo}
+</if>
     </where>
   </select>
   <select id="sleProcess" resultType="com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk">

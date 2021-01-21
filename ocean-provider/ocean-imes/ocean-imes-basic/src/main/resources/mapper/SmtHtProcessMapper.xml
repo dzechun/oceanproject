@@ -50,8 +50,14 @@
       <if test="sectionId!=null and sectionId!=''">
         and shp.section_id=#{sectionId}
       </if>
+      <if test="sectionName!=null and sectionName!=''">
+        and sws.section_name like CONCAT('%', #{sectionName}, '%')
+      </if>
       <if test="processCategoryId!=null and processCategoryId!=''">
         and shp.process_category_id=#{processCategoryId}
+      </if>
+      <if test="processCategoryName!=null and processCategoryName!=''">
+        and spc.process_category_name like CONCAT('%', #{processCategoryName}, '%')
       </if>
     </where>
     order by shp.modified_time desc
