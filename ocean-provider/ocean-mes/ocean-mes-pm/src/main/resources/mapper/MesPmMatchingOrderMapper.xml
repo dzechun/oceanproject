@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmMatchingOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="matching_order_id" jdbcType="BIGINT" property="matchingOrderId"/>
+        <result column="matching_order_code" jdbcType="VARCHAR" property="matchingOrderCode"/>
+        <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
+        <result column="staff_id" jdbcType="BIGINT" property="staffId"/>
+        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
+        <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
+        <result column="matching_quantity" jdbcType="DECIMAL" property="matchingQuantity"/>
+        <result column="min_matching_quantity" jdbcType="DECIMAL" property="minMatchingQuantity"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.pm.MesPmMatchingOrderDto"
+               extends="BaseResultMap">
+        <result column="staff_code" jdbcType="VARCHAR" property="staffCode"/>
+        <result column="staff_name" jdbcType="VARCHAR" property="staffName"/>
+        <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        mpmo.matching_order_id,
+	mpmo.matching_order_code,
+	mpmo.work_order_card_pool_id,
+	mpmo.staff_id,
+	mpmo.work_order_quantity,
+	mpmo.production_quantity,
+	mpmo.matching_quantity,
+    mpmo.min_matching_quantity,
+	mpmo.`status`,
+	mpmo.remark,
+	mpmo.organization_id,
+	mpmo.create_user_id,
+	mpmo.create_time,
+	mpmo.modified_user_id,
+	mpmo.modified_time,
+	mpmo.is_delete
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select
+        <include refid="Base_Column_List"></include>, su.user_name as createName,su.user_name,
+        bs.staff_code, bs.staff_name,
+        swocp.work_order_card_id,
+        swo.work_order_id, swo.work_order_code,
+        sm.material_id, sm.material_code, sm.material_desc,
+        btt.main_unit,
+        spm.product_model_name,
+        ss.storage_id
+        from mes_pm_matching_order mpmo
+        LEFT JOIN ocean.sys_user su ON mpmo.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON mpmo.modified_user_id = sus.user_id
+        LEFT JOIN base_staff bs ON bs.staff_id = mpmo.staff_id
+        LEFT JOIN base_team bt ON bs.team_id = bt.team_id
+        LEFT JOIN smt_work_order_card_pool swocp ON mpmo.work_order_card_pool_id = swocp.work_order_card_pool_id
+        LEFT JOIN smt_work_order swo ON swocp.work_order_id = swo.work_order_id
+        LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
+        LEFT JOIN base_tab btt ON sm.material_id = btt.material_id
+        LEFT JOIN smt_storage_material ssm ON sm.material_id = ssm.material_id
+        LEFT JOIN smt_product_model spm ON btt.product_model_id = spm.product_model_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(mppp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="workOrderCardId!=null and workOrderCardId!=''">
+                and swocp.work_order_card_id like CONCAT('%', #{workOrderCardId}, '%')
+            </if>
+            <if test="matchingOrderCode!=null and matchingOrderCode!=''">
+                and mpmo.matching_order_code like CONCAT('%', #{matchingOrderCode}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and mpmo.status= #{status}
+            </if>
+        </where>
+        order by mpmo.create_time desc
+    </select>
+</mapper>

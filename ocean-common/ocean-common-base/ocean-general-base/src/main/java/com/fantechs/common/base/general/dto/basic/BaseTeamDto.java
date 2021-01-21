@@ -63,7 +63,7 @@ public class BaseTeamDto extends BaseTeam implements Serializable {
      */
     @Excel(name = "工厂ID",  height = 20, width = 30)
     @ApiModelProperty(name="factoryId" ,value="厂别编码")
-    private String factoryId;
+    private Long factoryId;
 
     /**
      * 工厂编码
