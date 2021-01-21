@@ -68,10 +68,13 @@
         and sm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
       <if test="materialId != null and materialId!=''">
-        and sm.material_id like CONCAT('%', #{materialId}, '%')
+        and sm.material_id =  #{materialId}
       </if>
       <if test="materialName != null and materialName!=''">
         and sm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="materialDesc != null and materialDesc!=''">
+        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bpp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

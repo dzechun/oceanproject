@@ -31,20 +31,20 @@ public class QmsBadItem extends ValidGroup implements Serializable {
     private Long badItemId;
 
     /**
-     * 不良项目编码
+     * 不良类型编码
      */
-    @ApiModelProperty(name="badItemCode",value = "不良项目编码")
+    @ApiModelProperty(name="badTypeCode",value = "不良类型编码")
     @Excel(name = "不良项目编码", height = 20, width = 30,orderNum="1")
-    @Column(name = "bad_item_code")
-    private String badItemCode;
+    @Column(name = "bad_type_code")
+    private String badTypeCode;
 
     /**
-     * 不良原因
+     * 不良类型原因
      */
-    @ApiModelProperty(name="badCause",value = "不良原因")
-    @Excel(name = "不良原因", height = 20, width = 30,orderNum="2")
-    @Column(name = "bad_cause")
-    private String badCause;
+    @ApiModelProperty(name="badTypeCause",value = "不良类型原因")
+    @Excel(name = "不良类型原因", height = 20, width = 30,orderNum="2")
+    @Column(name = "bad_type_cause")
+    private String badTypeCause;
 
     /**
      * 工序ID
