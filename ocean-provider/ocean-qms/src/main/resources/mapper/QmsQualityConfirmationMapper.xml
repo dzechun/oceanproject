@@ -20,7 +20,7 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <collection property="list" ofType="com.fantechs.common.base.general.entity.qms.QmsPoorQuality"
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto"
                 column="quality_confirmation_id" select="com.fantechs.provider.qms.mapper.QmsPoorQualityMapper.findById"></collection>
   </resultMap>
 
@@ -39,11 +39,10 @@
     <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
     <result column="person_name" jdbcType="VARCHAR" property="personName"/>
     <result column="dosage" jdbcType="DECIMAL" property="dosage"/>
+    <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
     <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
-    <result column="bad_item_code" jdbcType="VARCHAR" property="badItemCode"/>
-    <result column="bad_phenomenon" jdbcType="VARCHAR" property="badPhenomenon"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -61,14 +60,14 @@
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
     sm.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
-    sp.process_name,sws.section_name,bppd.quantity AS dosage
+    sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qqc.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
     LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
-    LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = sm.material_id
+    LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = swo.material_id
     LEFT JOIN fantech_imes.smt_work_order_card_pool sswocp ON sswocp.work_order_card_pool_id = swocp.parent_id
     LEFT JOIN fantech_imes.smt_work_order sswo ON sswo.work_order_id = sswocp.work_order_id
     LEFT JOIN fantech_imes.base_plate_parts bpp ON bpp.material_id = sswo.material_id
@@ -76,7 +75,7 @@
     LEFT JOIN fantech_imes.smt_material sm ON sswo.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_process sp ON qqc.process_id = sp.process_id
     LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
-    LEFT JOIN fantech_imes.base_tab bt ON bt.tab_id = sm.tab_id
+    LEFT JOIN fantech_imes.base_tab bt ON bt.tab_id = sm.material_id
     LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
     LEFT JOIN fantech_imes.smt_dept sd ON sd.dept_id = su.dept_id
     <where>

@@ -27,6 +27,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
     <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
     <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
   </resultMap>
@@ -39,7 +40,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    sp.process_code,sp.process_name,sws.section_code,sws.section_name
+    sp.process_code,sp.process_name,sws.section_code,sws.section_name,sws.section_id
     from fantech_imes.qms_bad_item qbi
     LEFT JOIN ocean.sys_user su ON qbi.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qbi.modified_user_id = sus.user_id

@@ -100,7 +100,7 @@
             <if test="workOrderCardId!= null and workOrderCardId!= ''">
                 and swocp.work_order_card_id=#{workOrderCardId}
             </if>
-        and swocp.is_delete = 1
+            and swocp.is_delete = 1
         </where>
         order by swocp.modified_time desc
     </select>

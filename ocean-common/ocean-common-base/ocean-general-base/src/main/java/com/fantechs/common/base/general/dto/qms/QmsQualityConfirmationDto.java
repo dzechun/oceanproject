@@ -30,6 +30,14 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     private String workOrderCode;
 
     /**
+     * 生产数量
+     */
+    @Transient
+    @ApiModelProperty(name = "productionQuantity",value = "生产数量")
+    @Excel(name = "生产数量", height = 20, width = 30,orderNum="2")
+    private BigDecimal productionQuantity;
+
+    /**
      * 流程单号
      */
     @Transient
@@ -140,22 +148,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @ApiModelProperty(name = "sectionId",value = "所属工段ID")
     @Excel(name = "所属工段ID", height = 20, width = 30,orderNum="2")
     private Long sectionId;
-
-    /**
-     * 不良现象编码
-     */
-    @Transient
-    @ApiModelProperty(name = "badItemCode",value = "不良现象编码")
-    @Excel(name = "不良现象编码", height = 20, width = 30,orderNum="2")
-    private String badItemCode;
-
-    /**
-     * 不良现象名称
-     */
-    @Transient
-    @ApiModelProperty(name = "badPhenomenon",value = "不良现象名称")
-    @Excel(name = "不良现象名称", height = 20, width = 30,orderNum="2")
-    private String badPhenomenon;
 
     /**
      * 用量

@@ -20,6 +20,19 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+
+    <result column="bad_item_id" jdbcType="BIGINT" property="badItemId"/>
+    <result column="bad_item_code" jdbcType="VARCHAR" property="badItemCode"/>
+    <result column="bad_cause" jdbcType="VARCHAR" property="badCause"/>
+    <result column="bad_phenomenon" jdbcType="VARCHAR" property="badPhenomenon"/>
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
+  </resultMap>
+
+
   <sql id="Base_Column_List">
     qqc.poor_quality_id,
     qqc.quality_id,
@@ -31,8 +44,16 @@
   </sql>
 
   <select id="findById" parameterType="long" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    sws.section_name,qbi.bad_item_id,qbi.bad_item_code,qbi.bad_cause,qbid.bad_phenomenon
     from fantech_imes.qms_poor_quality qpq
+    LEFT JOIN ocean.sys_user su ON qpq.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON qpq.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON qpq.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = qpq.section_id
+    LEFT JOIN fantech_imes.qms_bad_item_det qbid ON qbid.bad_item_det_id = qpq.bad_item_det_id
+    LEFT JOIN fantech_imes.qms_bad_item qbi ON qbi.bad_item_id = qbid.bad_item_id
     where qpq.quality_id = #{qualityId}
   </select>
+
 </mapper>
