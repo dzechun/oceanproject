@@ -100,7 +100,7 @@
               and sf.factory_name like CONCAT('%', #{factoryName}, '%')
           </if>
           <if test="status!=null and status!=''">
-              and bs.status=#{status}
+              and bhs.status=#{status}
           </if>
       </where>
       order by modified_time desc

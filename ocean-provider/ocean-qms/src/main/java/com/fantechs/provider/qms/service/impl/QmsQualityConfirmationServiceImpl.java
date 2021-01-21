@@ -70,12 +70,12 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     @Override
     public List<QmsQualityConfirmationDto> findList(Map<String, Object> map) {
         List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
-        Map<String,Object> search = new HashMap();
+        /*Map<String,Object> search = new HashMap();
         for (QmsQualityConfirmationDto qmsQualityConfirmationDto : list) {
             search.put("section",qmsQualityConfirmationDto.getSectionId());
             List<QmsBadItemDto> badList = qmsBadItemMapper.findList(search);
             qmsQualityConfirmationDto.getBadList().addAll(badList);
-        }
+        }*/
         return list;
     }
 

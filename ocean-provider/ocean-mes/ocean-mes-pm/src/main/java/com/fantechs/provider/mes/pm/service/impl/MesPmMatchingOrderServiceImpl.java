@@ -29,6 +29,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -68,12 +69,20 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         for (QmsQualityConfirmationDto qmsQualityConfirmationDto : qmsQualityConfirmationDtos) {
             //获取部件用量
             BigDecimal dosage = qmsQualityConfirmationDto.getDosage();
-            //报工数量
-            BigDecimal quantity = qmsQualityConfirmationDto.getQuantity();
+            if (dosage.compareTo(BigDecimal.valueOf(0)) == 0 || dosage.compareTo(BigDecimal.valueOf(0)) == -1){
+                throw new BizErrorException("部件用量不能小于0");
+            }
+            //合格数量
+            BigDecimal qualifiedQuantity = qmsQualityConfirmationDto.getQualifiedQuantity();
+            if (qualifiedQuantity.compareTo(dosage) == -1){
+                throw new BizErrorException("质检合格数不足一套");
+            }
             if (dosage.equals(BigDecimal.ZERO)) {
                 throw new BizErrorException("部件用量不能为0");
             }
-            BigDecimal minMatchingQuantity = quantity.divide(dosage); //最小齐套数
+            System.out.println("=============");
+            System.out.println(qualifiedQuantity);
+            BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity,0, RoundingMode.HALF_UP); //最小齐套数
             minMatchingQuantitys.add(minMatchingQuantity);
         }
         //获取最小齐套数
@@ -101,7 +110,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         MesPmMatchingOrder mesPmMatchingOrder1 = mesPmMatchingOrderMapper.selectOneByExample(example);
 
         MesPmMatchingOrder mesPmMatchingOrder = new MesPmMatchingOrder();
-        BeanUtils.copyProperties(saveMesPmMatchingOrderDto,mesPmMatchingOrder);
+        BeanUtils.copyProperties(mesPmMatchingOrder1,mesPmMatchingOrder);
 
         if (StringUtils.isNotEmpty(mesPmMatchingOrder1)) {
             mesPmMatchingOrder.setModifiedUserId(currentUser.getUserId());
@@ -117,7 +126,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         int i = mesPmMatchingOrderMapper.insertUseGeneratedKeys(mesPmMatchingOrder);
 
         //新增完工入库单
-        if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 3){
+        if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 2){
             WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();//入库单
             WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();//入库单明细
             List<WmsInFinishedProductDet> wmsInFinishedProductDets = new ArrayList<>();

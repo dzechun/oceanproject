@@ -65,8 +65,7 @@
         swo.work_order_id, swo.work_order_code,
         sm.material_id, sm.material_code, sm.material_desc,
         btt.main_unit,
-        spm.product_model_name,
-        ss.storage_id
+        spm.product_model_name
         from mes_pm_matching_order mpmo
         LEFT JOIN ocean.sys_user su ON mpmo.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON mpmo.modified_user_id = sus.user_id
