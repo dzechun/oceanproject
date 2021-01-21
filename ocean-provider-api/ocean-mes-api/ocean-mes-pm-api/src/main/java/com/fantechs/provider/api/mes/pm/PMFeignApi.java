@@ -1,6 +1,17 @@
 package com.fantechs.provider.api.mes.pm;
 
 import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.search.*;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
@@ -84,7 +95,19 @@ public interface PMFeignApi {
     @PostMapping("/smtWorkOrder/detail")
     ResponseEntity<SmtWorkOrder> workOrderDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
-    @ApiOperation(value = "批量新增", notes = "批量新增")
+    @ApiOperation("备料列表")
+    @PostMapping("/smtStock/findList")
+    ResponseEntity<List<SmtStockDto>> findSmtStockList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStock searchSmtStock);
+
+    @ApiOperation("修改备料详情")
+    @PostMapping("/smtStockDet/update")
+    ResponseEntity updateSmtStockDet(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated SmtStockDet smtStockDet);
+
+    @ApiOperation("备料详情列表")
+    @PostMapping("/smtStockDet/findList")
+    ResponseEntity<List<SmtStockDetDto>> findSmtStockDetList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStockDet searchSmtStockDet);
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/smtProcessListProcess/startJob")
     ResponseEntity startJob(@ApiParam(value = "必传：", required = true) @RequestBody SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
     

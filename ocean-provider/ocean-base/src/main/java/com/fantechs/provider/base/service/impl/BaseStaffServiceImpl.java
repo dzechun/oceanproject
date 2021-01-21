@@ -16,6 +16,7 @@ import com.fantechs.provider.base.service.BaseStaffProcessService;
 import com.fantechs.provider.base.service.BaseStaffService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -42,6 +43,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(BaseStaff baseStaff) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -82,6 +84,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(BaseStaff baseStaff) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -104,18 +107,16 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         int i = baseStaffMapper.updateByPrimaryKeySelective(baseStaff);
 
         //更新人员工种关系
+        Example example1 = new Example(BaseStaffProcess.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("staffId",baseStaff.getStaffId());
+        baseStaffProcessService.deleteByExample(example1);
         List<BaseStaffProcess> baseStaffProcessList = baseStaff.getBaseStaffProcessList();
         if (StringUtils.isNotEmpty(baseStaffProcessList)) {
-            Long processId = baseStaffProcessList.get(0).getProcessId();
-            Example example1 = new Example(BaseStaffProcess.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("processId", processId);
-            baseStaffProcessService.deleteByExample(example1);
-
             for (BaseStaffProcess baseStaffProcess : baseStaffProcessList) {
                 baseStaffProcess.setStaffId(baseStaff.getStaffId());
-                baseStaffProcessService.batchSave(baseStaff.getBaseStaffProcessList());
             }
+            baseStaffProcessService.batchSave(baseStaff.getBaseStaffProcessList());
         }
 
 
@@ -128,6 +129,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {

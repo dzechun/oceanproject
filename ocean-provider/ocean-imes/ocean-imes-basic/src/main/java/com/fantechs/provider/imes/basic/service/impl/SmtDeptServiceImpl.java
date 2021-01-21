@@ -57,8 +57,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         }
 
         example.clear();
-
-        criteria.andEqualTo("factoryId",smtDept.getFactoryId())
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("factoryId",smtDept.getFactoryId())
                 .andEqualTo("deptName",smtDept.getDeptName());
         SmtDept smtDept2 = smtDeptMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(smtDept2)){
@@ -97,8 +97,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         }
 
         example.clear();
-
-        criteria.andEqualTo("factoryId",smtDept.getFactoryId())
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("factoryId",smtDept.getFactoryId())
                 .andEqualTo("deptName",smtDept.getDeptName())
                 .andNotEqualTo("deptId",smtDept.getDeptId());
         SmtDept smtDept2 = smtDeptMapper.selectOneByExample(example);

@@ -91,7 +91,7 @@ public class BaseTabDto extends BaseTab implements Serializable {
      *  产品型号名称
      */
     @Transient
-    @ApiModelProperty(name="productModelCode",value = "产品型号编码")
+    @ApiModelProperty(name="productModelCode",value = "产品型号名称")
     private String productModelName;
 
     /**

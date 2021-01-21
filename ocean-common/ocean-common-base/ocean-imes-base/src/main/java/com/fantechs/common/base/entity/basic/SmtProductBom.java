@@ -90,21 +90,20 @@ public class SmtProductBom extends ValidGroup implements Serializable {
      */
     @Column(name = "process_id")
     @ApiModelProperty(name="processId" ,value="工序ID")
-    @NotNull(message = "工序ID不能为空")
     private Long processId;
 
     /**
-     * 配送方式
+     * 配送方式（0、配送优化 1、配送不优化  2、不配送不优化）
      */
     @Column(name = "delivery_mode")
-    @ApiModelProperty(name = "deliveryMode", value = "配送方式")
+    @ApiModelProperty(name = "deliveryMode", value = "配送方式（0、配送优化 1、配送不优化  2、不配送不优化）")
     private Integer deliveryMode;
 
     /**
-     * 发料方式
+     * 发料方式（0、推式  1、拉式）
      */
     @Column(name = "issue_method")
-    @ApiModelProperty(name = "issueMethod", value = "发料方式")
+    @ApiModelProperty(name = "issueMethod", value = "发料方式（0、推式  1、拉式）")
     private Integer issueMethod;
 
     /**

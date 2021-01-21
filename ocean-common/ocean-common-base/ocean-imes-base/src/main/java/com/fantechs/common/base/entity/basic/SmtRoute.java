@@ -30,12 +30,12 @@ public class SmtRoute extends ValidGroup implements Serializable {
     private Long routeId;
 
     /**
-     * 工艺路线代码
+     * 工艺路线编码
      */
     @Column(name = "route_code")
     @ApiModelProperty(name="routeCode" ,value="工艺路线代码")
-    @Excel(name = "工艺路线名称", height = 20, width = 30)
-    @NotBlank(message = "工艺路线代码不能为空")
+    @Excel(name = "工艺路线编码", height = 20, width = 30)
+    @NotBlank(message = "工艺路线编码不能为空")
     private String routeCode;
 
     /**
@@ -98,6 +98,7 @@ public class SmtRoute extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="remark",value = "备注")
     @Column(name = "remark")
+    @Excel(name = "备注", height = 20, width = 30)
     private String remark;
 
     /**

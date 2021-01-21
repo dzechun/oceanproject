@@ -53,6 +53,12 @@
             <if test="stockId!=null and stockId!=''">
                 and ssd.stock_id = #{stockId}
             </if>
+            <if test="status!=null and status!=''">
+                and ssd.status = #{status}
+            </if>
+            <if test="remark!=null and remark!=''">
+                and ssd.remark = #{remark}
+            </if>
         </where>
     </select>
 

@@ -10,6 +10,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseStaffProcessMapper;
 import com.fantechs.provider.base.service.BaseStaffProcessService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(BaseStaffProcess baseStaffProcess) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -53,6 +55,7 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(BaseStaffProcess baseStaffProcess) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -74,6 +77,7 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -92,6 +96,7 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchSave(List<BaseStaffProcess> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

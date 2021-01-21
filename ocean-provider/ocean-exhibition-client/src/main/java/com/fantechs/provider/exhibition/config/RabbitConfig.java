@@ -14,6 +14,8 @@ public class RabbitConfig {
     public static final String TOPIC_QUEUE1 = "topic.queue1";
     public static final String TOPIC_HEARTBEAT_QUEUE = "topic.heartbeat.queue";
     public static final String TOPIC_EXCHANGE = "topic.exchange";
+    public static final String TOPIC_IMAGE_QUEUE = "topic.image.queue";
+    public static final String TOPIC_WORK_QUEUE = "topic.work.queue";
 
 
     //fanout

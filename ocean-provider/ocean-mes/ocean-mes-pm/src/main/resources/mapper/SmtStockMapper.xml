@@ -33,6 +33,9 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="inkjet_paint" jdbcType="VARCHAR" property="inkjetPaint"/>
+        <result column="radium_carving" jdbcType="VARCHAR" property="radiumCarving"/>
+        <result column="photo_url" jdbcType="VARCHAR" property="photoUrl"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -45,9 +48,10 @@
             parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStock">
         select<include refid="Base_Column_List"/>
         ,wo.work_order_code,spl.pro_name,sm.material_code,sm.version,sm.material_desc,sw.warehouse_name,su.user_name as
-        createName,su.user_name, bo.organization_name
+        createName,su.user_name, bo.organization_name, so.inkjet_paint, so.radium_carving, so.photo_url
         FROM smt_stock ss
         LEFT JOIN smt_work_order wo ON ss.work_order_id = wo.work_order_id
+        LEFT JOIN smt_order so on so.order_id = wo.order_id
         LEFT JOIN smt_pro_line spl ON wo.pro_line_id = spl.pro_line_id
         LEFT JOIN smt_material sm ON wo.material_id = sm.material_id
         LEFT JOIN smt_storage_material ssm ON sm.material_id
@@ -56,6 +60,9 @@
         LEFT JOIN ocean.sys_user sus ON ss.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON ss.organization_id = bo.organization_id
         <where>
+            <if test="stockId!=null and stockId!=''">
+                and ss.stock_id = #{stockId}
+            </if>
             <if test="stockCode!=null and stockCode!=''">
                 and ss.stock_code like CONCAT('%',#{stockCode},'%')
             </if>
