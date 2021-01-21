@@ -51,21 +51,21 @@
         <where>
             1=1
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-                AND date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                AND date_format(sws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
             <if test="sectionCode!=null and sectionCode!=''">
-                and ws.section_code like CONCAT('%', #{sectionCode}, '%')
+                and sws.section_code like CONCAT('%', #{sectionCode}, '%')
             </if>
             <if test="sectionName!=null and sectionName!=''">
-                and ws.section_name like CONCAT('%', #{sectionName}, '%')
+                and sws.section_name like CONCAT('%', #{sectionName}, '%')
             </if>
             <if test="sectionDesc!=null and sectionDesc!=''">
-                and ws.section_desc like CONCAT('%', #{sectionDesc}, '%')
+                and sws.section_desc like CONCAT('%', #{sectionDesc}, '%')
             </if>
             <if test="status!=null and status!=''">
-                and ws.status=#{status}
+                and sws.status=#{status}
             </if>
         </where>
-        order by ws.create_time desc
+        order by sws.create_time desc
     </select>
 </mapper>

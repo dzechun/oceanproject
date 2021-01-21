@@ -76,6 +76,12 @@
             <if test="teamDesc != null and teamDesc!=''">
                 and bt.team_desc like CONCAT('%', #{teamDesc}, '%')
             </if>
+            <if test="factoryName != null and factoryName!=''">
+                and sf.factory_name like CONCAT('%', #{factoryName}, '%')
+            </if>
+            <if test="workShopName != null and workShopName!=''">
+                and sws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+            </if>
         </where>
         order by create_time desc
     </select>

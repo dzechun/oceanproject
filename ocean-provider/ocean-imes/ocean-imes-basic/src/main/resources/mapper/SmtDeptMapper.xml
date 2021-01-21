@@ -24,9 +24,25 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <collection property="depts" ofType="com.fantechs.common.base.entity.basic.SmtDept" select="com.fantechs.provider.imes.basic.mapper.SmtDeptMapper.findById" column="dept_id"/>
   </resultMap>
+
   <sql id="Base_Column_List">
-    sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id, sd.parent_id,sd.status, sd.create_user_id, sd.create_time,
-    sd.modified_user_id, sd.modified_time, sd.is_delete, sd.option1, sd.option2, sd.option3
+    sd.dept_id,
+	sd.dept_code,
+	sd.dept_name,
+	sd.dept_desc,
+	sd.factory_id,
+	sd.parent_id,
+	sd.`status`,
+	sd.remark,
+	sd.organization_id,
+	sd.create_user_id,
+	sd.create_time,
+	sd.modified_user_id,
+	sd.modified_time,
+	sd.is_delete,
+	sd.option1,
+	sd.option2,
+	sd.option3
   </sql>
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">

@@ -35,4 +35,16 @@ public class SearchBaseTeam extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="workShopId",value = "车间ID")
     private Long workShopId;
+
+    /**
+     * 厂别名称
+     */
+    @ApiModelProperty(name="factoryName",value = "厂别名称")
+    private String factoryName;
+
+    /**
+     * 车间名称
+     */
+    @ApiModelProperty(name="workShopName",value = "车间名称")
+    private String workShopName;
 }

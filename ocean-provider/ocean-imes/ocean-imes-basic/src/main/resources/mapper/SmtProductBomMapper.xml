@@ -15,7 +15,7 @@
         <result column="takt" jdbcType="INTEGER" property="takt"/>
         <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
-        <result column="baseQuantity" jdbcType="DECIMAL" property="baseQuantity"/>
+        <result column="base_quantity" jdbcType="DECIMAL" property="baseQuantity"/>
         <result column="position" jdbcType="VARCHAR" property="position"/>
         <result column="bom_status" jdbcType="TINYINT" property="bomStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
