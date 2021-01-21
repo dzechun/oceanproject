@@ -21,6 +21,7 @@ import com.fantechs.provider.qms.mapper.QmsBadItemMapper;
 import com.fantechs.provider.qms.service.QmsBadItemService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -44,6 +45,7 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(QmsBadItem qmsBadItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -58,16 +60,21 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         qmsBadItem.setOrganizationId(user.getOrganizationId());
         qmsBadItem.setBadItemCode(CodeUtils.getId("QBI"));
 
-        List<QmsBadItemDetDto> list = qmsBadItem.getList();
-        for (QmsBadItemDetDto qmsBadItemDetDto : list) {
-            qmsBadItemDetDto.setBadItemId(qmsBadItem.getBadItemId());
-        }
-        qmsBadItemDetMapper.insertList(list);
+        int i = qmsBadItemMapper.insertUseGeneratedKeys(qmsBadItem);
 
-        return qmsBadItemMapper.insert(qmsBadItem);
+        List<QmsBadItemDetDto> list = qmsBadItem.getList();
+        if (StringUtils.isNotEmpty(list)){
+            for (QmsBadItemDetDto qmsBadItemDetDto : list) {
+                qmsBadItemDetDto.setBadItemId(qmsBadItem.getBadItemId());
+            }
+            qmsBadItemDetMapper.insertList(list);
+        }
+
+        return i;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -84,6 +91,7 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(QmsBadItem qmsBadItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -96,8 +104,13 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         Example example = new Example(QmsBadItemDet.class);
         example.createCriteria().andEqualTo("badItemId",qmsBadItem.getBadItemId());
         qmsBadItemDetMapper.deleteByExample(example);
-
-        qmsBadItemDetMapper.insertList(qmsBadItem.getList());
+        List<QmsBadItemDetDto> list = qmsBadItem.getList();
+        if (StringUtils.isNotEmpty(list)){
+            for (QmsBadItemDetDto qmsBadItemDetDto : list) {
+                qmsBadItemDetDto.setBadItemId(qmsBadItem.getBadItemId());
+            }
+            qmsBadItemDetMapper.insertList(list);
+        }
 
         return qmsBadItemMapper.updateByPrimaryKeySelective(qmsBadItem);
     }

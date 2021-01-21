@@ -1,60 +1,55 @@
 package com.fantechs.common.base.general.dto.qms;
 
+
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.qms.QmsBadItem;
-import com.fantechs.common.base.support.ValidGroup;
+import com.fantechs.common.base.general.entity.qms.QmsPoorQuality;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
-
 
 @Data
-public class QmsBadItemDto extends QmsBadItem implements Serializable {
+public class QmsPoorQualityDto extends QmsPoorQuality implements Serializable {
 
     /**
-     * 工序编码
+     * 不良项目类型ID
      */
     @Transient
-    @ApiModelProperty(name = "processCode",value = "工序编码")
-    @Excel(name = "工序编码", height = 20, width = 30,orderNum="3")
-    private String processCode;
+    @ApiModelProperty(name = "badItemId",value = "不良项目类型ID")
+    @Excel(name = "不良项目类型ID", height = 20, width = 30,orderNum="2")
+    private Long badItemId;
 
     /**
-     * 工序名称
+     * 不良项目编码
      */
     @Transient
-    @ApiModelProperty(name = "processName",value = "工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="4")
-    private String processName;
+    @ApiModelProperty(name = "badItemCode",value = "不良项目编码")
+    @Excel(name = "不良项目编码", height = 20, width = 30,orderNum="2")
+    private String badItemCode;
 
     /**
-     * 工段ID
+     * 不良项目原因
      */
     @Transient
-    @ApiModelProperty(name = "sectionId",value = "工段ID")
-    private Long sectionId;
+    @ApiModelProperty(name = "badCause",value = "不良项目原因")
+    @Excel(name = "不良项目原因", height = 20, width = 30,orderNum="2")
+    private String badCause;
 
     /**
-     * 工段编码
+     * 不良现象名称
      */
     @Transient
-    @ApiModelProperty(name = "sectionCode",value = "工段编码")
-    @Excel(name = "工序编码", height = 20, width = 30,orderNum="5")
-    private String sectionCode;
+    @ApiModelProperty(name = "badPhenomenon",value = "不良现象名称")
+    @Excel(name = "不良现象名称", height = 20, width = 30,orderNum="2")
+    private String badPhenomenon;
 
     /**
      * 工段名称
      */
     @Transient
     @ApiModelProperty(name = "sectionName",value = "工段名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "工段名称", height = 20, width = 30,orderNum="2")
     private String sectionName;
 
 
