@@ -60,7 +60,7 @@
       <if test="productFamilyDesc != null and productFamilyDesc!=''">
         and bhpf.product_family_desc like CONCAT('%', #{productFamilyDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and bhpf.status=#{status}
       </if>
     </where>

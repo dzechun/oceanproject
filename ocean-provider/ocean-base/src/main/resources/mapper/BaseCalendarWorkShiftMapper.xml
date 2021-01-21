@@ -56,7 +56,7 @@
       <if test="day != null and day !=''">
         and bcws.`day` = #{day}
       </if>
-      <if test="status!=null and status !=''">
+      <if test="status!=null">
         and bcws.status=#{status}
       </if>
     </where>
