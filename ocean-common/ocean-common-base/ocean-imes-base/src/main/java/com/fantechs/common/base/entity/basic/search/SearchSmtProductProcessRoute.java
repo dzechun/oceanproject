@@ -59,8 +59,8 @@ public class SearchSmtProductProcessRoute extends BaseQuery implements Serializa
     private String routeName;
 
     /**
-     * 工艺路线描述
+     * 工艺路线编码
      */
-    @ApiModelProperty(name="routeDesc" ,value="工艺路线描述")
-    private String routeDesc;
+    @ApiModelProperty(name="routeCode" ,value="工艺路线编码")
+    private String routeCode;
 }

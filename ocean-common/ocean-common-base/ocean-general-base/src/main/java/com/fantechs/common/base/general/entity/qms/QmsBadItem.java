@@ -31,26 +31,25 @@ public class QmsBadItem extends ValidGroup implements Serializable {
     private Long badItemId;
 
     /**
-     * 不良项目编码
+     * 不良类型编码
      */
-    @ApiModelProperty(name="badItemCode",value = "不良项目编码")
+    @ApiModelProperty(name="badTypeCode",value = "不良类型编码")
     @Excel(name = "不良项目编码", height = 20, width = 30,orderNum="1")
-    @Column(name = "bad_item_code")
-    private String badItemCode;
+    @Column(name = "bad_type_code")
+    private String badTypeCode;
 
     /**
-     * 不良原因
+     * 不良类型原因
      */
-    @ApiModelProperty(name="badCause",value = "不良原因")
-    @Excel(name = "不良原因", height = 20, width = 30,orderNum="2")
-    @Column(name = "bad_cause")
-    private String badCause;
+    @ApiModelProperty(name="badTypeCause",value = "不良类型原因")
+    @Excel(name = "不良类型原因", height = 20, width = 30,orderNum="2")
+    @Column(name = "bad_type_cause")
+    private String badTypeCause;
 
     /**
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")
-    @Excel(name = "工序ID", height = 20, width = 30,orderNum="3")
     @Column(name = "process_id")
     private Long processId;
 
@@ -65,7 +64,6 @@ public class QmsBadItem extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
     private String remark;
 
     /**
@@ -85,7 +83,7 @@ public class QmsBadItem extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -101,7 +99,7 @@ public class QmsBadItem extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

@@ -88,11 +88,12 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
         int i = 0;
         if(StringUtils.isNotEmpty(smtStorageInventories)){
             BigDecimal quantity = storageInventory.getQuantity();
-            storageInventory = smtStorageInventories.get(0);
+            SmtStorageInventory smtStorageInventory = smtStorageInventories.get(0);
+            storageInventory.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
             //累加库存
-            quantity = BigDecimal.valueOf(storageInventory.getQuantity().intValue()+quantity.intValue());
-            storageInventory.setQuantity(quantity);
-            super.update(storageInventory);
+            quantity = BigDecimal.valueOf(smtStorageInventory.getQuantity().intValue()+quantity.intValue());
+            smtStorageInventory.setQuantity(quantity);
+            super.update(smtStorageInventory);
         } else {
             //新增库存
             storageInventory.setCreateTime(new Date());

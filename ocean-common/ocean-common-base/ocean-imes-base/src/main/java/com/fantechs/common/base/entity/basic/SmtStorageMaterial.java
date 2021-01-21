@@ -83,7 +83,7 @@ public class SmtStorageMaterial extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="version" ,value="版本")
-    @Excel(name = "版本", height = 20, width = 30)
+    @Excel(name = "物料版本", height = 20, width = 30)
     private String version;
 
     /**
@@ -122,6 +122,7 @@ public class SmtStorageMaterial extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    @Excel(name = "仓库区域名称", height = 20, width = 30)
     private String warehouseAreaName;
 
     /**

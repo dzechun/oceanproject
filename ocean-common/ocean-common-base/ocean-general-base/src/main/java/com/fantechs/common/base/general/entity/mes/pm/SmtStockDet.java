@@ -2,11 +2,14 @@ package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -17,13 +20,14 @@ import lombok.Data;
  */
 @Data
 @Table(name = "smt_stock_det")
-public class SmtStockDet implements Serializable {
+public class SmtStockDet extends ValidGroup implements Serializable {
     /**
      * 备料详情表
      */
     @ApiModelProperty(name="stockDetId",value = "备料详情表")
     @Id
     @Column(name = "stock_det_id")
+    @NotNull(groups = ValidGroup.update.class,message = "备料详情Id不能为空")
     private Long stockDetId;
 
     /**
@@ -72,9 +76,9 @@ public class SmtStockDet implements Serializable {
     private String remark;
 
     /**
-     * 状态(0、无效 1、有效)
+     * 配送状态(0、待配送 1、配送中 2、配送完成)
      */
-    @ApiModelProperty(name="status",value = "状态(0、无效 1、有效)")
+    @ApiModelProperty(name="status",value = "配送状态(0、待配送 1、配送中 2、配送完成)")
     private Byte status;
 
     /**

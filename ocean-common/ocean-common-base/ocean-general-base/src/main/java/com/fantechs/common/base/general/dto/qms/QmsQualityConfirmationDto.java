@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements Serializable {
@@ -28,6 +29,14 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @ApiModelProperty(name = "workOrderCode",value = "工单号")
     @Excel(name = "工单号", height = 20, width = 30,orderNum="2")
     private String workOrderCode;
+
+    /**
+     * 生产数量
+     */
+    @Transient
+    @ApiModelProperty(name = "productionQuantity",value = "生产数量")
+    @Excel(name = "生产数量", height = 20, width = 30,orderNum="2")
+    private BigDecimal productionQuantity;
 
     /**
      * 流程单号
@@ -142,22 +151,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     private Long sectionId;
 
     /**
-     * 不良现象编码
-     */
-    @Transient
-    @ApiModelProperty(name = "badItemCode",value = "不良现象编码")
-    @Excel(name = "不良现象编码", height = 20, width = 30,orderNum="2")
-    private String badItemCode;
-
-    /**
-     * 不良现象名称
-     */
-    @Transient
-    @ApiModelProperty(name = "badPhenomenon",value = "不良现象名称")
-    @Excel(name = "不良现象名称", height = 20, width = 30,orderNum="2")
-    private String badPhenomenon;
-
-    /**
      * 用量
      */
     @Transient
@@ -187,6 +180,9 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    @ApiModelProperty(name = "list",value = "工段不良项目集合")
+    private List<QmsBadItemDto> badList;
 
     private static final long serialVersionUID = 1L;
 }

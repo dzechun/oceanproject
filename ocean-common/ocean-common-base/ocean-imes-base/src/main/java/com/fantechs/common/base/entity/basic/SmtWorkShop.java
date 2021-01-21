@@ -110,7 +110,7 @@ public class SmtWorkShop extends ValidGroup implements Serializable{
      * 车间状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name = "status",value = "车间状态（0、不启用 1、启用）")
-    @Excel(name = "车间状状态", height = 20, width = 30 ,orderNum="5",replace = {"不启用_0", "启用_1"})
+    @Excel(name = "车间状态", height = 20, width = 30 ,orderNum="5",replace = {"不启用_0", "启用_1"})
     private Integer status;
 
     /**

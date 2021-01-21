@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -146,7 +147,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 不良现象集合
      */
     @ApiModelProperty(name="list",value = "不良现象集合")
-    private List<QmsPoorQuality> list;
+    private List<QmsPoorQualityDto> list;
 
     private static final long serialVersionUID = 1L;
 }

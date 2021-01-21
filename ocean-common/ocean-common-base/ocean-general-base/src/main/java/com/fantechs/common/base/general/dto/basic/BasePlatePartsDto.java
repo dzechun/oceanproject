@@ -18,7 +18,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialCode",value = "产品编码")
-    @Excel(name = "产品编码", height = 20, width = 30)
+    @Excel(name = "产品编码", height = 20, width = 30,orderNum = "1")
     private String materialCode;
 
     /**
@@ -26,7 +26,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialName",value = "产品名称")
-    @Excel(name = "产品名称", height = 20, width = 30)
+    @Excel(name = "产品名称", height = 20, width = 30,orderNum = "2")
     private String materialName;
 
     /**
@@ -34,7 +34,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialDesc",value = "产品描述")
-    @Excel(name = "产品名称", height = 20, width = 30)
+    @Excel(name = "产品名称", height = 20, width = 30,orderNum = "3")
     private String materialDesc;
 
     /**
@@ -42,7 +42,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="productModelName",value = "型号名称")
-    @Excel(name = "型号名称", height = 20, width = 30)
+    @Excel(name = "型号名称", height = 20, width = 30,orderNum = "4")
     private String productModelName;
 
     /**
@@ -50,7 +50,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="color",value = "颜色")
-    @Excel(name = "颜色", height = 20, width = 30)
+    @Excel(name = "颜色", height = 20, width = 30,orderNum = "5")
     private String color;
 
     /**
@@ -58,7 +58,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="packageSpecificationCode",value = "规格编码")
-    @Excel(name = "规格编码", height = 20, width = 30)
+    @Excel(name = "规格编码", height = 20, width = 30,orderNum = "6")
     private String packageSpecificationCode;
 
     /**
@@ -66,7 +66,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="packageSpecificationName",value = "规格名称")
-    @Excel(name = "规格名称", height = 20, width = 30)
+    @Excel(name = "规格名称", height = 20, width = 30,orderNum = "7")
     private String packageSpecificationName;
 
     /**
@@ -74,7 +74,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialQuality",value = "材质")
-    @Excel(name = "材质", height = 20, width = 30)
+    @Excel(name = "材质", height = 20, width = 30,orderNum = "8")
     private String materialQuality;
 
     /**
@@ -82,7 +82,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30)
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum = "12")
     private String createUserName;
 
     /**
@@ -90,7 +90,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30)
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum = "14")
     private String modifiedUserName;
 
     /**
@@ -98,6 +98,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum = "10")
     private String organizationName;
 
     private static final long serialVersionUID = 1L;

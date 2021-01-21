@@ -15,6 +15,6 @@ public class SearchWmsInFinishedProductDet extends BaseQuery implements Serializ
      * 成品入库单ID
      */
     @ApiModelProperty(name="finishedProductId",value = "成品入库单ID")
-    private String finishedProductId;
+    private Long finishedProductId;
 
 }

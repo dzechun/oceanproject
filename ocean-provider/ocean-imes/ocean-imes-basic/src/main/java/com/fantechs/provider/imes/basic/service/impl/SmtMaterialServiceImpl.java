@@ -49,7 +49,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     @Override
     public List<SmtMaterialDto> findList(Map<String, Object> map) {
         List<SmtMaterialDto> smtMaterialDtos = smtMaterialMapper.findList(map);
-        if (StringUtils.isNotEmpty()) {
+        if (StringUtils.isNotEmpty(smtMaterialDtos)) {
             for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
                 SearchBaseTab searchBaseTab = new SearchBaseTab();
                 searchBaseTab.setMaterialId(smtMaterialDto.getMaterialId());

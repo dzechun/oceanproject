@@ -1,11 +1,13 @@
 package com.fantechs.common.base.entity.basic.history;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "smt_ht_process_category")
+@Data
 public class SmtHtProcessCategory {
     /**
      * 工序类别历史ID

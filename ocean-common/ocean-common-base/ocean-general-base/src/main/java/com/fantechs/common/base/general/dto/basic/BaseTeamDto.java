@@ -5,7 +5,9 @@ import com.fantechs.common.base.general.entity.basic.BaseTeam;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -55,4 +57,32 @@ public class BaseTeamDto extends BaseTeam implements Serializable {
     @ApiModelProperty(name = "workShopDesc",value = "车间描述")
     @Excel(name = "车间描述", height = 20, width = 30)
     private String workShopDesc;
+
+    /**
+     * 工厂ID
+     */
+    @Excel(name = "工厂ID",  height = 20, width = 30)
+    @ApiModelProperty(name="factoryId" ,value="厂别编码")
+    private Long factoryId;
+
+    /**
+     * 工厂编码
+     */
+    @Excel(name = "工厂编码",  height = 20, width = 30)
+    @ApiModelProperty(name="factoryCode" ,value="厂别编码")
+    private String factoryCode;
+
+    /**
+     * 工厂名称
+     */
+    @Excel(name = "工厂名称", height = 20, width = 30)
+    @ApiModelProperty(name="factoryName" ,value="厂别名称")
+    private String factoryName;
+
+    /**
+     * 工厂描述
+     */
+    @Excel(name = "工厂描述", height = 20, width = 30)
+    @ApiModelProperty(name="factoryDesc" ,value="厂别描述")
+    private String factoryDesc;
 }

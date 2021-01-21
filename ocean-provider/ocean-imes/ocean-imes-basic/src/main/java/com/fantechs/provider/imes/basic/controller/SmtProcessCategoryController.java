@@ -92,7 +92,7 @@ public class SmtProcessCategoryController {
     List<SmtProcessCategoryDto> list = smtProcessCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtProcessCategory));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtProcessCategory信息", SmtProcessCategoryDto.class, "SmtProcessCategory.xls", response);
+        EasyPoiUtils.exportExcel(list, "工序类别信息", "SmtProcessCategory信息", SmtProcessCategoryDto.class, "SmtProcessCategory.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

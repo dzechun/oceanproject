@@ -16,6 +16,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtProductionMaterialMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutProductionMaterialMapper;
 import com.fantechs.provider.wms.out.service.WmsOutProductionMaterialService;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,8 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
     private WmsOutProductionMaterialMapper wmsOutProductionMaterialMapper;
     @Resource
     private WmsOutHtProductionMaterialMapper wmsOutHtProductionMaterialMapper;
+    @Resource
+    private StorageInventoryFeignApi storageInventoryFeignApi;
 
     @Override
     public List<WmsOutProductionMaterialDto> findList(Map<String, Object> map) {
@@ -58,6 +62,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //库存数据
         SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
         smtStorageInventory.setQuantity(wmsOutProductionMaterial.getRealityQty());
         smtStorageInventory.setStorageId(wmsOutProductionMaterial.getStorageId());
@@ -65,7 +70,12 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
         SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
         smtStorageInventoryDet.setMaterialQuantity(wmsOutProductionMaterial.getRealityQty());
-//        smtStorageInventoryDet.setGodownEntry();
+        smtStorageInventoryDet.setGodownEntry(wmsOutProductionMaterial.getFinishedProductCode());
+        List<SmtStorageInventoryDet> smtStorageInventoryDets = new ArrayList<>();
+        smtStorageInventoryDets.add(smtStorageInventoryDet);
+        smtStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
+        //扣库存
+        storageInventoryFeignApi.out(smtStorageInventory);
 
         wmsOutProductionMaterial.setProductionMaterialCode(CodeUtils.getId("FL"));
         wmsOutProductionMaterial.setOrganizationId(user.getOrganizationId());

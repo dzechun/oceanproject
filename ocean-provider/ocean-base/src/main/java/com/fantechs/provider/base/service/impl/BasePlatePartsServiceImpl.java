@@ -65,10 +65,12 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         baseHtPlatePartsMapper.insert(baseHtPlateParts);
 
         List<BasePlatePartsDetDto> list = basePlateParts.getList();
-        for (BasePlatePartsDet basePlatePartsDet : list) {
-            basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+        if (StringUtils.isNotEmpty(list)){
+            for (BasePlatePartsDet basePlatePartsDet : list) {
+                basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+            }
+            basePlatePartsDetMapper.insertList(list);
         }
-        basePlatePartsDetMapper.insertList(list);
 
         return i;
     }
@@ -91,8 +93,9 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         basePlatePartsDetMapper.deleteByExample(example);
 
         System.out.println("数据："+basePlateParts.getList());
-        basePlatePartsDetMapper.insertList(basePlateParts.getList());
-
+        if (StringUtils.isNotEmpty(basePlateParts.getList())){
+            basePlatePartsDetMapper.insertList(basePlateParts.getList());
+        }
         return basePlatePartsMapper.updateByPrimaryKeySelective(basePlateParts);
     }
 

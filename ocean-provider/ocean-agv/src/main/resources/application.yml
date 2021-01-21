@@ -1,0 +1,14 @@
+server:
+  port: 8701
+  maxHttpHeaderSize: 10000000
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: @pom.artifactId@
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+rcsUrl: http://10.182.163.201:8182/cms/services/rest/hikRpcService

@@ -23,7 +23,7 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "processCode",value = "工序编码")
-    @Excel(name = "工序编码", height = 20, width = 30,orderNum="13")
+    @Excel(name = "工序编码", height = 20, width = 30,orderNum="3")
     private String processCode;
 
     /**
@@ -31,16 +31,22 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "processName",value = "工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "工序名称", height = 20, width = 30,orderNum="4")
     private String processName;
 
+    /**
+     * 工段ID
+     */
+    @Transient
+    @ApiModelProperty(name = "sectionId",value = "工段ID")
+    private Long sectionId;
 
     /**
      * 工段编码
      */
     @Transient
     @ApiModelProperty(name = "sectionCode",value = "工段编码")
-    @Excel(name = "工序编码", height = 20, width = 30,orderNum="13")
+    @Excel(name = "工序编码", height = 20, width = 30,orderNum="5")
     private String sectionCode;
 
     /**
@@ -48,7 +54,7 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "sectionName",value = "工段名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "工序名称", height = 20, width = 30,orderNum="6")
     private String sectionName;
 
 
@@ -57,7 +63,7 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -65,7 +71,7 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="15")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
     /**

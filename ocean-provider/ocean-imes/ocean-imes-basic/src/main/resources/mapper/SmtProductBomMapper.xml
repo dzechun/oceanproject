@@ -29,10 +29,10 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
-<!--        <collection property="smtProductBomDets"
-                    ofType="com.fantechs.common.base.entity.basic.SmtProductBomDet"
-                    select="com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper.findFirstLevelProductBomDet"
-                    column="product_bom_id"/>-->
+        <!--        <collection property="smtProductBomDets"
+                            ofType="com.fantechs.common.base.entity.basic.SmtProductBomDet"
+                            select="com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper.findFirstLevelProductBomDet"
+                            column="product_bom_id"/>-->
     </resultMap>
 
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtProductBomDto" extends="BaseResultMap">
@@ -55,7 +55,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    spb.product_bom_id,
+        spb.product_bom_id,
 	spb.product_bom_code,
 	spb.material_id,
 	spb.pro_line_id,
@@ -90,6 +90,7 @@
         sms.material_code AS sub_material_code,sms.material_name AS sub_material_name,sms.version AS sub_version,
         sms.material_desc AS sub_material_desc,
         sp.process_code, sp.process_name, sp.process_desc,
+        spl.pro_code,spl.pro_name,spl.pro_desc,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
         from fantech_imes.smt_product_bom spb
@@ -112,7 +113,7 @@
                 and spb.material_id=#{materialId}
             </if>
             <if test="isBomDet!=null and isBomDet!='' and materialId!=null and materialId!=''">
-                and   spb.parent_bom_id IN  (SELECT product_bom_id FROM smt_product_bom
+                and spb.parent_bom_id IN (SELECT product_bom_id FROM smt_product_bom
                 WHERE material_id =#{materialId})
             </if>
             <if test="materialCode!=null and materialCode!=''">

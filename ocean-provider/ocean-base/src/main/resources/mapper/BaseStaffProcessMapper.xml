@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseStaffProcessMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseStaffProcess">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="staff_process_id" jdbcType="BIGINT" property="staffProcessId" />
+    <result column="staff_id" jdbcType="BIGINT" property="staffId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="effective_start_time" jdbcType="TIMESTAMP" property="effectiveStartTime" />
+    <result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bsp.staff_process_id,
+	bsp.staff_id,
+	bsp.process_id,
+	bsp.effective_start_time,
+	bsp.effective_end_time,
+	bsp.`status`,
+	bsp.remark,
+	bsp.organization_id,
+	bsp.create_user_id,
+	bsp.create_time,
+	bsp.modified_user_id,
+	bsp.modified_time,
+	bsp.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.base_staff_process bsp
+    <where>
+      <if test="processId != null and processId != ''">
+        and bsp.process_id = #{processId}
+      </if>
+      <if test="staffId != null and staffId != ''">
+        and bsp.staff_id = #{staffId}
+      </if>
+    </where>
+  </select>
+
+    <select id="findByStaffId" parameterType="long" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from fantech_imes.base_staff_process bsp where bsp.staff_id = #{staffId}
+
+    </select>
+</mapper>

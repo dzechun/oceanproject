@@ -327,7 +327,7 @@ public class BaseTab extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialType",value = "物料类别")
     @Excel(name = "物料类别", height = 20, width = 30,orderNum="") 
     @Column(name = "material_type")
-    private String materialType;
+    private Byte materialType;
 
     /**
      * 采购批量

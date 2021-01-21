@@ -10,6 +10,8 @@ import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
+import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
+import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
@@ -30,11 +32,13 @@ import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
+import com.fantechs.provider.qms.mapper.QmsBadItemMapper;
 import com.fantechs.provider.qms.mapper.QmsPoorQualityMapper;
 import com.fantechs.provider.qms.mapper.QmsQualityConfirmationMapper;
 import com.fantechs.provider.qms.service.QmsQualityConfirmationService;
 import org.assertj.core.internal.BigDecimals;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -53,6 +57,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     @Resource
     private QmsPoorQualityMapper qmsPoorQualityMapper;
     @Resource
+    private QmsBadItemMapper qmsBadItemMapper;
+    @Resource
     private PMFeignApi pmFeignApi;
     @Resource
     private BasicFeignApi basicFeignApi;
@@ -63,7 +69,14 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
     @Override
     public List<QmsQualityConfirmationDto> findList(Map<String, Object> map) {
-        return qmsQualityConfirmationMapper.findList(map);
+        List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
+        /*Map<String,Object> search = new HashMap();
+        for (QmsQualityConfirmationDto qmsQualityConfirmationDto : list) {
+            search.put("section",qmsQualityConfirmationDto.getSectionId());
+            List<QmsBadItemDto> badList = qmsBadItemMapper.findList(search);
+            qmsQualityConfirmationDto.getBadList().addAll(badList);
+        }*/
+        return list;
     }
 
     @Override
@@ -76,10 +89,24 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<List<SmtWorkOrderCardPoolDto>> workOrderCardPoolResponse =
                 pmFeignApi.findSmtWorkOrderCardPoolList(searchSmtWorkOrderCardPool);
         List<SmtWorkOrderCardPoolDto> poolList = workOrderCardPoolResponse.getData();
+
         if (StringUtils.isEmpty(poolList) || poolList.size() ==0){
             throw new BizErrorException("流程单号不正确");
         }
+        //当前流程单的对象
         SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = poolList.get(0);
+
+        //获取工艺路线
+        ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId());
+        List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
+        Map<String,Object> search = new HashMap();
+        for (SmtRouteProcess routeProcess : routeProcesses) {
+            search.put("section",routeProcess.getSectionId());
+            List<QmsBadItemDto> list = qmsBadItemMapper.findList(search);
+            qmsQualityConfirmationDto.getBadList().addAll(list);
+        }
+
+        //当前流程单的父级对象
         ResponseEntity<SmtWorkOrderCardPool> workOrderCardPoolDetail = pmFeignApi.findSmtWorkOrderCardPoolDetail(smtWorkOrderCardPoolDto.getParentId());
         SmtWorkOrderCardPool parentWorkOrderCardPool = workOrderCardPoolDetail.getData();
 
@@ -107,21 +134,26 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //获取物料信息
         ResponseEntity<SmtWorkOrder> workOrderResponse = pmFeignApi.workOrderDetail(parentWorkOrderCardPool.getWorkOrderId());
         SmtWorkOrder smtWorkOrder = workOrderResponse.getData();
-        ResponseEntity<SmtMaterial> materialResponse = basicFeignApi.materialDetail(smtWorkOrder.getMaterialId());
-        SmtMaterial material = materialResponse.getData();
-        if (StringUtils.isEmpty(material)){
+
+        SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
+        searchSmtMaterial.setMaterialId(smtWorkOrder.getMaterialId());
+        ResponseEntity<List<SmtMaterial>> materialResponse = basicFeignApi.findSmtMaterialList(searchSmtMaterial);
+        if (StringUtils.isEmpty(materialResponse.getData())){
             throw new BizErrorException("物料不存在");
         }
+        SmtMaterial material = materialResponse.getData().get(0);
         BaseTab baseTab = material.getBaseTab();
+
         ResponseEntity<SmtProductModel> productModelResponse = basicFeignApi.productModelDetail(baseTab.getProductModelId());
         SmtProductModel productModel = productModelResponse.getData();
 
+        qmsQualityConfirmationDto.setProductionQuantity(smtWorkOrder.getWorkOrderQuantity());
         qmsQualityConfirmationDto.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
         qmsQualityConfirmationDto.setWorkOrderCode(smtWorkOrderCardPoolDto.getWorkOrderCode());
         qmsQualityConfirmationDto.setMaterialDesc(material.getMaterialDesc());
         qmsQualityConfirmationDto.setMaterialCode(material.getMaterialCode());
         qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
-        qmsQualityConfirmationDto.setProductModelName(productModel.getProductModelName());
+        qmsQualityConfirmationDto.setProductModelName(productModel == null ?"":productModel.getProductModelName());
         qmsQualityConfirmationDto.setUnit(baseTab.getMainUnit());
         qmsQualityConfirmationDto.setProcessName(smtProcess.getProcessName());
         qmsQualityConfirmationDto.setProcessId(smtProcess.getProcessId());
@@ -134,29 +166,41 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(QmsQualityConfirmationDto qmsQualityConfirmation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        int i = 0;
+        if (StringUtils.isEmpty(qmsQualityConfirmation.getQualityConfirmationId())){
+            qmsQualityConfirmation.setCreateTime(new Date());
+            qmsQualityConfirmation.setCreateUserId(user.getUserId());
+            qmsQualityConfirmation.setModifiedTime(new Date());
+            qmsQualityConfirmation.setModifiedUserId(user.getUserId());
+            qmsQualityConfirmation.setStatus(StringUtils.isEmpty(qmsQualityConfirmation.getStatus())?1:qmsQualityConfirmation.getStatus());
+            qmsQualityConfirmation.setOrganizationId(user.getOrganizationId());
+            qmsQualityConfirmation.setQualityConfirmationCode(CodeUtils.getId("PZQR"));
 
-        qmsQualityConfirmation.setCreateTime(new Date());
-        qmsQualityConfirmation.setCreateUserId(user.getUserId());
-        qmsQualityConfirmation.setModifiedTime(new Date());
-        qmsQualityConfirmation.setModifiedUserId(user.getUserId());
-        qmsQualityConfirmation.setStatus(StringUtils.isEmpty(qmsQualityConfirmation.getStatus())?1:qmsQualityConfirmation.getStatus());
-        qmsQualityConfirmation.setOrganizationId(user.getOrganizationId());
-        qmsQualityConfirmation.setQualityConfirmationCode(CodeUtils.getId("PZQR"));
+            i = qmsQualityConfirmationMapper.insertUseGeneratedKeys(qmsQualityConfirmation);
+        }else{
+            qmsQualityConfirmation.setModifiedTime(new Date());
+            qmsQualityConfirmation.setModifiedUserId(user.getUserId());
 
-        int i = qmsQualityConfirmationMapper.insertUseGeneratedKeys(qmsQualityConfirmation);
+            Example example = new Example(QmsPoorQuality.class);
+            example.createCriteria().andEqualTo("qualityId",qmsQualityConfirmation.getQualityConfirmationId());
+            qmsPoorQualityMapper.deleteByExample(example);
 
-        List<QmsPoorQuality> list = qmsQualityConfirmation.getList();
-        for (QmsPoorQuality qmsPoorQuality : list) {
+            qmsQualityConfirmationMapper.updateByPrimaryKeySelective(qmsQualityConfirmation);
+        }
+
+
+        List<QmsPoorQualityDto> list = qmsQualityConfirmation.getList();
+        for (QmsPoorQualityDto qmsPoorQuality : list) {
             qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
         }
         qmsPoorQualityMapper.insertList(list);
-
-        if (qmsQualityConfirmation.getQualityType().equals(1)){
+        if (qmsQualityConfirmation.getQualityType().equals(1) && !qmsQualityConfirmation.getAffirmStatus().equals(2)){
             return i;
         }
 
@@ -168,7 +212,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("未找到该物料的储位");
         }
 
-        //完工入库
+        //半成品完工入库
         WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();
         wmsInFinishedProduct.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
         wmsInFinishedProduct.setOperatorUserId(user.getUserId());
@@ -176,9 +220,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         wmsInFinishedProduct.setInType(Byte.parseByte("1"));
         wmsInFinishedProduct.setProjectType("dp");
         wmsInFinishedProduct.setInStatus(Byte.parseByte("2"));
+        //半成品完工入库明细
         List<WmsInFinishedProductDet> wmsInFinishedProductDetList = new ArrayList<>();
         WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();
-
         wmsInFinishedProductDet.setMaterialId(qmsQualityConfirmation.getMaterialId());
         wmsInFinishedProductDet.setStorageId(data.get(0).getStorageId());
         wmsInFinishedProductDet.setPlanInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
@@ -189,10 +233,14 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         wmsInFinishedProductDetList.add(wmsInFinishedProductDet);
         wmsInFinishedProduct.setWmsInFinishedProductDetList(wmsInFinishedProductDetList);
-        inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
+
+        ResponseEntity<WmsInFinishedProduct> wmsInFinishedProductResponse = inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
+        WmsInFinishedProduct inFinishedProduct = wmsInFinishedProductResponse.getData();
+
 
         //生成领料计划
         WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
+        wmsOutProductionMaterial.setFinishedProductCode(inFinishedProduct.getFinishedProductCode());
         wmsOutProductionMaterial.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
         wmsOutProductionMaterial.setMaterialId(qmsQualityConfirmation.getMaterialId());
         wmsOutProductionMaterial.setPlanQty(qmsQualityConfirmation.getQualifiedQuantity());
@@ -206,6 +254,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(QmsQualityConfirmation qmsQualityConfirmation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -222,6 +271,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

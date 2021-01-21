@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Table(name = "smt_route_process")
 @Data
@@ -131,7 +133,6 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="qualificationId" ,value="资质ID")
     private Long qualificationId;
 
-
     /**
      * 组织id
      */
@@ -152,5 +153,19 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="organizationName",value = "组织名称")
     @Transient
     private String organizationName;
+
+    /**
+     * 创建时间
+     */
+    @Transient
+    @ApiModelProperty(name="createTime" ,value="创建时间")
+    private Date readinessTime;
+
+    /**
+     * 创建时间
+     */
+    @Transient
+    @ApiModelProperty(name="createTime" ,value="创建时间")
+    private Date standardTime;
 
 }

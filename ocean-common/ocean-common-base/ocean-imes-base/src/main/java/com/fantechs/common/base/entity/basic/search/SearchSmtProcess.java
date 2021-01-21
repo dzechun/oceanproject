@@ -40,4 +40,16 @@ public class SearchSmtProcess extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "processCategoryId",value = "工序类别id")
     private Long processCategoryId;
+
+    /**
+     * 员工ID
+     */
+    @ApiModelProperty(name = "staffId",value = "员工ID")
+    private Long staffId;
+
+    /**
+     * 查询类型
+     */
+    @ApiModelProperty(name = "searchType",value = "查询类型")
+    private Integer searchType;
 }

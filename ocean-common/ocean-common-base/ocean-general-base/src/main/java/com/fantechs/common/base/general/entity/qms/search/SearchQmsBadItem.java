@@ -16,17 +16,16 @@ public class SearchQmsBadItem extends BaseQuery implements Serializable {
     private Long badItemId;
 
     /**
-     * 不良项目编码
+     * 不良类型编码
      */
-    @ApiModelProperty(name="badItemCode",value = "不良项目编码")
-    private String badItemCode;
+    @ApiModelProperty(name="badTypeCode",value = "不良类型编码")
+    private String badTypeCode;
 
     /**
-     * 不良原因
+     * 不良类型原因
      */
-    @ApiModelProperty(name="badCause",value = "不良原因")
-    private String badCause;
-
+    @ApiModelProperty(name="badTypeCause",value = "不良类型原因")
+    private String badTypeCause;
 
     /**
      * 工序ID
