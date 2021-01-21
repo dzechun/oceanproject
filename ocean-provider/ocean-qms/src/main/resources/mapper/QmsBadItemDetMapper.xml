@@ -7,7 +7,8 @@
     -->
     <id column="bad_item_det_id" jdbcType="BIGINT" property="badItemDetId" />
     <result column="bad_item_id" jdbcType="BIGINT" property="badItemId" />
-    <result column="bad_phenomenon" jdbcType="LONGVARCHAR" property="badPhenomenon" />
+    <result column="bad_phenomenon_code" jdbcType="VARCHAR" property="badPhenomenonCode" />
+    <result column="bad_phenomenon" jdbcType="VARCHAR" property="badPhenomenon" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -24,7 +25,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    qbid.bad_item_det_id,qbid.bad_item_id,qbid.bad_phenomenon,qbid.status,qbid.create_user_id,
+    qbid.bad_item_det_id,qbid.bad_item_id,qbid.bad_phenomenon_code,qbid.bad_phenomenon,qbid.status,qbid.create_user_id,
     bo.organization_name,qbid.create_time,qbid.modified_user_id,qbid.modified_time,qbid.is_delete,
     qbid.organization_id,qbid.remark
   </sql>
@@ -39,8 +40,11 @@
       <if test="badItemId != null and badItemId != ''">
         and qbid.bad_item_id = #{badItemId}
       </if>
+      <if test="badPhenomenonCode != null and badPhenomenonCode != ''">
+        and qbi.bad_phenomenon_code like CONCAT('%', #{badPhenomenonCode}, '%')
+      </if>
       <if test="badPhenomenon != null and badPhenomenon != ''">
-        and qbid.bad_phenomenon like CONCAT('%', #{badPhenomenon}, '%')
+        and qbi.bad_phenomenon  like CONCAT('%', #{badPhenomenon}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qbid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

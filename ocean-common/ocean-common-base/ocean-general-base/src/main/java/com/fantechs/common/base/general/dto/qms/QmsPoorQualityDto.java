@@ -21,20 +21,20 @@ public class QmsPoorQualityDto extends QmsPoorQuality implements Serializable {
     private Long badItemId;
 
     /**
-     * 不良项目编码
+     * 不良类型编码
      */
     @Transient
-    @ApiModelProperty(name = "badItemCode",value = "不良项目编码")
-    @Excel(name = "不良项目编码", height = 20, width = 30,orderNum="2")
-    private String badItemCode;
+    @ApiModelProperty(name = "badTypeCode",value = "不良类型编码")
+    @Excel(name = "不良类型编码", height = 20, width = 30,orderNum="2")
+    private String badTypeCode;
 
     /**
-     * 不良项目原因
+     * 不良类型原因
      */
     @Transient
-    @ApiModelProperty(name = "badCause",value = "不良项目原因")
-    @Excel(name = "不良项目原因", height = 20, width = 30,orderNum="2")
-    private String badCause;
+    @ApiModelProperty(name = "badTypeCause",value = "不良类型原因")
+    @Excel(name = "不良类型原因", height = 20, width = 30,orderNum="2")
+    private String badTypeCause;
 
     /**
      * 不良现象名称

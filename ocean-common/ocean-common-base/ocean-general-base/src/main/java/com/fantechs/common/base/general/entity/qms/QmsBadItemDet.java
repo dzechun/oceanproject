@@ -38,6 +38,22 @@ public class QmsBadItemDet extends ValidGroup implements Serializable {
     private Long badItemId;
 
     /**
+     * 不良现象编码
+     */
+    @ApiModelProperty(name="badPhenomenonCode",value = "不良现象编码")
+    @Excel(name = "不良现象编码", height = 20, width = 30,orderNum="")
+    @Column(name = "bad_phenomenon")
+    private String badPhenomenonCode;
+
+    /**
+     * 不良现象
+     */
+    @ApiModelProperty(name="badPhenomenon",value = "不良现象")
+    @Excel(name = "不良现象", height = 20, width = 30,orderNum="")
+    @Column(name = "bad_phenomenon")
+    private String badPhenomenon;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
@@ -100,14 +116,6 @@ public class QmsBadItemDet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
-
-    /**
-     * 不良现象
-     */
-    @ApiModelProperty(name="badPhenomenon",value = "不良现象")
-    @Excel(name = "不良现象", height = 20, width = 30,orderNum="")
-    @Column(name = "bad_phenomenon")
-    private String badPhenomenon;
 
     private static final long serialVersionUID = 1L;
 }

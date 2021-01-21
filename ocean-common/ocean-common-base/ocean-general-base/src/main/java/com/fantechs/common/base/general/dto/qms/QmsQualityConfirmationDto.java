@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements Serializable {
@@ -179,6 +180,9 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    @ApiModelProperty(name = "list",value = "工段不良项目集合")
+    private List<QmsBadItemDto> badList;
 
     private static final long serialVersionUID = 1L;
 }

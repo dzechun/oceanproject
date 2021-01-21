@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
+import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
@@ -31,6 +32,7 @@ import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
+import com.fantechs.provider.qms.mapper.QmsBadItemMapper;
 import com.fantechs.provider.qms.mapper.QmsPoorQualityMapper;
 import com.fantechs.provider.qms.mapper.QmsQualityConfirmationMapper;
 import com.fantechs.provider.qms.service.QmsQualityConfirmationService;
@@ -55,6 +57,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     @Resource
     private QmsPoorQualityMapper qmsPoorQualityMapper;
     @Resource
+    private QmsBadItemMapper qmsBadItemMapper;
+    @Resource
     private PMFeignApi pmFeignApi;
     @Resource
     private BasicFeignApi basicFeignApi;
@@ -65,7 +69,14 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
     @Override
     public List<QmsQualityConfirmationDto> findList(Map<String, Object> map) {
-        return qmsQualityConfirmationMapper.findList(map);
+        List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
+        /*Map<String,Object> search = new HashMap();
+        for (QmsQualityConfirmationDto qmsQualityConfirmationDto : list) {
+            search.put("section",qmsQualityConfirmationDto.getSectionId());
+            List<QmsBadItemDto> badList = qmsBadItemMapper.findList(search);
+            qmsQualityConfirmationDto.getBadList().addAll(badList);
+        }*/
+        return list;
     }
 
     @Override
@@ -78,16 +89,25 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<List<SmtWorkOrderCardPoolDto>> workOrderCardPoolResponse =
                 pmFeignApi.findSmtWorkOrderCardPoolList(searchSmtWorkOrderCardPool);
         List<SmtWorkOrderCardPoolDto> poolList = workOrderCardPoolResponse.getData();
-        System.out.println(poolList.get(0));
 
         if (StringUtils.isEmpty(poolList) || poolList.size() ==0){
             throw new BizErrorException("流程单号不正确");
         }
         //当前流程单的对象
         SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = poolList.get(0);
-        ResponseEntity<SmtWorkOrderCardPool> workOrderCardPoolDetail = pmFeignApi.findSmtWorkOrderCardPoolDetail(smtWorkOrderCardPoolDto.getParentId());
+
+        //获取工艺路线
+        ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId());
+        List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
+        Map<String,Object> search = new HashMap();
+        for (SmtRouteProcess routeProcess : routeProcesses) {
+            search.put("section",routeProcess.getSectionId());
+            List<QmsBadItemDto> list = qmsBadItemMapper.findList(search);
+            qmsQualityConfirmationDto.getBadList().addAll(list);
+        }
 
         //当前流程单的父级对象
+        ResponseEntity<SmtWorkOrderCardPool> workOrderCardPoolDetail = pmFeignApi.findSmtWorkOrderCardPoolDetail(smtWorkOrderCardPoolDto.getParentId());
         SmtWorkOrderCardPool parentWorkOrderCardPool = workOrderCardPoolDetail.getData();
 
 
@@ -123,6 +143,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
         SmtMaterial material = materialResponse.getData().get(0);
         BaseTab baseTab = material.getBaseTab();
+
         ResponseEntity<SmtProductModel> productModelResponse = basicFeignApi.productModelDetail(baseTab.getProductModelId());
         SmtProductModel productModel = productModelResponse.getData();
 
@@ -132,7 +153,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         qmsQualityConfirmationDto.setMaterialDesc(material.getMaterialDesc());
         qmsQualityConfirmationDto.setMaterialCode(material.getMaterialCode());
         qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
-        qmsQualityConfirmationDto.setProductModelName(productModel.getProductModelName());
+        qmsQualityConfirmationDto.setProductModelName(productModel == null ?"":productModel.getProductModelName());
         qmsQualityConfirmationDto.setUnit(baseTab.getMainUnit());
         qmsQualityConfirmationDto.setProcessName(smtProcess.getProcessName());
         qmsQualityConfirmationDto.setProcessId(smtProcess.getProcessId());
