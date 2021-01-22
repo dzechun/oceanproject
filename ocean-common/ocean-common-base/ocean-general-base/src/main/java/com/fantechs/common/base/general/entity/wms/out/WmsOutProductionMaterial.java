@@ -160,6 +160,7 @@ public class WmsOutProductionMaterial extends ValidGroup implements Serializable
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    @Transient
     @ApiModelProperty(name="finishedProductCode",value = "完工入库单号")
     private String finishedProductCode;
 

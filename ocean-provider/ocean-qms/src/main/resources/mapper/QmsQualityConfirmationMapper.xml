@@ -30,11 +30,13 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
+    <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
+    <result column="material_id" jdbcType="BIGINT" property="materialId"/>
     <result column="process_id" jdbcType="BIGINT" property="processId"/>
     <result column="route_id" jdbcType="BIGINT" property="routeId"/>
     <result column="parts_information_id" jdbcType="BIGINT" property="partsInformationId"/>
-    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
-    <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
@@ -43,7 +45,6 @@
     <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
     <result column="person_name" jdbcType="VARCHAR" property="personName"/>
     <result column="dosage" jdbcType="DECIMAL" property="dosage"/>
-    <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
     <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
@@ -64,9 +65,9 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
-    sm.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
+    sswo.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
     sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,sswo.route_id,splp.process_id,splp.output_quantity AS quantity,
-    swo.material_id AS parts_information_name
+    swo.material_id AS parts_information_id
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id

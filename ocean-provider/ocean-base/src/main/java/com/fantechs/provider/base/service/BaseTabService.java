@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.service;
 
 
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.support.IService;
 
@@ -13,5 +14,5 @@ import java.util.Map;
 
 public interface BaseTabService extends IService<BaseTab> {
 
-    List<BaseTab> findList(Map<String, Object> map);
+    List<BaseTabDto> findList(Map<String, Object> map);
 }

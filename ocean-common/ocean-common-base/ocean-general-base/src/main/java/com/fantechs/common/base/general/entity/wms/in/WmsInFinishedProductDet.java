@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -172,8 +173,14 @@ public class WmsInFinishedProductDet extends ValidGroup implements Serializable 
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    @Transient
     @ApiModelProperty(name="count",value = "本次扫描数量")
     private BigDecimal count;
+
+    @Transient
+    @ApiModelProperty(name="barCodeContentList",value = "条码内容集合")
+    private List<String> barCodeContentList;
+
 
     private static final long serialVersionUID = 1L;
 }

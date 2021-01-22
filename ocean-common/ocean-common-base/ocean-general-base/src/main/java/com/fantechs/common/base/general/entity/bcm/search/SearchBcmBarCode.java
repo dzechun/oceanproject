@@ -5,6 +5,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -45,4 +46,16 @@ public class SearchBcmBarCode extends BaseQuery implements Serializable {
     @Transient
     @ApiModelProperty(name="savePath" ,value="模版路径")
     private String savePath;
+
+    /**
+     * 工单id
+     */
+    @ApiModelProperty(name="workOrderId",value = "工单id")
+    private Long workOrderId;
+
+    /**
+     * 条码内容
+     */
+    @ApiModelProperty(name="条码内容",value = "备注")
+    private String barCodeContent;
 }
