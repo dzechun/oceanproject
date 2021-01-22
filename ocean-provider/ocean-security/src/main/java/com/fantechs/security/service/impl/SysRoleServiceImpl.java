@@ -150,6 +150,9 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
             sysUserRole.setRoleId(roleId);
             list.add(sysUserRole);
         }
-        return sysUserRoleMapper.insertList(list);
+        if (StringUtils.isNotEmpty(list)){
+            return sysUserRoleMapper.insertList(list);
+        }
+        return 1;
     }
 }
