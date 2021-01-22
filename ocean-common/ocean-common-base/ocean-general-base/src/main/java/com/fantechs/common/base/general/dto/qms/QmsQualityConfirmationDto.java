@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -61,6 +62,22 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     @ApiModelProperty(name = "proLineId",value = "线别Id")
     @Excel(name = "线别Id", height = 20, width = 30,orderNum="2")
     private Long proLineId;
+
+    /**
+     * 工艺路线ID
+     */
+    @Transient
+    @ApiModelProperty(name = "routeId",value = "工艺路线ID")
+    @Excel(name = "工艺路线ID", height = 20, width = 30,orderNum="2")
+    private Long routeId;
+
+    /**
+     * 生产部件Id
+     */
+    @Transient
+    @ApiModelProperty(name = "partsInformationId",value = "生产部件Id")
+    @Excel(name = "生产部件Id", height = 20, width = 30,orderNum="2")
+    private Long partsInformationId;
 
     /**
      * 产品描述
@@ -182,7 +199,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
     private String organizationName;
 
     @ApiModelProperty(name = "list",value = "工段不良项目集合")
-    private List<QmsBadItemDto> badList;
+    private List<QmsBadItemDto> sectionList = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

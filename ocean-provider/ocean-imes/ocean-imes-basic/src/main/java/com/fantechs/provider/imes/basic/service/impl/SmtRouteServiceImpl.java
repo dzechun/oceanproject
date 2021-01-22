@@ -2,9 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
-import com.fantechs.common.base.entity.basic.SmtRoute;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -13,9 +11,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.mapper.SmtHtRouteMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtRouteMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtRouteProcessMapper;
+import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtProductProcessRouteService;
 import com.fantechs.provider.imes.basic.service.SmtRouteService;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +39,10 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
       private SmtRouteProcessMapper smtRouteProcessMapper;
       @Resource
       private SmtProductProcessRouteService smtProductProcessRouteService;
+      @Resource
+      private SmtProcessCategoryMapper smtProcessCategoryMapper;
+      @Resource
+      private SmtProcessMapper smtProcessMapper;
 
       @Override
       @Transactional(rollbackFor = Exception.class)
@@ -166,5 +166,43 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             smtProductProcessRouteService.update(smtProductProcessRoute);
             return i;
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int configureRout(SmtRoute smtRoute) {
+
+        // 删除上一次配置的工艺路线
+        Example example = new Example(SmtRouteProcess.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("routeId",smtRoute.getRouteId());
+        smtRouteProcessMapper.deleteByExample(example);
+
+        //获取维修工序的对象
+        example =  new Example(SmtProcessCategory.class);
+        criteria = example.createCriteria();
+        criteria.andEqualTo("processCategoryCode","repair");
+        SmtProcessCategory smtProcessCategory= smtProcessCategoryMapper.selectOneByExample(example);
+
+        //已检验工序
+        List<Long> processIds= new ArrayList<>();
+        List<SmtRouteProcess> smtRouteProcesses = smtRoute.getSmtRouteProcesses();
+        if (StringUtils.isNotEmpty(smtRouteProcesses)){
+            for(SmtRouteProcess smtRouteProcess :smtRouteProcesses){
+                //当前工序
+                SmtProcess smtProcess = smtProcessMapper.selectByPrimaryKey(smtRouteProcess.getProcessId());
+                //是否维修工序
+                if(smtProcess.getProcessCategoryId()==smtProcessCategory.getProcessCategoryId()){
+                    if(!processIds.contains(smtRouteProcess.getNextProcessId())){
+                        throw new BizErrorException("维修工序返回工序有误");
+                    }
+                }else {
+                    processIds.add(smtRouteProcess.getProcessId());
+                }
+            }
+            smtRouteProcessMapper.insertList(smtRouteProcesses);
+        }
+
+        return 1;
     }
 }

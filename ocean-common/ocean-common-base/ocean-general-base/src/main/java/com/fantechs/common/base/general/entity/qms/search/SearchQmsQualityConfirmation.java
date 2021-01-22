@@ -48,7 +48,7 @@ public class SearchQmsQualityConfirmation extends BaseQuery implements Serializa
     /**
      * 品质类型（0、品质确认 1、品质抽检 ）
      */
-    @ApiModelProperty(name="qualityType",value = "品质类型（0、品质确认 1、品质抽检 ）")
+    @ApiModelProperty(name="qualityType",value = "品质类型（1、品质确认 2、品质抽检 ）")
     private Byte qualityType;
 
     private static final long serialVersionUID = 1L;

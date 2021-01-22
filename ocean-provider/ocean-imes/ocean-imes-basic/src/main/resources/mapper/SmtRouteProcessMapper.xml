@@ -8,6 +8,8 @@
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId"/>
         <result column="previous_process_id" jdbcType="BIGINT" property="previousProcessId"/>
+        <result column="standard_time" jdbcType="INTEGER" property="standardTime" />
+        <result column="readiness_time" jdbcType="INTEGER" property="readinessTime" />
         <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
         <result column="is_pass" jdbcType="TINYINT" property="isPass"/>
         <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass"/>
@@ -30,7 +32,7 @@
         select srp.route_process_id, srp.route_id,srp.section_id,srp.process_id,srp.next_process_id,
         sps.process_name as next_route_name, srp.previous_process_id,srp.order_num,
         srp.is_pass, srp.is_must_pass,srp.inspection_time,srp.qualification_id, srp.organization_id, srp.remark,
-        sr.route_name, sr.readiness_time, sr.standard_time,
+        sr.route_name, srp.readiness_time, srp.standard_time,
         ws.section_name,
         sp.process_name,
         p.process_name as previous_process_name,

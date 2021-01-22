@@ -99,8 +99,8 @@ public class SmtRouteController {
 
     @PostMapping(value = "/configureRout")
     @ApiOperation(value = "配置工艺路线",notes = "配置工艺路线")
-    public ResponseEntity configureRout(@RequestBody List<SmtRouteProcess> list){
-        return ControllerUtil.returnCRUD(smtRouteProcessService.configureRout(list));
+    public ResponseEntity configureRout(@RequestBody SmtRoute smtRoute){
+        return ControllerUtil.returnCRUD(smtRouteService.configureRout(smtRoute));
     }
 
 

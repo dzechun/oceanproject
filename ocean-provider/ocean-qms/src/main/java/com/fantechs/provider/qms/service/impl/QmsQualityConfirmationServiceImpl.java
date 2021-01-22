@@ -70,12 +70,12 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     @Override
     public List<QmsQualityConfirmationDto> findList(Map<String, Object> map) {
         List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
-        /*Map<String,Object> search = new HashMap();
+        Map<String,Object> search = new HashMap();
         for (QmsQualityConfirmationDto qmsQualityConfirmationDto : list) {
             search.put("section",qmsQualityConfirmationDto.getSectionId());
             List<QmsBadItemDto> badList = qmsBadItemMapper.findList(search);
-            qmsQualityConfirmationDto.getBadList().addAll(badList);
-        }*/
+            qmsQualityConfirmationDto.getSectionList().addAll(badList);
+        }
         return list;
     }
 
@@ -103,7 +103,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         for (SmtRouteProcess routeProcess : routeProcesses) {
             search.put("section",routeProcess.getSectionId());
             List<QmsBadItemDto> list = qmsBadItemMapper.findList(search);
-            qmsQualityConfirmationDto.getBadList().addAll(list);
+            qmsQualityConfirmationDto.getSectionList().addAll(list);
         }
 
         //当前流程单的父级对象
@@ -195,7 +195,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
 
 
-        List<QmsPoorQualityDto> list = qmsQualityConfirmation.getList();
+        List<QmsPoorQualityDto> list = qmsQualityConfirmation.getSeledBadItemList();
         for (QmsPoorQualityDto qmsPoorQuality : list) {
             qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
         }

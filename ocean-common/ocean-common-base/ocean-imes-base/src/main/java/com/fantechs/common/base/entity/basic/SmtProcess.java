@@ -133,6 +133,7 @@ public class SmtProcess extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="remark",value = "备注")
     @Column(name = "remark")
+    @Excel(name = "备注", height = 20, width = 30)
     private String remark;
 
     /**

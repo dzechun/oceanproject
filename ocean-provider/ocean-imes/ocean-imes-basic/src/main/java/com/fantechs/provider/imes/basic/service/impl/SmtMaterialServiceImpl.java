@@ -130,9 +130,18 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         //更新页签
         BaseTab baseTab = smtMaterial.getBaseTab();
         if (StringUtils.isNotEmpty(baseTab)) {
-            baseTab.setModifiedTime(new Date());
-            baseTab.setModifiedUserId(currentUser.getUserId());
-            baseFeignApi.updateTab(baseTab);
+            if (StringUtils.isNotEmpty(baseTab.getTabId())){
+                baseTab.setModifiedTime(new Date());
+                baseTab.setModifiedUserId(currentUser.getUserId());
+                baseFeignApi.updateTab(baseTab);
+            }else {
+                baseTab.setCreateUserId(currentUser.getUserId());
+                baseTab.setCreateTime(new Date());
+                baseTab.setModifiedUserId(currentUser.getUserId());
+                baseTab.setModifiedTime(new Date());
+                baseFeignApi.addTab(baseTab);
+            }
+
         }
 
         //新增物料历史信息

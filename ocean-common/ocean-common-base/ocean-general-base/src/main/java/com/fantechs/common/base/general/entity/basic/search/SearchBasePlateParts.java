@@ -28,6 +28,12 @@ public class SearchBasePlateParts extends BaseQuery implements Serializable {
     private String materialName;
 
     /**
+     * 产品型号名称
+     */
+    @ApiModelProperty(name="productModelName",value = "产品型号名称")
+    private String productModelName;
+
+    /**
      * 产品描述
      */
     @ApiModelProperty(name="materialDesc",value = "产品描述")
