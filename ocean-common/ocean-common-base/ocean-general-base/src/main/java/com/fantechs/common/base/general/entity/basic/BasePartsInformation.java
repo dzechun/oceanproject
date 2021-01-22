@@ -23,7 +23,6 @@ public class BasePartsInformation extends ValidGroup implements Serializable {
      * 部件资料ID
      */
     @ApiModelProperty(name="partsInformationId",value = "部件资料ID")
-    @Excel(name = "部件资料ID", height = 20, width = 30)
     @Id
     @Column(name = "parts_information_id")
     private Long partsInformationId;
@@ -31,7 +30,7 @@ public class BasePartsInformation extends ValidGroup implements Serializable {
     /**
      * 部件资料编码
      */
-    @ApiModelProperty(name="partsInformationCode",value = "部件资料编码")
+    @ApiModelProperty(name="partsInformationCode",value = "部件编码")
     @Excel(name = "部件资料编码", height = 20, width = 30)
     @Column(name = "parts_information_code")
     private String partsInformationCode;
@@ -39,7 +38,7 @@ public class BasePartsInformation extends ValidGroup implements Serializable {
     /**
      * 部件资料名称
      */
-    @ApiModelProperty(name="partsInformationName",value = "部件资料名称")
+    @ApiModelProperty(name="partsInformationName",value = "部件名称")
     @Excel(name = "部件资料名称", height = 20, width = 30)
     @Column(name = "parts_information_name")
     private String partsInformationName;
@@ -61,7 +60,7 @@ public class BasePartsInformation extends ValidGroup implements Serializable {
     /**
      * 状态（0、无效 1、有效）
      */
-    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @ApiModelProperty(name="status",value = "状态")
     @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,replace = {"无效_0","有效_1"})
     private Byte status;
 
@@ -101,7 +100,6 @@ public class BasePartsInformation extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 

@@ -31,7 +31,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/01/14.
  */
 @RestController
-@Api(tags = "部件资料")
+@Api(tags = "部件信息")
 @RequestMapping("/basePartsInformation")
 @Validated
 public class BasePartsInformationController {
@@ -89,7 +89,7 @@ public class BasePartsInformationController {
     List<BasePartsInformationDto> list = basePartsInformationService.findList(ControllerUtil.dynamicConditionByEntity(searchBasePartsInformation));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BasePartsInformation信息", BasePartsInformationDto.class, "BasePartsInformation.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出部件信息", "部件信息", BasePartsInformationDto.class, "部件信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
