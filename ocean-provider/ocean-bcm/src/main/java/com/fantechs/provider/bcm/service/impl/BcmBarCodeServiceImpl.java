@@ -164,16 +164,25 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
 
     @Override
     public int verifyQrCode(String QrCode, Long workOrderId) {
-        BcmBarCode bcmBarCode = new BcmBarCode();
-        bcmBarCode.setWorkOrderId(workOrderId);
-        bcmBarCode = bcmBarCodeMapper.selectOne(bcmBarCode);
-        if(StringUtils.isEmpty(bcmBarCode)){
+        Example example = new Example(BcmBarCode.class);
+        example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("barCodeContent",QrCode);
+        List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example);
+        if(StringUtils.isEmpty(bcmBarCodes)){
             throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成条码"));
         }
-        if(bcmBarCode.getBarCodeContent().substring(0,bcmBarCode.getBarCodeContent().length()-2).equals(QrCode.substring(0,QrCode.length()-2))){
-            return 1;
+        if(bcmBarCodes.get(0).getStatus() == 0){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("该条码已入库"));
         }
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public int updateByContent(BcmBarCode bcmBarCode) {
+
+        Example example = new Example(BcmBarCode.class);
+        example.createCriteria().andEqualTo("workOrderId",bcmBarCode.getWorkOrderId()).andEqualTo("barCodeContent",bcmBarCode.getBarCodeContent());
+
+        return bcmBarCodeMapper.updateByExampleSelective(bcmBarCode,example);
     }
 
     @Override

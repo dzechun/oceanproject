@@ -79,4 +79,12 @@ public class BcmBarCodeController {
     public ResponseEntity verifyQrCode(@RequestParam String QrCode,@RequestParam Long workOrderId){
         return ControllerUtil.returnCRUD(bcmBarCodeService.verifyQrCode(QrCode,workOrderId));
     }
+
+    @ApiOperation("根据工单ID和条码内容修改条码状态")
+    @PostMapping("/updateByContent")
+    public ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody BcmBarCode bcmBarCode) {
+        return ControllerUtil.returnCRUD(bcmBarCodeService.updateByContent(bcmBarCode));
+    }
+
+
 }

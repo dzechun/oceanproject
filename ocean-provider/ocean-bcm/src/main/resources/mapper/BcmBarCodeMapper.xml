@@ -48,8 +48,8 @@
 <!--        <result column="next_process_name" jdbcType="VARCHAR" property="nextProcessName"/>-->
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-        <result column="print_mode" jdbcType="VARCHAR" property="labelMode"/>
-        <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
+<!--        <result column="print_mode" jdbcType="VARCHAR" property="labelMode"/>-->
+<!--        <result column="save_path" jdbcType="VARCHAR" property="savePath"/>-->
         <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
         <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRuleCode"/>
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
@@ -75,7 +75,7 @@
     <select id="sel_work_order" resultMap="BaseResultMapWorkDto">
         SELECT
         sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sw.planned_end_time,
-        so.order_code,sc.supplier_name,bt.transfer_quantity,blm.label_material_id,bl.print_mode,bl.save_path,br.barcode_rule,br.barcode_rule_id
+        so.order_code,sc.supplier_name,bt.transfer_quantity,blm.label_material_id,/*bl.print_mode,bl.save_path,*/br.barcode_rule,br.barcode_rule_id
         <if test="barCodeType==2">
             ,wobp.work_order_card_id as barcode
         </if>
@@ -139,6 +139,12 @@
             </if>
             <if test="barCodeType!=null">
                 and bc.bar_code_type = #{barCodeType}
+            </if>
+            <if test="workOrderId!=null">
+                and bc.work_order_id = #{workOrderId}
+            </if>
+            <if test="barCodeContent != null and barCodeContent != ''">
+                and bc.barCodeContent = #{barCodeContent}
             </if>
         </where>
     </select>

@@ -8,8 +8,11 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPalletCarton;
@@ -21,6 +24,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.in.controller.pda.PDAMesPackageManagerController;
 import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductDetMapper;
@@ -58,6 +62,8 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
     private WmsInFinishedProductDetMapper wmsInFinishedProductDetMapper;
     @Resource
     private PDAMesPackageManagerController pdaMesPackageManagerController;
+    @Resource
+    private BcmFeignApi bcmFeignApi;
 
 
     @Override
@@ -227,10 +233,19 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 storageInventoryFeignApi.add(smtStorageInventoryDet);
 
                 wmsInFinishedProductDet.setInQuantity((StringUtils.isEmpty(wmsInFinishedProductDet.getInQuantity()) ? new BigDecimal(0) : wmsInFinishedProductDet.getInQuantity()).add(wmsInFinishedProductDet.getCount()));
-                wmsInFinishedProductDet.setCount(null);
                 wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
 
             }
+
+            //更改条码状态
+            for (String s : wmsInFinishedProductDet.getBarCodeContentList()) {
+                BcmBarCode bcmBarCode = new BcmBarCode();
+                bcmBarCode.setWorkOrderId(wmsInFinishedProduct.getWorkOrderId());
+                bcmBarCode.setBarCodeContent(s);
+                bcmBarCode.setStatus((byte)0);
+                bcmFeignApi.updateByContent(bcmBarCode);
+            }
+
         }
 
         //获取最新子表数据判断主表状态

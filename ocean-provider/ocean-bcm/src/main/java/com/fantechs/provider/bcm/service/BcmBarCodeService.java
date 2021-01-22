@@ -24,4 +24,6 @@ public interface BcmBarCodeService extends IService<BcmBarCode> {
     int print(Long workOrderId);
 
     int verifyQrCode(String QrCode,Long workOrderId);
+
+    int updateByContent(BcmBarCode bcmBarCode);
 }

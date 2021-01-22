@@ -1,7 +1,5 @@
 package com.fantechs.provider.bcm;
 
-import com.fantechs.provider.bcm.util.SocketClient;
-import com.fantechs.provider.bcm.util.SocketUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -18,8 +16,6 @@ public class OceanBcmApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OceanBcmApplication.class, args);
-
-        //new SocketClient();
     }
 
 }
