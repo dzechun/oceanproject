@@ -29,8 +29,8 @@ public class SmtProLine extends ValidGroup implements Serializable {
      */
     @Column(name = "pro_code")
     @ApiModelProperty(name="proCode" ,value="线别代码")
-    @Excel(name = "线别代码", height = 20, width = 30)
-    @NotBlank(message = "线别编码不能为空")
+    @Excel(name = "产线编码", height = 20, width = 30)
+    @NotBlank(message = "产线编码不能为空")
     private String proCode;
 
     /**
@@ -38,8 +38,8 @@ public class SmtProLine extends ValidGroup implements Serializable {
      */
     @Column(name = "pro_name")
     @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30)
-    @NotBlank(message = "线别名称不能为空")
+    @Excel(name = "产线名称", height = 20, width = 30)
+    @NotBlank(message = "产线名称不能为空")
     private String proName;
 
     /**
