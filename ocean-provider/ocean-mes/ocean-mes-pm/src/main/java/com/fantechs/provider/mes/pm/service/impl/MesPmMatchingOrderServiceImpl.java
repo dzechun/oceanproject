@@ -110,14 +110,25 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         criteria.andEqualTo("workOrderCardPoolId", saveMesPmMatchingOrderDto.getWorkOrderCardPoolId());
         MesPmMatchingOrder mesPmMatchingOrder1 = mesPmMatchingOrderMapper.selectOneByExample(example);
         MesPmMatchingOrder mesPmMatchingOrder = new MesPmMatchingOrder();
+
         if (StringUtils.isNotEmpty(mesPmMatchingOrder1)) {
-            BeanUtils.copyProperties(mesPmMatchingOrder1,mesPmMatchingOrder);
-            mesPmMatchingOrder.setModifiedUserId(currentUser.getUserId());
-            mesPmMatchingOrder.setModifiedTime(new Date());
+
+            BigDecimal minMatchingQuantity = mesPmMatchingOrder1.getMinMatchingQuantity();//获取原来的最小齐套数
+            BigDecimal matchingQuantity = mesPmMatchingOrder1.getMatchingQuantity();//获取原配套数
+
+            //更新最小齐套数和原配套数
+            BigDecimal newMinMatchingQuantity = minMatchingQuantity.subtract(saveMesPmMatchingOrderDto.getMatchingQuantity());
+            BigDecimal newMatchingQuantity = matchingQuantity.add(saveMesPmMatchingOrderDto.getMatchingQuantity());
+
+            mesPmMatchingOrder1.setMinMatchingQuantity(newMinMatchingQuantity);
+            mesPmMatchingOrder1.setMatchingQuantity(newMatchingQuantity);
+            mesPmMatchingOrder1.setModifiedUserId(currentUser.getUserId());
+            mesPmMatchingOrder1.setModifiedTime(new Date());
+            //pda点击提交操作，状态置为配套完成
             if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 2){
                 mesPmMatchingOrder.setStatus((byte) 2);
             }
-            return mesPmMatchingOrderMapper.updateByPrimaryKeySelective(mesPmMatchingOrder);
+            return mesPmMatchingOrderMapper.updateByPrimaryKeySelective(mesPmMatchingOrder1);
         }
 
         mesPmMatchingOrder.setMatchingOrderCode(CodeUtils.getId("PT"));
