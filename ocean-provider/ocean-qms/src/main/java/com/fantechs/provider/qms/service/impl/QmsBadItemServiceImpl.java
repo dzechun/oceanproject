@@ -108,6 +108,7 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         List<QmsBadItemDetDto> list = qmsBadItem.getList();
         if (StringUtils.isNotEmpty(list)){
             for (QmsBadItemDetDto qmsBadItemDetDto : list) {
+                qmsBadItemDetDto.setBadPhenomenonCode(CodeUtils.getId("BPC"));
                 qmsBadItemDetDto.setBadItemId(qmsBadItem.getBadItemId());
             }
             qmsBadItemDetMapper.insertList(list);
