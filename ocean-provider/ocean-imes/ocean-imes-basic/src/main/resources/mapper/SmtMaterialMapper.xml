@@ -10,7 +10,7 @@
         <result column="base" jdbcType="DECIMAL" property="base"/>
         <result column="material_source" jdbcType="INTEGER" property="materialSource"/>
         <result column="system_source" jdbcType="VARCHAR" property="systemSource"/>
-        <result column="status" jdbcType="BIT" property= "status"/>
+        <result column="status" jdbcType="TINYINT" property= "status"/>
         <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -90,7 +90,7 @@
                 and sm.material_id!=(select material_id from fantech_imes.smt_work_order where
                 work_order_id=#{workOrderId})
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and sm.status=#{status}
             </if>
         </where>
