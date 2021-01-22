@@ -113,23 +113,23 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //获取最后报工数据
         SmtProcessListProcessDto smtProcessListProcessDto = processListProcessList.get(processListProcessList.size()-1);
 
-        Example example = new Example(QmsQualityConfirmation.class);
-        example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId())
-                .andEqualTo("processId",smtProcessListProcessDto.getProcessId())
-                .andEqualTo("qualityType",0);
-        List<QmsQualityConfirmation> qmsQualityConfirmations = qmsQualityConfirmationMapper.selectByExample(example);
-
-        if (StringUtils.isNotEmpty(qmsQualityConfirmations)){
-            throw new BizErrorException("当前工序已品质确认");
-        }
-
-
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(smtProcessListProcessDto.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
         Byte isQuality = smtProcess.getIsQuality();
         if (type.equals(0) && isQuality.equals(0)){
             throw new BizErrorException("当前工序不是最后一道工序");
         }
+
+        Example example = new Example(QmsQualityConfirmation.class);
+        example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId())
+                .andEqualTo("processId",smtProcess.getProcessId())
+                .andEqualTo("qualityType",1);
+        List<QmsQualityConfirmation> qmsQualityConfirmations = qmsQualityConfirmationMapper.selectByExample(example);
+
+        if (StringUtils.isNotEmpty(qmsQualityConfirmations)){
+            throw new BizErrorException("当前工序已品质确认");
+        }
+
         ResponseEntity<SmtWorkshopSection> workshopSectionResponse = basicFeignApi.sectionDetail(smtProcess.getSectionId());
         SmtWorkshopSection workshopSection = workshopSectionResponse.getData();
 
