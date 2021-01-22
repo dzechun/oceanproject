@@ -70,12 +70,12 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(BasePartsInformation basePartsInformation) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
         basePartsInformation.setModifiedTime(new Date());
-        basePartsInformation.setModifiedUserId(user.getUserId());
+//        basePartsInformation.setModifiedUserId(user.getUserId());
 
         BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
         BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
