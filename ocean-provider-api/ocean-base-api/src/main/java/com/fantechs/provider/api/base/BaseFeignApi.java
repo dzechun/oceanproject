@@ -1,5 +1,6 @@
 package com.fantechs.provider.api.base;
 
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
@@ -19,7 +20,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("页签信息列表")
     @PostMapping("/baseTab/findList")
-    ResponseEntity<List<BaseTab>> findTabList(@ApiParam(value = "查询对象") @RequestBody SearchBaseTab searchBaseTab);
+    ResponseEntity<List<BaseTabDto>> findTabList(@ApiParam(value = "查询对象") @RequestBody SearchBaseTab searchBaseTab);
 
     @ApiOperation(value = "新增页签", notes = "新增页签")
     @PostMapping("/baseTab/add")

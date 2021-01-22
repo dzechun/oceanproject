@@ -3,6 +3,7 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -26,7 +27,7 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     private BaseTabMapper baseTabMapper;
 
     @Override
-    public List<BaseTab> findList(Map<String, Object> map) {
+    public List<BaseTabDto> findList(Map<String, Object> map) {
         return baseTabMapper.findList(map);
     }
 
