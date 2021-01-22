@@ -3,6 +3,7 @@ package com.fantechs.provider.bcm.service;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.support.IService;
 
@@ -23,5 +24,9 @@ public interface BcmBarCodeService extends IService<BcmBarCode> {
 
     int print(Long workOrderId);
 
-    int verifyQrCode(String QrCode,Long workOrderId);
+    BcmBarCodeDet verifyQrCode(String QrCode, Long workOrderId);
+
+    int saveCode(BcmBarCodeWorkDto bcmBarCodeWorkDto);
+
+    int updateByContent(List<BcmBarCodeDet> bcmBarCodeDets);
 }
