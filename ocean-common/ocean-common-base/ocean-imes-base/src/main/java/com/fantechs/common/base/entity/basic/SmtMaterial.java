@@ -108,7 +108,7 @@ public class SmtMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="status" ,value="状态")
     @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     @Column(name = "status")
-    private Integer status;
+    private Byte status;
 
     /**
      * 最小包装数

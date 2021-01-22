@@ -97,6 +97,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         baseTab.setCreateTime(new Date());
         baseTab.setModifiedUserId(currentUser.getUserId());
         baseTab.setModifiedTime(new Date());
+        baseTab.setStatus(smtMaterial.getStatus());
         baseFeignApi.addTab(baseTab);
 
         //新增物料历史信息
@@ -134,12 +135,14 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             if (StringUtils.isNotEmpty(baseTab.getTabId())){
                 baseTab.setModifiedTime(new Date());
                 baseTab.setModifiedUserId(currentUser.getUserId());
+                baseTab.setStatus(material.getStatus());
                 baseFeignApi.updateTab(baseTab);
             }else {
                 baseTab.setCreateUserId(currentUser.getUserId());
                 baseTab.setCreateTime(new Date());
                 baseTab.setModifiedUserId(currentUser.getUserId());
                 baseTab.setModifiedTime(new Date());
+                baseTab.setStatus(material.getStatus());
                 baseFeignApi.addTab(baseTab);
             }
 
