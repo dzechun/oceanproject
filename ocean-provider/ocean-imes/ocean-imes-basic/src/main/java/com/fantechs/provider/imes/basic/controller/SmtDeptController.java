@@ -1,6 +1,8 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
@@ -20,11 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: wcz
@@ -92,7 +96,7 @@ public class SmtDeptController {
         List<SmtDept> list = smtDeptService.findList(searchSmtDept);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "部门信息导出", "部门信息", SmtDept.class, "部门信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "部门信息表", "部门信息", SmtDept.class, "部门信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
@@ -107,6 +111,27 @@ public class SmtDeptController {
         Page<Object> page = PageHelper.startPage(searchSmtDept.getStartPage(),searchSmtDept.getPageSize());
         List<SmtHtDept> smtHtDepts=smtHtDeptService.selectHtDepts(searchSmtDept);
         return  ControllerUtil.returnDataSuccess(smtHtDepts, (int)page.getTotal());
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtDept> smtDepts = EasyPoiUtils.importExcel(file, SmtDept.class);
+            Map<String, Object> resultMap = smtDeptService.importExcel(smtDepts);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
     }
 
 }

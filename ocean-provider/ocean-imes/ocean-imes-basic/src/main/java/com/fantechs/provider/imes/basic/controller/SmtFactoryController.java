@@ -102,7 +102,7 @@ public class SmtFactoryController {
         List<SmtFactoryDto> smtFactoryDtos = smtFactoryService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtFactory));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(smtFactoryDtos, "导出工厂信息", "工厂信息", SmtFactoryDto.class, "工厂信息.xls", response);
+            EasyPoiUtils.exportExcel(smtFactoryDtos, "工厂信息表", "工厂信息", SmtFactoryDto.class, "工厂信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

@@ -1,9 +1,11 @@
 package com.fantechs.common.base.entity.basic.history;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -74,6 +76,37 @@ public class SmtHtProcess implements Serializable {
     @Transient
     @ApiModelProperty(name="processCategoryName" ,value="工序类别名称")
     private String processCategoryName;
+
+    /**
+     * 是否报工扫描（0、否 1、是）
+     */
+    @Column(name = "is_job_scan")
+    @ApiModelProperty(name="isJobScan" ,value="是否报工扫描")
+    @Excel(name = "是否报工扫描",  height = 20, width = 30,replace = {"否_0", "是_1"})
+    private Byte isJobScan;
+
+    /**
+     * 是否开工工扫描（0、否 1、是）
+     */
+    @Column(name = "is_start_scan")
+    @ApiModelProperty(name= "isStartScan" ,value="是否开工工扫描")
+    @Excel(name = "是否开工工扫描",  height = 20, width = 30,replace = {"否_0", "是_1"})
+    private Byte isStartScan;
+
+    /**
+     * 是否品质确认（0、否 1、是）
+     */
+    @Column(name = "is_quality")
+    @ApiModelProperty(name="isQuality" ,value="是否品质确认")
+    @Excel(name = "是否品质确认",  height = 20, width = 30,replace = {"否_0", "是_1"})
+    private Byte isQuality;
+
+    /**
+     * 完成时间
+     */
+    @Column(name = "finish_time")
+    @ApiModelProperty(name="finishTime" ,value="完成时间")
+    private BigDecimal finishTime;
 
     /**
      * 组织id
