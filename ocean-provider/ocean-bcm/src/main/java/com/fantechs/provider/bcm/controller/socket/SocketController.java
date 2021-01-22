@@ -5,10 +5,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.bcm.service.socket.SocketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -29,5 +26,15 @@ public class SocketController {
     public ResponseEntity send(@RequestBody String sss){
         String ss = socketService.sender(ControllerUtil.dynamicConditionByEntity(sss));
         return ControllerUtil.returnSuccess(ss);
+    }
+
+    @GetMapping("/start")
+    public ResponseEntity start(@RequestParam(required = true)String ip,@RequestParam(required = true)Integer port){
+        return ControllerUtil.returnCRUD(socketService.start(ip,port));
+    }
+
+    @GetMapping("/stop")
+    public ResponseEntity stop(){
+        return ControllerUtil.returnCRUD(socketService.stop());
     }
 }

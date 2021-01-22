@@ -21,13 +21,13 @@ import java.util.Map;
  */
 public class SocketClient {
     private static Logger logger = LoggerFactory.getLogger(SocketClient.class);
-    private String ip = "10.182.164.100";
-    private int port = 8098;
+    //private String ip = "10.182.164.100";
+    //private int port = 8098;
     static Socket socket = null;
     public static Boolean isConnect = false;
     public static String massage = null;
 
-    public SocketClient(){
+    public SocketClient(String ip,Integer port){
         try {
             socket = new Socket(ip,port);
             isConnect = socket.isConnected();

@@ -69,7 +69,10 @@
             and pb.batch_no = #{batchNo}
         </if>
        <if test="childLotNo!=null and childLotNo!=''">
-       and pbd.child_lot_no = #{childLotNo}
+            and pbd.child_lot_no = #{childLotNo}
+       </if>
+       <if test="status!=null">
+         and pbd.status=#{status}
        </if>
     </where>
   </select>

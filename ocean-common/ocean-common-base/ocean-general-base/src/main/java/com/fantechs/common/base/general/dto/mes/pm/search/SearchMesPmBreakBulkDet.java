@@ -32,4 +32,10 @@ public class SearchMesPmBreakBulkDet extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "childLotNo",value = "子批次号")
     private String childLotNo;
+
+    /**
+     * 合批状态
+     */
+    @ApiModelProperty(name = "status",value = "合批状态")
+    private Byte status;
 }
