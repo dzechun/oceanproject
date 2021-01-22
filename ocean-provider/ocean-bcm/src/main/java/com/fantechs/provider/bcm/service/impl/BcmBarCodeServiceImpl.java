@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
@@ -19,6 +20,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.bcm.mapper.BcmBarCodeDetMapper;
 import com.fantechs.provider.bcm.mapper.BcmBarCodeMapper;
 import com.fantechs.provider.bcm.service.BcmBarCodeService;
 import com.fantechs.provider.bcm.util.FTPUtil;
@@ -35,9 +37,11 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.Socket;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -59,6 +63,9 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
     @Resource
     SmtWorkOrderMapper smtWorkOrderMapper;
+    @Resource
+    BcmBarCodeDetMapper bcmBarCodeDetMapper;
+
     @Override
     public List<BcmBarCodeDto> findList(SearchBcmBarCode searchBcmBarCode) {
         return bcmBarCodeMapper.findList(searchBcmBarCode);
@@ -74,12 +81,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         Example example1 = new Example(BcmBarCode.class);
         example1.createCriteria().andEqualTo("workOrderId",bcmBarCodeWorkDto.getWorkOrderId());
         List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example1);
-        String maxQty = null;
-        if(bcmBarCodes.size()>0){
-            Integer num = bcmBarCodes.stream().mapToInt(BcmBarCode::getPrintQuantity).sum();
-            //maxQty = bcmBarCodes.get(0).getBarCodeContent().substring(0,bcmBarCodes.get(0).getBarCodeContent().length()-2);
-            maxQty = num.toString();
-        }
+        String maxQty = bcmBarCodeMapper.selMaxCode(bcmBarCodeWorkDto.getWorkOrderId());
         String code = BarcodeRuleUtils.analysisCode(list,maxQty,bcmBarCodeWorkDto.getMaterialCode());
         bcmBarCodeWorkDto.setBarcode(code);
         return bcmBarCodeWorkDto;
@@ -142,63 +144,128 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
             }
     }
 
-    @Override
-    public int print(Long workOrderId) {
-        BcmBarCode bcmBarCode = new BcmBarCode();
-        bcmBarCode.setWorkOrderId(workOrderId);
-        bcmBarCode = bcmBarCodeMapper.selectOne(bcmBarCode);
-        if(StringUtils.isEmpty(bcmBarCode)){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成条码"));
-        }
-        //查询绑定标签
-        if(!SocketClient.isConnect){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("连接打印服务失败"));
-        }
-        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
-        Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto);
-        map.put("QrCode",bcmBarCode.getBarCodeContent());
-        String json = JSON.toJSONString(map);
-        SocketClient.out(json);
-        return 1;
-    }
-
-    @Override
-    public int verifyQrCode(String QrCode, Long workOrderId) {
-        Example example = new Example(BcmBarCode.class);
-        example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("barCodeContent",QrCode);
-        List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example);
-        if(StringUtils.isEmpty(bcmBarCodes)){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成条码"));
-        }
-        if(bcmBarCodes.get(0).getStatus() == 0){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("该条码已入库"));
-        }
-        return 1;
-    }
-
-    @Override
-    public int updateByContent(BcmBarCode bcmBarCode) {
-
-        Example example = new Example(BcmBarCode.class);
-        example.createCriteria().andEqualTo("workOrderId",bcmBarCode.getWorkOrderId()).andEqualTo("barCodeContent",bcmBarCode.getBarCodeContent());
-
-        return bcmBarCodeMapper.updateByExampleSelective(bcmBarCode,example);
-    }
-
+    /**
+     * 打印
+     * @param workOrderId
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(BcmBarCode record) {
+    public int print(Long workOrderId) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        //生成条码
+        Example example = new Example(BcmBarCode.class);
+        example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("status",(byte)1);
+        List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example);
+        if(StringUtils.isEmpty(bcmBarCodes)){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成可打印的条码"));
+        }
+        if(!SocketClient.isConnect){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("连接打印服务失败"));
+        }
+        try {
+            for (BcmBarCode bcmBarCode : bcmBarCodes) {
+                Example example1 = new Example(BcmBarCodeDet.class);
+                example1.createCriteria().andEqualTo("barCodeId",bcmBarCode.getBarCodeId());
+                List<BcmBarCodeDet> bcmBarCodeDets = bcmBarCodeDetMapper.selectByExample(example1);
+                for (BcmBarCodeDet bcmBarCodeDet : bcmBarCodeDets) {
+                    //打印
+                    SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+                    Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto);
+                    map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
+                    String json = JSON.toJSONString(map);
+                    SocketClient.out(json);
+                }
+                //更新已打印状态
+                bcmBarCode.setStatus((byte)2);
+                bcmBarCode.setModifiedTime(new Date());
+                bcmBarCode.setModifiedUserId(currentUserInfo.getUserId());
+                bcmBarCodeMapper.updateByPrimaryKeySelective(bcmBarCode);
+            }
+        }catch (Exception e){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("打印失败！"));
+        }
+        return 1;
+    }
+
+    @Override
+    public BcmBarCodeDet verifyQrCode(String QrCode, Long workOrderId) {
+        Example example = new Example(BcmBarCode.class);
+        example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("status",(byte)2);
+        List<BcmBarCode> list = bcmBarCodeMapper.selectByExample(example);
+        List<Long> ids = list.stream().map(BcmBarCode::getBarCodeId).collect(Collectors.toList());
+        Example example1 =new Example(BcmBarCodeDet.class);
+        example1.createCriteria().andIn("barCodeId",ids).andEqualTo("barCodeContent",QrCode).andEqualTo("status",(byte)1);
+        List<BcmBarCodeDet> bcmBarCodeDets = bcmBarCodeDetMapper.selectByExample(example1);
+        if(bcmBarCodeDets.size()>0){
+            return bcmBarCodeDets.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * 生成条码
+     * @param record
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int saveCode(BcmBarCodeWorkDto record) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUserInfo)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        //查询产生数量是否大于工单目标数量
+        Example example = new Example(BcmBarCode.class);
+        example.createCriteria().andEqualTo("workOrderId",record.getWorkOrderId());
+        List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example);
+        Integer num = bcmBarCodes.stream().mapToInt(BcmBarCode::getPrintQuantity).sum();
+
+        if(record.getWorkOrderQuantity().compareTo(BigDecimal.valueOf(num+record.getPrintQuantity()))==1){
+            throw new BizErrorException(ErrorCodeEnum.valueOf("产生数量不能大于工单数量"));
+        }
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
+        int nm = bcmBarCodeMapper.insertUseGeneratedKeys(record);
 
-        return bcmBarCodeMapper.insertSelective(record);
+        for (Integer i = 0; i < record.getPrintQuantity(); i++) {
+            BcmBarCodeDet bcmBarCodeDet = new BcmBarCodeDet();
+            bcmBarCodeDet.setBarCodeId(record.getBarCodeId());
+            Example example1 = new Example(SmtBarcodeRuleSpec.class);
+            example1.createCriteria().andEqualTo("barcodeRuleId",record.getBarcodeRuleId());
+            List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecMapper.selectByExample(example1);
+            String maxCode = bcmBarCodeMapper.selMaxCode(record.getWorkOrderId());
+            String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
+            bcmBarCodeDet.setBarCodeContent(code);
+            bcmBarCodeDet.setCreateTime(new Date());
+            bcmBarCodeDet.setCreateUserId(currentUserInfo.getUserId());
+            bcmBarCodeDet.setModifiedTime(new Date());
+            bcmBarCodeDet.setModifiedUserId(currentUserInfo.getUserId());
+            bcmBarCodeDetMapper.insertSelective(bcmBarCodeDet);
+        }
+
+        return nm;
+    }
+
+    @Override
+    public int updateByContent(List<BcmBarCodeDet> bcmBarCodeDets) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUserInfo)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        int num = 0;
+        for (BcmBarCodeDet bcmBarCodeDet : bcmBarCodeDets) {
+            bcmBarCodeDet.setModifiedUserId(currentUserInfo.getUserId());
+            bcmBarCodeDet.setModifiedTime(new Date());
+            bcmBarCodeDet.setStatus((byte)2);
+            num=+bcmBarCodeDetMapper.updateByPrimaryKeySelective(bcmBarCodeDet);
+        }
+        return num;
     }
 
     /**

@@ -21,6 +21,7 @@ import com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmBreakBulkService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -57,6 +58,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public MesPmBreakBulk saveBreak(MesPmBreakBulk record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -70,6 +72,10 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         if(record.getBreakBulkType()==(byte)2){
             String batch = record.getMesPmBreakBulkDets().get(0).getChildLotNo();
             record.setBatchNo(batch.substring(0,batch.length()-2));
+        }else{
+            if(StringUtils.isEmpty(record.getBatchNo())){
+                throw new BizErrorException(ErrorCodeEnum.valueOf("批次不能为空"));
+            }
         }
         //查询当前工序
         MesPmBreakBulk mesPmBreakBulk = mesPmBreakBulkMapper.sleProcess(record.getBatchNo());
@@ -94,6 +100,9 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 DecimalFormat df=new DecimalFormat("0");
                 String no = df.format(i);
                 mesPmBreakBulkDet.setChildLotNo(record.getBatchNo()+no);
+            }else{
+                //合批：状态：2：已合批生成工单
+                mesPmBreakBulkDet.setStatus((byte)2);
             }
             mesPmBreakBulkDet.setBreakBulkId(record.getBreakBulkId());
             mesPmBreakBulkDet.setCreateTime(new Date());
@@ -103,6 +112,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             mesPmBreakBulkDetMapper.insertUseGeneratedKeys(mesPmBreakBulkDet);
 
             //拆批生成工单
+            smtWorkOrder.setWorkOrderId(null);
             smtWorkOrder.setProductionQuantity(mesPmBreakBulkDet.getBreakBulkQty());
             smtWorkOrder.setCreateTime(new Date());
             smtWorkOrder.setCreateUserId(user.getUserId());
@@ -113,6 +123,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         }
         if(record.getBreakBulkType()==(byte)2){
             //合批生成工单
+            smtWorkOrder.setWorkOrderId(null);
             smtWorkOrder.setProductionQuantity(record.getBreakBulkBatchQty());
             smtWorkOrder.setCreateTime(new Date());
             smtWorkOrder.setCreateUserId(user.getUserId());

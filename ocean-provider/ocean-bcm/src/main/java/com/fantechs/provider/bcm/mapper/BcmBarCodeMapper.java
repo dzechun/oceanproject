@@ -18,5 +18,5 @@ public interface BcmBarCodeMapper extends MyMapper<BcmBarCode> {
 
     BcmBarCodeWorkDto sel_work_order(SearchBcmBarCode searchBcmBarCode);
 
-    List<SmtBarcodeRuleSpec> ruleSpec(@Param("barcodeRuleSetId")Long barcodeRuleSetId);
+    String selMaxCode(@Param("workOrderId")Long workOrderId);
 }
