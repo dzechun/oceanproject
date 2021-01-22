@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -62,9 +63,9 @@ public class BaseTabController {
 
     @ApiOperation("页签信息列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<BaseTab>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseTab searchBaseTab) {
+    public ResponseEntity<List<BaseTabDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseTab searchBaseTab) {
         Page<Object> page = PageHelper.startPage(searchBaseTab.getStartPage(),searchBaseTab.getPageSize());
-        List<BaseTab> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
+        List<BaseTabDto> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -80,7 +81,7 @@ public class BaseTabController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseTab searchBaseTab){
-    List<BaseTab> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
+    List<BaseTabDto> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "BaseTab信息", BaseTab.class, "BaseTab.xls", response);
