@@ -51,6 +51,13 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(BasePlateParts.class);
+        example.createCriteria().andEqualTo("materialId",basePlateParts.getMaterialId());
+        List<BasePlateParts> basePlateParts1 = basePlatePartsMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(basePlateParts1)){
+            throw new BizErrorException("该产品已配置组成部件，请勿重复配置");
+        }
+
         basePlateParts.setCreateTime(new Date());
         basePlateParts.setCreateUserId(user.getUserId());
         basePlateParts.setModifiedTime(new Date());

@@ -73,7 +73,7 @@
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qqc.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
-    LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = swocp.work_order_card_pool_id
+    LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = qqc.work_order_card_pool_id
     and splp.process_id = qqc.process_id
     LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
     LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = swo.material_id
@@ -117,6 +117,18 @@
     order by create_time desc
   </select>
 
+  <select id="updateQuantity" parameterType="map" resultType="integer">
+    select splp.cur_output_qty
+    from fantech_imes.smt_process_list_process splp
+    <where>
+      <if test="processId != null and processId != ''">
+        and splp.process_id = #{processId}
+      </if>
+      <if test="workOrderCardPoolId != null and workOrderCardPoolId != ''">
+        and splp.work_order_card_pool_id = #{workOrderCardPoolId}
+      </if>
+    </where>
+  </select>
 
 
 </mapper>
