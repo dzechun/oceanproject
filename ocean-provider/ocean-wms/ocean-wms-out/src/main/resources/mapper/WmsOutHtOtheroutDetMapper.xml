@@ -96,7 +96,7 @@
       <if test="otheroutId!=null and otheroutId!=''">
         and wood.otherout_Id=#{otheroutId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and wood.status=#{status}
       </if>
     </where>

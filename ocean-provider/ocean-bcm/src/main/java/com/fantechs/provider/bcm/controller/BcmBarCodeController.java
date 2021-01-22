@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -39,8 +40,8 @@ public class BcmBarCodeController {
 
     @ApiOperation("生成条码")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BcmBarCode bcmBarCode) {
-        return ControllerUtil.returnCRUD(bcmBarCodeService.save(bcmBarCode));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BcmBarCodeWorkDto bcmBarCode) {
+        return ControllerUtil.returnCRUD(bcmBarCodeService.saveCode(bcmBarCode));
     }
 
     @ApiOperation("列表")
@@ -76,15 +77,14 @@ public class BcmBarCodeController {
 
     @ApiModelProperty("Pda条码对比")
     @GetMapping("/verifyQrCode")
-    public ResponseEntity verifyQrCode(@RequestParam String QrCode,@RequestParam Long workOrderId){
-        return ControllerUtil.returnCRUD(bcmBarCodeService.verifyQrCode(QrCode,workOrderId));
+    public ResponseEntity<BcmBarCodeDet> verifyQrCode(@RequestParam String QrCode, @RequestParam Long workOrderId){
+        BcmBarCodeDet bcmBarCodeDet = bcmBarCodeService.verifyQrCode(QrCode,workOrderId);
+        return ControllerUtil.returnDataSuccess(bcmBarCodeDet,StringUtils.isEmpty(bcmBarCodeDet)?0:1);
     }
 
-    @ApiOperation("根据工单ID和条码内容修改条码状态")
+    @ApiModelProperty("条码内容修改条码状态")
     @PostMapping("/updateByContent")
-    public ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody BcmBarCode bcmBarCode) {
-        return ControllerUtil.returnCRUD(bcmBarCodeService.updateByContent(bcmBarCode));
+    public ResponseEntity updateByContent(@RequestBody(required = true)List<BcmBarCodeDet> bcmBarCodeDets){
+        return ControllerUtil.returnCRUD(bcmBarCodeService.updateByContent(bcmBarCodeDets));
     }
-
-
 }

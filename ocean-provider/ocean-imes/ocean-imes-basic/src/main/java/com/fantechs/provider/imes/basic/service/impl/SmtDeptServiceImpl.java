@@ -1,9 +1,12 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.entity.basic.SmtDept;
+import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtMaterialCategory;
 import com.fantechs.common.base.entity.basic.history.SmtHtDept;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -21,9 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -153,5 +155,62 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         smtHtDeptMapper.insertList(list);
         i= smtDeptMapper.deleteByIds(ids);
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtDept> smtDepts) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtDept> list = new LinkedList<>();
+        LinkedList<SmtHtDept> htList = new LinkedList<>();
+        for (int i = 0; i < smtDepts.size(); i++) {
+            SmtDept smtDept = smtDepts.get(i);
+            String deptCode = smtDept.getDeptCode();
+            String deptName = smtDept.getDeptName();
+            if (StringUtils.isEmpty(
+                    deptCode,deptName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtDept.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("deptCode",smtDept.getDeptCode());
+            if (StringUtils.isNotEmpty(smtDeptMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            smtDept.setCreateTime(new Date());
+            smtDept.setCreateUserId(currentUser.getUserId());
+            smtDept.setModifiedTime(new Date());
+            smtDept.setModifiedUserId(currentUser.getUserId());
+            list.add(smtDept);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtDeptMapper.insertList(list);
+        }
+
+        for (SmtDept smtDept : list) {
+            SmtHtDept smtHtDept = new SmtHtDept();
+            BeanUtils.copyProperties(smtDept,smtHtDept);
+            htList.add(smtHtDept);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtDeptMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

@@ -71,7 +71,7 @@
             <if test="finishedProductCode != null and finishedProductCode != ''">
                 and fp.finished_product_code like CONCAT('%', #{finishedProductCode}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and fp.status=#{status}
             </if>
         </where>

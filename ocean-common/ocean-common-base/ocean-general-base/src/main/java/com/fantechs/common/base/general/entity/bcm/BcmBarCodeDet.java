@@ -2,7 +2,7 @@ package com.fantechs.common.base.general.entity.bcm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;
+import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
@@ -10,74 +10,58 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 条码\流转卡生产打印信息
- * bcm_bar_code
+ * bcm_bar_code_det
  * @author mr.lei
- * @date 2020-12-22 10:27:58
+ * @date 2021-01-22 09:53:53
  */
 @Data
-@Table(name = "bcm_bar_code")
-public class BcmBarCode extends ValidGroup implements Serializable {
+@Table(name = "bcm_bar_code_det")
+public class BcmBarCodeDet extends ValidGroup implements Serializable {
     /**
-     * 条码\流转卡生产id
+     * 工单条码明细id
      */
-    @ApiModelProperty(name="barCodeId",value = "条码/流转卡生产id")
+    @ApiModelProperty(name="barCodeDetId",value = "工单条码明细id")
+    @Excel(name = "工单条码明细id", height = 20, width = 30,orderNum="") 
     @Id
+    @Column(name = "bar_code_det_id")
+    private Long barCodeDetId;
+
+    /**
+     * 工单条码
+     */
+    @ApiModelProperty(name="barCodeId",value = "工单条码")
+    @Excel(name = "工单条码", height = 20, width = 30,orderNum="") 
     @Column(name = "bar_code_id")
     private Long barCodeId;
 
     /**
-     * 类型:1条码生产，2 流转卡生产
+     * 条码内容
      */
-    @ApiModelProperty(name="barCodeType",value = "类型:1条码生产，2 流转卡生产")
-    @Column(name = "bar_code_type")
-    private Byte barCodeType;
+    @ApiModelProperty(name="barCodeContent",value = "条码内容")
+    @Excel(name = "条码内容", height = 20, width = 30,orderNum="") 
+    @Column(name = "bar_code_content")
+    private String barCodeContent;
 
     /**
-     * 工单id
+     * 状态(2已入库，1未入库)
      */
-    @ApiModelProperty(name="workOrderId",value = "工单id")
-    @Column(name = "work_order_id")
-    private Long workOrderId;
-
-    /**
-     * 产品料号绑定标签id
-     */
-    @ApiModelProperty(name="labelMaterialId",value = "产品料号绑定标签id")
-    @Column(name = "label_material_id")
-    private Long labelMaterialId;
-
-    /**
-     * 条码生产数量
-     */
-    @ApiModelProperty(name="printQuantity",value = "条码生产数量")
-    @Column(name = "print_quantity")
-    private Integer printQuantity;
+    @ApiModelProperty(name="status",value = "状态(2已入库，1未入库)")
+    @Excel(name = "状态(2已入库，1未入库)", height = 20, width = 30,orderNum="") 
+    private Byte status;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "organization_id")
     private Long organizationId;
-
-    /**
-     * 备注
-     */
-    @ApiModelProperty(name="remark",value = "备注")
-    @Column(name = "remark")
-    private String remark;
-
-    /**
-     * 状态(0无效，1有效)
-     */
-    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
+    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -85,6 +69,7 @@ public class BcmBarCode extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -93,6 +78,7 @@ public class BcmBarCode extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
+    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -100,6 +86,7 @@ public class BcmBarCode extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -108,6 +95,7 @@ public class BcmBarCode extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -115,18 +103,21 @@ public class BcmBarCode extends ValidGroup implements Serializable {
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
+    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="") 
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
+    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="") 
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
+    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
 
     private static final long serialVersionUID = 1L;
