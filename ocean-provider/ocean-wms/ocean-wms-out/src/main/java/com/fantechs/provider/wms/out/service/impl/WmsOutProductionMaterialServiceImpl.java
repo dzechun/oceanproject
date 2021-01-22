@@ -68,7 +68,11 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
         Example example = new Example(WmsOutProductionMaterial.class);
         example.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterial.getMaterialId());
-        wmsOutProductionMaterial = wmsOutProductionMaterialMapper.selectByExample(example).get(0);
+        List<WmsOutProductionMaterial> wmsOutProductionMaterials = wmsOutProductionMaterialMapper.selectByExample(example);
+        if(wmsOutProductionMaterials.isEmpty()){
+            return 0;
+        }
+        wmsOutProductionMaterial = wmsOutProductionMaterials.get(0);
 
         //库存数据
         SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
