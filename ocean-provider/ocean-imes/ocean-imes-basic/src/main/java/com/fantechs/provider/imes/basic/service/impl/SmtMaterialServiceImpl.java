@@ -8,6 +8,7 @@ import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -53,7 +54,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
                 SearchBaseTab searchBaseTab = new SearchBaseTab();
                 searchBaseTab.setMaterialId(smtMaterialDto.getMaterialId());
-                List<BaseTab> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
+                List<BaseTabDto> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
                 if (StringUtils.isNotEmpty(baseTabs)) {
                     BaseTab baseTab = baseTabs.get(0);
                     smtMaterialDto.setBaseTab(baseTab);
@@ -208,7 +209,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
             //查询该物料对应的页签
             searchBaseTab.setMaterialId(Long.valueOf(materialId));
-            List<BaseTab> baseTabs1 = baseFeignApi.findTabList(searchBaseTab).getData();
+            List<BaseTabDto> baseTabs1 = baseFeignApi.findTabList(searchBaseTab).getData();
             if (StringUtils.isNotEmpty(baseTabs1)) {
                 baseTabs.add(baseTabs1.get(0));
             }

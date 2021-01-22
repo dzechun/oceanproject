@@ -10,6 +10,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtProductModel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -127,7 +128,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             //被物料引用
             SearchBaseTab searchBaseTab = new SearchBaseTab();
             searchBaseTab.setProductModelId(Long.valueOf(productModelId));
-            List<BaseTab> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
+            List<BaseTabDto> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
             if (StringUtils.isNotEmpty(baseTabs)){
                 BaseTab baseTab = baseTabs.get(0);
                 if (StringUtils.isNotEmpty(baseTab)){
