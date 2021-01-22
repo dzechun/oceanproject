@@ -43,7 +43,7 @@ public class BasePlateParts extends ValidGroup implements Serializable {
      * 是否是定制产品（0、否 1、是）
      */
     @ApiModelProperty(name="ifCustomized",value = "是否是定制产品（0、否 1、是）")
-    @Excel(name = "是否是定制产品（0、否 1、是）",orderNum = "9", height = 20, width = 30,replace = {"否_0", "是_1"})
+    @Excel(name = "是否是定制产品",orderNum = "8", height = 20, width = 30,replace = {"否_0", "是_1"})
     @Column(name = "if_customized")
     private Byte ifCustomized;
 
@@ -58,14 +58,14 @@ public class BasePlateParts extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30)
+    @Excel(name = "备注", height = 20, width = 30,orderNum = "10")
     private String remark;
 
     /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）",orderNum = "11", height = 20, width = 30,replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态",orderNum = "11", height = 20, width = 30,replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

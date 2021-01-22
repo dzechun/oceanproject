@@ -58,7 +58,6 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="packageSpecificationCode",value = "规格编码")
-    @Excel(name = "规格编码", height = 20, width = 30,orderNum = "6")
     private String packageSpecificationCode;
 
     /**
@@ -66,7 +65,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="packageSpecificationName",value = "规格名称")
-    @Excel(name = "规格名称", height = 20, width = 30,orderNum = "7")
+    @Excel(name = "规格名称", height = 20, width = 30,orderNum = "6")
     private String packageSpecificationName;
 
     /**
@@ -74,7 +73,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialQuality",value = "材质")
-    @Excel(name = "材质", height = 20, width = 30,orderNum = "8")
+    @Excel(name = "材质", height = 20, width = 30,orderNum = "7")
     private String materialQuality;
 
     /**
@@ -98,7 +97,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum = "10")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "9")
     private String organizationName;
 
     private static final long serialVersionUID = 1L;
