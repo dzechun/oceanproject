@@ -1,5 +1,6 @@
 package com.fantechs.provider.bcm;
 
+import com.fantechs.provider.bcm.util.SocketClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

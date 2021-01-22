@@ -137,7 +137,8 @@ public class BarcodeRuleUtils {
             sb.append(maxCode);
         } else {
             String streamCode = CodeUtils.generateSerialNumber(maxCode, step, customizeCode);
-            if (streamCode.length() <= barcodeLength) {
+            if (streamCode.length() <= maxCode.length()) {
+                sb.delete(0,sb.length());
                 sb.append(streamCode);
             } else {
                 throw new BizErrorException("流水号已经超出定义的范围");
