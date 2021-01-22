@@ -25,5 +25,5 @@ public interface InFeignApi {
 
     @ApiOperation(value = "成品入库新增", notes = "成品入库新增")
     @PostMapping("/wmsInFinishedProduct/add")
-    ResponseEntity inFinishedProductAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct);
+    ResponseEntity<WmsInFinishedProduct> inFinishedProductAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct);
 }

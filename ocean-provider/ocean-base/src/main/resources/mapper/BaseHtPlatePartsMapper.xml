@@ -17,6 +17,17 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="color" jdbcType="VARCHAR" property="color"/>
+    <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode"/>
+    <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
+    <result column="material_quality" jdbcType="VARCHAR" property="materialQuality"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
