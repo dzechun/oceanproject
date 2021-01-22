@@ -4,7 +4,7 @@ import com.fantechs.common.base.support.IService;
 
 import java.util.Map;
 
-public interface DispatchService extends IService {
+public interface DispatchService {
 
     String genAgvSchedulingTask(Map<String, Object> map);
 
