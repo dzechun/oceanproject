@@ -152,6 +152,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<SmtFactoryDto> smtFactoryDtos) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -200,7 +201,9 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
             BeanUtils.copyProperties(smtFactory,smtHtFactory);
             htList.add(smtHtFactory);
         }
-        smtHtFactoryMapper.insertList(htList);
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtFactoryMapper.insertList(htList);
+        }
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
