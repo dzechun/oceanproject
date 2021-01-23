@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.exhibition","com.fantechs.common"})
-@MapperScan({"com.fantechs.provider.srm.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider.api")
 public class OceanExhibitionClientApplication {
 

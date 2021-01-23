@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface QmsQualityConfirmationMapper extends MyMapper<QmsQualityConfirmation> {
     List<QmsQualityConfirmationDto> findList(Map<String, Object> map);
+
+    Integer updateQuantity(Map<String, Object> map);
 }

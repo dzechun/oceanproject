@@ -14,6 +14,8 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.exhibition.config.RabbitConfig;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
 import com.fantechs.provider.exhibition.service.RcsCallBackService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ import java.util.Map;
 
 @Service
 public class RcsCallBackServiceImpl implements RcsCallBackService {
+
+    private static final Logger log = LoggerFactory.getLogger(RcsCallBackServiceImpl.class);
 
     @Autowired
     private FanoutSender fanoutSender;
@@ -52,6 +56,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
             mQResponseEntity.setCode(1010);
             fanoutSender.send(RabbitConfig.TOPIC_WORK_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+            log.info("发送图片、镭雕信息到客户端：" + JSONObject.toJSONString(mQResponseEntity));
         } else {
             SearchSmtStockDet searchSmtStockDet = new SearchSmtStockDet();
             searchSmtStockDet.setRemark(agvCallBackDTO.getTaskCode());
@@ -65,32 +70,27 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 
             // 查询剩下未配送的物料，进行配送
             String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId());
-            // 配送完成
-            if (StringUtils.isEmpty(taskCode)) {
 
+            if (StringUtils.isEmpty(taskCode)) {
+                // 配送小车成品完成
                 String positionCode = "";
                 for(MaterialAndPositionCodeEnum.MaterialAndPositionCode materialAndPositionCode : MaterialAndPositionCodeEnum.MaterialAndPositionCode.values()){
-                    if("911".equals(materialAndPositionCode.getMaterialCode())) {
-                        positionCode = materialAndPositionCode.getStartPositionCode();
+                    if("2249".equals(materialAndPositionCode.getMaterialCode())) {
+                        positionCode = materialAndPositionCode.getEndPositionCode();
                     }
                 }
 
                 // agv回到暂驻区
                 Map<String, Object> map = new HashMap<>();
-                map.put("taskTyp", "c02");
+                map.put("taskTyp", "c01");
                 List<PositionCodePath> positionCodePathList = new LinkedList<>();
                 // 目标位置条码
-                PositionCodePath positionCodePath2 = new PositionCodePath();
-                positionCodePath2.setPositionCode(positionCode);
-                positionCodePath2.setType("00");
-                positionCodePathList.add(positionCodePath2);
+                PositionCodePath positionCodePath = new PositionCodePath();
+                positionCodePath.setPositionCode(positionCode);
+                positionCodePath.setType("00");
+                positionCodePathList.add(positionCodePath);
                 map.put("positionCodePath", positionCodePathList);
                 taskCode = agvFeignApi.genAgvSchedulingTask(map).getData();
-
-                // 发送消息到客户端，通知配送物料完成
-                MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
-                mQResponseEntity.setCode(1009);
-                fanoutSender.send(RabbitConfig.TOPIC_WORK_QUEUE, JSONObject.toJSONString(mQResponseEntity));
             }
         }
 

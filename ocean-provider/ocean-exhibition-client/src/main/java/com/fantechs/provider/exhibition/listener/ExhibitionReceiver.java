@@ -21,7 +21,7 @@ public class ExhibitionReceiver {
     @Autowired
     private AgvFeignApi agvFeignApi;
 
-    // 监听标签队列
+    // 监听客户端队列
     @RabbitListener(queues = RabbitConfig.TOPIC_WORK_QUEUE)
     public void receiveTopicWorkQueue(byte[]  bytes ) throws Exception {
         String encoded= new String(bytes,"UTF-8");
