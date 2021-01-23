@@ -138,8 +138,11 @@
             <if test="workOrderCode!=null and workOrderCode!=''">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
-            <if test="workOrderId!=null and workOrderId!=''">
+            <if test="workOrderId!=null">
                 and swo.work_order_id like CONCAT('%', #{workOrderId}, '%')
+            </if>
+            <if test="parentId!=null">
+                and swo.parent_id like CONCAT('%', #{parentId}, '%')
             </if>
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}

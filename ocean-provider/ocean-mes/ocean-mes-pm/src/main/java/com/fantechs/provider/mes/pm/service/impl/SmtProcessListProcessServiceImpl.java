@@ -12,12 +12,17 @@ import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.mes.pm.*;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
 import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import com.fantechs.provider.mes.pm.service.SmtProcessListProcessService;
 import org.springframework.stereotype.Service;
@@ -25,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,13 +49,19 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
     @Resource
+    private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
+    @Resource
     private SmtWorkOrderMapper smtWorkOrderMapper;
+    @Resource
+    private SmtWorkOrderService smtWorkOrderService;
     @Resource
     private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
     @Resource
     private SmtBarcodeRuleSetDetMapper smtBarcodeRuleSetDetMapper;
     @Resource
     private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
+    @Resource
+    private OutFeignApi outFeignApi;
 
 
     @Override
@@ -149,12 +161,43 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int finishedProduct(ProcessFinishedProductDTO processFinishedProductDTO) {
+        //=====判断工单的状态
+        SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
+        if(StringUtils.isEmpty(smtWorkOrderCardPool)){
+            throw new BizErrorException("未找到对应流程卡");
+        }
+        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPool.getWorkOrderId());
+        if(StringUtils.isEmpty(smtWorkOrder)){
+            throw new BizErrorException("未找到对应工单");
+        }
+        if(smtWorkOrder.getWorkOrderStatus() != 0 && smtWorkOrder.getWorkOrderStatus() != 2){
+            throw new BizErrorException("工单状态异常");
+        }
+        //=====
+
+        //判断操作是否正常
+        if(smtWorkOrderCardPool.getCardStatus()==0){
+            //流程卡未开工
+            if(processFinishedProductDTO.getProcessType()!=1){
+                throw new BizErrorException("流程卡尚未开工，不允许报工");
+            }
+            smtWorkOrderCardPool.setCardStatus((byte)1);
+            if(smtWorkOrderCardPoolService.update(smtWorkOrderCardPool)<=0){
+                throw new BizErrorException("更新流程卡状态失败");
+            }
+            //流程卡开工确认数不能够大于执行计划剩余完成数量
+        }else{
+            //流程卡已经开工，这个时候的工段首工序开工确认数或者报工数不允许大于上工序的报工数
+        }
+
         List<SmtProcessListProcess> smtProcessListProcesses = this.selectAll(ControllerUtil.dynamicCondition(
                 "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
                 "processId", processFinishedProductDTO.getProcessId()));
+        SmtProcessListProcess smtProcessListProcess;
         if(StringUtils.isEmpty(smtProcessListProcesses)){
-            SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
+            smtProcessListProcess = new SmtProcessListProcess();
             smtProcessListProcess.setStatus((byte)processFinishedProductDTO.getOperation());
             smtProcessListProcess.setWorkOrderCardPoolId(processFinishedProductDTO.getWorkOrderCardPoolId());
             smtProcessListProcess.setProcessId(processFinishedProductDTO.getProcessId());
@@ -165,7 +208,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }else{
-            SmtProcessListProcess smtProcessListProcess = smtProcessListProcesses.get(0);
+            smtProcessListProcess = smtProcessListProcesses.get(0);
             if(smtProcessListProcess.getStatus()==2){
                 throw new BizErrorException("当前流程卡你已提交，请勿提交");
             }
@@ -175,6 +218,20 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             smtProcessListProcess.setProcessType(processFinishedProductDTO.getProcessType());
             if(this.update(smtProcessListProcess)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
+        }
+        if(processFinishedProductDTO.getProcessType()==1 && processFinishedProductDTO.getOperation()==2){
+            //工序开工需要进行发料计划实发数反写
+            WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
+            wmsOutProductionMaterial.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            wmsOutProductionMaterial.setMaterialId(smtWorkOrder.getMaterialId());
+            wmsOutProductionMaterial.setRealityQty(smtProcessListProcess.getOutputQuantity());
+            ResponseEntity responseEntity = outFeignApi.updateByWorkOrderId(wmsOutProductionMaterial);
+            if(StringUtils.isEmpty(responseEntity)){
+                throw new BizErrorException("反写发料实发数接口出错");
+            }
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getMessage());
             }
         }
         return 1;

@@ -136,4 +136,10 @@ public class ProcessListWorkOrderDTO {
     @Transient
     @ApiModelProperty(name = "workOrderCode",value = "工单编码")
     private String workOrderCode;
+    /**
+     * 工单总数
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderQuantity",value = "工单总数")
+    private BigDecimal workOrderQuantity;
 }

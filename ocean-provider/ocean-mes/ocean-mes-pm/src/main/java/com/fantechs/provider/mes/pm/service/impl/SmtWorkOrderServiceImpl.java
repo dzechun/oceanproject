@@ -259,7 +259,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
                         //修改备料数量
                         if(StringUtils.isNotEmpty(smtStockDets)){
-                            List<SmtStockDet> smtStockDet = smtStockDets.stream().filter(st -> st.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())).collect(Collectors.toList());
+                            List<SmtStockDet> smtStockDet = smtStockDets.stream().filter(st ->st.getMaterialId() != null && st.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())).collect(Collectors.toList());
                             if (StringUtils.isNotEmpty(smtStockDet)) {
                                 for (SmtStockDet stockDet : smtStockDet) {
                                     stockDet.setStockId(smtStock.getStockId());
@@ -333,11 +333,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             Example example = new Example(SmtWorkOrderBom.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("workOrderId", workOrderId);
-            List<SmtWorkOrderBom> smtWorkOrderBoms = smtWorkOrderBomMapper.selectByExample(example);
-            if (StringUtils.isNotEmpty(smtWorkOrderBoms)) {
-                throw new BizErrorException("工单被引用，不能删除");
-            }
-
+            smtWorkOrderBomMapper.deleteByExample(example);
         }
         smtHtWorkOrderMapper.insertList(list);
 

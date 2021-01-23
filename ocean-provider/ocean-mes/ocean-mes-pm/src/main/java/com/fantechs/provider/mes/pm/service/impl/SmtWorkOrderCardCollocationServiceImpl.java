@@ -120,7 +120,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         for (SmtBarcodeRuleSetDet smtBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
             SmtBarcodeRule smtBarcodeRule = SmtBarcodeRuleMapper.selectByPrimaryKey(smtBarcodeRuleSetDet.getBarcodeRuleId());
             if (StringUtils.isEmpty(smtBarcodeRule)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                throw new BizErrorException("未找到条码规则");
             }
             //产品条码规则
             if (smtBarcodeRule.getBarcodeRuleCategoryId() == 1) {
@@ -254,7 +254,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             smtWorkOrderCardPool.setWorkOrderId(smtWorkOrderCardCollocation.getWorkOrderId());
             smtWorkOrderCardPool.setBarcodeRuleId(barcodeRuleId);
             smtWorkOrderCardPool.setWorkOrderCardId(workOrderCardCode);
-            smtWorkOrderCardPool.setParentId((long)0);
             smtWorkOrderCardPool.setIsDelete((byte)1);
             smtWorkOrderCardPool.setCardStatus((byte) 0);
             smtWorkOrderCardPool.setStatus((byte) 1);

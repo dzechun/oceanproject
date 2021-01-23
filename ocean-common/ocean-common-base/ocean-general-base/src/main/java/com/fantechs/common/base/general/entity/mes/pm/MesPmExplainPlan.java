@@ -56,6 +56,14 @@ public class MesPmExplainPlan implements Serializable {
     private Long proLineId;
 
     /**
+     * 工单生产总数
+     */
+    @ApiModelProperty(value = "工单生产总数",example = "工单生产总数")
+    @Column(name = "work_order_quantity")
+    @Excel(name = "工单生产总数")
+    private java.math.BigDecimal workOrderQuantity;
+
+    /**
     * 生产总数
     */
     @ApiModelProperty(value = "生产总数",example = "生产总数")

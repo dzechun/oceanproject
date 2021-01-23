@@ -134,10 +134,26 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
    }
 
     @Override
+    @Transactional
     public int save(SaveMesPmMasterPlanDTO saveMesPmMasterPlanDTO) {
         MesPmMasterPlan mesPmMasterPlan = saveMesPmMasterPlanDTO.getMesPmMasterPlan();
         if(StringUtils.isEmpty(mesPmMasterPlan.getMasterPlanId())){
             //新增
+            //判断计划排产数是否大于工单数
+            SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(mesPmMasterPlan.getWorkOrderId());
+            if(StringUtils.isEmpty(smtWorkOrder)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+            }
+            double workOrderQuantity = smtWorkOrder.getWorkOrderQuantity().doubleValue();
+            double productionQuantity = smtWorkOrder.getProductionQuantity().doubleValue();
+            double scheduleQuantity = mesPmMasterPlan.getProductQty().doubleValue();
+            if(scheduleQuantity>(workOrderQuantity-productionQuantity)){
+                throw new BizErrorException("计划排产数不能大于工单剩余生产数");
+            }
+            smtWorkOrder.setProductionQuantity(new BigDecimal(productionQuantity+scheduleQuantity));
+            if(smtWorkOrderService.update(smtWorkOrder)<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
             if(this.save(mesPmMasterPlan)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
@@ -148,16 +164,40 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             }
         }
         List<MesPmProcessPlan> mesPmProcessPlanList = saveMesPmMasterPlanDTO.getMesPmProcessPlanList();
+        //找出原有工序计划
+        List<MesPmProcessPlan> mesPmProcessPlans = mesPmProcessPlanService.selectAll(ControllerUtil.dynamicCondition(
+                "masterPlanId", mesPmMasterPlan.getMasterPlanId()
+        ));
         if(StringUtils.isNotEmpty(mesPmProcessPlanList)){
             for (MesPmProcessPlan mesPmProcessPlan : mesPmProcessPlanList) {
                 if(StringUtils.isEmpty(mesPmProcessPlan.getProcessPlanId())){
                     mesPmProcessPlan.setMasterPlanId(mesPmMasterPlan.getMasterPlanId());
                     mesPmProcessPlan.setProcessPlanCode(CodeUtils.getId("MPPP"));
+                    if(mesPmProcessPlanService.save(mesPmProcessPlan)<=0){
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+                    }
+                }else{
+                    if(mesPmProcessPlanService.update(mesPmProcessPlan)<=0){
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+                    }
                 }
             }
-            if(mesPmProcessPlanService.batchAdd(mesPmProcessPlanList)<=0){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            //=====找出删除的工序计划
+            for (MesPmProcessPlan mesPmProcessPlan : mesPmProcessPlans) {
+                boolean isHas=false;
+                for (MesPmProcessPlan pmProcessPlan : mesPmProcessPlanList) {
+                    if(pmProcessPlan.getProcessPlanId().compareTo(mesPmProcessPlan.getProcessPlanId())==0){
+                        isHas=true;
+                        break;
+                    }
+                }
+                if(!isHas){
+                    if(mesPmProcessPlanService.deleteByKey(mesPmProcessPlan.getProcessPlanId())<=0){
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+                    }
+                }
             }
+            //=====
         }
         return 1;
     }
@@ -165,6 +205,9 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int turnExplainPlan(TurnExplainPlanDTO turnExplainPlanDTO) {
+        if(StringUtils.isEmpty(turnExplainPlanDTO.getTheScheduleQty()) || turnExplainPlanDTO.getTheScheduleQty().doubleValue()<=0){
+            throw new BizErrorException("排产数必须大于0");
+        }
         MesPmMasterPlan mesPmMasterPlan = this.selectByKey(turnExplainPlanDTO.getMasterPlanId());
         if(StringUtils.isEmpty(mesPmMasterPlan)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
@@ -178,7 +221,9 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         MesPmExplainPlan mesPmExplainPlan = new MesPmExplainPlan();
         mesPmExplainPlan.setMasterPlanId(mesPmMasterPlan.getMasterPlanId());
         mesPmExplainPlan.setWorkOrderId(mesPmMasterPlan.getWorkOrderId());
+        mesPmExplainPlan.setWorkOrderQuantity(mesPmMasterPlan.getWorkOrderQuantity());
         mesPmExplainPlan.setProductQty(turnExplainPlanDTO.getTheScheduleQty());
+        mesPmExplainPlan.setNoScheduleQty(turnExplainPlanDTO.getTheScheduleQty());
         mesPmExplainPlan.setPlanedStartDate(turnExplainPlanDTO.getPlanedStartDate());
         mesPmExplainPlan.setPlanedEndDate(turnExplainPlanDTO.getPlanedEndDate());
         if(mesPmExplainPlanService.save(mesPmExplainPlan)<=0){
@@ -186,6 +231,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         }
         //更新总计划数据的已排产数
         mesPmMasterPlan.setScheduledQty(new BigDecimal(scheduledQty+theScheduleQty));
+        mesPmMasterPlan.setNoScheduleQty(new BigDecimal(mesPmMasterPlan.getProductQty().doubleValue()-mesPmMasterPlan.getScheduledQty().doubleValue()));
         if(this.update(mesPmMasterPlan)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
@@ -249,8 +295,10 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             ResponseEntity<List<BasePlatePartsDto>> feignResult = baseFeignApi.findPlatePartsList(searchBasePlateParts);
             if(StringUtils.isNotEmpty(feignResult)){
                 List<BasePlatePartsDto> basePlatePartsDtoList = feignResult.getData();
-                BasePlatePartsDto basePlatePartsDto = basePlatePartsDtoList.get(0);
-                masterPlanPrintWorkOrderDTO.setBasePlatePartsDetDtoList(basePlatePartsDto.getList());
+                if(StringUtils.isNotEmpty(basePlatePartsDtoList)){
+                    BasePlatePartsDto basePlatePartsDto = basePlatePartsDtoList.get(0);
+                    masterPlanPrintWorkOrderDTO.setBasePlatePartsDetDtoList(basePlatePartsDto.getList());
+                }
             }
             //=====
         }
@@ -265,6 +313,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int turnWorkOrderCardPool(TurnWorkOrderCardPoolDTO turnWorkOrderCardPoolDTO) {
         MesPmMasterPlan mesPmMasterPlan = this.selectByKey(turnWorkOrderCardPoolDTO.getMasterPlanId());
         if(StringUtils.isEmpty(mesPmMasterPlan)){
@@ -296,21 +345,47 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                 throw new BizErrorException("未找到部件详细信息");
             }
             for (BasePlatePartsDetDto basePlatePartsDetDto : basePlatePartsDetDtoList) {
-                //=====根据部件信息生成工单
-                SmtWorkOrder tempsmtWorkOrder = new SmtWorkOrder();
-                tempsmtWorkOrder.setParentId(workOrderId);
-                tempsmtWorkOrder.setProLineId(mesPmMasterPlan.getProLineId());
-                tempsmtWorkOrder.setMaterialId(basePlatePartsDetDto.getPartsInformationId());
-                tempsmtWorkOrder.setWorkOrderQuantity(turnWorkOrderCardPoolDTO.getScheduleQty());
-                tempsmtWorkOrder.setProductionQuantity(turnWorkOrderCardPoolDTO.getScheduleQty());
-                tempsmtWorkOrder.setRemark("无BOM");
-                SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
-                saveWorkOrderAndBom.setSmtWorkOrder(tempsmtWorkOrder);
-                saveWorkOrderAndBom.setGenerate(false);
-                if(smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom)<=0){
-                    throw new BizErrorException("新增部件工单错误");
+                //部件用量
+                double quantity=StringUtils.isEmpty(basePlatePartsDetDto.getQuantity())?1:basePlatePartsDetDto.getQuantity().doubleValue();
+                //=====查找此主工单对于的部件工单是否存在，如果存在是否超数
+                SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+                searchSmtWorkOrder.setMaterialId(basePlatePartsDetDto.getPartsInformationId());
+                searchSmtWorkOrder.setParentId(workOrderId);
+                List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+                SmtWorkOrder tempsmtWorkOrder;
+                if(StringUtils.isNotEmpty(smtWorkOrderDtoList)){
+                    SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+                    //查看投产是否超
+                    double remainQty=smtWorkOrderDto.getWorkOrderQuantity().doubleValue()-smtWorkOrderDto.getProductionQuantity().doubleValue();
+                    double curProductQty=turnWorkOrderCardPoolDTO.getScheduleQty().doubleValue()*quantity;
+                    if(curProductQty>remainQty){
+                        throw new BizErrorException("部件投产数超出工单生产总数");
+                    }
+                    //更新部件工单信息
+                    tempsmtWorkOrder = new SmtWorkOrder();
+                    BeanUtils.copyProperties(smtWorkOrderDto,tempsmtWorkOrder);
+                    tempsmtWorkOrder.setProductionQuantity(new BigDecimal(curProductQty));
+                    if(smtWorkOrderService.update(tempsmtWorkOrder)<=0){
+                        throw new BizErrorException("更新部件工单错误");
+                    }
+                }else{
+                    //=====根据部件信息生成工单
+                    tempsmtWorkOrder = new SmtWorkOrder();
+                    tempsmtWorkOrder.setParentId(workOrderId);
+                    tempsmtWorkOrder.setProLineId(mesPmMasterPlan.getProLineId());
+                    tempsmtWorkOrder.setMaterialId(basePlatePartsDetDto.getPartsInformationId());
+                    tempsmtWorkOrder.setWorkOrderQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().doubleValue()*quantity));
+                    tempsmtWorkOrder.setProductionQuantity(new BigDecimal(turnWorkOrderCardPoolDTO.getScheduleQty().doubleValue()*quantity));
+                    tempsmtWorkOrder.setRemark("无BOM");
+                    tempsmtWorkOrder.setBarcodeRuleSetId(smtWorkOrder.getBarcodeRuleSetId());
+                    SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
+                    saveWorkOrderAndBom.setSmtWorkOrder(tempsmtWorkOrder);
+                    saveWorkOrderAndBom.setGenerate(false);
+                    if(smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom)<=0){
+                        throw new BizErrorException("新增部件工单错误");
+                    }
+                    //=====
                 }
-                //=====
                 //=====转流程卡
                 SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
                 smtWorkOrderCardCollocation.setWorkOrderId(tempsmtWorkOrder.getWorkOrderId());

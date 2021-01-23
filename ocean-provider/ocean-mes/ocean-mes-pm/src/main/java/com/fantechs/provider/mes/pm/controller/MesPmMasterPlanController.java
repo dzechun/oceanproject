@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmMasterPlanService;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -41,6 +43,8 @@ public class MesPmMasterPlanController {
 
     @Resource
     private MesPmMasterPlanService mesPmMasterPlanService;
+    @Resource
+    private SmtWorkOrderService smtWorkOrderService;
 
     @ApiOperation("查询总计划表（月计划表）列表")
     @PostMapping("findAllList")
@@ -123,20 +127,44 @@ public class MesPmMasterPlanController {
         EasyPoiUtils.exportExcel(mesPmMasterPlanDTOList ,"总计划表（月计划表）信息","总计划表（月计划表）信息", MesPmMasterPlanDTO.class, "总计划表（月计划表）信息.xls", response);
     }
 
-    /*@PostMapping(value = "/import")
+    @PostMapping(value = "/import")
     @ApiOperation(value = "导入EXCEL",notes = "导入EXCEL")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+    public ResponseEntity<String> importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file) throws IOException {
-        List<MesPmMasterPlan> mesPmMasterPlanList = EasyPoiUtils.importExcel(file, MesPmMasterPlan.class);
-        if(StringUtils.isEmpty(mesPmMasterPlanList)){
+        List<MesPmMasterPlanDTO> mesPmMasterPlanDTOList = EasyPoiUtils.importExcel(file, MesPmMasterPlanDTO.class);
+        if(StringUtils.isEmpty(mesPmMasterPlanDTOList)){
             return ControllerUtil.returnCRUD(0);
         }
-        for (MesPmMasterPlan mesPmMasterPlan : mesPmMasterPlanList) {
-            mesPmMasterPlan.setMasterPlanCode(CodeUtils.getId("MPLAN"));
+        StringBuffer errorWorkOrderCode=new StringBuffer();
+        for (MesPmMasterPlanDTO mesPmMasterPlanDTO : mesPmMasterPlanDTOList) {
+            //=====校验数据正确性
             if(StringUtils.isEmpty(
-                    mesPmMasterPlan.getWorkOrderId(),
-                    mesPmMasterPlan.getProductQty(),))
+                    mesPmMasterPlanDTO.getWorkOrderCode(),
+                    mesPmMasterPlanDTO.getProductQty(),
+                    mesPmMasterPlanDTO.getPlanedStartDate(),
+                    mesPmMasterPlanDTO.getPlanedEndDate())){
+                throw new BizErrorException("缺少必要数据（工单编码/计划生产总数及排产数/计划开工完工时间）");
+            }
+            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+            searchSmtWorkOrder.setWorkOrderCode(mesPmMasterPlanDTO.getWorkOrderCode());
+            List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+            if(StringUtils.isEmpty(smtWorkOrderDtoList) || smtWorkOrderDtoList.size()>1){
+                throw new BizErrorException("工单编号未找到或工单编号不唯一");
+            }
+            //=====
+            SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+            MesPmMasterPlan mesPmMasterPlan = new MesPmMasterPlan();
+            mesPmMasterPlan.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
+            mesPmMasterPlan.setProLineId(smtWorkOrderDto.getProLineId());
+            mesPmMasterPlan.setWorkOrderQuantity(smtWorkOrderDto.getWorkOrderQuantity());
+            mesPmMasterPlan.setProductQty(mesPmMasterPlanDTO.getProductQty());
+            mesPmMasterPlan.setNoScheduleQty(mesPmMasterPlan.getProductQty());
+            mesPmMasterPlan.setPlanedStartDate(mesPmMasterPlanDTO.getPlanedStartDate());
+            mesPmMasterPlan.setPlanedEndDate(mesPmMasterPlanDTO.getPlanedEndDate());
+            if(mesPmMasterPlanService.save(mesPmMasterPlan)<=0){
+                errorWorkOrderCode.append( mesPmMasterPlanDTO.getWorkOrderCode()+",");
+            }
         }
-        return ControllerUtil.returnCRUD(mesPmMasterPlanService.ba);
-    }*/
+        return ControllerUtil.returnDataSuccess(errorWorkOrderCode.toString(), 1);
+    }
 }

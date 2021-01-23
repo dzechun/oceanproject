@@ -48,6 +48,14 @@ public class MesPmMasterPlan implements Serializable {
     private Long proLineId;
 
     /**
+     * 工单生产总数
+     */
+    @ApiModelProperty(value = "工单生产总数",example = "工单生产总数")
+    @Column(name = "work_order_quantity")
+    @Excel(name = "工单生产总数")
+    private java.math.BigDecimal workOrderQuantity;
+
+    /**
     * 生产总数
     */
     @ApiModelProperty(value = "生产总数",example = "生产总数")
@@ -86,7 +94,7 @@ public class MesPmMasterPlan implements Serializable {
     @Column(name = "planed_start_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @JsonFormat(pattern ="yyyy-MM-dd HH:mm")
-    @Excel(name = "计划开工时间")
+    @Excel(name = "计划开工时间",exportFormat = "yyyy-MM-dd HH:mm",importFormat = "yyyy-MM-dd HH:mm")
     private java.util.Date planedStartDate;
 
     /**
@@ -96,7 +104,7 @@ public class MesPmMasterPlan implements Serializable {
     @Column(name = "planed_end_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @JsonFormat(pattern ="yyyy-MM-dd HH:mm")
-    @Excel(name = "计划完工时间")
+    @Excel(name = "计划完工时间",exportFormat = "yyyy-MM-dd HH:mm",importFormat = "yyyy-MM-dd HH:mm")
     private java.util.Date planedEndDate;
 
     /**

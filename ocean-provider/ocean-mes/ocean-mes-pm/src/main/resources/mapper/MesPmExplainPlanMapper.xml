@@ -7,6 +7,7 @@
         <result column="master_plan_id" jdbcType="BIGINT" property="masterPlanId"/>
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
         <result column="product_qty" jdbcType="DECIMAL" property="productQty"/>
         <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
         <result column="no_schedule_qty" jdbcType="DECIMAL" property="noScheduleQty"/>
@@ -36,6 +37,7 @@
         mpep.master_plan_id,
         mpep.work_order_id,
         mpep.pro_line_id,
+        mpep.work_order_quantity,
         mpep.product_qty,
         mpep.scheduled_qty,
         mpep.no_schedule_qty,
@@ -96,6 +98,9 @@
             </if>
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status=#{workOrderStatus}
+            </if>
+            <if test="masterPlanId!=null">
+                and mpep.master_plan_id=#{masterPlanId}
             </if>
             and mpep.is_delete = 1
         </where>

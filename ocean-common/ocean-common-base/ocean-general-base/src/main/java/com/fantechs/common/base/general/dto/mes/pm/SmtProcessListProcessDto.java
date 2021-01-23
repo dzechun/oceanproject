@@ -19,6 +19,20 @@ import java.util.Date;
 @Data
 public class SmtProcessListProcessDto extends SmtProcessListProcess implements Serializable {
     private static final long serialVersionUID = -8014622703067473837L;
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(value = "创建用户名称",example = "创建用户名称")
+    @Excel(name = "创建用户名称")
+    private String createUserName;
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(value = "修改用户名称",example = "修改用户名称")
+    @Excel(name = "修改用户名称")
+    private String modifiedUserName;
 
     /**
      * 工单号

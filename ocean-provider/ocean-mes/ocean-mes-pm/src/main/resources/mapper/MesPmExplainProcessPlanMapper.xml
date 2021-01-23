@@ -68,6 +68,9 @@
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}
             </if>
+            <if test="explainPlanId!=null">
+                and mpepp.explain_plan_id=#{explainPlanId}
+            </if>
             and mpepp.is_delete = 1
         </where>
         order by mpepp.modified_time desc

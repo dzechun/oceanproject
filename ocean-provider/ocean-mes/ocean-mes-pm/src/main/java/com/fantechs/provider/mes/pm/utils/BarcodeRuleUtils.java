@@ -159,7 +159,7 @@ public class BarcodeRuleUtils {
         for (SmtBarcodeRuleSpec smtBarcodeRuleSpec : list) {
             String specification = smtBarcodeRuleSpec.getSpecification();
             String customizeValue = smtBarcodeRuleSpec.getCustomizeValue();
-            Integer length =0;
+            int length =0;
             if("[G]".equals(specification)){
                 length=customizeValue.length();
             }else {
@@ -167,7 +167,12 @@ public class BarcodeRuleUtils {
             }
             if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
                 if(StringUtils.isNotEmpty(maxCode)){
-                    maxSerialNumber = maxCode.substring(sum, sum + length);
+                    if(sum+length>maxCode.length() || sum>maxCode.length()){
+                        maxSerialNumber = maxCode+"1";
+                    }else{
+                        maxSerialNumber = maxCode.substring(sum, sum + length);
+                    }
+
                 }
             }
             sum+=length;

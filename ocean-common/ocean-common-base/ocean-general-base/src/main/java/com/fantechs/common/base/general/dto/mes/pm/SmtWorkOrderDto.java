@@ -184,5 +184,5 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(value = "父工单编码",example = "父工单编码")
     @Excel(name = "父工单编码")
-    private Byte parentWorkOrderCode;
+    private String parentWorkOrderCode;
 }
