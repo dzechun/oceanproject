@@ -34,15 +34,17 @@
         spu.packing_unit_name,
         spu.packing_unit_desc,
         spu.is_chief,
-        spu.status,
-        ified_user_id,
+        spu.`status`,
+        spu.remark,
+        spu.organization_id,
+        spu.create_user_id,
+        spu.create_time,
+        spu.modified_user_id,
         spu.modified_time,
         spu.is_delete,
         spu.option1,
         spu.option2,
-        spu.option3,
-        spu.organization_id,
-        spu.remark
+        spu.option3
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
