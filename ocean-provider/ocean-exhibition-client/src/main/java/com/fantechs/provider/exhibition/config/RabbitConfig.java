@@ -49,6 +49,15 @@ public class RabbitConfig {
         return new Queue(TOPIC_PROCESS_LIST_QUEUE);
     }
 
+    @Bean
+    public Queue topicImageQueue() {
+        return new Queue(TOPIC_IMAGE_QUEUE);
+    }
+
+    @Bean
+    public Queue topicWorkQueue() {
+        return new Queue(TOPIC_WORK_QUEUE);
+    }
 
 
     @Bean
