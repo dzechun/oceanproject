@@ -9,6 +9,7 @@ import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleSpecMapper;
 import com.fantechs.provider.mes.pm.service.SmtBarcodeRuleSpecService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,6 +29,13 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
         @Override
         public List<SmtBarcodeRuleSpecDto> findList(SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec) {
             return smtBarcodeRuleSpecMapper.findList(searchSmtBarcodeRuleSpec);
+        }
+
+        @Override
+        public List<SmtBarcodeRuleSpec> findSpec(SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec) {
+                Example example = new Example(SmtBarcodeRuleSpec.class);
+                example.createCriteria().andEqualTo("barcodeRuleId",searchSmtBarcodeRuleSpec.getBarcodeRuleId());
+                return smtBarcodeRuleSpecMapper.selectByExample(example);
         }
 
 

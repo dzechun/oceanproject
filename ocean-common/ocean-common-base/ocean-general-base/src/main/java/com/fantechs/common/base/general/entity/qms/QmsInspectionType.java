@@ -49,17 +49,27 @@ public class QmsInspectionType extends ValidGroup implements Serializable {
      * 检验类型水平
      */
     @ApiModelProperty(name="inspectionTypeLevel",value = "检验类型水平")
-    @Excel(name = "检验类型水平", height = 20, width = 30,orderNum="3")
     @Column(name = "inspection_type_level")
     private Long inspectionTypeLevel;
+
+    /**
+     * 检验类型水平名称
+     */
+    @Excel(name = "检验类型水平", height = 20, width = 30,orderNum="3")
+    private String inspectionTypeLevelName;
 
     /**
      * 检验工具
      */
     @ApiModelProperty(name="inspectionTool",value = "检验工具")
-    @Excel(name = "检验工具", height = 20, width = 30,orderNum="4")
     @Column(name = "inspection_tool")
     private Long inspectionTool;
+
+    /**
+     * 检验工具名称
+     */
+    @Excel(name = "检验工具", height = 20, width = 30,orderNum="4")
+    private String inspectionToolName;
 
     /**
      * 检验标准
@@ -73,9 +83,14 @@ public class QmsInspectionType extends ValidGroup implements Serializable {
      * 检验项
      */
     @ApiModelProperty(name="inspectionNape",value = "检验项")
-    @Excel(name = "检验项", height = 20, width = 30,orderNum="6")
     @Column(name = "inspection_nape")
     private Long inspectionNape;
+
+    /**
+     * 检验项名称
+     */
+    @Excel(name = "检验项", height = 20, width = 30,orderNum="6")
+    private String inspectionNapeName;
 
     /**
      * 批量

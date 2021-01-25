@@ -110,5 +110,14 @@ public interface PMFeignApi {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/smtProcessListProcess/startJob")
     ResponseEntity startJob(@ApiParam(value = "必传：", required = true) @RequestBody SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
-    
+
+    @ApiOperation("列表")
+    @PostMapping("/smtBarcodeRuleSpec/findSpec")
+    ResponseEntity<List<SmtBarcodeRuleSpec>> findSpec(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec);
+
+    @ApiOperation(value = "获取最大流水号")
+    @PostMapping("/smtBarcodeRule/generateMaxCode")
+    ResponseEntity<String> generateMaxCode(
+            @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
+            @ApiParam(value = "最大条码数")@RequestParam String maxCode);
 }

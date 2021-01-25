@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
@@ -39,10 +40,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2021/01/07.
@@ -107,7 +105,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
             wmsInFinishedProductDetMapper.insertSelective(wmsInFinishedProductDet);
 
             if (wmsInFinishedProduct.getProjectType().equals("dp")) {
-                if(wmsInFinishedProduct.getInType() == 1){
+                if (wmsInFinishedProduct.getInType() == 1) {
                     //半成品入库 直接计算库存。
                     //新增库存
                     SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
@@ -203,16 +201,16 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
             wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
             wmsInFinishedProductDet.setInTime(new Date());
             wmsInFinishedProductDet.setDeptId(user.getDeptId());
-            if(!StringUtils.isEmpty(wmsInFinishedProductDet.getCount())){
+            if (!StringUtils.isEmpty(wmsInFinishedProductDet.getCount())) {
                 Boolean flag2 = true;
-                if(StringUtils.isEmpty(wmsInFinishedProductDet.getInQuantity())){
+                if (StringUtils.isEmpty(wmsInFinishedProductDet.getInQuantity())) {
                     if (wmsInFinishedProductDet.getPlanInQuantity().compareTo(wmsInFinishedProductDet.getCount()) == 0) {
-                    }else{
+                    } else {
                         flag2 = false;
                     }
-                }else{
+                } else {
                     if (wmsInFinishedProductDet.getPlanInQuantity().compareTo(wmsInFinishedProductDet.getInQuantity().add(wmsInFinishedProductDet.getCount())) == 0) {
-                    }else{
+                    } else {
                         flag2 = false;
                     }
                 }
@@ -233,35 +231,40 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 storageInventoryFeignApi.add(smtStorageInventoryDet);
 
                 wmsInFinishedProductDet.setInQuantity((StringUtils.isEmpty(wmsInFinishedProductDet.getInQuantity()) ? new BigDecimal(0) : wmsInFinishedProductDet.getInQuantity()).add(wmsInFinishedProductDet.getCount()));
+                if (flag2) {//子表状态
+                    wmsInFinishedProductDet.setInStatus((byte) 2);
+                } else {
+                    wmsInFinishedProductDet.setInStatus((byte) 1);
+                }
                 wmsInFinishedProductDetMapper.updateByPrimaryKeySelective(wmsInFinishedProductDet);
 
             }
 
             //更改条码状态
-            for (String s : wmsInFinishedProductDet.getBarCodeContentList()) {
-                BcmBarCode bcmBarCode = new BcmBarCode();
-                bcmBarCode.setWorkOrderId(wmsInFinishedProduct.getWorkOrderId());
-                bcmBarCode.setBarCodeContent(s);
-                bcmBarCode.setStatus((byte)0);
-                bcmFeignApi.updateByContent(bcmBarCode);
+            List<BcmBarCodeDet> bcmBarCodeDets = new ArrayList<>();
+            for (Integer id : wmsInFinishedProductDet.getBarCodeIdList()) {
+                BcmBarCodeDet bcmBarCodeDet = new BcmBarCodeDet();
+                bcmBarCodeDet.setBarCodeDetId(id.longValue());
+                bcmBarCodeDets.add(bcmBarCodeDet);
             }
+            bcmFeignApi.updateByContent(bcmBarCodeDets);
 
         }
 
         //获取最新子表数据判断主表状态
-        Map<String,Object> map = new HashMap();
-        map.put("finishedProductCode",wmsInFinishedProduct.getFinishedProductId());
+        Map<String, Object> map = new HashMap();
+        map.put("finishedProductCode", wmsInFinishedProduct.getFinishedProductId());
         List<WmsInFinishedProductDetDto> wmsInFinishedProductDets = wmsInFinishedProductDetMapper.findList(map);
 
         Boolean flag = true;
         for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProductDets) {
-            if(wmsInFinishedProductDet.getInStatus() != 2){
+            if (wmsInFinishedProductDet.getInStatus() != 2) {
                 flag = false;
                 break;
             }
         }
 
-        if (flag) {
+        if (flag) {//主表状态
             wmsInFinishedProduct.setInStatus((byte) 2);
         } else {
             wmsInFinishedProduct.setInStatus((byte) 1);
@@ -289,7 +292,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
         BeanUtils.copyProperties(wmsInFinishedProduct, wmsInHtFinishedProduct);
         wmsInHtFinishedProductMapper.insertSelective(wmsInHtFinishedProduct);
 
-        if(wmsInFinishedProduct.getWmsInFinishedProductDetList() != null){
+        if (wmsInFinishedProduct.getWmsInFinishedProductDetList() != null) {
             for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
                 wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
                 wmsInFinishedProductDet.setModifiedTime(new Date());

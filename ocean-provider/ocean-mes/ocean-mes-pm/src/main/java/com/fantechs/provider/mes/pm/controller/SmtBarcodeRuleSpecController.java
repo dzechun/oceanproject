@@ -47,4 +47,11 @@ public class SmtBarcodeRuleSpecController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("列表")
+    @PostMapping("/findSpec")
+    public ResponseEntity<List<SmtBarcodeRuleSpec>> findSpec(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec){
+        List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecService.findSpec(searchSmtBarcodeRuleSpec);
+        return ControllerUtil.returnDataSuccess(list,(int)list.size());
+    }
+
 }

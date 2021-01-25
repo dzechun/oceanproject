@@ -87,7 +87,7 @@ public class QmsInspectionTypeController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchQmsInspectionType searchQmsInspectionType){
-    List<QmsInspectionTypeDto> list = qmsInspectionTypeService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionType));
+    List<QmsInspectionTypeDto> list = qmsInspectionTypeService.exportExcel(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionType));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "检验类型导出信息", "检验类型信息", QmsInspectionType.class, "检验类型.xls", response);
