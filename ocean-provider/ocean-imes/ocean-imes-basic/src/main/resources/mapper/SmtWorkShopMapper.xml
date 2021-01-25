@@ -1,67 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtWorkShop">
-    <id column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
-    <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode" />
-    <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
-    <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
-    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="status" jdbcType="BIT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtWorkShop">
+        <id column="work_shop_id" jdbcType="BIGINT" property="workShopId"/>
+        <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+        <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtWorkShopDto">
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtWorkShopDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    ws.work_shop_id, ws.work_shop_code, ws.work_shop_name, ws.work_shop_desc, ws.factory_id, ws.create_user_id,
-    ws.create_time, ws.modified_user_id, ws.modified_time, ws.status, ws.is_delete, ws.option1, ws.option2,
-    ws.option3, ws.organization_id, ws.remark
-  </sql>
+    <sql id="Base_Column_List">
+        ws.work_shop_id,
+        ws.work_shop_code,
+        ws.work_shop_name,
+        ws.work_shop_desc,
+        ws.factory_id,
+        ws.create_user_id,
+        ws.create_time,
+        ws.modified_user_id,
+        ws.modified_time,
+        ws.status,
+        ws.is_delete,
+        ws.option1,
+        ws.option2,
+        ws.option3,
+        ws.organization_id,
+        ws.remark
+    </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select
-    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,sf.factory_name,
-    bo.organization_name
-    from fantech_imes.smt_work_shop ws
-    LEFT JOIN ocean.sys_user su  ON ws.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON ws.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.smt_factory sf ON sf.factory_id = ws.factory_id
-    LEFT JOIN fantech_imes.base_organization bo ON ws.organization_id = bo.organization_id
-    <where>
-      <if test="workShopCode != null and workShopCode != ''">
-        and  ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
-      </if>
-      <if test="workShopName != null and workShopName != ''">
-        and  ws.work_shop_name like CONCAT('%', #{workShopName}, '%')
-      </if>
-      <if test="workShopDesc != null and workShopDesc != ''">
-        and  ws.work_shop_desc like CONCAT('%', #{workShopDesc}, '%')
-      </if>
-      <if test="factoryId != null and factoryId != ''">
-        and  ws.factory_id = #{factoryId}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="status!=null">
-        and ws.status=#{status}
-      </if>
-    </where>
-    order by create_time desc
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS
+        modified_user_name,sf.factory_name,
+        bo.organization_name
+        from fantech_imes.smt_work_shop ws
+        LEFT JOIN ocean.sys_user su ON ws.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON ws.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.smt_factory sf ON sf.factory_id = ws.factory_id
+        LEFT JOIN fantech_imes.base_organization bo ON ws.organization_id = bo.organization_id
+        <where>
+            <if test="workShopCode != null and workShopCode != ''">
+                and ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
+            </if>
+            <if test="workShopName != null and workShopName != ''">
+                and ws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+            </if>
+            <if test="workShopDesc != null and workShopDesc != ''">
+                and ws.work_shop_desc like CONCAT('%', #{workShopDesc}, '%')
+            </if>
+            <if test="factoryId != null and factoryId != ''">
+                and ws.factory_id = #{factoryId}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="status!=null">
+                and ws.status=#{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 </mapper>

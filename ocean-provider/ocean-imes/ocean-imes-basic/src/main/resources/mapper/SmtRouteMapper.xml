@@ -1,60 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtRouteMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtRoute">
-    <id column="route_id" jdbcType="BIGINT" property="routeId" />
-    <result column="route_code" jdbcType="VARCHAR" property="routeCode" />
-    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
-    <result column="route_desc" jdbcType="VARCHAR" property="routeDesc" />
-    <result column="route_type" jdbcType="TINYINT" property="routeType" />
-    <result column="standard_time" jdbcType="TIMESTAMP" property="standardTime" />
-    <result column="readiness_time" jdbcType="TIMESTAMP" property="readinessTime" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtRoute">
+        <id column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="route_code" jdbcType="VARCHAR" property="routeCode"/>
+        <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+        <result column="route_desc" jdbcType="VARCHAR" property="routeDesc"/>
+        <result column="route_type" jdbcType="TINYINT" property="routeType"/>
+        <result column="standard_time" jdbcType="TIMESTAMP" property="standardTime"/>
+        <result column="readiness_time" jdbcType="TIMESTAMP" property="readinessTime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="process_desc" jdbcType="VARCHAR" property="processDesc"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtRoute" resultMap="BaseResultMap">
-    select sr.route_id,sr.route_code,sr.route_name,sr.route_desc,sr.route_type,sr.standard_time,sr.readiness_time, sr.status, sr.create_user_id,u.user_name as create_user_name,
-    sr.create_time, sr.modified_user_id,s.user_name as modified_user_name,sr.modified_time,sr.is_delete, sr.organization_id,
-    sr.remark, bo.organization_name
-    from fantech_imes.smt_route sr
-    left join ocean.sys_user u on sr.create_user_id=u.user_id
-    left join ocean.sys_user s on sr.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON sr.organization_id = bo.organization_id
-    <where>
-      1=1
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(sr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="routeCode!=null and routeCode!=''">
-        and sr.route_code like CONCAT('%', #{routeCode}, '%')
-      </if>
-      <if test="routeName!=null and routeName!=''">
-        and sr.route_name like CONCAT('%', #{routeName}, '%')
-      </if>
-      <if test="routeDesc!=null and routeDesc!=''">
-        and sr.route_desc like CONCAT('%', #{routeDesc}, '%')
-      </if>
-      <if test="routeType!=null and routeType!=''">
-        and sr.route_type = #{routeType}
-      </if>
-      <if test="status!=null">
-        and sr.status=#{status}
-      </if>
-    </where>
-    order by sr.create_time desc
-  </select>
+    <sql id="Base_Column_List">
+        sr.route_id,
+        sr.route_code,
+        sr.route_name,
+        sr.route_desc,
+        sr.route_type,
+        sr.readiness_time,
+        sr.standard_time,
+        sr.`status`,
+        sr.remark,
+        sr.organization_id,
+        sr.create_user_id,
+        sr.create_time,
+        sr.modified_user_id,
+        sr.modified_time,
+        sr.is_delete,
+        sr.option1,
+        sr.option2,
+        sr.option3
+    </sql>
+
+    <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtRoute"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        u.user_name as create_user_name, s.user_name as modified_user_name,
+        sp.process_id, sp.process_code, sp.process_name, sp.process_desc,
+        bo.organization_name
+        from fantech_imes.smt_route sr
+        left join ocean.sys_user u on sr.create_user_id=u.user_id
+        left join ocean.sys_user s on sr.modified_user_id=s.user_id
+        left join fantech_imes.smt_route_process srp on sr.route_id = srp.route_id
+        left join fantech_imes.smt_process sp on srp.process_id = sp.process_id
+        LEFT JOIN fantech_imes.base_organization bo ON sr.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="routeCode!=null and routeCode!=''">
+                and sr.route_code like CONCAT('%', #{routeCode}, '%')
+            </if>
+            <if test="routeName!=null and routeName!=''">
+                and sr.route_name like CONCAT('%', #{routeName}, '%')
+            </if>
+            <if test="routeDesc!=null and routeDesc!=''">
+                and sr.route_desc like CONCAT('%', #{routeDesc}, '%')
+            </if>
+            <if test="routeType!=null and routeType!=''">
+                and sr.route_type = #{routeType}
+            </if>
+            <if test="routeId !=null">
+                and sr.route_id = #{routeId}
+            </if>
+            <if test="status!=null">
+                and sr.status=#{status}
+            </if>
+        </where>
+        order by sr.create_time desc
+    </select>
 </mapper>

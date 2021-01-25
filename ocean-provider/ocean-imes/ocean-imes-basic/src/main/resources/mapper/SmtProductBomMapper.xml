@@ -56,32 +56,32 @@
 
     <sql id="Base_Column_List">
         spb.product_bom_id,
-	spb.product_bom_code,
-	spb.material_id,
-	spb.pro_line_id,
-	spb.delivery_mode,
-	spb.issue_method,
-	spb.loss_rate,
-	spb.takt,
-	spb.transfer_quantity,
-	spb.bom_status,
-	spb.sub_material_id,
-	spb.base_quantity,
-	spb.process_id,
-	spb.quantity,
-	spb.position,
-	spb.`status`,
-	spb.remark,
-	spb.organization_id,
-	spb.parent_bom_id,
-	spb.create_user_id,
-	spb.create_time,
-	spb.modified_user_id,
-	spb.modified_time,
-	spb.is_delete,
-	spb.option1,
-	spb.option2,
-	spb.option3
+        spb.product_bom_code,
+        spb.material_id,
+        spb.pro_line_id,
+        spb.delivery_mode,
+        spb.issue_method,
+        spb.loss_rate,
+        spb.takt,
+        spb.transfer_quantity,
+        spb.bom_status,
+        spb.sub_material_id,
+        spb.base_quantity,
+        spb.process_id,
+        spb.quantity,
+        spb.position,
+        spb.`status`,
+        spb.remark,
+        spb.organization_id,
+        spb.parent_bom_id,
+        spb.create_user_id,
+        spb.create_time,
+        spb.modified_user_id,
+        spb.modified_time,
+        spb.is_delete,
+        spb.option1,
+        spb.option2,
+        spb.option3
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -102,7 +102,6 @@
         LEFT JOIN fantech_imes.smt_pro_line spl ON spb.pro_line_id = spl.pro_line_id
         LEFT JOIN fantech_imes.smt_process sp ON spb.process_id = sp.process_id
         <where>
-
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

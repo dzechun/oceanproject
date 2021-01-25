@@ -38,10 +38,26 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    shps.ht_package_specification_id,shps.package_specification_id, shps.package_specification_code, shps.package_specification_name,
-    shps.package_specification_desc, shps.package_specification_quantity, shps.material_id, shps.barcode_rule_id,
-    shps.packing_unit_id, shps.status, shps.create_user_id, shps.create_time, shps.modified_user_id, shps.modified_time,
-    shps.is_delete, shps.option1, shps.option2, shps.option3, shps.organization_id, shps.remark
+    shps.ht_package_specification_id,
+    shps.package_specification_id,
+    shps.package_specification_code,
+    shps.package_specification_name,
+    shps.package_specification_desc,
+    shps.package_specification_quantity,
+    shps.material_id,
+    shps.barcode_rule_id,
+    shps.packing_unit_id,
+    shps.status,
+    shps.create_user_id,
+    shps.create_time,
+    shps.modified_user_id,
+    shps.modified_time,
+    shps.is_delete,
+    shps.option1,
+    shps.option2,
+    shps.option3,
+    shps.organization_id,
+    shps.remark
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">

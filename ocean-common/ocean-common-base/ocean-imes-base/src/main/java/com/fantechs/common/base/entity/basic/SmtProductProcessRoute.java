@@ -197,6 +197,7 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name="createTime" ,value="创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30)
     private Date createTime;
 
     /**
@@ -219,6 +220,7 @@ public class SmtProductProcessRoute extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30)
     private Date modifiedTime;
 
     /**

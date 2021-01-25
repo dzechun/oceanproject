@@ -23,20 +23,20 @@
 
     <sql id="Base_Column_List">
         sws.section_id,
-	sws.section_code,
-	sws.section_name,
-	sws.section_desc,
-	sws.`status`,
-	sws.remark,
-	sws.organization_id,
-	sws.create_user_id,
-	sws.create_time,
-	sws.modified_user_id,
-	sws.modified_time,
-	sws.is_delete,
-	sws.option1,
-	sws.option2,
-	sws.option3
+        sws.section_code,
+        sws.section_name,
+        sws.section_desc,
+        sws.`status`,
+        sws.remark,
+        sws.organization_id,
+        sws.create_user_id,
+        sws.create_time,
+        sws.modified_user_id,
+        sws.modified_time,
+        sws.is_delete,
+        sws.option1,
+        sws.option2,
+        sws.option3
     </sql>
 
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection"
@@ -49,7 +49,6 @@
         left join ocean.sys_user s on sws.modified_user_id=s.user_id
         LEFT JOIN fantech_imes.base_organization bo ON sws.organization_id = bo.organization_id
         <where>
-            1=1
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
                 AND date_format(sws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

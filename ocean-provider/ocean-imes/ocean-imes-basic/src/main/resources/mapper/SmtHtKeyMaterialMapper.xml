@@ -15,8 +15,8 @@
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="station_id" jdbcType="BIGINT" property="stationId"/>
         <result column="consumption" jdbcType="DECIMAL" property="consumption"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -38,15 +38,31 @@
         <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-    shkm.ht_key_material_id, shkm.key_material_id, shkm.product_type, shkm.product_model_id, shkm.material_id, shkm.part_material_id,
-    shkm.scanning_gun_quantity, shkm.process_id, shkm.station_id, shkm.consumption, shkm.status, shkm.create_user_id,
-    shkm.create_time, shkm.modified_user_id, shkm.modified_time, shkm.is_delete, shkm.option1, shkm.option2, shkm.option3,
-    bc.organization_id, bc.remark
-  </sql>
+        shkm.ht_key_material_id,
+        shkm.key_material_id,
+        shkm.product_type,
+        shkm.product_model_id,
+        shkm.material_id,
+        shkm.part_material_id,
+        shkm.scanning_gun_quantity,
+        shkm.process_id,
+        shkm.station_id,
+        shkm.consumption,
+        shkm.status,
+        shkm.create_user_id,
+        shkm.create_time,
+        shkm.modified_user_id,
+        shkm.modified_time,
+        shkm.is_delete,
+        shkm.option1,
+        shkm.option2,
+        shkm.option3,
+        shkm.organization_id, shkm.remark
+    </sql>
 
     <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
         SELECT<include refid="Base_Column_List"/>,

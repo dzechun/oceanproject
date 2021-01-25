@@ -59,7 +59,8 @@
     select <include refid="Base_Column_List"></include>,
     spl.pro_name, spl.pro_code,
     spm.product_model_code, spm.product_model_name,
-    sm.material_code,sm.material_desc,sm.version,sppr.route_id,
+    sm.material_code,sm.material_desc,sm.version,
+    sppr.route_id,
     bo.organization_name,
     sr.route_name, sr.route_code, sr.route_desc,
     u.user_name as create_user_name,s.user_name as modified_user_name
@@ -72,7 +73,6 @@
     left join fantech_imes.smt_route sr on sppr.route_id = sr.route_id
     LEFT JOIN fantech_imes.base_organization bo ON sppr.organization_id = bo.organization_id
     <where>
-      1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sppr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
