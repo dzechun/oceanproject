@@ -77,7 +77,8 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         example1.createCriteria().andEqualTo("workOrderId",bcmBarCodeWorkDto.getWorkOrderId());
         List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example1);
         String maxQty = bcmBarCodeMapper.selMaxCode(bcmBarCodeWorkDto.getWorkOrderId());
-        String code = pmFeignApi.generateCode(list,maxQty,bcmBarCodeWorkDto.getMaterialCode()).getData();
+        String maxCode = pmFeignApi.generateMaxCode(list, maxQty).getData();
+        String code = pmFeignApi.generateCode(list,maxCode,bcmBarCodeWorkDto.getMaterialCode()).getData();
         bcmBarCodeWorkDto.setBarcode(code);
         return bcmBarCodeWorkDto;
     }
@@ -239,7 +240,8 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
             SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
             searchSmtBarcodeRuleSpec.setBarcodeRuleId(record.getBarcodeRuleId());
             List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
-            String maxCode = bcmBarCodeMapper.selMaxCode(record.getWorkOrderId());
+            String max = bcmBarCodeMapper.selMaxCode(record.getWorkOrderId());
+            String maxCode = pmFeignApi.generateMaxCode(list, max).getData();
             //String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
             //生成流水号
             String code = pmFeignApi.generateCode(list,maxCode,record.getMaterialCode()).getData();
