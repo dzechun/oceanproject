@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
@@ -39,10 +40,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2021/01/07.
@@ -238,13 +236,13 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
             }
 
             //更改条码状态
-            for (String s : wmsInFinishedProductDet.getBarCodeContentList()) {
-                BcmBarCode bcmBarCode = new BcmBarCode();
-                bcmBarCode.setWorkOrderId(wmsInFinishedProduct.getWorkOrderId());
-                bcmBarCode.setBarCodeContent(s);
-                bcmBarCode.setStatus((byte)0);
-                bcmFeignApi.updateByContent(bcmBarCode);
+            List<BcmBarCodeDet> bcmBarCodeDets = new ArrayList<>();
+            for (Integer id : wmsInFinishedProductDet.getBarCodeIdList()) {
+                BcmBarCodeDet bcmBarCodeDet = new BcmBarCodeDet();
+                bcmBarCodeDet.setBarCodeDetId(id.longValue());
+                bcmBarCodeDets.add(bcmBarCodeDet);
             }
+            bcmFeignApi.updateByContent(bcmBarCodeDets);
 
         }
 

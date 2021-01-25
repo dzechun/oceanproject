@@ -178,8 +178,8 @@ public class WmsInFinishedProductDet extends ValidGroup implements Serializable 
     private BigDecimal count;
 
     @Transient
-    @ApiModelProperty(name="barCodeContentList",value = "条码内容集合")
-    private List<String> barCodeContentList;
+    @ApiModelProperty(name="barCodeIdList",value = "条码ID集合")
+    private List<Integer> barCodeIdList;
 
 
     private static final long serialVersionUID = 1L;
