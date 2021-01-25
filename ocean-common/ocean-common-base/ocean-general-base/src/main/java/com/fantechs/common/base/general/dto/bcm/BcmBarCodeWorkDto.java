@@ -263,7 +263,7 @@ public class BcmBarCodeWorkDto extends BcmBarCode implements Serializable {
     /**
      * 条码规则id
      */
-    private String barcodeRuleId;
+    private Long barcodeRuleId;
 
     /**
      * 标签模版

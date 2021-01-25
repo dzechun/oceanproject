@@ -9,42 +9,36 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.bcm.mapper.BcmBarCodeDetMapper;
 import com.fantechs.provider.bcm.mapper.BcmBarCodeMapper;
 import com.fantechs.provider.bcm.service.BcmBarCodeService;
 import com.fantechs.provider.bcm.util.FTPUtil;
 import com.fantechs.provider.bcm.util.SocketClient;
-import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleSpecMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
-import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
-import java.net.Socket;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 /**
 * @author Mr.Lei
@@ -60,11 +54,9 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
-    SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
-    @Resource
-    SmtWorkOrderMapper smtWorkOrderMapper;
-    @Resource
     BcmBarCodeDetMapper bcmBarCodeDetMapper;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<BcmBarCodeDto> findList(SearchBcmBarCode searchBcmBarCode) {
@@ -75,14 +67,14 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     public BcmBarCodeWorkDto work(SearchBcmBarCode searchBcmBarCode) {
         BcmBarCodeWorkDto bcmBarCodeWorkDto = bcmBarCodeMapper.sel_work_order(searchBcmBarCode);
         //生成规则
-        Example example = new Example(SmtBarcodeRuleSpec.class);
-        example.createCriteria().andEqualTo("barcodeRuleId",bcmBarCodeWorkDto.getBarcodeRuleId());
-        List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecMapper.selectByExample(example);
+        SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
+        searchSmtBarcodeRuleSpec.setBarcodeRuleId(bcmBarCodeWorkDto.getBarcodeRuleId());
+        List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
         Example example1 = new Example(BcmBarCode.class);
         example1.createCriteria().andEqualTo("workOrderId",bcmBarCodeWorkDto.getWorkOrderId());
         List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example1);
         String maxQty = bcmBarCodeMapper.selMaxCode(bcmBarCodeWorkDto.getWorkOrderId());
-        String code = BarcodeRuleUtils.analysisCode(list,maxQty,bcmBarCodeWorkDto.getMaterialCode());
+        String code = pmFeignApi.generateCode(list,maxQty,bcmBarCodeWorkDto.getMaterialCode()).getData();
         bcmBarCodeWorkDto.setBarcode(code);
         return bcmBarCodeWorkDto;
     }
@@ -172,8 +164,13 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                 List<BcmBarCodeDet> bcmBarCodeDets = bcmBarCodeDetMapper.selectByExample(example1);
                 for (BcmBarCodeDet bcmBarCodeDet : bcmBarCodeDets) {
                     //打印
-                    SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
-                    Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto);
+                    SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+                    searchSmtWorkOrder.setWorkOrderId(workOrderId);
+                    List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+                    if(smtWorkOrderDto.size()<1){
+                        throw new BizErrorException(ErrorCodeEnum.valueOf("获取工单信息失败"));
+                    }
+                    Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto.get(0));
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
                     String json = JSON.toJSONString(map);
                     SocketClient.out(json);
@@ -236,11 +233,13 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         for (Integer i = 0; i < record.getPrintQuantity(); i++) {
             BcmBarCodeDet bcmBarCodeDet = new BcmBarCodeDet();
             bcmBarCodeDet.setBarCodeId(record.getBarCodeId());
-            Example example1 = new Example(SmtBarcodeRuleSpec.class);
-            example1.createCriteria().andEqualTo("barcodeRuleId",record.getBarcodeRuleId());
-            List<SmtBarcodeRuleSpec> list = smtBarcodeRuleSpecMapper.selectByExample(example1);
+            SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
+            searchSmtBarcodeRuleSpec.setBarcodeRuleId(record.getBarcodeRuleId());
+            List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
             String maxCode = bcmBarCodeMapper.selMaxCode(record.getWorkOrderId());
-            String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
+            //String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
+            //生成流水号
+            String code = pmFeignApi.generateCode(list,maxCode,record.getMaterialCode()).getData();
             bcmBarCodeDet.setBarCodeContent(code);
             bcmBarCodeDet.setCreateTime(new Date());
             bcmBarCodeDet.setCreateUserId(currentUserInfo.getUserId());

@@ -21,7 +21,6 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
-        <result column="bar_code_content" jdbcType="VARCHAR" property="barCodeContent"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -36,7 +35,7 @@
 
     <resultMap id="BaseResultMapWorkDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto">
-        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
         <result column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
@@ -64,7 +63,7 @@
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
         <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRuleCode"/>
-        <result column="barcode_rule_id" jdbcType="VARCHAR" property="barcodeRuleId"/>
+        <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="print_mode" jdbcType="VARCHAR" property="labelMode"/>
         <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
     </resultMap>
@@ -82,7 +81,6 @@
     bc.modified_user_id,
     bc.modified_time,
     bc.is_delete,
-    bc.barCodeContent,
   </sql>
     <!--  <select id="sel_work_order" resultType="com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto">-->
     <select id="sel_work_order" resultMap="BaseResultMapWorkDto">
