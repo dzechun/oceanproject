@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>ocean-agv-api</module>
         <module>ocean-fileserver-api</module>
         <module>ocean-security-api</module>
         <module>ocean-electronic-tag-api</module>
