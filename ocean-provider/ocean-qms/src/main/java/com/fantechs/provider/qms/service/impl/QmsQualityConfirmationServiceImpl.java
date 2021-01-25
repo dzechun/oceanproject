@@ -68,6 +68,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
 
         for (QmsQualityConfirmationDto qmsQualityConfirmationDto : list) {
+            if (qmsQualityConfirmationDto.getRouteId() == null){
+                continue;
+            }
             ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(qmsQualityConfirmationDto.getRouteId());
             List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
             qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));

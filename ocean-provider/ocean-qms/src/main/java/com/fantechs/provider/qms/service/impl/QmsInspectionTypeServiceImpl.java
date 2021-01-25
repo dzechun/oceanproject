@@ -47,42 +47,17 @@ public class QmsInspectionTypeServiceImpl extends BaseService<QmsInspectionType>
         return qmsInspectionTypeMapper.findList(map);
     }
 
-    private static final Map<String,List<SysSpecItem>> hashMap = new Hashtable<>();
-
     @Override
     public List<QmsInspectionTypeDto> exportExcel(Map<String, Object> map) {
         List<QmsInspectionTypeDto> list = this.findList(map);
 
-        List<SysSpecItem> inspectionItems = null;
-        List<SysSpecItem> inspectionLevels = null;
-        List<SysSpecItem> inspectionTools = null;
-
-        new Thread(new SecurityRun("inspectionItem")).start();
-        new Thread(new SecurityRun("inspectionLevel")).start();
-        new Thread(new SecurityRun("inspectionTool")).start();
-
-        while (true){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (hashMap != null && hashMap.size() == 3){
-                inspectionItems = hashMap.get("inspectionItem");
-                inspectionLevels = hashMap.get("inspectionLevel");
-                inspectionTools = hashMap.get("inspectionTool");
-                break;
-            }
-
-        }
-
-//        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-//        searchSysSpecItem.setSpecCode("inspectionItem");
-//        List<SysSpecItem> inspectionItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-//        searchSysSpecItem.setSpecCode("inspectionLevel");
-//        List<SysSpecItem> inspectionLevels = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-//        searchSysSpecItem.setSpecCode("inspectionTool");
-//        List<SysSpecItem> inspectionTools = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("inspectionItem");
+        List<SysSpecItem> inspectionItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        searchSysSpecItem.setSpecCode("inspectionLevel");
+        List<SysSpecItem> inspectionLevels = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        searchSysSpecItem.setSpecCode("inspectionTool");
+        List<SysSpecItem> inspectionTools = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
         for (QmsInspectionTypeDto qmsInspectionTypeDto : list) {
             qmsInspectionTypeDto.setInspectionNapeName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionItems.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionNape()+"")))).get("name")+"");
@@ -90,26 +65,6 @@ public class QmsInspectionTypeServiceImpl extends BaseService<QmsInspectionType>
             qmsInspectionTypeDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionTools.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionTool()+"")))).get("name")+"");
         }
         return list;
-    }
-
-
-    class SecurityRun implements Runnable{
-
-        private String code;
-
-        public SecurityRun(String code){
-            this.code = code;
-        }
-
-        @Override
-        public void run()  {
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode(this.code);
-            List<SysSpecItem> list = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            Map<String, List<SysSpecItem>> map = hashMap;
-            map.put(code,list);
-
-        }
     }
 
     @Override
