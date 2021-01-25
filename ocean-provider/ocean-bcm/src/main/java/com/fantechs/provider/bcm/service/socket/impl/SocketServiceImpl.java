@@ -5,9 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.provider.bcm.service.socket.SocketService;
 import com.fantechs.provider.bcm.util.SocketClient;
-import com.fantechs.provider.bcm.util.SocketUtil;
-import com.google.gson.JsonArray;
-import org.json.JSONObject;
+
 import org.springframework.stereotype.Service;
 
 import java.net.Socket;

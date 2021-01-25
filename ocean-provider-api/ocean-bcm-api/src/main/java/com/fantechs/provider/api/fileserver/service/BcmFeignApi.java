@@ -3,6 +3,7 @@ package com.fantechs.provider.api.fileserver.service;
 
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -25,6 +26,6 @@ public interface BcmFeignApi {
 
     @ApiOperation("根据工单ID和条码内容修改条码状态")
     @PostMapping("/bcmBarCode/updateByContent")
-    ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody BcmBarCode bcmBarCode);
+    ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody List<BcmBarCodeDet> bcmBarCodeDets);
 
 }
