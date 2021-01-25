@@ -97,8 +97,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId());
         List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
 
-        routeProcesses.get(0).getRouteId();
-
         qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
 
         //当前流程单的父级对象
@@ -107,6 +105,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         //查询过站信息（报工数据）
         SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+        searchSmtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
         ResponseEntity<List<SmtProcessListProcessDto>> processListProcessResponse = pmFeignApi.findSmtProcessListProcessList(searchSmtProcessListProcess);
         List<SmtProcessListProcessDto> processListProcessList = processListProcessResponse.getData();
         if (StringUtils.isEmpty(processListProcessList) || processListProcessList.size() == 0){
@@ -115,21 +114,23 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //获取最后报工数据
         SmtProcessListProcessDto smtProcessListProcessDto = processListProcessList.get(processListProcessList.size()-1);
 
+        if (type.equals(1)){
+            Example example = new Example(QmsQualityConfirmation.class);
+            example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId())
+                    .andEqualTo("processId",smtProcessListProcessDto.getProcessId())
+                    .andEqualTo("qualityType",1);
+            List<QmsQualityConfirmation> qmsQualityConfirmations = qmsQualityConfirmationMapper.selectByExample(example);
+
+            if (StringUtils.isNotEmpty(qmsQualityConfirmations)){
+                throw new BizErrorException("当前工序已品质确认");
+            }
+        }
+
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(smtProcessListProcessDto.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
         Byte isQuality = smtProcess.getIsQuality();
         if (type.equals(1) && isQuality.equals(0)){
             throw new BizErrorException("当前工序不是最后一道工序");
-        }
-
-        Example example = new Example(QmsQualityConfirmation.class);
-        example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId())
-                .andEqualTo("processId",smtProcess.getProcessId())
-                .andEqualTo("qualityType",1);
-        List<QmsQualityConfirmation> qmsQualityConfirmations = qmsQualityConfirmationMapper.selectByExample(example);
-
-        if (StringUtils.isNotEmpty(qmsQualityConfirmations)&& type.equals(1)){
-            throw new BizErrorException("当前工序已品质确认");
         }
 
         ResponseEntity<SmtWorkshopSection> workshopSectionResponse = basicFeignApi.sectionDetail(smtProcess.getSectionId());
@@ -178,11 +179,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
         int i = 0;
 
-
-        if (StringUtils.isEmpty(qmsQualityConfirmation)){
-            System.out.println("保证或添加：");
-        }
-        System.out.println("保证或添加："+qmsQualityConfirmation.getQualityConfirmationId());
         if (qmsQualityConfirmation.getQualityConfirmationId() == null ||qmsQualityConfirmation.getQualityConfirmationId() == 0){
             qmsQualityConfirmation.setCreateTime(new Date());
             qmsQualityConfirmation.setCreateUserId(user.getUserId());
@@ -200,9 +196,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             Example example = new Example(QmsPoorQuality.class);
             example.createCriteria().andEqualTo("qualityId",qmsQualityConfirmation.getQualityConfirmationId());
             qmsPoorQualityMapper.deleteByExample(example);
-
-            System.out.println("ID："+qmsQualityConfirmation.getQualityConfirmationId());
-            System.out.println(qmsQualityConfirmation);
 
             i = qmsQualityConfirmationMapper.updateByPrimaryKeySelective(qmsQualityConfirmation);
         }
@@ -240,8 +233,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //半成品完工入库明细
         List<WmsInFinishedProductDet> wmsInFinishedProductDetList = new ArrayList<>();
         WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();
-        System.out.println("物料ID"+qmsQualityConfirmation.getMaterialId());
-        System.out.println("部件ID"+qmsQualityConfirmation.getPartsInformationId());
         wmsInFinishedProductDet.setMaterialId(qmsQualityConfirmation.getMaterialId());
         wmsInFinishedProductDet.setStorageId(data.get(0).getStorageId());
         wmsInFinishedProductDet.setPlanInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
@@ -268,8 +259,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
         wmsOutProductionMaterial.setProLineId(qmsQualityConfirmation.getProLineId());
         outFeignApi.outProductionMaterialAdd(wmsOutProductionMaterial);
-
-        System.out.println("完成-------------");
 
         return i;
     }

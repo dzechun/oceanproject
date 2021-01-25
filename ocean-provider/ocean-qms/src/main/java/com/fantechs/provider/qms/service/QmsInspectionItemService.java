@@ -15,4 +15,6 @@ import java.util.Map;
 public interface QmsInspectionItemService extends IService<QmsInspectionItem> {
 
     List<QmsInspectionItemDto> findList(Map<String, Object> map);
+
+    List<QmsInspectionItemDto> exportExcel(Map<String, Object> map);
 }
