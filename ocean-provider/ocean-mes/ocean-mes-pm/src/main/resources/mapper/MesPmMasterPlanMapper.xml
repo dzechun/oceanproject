@@ -15,6 +15,7 @@
         <result column="planed_end_date" jdbcType="TIMESTAMP" property="planedEndDate"/>
         <result column="actual_start_date" jdbcType="TIMESTAMP" property="actualStartDate"/>
         <result column="actual_end_date" jdbcType="TIMESTAMP" property="actualEndDate"/>
+        <result column="turn_process_list" jdbcType="TINYINT" property="turnProcessList"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
@@ -46,6 +47,7 @@
         mpmp.actual_end_date,
         mpmp.organization_id,
         mpmp.remark,
+        mpmp.turn_process_list,
         mpmp.is_delete,
         mpmp.create_user_id,
         mpmp.create_time,
