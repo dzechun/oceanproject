@@ -62,7 +62,7 @@
             <if test="sectionDesc!=null and sectionDesc!=''">
                 and sws.section_desc like CONCAT('%', #{sectionDesc}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and sws.status=#{status}
             </if>
         </where>

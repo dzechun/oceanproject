@@ -51,7 +51,7 @@
             <if test="factoryDesc != null and factoryDesc !=''">
                 and sf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and sf.status=#{status}
             </if>
         </where>

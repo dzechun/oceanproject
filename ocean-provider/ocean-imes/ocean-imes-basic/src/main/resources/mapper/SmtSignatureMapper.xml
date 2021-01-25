@@ -43,7 +43,7 @@
       <if test="signatureCode!=null and signatureCode!=''">
         and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and ss.status=#{status}
       </if>
     </where>

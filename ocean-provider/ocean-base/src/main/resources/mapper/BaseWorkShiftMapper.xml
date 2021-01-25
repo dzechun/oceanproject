@@ -61,7 +61,7 @@
       <if test="workShiftId != null and workShiftId!=''">
         and bws.work_shift_id = #{workShiftId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and bws.status=#{status}
       </if>
     </where>

@@ -55,7 +55,7 @@
       <if test="productModelDesc!=null and productModelDesc!=''">
         and spm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and spm.status=#{status}
       </if>
     </where>

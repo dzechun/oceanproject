@@ -89,7 +89,7 @@
       <if test="materialDesc != null">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sps.status=#{status}
       </if>
     </where>

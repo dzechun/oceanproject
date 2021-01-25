@@ -97,7 +97,7 @@
       <if test="routeCode != null and routeCode != ''">
         and sr.route_code like CONCAT('%', #{routeCode}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sppr.status=#{status}
       </if>
     </where>

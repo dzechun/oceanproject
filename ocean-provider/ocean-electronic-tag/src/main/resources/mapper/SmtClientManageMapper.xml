@@ -67,7 +67,7 @@
             <if test="secretKey!=null and secretKey!=''">
                 and scm.secret_key=#{secretKey}
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and scm.status=#{status}
             </if>
         </where>

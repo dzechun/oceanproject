@@ -74,7 +74,7 @@
             <if test="equipmentType != null">
                 and se.equipment_type=#{equipmentType}
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and se.status=#{status}
             </if>
         </where>

@@ -43,7 +43,7 @@
       <if test="customerDesc!=null and customerDesc!=''">
         and sc.customer_desc like CONCAT('%', #{customerDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sc.status=#{status}
       </if>
     </where>

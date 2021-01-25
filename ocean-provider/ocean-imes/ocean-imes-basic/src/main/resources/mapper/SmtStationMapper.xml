@@ -55,7 +55,7 @@
       <if test="sectionId!=null and sectionId!=''">
         and ss.section_id=#{sectionId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and ss.status=#{status}
       </if>
     </where>

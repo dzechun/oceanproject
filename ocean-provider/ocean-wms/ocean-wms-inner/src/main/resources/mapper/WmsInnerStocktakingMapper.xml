@@ -101,7 +101,7 @@
       <if test="materialCode != null and materialCode!=''">
         and sm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and wis.status=#{status}
       </if>
     </where>

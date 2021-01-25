@@ -80,7 +80,7 @@
             <if test="warehouseAreaName!=null and warehouseAreaName!=''">
                 and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and ss.status=#{status}
             </if>
         </where>

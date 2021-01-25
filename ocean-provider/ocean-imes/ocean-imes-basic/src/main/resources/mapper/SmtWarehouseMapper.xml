@@ -54,7 +54,7 @@
       <if test="warehouseDesc!=null and warehouseDesc!=''">
         and sw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sw.status=#{status}
       </if>
     </where>

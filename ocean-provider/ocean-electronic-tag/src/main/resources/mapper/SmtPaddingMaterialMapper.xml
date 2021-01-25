@@ -71,7 +71,7 @@
       <if test="electronicTagId != null and electronicTagId!=''">
         and sets.electronic_tag_id=#{electronicTagId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and spm.status=#{status}
       </if>
     </where>

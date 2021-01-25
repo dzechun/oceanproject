@@ -100,7 +100,7 @@
             <if test="supplierName != null and supplierName != ''">
                 and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and so.status=#{status}
             </if>
         AND so.is_delete = 1

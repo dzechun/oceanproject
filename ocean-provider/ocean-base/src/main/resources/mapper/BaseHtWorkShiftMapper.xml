@@ -60,7 +60,7 @@
       <if test="workShiftDesc != null and workShiftDesc!=''">
         and bhws.work_shift_desc like CONCAT('%', #{workShiftDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and bhws.status=#{status}
       </if>
     </where>

@@ -94,7 +94,7 @@
                 AND su.user_id NOT IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
                 AND su.status=1
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and su.status=#{status}
             </if>
             <if test="searchType==1 and organizationId!=null and organizationId!=''">

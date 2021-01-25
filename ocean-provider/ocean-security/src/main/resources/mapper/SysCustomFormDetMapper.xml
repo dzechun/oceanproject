@@ -85,7 +85,7 @@
             <if test="fromRout!=null and fromRout!=''">
                 and cf.from_rout=#{fromRout}
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and cfd.status=#{status}
             </if>
         </where>

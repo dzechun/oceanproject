@@ -81,7 +81,7 @@
             <if test="stationName != null">
                 and ss.station_name like CONCAT('%', #{stationName}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and shkm.status=#{status}
             </if>
         </where>

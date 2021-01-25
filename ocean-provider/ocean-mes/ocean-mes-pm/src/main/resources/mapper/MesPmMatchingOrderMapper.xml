@@ -90,7 +90,7 @@
             <if test="matchingOrderCode!=null and matchingOrderCode!=''">
                 and mpmo.matching_order_code like CONCAT('%', #{matchingOrderCode}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and mpmo.status= #{status}
             </if>
         </where>

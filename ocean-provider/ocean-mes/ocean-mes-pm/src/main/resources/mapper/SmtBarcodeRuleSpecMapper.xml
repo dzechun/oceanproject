@@ -52,7 +52,7 @@
         intercept_position = #{item.interceptPosition},intercept_direction = #{item.interceptDirection},customize_value = #{item.customizeValue}
       </set>
       <where>
-        <if test="status!=null and status!=''">
+        <if test="status!=null">
           and sbrs.status like CONCAT('%', #{status}, '%')
         </if>
         <if test="barcodeRuleSpecId!=null and barcodeRuleSpecId!=''">

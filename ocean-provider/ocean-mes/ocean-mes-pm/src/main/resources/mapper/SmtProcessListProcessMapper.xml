@@ -154,7 +154,7 @@
             <if test="processType!=null and processType!=''">
                 and splp.process_type=#{processType}
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and splp.status=#{status}
             </if>
             and splp.is_delete = 1

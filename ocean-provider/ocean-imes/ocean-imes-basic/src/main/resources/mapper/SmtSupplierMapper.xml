@@ -52,7 +52,7 @@
       <if test="supplierType!=null and supplierType!=''">
         and su.supplier_type=#{supplierType}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and su.status=#{status}
       </if>
       <if test="addressDetail!=null and addressDetail!=''">

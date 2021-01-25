@@ -99,7 +99,7 @@
           <if test="factoryName != null and factoryName !=''">
               and sf.factory_name like CONCAT('%', #{factoryName}, '%')
           </if>
-          <if test="status!=null and status!=''">
+          <if test="status!=null">
               and bhs.status=#{status}
           </if>
       </where>

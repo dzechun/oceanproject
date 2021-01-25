@@ -58,7 +58,7 @@
       <if test="organizationDesc != null and organizationDesc!=''">
         and bo.organization_desc like CONCAT('%', #{organizationDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and bo.status=#{status}
       </if>
     </where>

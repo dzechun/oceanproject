@@ -74,7 +74,7 @@
       <if test="parentId!=null and parentId!=''">
         and sd.parent_id=#{parentId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sd.status=#{status}
       </if>
     </where>

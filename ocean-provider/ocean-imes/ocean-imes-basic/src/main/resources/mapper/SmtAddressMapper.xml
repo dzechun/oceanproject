@@ -77,7 +77,7 @@
             <if test="postCode != null and postCode != ''">
                 and sa.post_code like CONCAT('%', #{postCode}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and sa.status=#{status}
             </if>
         </where>

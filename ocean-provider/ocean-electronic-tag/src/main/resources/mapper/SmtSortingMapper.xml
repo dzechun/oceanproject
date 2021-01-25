@@ -74,7 +74,7 @@
             <if test="equipmentId != null and equipmentId!=''">
                 and sets.equipment_Id=#{equipmentId}
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and `ssl`.status=#{status}
             </if>
         </where>
@@ -96,7 +96,7 @@
                 <if test="quantity!=null and quantity!=''">
                     quantity=#{item.quantity},
                 </if>
-                <if test="status!=null and status!=''">
+                <if test="status!=null">
                     status=#{item.status}
                 </if>
             </set>

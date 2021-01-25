@@ -48,7 +48,7 @@
       <if test="currencyName != null">
         and  sc.currency_name like CONCAT('%', #{currencyName}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sc.status=#{status}
       </if>
     </where>

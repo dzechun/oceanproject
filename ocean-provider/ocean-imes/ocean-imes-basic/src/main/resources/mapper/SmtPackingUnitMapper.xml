@@ -51,7 +51,7 @@
       <if test="packingUnitDesc != null and packingUnitDesc != ''">
         and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and spu.status=#{status}
       </if>
     </where>

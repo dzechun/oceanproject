@@ -128,7 +128,7 @@
             <if test="electronicTagId != null and electronicTagId != ''">
                 and sets.electronic_tag_id like CONCAT('%', #{electronicTagId}, '%')
             </if>
-            <if test="status!=null and status!=''">
+            <if test="status!=null">
                 and sets.status=#{status}
             </if>
             <if test="materialId!=null and materialId!=''">

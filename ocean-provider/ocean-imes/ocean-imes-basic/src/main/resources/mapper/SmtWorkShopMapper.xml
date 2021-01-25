@@ -58,7 +58,7 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and ws.status=#{status}
       </if>
     </where>

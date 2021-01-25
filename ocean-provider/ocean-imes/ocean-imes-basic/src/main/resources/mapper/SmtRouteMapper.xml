@@ -51,7 +51,7 @@
       <if test="routeType!=null and routeType!=''">
         and sr.route_type = #{routeType}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and sr.status=#{status}
       </if>
     </where>
