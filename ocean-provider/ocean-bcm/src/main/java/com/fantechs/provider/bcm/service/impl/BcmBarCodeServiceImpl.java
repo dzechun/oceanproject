@@ -22,6 +22,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+
 import com.fantechs.provider.bcm.mapper.BcmBarCodeDetMapper;
 import com.fantechs.provider.bcm.mapper.BcmBarCodeMapper;
 import com.fantechs.provider.bcm.service.BcmBarCodeService;
@@ -54,7 +55,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
-    BcmBarCodeDetMapper bcmBarCodeDetMapper;
+    private BcmBarCodeDetMapper bcmBarCodeDetMapper;
     @Resource
     private PMFeignApi pmFeignApi;
 
