@@ -123,11 +123,17 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
     @ApiModelProperty(name = "materialDesc",value = "产品描述")
     private String materialDesc;
     /**
-     * 生产数量
+     * 投产数量
      */
     @Transient
-    @ApiModelProperty(name = "productionQuantity",value = "生产数量")
+    @ApiModelProperty(name = "productionQuantity",value = "投产数量")
     private BigDecimal productionQuantity;
+    /**
+     * 工单数量
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderQuantity",value = "工单数量")
+    private BigDecimal workOrderQuantity;
     /**
      * 产品型号
      */

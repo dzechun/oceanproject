@@ -131,7 +131,12 @@ public class MesPmMasterPlanController {
     @ApiOperation(value = "导入EXCEL",notes = "导入EXCEL")
     public ResponseEntity<String> importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file) throws IOException {
-        List<MesPmMasterPlanDTO> mesPmMasterPlanDTOList = EasyPoiUtils.importExcel(file, MesPmMasterPlanDTO.class);
+        List<MesPmMasterPlanDTO> mesPmMasterPlanDTOList;
+        try{
+            mesPmMasterPlanDTOList = EasyPoiUtils.importExcel(file, MesPmMasterPlanDTO.class);
+        }catch (Exception e){
+            throw new BizErrorException("请选择正确的模板");
+        }
         if(StringUtils.isEmpty(mesPmMasterPlanDTOList)){
             return ControllerUtil.returnCRUD(0);
         }
