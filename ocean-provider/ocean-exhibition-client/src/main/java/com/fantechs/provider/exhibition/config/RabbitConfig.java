@@ -16,6 +16,8 @@ public class RabbitConfig {
     public static final String TOPIC_EXCHANGE = "topic.exchange";
     public static final String TOPIC_IMAGE_QUEUE = "topic.image.queue";
     public static final String TOPIC_WORK_QUEUE = "topic.work.queue";
+    public static final String TOPIC_PROCESS_LIST_QUEUE = "topic.process.list.queue";
+
 
 
     //fanout
@@ -40,6 +42,11 @@ public class RabbitConfig {
     @Bean
     public Queue topicQueue2() {
         return new Queue(TOPIC_HEARTBEAT_QUEUE);
+    }
+
+    @Bean
+    public Queue topicProcessListQueue() {
+        return new Queue(TOPIC_PROCESS_LIST_QUEUE);
     }
 
 
