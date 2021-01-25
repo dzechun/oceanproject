@@ -62,7 +62,6 @@ public class MesPmProcessListProcessReController {
     @ApiOperation("增加流程单工序退回表数据")
     @PostMapping("save")
     public ResponseEntity add(
-            @ApiParam(value = "操作方式（1、保存 2、提交）",required = true)@RequestParam Integer operation,
             @ApiParam(value = "流程单工序退回表对象",required = true)@RequestBody SaveProcessListProcessReDTO saveProcessListProcessReDTO){
         return ControllerUtil.returnCRUD(mesPmProcessListProcessReService.save(saveProcessListProcessReDTO));
     }

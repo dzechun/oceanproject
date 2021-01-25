@@ -22,6 +22,8 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.exhibition.config.RabbitConfig;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,9 @@ import java.util.*;
 
 @Service
 public class ExhibitionClientServiceImpl implements ExhibitionClientService {
+
+    private static final Logger log = LoggerFactory.getLogger(ExhibitionClientServiceImpl.class);
+
     @Resource
     private PMFeignApi pmFeignApi;
     @Resource
@@ -112,6 +117,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
                 mQResponseEntity.setCode(1009);
                 mQResponseEntity.setData(smtStockDtoList.get(0));
                 fanoutSender.send(RabbitConfig.TOPIC_IMAGE_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+                log.info("发送图片、镭雕信息到客户端：" + JSONObject.toJSONString(mQResponseEntity));
             }
 
             String startPositionCode = "";
@@ -146,6 +152,46 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
         }
 
         return taskCode;
+    }
+
+    @Override
+    public String agvStockTaskTest(String materialCode) {
+        String startPositionCode = "";
+        String endPositionCode = "";
+        for (MaterialAndPositionCodeEnum.MaterialAndPositionCode materialAndPositionCode : MaterialAndPositionCodeEnum.MaterialAndPositionCode.values()) {
+            if (materialCode.equals(materialAndPositionCode.getMaterialCode())) {
+                startPositionCode = materialAndPositionCode.getStartPositionCode();
+                endPositionCode = materialAndPositionCode.getEndPositionCode();
+            }
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("taskTyp", "c02");
+        List<PositionCodePath> positionCodePathList = new LinkedList<>();
+        // 起始地标条码
+        PositionCodePath positionCodePath = new PositionCodePath();
+        positionCodePath.setPositionCode(startPositionCode);
+        positionCodePath.setType("00");
+        positionCodePathList.add(positionCodePath);
+        // 目标位置条码
+        PositionCodePath positionCodePath2 = new PositionCodePath();
+        positionCodePath2.setPositionCode(endPositionCode);
+        positionCodePath2.setType("00");
+        positionCodePathList.add(positionCodePath2);
+        map.put("positionCodePath", positionCodePathList);
+        String taskCode = agvFeignApi.genAgvSchedulingTask(map).getData();
+
+        return taskCode;
+    }
+
+    @Override
+    public String agvContinueTask() {
+        // agv继续执行任务
+        Map<String, Object> map = new HashMap<>();
+        map.put("agvCode", "2249");
+        String result = agvFeignApi.continueTask(map).getData();
+
+        return result;
     }
 
 }

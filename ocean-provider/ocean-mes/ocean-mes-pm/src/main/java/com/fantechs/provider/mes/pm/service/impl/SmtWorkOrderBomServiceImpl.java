@@ -54,10 +54,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         if (StringUtils.isEmpty(smtWorkOrder)) {
             throw new BizErrorException("该工单不存在");
         }
-        //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
-        Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
-        if (workOrderStatus == 0 || workOrderStatus == 2) {
-            /*Example example = new Example(SmtWorkOrderBom.class);
+        /*Example example = new Example(SmtWorkOrderBom.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partMaterialId", smtWorkOrderBom.getPartMaterialId());
             criteria.andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
@@ -66,28 +63,25 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 throw new BizErrorException("零件料号已存在");
             }*/
 
-            if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
-                throw new BizErrorException("零件料号不能选择产品料号");
-            }
-
-            if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId()) || smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())) {
-                throw new BizErrorException("代用料号不能选择产品料号或零件料号");
-            }
-            BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
-            smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
-            smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
-            smtWorkOrderBom.setCreateTime(new Date());
-            smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-            smtWorkOrderBom.setModifiedTime(new Date());
-            smtWorkOrderBomMapper.insertSelective(smtWorkOrderBom);
-
-            //新增工单BOM历史信息
-            SmtHtWorkOrderBom smtHtWorkOrderBom = new SmtHtWorkOrderBom();
-            BeanUtils.copyProperties(smtWorkOrderBom, smtHtWorkOrderBom);
-            return smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
-        } else {
-            throw new BizErrorException("只有工单状态为待生产或暂停生产状态，才能新增工单BOM");
+        if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
+            throw new BizErrorException("零件料号不能选择产品料号");
         }
+
+        if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId()) || smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())) {
+            throw new BizErrorException("代用料号不能选择产品料号或零件料号");
+        }
+        BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
+        smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+        smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
+        smtWorkOrderBom.setCreateTime(new Date());
+        smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
+        smtWorkOrderBom.setModifiedTime(new Date());
+        smtWorkOrderBomMapper.insertSelective(smtWorkOrderBom);
+
+        //新增工单BOM历史信息
+        SmtHtWorkOrderBom smtHtWorkOrderBom = new SmtHtWorkOrderBom();
+        BeanUtils.copyProperties(smtWorkOrderBom, smtHtWorkOrderBom);
+        return smtHtWorkOrderBomMapper.insertSelective(smtHtWorkOrderBom);
 
     }
 

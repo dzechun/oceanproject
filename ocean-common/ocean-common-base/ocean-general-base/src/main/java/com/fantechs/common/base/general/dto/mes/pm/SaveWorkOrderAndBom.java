@@ -19,4 +19,6 @@ public class SaveWorkOrderAndBom {
     private SmtWorkOrder smtWorkOrder;
     @ApiModelProperty(value = "工单BOM对象集合",example = "工单BOM对象集合")
     private List<SmtWorkOrderBom> smtWorkOrderBomList;
+    @ApiModelProperty(value = "是否生成工单流转卡",example = "是否生成工单流转卡")
+    private Boolean generate;
 }

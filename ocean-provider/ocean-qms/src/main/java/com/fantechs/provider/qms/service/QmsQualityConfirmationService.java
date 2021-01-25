@@ -18,4 +18,6 @@ public interface QmsQualityConfirmationService extends IService<QmsQualityConfir
     QmsQualityConfirmationDto analysis(String code,Byte type);
 
     int save(QmsQualityConfirmationDto qmsQualityConfirmationDto);
+
+    Integer updateQuantity(Map<String, Object> map);
 }

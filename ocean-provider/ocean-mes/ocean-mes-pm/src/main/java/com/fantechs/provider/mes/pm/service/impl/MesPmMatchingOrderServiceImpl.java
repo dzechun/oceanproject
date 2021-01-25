@@ -24,6 +24,7 @@ import com.fantechs.provider.mes.pm.mapper.MesPmMatchingOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmMatchingOrderService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -70,19 +71,19 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         for (QmsQualityConfirmationDto qmsQualityConfirmationDto : qmsQualityConfirmationDtos) {
             //获取部件用量
             BigDecimal dosage = qmsQualityConfirmationDto.getDosage();
-            if (dosage.compareTo(BigDecimal.valueOf(0)) == 0 || dosage.compareTo(BigDecimal.valueOf(0)) == -1){
-                throw new BizErrorException("部件用量不能小于0");
+            if (dosage == null || BigDecimal.valueOf(0).compareTo(dosage) == 0 || BigDecimal.valueOf(0).compareTo(dosage) == 1) {
+                continue;
             }
             //合格数量
             BigDecimal qualifiedQuantity = qmsQualityConfirmationDto.getQualifiedQuantity();
-            if (qualifiedQuantity.compareTo(dosage) == -1){
+            if (qualifiedQuantity.compareTo(dosage) == -1) {
                 throw new BizErrorException("质检合格数不足一套");
             }
             if (dosage.equals(BigDecimal.ZERO)) {
                 throw new BizErrorException("部件用量不能为0");
             }
 
-            BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity,0, RoundingMode.HALF_UP); //最小齐套数
+            BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity, 0, RoundingMode.HALF_UP); //最小齐套数
             minMatchingQuantitys.add(minMatchingQuantity);
         }
         //获取最小齐套数
@@ -99,25 +100,42 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        int i = 0;
         //判断配套数量是否大于最小齐套数量
         if (saveMesPmMatchingOrderDto.getMatchingQuantity().compareTo(saveMesPmMatchingOrderDto.getMinMatchingQuantity()) == 1) {
             throw new BizErrorException("配套数量不能大于最小齐套数");
         }
 
-        //判断该配套单是否存在
         Example example = new Example(MesPmMatchingOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderCardPoolId", saveMesPmMatchingOrderDto.getWorkOrderCardPoolId());
         MesPmMatchingOrder mesPmMatchingOrder1 = mesPmMatchingOrderMapper.selectOneByExample(example);
         MesPmMatchingOrder mesPmMatchingOrder = new MesPmMatchingOrder();
+
+        //该配套单存在
         if (StringUtils.isNotEmpty(mesPmMatchingOrder1)) {
-            BeanUtils.copyProperties(mesPmMatchingOrder1,mesPmMatchingOrder);
-            mesPmMatchingOrder.setModifiedUserId(currentUser.getUserId());
-            mesPmMatchingOrder.setModifiedTime(new Date());
-            if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 2){
-                mesPmMatchingOrder.setStatus((byte) 2);
+            //该配套单还未提交
+            if (mesPmMatchingOrder1.getStatus() == 1) {
+                BigDecimal minMatchingQuantity = mesPmMatchingOrder1.getMinMatchingQuantity();//获取原来的最小齐套数
+                BigDecimal matchingQuantity = mesPmMatchingOrder1.getMatchingQuantity();//获取原配套数
+
+                //更新最小齐套数和原配套数
+                BigDecimal newMinMatchingQuantity = minMatchingQuantity.subtract(saveMesPmMatchingOrderDto.getMatchingQuantity());
+                BigDecimal newMatchingQuantity = matchingQuantity.add(saveMesPmMatchingOrderDto.getMatchingQuantity());
+
+                mesPmMatchingOrder1.setMinMatchingQuantity(newMinMatchingQuantity);
+                mesPmMatchingOrder1.setMatchingQuantity(newMatchingQuantity);
+                mesPmMatchingOrder1.setModifiedUserId(currentUser.getUserId());
+                mesPmMatchingOrder1.setModifiedTime(new Date());
+                if (saveMesPmMatchingOrderDto.getStatus() == 1){
+                    mesPmMatchingOrder1.setStatus((byte) 1);
+                }else {
+                    mesPmMatchingOrder1.setStatus((byte) 2);
+                }
+                return mesPmMatchingOrderMapper.updateByPrimaryKeySelective(mesPmMatchingOrder1);
+            }else {
+                throw new BizErrorException("该配套单已经配套完成");
             }
-            return mesPmMatchingOrderMapper.updateByPrimaryKeySelective(mesPmMatchingOrder);
         }
 
         mesPmMatchingOrder.setMatchingOrderCode(CodeUtils.getId("PT"));
@@ -126,21 +144,21 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         mesPmMatchingOrder.setModifiedTime(new Date());
         mesPmMatchingOrder.setModifiedUserId(currentUser.getUserId());
         mesPmMatchingOrder.setOrganizationId(currentUser.getOrganizationId());
-        if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 2){
-            mesPmMatchingOrder.setStatus((byte) 2);
-        }else {
+        if (saveMesPmMatchingOrderDto.getStatus() == 1){
             mesPmMatchingOrder.setStatus((byte) 1);
+        }else {
+            mesPmMatchingOrder.setStatus((byte) 2);
         }
         mesPmMatchingOrder.setWorkOrderCardPoolId(saveMesPmMatchingOrderDto.getWorkOrderCardPoolId());
         mesPmMatchingOrder.setWorkOrderQuantity(saveMesPmMatchingOrderDto.getWorkOrderQuantity());
         mesPmMatchingOrder.setProductionQuantity(saveMesPmMatchingOrderDto.getProductionQuantity());
-        mesPmMatchingOrder.setMinMatchingQuantity(saveMesPmMatchingOrderDto.getMinMatchingQuantity());
+        mesPmMatchingOrder.setMinMatchingQuantity(saveMesPmMatchingOrderDto.getMinMatchingQuantity().subtract(saveMesPmMatchingOrderDto.getMatchingQuantity()));
         mesPmMatchingOrder.setMatchingQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
 
-        int i = mesPmMatchingOrderMapper.insertUseGeneratedKeys(mesPmMatchingOrder);
+        i = mesPmMatchingOrderMapper.insertUseGeneratedKeys(mesPmMatchingOrder);
 
         //新增完工入库单
-        if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 2){
+        if (StringUtils.isNotEmpty(saveMesPmMatchingOrderDto.getStatus()) && saveMesPmMatchingOrderDto.getStatus() == 2) {
             WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();//入库单
             WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();//入库单明细
             List<WmsInFinishedProductDet> wmsInFinishedProductDets = new ArrayList<>();

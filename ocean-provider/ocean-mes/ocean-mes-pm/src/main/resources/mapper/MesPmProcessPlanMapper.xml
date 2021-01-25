@@ -67,7 +67,10 @@
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}
             </if>
-            and swo.is_delete = 1
+            <if test="masterPlanId!=null and masterPlanId!=''">
+                and mppp.master_plan_id=#{masterPlanId}
+            </if>
+            and mppp.is_delete = 1
         </where>
         order by mppp.modified_time desc
     </select>
@@ -76,8 +79,8 @@
         insert into mes_pm_process_plan
         (process_plan_code,master_plan_id,process_id,planed_start_date,planed_end_date)
         values
-        <foreach collection="list" open="(" close=")" separator="," item="item">
-            #{processPlanCode},#{masterPlanId},#{processId},#{planedStartDate},#{planedEndDate}
+        <foreach collection="list" separator="," item="item">
+            (#{item.processPlanCode},#{item.masterPlanId},#{item.processId},#{item.planedStartDate},#{item.planedEndDate})
         </foreach>
     </insert>
 

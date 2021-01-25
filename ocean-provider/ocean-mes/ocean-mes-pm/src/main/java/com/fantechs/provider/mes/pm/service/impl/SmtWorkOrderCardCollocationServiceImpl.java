@@ -4,11 +4,13 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardCollocationDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -16,6 +18,8 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardCollocationService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
 import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,11 +42,15 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
     @Resource
     private SmtWorkOrderMapper smtWorkOrderMapper;
     @Resource
+    private SmtWorkOrderService smtWorkOrderService;
+    @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
     @Resource
     private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
     @Resource
     private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
+    @Resource
+    private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
     @Resource
     private SmtBarcodeRuleSetDetMapper SmtBarcodeRuleSetDetMapper;
     @Resource
@@ -66,6 +74,13 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
         //转移批量
         Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
+        if(StringUtils.isEmpty(transferQuantity)){
+            //如果产品转移批量为空，有可能此工单属于部件工单，转移批量换成部件用量
+            transferQuantity=smtWorkOrderDto.getQuantity();
+        }
+        if(StringUtils.isEmpty(transferQuantity)){
+            transferQuantity=1;//默认为1
+        }
         //工单总转移批次
         int sumBatchQuantity = (int) Math.ceil(workOrderQuantity.doubleValue() / transferQuantity);
 
@@ -105,7 +120,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         for (SmtBarcodeRuleSetDet smtBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
             SmtBarcodeRule smtBarcodeRule = SmtBarcodeRuleMapper.selectByPrimaryKey(smtBarcodeRuleSetDet.getBarcodeRuleId());
             if (StringUtils.isEmpty(smtBarcodeRule)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                throw new BizErrorException("未找到条码规则");
             }
             //产品条码规则
             if (smtBarcodeRule.getBarcodeRuleCategoryId() == 1) {
@@ -117,7 +132,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
                 cardCode = smtBarcodeRule.getBarcodeRuleId();
                 continue;
             }
-
         }
 
         if (StringUtils.isEmpty(cardCode)) {
@@ -210,6 +224,22 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         if (StringUtils.isNotEmpty(smtWorkOrderCardPools)) {
             workOrderCardCode = smtWorkOrderCardPools.get(0).getWorkOrderCardId();
         }
+
+        //=====判断当前工单是否存在父级工单，如果存在父级工单，是否产生父级流程卡
+        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardCollocation.getWorkOrderId());
+        Long parentWorkOrderCardId=0L;
+        if(smtWorkOrder.getParentId()!=0){
+            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+            searchSmtWorkOrderCardPool.setWorkOrderId(smtWorkOrder.getParentId());
+            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+            if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
+                throw new BizErrorException("父级工单未生成流程卡："+smtWorkOrder.getParentId());
+            }
+            SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = smtWorkOrderCardPoolDtoList.get(0);
+            parentWorkOrderCardId=smtWorkOrderCardPoolDto.getWorkOrderCardPoolId();
+        }
+        //=====
+
         for (int i = 0; i < produceQuantity; i++) {
             if (StringUtils.isNotEmpty(list)) {
                 workOrderCardCode = BarcodeRuleUtils.getMaxSerialNumber(list, workOrderCardCode);
@@ -220,10 +250,10 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
 
             SmtWorkOrderCardPool smtWorkOrderCardPool = new SmtWorkOrderCardPool();
             smtWorkOrderCardPool.setTaskCode(CodeUtils.getId("WOED"));
+            smtWorkOrderCardPool.setParentId(parentWorkOrderCardId);
             smtWorkOrderCardPool.setWorkOrderId(smtWorkOrderCardCollocation.getWorkOrderId());
             smtWorkOrderCardPool.setBarcodeRuleId(barcodeRuleId);
             smtWorkOrderCardPool.setWorkOrderCardId(workOrderCardCode);
-            smtWorkOrderCardPool.setParentId((long)0);
             smtWorkOrderCardPool.setIsDelete((byte)1);
             smtWorkOrderCardPool.setCardStatus((byte) 0);
             smtWorkOrderCardPool.setStatus((byte) 1);

@@ -38,6 +38,13 @@ public class MesPmExplainPlanDTO extends MesPmExplainPlan implements Serializabl
     @Excel(name = "工单编号")
     private String workOrderCode;
     /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(value = "物料名称",example = "物料名称")
+    @Excel(name = "物料名称")
+    private String materialName;
+    /**
      * 物料编号
      */
     @Transient

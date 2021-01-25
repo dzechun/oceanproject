@@ -33,6 +33,7 @@
     from sys_spec_item si
     left join sys_user u on si.create_user_id=u.user_id
     left join sys_user s on si.modified_user_id=s.user_id
+    LEFT JOIN sys_menuinfo sm on si.menu_id = sm.menu_id
     <where>
       1=1
       <if test="specCode!=null and specCode!=''">

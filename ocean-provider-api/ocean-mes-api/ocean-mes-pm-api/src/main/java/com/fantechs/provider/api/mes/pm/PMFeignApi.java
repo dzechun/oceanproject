@@ -1,6 +1,7 @@
 package com.fantechs.provider.api.mes.pm;
 
 import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
@@ -51,6 +52,10 @@ public interface PMFeignApi {
     @ApiOperation(value = "新增工单", notes = "新增工单")
     @PostMapping("/smtWorkOrder/add")
     ResponseEntity addWorkOrder(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId、proLineId", required = true) @RequestBody SmtWorkOrder smtWorkOrder);
+
+    @ApiOperation(value = "新增及更新工单及BOM",notes = "新增及更新工单及BOM")
+    @PostMapping("/smtWorkOrder/save")
+    ResponseEntity saveWorkOrder(@ApiParam(value = "保存工单及工单BOM",required = true)@RequestBody SaveWorkOrderAndBom saveWorkOrderAndBom);
 
     @ApiOperation(value = "产生工单流转卡", notes = "产生工单流转卡")
     @PostMapping("/smtWorkOrderCardCollocation/generateWorkOrderCardCollocation")

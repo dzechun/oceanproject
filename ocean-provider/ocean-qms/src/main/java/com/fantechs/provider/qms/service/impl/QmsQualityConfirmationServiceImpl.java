@@ -97,6 +97,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId());
         List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
 
+        routeProcesses.get(0).getRouteId();
+
         qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
 
         //当前流程单的父级对象
@@ -116,7 +118,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(smtProcessListProcessDto.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
         Byte isQuality = smtProcess.getIsQuality();
-        if (type.equals(0) && isQuality.equals(0)){
+        if (type.equals(1) && isQuality.equals(0)){
             throw new BizErrorException("当前工序不是最后一道工序");
         }
 
@@ -126,7 +128,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 .andEqualTo("qualityType",1);
         List<QmsQualityConfirmation> qmsQualityConfirmations = qmsQualityConfirmationMapper.selectByExample(example);
 
-        if (StringUtils.isNotEmpty(qmsQualityConfirmations)){
+        if (StringUtils.isNotEmpty(qmsQualityConfirmations)&& type.equals(1)){
             throw new BizErrorException("当前工序已品质确认");
         }
 
@@ -175,7 +177,13 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         int i = 0;
-        if (qmsQualityConfirmation.getQualityConfirmationId() == 0){
+
+
+        if (StringUtils.isEmpty(qmsQualityConfirmation)){
+            System.out.println("保证或添加：");
+        }
+        System.out.println("保证或添加："+qmsQualityConfirmation.getQualityConfirmationId());
+        if (qmsQualityConfirmation.getQualityConfirmationId() == null ||qmsQualityConfirmation.getQualityConfirmationId() == 0){
             qmsQualityConfirmation.setCreateTime(new Date());
             qmsQualityConfirmation.setCreateUserId(user.getUserId());
             qmsQualityConfirmation.setModifiedTime(new Date());
@@ -348,5 +356,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             }
         }
         return sectionList;
+    }
+
+    @Override
+    public Integer updateQuantity(Map<String, Object> map) {
+        return qmsQualityConfirmationMapper.updateQuantity(map);
     }
 }

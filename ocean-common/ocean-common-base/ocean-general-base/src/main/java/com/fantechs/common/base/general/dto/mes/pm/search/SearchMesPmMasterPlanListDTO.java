@@ -1,13 +1,10 @@
 package com.fantechs.common.base.general.dto.mes.pm.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -19,8 +16,8 @@ import java.io.Serializable;
 @Data
 public class SearchMesPmMasterPlanListDTO extends BaseQuery implements Serializable  {
     @ApiModelProperty(value = "计划开工时间",example = "计划开工时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @JsonFormat(pattern ="yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private java.util.Date planedStartDate;
     @ApiModelProperty(value = "产线ID",example = "产线ID")
     private Long proLineId;

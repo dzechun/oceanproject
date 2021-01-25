@@ -140,4 +140,10 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
     @Transient
     @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
     private String packingUnitName;
+    /**
+     * 报工数量
+     */
+    @ApiModelProperty(name="outputQuantity",value = "报工数量")
+    @Excel(name = "报工数量", height = 20, width = 30,orderNum="")
+    private BigDecimal outputQuantity;
 }

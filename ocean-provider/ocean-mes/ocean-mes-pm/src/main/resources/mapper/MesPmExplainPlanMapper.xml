@@ -7,6 +7,7 @@
         <result column="master_plan_id" jdbcType="BIGINT" property="masterPlanId"/>
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
         <result column="product_qty" jdbcType="DECIMAL" property="productQty"/>
         <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
         <result column="no_schedule_qty" jdbcType="DECIMAL" property="noScheduleQty"/>
@@ -36,6 +37,7 @@
         mpep.master_plan_id,
         mpep.work_order_id,
         mpep.pro_line_id,
+        mpep.work_order_quantity,
         mpep.product_qty,
         mpep.scheduled_qty,
         mpep.no_schedule_qty,
@@ -54,12 +56,13 @@
         su1.user_name AS 'createUserName',
         su2.user_name AS 'modifiedUserName',
         bo.organization_name AS 'organizationName',
-        swo.work_order_code AS 'workOrderCode ',
+        swo.work_order_code AS 'workOrderCode',
         sm.material_code AS 'materialCode',
+        sm.material_name AS 'materialName',
         spm.product_model_name AS 'productModelName',
         sps.package_specification_name AS 'packageSpecificationName',
         bt.color AS 'color',
-        spl.pro_name AS 'proName '
+        spl.pro_name AS 'proName'
         FROM
         mes_pm_explain_plan AS mpep
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpep.work_order_id
@@ -96,7 +99,10 @@
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status=#{workOrderStatus}
             </if>
-            and swo.is_delete = 1
+            <if test="masterPlanId!=null">
+                and mpep.master_plan_id=#{masterPlanId}
+            </if>
+            and mpep.is_delete = 1
         </where>
         order by mpep.modified_time desc
     </select>

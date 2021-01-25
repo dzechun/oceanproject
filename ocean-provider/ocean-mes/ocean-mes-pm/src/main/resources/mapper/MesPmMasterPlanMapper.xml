@@ -7,6 +7,7 @@
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
         <result column="product_qty" jdbcType="DECIMAL" property="productQty"/>
+        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
         <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
         <result column="no_schedule_qty" jdbcType="DECIMAL" property="noScheduleQty"/>
         <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty"/>
@@ -34,6 +35,7 @@
         mpmp.master_plan_code,
         mpmp.work_order_id,
         mpmp.pro_line_id,
+        mpmp.work_order_quantity,
         mpmp.product_qty,
         mpmp.scheduled_qty,
         mpmp.no_schedule_qty,
@@ -53,12 +55,14 @@
         su2.user_name AS 'modifiedUserName',
         bo.organization_name AS 'organizationName',
         swo.work_order_code AS 'workOrderCode',
+        swo.work_order_quantity AS 'workOrderQuantity',
+        swo.work_order_status AS 'workOrderStatus',
         sm.material_name AS 'materialName',
         sm.material_code AS 'materialCode',
         spm.product_model_name AS 'productModelName',
         sps.package_specification_name AS 'packageSpecificationName',
         bt.color AS 'color',
-        spl.pro_name AS 'proName '
+        spl.pro_name AS 'proName'
         FROM
         mes_pm_master_plan AS mpmp
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpmp.work_order_id
@@ -86,16 +90,16 @@
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
-            <if test="planedStartDate!=null and planedStartDate!=''">
-                and date_format(mpmp.planed_start_date, '%Y-%m-%d') = #{planedStartDate}
+            <if test="planedStartDate!=null">
+                and date_format(mpmp.planed_start_date, '%Y-%m-%d') = date_format(#{planedStartDate}, '%Y-%m-%d')
             </if>
             <if test="proLineId!=null and proLineId!=''">
                 and spl.pro_line_id=#{proLineId}
             </if>
-            <if test="workOrderStatus!=null and workOrderStatus!=''">
+            <if test="workOrderStatus!=null">
                 and swo.work_order_status=#{workOrderStatus}
             </if>
-            and swo.is_delete = 1
+            and mpmp.is_delete = 1
         </where>
         order by mpmp.modified_time desc
     </select>

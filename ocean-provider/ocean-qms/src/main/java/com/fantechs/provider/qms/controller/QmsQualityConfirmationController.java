@@ -48,6 +48,13 @@ public class QmsQualityConfirmationController {
         return ControllerUtil.returnCRUD(qmsQualityConfirmationService.batchDelete(ids));
     }
 
+    @ApiOperation("更新报工数量")
+    @PostMapping("/updateQuantity")
+    public ResponseEntity updateQuantity(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsQualityConfirmation.update.class) SearchQmsQualityConfirmation qmsQualityConfirmation) {
+        Integer integer = qmsQualityConfirmationService.updateQuantity(ControllerUtil.dynamicConditionByEntity(qmsQualityConfirmation));
+        return ControllerUtil.returnDataSuccess(integer == null?0:integer,1);
+    }
+
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsQualityConfirmation.update.class) QmsQualityConfirmation qmsQualityConfirmation) {

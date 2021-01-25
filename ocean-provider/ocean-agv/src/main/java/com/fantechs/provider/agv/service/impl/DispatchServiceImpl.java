@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class DispatchServiceImpl extends BaseService implements DispatchService {
+public class DispatchServiceImpl implements DispatchService {
 
     @Value("${rcsUrl}")
     private String url;

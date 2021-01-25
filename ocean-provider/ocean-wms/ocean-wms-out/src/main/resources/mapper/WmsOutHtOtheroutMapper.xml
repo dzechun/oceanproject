@@ -63,7 +63,7 @@
       <if test="otheroutStatus!=null and otheroutStatus!=''">
         and woo.otherout_status=#{otheroutStatus}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and woo.status=#{status}
       </if>
     </where>

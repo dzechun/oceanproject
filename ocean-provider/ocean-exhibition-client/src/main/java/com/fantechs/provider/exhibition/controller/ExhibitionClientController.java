@@ -34,4 +34,18 @@ public class ExhibitionClientController {
 
         return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTask(stockId));
     }
+
+    @PostMapping(value = "/agvStockTaskTest")
+    @ApiOperation(value = "执行agv任务配送备料单物料测试")
+    public ResponseEntity agvStockTaskTest(@ApiParam(value = "物料编码", required = true) @RequestParam String materialCode) {
+
+        return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTaskTest(materialCode));
+    }
+
+    @PostMapping(value = "/agvContinueTask")
+    @ApiOperation(value = "继续执行agv任务配送")
+    public ResponseEntity agvContinueTask() {
+
+        return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvContinueTask());
+    }
 }
