@@ -61,6 +61,7 @@ public class SocketClient {
         try {
             OutputStream outputStream = socket.getOutputStream();
             outputStream.write(out_string.getBytes("UTF-8"));
+            logger.info("发送数据："+out_string);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             logger.error("打印失败："+e.getMessage());
@@ -85,13 +86,6 @@ public class SocketClient {
                     while((len = inputStream.read(bytes)) != -1) {
                         massage = new String(bytes, 0, len,"UTF-8");
                         logger.info(massage);
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("printName","1234");
-                        map.put("tempName","文档2");
-                        map.put("no","123456");
-                        map.put("size",1);
-                        String js = JSON.toJSONString(map);
-                        out(js);
                     }
                     inputStream.close();
                 }catch (Exception e){

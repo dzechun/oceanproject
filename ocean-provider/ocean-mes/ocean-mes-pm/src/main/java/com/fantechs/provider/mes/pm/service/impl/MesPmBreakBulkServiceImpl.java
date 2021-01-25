@@ -7,18 +7,14 @@ import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkDetMapper;
-import com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.MesPmBreakBulkService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +40,10 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
     private MesPmBreakBulkDetMapper mesPmBreakBulkDetMapper;
     @Resource
     private SmtWorkOrderMapper smtWorkOrderMapper;
+    @Resource
+    private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
+    @Resource
+    private SmtProcessListProcessMapper smtProcessListProcessMapper;
 
     @Override
     public List<MesPmBreakBulkDto> findList(SearchMesPmBreakBulk searchMesPmBreakBulk) {
@@ -89,7 +89,11 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         record.setModifiedUserId(user.getUserId());
         int num = mesPmBreakBulkMapper.insertUseGeneratedKeys(record);
 
-        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(record.getWorkOrderId());
+        SmtWorkOrderCardPool sm = new SmtWorkOrderCardPool();
+        sm.setWorkOrderCardId(record.getBatchNo());
+        SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolMapper.selectOne(sm);
+
+        boolean isUp = false;
 
         //添加明细
         int i = 1;
@@ -111,27 +115,52 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             mesPmBreakBulkDet.setModifiedUserId(user.getUserId());
             mesPmBreakBulkDetMapper.insertUseGeneratedKeys(mesPmBreakBulkDet);
 
-            //拆批生成工单
-            smtWorkOrder.setWorkOrderId(null);
-            smtWorkOrder.setProductionQuantity(mesPmBreakBulkDet.getBreakBulkQty());
-            smtWorkOrder.setCreateTime(new Date());
-            smtWorkOrder.setCreateUserId(user.getUserId());
-            smtWorkOrder.setModifiedTime(new Date());
-            smtWorkOrder.setModifiedUserId(user.getUserId());
-            smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
-            smtWorkOrderMapper.insertSelective(smtWorkOrder);
+            if(record.getBreakBulkType()==(byte)1){
+                //生成流转卡
+                sm = new SmtWorkOrderCardPool();
+                sm = smtWorkOrderCardPool;
+                sm.setWorkOrderCardPoolId(null);
+                sm.setType((byte)3);
+                sm.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+                sm.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
+                smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sm);
+
+                Example example = new Example(SmtProcessListProcess.class);
+                example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPool.getWorkOrderCardPoolId());
+                List<SmtProcessListProcess> processListProcesses = smtProcessListProcessMapper.selectByExample(example);
+                if(processListProcesses.size()<1){
+                    throw new BizErrorException(ErrorCodeEnum.valueOf("获取流程单失败"));
+                }
+                SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
+                up.setProcessListProcessId(null);
+                if(!isUp){
+                    //生成流程单up
+                    //过站中
+                    up.setStatus((byte)1);
+                    up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
+                    up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
+                    smtProcessListProcessMapper.insertSelective(up);
+                    isUp = true;
+                }else{
+                    //生成流程单down
+                    up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
+                    up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
+                    smtProcessListProcessMapper.insertSelective(up);
+                }
+            }
         }
         if(record.getBreakBulkType()==(byte)2){
-            //合批生成工单
-            smtWorkOrder.setWorkOrderId(null);
-            smtWorkOrder.setProductionQuantity(record.getBreakBulkBatchQty());
-            smtWorkOrder.setCreateTime(new Date());
-            smtWorkOrder.setCreateUserId(user.getUserId());
-            smtWorkOrder.setModifiedTime(new Date());
-            smtWorkOrder.setModifiedUserId(user.getUserId());
-            smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
-            smtWorkOrderMapper.insertSelective(smtWorkOrder);
-            record.setMesPmBreakBulkDets(null);
+            //合批生成流转卡
+            Example example = new Example(SmtProcessListProcess.class);
+            example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPool.getWorkOrderCardPoolId());
+            List<SmtProcessListProcess> processListProcesses = smtProcessListProcessMapper.selectByExample(example);
+            if(processListProcesses.size()<1){
+                throw new BizErrorException(ErrorCodeEnum.valueOf("获取流程单失败"));
+            }
+            SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
+            up.setOutputQuantity(record.getBreakBulkBatchQty());
+            up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
+            smtProcessListProcessMapper.insertSelective(up);
         }
         return record;
     }
