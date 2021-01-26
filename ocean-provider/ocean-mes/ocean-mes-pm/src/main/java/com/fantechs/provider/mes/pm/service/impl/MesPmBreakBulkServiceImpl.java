@@ -86,11 +86,11 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             }
         }
         //查询当前工序
-        Long mesPmBreakBulk = mesPmBreakBulkMapper.sleProcess(record.getBatchNo());
-        if(StringUtils.isEmpty(mesPmBreakBulk)){
+        Long processId = mesPmBreakBulkMapper.sleProcess(record.getBatchNo());
+        if(StringUtils.isEmpty(processId)){
              throw new BizErrorException("获取当前工序失败！");
         }
-        record.setProcessId(mesPmBreakBulk);
+        record.setProcessId(processId);
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
