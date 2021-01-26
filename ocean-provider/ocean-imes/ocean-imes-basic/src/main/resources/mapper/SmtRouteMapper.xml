@@ -55,13 +55,10 @@
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         u.user_name as create_user_name, s.user_name as modified_user_name,
-        sp.process_id, sp.process_code, sp.process_name, sp.process_desc,
         bo.organization_name
         from fantech_imes.smt_route sr
         left join ocean.sys_user u on sr.create_user_id=u.user_id
         left join ocean.sys_user s on sr.modified_user_id=s.user_id
-        left join fantech_imes.smt_route_process srp on sr.route_id = srp.route_id
-        left join fantech_imes.smt_process sp on srp.process_id = sp.process_id
         LEFT JOIN fantech_imes.base_organization bo ON sr.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -78,9 +75,6 @@
             </if>
             <if test="routeType!=null and routeType!=''">
                 and sr.route_type = #{routeType}
-            </if>
-            <if test="routeId !=null">
-                and sr.route_id = #{routeId}
             </if>
             <if test="status!=null">
                 and sr.status=#{status}

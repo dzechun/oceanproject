@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/smtDept")
-@Api(tags = "部门管理")
+@Api(tags = "部门信息管理")
 @Slf4j
 @Validated
 public class SmtDeptController {
