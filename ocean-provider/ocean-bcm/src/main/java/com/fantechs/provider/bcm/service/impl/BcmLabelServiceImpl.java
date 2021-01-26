@@ -93,7 +93,12 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
 
-        return bcmLabelMapper.insertUseGeneratedKeys(record);
+        int num = bcmLabelMapper.insertUseGeneratedKeys(record);
+
+        BcmHtLabel bcmHtLabel = new BcmHtLabel();
+        BeanUtils.copyProperties(record,bcmHtLabel);
+        bcmHtLabelMapper.insertSelective(bcmHtLabel);
+        return num;
     }
 
     @Override
