@@ -121,7 +121,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //获取最后报工数据
         SmtProcessListProcessDto smtProcessListProcessDto = processListProcessList.get(0);
 
-        if (type.equals(1)){
+        if (type == 1){
             Example example = new Example(QmsQualityConfirmation.class);
             example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId())
                     .andEqualTo("processId",smtProcessListProcessDto.getProcessId())
