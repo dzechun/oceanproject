@@ -68,7 +68,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     public BcmBarCodeWorkDto work(SearchBcmBarCode searchBcmBarCode) {
         BcmBarCodeWorkDto bcmBarCodeWorkDto = bcmBarCodeMapper.sel_work_order(searchBcmBarCode);
         if(StringUtils.isEmpty(bcmBarCodeWorkDto.getBarcodeRuleId())){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("此工单没有绑定条码规则"));
+            throw new BizErrorException("此工单没有绑定条码规则");
         }
         //生成规则
         SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
@@ -157,10 +157,10 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("status",(byte)1);
         List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example);
         if(StringUtils.isEmpty(bcmBarCodes)){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("工单没有生成可打印的条码"));
+            throw new BizErrorException("工单没有生成可打印的条码");
         }
         if(!SocketClient.isConnect){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("连接打印服务失败"));
+            throw new BizErrorException("连接打印服务失败");
         }
         try {
             for (BcmBarCode bcmBarCode : bcmBarCodes) {
@@ -173,7 +173,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                     searchSmtWorkOrder.setWorkOrderId(workOrderId);
                     List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
                     if(smtWorkOrderDto.size()<1){
-                        throw new BizErrorException(ErrorCodeEnum.valueOf("获取工单信息失败"));
+                        throw new BizErrorException("获取工单信息失败");
                     }
                     Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto.get(0));
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
@@ -187,7 +187,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                 bcmBarCodeMapper.updateByPrimaryKeySelective(bcmBarCode);
             }
         }catch (Exception e){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("打印失败！"));
+            throw new BizErrorException("打印失败！");
         }
         return 1;
     }
@@ -227,7 +227,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         Integer num = bcmBarCodes.stream().mapToInt(BcmBarCode::getPrintQuantity).sum();
 
         if(record.getWorkOrderQuantity().compareTo(BigDecimal.valueOf(num+record.getPrintQuantity()))==1){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("产生数量不能大于工单数量"));
+            throw new BizErrorException("产生数量不能大于工单数量");
         }
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());

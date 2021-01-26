@@ -88,8 +88,8 @@
 </if>
     </where>
   </select>
-  <select id="sleProcess" resultType="com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk">
-  select plp.process_id FROM smt_work_order_card_pool wocp
+  <select id="sleProcess" resultType="java.lang.Long">
+  select MAX(plp.process_id) as process_id FROM smt_work_order_card_pool wocp
   left join smt_process_list_process plp on plp.work_order_card_pool_id = wocp.work_order_card_pool_id
   where wocp.work_order_card_id= #{workOrderCardId}
 </select>
