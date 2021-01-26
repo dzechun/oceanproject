@@ -102,6 +102,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
 
+        if (smtWorkOrderCardPoolDto.getParentId() == null || smtWorkOrderCardPoolDto.getParentId() == 0){
+            throw new BizErrorException("当前为父级流程单");
+        }
+
         //当前流程单的父级对象
         ResponseEntity<SmtWorkOrderCardPool> workOrderCardPoolDetail = pmFeignApi.findSmtWorkOrderCardPoolDetail(smtWorkOrderCardPoolDto.getParentId());
         SmtWorkOrderCardPool parentWorkOrderCardPool = workOrderCardPoolDetail.getData();
@@ -115,7 +119,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("暂无过站信息");
         }
         //获取最后报工数据
-        SmtProcessListProcessDto smtProcessListProcessDto = processListProcessList.get(processListProcessList.size()-1);
+        SmtProcessListProcessDto smtProcessListProcessDto = processListProcessList.get(0);
 
         if (type.equals(1)){
             Example example = new Example(QmsQualityConfirmation.class);
@@ -132,7 +136,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(smtProcessListProcessDto.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
         Byte isQuality = smtProcess.getIsQuality();
-        if (type.equals(1) && isQuality.equals(0)){
+        if (type == 1 && isQuality ==0){
             throw new BizErrorException("当前工序不是最后一道工序");
         }
 
@@ -151,9 +155,11 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
         SmtMaterial material = materialResponse.getData().get(0);
         BaseTab baseTab = material.getBaseTab();
-
-        ResponseEntity<SmtProductModel> productModelResponse = basicFeignApi.productModelDetail(baseTab.getProductModelId());
-        SmtProductModel productModel = productModelResponse.getData();
+        SmtProductModel productModel = null;
+        if (baseTab != null){
+            ResponseEntity<SmtProductModel> productModelResponse = basicFeignApi.productModelDetail(baseTab.getProductModelId());
+            productModel = productModelResponse.getData();
+        }
 
         qmsQualityConfirmationDto.setProductionQuantity(smtWorkOrder.getWorkOrderQuantity());
         qmsQualityConfirmationDto.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
@@ -162,9 +168,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         qmsQualityConfirmationDto.setMaterialCode(material.getMaterialCode());
         qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
         qmsQualityConfirmationDto.setProductModelName(productModel == null ?"":productModel.getProductModelName());
-        qmsQualityConfirmationDto.setUnit(baseTab.getMainUnit());
+        qmsQualityConfirmationDto.setUnit(baseTab == null?"":baseTab.getMainUnit());
         qmsQualityConfirmationDto.setProcessName(smtProcess.getProcessName());
         qmsQualityConfirmationDto.setProcessId(smtProcess.getProcessId());
+        qmsQualityConfirmationDto.setRouteId(smtWorkOrderCardPoolDto.getRouteId());
         qmsQualityConfirmationDto.setSectionName(workshopSection.getSectionName());
         qmsQualityConfirmationDto.setSectionId(workshopSection.getSectionId());
         qmsQualityConfirmationDto.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
@@ -319,8 +326,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         if (StringUtils.isNotEmpty(routeProcesses)){
             for (SmtRouteProcess routeProcess : routeProcesses) {
-                search.put("sectionId",routeProcess.getSectionId());
-                List<QmsBadItemDto> list = qmsBadItemMapper.findList(search);
                 int is = 0;
                 for (Long section : sections) {
                     if (section.equals(routeProcess.getSectionId())){
@@ -328,8 +333,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                         break;
                     }
                 }
-
                 if (is == 0){
+                    search.put("sectionId",routeProcess.getSectionId());
+                    List<QmsBadItemDto> list = qmsBadItemMapper.findList(search);
+
                     QmsBadItemDto badItemDto = new QmsBadItemDto();
                     badItemDto.setSectionId(routeProcess.getSectionId());
                     badItemDto.setSectionName(routeProcess.getSectionName());

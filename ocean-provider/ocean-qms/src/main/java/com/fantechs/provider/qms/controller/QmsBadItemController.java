@@ -84,7 +84,7 @@ public class QmsBadItemController {
     List<QmsBadItemDto> list = qmsBadItemService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsBadItem));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "QmsBadItem信息", QmsBadItemDto.class, "QmsBadItem.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出不良项目信息", "不良项目信息", QmsBadItemDto.class, "不良项目.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
