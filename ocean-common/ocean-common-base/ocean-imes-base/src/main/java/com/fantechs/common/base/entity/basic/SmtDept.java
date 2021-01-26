@@ -65,8 +65,16 @@ public class SmtDept extends ValidGroup implements Serializable  {
      */
     @Transient
     @ApiModelProperty(name="factoryName" ,value="厂别名称")
-    @Excel(name = "厂别", height = 20, width = 30)
+    @Excel(name = "厂别名称", height = 20, width = 30)
     private String factoryName;
+
+    /**
+     * 厂别编码
+     */
+    @Transient
+    @ApiModelProperty(name="factoryCode" ,value="厂别编码")
+    @Excel(name = "厂别编码", height = 20, width = 30)
+    private String factoryCode;
 
     /**
      * 父级ID
@@ -88,6 +96,7 @@ public class SmtDept extends ValidGroup implements Serializable  {
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
     @Transient
+    @Excel(name = "组织名称", height = 20, width = 30)
     private String organizationName;
 
     /**

@@ -46,6 +46,14 @@ public class SmtFactory extends ValidGroup implements Serializable {
     private String factoryName;
 
     /**
+     * 工厂描述
+     */
+    @Column(name = "factory_desc")
+    @Excel(name = "工厂描述", height = 20, width = 30,orderNum="3")
+    @ApiModelProperty(name="factoryDesc" ,value="厂别描述")
+    private String factoryDesc;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
@@ -59,14 +67,6 @@ public class SmtFactory extends ValidGroup implements Serializable {
     @Column(name = "remark")
     @Excel(name = "备注", height = 20, width = 30 ,orderNum="9")
     private String remark;
-
-    /**
-     * 工厂描述
-     */
-    @Column(name = "factory_desc")
-    @Excel(name = "工厂描述", height = 20, width = 30,orderNum="3")
-    @ApiModelProperty(name="factoryDesc" ,value="厂别描述")
-    private String factoryDesc;
 
     /**
      * 创建账号

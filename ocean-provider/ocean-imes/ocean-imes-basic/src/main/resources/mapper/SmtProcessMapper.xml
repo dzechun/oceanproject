@@ -94,9 +94,6 @@
             <if test="status!=null">
                 and sp.status=#{status}
             </if>
-            <if test="routeId !=null">
-                and sr.route_id = #{routeId}
-            </if>
             <if test="isJobScan !=null">
                 and sp.is_job_scan = #{isJobScan}
             </if>
