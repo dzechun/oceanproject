@@ -1,74 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtMaterialSupplierMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtMaterialSupplier">
-    <id column="material_supplier_id" jdbcType="BIGINT" property="materialSupplierId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="material_supplier_code" jdbcType="VARCHAR" property="materialSupplierCode" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="image" jdbcType="VARCHAR" property="image" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtMaterialSupplier">
+        <id column="material_supplier_id" jdbcType="BIGINT" property="materialSupplierId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="material_supplier_code" jdbcType="VARCHAR" property="materialSupplierCode"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto">
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
-    <result column="version" jdbcType="VARCHAR" property="version" />
-    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
+    <sql id="Base_Column_List">
+        sms.material_supplier_id,
+        sms.material_id,
+        sms.material_supplier_code,
+        sms.supplier_id,
+        sms.image,
+        sms.`status`,
+        sms.remark,
+        sms.organization_id,
+        sms.create_user_id,
+        sms.create_time,
+        sms.modified_user_id,
+        sms.modified_time,
+        sms.is_delete,
+        sms.option1,
+        sms.option2,
+        sms.option3
+    </sql>
 
-
-  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier" resultMap="BaseResultMapDto">
-    select  sms.material_supplier_id,sms.material_id,sm.material_code,sm.version,sm.material_desc,sms.material_supplier_code,sms.supplier_id,
-    ss.supplier_name,sms.status,sms.create_user_id,u.user_name as create_user_name,sms.create_time,sms.modified_user_id,s.user_name as modified_user_name,
-    sms.modified_time, sms.is_delete, sms.organization_id, sms.remark, sms.image, bo.organization_name
-    from fantech_imes.smt_material_supplier sms
-    left join fantech_imes.smt_material sm on sms.material_id=sm.material_id
-    left join fantech_imes.smt_supplier ss on sms.supplier_id=ss.supplier_id
-    left join ocean.sys_user u on sms.create_user_id=u.user_id
-    left join ocean.sys_user s on sms.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON sms.organization_id = bo.organization_id
-    <where>
-      1=1
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(sms.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="materialId!=null and materialId!=''">
-        and sms.material_id=#{materialId}
-      </if>
-      <if test="materialCode!=null and materialCode!=''">
-        and sm.material_code like CONCAT('%', #{materialCode}, '%')
-      </if>
-      <if test="materialDesc!=null and materialDesc!=''">
-        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
-      </if>
-      <if test="materialSupplierCode!=null and materialSupplierCode!=''">
-        and sms.material_supplier_code like CONCAT('%', #{materialSupplierCode}, '%')
-      </if>
-      <if test="supplierId!=null and supplierId!=''">
-        and sms.supplier_id=#{supplierId}
-      </if>
-      <if test="supplierName!=null and supplierName!=''">
-        and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
-      </if>
-      <if test="status!=null">
-        and sms.status=#{status}
-      </if>
-    </where>
-    order by sms.create_time desc
-  </select>
+    <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier"
+            resultMap="BaseResultMapDto">
+        select  <include refid="Base_Column_List"></include>,
+        sm.material_code,sm.version,sm.material_desc,
+        ss.supplier_name,
+        u.user_name as create_user_name, s.user_name as modified_user_name,
+        bo.organization_name
+        from fantech_imes.smt_material_supplier sms
+        left join fantech_imes.smt_material sm on sms.material_id=sm.material_id
+        left join fantech_imes.smt_supplier ss on sms.supplier_id=ss.supplier_id
+        left join ocean.sys_user u on sms.create_user_id=u.user_id
+        left join ocean.sys_user s on sms.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON sms.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sms.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and sms.material_id=#{materialId}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="materialSupplierCode!=null and materialSupplierCode!=''">
+                and sms.material_supplier_code like CONCAT('%', #{materialSupplierCode}, '%')
+            </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and sms.supplier_id=#{supplierId}
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="status!=null">
+                and sms.status=#{status}
+            </if>
+        </where>
+        order by sms.create_time desc
+    </select>
 </mapper>

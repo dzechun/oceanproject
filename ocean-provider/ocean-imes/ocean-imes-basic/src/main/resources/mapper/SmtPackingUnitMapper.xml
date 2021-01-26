@@ -1,60 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtPackingUnitMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtPackingUnit">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
-    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
-    <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc" />
-    <result column="is_chief" jdbcType="TINYINT" property="isChief" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtPackingUnit">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+        <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc"/>
+        <result column="is_chief" jdbcType="TINYINT" property="isChief"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.basic.SmtPackingUnitDto">
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.dto.basic.SmtPackingUnitDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    spu.packing_unit_id,spu.packing_unit_name,spu.packing_unit_desc,spu.is_chief,spu.status,spu.create_user_id,spu.create_time,
-    spu.modified_user_id,spu.modified_time,spu.is_delete,spu.option1,spu.option2,spu.option3, spu.organization_id,
-	spu.remark
-  </sql>
+    <sql id="Base_Column_List">
+        spu.packing_unit_id,
+        spu.packing_unit_name,
+        spu.packing_unit_desc,
+        spu.is_chief,
+        spu.`status`,
+        spu.remark,
+        spu.organization_id,
+        spu.create_user_id,
+        spu.create_time,
+        spu.modified_user_id,
+        spu.modified_time,
+        spu.is_delete,
+        spu.option1,
+        spu.option2,
+        spu.option3
+    </sql>
 
-  <select id="findList"  resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    bo.organization_name
-    from fantech_imes.smt_packing_unit spu
-    LEFT JOIN ocean.sys_user su  ON spu.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON spu.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON spu.organization_id = bo.organization_id
-    <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(spu.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="packingUnitName != null and packingUnitName != ''">
-        and spu.packing_unit_name like CONCAT('%', #{packingUnitName}, '%')
-      </if>
-      <if test="packingUnitDesc != null and packingUnitDesc != ''">
-        and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
-      </if>
-      <if test="status!=null">
-        and spu.status=#{status}
-      </if>
-    </where>
-    order by spu.create_time desc
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bo.organization_name
+        from fantech_imes.smt_packing_unit spu
+        LEFT JOIN ocean.sys_user su ON spu.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON spu.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON spu.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(spu.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="packingUnitName != null and packingUnitName != ''">
+                and spu.packing_unit_name like CONCAT('%', #{packingUnitName}, '%')
+            </if>
+            <if test="packingUnitDesc != null and packingUnitDesc != ''">
+                and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
+            </if>
+            <if test="status!=null">
+                and spu.status=#{status}
+            </if>
+        </where>
+        order by spu.create_time desc
+    </select>
 </mapper>

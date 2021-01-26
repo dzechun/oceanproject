@@ -142,7 +142,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 baseTab.setCreateTime(new Date());
                 baseTab.setModifiedUserId(currentUser.getUserId());
                 baseTab.setModifiedTime(new Date());
-                baseTab.setStatus(material.getStatus());
+                baseTab.setStatus(smtMaterial.getStatus());
                 baseFeignApi.addTab(baseTab);
             }
 

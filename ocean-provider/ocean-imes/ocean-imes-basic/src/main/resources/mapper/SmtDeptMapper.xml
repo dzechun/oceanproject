@@ -55,7 +55,6 @@
     left join ocean.sys_user s on sd.modified_user_id=s.user_id
     left join fantech_imes.smt_factory sf on sd.factory_id=sf.factory_id
     <where>
-      1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

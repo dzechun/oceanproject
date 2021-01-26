@@ -43,20 +43,20 @@
 
     <sql id="Base_Column_List">
         bs.staff_id,
-	bs.staff_code,
-	bs.staff_name,
-	bs.staff_desc,
-	bs.team_id,
-	bs.identity_number,
-	bs.is_team_piecework,
-	bs.`status`,
-	bs.remark,
-	bs.organization_id,
-	bs.create_user_id,
-	bs.create_time,
-	bs.modified_user_id,
-	bs.modified_time,
-	bs.is_delete
+        bs.staff_code,
+        bs.staff_name,
+        bs.staff_desc,
+        bs.team_id,
+        bs.identity_number,
+        bs.is_team_piecework,
+        bs.`status`,
+        bs.remark,
+        bs.organization_id,
+        bs.create_user_id,
+        bs.create_time,
+        bs.modified_user_id,
+        bs.modified_time,
+        bs.is_delete
     </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
@@ -103,7 +103,7 @@
             <if test="factoryName != null and factoryName !=''">
                 and sf.factory_name like CONCAT('%', #{factoryName}, '%')
             </if>
-            <if test="status !=null and status !=''">
+            <if test="status !=null">
                 and bs.status=#{status}
             </if>
         </where>

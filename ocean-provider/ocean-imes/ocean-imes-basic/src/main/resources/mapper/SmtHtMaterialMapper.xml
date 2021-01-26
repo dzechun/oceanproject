@@ -26,6 +26,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
+
   <sql id="Base_Column_List">
     shm.ht_material_id,
 	shm.material_id,
@@ -51,11 +52,11 @@
 
   <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterial" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    u.user_name as createUserName, s.user_name as modifiedUserName,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes.smt_ht_material shm
-    left join ocean.sys_user u on shm.create_user_id=u.user_id
-    left join ocean.sys_user s on shm.modified_user_id=s.user_id
+    left join ocean.sys_user u on shm.create_user_id= u.user_id
+    left join ocean.sys_user s on shm.modified_user_id= s.user_id
     LEFT JOIN fantech_imes.base_organization bo ON shm.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

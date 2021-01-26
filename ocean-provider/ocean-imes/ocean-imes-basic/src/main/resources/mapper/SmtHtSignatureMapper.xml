@@ -1,50 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtSignatureMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtSignature">
-    <id column="ht_signature_id" jdbcType="BIGINT" property="htSignatureId" />
-    <result column="signature_id" jdbcType="BIGINT" property="signatureId" />
-    <result column="signature_code" jdbcType="VARCHAR" property="signatureCode" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtSignature">
+        <id column="ht_signature_id" jdbcType="BIGINT" property="htSignatureId"/>
+        <result column="signature_id" jdbcType="BIGINT" property="signatureId"/>
+        <result column="signature_code" jdbcType="VARCHAR" property="signatureCode"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtSignature" resultMap="BaseResultMap">
-    select  shs.ht_signature_id,shs.signature_id,shs.signature_code,shs.material_id,sm.material_code as materialCode,sm.material_name as materialName,
-    sm.version,sm.material_desc as materialDesc,shs.supplier_id,ssu.supplier_name as supplierName,shs.status,shs.create_user_id,u.user_name as createUserName,
-    shs.create_time,shs.modified_user_id,s.user_name as modifiedUserName,shs.modified_time, shs.is_delete, shs.organization_id,
-    shs.remark, bo.organization_name
-    from fantech_imes.smt_ht_signature shs
-    left join fantech_imes.smt_material sm on shs.material_id=sm.material_id
-    left join fantech_imes.smt_supplier ssu on shs.supplier_id=ssu.supplier_id
-    left join ocean.sys_user u on shs.create_user_id=u.user_id
-    left join ocean.sys_user s on shs.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON shs.organization_id = bo.organization_id
-    <where>
-      1=1
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(shs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="materialCode!=null and materialCode!=''">
-        and sm.material_code like CONCAT('%', #{materialCode}, '%')
-      </if>
-      <if test="signatureCode!=null and signatureCode!=''">
-        and shs.signature_code like CONCAT('%', #{signatureCode}, '%')
-      </if>
-    </where>
-    order by shs.modified_time desc
-  </select>
+
+    <sql id="Base_Cloumn_List">
+        shs.ht_signature_id,
+        shs.signature_id,
+        shs.signature_code,
+        shs.material_id,
+        shs.supplier_id,
+        shs.`status`,
+        shs.remark,
+        shs.organization_id,
+        shs.create_user_id,
+        shs.create_time,
+        shs.modified_user_id,
+        shs.modified_time,
+        shs.is_delete,
+        shs.option1,
+        shs.option2,
+        shs.option3
+    </sql>
+    <select id="findHtList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtSignature"
+            resultMap="BaseResultMap">
+        select  <include refid="Base_Cloumn_List"></include>,
+        sm.material_code as materialCode, sm.material_name as materialName, sm.version, sm.material_desc as
+        materialDesc,
+        ssu.supplier_name as supplierName,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes.smt_ht_signature shs
+        left join fantech_imes.smt_material sm on shs.material_id=sm.material_id
+        left join fantech_imes.smt_supplier ssu on shs.supplier_id=ssu.supplier_id
+        left join ocean.sys_user u on shs.create_user_id=u.user_id
+        left join ocean.sys_user s on shs.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON shs.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(shs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="signatureCode!=null and signatureCode!=''">
+                and shs.signature_code like CONCAT('%', #{signatureCode}, '%')
+            </if>
+        </where>
+        order by shs.modified_time desc
+    </select>
 </mapper>

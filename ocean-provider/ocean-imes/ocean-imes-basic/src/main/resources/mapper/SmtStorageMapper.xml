@@ -9,13 +9,13 @@
         <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
-        <result column="capacity" jdbcType="DECIMAL" property="capacity" />
-        <result column="temperature" jdbcType="DECIMAL" property="temperature" />
-        <result column="unit" jdbcType="VARCHAR" property="unit" />
-        <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState" />
+        <result column="capacity" jdbcType="DECIMAL" property="capacity"/>
+        <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -29,19 +29,42 @@
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-        <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory" />
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
     </resultMap>
+
+    <sql id="Base_Cloumn_List">
+        ss.storage_id,
+        ss.storage_code,
+        ss.storage_name,
+        ss.`level`,
+        ss.storage_desc,
+        ss.capacity,
+        ss.temperature,
+        ss.unit,
+        ss.warehouse_state,
+        ss.warehouse_id,
+        ss.warehouse_area_id,
+        ss.`status`,
+        ss.remark,
+        ss.organization_id,
+        ss.create_user_id,
+        ss.create_time,
+        ss.modified_user_id,
+        ss.modified_time,
+        ss.is_delete,
+        ss.option1,
+        ss.option2,
+        ss.option3
+    </sql>
 
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStorage"
             resultMap="BaseResultMap">
-        select ss.storage_id,ss.storage_code,ss.storage_name,ss.level,ss.storage_desc,ss.warehouse_id,sw.warehouse_name
-        as warehouseName,
-        ss.warehouse_area_id,swa.warehouse_area_name as warehouseAreaName,ss.status,ss.create_user_id,u.user_name as
-        createUserName,ss.capacity,ss.temperature,ss.unit,ss.warehouse_state,
-        ss.create_time,ss.modified_user_id, s.user_name as modifiedUserName,ss.modified_time,
-        ss.is_delete,sw.warehouse_code, sw.warehouse_name,sw.warehouse_category,
-        swa.warehouse_area_code, swa.warehouse_area_name, ss.organization_id, ss.remark, bo.organization_name
+        select <include refid="Base_Cloumn_List"></include>,
+        sw.warehouse_name as warehouseName, sw.warehouse_code, sw.warehouse_name, sw.warehouse_category,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        swa.warehouse_area_code, swa.warehouse_area_name, swa.warehouse_area_name as warehouseAreaName,
+        bo.organization_name
         from fantech_imes.smt_storage ss
         left join fantech_imes.smt_warehouse sw on ss.warehouse_id=sw.warehouse_id
         left join fantech_imes.smt_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
@@ -49,7 +72,6 @@
         left join ocean.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes.base_organization bo ON ss.organization_id = bo.organization_id
         <where>
-            1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

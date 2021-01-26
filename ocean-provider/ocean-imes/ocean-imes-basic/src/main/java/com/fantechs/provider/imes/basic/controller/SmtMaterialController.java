@@ -98,7 +98,7 @@ public class SmtMaterialController {
         List<SmtMaterialDto> list = smtMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtMaterial));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出物料信息", "物料信息", SmtMaterialDto.class, "物料信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "物料信息表", "物料信息", SmtMaterialDto.class, "物料信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

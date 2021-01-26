@@ -31,20 +31,40 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
+    <sql id="Base_Column_List">
+        shpb.ht_product_bom_id,
+        shpb.product_bom_id,
+        shpb.product_bom_code,
+        shpb.material_id,
+        shpb.takt,
+        shpb.transfer_quantity,
+        shpb.bom_status,
+        shpb.`status`,
+        shpb.remark,
+        shpb.organization_id,
+        shpb.parent_bom_id,
+        shpb.create_user_id,
+        shpb.create_time,
+        shpb.modified_user_id,
+        shpb.modified_time,
+        shpb.is_delete,
+        shpb.option1,
+        shpb.option2,
+        shpb.option3
+    </sql>
+
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductBom"
             resultMap="BaseResultMap">
-        select
-        shpb.ht_product_bom_id,shpb.product_bom_id,shpb.product_bom_code,shpb.material_id,sm.material_code,sm.material_name,
-        sm.version,sm.material_desc,shpb.takt,shpb.transfer_quantity,shpb.bom_status,shpb.status,shpb.create_user_id,
-        u.user_name as create_user_name,shpb.create_time,shpb.modified_user_id,s.user_name as
-        modified_user_name,shpb.modified_time, shpb.is_delete, shpb.organization_id, shpb.remark, bo.organization_name
+        select <include refid="Base_Column_List"></include>,
+        sm.material_code, sm.material_name, sm.version, sm.material_desc,
+        u.user_name as create_user_name, s.user_name as modified_user_name,
+        bo.organization_name
         from fantech_imes.smt_ht_product_bom shpb
         left join fantech_imes.smt_material sm on shpb.material_id=sm.material_id
         left join ocean.sys_user u on shpb.create_user_id=u.user_id
         left join ocean.sys_user s on shpb.modified_user_id=s.user_id
         LEFT JOIN fantech_imes.base_organization bo ON shpb.organization_id = bo.organization_id
         <where>
-            1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shpb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

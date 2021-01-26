@@ -1,9 +1,11 @@
 package com.fantechs.common.base.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
@@ -64,4 +66,22 @@ public class SearchSmtProcess extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "searchType",value = "查询类型")
     private Integer searchType;
+
+    /**
+     * 工艺路线ID
+     */
+    @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    private Long routeId;
+
+    /**
+     * 是否报工扫描（0、否 1、是）
+     */
+    @ApiModelProperty(name="isJobScan" ,value="是否报工扫描")
+    private Byte isJobScan;
+
+    /**
+     * 是否开工工扫描（0、否 1、是）
+     */
+    @ApiModelProperty(name= "isStartScan" ,value="是否开工工扫描")
+    private Byte isStartScan;
 }
