@@ -114,7 +114,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         if(mesPackageManagerMapper.insertSelective(mesPackageManager)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
-        recordHistory(mesPackageManager.getPackageManagerId(),"新增");
+        recordHistory(mesPackageManager,"新增");
         return 1;
     }
 
@@ -145,7 +145,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         if(mesPackageManagerMapper.updateByPrimaryKeySelective(mesPackageManager)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
-        recordHistory(mesPackageManager.getPackageManagerId(),"更新");
+        recordHistory(mesPackageManager,"更新");
         return 1;
     }
 
@@ -266,13 +266,12 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     /**
      * 记录操作历史
-     * @param id
+     * @param mesPackageManager
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(MesPackageManager mesPackageManager,String operation){
         MesHtPackageManager mesHtPackageManager = new MesHtPackageManager();
         mesHtPackageManager.setOperation(operation);
-        MesPackageManager mesPackageManager = this.selectByKey(id);
         if (StringUtils.isEmpty(mesPackageManager)){
             return;
         }

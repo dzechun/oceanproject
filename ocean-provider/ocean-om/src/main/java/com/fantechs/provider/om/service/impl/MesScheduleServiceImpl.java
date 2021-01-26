@@ -120,7 +120,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         if(mesScheduleMapper.insertSelective(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
-        recordHistory(mesSchedule.getScheduleId(),"新增");
+        recordHistory(mesSchedule,"新增");
         return 1;
     }
 
@@ -151,7 +151,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         if(mesScheduleMapper.updateByPrimaryKeySelective(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
-        recordHistory(mesSchedule.getScheduleId(),"更新");
+        recordHistory(mesSchedule,"更新");
         return 1;
     }
 
@@ -244,13 +244,12 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
     /**
      * 记录操作历史
-     * @param id
+     * @param mesSchedule
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(MesSchedule mesSchedule,String operation){
         MesHtSchedule mesHtSchedule = new MesHtSchedule();
         mesHtSchedule.setOperation(operation);
-        MesSchedule mesSchedule = selectByKey(id);
         if (StringUtils.isEmpty(mesSchedule)){
             return;
         }
