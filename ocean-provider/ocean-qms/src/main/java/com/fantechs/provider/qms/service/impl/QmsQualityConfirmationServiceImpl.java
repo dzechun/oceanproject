@@ -193,12 +193,12 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         qmsQualityConfirmationDto.setWorkOrderCode(smtWorkOrderCardPoolDto.getWorkOrderCode());
         qmsQualityConfirmationDto.setMaterialDesc(material.getMaterialDesc());
         qmsQualityConfirmationDto.setMaterialCode(material.getMaterialCode());
-        qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
+        qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getCurOutputQty());
         qmsQualityConfirmationDto.setProductModelName(productModel == null ?"":productModel.getProductModelName());
         qmsQualityConfirmationDto.setUnit(baseTab == null?"":baseTab.getMainUnit());
         qmsQualityConfirmationDto.setProcessName(smtProcess.getProcessName());
         qmsQualityConfirmationDto.setProcessId(smtProcess.getProcessId());
-        qmsQualityConfirmationDto.setRouteId(smtWorkOrderCardPoolDto.getRouteId());
+        qmsQualityConfirmationDto.setRouteId(routeId);
         qmsQualityConfirmationDto.setSectionName(workshopSection.getSectionName());
         qmsQualityConfirmationDto.setSectionId(workshopSection.getSectionId());
         qmsQualityConfirmationDto.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
