@@ -225,7 +225,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         if (StringUtils.isNotEmpty(smtMaterials)) {
             Example example = new Example(SmtMaterial.class);
             for (SmtMaterial smtMaterial : smtMaterials) {
-
                 smtMaterial.setModifiedTime(new Date());
 
                 //更新页签
