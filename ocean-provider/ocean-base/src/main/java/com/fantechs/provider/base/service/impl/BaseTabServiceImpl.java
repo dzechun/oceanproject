@@ -38,10 +38,6 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        baseTab.setCreateTime(new Date());
-        baseTab.setCreateUserId(user.getUserId());
-        baseTab.setModifiedTime(new Date());
-        baseTab.setModifiedUserId(user.getUserId());
         return baseTabMapper.insertUseGeneratedKeys(baseTab);
     }
 
@@ -52,8 +48,6 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        baseTab.setModifiedTime(new Date());
-        baseTab.setModifiedUserId(user.getUserId());
         return baseTabMapper.updateByPrimaryKeySelective(baseTab);
     }
 

@@ -16,6 +16,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtDeptMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtHtDeptMapper;
 import com.fantechs.provider.imes.basic.service.SmtDeptService;
+import com.fantechs.provider.imes.basic.service.SmtFactoryService;
 import javafx.scene.layout.BackgroundImage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -33,9 +34,10 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
     @Resource
     private SmtDeptMapper smtDeptMapper;
-
     @Resource
     private SmtHtDeptMapper smtHtDeptMapper;
+    @Resource
+    private SmtFactoryService smtFactoryService;
 
     @Override
     public List<SmtDept> findList(SearchSmtDept searchSmtDept) {
@@ -169,12 +171,14 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtDept> list = new LinkedList<>();
         LinkedList<SmtHtDept> htList = new LinkedList<>();
+
         for (int i = 0; i < smtDepts.size(); i++) {
             SmtDept smtDept = smtDepts.get(i);
             String deptCode = smtDept.getDeptCode();
             String deptName = smtDept.getDeptName();
+            String factoryCode = smtDept.getFactoryCode();
             if (StringUtils.isEmpty(
-                    deptCode,deptName
+                    deptCode,deptName,factoryCode
             )){
                 fail.add(i+3);
                 continue;
@@ -189,10 +193,21 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
                 continue;
             }
 
+            //判断工厂是否存在
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("factoryCode",smtDept.getDeptCode());
+            map.put("codeQueryMark",1);
+            List<SmtFactoryDto> list1 = smtFactoryService.findList(map);
+            if (StringUtils.isNotEmpty(list1)){
+                fail.add(i+3);
+                continue;
+            }
+
             smtDept.setCreateTime(new Date());
             smtDept.setCreateUserId(currentUser.getUserId());
             smtDept.setModifiedTime(new Date());
             smtDept.setModifiedUserId(currentUser.getUserId());
+            smtDept.setFactoryId(list1.get(0).getFactoryId());
             list.add(smtDept);
         }
 

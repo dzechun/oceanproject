@@ -151,10 +151,16 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int preserve(SmtBarcodeRule smtBarcodeRule) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         int i=0;
         Long barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
         if(StringUtils.isEmpty(barcodeRuleId)){
             //新增条码规则
+            smtBarcodeRule.setCreateTime(new Date());
+            smtBarcodeRule.setCreateUserId(currentUser.getUserId());
             i = smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
 
             /**
