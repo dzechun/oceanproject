@@ -34,7 +34,7 @@ public class BasePlatePartsDto extends BasePlateParts implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialDesc",value = "产品描述")
-    @Excel(name = "产品名称", height = 20, width = 30,orderNum = "3")
+    @Excel(name = "产品描述", height = 20, width = 30,orderNum = "3")
     private String materialDesc;
 
     /**

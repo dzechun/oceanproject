@@ -63,6 +63,7 @@ public class BasePlatePartsServiceImpl  extends BaseService<BasePlateParts> impl
         basePlateParts.setModifiedTime(new Date());
         basePlateParts.setModifiedUserId(user.getUserId());
         basePlateParts.setStatus(StringUtils.isEmpty(basePlateParts.getStatus())?1:basePlateParts.getStatus());
+        basePlateParts.setIfCustomized(StringUtils.isEmpty(basePlateParts.getIfCustomized())?0:basePlateParts.getIfCustomized());
         basePlateParts.setOrganizationId(user.getOrganizationId());
 
         int i = basePlatePartsMapper.insertUseGeneratedKeys(basePlateParts);
