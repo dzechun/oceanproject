@@ -90,8 +90,8 @@
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
-            <if test="planedStartDate!=null and planedStartDate!=''">
-                and date_format(mpep.planed_start_date, '%Y-%m-%d') = #{planedStartDate}
+            <if test="planedStartDate!=null">
+                and date_format(mpep.planed_start_date, '%Y-%m-%d') = date_format(#{planedStartDate}, '%Y-%m-%d')
             </if>
             <if test="proLineId!=null and proLineId!=''">
                 and spl.pro_line_id=#{proLineId}

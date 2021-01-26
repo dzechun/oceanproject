@@ -1,6 +1,8 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
@@ -10,6 +12,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDe
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -67,6 +70,11 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         if(StringUtils.isEmpty(record.getMesPmBreakBulkDets())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
+        Example codeEx = new Example(MesPmBreakBulk.class);
+        codeEx.createCriteria().andEqualTo("batchNo",record.getBatchNo());
+        if(mesPmBreakBulkMapper.selectByExample(codeEx).size()>0 && record.getBreakBulkType()==(byte)1){
+            throw new BizErrorException("该流程单已经拆批");
+        }
         record.setBreakBulkCode(CodeUtils.getId("BREAK"));
         //合批作业生成母批次号
         if(record.getBreakBulkType()==(byte)2){
@@ -74,15 +82,15 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             record.setBatchNo(batch.substring(0,batch.length()-2));
         }else{
             if(StringUtils.isEmpty(record.getBatchNo())){
-                throw new BizErrorException(ErrorCodeEnum.valueOf("批次不能为空"));
+                throw new BizErrorException("批次不能为空");
             }
         }
         //查询当前工序
-        MesPmBreakBulk mesPmBreakBulk = mesPmBreakBulkMapper.sleProcess(record.getBatchNo());
+        Long mesPmBreakBulk = mesPmBreakBulkMapper.sleProcess(record.getBatchNo());
         if(StringUtils.isEmpty(mesPmBreakBulk)){
-             throw new BizErrorException(ErrorCodeEnum.valueOf("获取当前工序失败！"));
+             throw new BizErrorException("获取当前工序失败！");
         }
-        record.setProcessId(mesPmBreakBulk.getProcessId());
+        record.setProcessId(mesPmBreakBulk);
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
@@ -99,11 +107,12 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         int i = 1;
         for (MesPmBreakBulkDet mesPmBreakBulkDet : record.getMesPmBreakBulkDets()) {
 
-            //拆批作业生产子批次号
+            //拆批作业生产子批次号≤µ˚≥
             if(record.getBreakBulkType()==(byte)1){
-                DecimalFormat df=new DecimalFormat("0");
+                DecimalFormat df=new DecimalFormat("00");
                 String no = df.format(i);
                 mesPmBreakBulkDet.setChildLotNo(record.getBatchNo()+no);
+                mesPmBreakBulkDet.setStatus((byte)1);
             }else{
                 //合批：状态：2：已合批生成工单
                 mesPmBreakBulkDet.setStatus((byte)2);
@@ -117,19 +126,19 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
 
             if(record.getBreakBulkType()==(byte)1){
                 //生成流转卡
-                sm = new SmtWorkOrderCardPool();
-                sm = smtWorkOrderCardPool;
-                sm.setWorkOrderCardPoolId(null);
-                sm.setType((byte)3);
-                sm.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
-                sm.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
-                smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sm);
+                SmtWorkOrderCardPool sms = new SmtWorkOrderCardPool();
+                BeanUtil.copyProperties(smtWorkOrderCardPool,sms);
+                sms.setWorkOrderCardPoolId(null);
+                sms.setType((byte)3);
+                sms.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+                sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
+                smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);
 
                 Example example = new Example(SmtProcessListProcess.class);
                 example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPool.getWorkOrderCardPoolId());
                 List<SmtProcessListProcess> processListProcesses = smtProcessListProcessMapper.selectByExample(example);
                 if(processListProcesses.size()<1){
-                    throw new BizErrorException(ErrorCodeEnum.valueOf("获取流程单失败"));
+                    throw new BizErrorException("获取流程单失败");
                 }
                 SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
                 up.setProcessListProcessId(null);
@@ -148,6 +157,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     smtProcessListProcessMapper.insertSelective(up);
                 }
             }
+            i++;
         }
         if(record.getBreakBulkType()==(byte)2){
             //合批生成流转卡
@@ -155,9 +165,10 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPool.getWorkOrderCardPoolId());
             List<SmtProcessListProcess> processListProcesses = smtProcessListProcessMapper.selectByExample(example);
             if(processListProcesses.size()<1){
-                throw new BizErrorException(ErrorCodeEnum.valueOf("获取流程单失败"));
+                throw new BizErrorException("获取流程单失败");
             }
             SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
+            up.setProcessListProcessId(null);
             up.setOutputQuantity(record.getBreakBulkBatchQty());
             up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
             smtProcessListProcessMapper.insertSelective(up);

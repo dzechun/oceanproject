@@ -28,11 +28,28 @@
         <result column="standard_time" jdbcType="TIMESTAMP" property="standardTime" />
     </resultMap>
 
+    <sql id="Base_Column_List">
+        srp.route_process_id,
+        srp.route_id,
+        srp.section_id,
+        srp.process_id,
+        srp.next_process_id,
+        srp.previous_process_id,
+        srp.standard_time,
+        srp.readiness_time,
+        srp.order_num,
+        srp.is_pass,
+        srp.is_must_pass,
+        srp.inspection_time,
+        srp.qualification_id,
+        srp.remark,
+        srp.organization_id
+    </sql>
+
     <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select srp.route_process_id, srp.route_id,srp.section_id,srp.process_id,srp.next_process_id,
-        sps.process_name as next_route_name, srp.previous_process_id,srp.order_num,
-        srp.is_pass, srp.is_must_pass,srp.inspection_time,srp.qualification_id, srp.organization_id, srp.remark,
-        sr.route_name, srp.readiness_time, srp.standard_time,
+        select <include refid="Base_Column_List"></include>,
+        sps.process_name as next_route_name,
+        sr.route_name,
         ws.section_name,
         sp.process_name,
         p.process_name as previous_process_name,

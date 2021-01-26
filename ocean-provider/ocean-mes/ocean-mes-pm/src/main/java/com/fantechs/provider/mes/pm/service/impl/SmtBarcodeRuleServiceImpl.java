@@ -216,6 +216,15 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                 String spec = getRuleSpec(specification, barcodeLength);
                 sb.append(spec);
             }
+            if(specification.contains("S")){
+                if(barcodeLength>10){
+                    throw new BizErrorException(ErrorCodeEnum.valueOf("十进制长度不能超过10"));
+                }
+            }else if (specification.contains("F")){
+                if (barcodeLength>16){
+                    throw new BizErrorException(ErrorCodeEnum.valueOf("十六进制长度不能超过16"));
+                }
+            }
 
             smtBarcodeRuleSpec.setBarcodeRuleId(smtBarcodeRule.getBarcodeRuleId());
             specs.add(specification);

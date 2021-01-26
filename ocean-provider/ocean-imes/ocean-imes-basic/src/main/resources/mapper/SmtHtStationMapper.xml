@@ -1,62 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtHtStationMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtStation">
-    <id column="ht_station_id" jdbcType="BIGINT" property="htStationId" />
-    <result column="station_id" jdbcType="BIGINT" property="stationId" />
-    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
-    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
-    <result column="station_desc" jdbcType="VARCHAR" property="stationDesc" />
-    <result column="process_id" jdbcType="BIGINT" property="processId" />
-    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="if_pass_station" jdbcType="TINYINT" property="ifPassStation" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.history.SmtHtStation">
+        <id column="ht_station_id" jdbcType="BIGINT" property="htStationId"/>
+        <result column="station_id" jdbcType="BIGINT" property="stationId"/>
+        <result column="station_code" jdbcType="VARCHAR" property="stationCode"/>
+        <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
+        <result column="station_desc" jdbcType="VARCHAR" property="stationDesc"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="if_pass_station" jdbcType="TINYINT" property="ifPassStation"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStation" resultMap="BaseResultMap">
-    select  shs.ht_station_id,shs.station_id,shs.station_code,shs.station_name,shs.station_desc,shs.process_id,sp.process_name as processName,shs.section_id,
-    sws.section_name as sectionName,shs.status,shs.if_pass_station,shs.create_user_id,u.user_name as createUserName,shs.create_time,
-    shs.modified_user_id, s.user_name as modifiedUserName,shs.modified_time, shs.is_delete, shs.organization_id,
-    shs.remark, bo.organization_name
-    from fantech_imes.smt_ht_station shs
-    left join fantech_imes.smt_process sp on shs.process_id=sp.process_id
-    left join fantech_imes.smt_workshop_section sws on shs.section_id=sws.section_id
-    left join ocean.sys_user u on shs.create_user_id=u.user_id
-    left join ocean.sys_user s on shs.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON shs.organization_id = bo.organization_id
-    <where>
-      1=1
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(shs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="stationCode!=null and stationCode!=''">
-        and shs.station_code like CONCAT('%', #{stationCode}, '%')
-      </if>
-      <if test="stationName!=null and stationName!=''">
-        and shs.station_name like CONCAT('%', #{stationName}, '%')
-      </if>
-      <if test="stationDesc!=null and stationDesc!=''">
-        and shs.station_desc like CONCAT('%', #{stationDesc}, '%')
-      </if>
-      <if test="processId!=null and processId!=''">
-        and shs.process_id=#{processId}
-      </if>
-      <if test="sectionId!=null and sectionId!=''">
-        and shs.section_id=#{sectionId}
-      </if>
-    </where>
-    order by shs.modified_time desc
-  </select>
+    <sql id="Base_Column_List">
+        shs.ht_station_id,
+        shs.station_id,
+        shs.station_code,
+        shs.station_name,
+        shs.station_desc,
+        shs.process_id,
+        shs.section_id,
+        shs.`status`,
+        shs.remark,
+        shs.organization_id,
+        shs.if_pass_station,
+        shs.create_user_id,
+        shs.create_time,
+        shs.modified_user_id,
+        shs.modified_time,
+        shs.is_delete,
+        shs.option1,
+        shs.option2,
+        shs.option3
+    </sql>
+    <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtStation"
+            resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List"></include>,
+        sp.process_name as processName,
+        sws.section_name as sectionName,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes.smt_ht_station shs
+        left join fantech_imes.smt_process sp on shs.process_id=sp.process_id
+        left join fantech_imes.smt_workshop_section sws on shs.section_id=sws.section_id
+        left join ocean.sys_user u on shs.create_user_id=u.user_id
+        left join ocean.sys_user s on shs.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON shs.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(shs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="stationCode!=null and stationCode!=''">
+                and shs.station_code like CONCAT('%', #{stationCode}, '%')
+            </if>
+            <if test="stationName!=null and stationName!=''">
+                and shs.station_name like CONCAT('%', #{stationName}, '%')
+            </if>
+            <if test="stationDesc!=null and stationDesc!=''">
+                and shs.station_desc like CONCAT('%', #{stationDesc}, '%')
+            </if>
+            <if test="processId!=null and processId!=''">
+                and shs.process_id=#{processId}
+            </if>
+            <if test="sectionId!=null and sectionId!=''">
+                and shs.section_id=#{sectionId}
+            </if>
+        </where>
+        order by shs.modified_time desc
+    </select>
 </mapper>

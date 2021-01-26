@@ -162,8 +162,36 @@ public class SmtRoute extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete" ,value="逻辑删除")
     private Byte isDelete;
 
+    /**
+     * 工序ID
+     */
     @Transient
-    @ApiModelProperty(name = "产品工艺路线",notes = "产品工艺路线")
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long processId;
+
+    /**
+     * 工序代码
+     */
+    @Transient
+    @ApiModelProperty(name="processCode" ,value="工序代码")
+    private String processCode;
+
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name="processName" ,value="工序名称")
+    private String processName;
+
+    /**
+     * 工序描述
+     */
+    @Transient
+    @ApiModelProperty(name="processDesc" ,value="工序描述")
+    private String processDesc;
+
+    @Transient
+    @ApiModelProperty(name = "",notes = "产品工艺路线")
     private SmtProductProcessRoute smtProductProcessRoute;
 
     @Transient

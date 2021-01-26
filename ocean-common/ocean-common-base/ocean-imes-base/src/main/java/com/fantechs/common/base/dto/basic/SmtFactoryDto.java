@@ -37,5 +37,6 @@ public class SmtFactoryDto extends SmtFactory implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="10")
     private String organizationName;
 }

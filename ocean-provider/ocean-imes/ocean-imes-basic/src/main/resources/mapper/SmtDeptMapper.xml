@@ -21,6 +21,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
 
     <result column="factory_name" jdbcType="BIGINT" property="factoryName" />
+    <result column="factory_code" jdbcType="BIGINT" property="factoryCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <collection property="depts" ofType="com.fantechs.common.base.entity.basic.SmtDept" select="com.fantechs.provider.imes.basic.mapper.SmtDeptMapper.findById" column="dept_id"/>
   </resultMap>
@@ -47,7 +48,7 @@
 
   <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtDept" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    sf.factory_name,
+    sf.factory_name,sf.factory_code,
     u.user_name as createUserName,
     s.user_name as modifiedUserName
     from fantech_imes.smt_dept sd
@@ -55,7 +56,6 @@
     left join ocean.sys_user s on sd.modified_user_id=s.user_id
     left join fantech_imes.smt_factory sf on sd.factory_id=sf.factory_id
     <where>
-      1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

@@ -30,7 +30,6 @@
     left join ocean.sys_user s on sc.modified_user_id=s.user_id
     LEFT JOIN fantech_imes.base_organization bo ON sc.organization_id = bo.organization_id
     <where>
-      1=1
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
         AND date_format(sc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

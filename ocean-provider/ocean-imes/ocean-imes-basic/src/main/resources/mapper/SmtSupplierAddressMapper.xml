@@ -1,53 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtSupplierAddressMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtSupplierAddress">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="supplier_address_id" jdbcType="BIGINT" property="supplierAddressId" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="address_id" jdbcType="BIGINT" property="addressId" />
-    <result column="if_default" jdbcType="TINYINT" property="ifDefault" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtSupplierAddress">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="supplier_address_id" jdbcType="BIGINT" property="supplierAddressId"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="address_id" jdbcType="BIGINT" property="addressId"/>
+        <result column="if_default" jdbcType="TINYINT" property="ifDefault"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    ssa.supplier_address_id,ssa.supplier_id,ssa.address_id,ssa.if_default,ssa.create_user_id,
-    ssa.create_time, ssa.modified_user_id, ssa.modified_time, ssa.status, ssa.is_delete,
-    ssa.organization_id, ssa.remark
-  </sql>
+    <sql id="Base_Column_List">
+        ssa.supplier_address_id,
+        ssa.supplier_id,
+        ssa.address_id,
+        ssa.if_default,
+        ssa.create_user_id,
+        ssa.create_time,
+        ssa.modified_user_id,
+        ssa.modified_time,
+        ssa.status,
+        ssa.is_delete,
+        ssa.organization_id,
+        ssa.remark
+    </sql>
 
-  <select id="findList" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>
-    from fantech_imes.smt_supplier_address ssa
-    <where>
-      <if test="supplierAddressId != null and supplierAddressId != ''">
-        and  ssa.supplier_address_id like CONCAT('%', #{supplierAddressId}, '%')
-      </if>
-      <if test="supplierId != null and supplierId != ''">
-        and  ssa.supplier_id like CONCAT('%', #{supplierId}, '%')
-      </if>
-      <if test="ifDefault != null and ifDefault != ''">
-        and  ssa.is_delete = #{ifDefault}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(ssa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-    </where>
-    order by create_time desc
-  </select>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from fantech_imes.smt_supplier_address ssa
+        <where>
+            <if test="supplierAddressId != null and supplierAddressId != ''">
+                and ssa.supplier_address_id like CONCAT('%', #{supplierAddressId}, '%')
+            </if>
+            <if test="supplierId != null and supplierId != ''">
+                and ssa.supplier_id like CONCAT('%', #{supplierId}, '%')
+            </if>
+            <if test="ifDefault != null and ifDefault != ''">
+                and ssa.is_delete = #{ifDefault}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(ssa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 
-  <update id="updateIfDefault">
-    update smt_supplier_address set if_default = 0 where supplier_id = #{supplierId};
-    update smt_supplier_address set if_default = 1 where supplier_id = #{supplierId} and address_id = #{addressId}
-  </update>
+    <update id="updateIfDefault">
+        update smt_supplier_address
+        set if_default = 0
+        where supplier_id = #{supplierId};
+        update smt_supplier_address
+        set if_default = 1
+        where supplier_id = #{supplierId}
+          and address_id = #{addressId}
+    </update>
 
 </mapper>

@@ -14,5 +14,5 @@ import java.util.Map;
 public interface MesPmBreakBulkMapper extends MyMapper<MesPmBreakBulk> {
     List<MesPmBreakBulkDto> findList(SearchMesPmBreakBulk searchMesPmBreakBulk);
 
-    MesPmBreakBulk sleProcess(@Param("workOrderCardId")String workOrderCardId);
+    Long sleProcess(@Param("workOrderCardId")String workOrderCardId);
 }

@@ -62,7 +62,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      * 基数
      */
     @ApiModelProperty(name="base" ,value="基数")
-    @Excel(name = "基数", height = 20, width = 30)
     private Integer base;
 
     /**
@@ -85,7 +84,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "system_source")
     @ApiModelProperty(name="systemSource" ,value="系统来源")
-    @Excel(name = "系统来源", height = 20, width = 30)
     private String systemSource;
 
     /**
@@ -115,7 +113,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "min_package_number")
     @ApiModelProperty(name="minPackageNumber" ,value="最小包装数")
-    @Excel(name = "最小包装数", height = 20, width = 30)
     private Integer minPackageNumber;
 
     /**

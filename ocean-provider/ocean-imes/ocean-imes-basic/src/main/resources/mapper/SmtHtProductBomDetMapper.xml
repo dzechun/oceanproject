@@ -33,15 +33,35 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
+    <sql id="Base_Column_List">
+        shpbd.ht_product_bom_det_id,
+        shpbd.product_bom_det_id,
+        shpbd.product_bom_id,
+        shpbd.part_material_id,
+        shpbd.sub_material_id,
+        shpbd.process_id,
+        shpbd.quantity,
+        shpbd.base_quantity,
+        shpbd.position,
+        shpbd.remark,
+        shpbd.organization_id,
+        shpbd.create_user_id,
+        shpbd.create_time,
+        shpbd.modified_user_id,
+        shpbd.modified_time,
+        shpbd.is_delete,
+        shpbd.option1,
+        shpbd.option2,
+        shpbd.option3
+    </sql>
+
     <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtProductBomDet"
             resultMap="BaseResultMap">
-        select
-        shpbd.ht_product_bom_det_id,shpbd.product_bom_det_id,shpbd.product_bom_id,shpbd.part_material_id,sm.material_code
-        as part_material_code,sm.material_name,
-        sm.version,sm.material_desc,shpbd.sub_material_id,sml.material_code as
-        sub_material_code,shpbd.process_id,sp.process_name,shpbd.quantity,shpbd.base_quantity,shpbd.position,
-        shpbd.create_user_id, u.user_name as create_user_name,shpbd.create_time,shpbd.modified_user_id,s.user_name as
-        modified_user_name,shpbd.modified_time, shpbd.is_delete, shpbd.organization_id, shpbd.remark, bo.organization_name
+        select <include refid="Base_Column_List"></include>,
+        sm.material_code as part_material_code, sm.material_name, sm.version, sm.material_desc,
+        sml.material_code as sub_material_code, sp.process_name,
+        u.user_name as create_user_name, s.user_name as modified_user_name,
+        bo.organization_name
         from fantech_imes.smt_ht_product_bom_det shpbd
         left join fantech_imes.smt_material sm on shpbd.part_material_id=sm.material_id
         left join fantech_imes.smt_material sml on shpbd.sub_material_id=sml.material_id
