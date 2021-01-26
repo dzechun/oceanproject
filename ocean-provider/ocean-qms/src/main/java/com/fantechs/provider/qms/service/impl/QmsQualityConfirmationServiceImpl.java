@@ -113,23 +113,20 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         SmtWorkOrderCardPoolDto parentWorkOrderCardPool = smtWorkOrderCardPoolList.getData().get(0);
 
         Long routeId = null;
-        if (smtWorkOrderCardPoolDto.getRouteId() == null){
-            //获取当前生成部件的工艺路线
-            SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
-            searchBasePlateParts.setMaterialId(parentWorkOrderCardPool.getMaterialId());
-            ResponseEntity<List<BasePlatePartsDto>> platePartsList = baseFeignApi.findPlatePartsList(searchBasePlateParts);
-            List<BasePlatePartsDto> patePartsDtoList = platePartsList.getData();
-            if (StringUtils.isNotEmpty(patePartsDtoList)){
-                List<BasePlatePartsDetDto> list = patePartsDtoList.get(0).getList();
-                for (BasePlatePartsDetDto basePlatePartsDetDto : list) {
-                    if (basePlatePartsDetDto.getPartsInformationId() == smtWorkOrderCardPoolDto.getMaterialId()){
-                        routeId = basePlatePartsDetDto.getRouteId();
-                        break;
-                    }
+        //获取当前生成部件的工艺路线
+        SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
+        searchBasePlateParts.setMaterialId(parentWorkOrderCardPool.getMaterialId());
+        ResponseEntity<List<BasePlatePartsDto>> platePartsList = baseFeignApi.findPlatePartsList(searchBasePlateParts);
+        List<BasePlatePartsDto> patePartsDtoList = platePartsList.getData();
+        if (StringUtils.isNotEmpty(patePartsDtoList)){
+            List<BasePlatePartsDetDto> list = patePartsDtoList.get(0).getList();
+            for (BasePlatePartsDetDto basePlatePartsDetDto : list) {
+                if (basePlatePartsDetDto.getPartsInformationId() == smtWorkOrderCardPoolDto.getMaterialId()){
+                    routeId = basePlatePartsDetDto.getRouteId();
+                    break;
                 }
             }
         }
-
         if (routeId == null){
             throw new BizErrorException("当前生产的部件未绑定工艺路线");
         }
