@@ -20,7 +20,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="2")
     private Long workOrderId;
 
     /**
@@ -28,7 +27,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "workOrderCode",value = "工单号")
-    @Excel(name = "工单号", height = 20, width = 30,orderNum="2")
+    @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
 
     /**
@@ -36,7 +35,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "productionQuantity",value = "生产数量")
-    @Excel(name = "生产数量", height = 20, width = 30,orderNum="2")
     private BigDecimal productionQuantity;
 
     /**
@@ -52,7 +50,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "materialId",value = "产品Id")
-    @Excel(name = "产品Id", height = 20, width = 30,orderNum="2")
     private Long materialId;
 
     /**
@@ -60,7 +57,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "proLineId",value = "线别Id")
-    @Excel(name = "线别Id", height = 20, width = 30,orderNum="2")
     private Long proLineId;
 
     /**
@@ -68,7 +64,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "routeId",value = "工艺路线ID")
-    @Excel(name = "工艺路线ID", height = 20, width = 30,orderNum="2")
     private Long routeId;
 
     /**
@@ -76,7 +71,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "partsInformationId",value = "生产部件Id")
-    @Excel(name = "生产部件Id", height = 20, width = 30,orderNum="2")
     private Long partsInformationId;
 
     /**
@@ -84,7 +78,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "materialDesc",value = "产品描述")
-    @Excel(name = "产品描述", height = 20, width = 30,orderNum="2")
+    @Excel(name = "产品描述", height = 20, width = 30,orderNum="4")
     private String materialDesc;
 
     /**
@@ -92,7 +86,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "materialCode",value = "产品编码")
-    @Excel(name = "产品编码", height = 20, width = 30,orderNum="2")
+    @Excel(name = "产品编码", height = 20, width = 30,orderNum="5")
     private String materialCode;
 
     /**
@@ -100,7 +94,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "productModelName",value = "产品型号")
-    @Excel(name = "产品型号", height = 20, width = 30,orderNum="2")
     private String productModelName;
 
     /**
@@ -108,7 +101,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "unit",value = "单位")
-    @Excel(name = "单位", height = 20, width = 30,orderNum="2")
+    @Excel(name = "单位", height = 20, width = 30,orderNum="6")
     private String unit;
 
     /**
@@ -116,15 +109,15 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "partsInformationName",value = "部件名称")
-    @Excel(name = "部件名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "部件名称", height = 20, width = 30,orderNum="7")
     private String partsInformationName;
 
     /**
      * 部门名称
      */
     @Transient
-    @ApiModelProperty(name = "deptName",value = "部门名称")
-    @Excel(name = "部门名称", height = 20, width = 30,orderNum="2")
+    @ApiModelProperty(name = "deptName",value = "部门")
+    @Excel(name = "部门", height = 20, width = 30,orderNum="8")
     private String deptName;
 
     /**
@@ -132,7 +125,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "personName",value = "确认人员名称")
-    @Excel(name = "确认人员名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "确认人员名称", height = 20, width = 30,orderNum="9")
     private String personName;
 
     /**
@@ -140,7 +133,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "quantity",value = "报工数量")
-    @Excel(name = "报工数量", height = 20, width = 30,orderNum="2")
+    @Excel(name = "报工数量", height = 20, width = 30,orderNum="10")
     private BigDecimal quantity;
 
     /**
@@ -148,7 +141,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "personName",value = "报工工序名称")
-    @Excel(name = "报工工序名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "报工工序", height = 20, width = 30,orderNum="11")
     private String processName;
 
     /**
@@ -156,7 +149,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "sectionName",value = "所属工段名称")
-    @Excel(name = "所属工段名称", height = 20, width = 30,orderNum="2")
     private String sectionName;
 
     /**
@@ -164,7 +156,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "sectionId",value = "所属工段ID")
-    @Excel(name = "所属工段ID", height = 20, width = 30,orderNum="2")
     private Long sectionId;
 
     /**
@@ -172,7 +163,6 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "dosage",value = "用量")
-    @Excel(name = "用量", height = 20, width = 30,orderNum="2")
     private BigDecimal dosage;
 
     /**
@@ -180,7 +170,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="17")
     private String createUserName;
 
     /**
@@ -188,7 +178,7 @@ public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="19")
     private String modifiedUserName;
 
     /**

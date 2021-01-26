@@ -6,6 +6,8 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
@@ -14,6 +16,7 @@ import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.qms.QmsPoorQuality;
@@ -26,6 +29,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -58,6 +62,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     private PMFeignApi pmFeignApi;
     @Resource
     private BasicFeignApi basicFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
     @Resource
     private InFeignApi inFeignApi;
     @Resource
@@ -96,19 +102,42 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = poolList.get(0);
         qmsQualityConfirmationDto.setPartsInformationId(smtWorkOrderCardPoolDto.getMaterialId());
 
-        //获取工艺路线
-        ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId());
-        List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
-
-        qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
-
         if (smtWorkOrderCardPoolDto.getParentId() == null || smtWorkOrderCardPoolDto.getParentId() == 0){
             throw new BizErrorException("当前为父级流程单");
         }
 
         //当前流程单的父级对象
-        ResponseEntity<SmtWorkOrderCardPool> workOrderCardPoolDetail = pmFeignApi.findSmtWorkOrderCardPoolDetail(smtWorkOrderCardPoolDto.getParentId());
-        SmtWorkOrderCardPool parentWorkOrderCardPool = workOrderCardPoolDetail.getData();
+        searchSmtWorkOrderCardPool.setWorkOrderCardId("");
+//        searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getParentId());
+        ResponseEntity<List<SmtWorkOrderCardPoolDto>> smtWorkOrderCardPoolList = pmFeignApi.findSmtWorkOrderCardPoolList(searchSmtWorkOrderCardPool);
+        SmtWorkOrderCardPoolDto parentWorkOrderCardPool = smtWorkOrderCardPoolList.getData().get(0);
+
+        Long routeId = null;
+        if (smtWorkOrderCardPoolDto.getRouteId() == null){
+            //获取当前生成部件的工艺路线
+            SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
+            searchBasePlateParts.setMaterialId(parentWorkOrderCardPool.getMaterialId());
+            ResponseEntity<List<BasePlatePartsDto>> platePartsList = baseFeignApi.findPlatePartsList(searchBasePlateParts);
+            List<BasePlatePartsDto> patePartsDtoList = platePartsList.getData();
+            if (StringUtils.isNotEmpty(patePartsDtoList)){
+                List<BasePlatePartsDetDto> list = patePartsDtoList.get(0).getList();
+                for (BasePlatePartsDetDto basePlatePartsDetDto : list) {
+                    if (basePlatePartsDetDto.getPartsInformationId() == smtWorkOrderCardPoolDto.getMaterialId()){
+                        routeId = basePlatePartsDetDto.getRouteId();
+                        break;
+                    }
+                }
+            }
+            if (routeId == null){
+                throw new BizErrorException("当前生产的部件未绑定工艺路线");
+            }
+        }
+
+        //获取工艺路线
+        ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(routeId);
+        List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
+
+        qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
 
         //查询过站信息（报工数据）
         SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
@@ -136,7 +165,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(smtProcessListProcessDto.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
         Byte isQuality = smtProcess.getIsQuality();
-        if (type == 1 && isQuality ==0){
+        if (type == 1 && (isQuality == null || isQuality ==0)){
             throw new BizErrorException("当前工序不是最后一道工序");
         }
 
