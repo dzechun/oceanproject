@@ -128,9 +128,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                     }
                 }
             }
-            if (routeId == null){
-                throw new BizErrorException("当前生产的部件未绑定工艺路线");
-            }
+        }
+
+        if (routeId == null){
+            throw new BizErrorException("当前生产的部件未绑定工艺路线");
         }
 
         //获取工艺路线
