@@ -50,14 +50,6 @@
       <result column="storage_require_desc" jdbcType="VARCHAR" property="storageRequireDesc" />
       <result column="packing_method" jdbcType="INTEGER" property="packingMethod" />
       <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
-      <result column="status" jdbcType="TINYINT" property="status" />
-      <result column="remark" jdbcType="VARCHAR" property="remark" />
-      <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-      <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-      <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-      <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-      <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
       <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
       <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
   </resultMap>
@@ -77,8 +69,6 @@
         <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
-        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     </resultMap>
 
   <sql id="Base_Column_List">
@@ -126,14 +116,6 @@
 	bt.storage_humidity,
 	bt.storage_require_desc,
 	bt.packing_method,
-	bt.`status`,
-	bt.remark,
-	bt.organization_id,
-	bt.create_user_id,
-	bt.modified_user_id,
-	bt.create_time,
-	bt.modified_time,
-	bt.is_delete,
 	bt.is_wet_sensitive,
 	bt.wet_sensitive_level,
 	bt.material_quality
@@ -141,7 +123,6 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>,
-    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
       qii.inspection_item_code,qii.inspection_item_name,
       qit.inspection_type_code,qit.inspection_type_name,
       sps.package_specification_code,sps.package_specification_name,
@@ -157,8 +138,6 @@
     LEFT JOIN fantech_imes.bcm_label_category blc ON bt.label_category_id = blc.label_category_id
     LEFT JOIN fantech_imes.bcm_label bl ON bt.label_id = bl.label_id
     LEFT JOIN fantech_imes.smt_supplier ss ON bt.supplier_id = ss.supplier_id
-    LEFT JOIN ocean.sys_user su ON bt.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON bt.modified_user_id = sus.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
