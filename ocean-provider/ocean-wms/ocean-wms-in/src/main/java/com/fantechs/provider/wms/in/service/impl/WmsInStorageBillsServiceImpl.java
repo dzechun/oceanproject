@@ -119,7 +119,7 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
         if(wmsStorageBillsMapper.insertSelective(wmsStorageBills)<=0){
             return 0;
         }
-        recordHistory(wmsStorageBills.getStorageBillsId(),"新增");
+        recordHistory(wmsStorageBills,"新增");
         return 1;
     }
 
@@ -151,7 +151,7 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
         if(wmsStorageBillsMapper.updateByPrimaryKeySelective(wmsStorageBills)<=0){
             return 0;
         }
-        recordHistory(wmsStorageBills.getStorageBillsId(),"更新");
+        recordHistory(wmsStorageBills,"更新");
         return 1;
     }
 
@@ -291,13 +291,12 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
 
     /**
      * 记录操作历史
-     * @param id
+     * @param wmsStorageBills
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(WmsInStorageBills wmsStorageBills,String operation){
         WmsInHtStorageBills wmsHtStorageBills = new WmsInHtStorageBills();
         wmsHtStorageBills.setOperation(operation);
-        WmsInStorageBills wmsStorageBills = selectByKey(id);
         if (StringUtils.isEmpty(wmsStorageBills)){
             return;
         }

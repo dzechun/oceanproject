@@ -62,7 +62,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         if(smtOrderMapper.insertSelective(smtOrder)<=0){
             return 0;
         }
-        recordHistory(smtOrder.getOrderId(),"新增");
+        recordHistory(smtOrder,"新增");
         return 1;
     }
 
@@ -79,12 +79,10 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
             if (StringUtils.isEmpty(smtOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            recordHistory(smtOrder,"删除");
         }
         if(smtOrderMapper.deleteByIds(ids)<=0){
             return 0;
-        }
-        for (String s : idArray) {
-            recordHistory(Long.parseLong(s),"删除");
         }
         return 1;
     }
@@ -110,7 +108,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         if(smtOrderMapper.updateByPrimaryKey(smtOrder)<=0){
             return 0;
         }
-        recordHistory(smtOrder.getOrderId(),"更新");
+        recordHistory(smtOrder,"更新");
         return 1;
     }
 
@@ -162,13 +160,12 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
 
     /**
      * 记录操作历史
-     * @param id
+     * @param smtOrder
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(SmtOrder smtOrder,String operation){
         SmtHtOrder smtHtOrder = new SmtHtOrder();
         smtHtOrder.setOption1(operation);
-        SmtOrder smtOrder = this.selectByKey(id);
         if (StringUtils.isEmpty(smtOrder)){
             return;
         }

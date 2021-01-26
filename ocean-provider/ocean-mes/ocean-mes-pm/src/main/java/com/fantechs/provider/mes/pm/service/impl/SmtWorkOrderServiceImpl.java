@@ -86,7 +86,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         }
 
         //新增工单历史信息
-        recordHistory(smtWorkOrder.getWorkOrderId(),"新增");
+        recordHistory(smtWorkOrder,"新增");
 
 
         //根据产品BOM生成工单BOM
@@ -447,13 +447,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
     /**
      * 记录操作历史
-     * @param id
+     * @param smtWorkOrder
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(SmtWorkOrder smtWorkOrder,String operation){
         SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
         smtHtWorkOrder.setOption1(operation);
-        SmtWorkOrder smtWorkOrder = selectByKey(id);
         if (StringUtils.isEmpty(smtWorkOrder)){
             return;
         }
