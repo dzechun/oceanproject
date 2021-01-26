@@ -62,7 +62,6 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
     /**
      * 工序id
      */
-    @Transient
     @ApiModelProperty(name = "processId",value = "工序id")
     @Column(name = "process_id")
     private Long processId;
