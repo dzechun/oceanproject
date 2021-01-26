@@ -85,7 +85,6 @@ public class SmtMaterialController {
         return  ControllerUtil.returnDataSuccess(smtMaterial,StringUtils.isEmpty(smtMaterial)?0:1);
     }
 
-
     /**
      * 导出数据
      * @return
