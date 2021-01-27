@@ -224,6 +224,8 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             String specification = smtBarcodeRuleSpec.getSpecification();
             Integer barcodeLength = smtBarcodeRuleSpec.getBarcodeLength();
             String customizeValue = smtBarcodeRuleSpec.getCustomizeValue();
+            Integer initialValue = smtBarcodeRuleSpec.getInitialValue();
+            Integer step = smtBarcodeRuleSpec.getStep();
             if(specification.contains("G")){
                 sb.append(customizeValue);
             }else {
@@ -233,14 +235,20 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
             }
             if(specification.contains("S")){
                 if(barcodeLength>10){
-                    throw new BizErrorException(ErrorCodeEnum.valueOf("十进制长度不能超过10"));
+                    throw new BizErrorException("十进制长度不能超过10");
                 }
             }else if (specification.contains("F")){
                 if (barcodeLength>16){
-                    throw new BizErrorException(ErrorCodeEnum.valueOf("十六进制长度不能超过16"));
+                    throw new BizErrorException("十六进制长度不能超过16");
                 }
             }
 
+            if(StringUtils.isEmpty(initialValue)||initialValue<1){
+                throw new BizErrorException("初始值不能为空必须大于0");
+            }
+            if(StringUtils.isEmpty(step)||step<1){
+                throw new BizErrorException("步长不能为空必须大于0");
+            }
             smtBarcodeRuleSpec.setBarcodeRuleId(smtBarcodeRule.getBarcodeRuleId());
             specs.add(specification);
         }

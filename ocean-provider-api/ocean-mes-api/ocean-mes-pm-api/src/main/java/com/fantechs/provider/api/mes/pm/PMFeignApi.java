@@ -76,7 +76,7 @@ public interface PMFeignApi {
     );
 
     @ApiOperation("查询条码流转卡")
-    @GetMapping("/smtWorkOrderBarcodePool/findList")
+    @PostMapping("/smtWorkOrderBarcodePool/findList")
     ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findWorkOrderBarcodePoolList(@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
 
     @ApiOperation("查询工单流转卡任务池列表")

@@ -41,7 +41,7 @@
 
     <select id="findList" resultMap="BaseResultMapDto"
             parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStockDet">
-        select<include refid="Base_Column_List"/>,sm.material_code,sm.version,sm.material_desc,su.user_name as
+        select<include refid="Base_Column_List"/>,sm.material_code,sm.version,sm.material_desc,sus.user_name as
         createName,sus.user_name, bo.organization_name,bt.main_unit AS unit
         FROM smt_stock_det ssd
         LEFT JOIN smt_material sm ON ssd.material_id = sm.material_id

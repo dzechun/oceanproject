@@ -30,7 +30,7 @@ import java.util.List;
  * Created by wcz on 2020/10/12.
  */
 @RestController
-@Api(tags = "产品BOM信息")
+@Api(tags = "产品BOM信息管理")
 @RequestMapping("/smtProductBom")
 @Validated
 public class SmtProductBomController {

@@ -31,7 +31,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/11/04.
  */
 @RestController
-@Api(tags = "包装规格信息")
+@Api(tags = "包装规格信息管理")
 @RequestMapping("/smtPackageSpecification")
 @Validated
 public class SmtPackageSpecificationController {

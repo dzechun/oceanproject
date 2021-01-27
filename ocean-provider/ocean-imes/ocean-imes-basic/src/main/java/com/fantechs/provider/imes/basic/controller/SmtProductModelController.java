@@ -34,7 +34,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/smtProductModel")
-@Api(tags = "产品型号管理")
+@Api(tags = "产品型号信息管理")
 @Slf4j
 @Validated
 public class SmtProductModelController {

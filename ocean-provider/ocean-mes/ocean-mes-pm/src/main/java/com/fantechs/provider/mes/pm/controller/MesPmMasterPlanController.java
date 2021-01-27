@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @RestController
 @Api(tags = "总计划表（月计划表）管理",basePath = "mesPmMasterPlan")
-@RequestMapping("mesPmMasterPlan")
+@RequestMapping("/mesPmMasterPlan")
 @Slf4j
 public class MesPmMasterPlanController {
 
@@ -47,7 +47,7 @@ public class MesPmMasterPlanController {
     private SmtWorkOrderService smtWorkOrderService;
 
     @ApiOperation("查询总计划表（月计划表）列表")
-    @PostMapping("findList")
+    @PostMapping("/findList")
     public ResponseEntity<List<MesPmMasterPlanDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO
     ){
@@ -57,56 +57,56 @@ public class MesPmMasterPlanController {
     }
 
     @ApiOperation("通过ID查询总计划表（月计划表）")
-    @GetMapping("detail")
+    @GetMapping("/detail")
     public ResponseEntity<MesPmMasterPlan> one(@ApiParam(value = "总计划表（月计划表）对象ID",required = true)@RequestParam Long id){
         MesPmMasterPlan mesPmMasterPlan = mesPmMasterPlanService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(mesPmMasterPlan, StringUtils.isEmpty(mesPmMasterPlan)?0:1);
     }
 
     @ApiOperation("增加总计划表（月计划表）数据")
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "总计划表（月计划表）对象",required = true)@RequestBody MesPmMasterPlan mesPmMasterPlan){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.save(mesPmMasterPlan));
     }
 
     @ApiOperation("增加或更新总计划表（月计划表）数据及工序计划数据")
-    @PostMapping("save")
+    @PostMapping("/save")
     public ResponseEntity save(@ApiParam(value = "对象",required = true)@RequestBody SaveMesPmMasterPlanDTO saveMesPmMasterPlanDTO){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.save(saveMesPmMasterPlanDTO));
     }
 
     @ApiOperation("批量删除总计划表（月计划表）数据")
-    @GetMapping("delete")
+    @GetMapping("/delete")
     public ResponseEntity batchDelete(@ApiParam(value = "总计划表（月计划表）对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.batchDelete(ids));
     }
 
     @ApiOperation("修改总计划表（月计划表）数据")
-    @PostMapping("update")
+    @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "总计划表（月计划表）对象，对象ID必传",required = true)@RequestBody MesPmMasterPlan mesPmMasterPlan){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.update(mesPmMasterPlan));
     }
 
     @ApiOperation("总计划表（月计划表）转执行计划（周/日计划）")
-    @PostMapping("turnExplainPlan")
+    @PostMapping("/turnExplainPlan")
     public ResponseEntity turnExplainPlan(@ApiParam(value = "对象",required = true)@RequestBody TurnExplainPlanDTO turnExplainPlanDTO){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.turnExplainPlan(turnExplainPlanDTO));
     }
 
     @ApiOperation("总计划表（月计划表）转流程卡")
-    @PostMapping("turnWorkOrderCardPool")
+    @PostMapping("/turnWorkOrderCardPool")
     public ResponseEntity turnWorkOrderCardPool(@ApiParam(value = "对象",required = true)@RequestBody TurnWorkOrderCardPoolDTO turnWorkOrderCardPoolDTO){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.turnWorkOrderCardPool(turnWorkOrderCardPoolDTO));
     }
 
     @ApiOperation("输出工单相关信息（总计划打印A4）")
-    @GetMapping("masterPlanPrintWorkOrder")
+    @GetMapping("/masterPlanPrintWorkOrder")
     public ResponseEntity<MasterPlanPrintWorkOrderDTO> masterPlanPrintWorkOrder(@ApiParam(value = "总计划表（月计划表）对象ID",required = true)@RequestParam Long masterPlanId){
         MasterPlanPrintWorkOrderDTO masterPlanPrintWorkOrderDTO = mesPmMasterPlanService.masterPlanPrintWorkOrder(masterPlanId);
         return ControllerUtil.returnDataSuccess(masterPlanPrintWorkOrderDTO,StringUtils.isEmpty(masterPlanPrintWorkOrderDTO)?0:1);
     }
 
-    @PostMapping(value = "export",produces = "application/octet-stream")
+    @PostMapping(value = "/export",produces = "application/octet-stream")
     @ApiOperation(value = "导出EXCEL")
     public void export(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO,

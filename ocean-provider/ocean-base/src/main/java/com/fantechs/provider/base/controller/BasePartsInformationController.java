@@ -31,7 +31,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/01/14.
  */
 @RestController
-@Api(tags = "部件信息")
+@Api(tags = "部件信息管理")
 @RequestMapping("/basePartsInformation")
 @Validated
 public class BasePartsInformationController {

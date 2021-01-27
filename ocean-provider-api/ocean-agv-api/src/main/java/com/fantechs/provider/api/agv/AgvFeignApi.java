@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(name = "ocean-mes-agv")
+@FeignClient(name = "ocean-agv")
 public interface AgvFeignApi {
 
     @PostMapping("/dispatch/genAgvSchedulingTask")

@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "执行计划（周/日计划表）管理",basePath = "mesPmExplainPlan")
-@RequestMapping("mesPmExplainPlan")
+@RequestMapping("/mesPmExplainPlan")
 @Slf4j
 public class MesPmExplainPlanController {
 
@@ -38,7 +38,7 @@ public class MesPmExplainPlanController {
     private MesPmExplainPlanService mesPmExplainPlanService;
 
     @ApiOperation("查询执行计划（周/日计划表）列表")
-    @PostMapping("findList")
+    @PostMapping("/findList")
     public ResponseEntity<List<MesPmExplainPlanDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmExplainPlanListDTO searchMesPmExplainPlanListDTO
     ){
@@ -48,37 +48,37 @@ public class MesPmExplainPlanController {
     }
 
     @ApiOperation("通过ID查询执行计划（周/日计划表）")
-    @GetMapping("detail")
+    @GetMapping("/detail")
     public ResponseEntity<MesPmExplainPlan> one(@ApiParam(value = "执行计划（周/日计划表）对象ID",required = true)@RequestParam Long id){
         MesPmExplainPlan mesPmExplainPlan = mesPmExplainPlanService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(mesPmExplainPlan, StringUtils.isEmpty(mesPmExplainPlan)?0:1);
     }
 
     @ApiOperation("增加执行计划（周/日计划表）数据")
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "执行计划（周/日计划表）对象",required = true)@RequestBody MesPmExplainPlan mesPmExplainPlan){
         return ControllerUtil.returnCRUD(mesPmExplainPlanService.save(mesPmExplainPlan));
     }
 
     @ApiOperation("增加或更新执行计划（周/日计划表）数据及工序计划数据")
-    @PostMapping("save")
+    @PostMapping("/save")
     public ResponseEntity save(@ApiParam(value = "对象",required = true)@RequestBody SaveMesPmExplainPlanDTO saveMesPmExplainPlanDTO){
         return ControllerUtil.returnCRUD(mesPmExplainPlanService.save(saveMesPmExplainPlanDTO));
     }
 
     @ApiOperation("批量删除执行计划（周/日计划表）数据")
-    @GetMapping("delete")
+    @GetMapping("/delete")
     public ResponseEntity batchDelete(@ApiParam(value = "执行计划（周/日计划表）对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmExplainPlanService.batchDelete(ids));
     }
 
     @ApiOperation("修改执行计划（周/日计划表）数据")
-    @PostMapping("update")
+    @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "执行计划（周/日计划表）对象，对象ID必传",required = true)@RequestBody MesPmExplainPlan mesPmExplainPlan){
         return ControllerUtil.returnCRUD(mesPmExplainPlanService.update(mesPmExplainPlan));
     }
 
-    @PostMapping(value = "export",produces = "application/octet-stream")
+    @PostMapping(value = "/export",produces = "application/octet-stream")
     @ApiOperation(value = "导出EXCEL")
     public void export(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmExplainPlanListDTO searchMesPmExplainPlanListDTO,

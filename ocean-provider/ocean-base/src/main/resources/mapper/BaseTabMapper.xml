@@ -139,9 +139,6 @@
     LEFT JOIN fantech_imes.bcm_label bl ON bt.label_id = bl.label_id
     LEFT JOIN fantech_imes.smt_supplier ss ON bt.supplier_id = ss.supplier_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
       <if test="materialId != null">
         and bt.material_id = #{materialId}
       </if>
@@ -149,6 +146,5 @@
         and bt.product_model_id = #{productModelId}
       </if>
     </where>
-    order by create_time desc
   </select>
 </mapper>
