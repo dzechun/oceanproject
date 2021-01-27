@@ -47,7 +47,7 @@ public class MesPmMasterPlanController {
     private SmtWorkOrderService smtWorkOrderService;
 
     @ApiOperation("查询总计划表（月计划表）列表")
-    @PostMapping("findAllList")
+    @PostMapping("findList")
     public ResponseEntity<List<MesPmMasterPlanDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO
     ){
@@ -75,14 +75,8 @@ public class MesPmMasterPlanController {
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.save(saveMesPmMasterPlanDTO));
     }
 
-    @ApiOperation("删除总计划表（月计划表）数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "总计划表（月计划表）对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesPmMasterPlanService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除总计划表（月计划表）数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "总计划表（月计划表）对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmMasterPlanService.batchDelete(ids));
     }

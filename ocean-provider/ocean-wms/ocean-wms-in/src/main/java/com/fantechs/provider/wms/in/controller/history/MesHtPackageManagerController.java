@@ -36,7 +36,7 @@ public class MesHtPackageManagerController {
     private MesHtPackageManagerService mesHtPackageManagerService;
 
     @ApiOperation("查询包装管理履历表列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<MesHtPackageManagerDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesHtPackageManagerListDTO searchMesHtPackageManagerListDTO
     ){
@@ -46,7 +46,7 @@ public class MesHtPackageManagerController {
     }
 
     @ApiOperation("通过ID查询包装管理履历表")
-    @GetMapping("one")
+    @GetMapping("detail")
     public ResponseEntity<MesHtPackageManager> one(@ApiParam(value = "包装管理履历表对象ID",required = true)@RequestParam Long id){
         MesHtPackageManager mesHtPackageManager = mesHtPackageManagerService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(mesHtPackageManager, StringUtils.isEmpty(mesHtPackageManager)?0:1);
@@ -58,14 +58,8 @@ public class MesHtPackageManagerController {
         return ControllerUtil.returnCRUD(mesHtPackageManagerService.save(mesHtPackageManager));
     }
 
-    @ApiOperation("删除包装管理履历表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "包装管理履历表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesHtPackageManagerService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除包装管理履历表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "包装管理履历表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesHtPackageManagerService.batchDelete(ids));
     }

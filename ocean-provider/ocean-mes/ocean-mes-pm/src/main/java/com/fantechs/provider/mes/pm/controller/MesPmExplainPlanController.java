@@ -38,7 +38,7 @@ public class MesPmExplainPlanController {
     private MesPmExplainPlanService mesPmExplainPlanService;
 
     @ApiOperation("查询执行计划（周/日计划表）列表")
-    @PostMapping("findAllList")
+    @PostMapping("findList")
     public ResponseEntity<List<MesPmExplainPlanDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmExplainPlanListDTO searchMesPmExplainPlanListDTO
     ){
@@ -66,14 +66,8 @@ public class MesPmExplainPlanController {
         return ControllerUtil.returnCRUD(mesPmExplainPlanService.save(saveMesPmExplainPlanDTO));
     }
 
-    @ApiOperation("删除执行计划（周/日计划表）数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "执行计划（周/日计划表）对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesPmExplainPlanService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除执行计划（周/日计划表）数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "执行计划（周/日计划表）对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmExplainPlanService.batchDelete(ids));
     }

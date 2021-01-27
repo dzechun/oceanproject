@@ -42,7 +42,7 @@ public class WmsInHtStorageBillsController {
     private WmsInHtStorageBillsDetService wmsInHtStorageBillsDetService;
 
     @ApiOperation("查询履历仓库清单表列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<WmsInHtStorageBillsDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchWmsInHtStorageBillsListDTO searchWmsHtStorageBillsListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
@@ -51,31 +51,6 @@ public class WmsInHtStorageBillsController {
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
         List<WmsInHtStorageBillsDTO> wmsHtStorageBillsDTOList = wmsHtStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsHtStorageBillsListDTO));
         return ControllerUtil.returnDataSuccess(wmsHtStorageBillsDTOList,(int)page.getTotal());
-    }
-
-    @ApiOperation("通过ID查询履历仓库清单表")
-    @GetMapping("one")
-    public ResponseEntity<WmsInHtStorageBills> one(@ApiParam(value = "履历仓库清单表对象ID",required = true)@RequestParam Long id){
-        WmsInHtStorageBills wmsHtStorageBills = wmsHtStorageBillsService.selectByKey(id);
-        return ControllerUtil.returnDataSuccess(wmsHtStorageBills, StringUtils.isEmpty(wmsHtStorageBills)?0:1);
-    }
-
-    @ApiOperation("增加履历仓库清单表数据")
-    @PostMapping("add")
-    public ResponseEntity add(@ApiParam(value = "履历仓库清单表对象",required = true)@RequestBody WmsInHtStorageBills wmsHtStorageBills){
-        return ControllerUtil.returnCRUD(wmsHtStorageBillsService.save(wmsHtStorageBills));
-    }
-
-    @ApiOperation("删除履历仓库清单表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "履历仓库清单表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(wmsHtStorageBillsService.deleteByKey(id));
-    }
-
-    @ApiOperation("修改履历仓库清单表数据")
-    @PostMapping("update")
-    public ResponseEntity update(@ApiParam(value = "履历仓库清单表对象，对象ID必传",required = true)@RequestBody WmsInHtStorageBills wmsHtStorageBills){
-        return ControllerUtil.returnCRUD(wmsHtStorageBillsService.update(wmsHtStorageBills));
     }
 
     @PostMapping(value = "export",produces = "application/octet-stream")

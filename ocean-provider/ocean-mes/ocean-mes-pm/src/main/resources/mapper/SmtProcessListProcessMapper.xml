@@ -71,6 +71,7 @@
         SELECT
         wo.work_order_code AS 'workOrderCode',
         wo.production_quantity AS 'productionQuantity',
+        wo.work_order_quantity AS 'workOrderQuantity',
         swocp.task_code AS 'taskCode',
         swobp.task_code AS 'barcodeTaskCode',
         swocp.work_order_card_id AS 'workOrderCardId',

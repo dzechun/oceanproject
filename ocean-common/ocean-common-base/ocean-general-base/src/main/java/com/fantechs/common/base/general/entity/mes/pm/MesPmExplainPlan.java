@@ -20,7 +20,6 @@ public class MesPmExplainPlan implements Serializable {
     @Column(name = "explain_plan_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    @Excel(name = "执行计划ID")
     private Long explainPlanId;
 
     /**
@@ -28,7 +27,6 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "执行计划编码",example = "执行计划编码")
     @Column(name = "explain_plan_code")
-    @Excel(name = "执行计划编码")
     private String explainPlanCode;
 
     /**
@@ -36,7 +34,6 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "总计划ID",example = "总计划ID")
     @Column(name = "master_plan_id")
-    @Excel(name = "总计划ID")
     private Long masterPlanId;
 
     /**
@@ -44,7 +41,6 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "工单ID",example = "工单ID")
     @Column(name = "work_order_id")
-    @Excel(name = "工单ID")
     private Long workOrderId;
 
     /**
@@ -52,7 +48,6 @@ public class MesPmExplainPlan implements Serializable {
      */
     @ApiModelProperty(value = "产线ID",example = "产线ID")
     @Column(name = "pro_line_id")
-    @Excel(name = "产线ID")
     private Long proLineId;
 
     /**
@@ -60,7 +55,7 @@ public class MesPmExplainPlan implements Serializable {
      */
     @ApiModelProperty(value = "工单生产总数",example = "工单生产总数")
     @Column(name = "work_order_quantity")
-    @Excel(name = "工单生产总数")
+    @Excel(name = "生产数量")
     private java.math.BigDecimal workOrderQuantity;
 
     /**
@@ -68,7 +63,7 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "生产总数",example = "生产总数")
     @Column(name = "product_qty")
-    @Excel(name = "生产总数")
+    @Excel(name = "排产数")
     private java.math.BigDecimal productQty;
 
     /**
@@ -140,14 +135,12 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "组织代码id",example = "组织代码id")
     @Column(name = "organization_id")
-    @Excel(name = "组织代码id")
     private Long organizationId;
 
     /**
     * 备注
     */
     @ApiModelProperty(value = "备注",example = "备注")
-    @Excel(name = "备注")
     private String remark;
 
     /**
@@ -155,7 +148,6 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "逻辑删除（0、删除 1、正常）",example = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
-    @Excel(name = "逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
 
     /**
@@ -163,7 +155,6 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "创建人ID",example = "创建人ID")
     @Column(name = "create_user_id")
-    @Excel(name = "创建人ID")
     private Long createUserId;
 
     /**
@@ -173,7 +164,6 @@ public class MesPmExplainPlan implements Serializable {
     @Column(name = "create_time")
     @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "创建时间")
     private java.util.Date createTime;
 
     /**
@@ -181,7 +171,6 @@ public class MesPmExplainPlan implements Serializable {
     */
     @ApiModelProperty(value = "修改人ID",example = "修改人ID")
     @Column(name = "modified_user_id")
-    @Excel(name = "修改人ID")
     private Long modifiedUserId;
 
     /**
@@ -191,7 +180,6 @@ public class MesPmExplainPlan implements Serializable {
     @Column(name = "modified_time")
     @DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "修改时间")
     private java.util.Date modifiedTime;
 
 }
