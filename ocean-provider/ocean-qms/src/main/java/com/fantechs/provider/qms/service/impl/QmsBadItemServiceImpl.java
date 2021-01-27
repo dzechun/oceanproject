@@ -5,19 +5,15 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDetDto;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
-import com.fantechs.common.base.general.entity.qms.QmsBadItem;
-import com.fantechs.common.base.general.entity.qms.QmsBadItemDet;
-import com.fantechs.common.base.general.entity.qms.QmsFirstInspection;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtFirstInspection;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionType;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtMrbReview;
+import com.fantechs.common.base.general.entity.qms.*;
+import com.fantechs.common.base.general.entity.qms.history.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.mapper.QmsBadItemDetMapper;
 import com.fantechs.provider.qms.mapper.QmsBadItemMapper;
+import com.fantechs.provider.qms.mapper.QmsHtBadItemMapper;
 import com.fantechs.provider.qms.service.QmsBadItemService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -38,6 +34,8 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
     private QmsBadItemMapper qmsBadItemMapper;
     @Resource
     private QmsBadItemDetMapper qmsBadItemDetMapper;
+    @Resource
+    private QmsHtBadItemMapper qmsHtBadItemMapper;
 
     @Override
     public List<QmsBadItemDto> findList(Map<String, Object> map) {
@@ -68,6 +66,10 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
 
         int i = qmsBadItemMapper.insertUseGeneratedKeys(qmsBadItem);
 
+        QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
+        BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);
+        qmsHtBadItemMapper.insert(qmsHtBadItem);
+
         List<QmsBadItemDetDto> list = qmsBadItem.getList();
         if (StringUtils.isNotEmpty(list)){
             for (QmsBadItemDetDto qmsBadItemDetDto : list) {
@@ -87,6 +89,21 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        List<QmsHtBadItem> qmsHtBadItems = new ArrayList<>();
+        String[] idsArr  = ids.split(",");
+        for (String id : idsArr) {
+            QmsBadItem qmsBadItem = qmsBadItemMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(qmsBadItem)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
+            BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);
+            qmsHtBadItems.add(qmsHtBadItem);
+        }
+
+        qmsHtBadItemMapper.insertList(qmsHtBadItems);
 
         Example example = new Example(QmsBadItemDet.class);
         Example.Criteria criteria = example.createCriteria();
@@ -120,6 +137,12 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
             qmsBadItemDetMapper.insertList(list);
         }
 
-        return qmsBadItemMapper.updateByPrimaryKeySelective(qmsBadItem);
+        int i = qmsBadItemMapper.updateByPrimaryKeySelective(qmsBadItem);
+
+        QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
+        BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);
+        qmsHtBadItemMapper.insert(qmsHtBadItem);
+
+        return i;
     }
 }

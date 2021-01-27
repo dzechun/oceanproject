@@ -46,7 +46,7 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "sectionCode",value = "工段编码")
-    @Excel(name = "工序编码", height = 20, width = 30,orderNum="5")
+    @Excel(name = "工段编码", height = 20, width = 30,orderNum="5")
     private String sectionCode;
 
     /**
@@ -54,7 +54,7 @@ public class QmsBadItemDto extends QmsBadItem implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "sectionName",value = "工段名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "工段名称", height = 20, width = 30,orderNum="6")
     private String sectionName;
 
 

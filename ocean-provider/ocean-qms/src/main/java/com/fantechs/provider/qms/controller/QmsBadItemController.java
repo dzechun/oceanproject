@@ -3,12 +3,14 @@ package com.fantechs.provider.qms.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
 import com.fantechs.common.base.general.entity.qms.QmsBadItem;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtBadItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsBadItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.service.QmsBadItemService;
+import com.fantechs.provider.qms.service.QmsHtBadItemService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -35,6 +37,8 @@ public class QmsBadItemController {
 
     @Resource
     private QmsBadItemService qmsBadItemService;
+    @Resource
+    private QmsHtBadItemService qmsHtBadItemService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -69,13 +73,13 @@ public class QmsBadItemController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<QmsBadItem>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsBadItem searchQmsBadItem) {
-//        Page<Object> page = PageHelper.startPage(searchQmsBadItem.getStartPage(),searchQmsBadItem.getPageSize());
-//        List<QmsBadItem> list = qmsBadItemService.findHtList(ControllerUtil.dynamicConditionByEntity(searchQmsBadItem));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<QmsHtBadItem>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsBadItem searchQmsBadItem) {
+        Page<Object> page = PageHelper.startPage(searchQmsBadItem.getStartPage(),searchQmsBadItem.getPageSize());
+        List<QmsHtBadItem> list = qmsHtBadItemService.findHtList(ControllerUtil.dynamicConditionByEntity(searchQmsBadItem));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
