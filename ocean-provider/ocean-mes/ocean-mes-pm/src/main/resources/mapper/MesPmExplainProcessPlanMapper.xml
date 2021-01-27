@@ -6,6 +6,9 @@
         <result column="explain_process_plan_code" jdbcType="VARCHAR" property="explainProcessPlanCode"/>
         <result column="explain_plan_id" jdbcType="BIGINT" property="explainPlanId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="is_job_scan" jdbcType="TINYINT" property="isJobScan"/>
+        <result column="is_start_scan" jdbcType="TINYINT" property="isStartScan"/>
+        <result column="is_quality" jdbcType="TINYINT" property="isQuality"/>
         <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty"/>
         <result column="planed_start_date" jdbcType="TIMESTAMP" property="planedStartDate"/>
         <result column="planed_end_date" jdbcType="TIMESTAMP" property="planedEndDate"/>
@@ -31,6 +34,9 @@
         mpepp.explain_process_plan_code,
         mpepp.explain_plan_id,
         mpepp.process_id,
+        mpepp.is_job_scan,
+        mpepp.is_start_scan,
+        mpepp.is_quality,
         mpepp.finished_qty,
         mpepp.planed_start_date,
         mpepp.planed_end_date,
@@ -70,6 +76,9 @@
             </if>
             <if test="explainPlanId!=null">
                 and mpepp.explain_plan_id=#{explainPlanId}
+            </if>
+            <if test="processId!=null">
+                and mpepp.process_id=#{processId}
             </if>
             and mpepp.is_delete = 1
         </where>

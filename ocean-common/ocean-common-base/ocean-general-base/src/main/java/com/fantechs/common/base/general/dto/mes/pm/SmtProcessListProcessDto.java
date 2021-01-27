@@ -133,6 +133,12 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     @ApiModelProperty(name = "productionQuantity",value = "生产数量")
     private BigDecimal productionQuantity;
     /**
+     * 工单生产数量
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderQuantity",value = "工单生产数量")
+    private BigDecimal workOrderQuantity;
+    /**
      * 产品型号
      */
     @Transient

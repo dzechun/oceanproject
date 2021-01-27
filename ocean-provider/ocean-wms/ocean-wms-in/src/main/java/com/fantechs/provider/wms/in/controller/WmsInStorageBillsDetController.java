@@ -33,7 +33,7 @@ public class WmsInStorageBillsDetController {
     private WmsInStorageBillsDetService wmsStorageBillsDetService;
 
     @ApiOperation("查询仓库清单详情表列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<WmsInStorageBillsDetDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) @Validated SearchWmsStorageBillsDetListDTO searchWmsStorageBillsDetListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
@@ -45,7 +45,7 @@ public class WmsInStorageBillsDetController {
     }
 
     @ApiOperation("通过ID查询仓库清单详情表")
-    @GetMapping("one")
+    @GetMapping("detail")
     public ResponseEntity<WmsInStorageBillsDet> one(@ApiParam(value = "仓库清单详情表对象ID",required = true)@RequestParam Long id){
         WmsInStorageBillsDet wmsStorageBillsDet = wmsStorageBillsDetService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(wmsStorageBillsDet, StringUtils.isEmpty(wmsStorageBillsDet)?0:1);
@@ -57,14 +57,8 @@ public class WmsInStorageBillsDetController {
         return ControllerUtil.returnCRUD(wmsStorageBillsDetService.save(wmsStorageBillsDet));
     }
 
-    @ApiOperation("删除仓库清单详情表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "仓库清单详情表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(wmsStorageBillsDetService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除仓库清单详情表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "仓库清单详情表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(wmsStorageBillsDetService.batchDelete(ids));
     }

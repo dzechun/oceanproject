@@ -66,14 +66,14 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     public int save(SmtWorkOrder smtWorkOrder) {
         SysUser currentUser = currentUser();
 
-        /*Example example = new Example(SmtWorkOrder.class);
+        Example example = new Example(SmtWorkOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
 
         List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtWorkOrders)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }*/
+        }
         if(StringUtils.isEmpty(smtWorkOrder.getWorkOrderCode())){
             smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
         }
@@ -320,6 +320,9 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         String[] workOrderIds = ids.split(",");
         for (String workOrderId : workOrderIds) {
             SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(workOrderId);
+            if(StringUtils.isNotEmpty(smtWorkOrder.getScheduledQuantity())){
+                throw new BizErrorException("工单已排产，不允许删除:"+smtWorkOrder.getWorkOrderCode());
+            }
             if (StringUtils.isEmpty(smtWorkOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
@@ -345,6 +348,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     public List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder) {
         List<SmtWorkOrderDto> list = smtWorkOrderMapper.findList(searchSmtWorkOrder);
         for (SmtWorkOrderDto smtWorkOrderDto : list) {
+            if(StringUtils.isEmpty(smtWorkOrderDto.getMaterialCode())){
+                //可能是部件工单，到部件表去找找
+
+            }
             Long routeId = smtWorkOrderDto.getRouteId();
             //查询工艺路线配置
             List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);

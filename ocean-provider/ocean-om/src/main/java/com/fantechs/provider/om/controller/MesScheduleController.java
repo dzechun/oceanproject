@@ -36,7 +36,7 @@ public class MesScheduleController {
     private MesScheduleService mesScheduleService;
 
     @ApiOperation("查询工单排产表列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<MesScheduleDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesScheduleListDTO searchMesScheduleListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
@@ -48,7 +48,7 @@ public class MesScheduleController {
     }
 
     @ApiOperation("通过ID查询工单排产表")
-    @GetMapping("one")
+    @GetMapping("detail")
     public ResponseEntity<MesSchedule> one(@ApiParam(value = "工单排产表对象ID",required = true)@RequestParam Long id){
         MesSchedule mesSchedule = mesScheduleService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(mesSchedule, StringUtils.isEmpty(mesSchedule)?0:1);
@@ -62,14 +62,8 @@ public class MesScheduleController {
         return ControllerUtil.returnCRUD(mesScheduleService.saveByOrderMaterialIdList(proLineId,orderMaterialIdList));
     }
 
-    @ApiOperation("删除工单排产表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "工单排产表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesScheduleService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除工单排产表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "工单排产表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesScheduleService.batchDelete(ids));
     }

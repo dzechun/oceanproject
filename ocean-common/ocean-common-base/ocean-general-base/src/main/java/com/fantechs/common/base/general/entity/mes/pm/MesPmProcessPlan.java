@@ -48,6 +48,30 @@ public class MesPmProcessPlan implements Serializable {
     private Long processId;
 
     /**
+     * 是否报工扫描（0、否 1、是）
+     */
+    @ApiModelProperty(value = "是否报工扫描（0、否 1、是）",example = "是否报工扫描（0、否 1、是）")
+    @Column(name = "is_job_scan")
+    @Excel(name = "是否报工扫描（0、否 1、是）")
+    private Byte isJobScan;
+
+    /**
+     * 是否开工扫描（0、否 1、是）
+     */
+    @ApiModelProperty(value = "是否开工扫描（0、否 1、是）",example = "是否开工扫描（0、否 1、是）")
+    @Column(name = "is_start_scan")
+    @Excel(name = "是否开工扫描（0、否 1、是）")
+    private Byte isStartScan;
+
+    /**
+     * 是否品质确认（0、否 1、是）
+     */
+    @ApiModelProperty(value = "是否品质确认（0、否 1、是）",example = "是否品质确认（0、否 1、是）")
+    @Column(name = "is_quality")
+    @Excel(name = "是否品质确认（0、否 1、是）")
+    private Byte isQuality;
+
+    /**
     * 完成数量
     */
     @ApiModelProperty(value = "完成数量",example = "完成数量")

@@ -107,6 +107,17 @@ public class MesPmExplainProcessPlanServiceImpl extends BaseService<MesPmExplain
         return mesPmExplainProcessPlanMapper.batchAdd(mesPmExplainProcessPlanList);
     }
 
+    @Override
+    public int batchUpdate(List<MesPmExplainProcessPlan> mesPmExplainProcessPlanList) {
+        if(StringUtils.isEmpty(mesPmExplainProcessPlanList)){
+            return 0;
+        }
+        for (MesPmExplainProcessPlan mesPmExplainProcessPlan : mesPmExplainProcessPlanList) {
+            this.update(mesPmExplainProcessPlan);
+        }
+        return 1;
+    }
+
 
     /**
      * 获取当前登录用户
