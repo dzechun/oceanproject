@@ -52,6 +52,13 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(QmsBadItem.class);
+        example.createCriteria().andEqualTo("badTypeCode",qmsBadItem.getBadTypeCode());
+        List<QmsBadItem> qmsBadItems = qmsBadItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(qmsBadItems)){
+            throw new BizErrorException("不良项目类型编码重复");
+        }
+
         qmsBadItem.setCreateTime(new Date());
         qmsBadItem.setCreateUserId(user.getUserId());
         qmsBadItem.setModifiedTime(new Date());
