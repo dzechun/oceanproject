@@ -124,13 +124,17 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         smtMaterial.setModifiedTime(new Date());
         int i = smtMaterialMapper.updateByPrimaryKeySelective(smtMaterial);
 
-        //更新页签
         BaseTab baseTab = smtMaterial.getBaseTab();
-        if (StringUtils.isNotEmpty(baseTab)) {
-            if (StringUtils.isNotEmpty(baseTab.getTabId())){
-                baseFeignApi.updateTab(baseTab);
-            }else {
+        if (StringUtils.isNotEmpty(baseTab)){
+            //判断该物料的页签是否存在
+            SearchBaseTab searchBaseTab = new SearchBaseTab();
+            searchBaseTab.setMaterialId(smtMaterial.getMaterialId());
+            List<BaseTabDto> baseTabDtos = baseFeignApi.findTabList(searchBaseTab).getData();
+            if (StringUtils.isEmpty(baseTabDtos)){
+                //新增页签
                 baseFeignApi.addTab(baseTab);
+            }else {
+                baseFeignApi.updateTab(baseTab);
             }
 
         }

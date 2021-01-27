@@ -159,6 +159,15 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
         Long barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
         if(StringUtils.isEmpty(barcodeRuleId)){
             //新增条码规则
+            //判断条码规则编码是否重复
+            Example example = new Example(SmtBarcodeRule.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("barcodeRuleCode",smtBarcodeRule.getBarcodeRuleCode());
+            SmtBarcodeRule smtBarcodeRule1 = smtBarcodeRuleMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(smtBarcodeRule1)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            }
+
             smtBarcodeRule.setCreateTime(new Date());
             smtBarcodeRule.setCreateUserId(currentUser.getUserId());
             i = smtBarcodeRuleMapper.insertUseGeneratedKeys(smtBarcodeRule);
