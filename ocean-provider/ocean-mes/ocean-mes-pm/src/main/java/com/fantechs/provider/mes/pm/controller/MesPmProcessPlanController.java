@@ -36,7 +36,7 @@ public class MesPmProcessPlanController {
     private MesPmProcessPlanService mesPmProcessPlanService;
 
     @ApiOperation("查询工序计划表列表")
-    @PostMapping("findAllList")
+    @PostMapping("findList")
     public ResponseEntity<List<MesPmProcessPlanDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmProcessPlanListDTO searchMesPmProcessPlanListDTO
     ){
@@ -58,14 +58,8 @@ public class MesPmProcessPlanController {
         return ControllerUtil.returnCRUD(mesPmProcessPlanService.save(mesPmProcessPlan));
     }
 
-    @ApiOperation("删除工序计划表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "工序计划表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesPmProcessPlanService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除工序计划表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "工序计划表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmProcessPlanService.batchDelete(ids));
     }

@@ -37,7 +37,7 @@ public class MesPmProcessListProcessReController {
     private MesPmProcessListProcessReService mesPmProcessListProcessReService;
 
     @ApiOperation("查询流程单工序退回表列表")
-    @PostMapping("findAllList")
+    @PostMapping("findList")
     public ResponseEntity<List<MesPmProcessListProcessReDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmProcessListProcessReListDTO searchMesPmProcessListProcessReListDTO
     ){
@@ -66,14 +66,8 @@ public class MesPmProcessListProcessReController {
         return ControllerUtil.returnCRUD(mesPmProcessListProcessReService.save(saveProcessListProcessReDTO));
     }
 
-    @ApiOperation("删除流程单工序退回表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "流程单工序退回表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesPmProcessListProcessReService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除流程单工序退回表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "流程单工序退回表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmProcessListProcessReService.batchDelete(ids));
     }

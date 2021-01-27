@@ -1,5 +1,9 @@
 package com.fantechs.provider.om.controller;
 
+import com.fantechs.common.base.general.dto.mes.pm.history.MesHtScheduleDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchMesHtScheduleListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchSmtHtOrderListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.dto.om.MesScheduleDTO;
 import com.fantechs.common.base.general.dto.om.SearchMesScheduleListDTO;
@@ -10,12 +14,15 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.service.MesScheduleService;
+import com.fantechs.provider.om.service.ht.MesHtScheduleService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.netflix.discovery.converters.Auto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.annotation.Resource;
@@ -34,9 +41,11 @@ public class MesScheduleController {
 
     @Resource
     private MesScheduleService mesScheduleService;
+    @Autowired
+    private MesHtScheduleService mesHtScheduleService;
 
     @ApiOperation("查询工单排产表列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<MesScheduleDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesScheduleListDTO searchMesScheduleListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
@@ -47,8 +56,16 @@ public class MesScheduleController {
         return ControllerUtil.returnDataSuccess(mesScheduleDTOList,(int)page.getTotal());
     }
 
+    @ApiOperation(value = "获取工单排产履历列表",notes = "获取工单排产履历列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<MesHtScheduleDTO>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchMesHtScheduleListDTO searchMesHtScheduleListDTO){
+        Page<Object> page = PageHelper.startPage(searchMesHtScheduleListDTO.getStartPage(),searchMesHtScheduleListDTO.getPageSize());
+        List<MesHtScheduleDTO> mesHtScheduleDTOList = mesHtScheduleService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesHtScheduleListDTO));
+        return ControllerUtil.returnDataSuccess(mesHtScheduleDTOList,(int)page.getTotal());
+    }
+
     @ApiOperation("通过ID查询工单排产表")
-    @GetMapping("one")
+    @GetMapping("detail")
     public ResponseEntity<MesSchedule> one(@ApiParam(value = "工单排产表对象ID",required = true)@RequestParam Long id){
         MesSchedule mesSchedule = mesScheduleService.selectByKey(id);
         return ControllerUtil.returnDataSuccess(mesSchedule, StringUtils.isEmpty(mesSchedule)?0:1);
@@ -62,14 +79,8 @@ public class MesScheduleController {
         return ControllerUtil.returnCRUD(mesScheduleService.saveByOrderMaterialIdList(proLineId,orderMaterialIdList));
     }
 
-    @ApiOperation("删除工单排产表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "工单排产表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesScheduleService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除工单排产表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "工单排产表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesScheduleService.batchDelete(ids));
     }

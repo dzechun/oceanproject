@@ -1,5 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBillsDet;
+import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
@@ -122,6 +124,25 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         }
         recordHistory(mesSchedule,"新增");
         return 1;
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        List<MesHtSchedule> mesHtScheduleList=new LinkedList<>();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesSchedule mesSchedule = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesSchedule)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            MesHtSchedule mesHtSchedule = new MesHtSchedule();
+            BeanUtils.autoFillEqFields(mesSchedule,mesHtSchedule);
+            mesHtSchedule.setModifiedUserId(sysUser.getUserId());
+            mesHtScheduleList.add(mesHtSchedule);
+        }
+        mesHtScheduleService.batchSave(mesHtScheduleList);
+        return super.batchDelete(ids);
     }
 
     @Override

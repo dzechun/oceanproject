@@ -31,4 +31,9 @@ public class SearchSmtFactory  extends BaseQuery implements Serializable {
     @ApiModelProperty(name="factoryDesc" ,value="厂别描述")
     private String factoryDesc;
 
+    /**
+     * 根据编码查询方式标记（传1则为等值查询）
+     */
+    @ApiModelProperty(name = "queryMark",value = "查询方式标记")
+    private Byte codeQueryMark;
 }

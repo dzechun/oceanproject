@@ -31,7 +31,7 @@ import java.util.List;
  * Created by wcz on 2020/10/12.
  */
 @RestController
-@Api(tags = "工艺路线信息")
+@Api(tags = "工艺路线信息管理")
 @RequestMapping("/smtRoute")
 @Validated
 public class SmtRouteController {

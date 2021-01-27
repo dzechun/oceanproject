@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsHtBadItemMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.history.QmsHtBadItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_bad_item_id" jdbcType="BIGINT" property="htBadItemId" />
+    <result column="bad_item_id" jdbcType="BIGINT" property="badItemId" />
+    <result column="bad_type_code" jdbcType="VARCHAR" property="badTypeCode" />
+    <result column="bad_type_cause" jdbcType="VARCHAR" property="badTypeCause" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qhbi.ht_bad_item_id,qhbi.bad_item_id,qhbi.bad_type_code,qhbi.bad_type_cause,qhbi.process_id,
+    qhbi.status,qhbi.create_user_id,qhbi.create_time,
+    qhbi.modified_user_id,qhbi.modified_time,qhbi.is_delete, qhbi.organization_id,qhbi.remark
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,sp.process_name,sws.section_name
+    from fantech_imes.qms_ht_bad_item qhbi
+    LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = qhbi.process_id
+    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+    <where>
+      <if test="badItemId != null and badItemId != ''">
+        and qhbi.bad_item_id = #{badItemId}
+      </if>
+      <if test="processId != null and processId != ''">
+        and sp.process_id = #{processId}
+      </if>
+      <if test="sectionId != null and sectionId != ''">
+        and sws.section_id = #{sectionId}
+      </if>
+      <if test="badTypeCode != null and badTypeCode != ''">
+        and qhbi.bad_type_code like CONCAT('%', #{badTypeCode}, '%')
+      </if>
+      <if test="badTypeCause != null and badTypeCause != ''">
+        and qhbi.bad_type_cause  like CONCAT('%', #{badTypeCause}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qhbi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

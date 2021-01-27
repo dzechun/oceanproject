@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/smtFactory")
-@Api(tags = "厂别管理")
+@Api(tags = "厂别信息管理")
 @Slf4j
 @Validated
 public class SmtFactoryController {

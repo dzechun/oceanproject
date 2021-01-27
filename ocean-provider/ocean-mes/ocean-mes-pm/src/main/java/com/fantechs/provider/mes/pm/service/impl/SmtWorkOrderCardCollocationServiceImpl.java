@@ -75,10 +75,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         //转移批量
         Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
         if(StringUtils.isEmpty(transferQuantity)){
-            //如果产品转移批量为空，有可能此工单属于部件工单，转移批量换成部件用量
-            transferQuantity=smtWorkOrderDto.getQuantity();
-        }
-        if(StringUtils.isEmpty(transferQuantity)){
             transferQuantity=1;//默认为1
         }
         //工单总转移批次

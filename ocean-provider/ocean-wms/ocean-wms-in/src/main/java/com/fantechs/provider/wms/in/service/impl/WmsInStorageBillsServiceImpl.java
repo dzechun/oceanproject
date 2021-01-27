@@ -21,6 +21,7 @@ import com.fantechs.provider.wms.in.mapper.WmsInStorageBillsMapper;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.wms.in.service.history.WmsInHtStorageBillsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -28,6 +29,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -112,8 +114,8 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
 
     @Override
     public int save(WmsInStorageBills wmsStorageBills) {
-//        SysUser sysUser = this.currentUser();
-//        wmsStorageBills.setCreateUserId(sysUser.getUserId());
+        SysUser sysUser = this.currentUser();
+        wmsStorageBills.setCreateUserId(sysUser.getUserId());
         wmsStorageBills.setIsDelete((byte)1);
         wmsStorageBills.setStorageBillsCode(CodeUtils.getId("STB"));
         if(wmsStorageBillsMapper.insertSelective(wmsStorageBills)<=0){
@@ -121,6 +123,25 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
         }
         recordHistory(wmsStorageBills,"新增");
         return 1;
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        List<WmsInHtStorageBills> wmsInHtStorageBillsList=new LinkedList<>();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            WmsInStorageBills wmsInStorageBills = this.selectByKey(id);
+            if(StringUtils.isEmpty(wmsInStorageBills)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            WmsInHtStorageBills wmsInHtStorageBills = new WmsInHtStorageBills();
+            BeanUtils.autoFillEqFields(wmsInStorageBills,wmsInHtStorageBills);
+            wmsInHtStorageBills.setModifiedUserId(sysUser.getUserId());
+            wmsInHtStorageBillsList.add(wmsInHtStorageBills);
+        }
+        wmsHtStorageBillsService.batchSave(wmsInHtStorageBillsList);
+        return super.batchDelete(ids);
     }
 
     @Override
@@ -146,8 +167,8 @@ public class WmsInStorageBillsServiceImpl extends BaseService<WmsInStorageBills>
 
     @Override
     public int update(WmsInStorageBills wmsStorageBills) {
-        /*SysUser sysUser = this.currentUser();
-        wmsStorageBills.setModifiedUserId(sysUser.getUserId());*/
+        SysUser sysUser = this.currentUser();
+        wmsStorageBills.setModifiedUserId(sysUser.getUserId());
         if(wmsStorageBillsMapper.updateByPrimaryKeySelective(wmsStorageBills)<=0){
             return 0;
         }

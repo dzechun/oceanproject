@@ -6,6 +6,9 @@
         <result column="process_plan_code" jdbcType="VARCHAR" property="processPlanCode"/>
         <result column="master_plan_id" jdbcType="BIGINT" property="masterPlanId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="is_job_scan" jdbcType="TINYINT" property="isJobScan"/>
+        <result column="is_start_scan" jdbcType="TINYINT" property="isStartScan"/>
+        <result column="is_quality" jdbcType="TINYINT" property="isQuality"/>
         <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty"/>
         <result column="planed_start_date" jdbcType="TIMESTAMP" property="planedStartDate"/>
         <result column="planed_end_date" jdbcType="TIMESTAMP" property="planedEndDate"/>
@@ -30,6 +33,9 @@
         mppp.process_plan_code,
         mppp.master_plan_id,
         mppp.process_id,
+        mppp.is_job_scan,
+        mppp.is_start_scan,
+        mppp.is_quality,
         mppp.finished_qty,
         mppp.planed_start_date,
         mppp.planed_end_date,

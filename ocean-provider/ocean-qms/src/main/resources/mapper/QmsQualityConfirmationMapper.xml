@@ -66,8 +66,8 @@
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
     sswo.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
-    sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,sswo.route_id,splp.process_id,splp.output_quantity AS quantity,
-    swo.material_id AS parts_information_id
+    sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,splp.process_id,splp.cur_output_qty AS quantity,
+    swo.material_id AS parts_information_id,sswo.production_quantity
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id

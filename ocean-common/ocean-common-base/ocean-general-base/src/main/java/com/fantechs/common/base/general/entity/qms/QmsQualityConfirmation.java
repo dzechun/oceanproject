@@ -26,7 +26,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 品质确认ID
      */
     @ApiModelProperty(name="qualityConfirmationId",value = "品质确认ID")
-    @Excel(name = "品质确认ID", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "quality_confirmation_id")
     private Long qualityConfirmationId;
@@ -35,7 +34,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 品质确认单号
      */
     @ApiModelProperty(name="qualityConfirmationCode",value = "品质确认单号")
-    @Excel(name = "品质确认单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "品质确认单号", height = 20, width = 30,orderNum="3")
     @Column(name = "quality_confirmation_code")
     private String qualityConfirmationCode;
 
@@ -43,7 +42,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 流程卡ID
      */
     @ApiModelProperty(name="workOrderCardPoolId",value = "流程卡ID")
-    @Excel(name = "流程卡ID", height = 20, width = 30,orderNum="")
     @Column(name = "work_order_card_pool_id")
     private Long workOrderCardPoolId;
 
@@ -51,7 +49,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")
-    @Excel(name = "工序ID", height = 20, width = 30,orderNum="")
     @Column(name = "process_id")
     private Long processId;
 
@@ -59,7 +56,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 品质类型（0、品质确认 1、品质抽检 ）
      */
     @ApiModelProperty(name="qualityType",value = "品质类型（0、品质确认 1、品质抽检 ）")
-    @Excel(name = "品质类型", height = 20, width = 30,orderNum="")
     @Column(name = "quality_type")
     private Byte qualityType;
 
@@ -67,7 +63,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 合格数量
      */
     @ApiModelProperty(name="qualifiedQuantity",value = "合格数量")
-    @Excel(name = "合格数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "合格数量", height = 20, width = 30,orderNum="12")
     @Column(name = "qualified_quantity")
     private BigDecimal qualifiedQuantity;
 
@@ -75,7 +71,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 不合格数量
      */
     @ApiModelProperty(name="unqualifiedQuantity",value = "不合格数量")
-    @Excel(name = "合格数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "合格数量", height = 20, width = 30,orderNum="13")
     @Column(name = "unqualified_quantity")
     private BigDecimal unqualifiedQuantity;
 
@@ -83,7 +79,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 品质确认状态（0、待确认 1、确认中 2、已确认）
      */
     @ApiModelProperty(name="affirmStatus",value = "品质确认状态（0、待确认 1、确认中 2、已确认）")
-    @Excel(name = "品质确认状态（0、待确认 1、确认中 2、已确认）", height = 20, width = 30,orderNum="")
+    @Excel(name = "品质确认状态",orderNum = "14",height = 20, width = 30,replace = {"0_待确认","1_确认中","2_已确认"})
     @Column(name = "affirm_status")
     private Byte affirmStatus;
 
@@ -91,7 +87,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="")
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -99,21 +94,20 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="15")
     private String remark;
 
     /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
+    @Excel(name = "状态", height = 20, width = 30,orderNum="16",replace = {"0_无效","1_有效"})
     private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -121,7 +115,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -130,7 +124,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -138,7 +131,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -147,7 +140,6 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 

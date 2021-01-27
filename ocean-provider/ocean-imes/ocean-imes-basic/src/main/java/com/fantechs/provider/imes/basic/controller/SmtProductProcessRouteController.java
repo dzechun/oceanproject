@@ -29,7 +29,7 @@ import java.util.List;
  * Created by wcz on 2020/09/30.
  */
 @RestController
-@Api(tags = "产品工艺路线信息")
+@Api(tags = "产品工艺路线信息管理")
 @RequestMapping("/smtProductProcessRoute")
 @Validated
 public class SmtProductProcessRouteController {

@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/11/03.
  */
 @RestController
-@Api(tags = "包装单位管理")
+@Api(tags = "包装单位信息管理")
 @RequestMapping("/smtPackingUnit")
 @Validated
 public class SmtPackingUnitController {

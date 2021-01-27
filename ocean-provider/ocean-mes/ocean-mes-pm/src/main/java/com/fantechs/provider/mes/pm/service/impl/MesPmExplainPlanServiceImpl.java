@@ -81,6 +81,19 @@ public class MesPmExplainPlanServiceImpl extends BaseService<MesPmExplainPlan>  
     }
 
     @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesPmExplainPlan mesPmExplainPlan = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesPmExplainPlan)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+        return super.batchDelete(ids);
+    }
+
+    @Override
     public int deleteByKey(Object id) {
         MesPmExplainPlan mesPmExplainPlan = new MesPmExplainPlan();
         mesPmExplainPlan.setExplainPlanId((long)id);

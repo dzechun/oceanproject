@@ -36,7 +36,7 @@ public class MesPmExplainProcessPlanController {
     private MesPmExplainProcessPlanService mesPmExplainProcessPlanService;
 
     @ApiOperation("查询执行工序计划表列表")
-    @PostMapping("findAllList")
+    @PostMapping("findList")
     public ResponseEntity<List<MesPmExplainProcessPlanDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmExplainProcessPlanListDTO searchMesPmExplainProcessPlanListDTO
     ){
@@ -58,14 +58,8 @@ public class MesPmExplainProcessPlanController {
         return ControllerUtil.returnCRUD(mesPmExplainProcessPlanService.save(mesPmExplainProcessPlan));
     }
 
-    @ApiOperation("删除执行工序计划表数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "执行工序计划表对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesPmExplainProcessPlanService.deleteByKey(id));
-    }
-
     @ApiOperation("批量删除执行工序计划表数据")
-    @GetMapping("batchDelete")
+    @GetMapping("delete")
     public ResponseEntity batchDelete(@ApiParam(value = "执行工序计划表对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
         return ControllerUtil.returnCRUD(mesPmExplainProcessPlanService.batchDelete(ids));
     }
@@ -74,6 +68,12 @@ public class MesPmExplainProcessPlanController {
     @PostMapping("update")
     public ResponseEntity update(@ApiParam(value = "执行工序计划表对象，对象ID必传",required = true)@RequestBody MesPmExplainProcessPlan mesPmExplainProcessPlan){
         return ControllerUtil.returnCRUD(mesPmExplainProcessPlanService.update(mesPmExplainProcessPlan));
+    }
+
+    @ApiOperation("修改执行工序计划表数据")
+    @PostMapping("batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "执行工序计划表对象，对象ID必传",required = true)@RequestBody List<MesPmExplainProcessPlan> mesPmExplainProcessPlanList){
+        return ControllerUtil.returnCRUD(mesPmExplainProcessPlanService.batchUpdate(mesPmExplainProcessPlanList));
     }
 
     @PostMapping(value = "export",produces = "application/octet-stream")

@@ -1,10 +1,12 @@
 package com.fantechs.provider.api.base;
 
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -46,4 +48,8 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/basePlateParts/findList")
     ResponseEntity<List<BasePlatePartsDto>> findPlatePartsList(@ApiParam(value = "查询对象")@RequestBody SearchBasePlateParts searchBasePlateParts);
+
+    @ApiOperation("列表")
+    @PostMapping("/basePlatePartsDet/findList")
+    ResponseEntity<List<BasePlatePartsDetDto>> findPlatePartsDetList(@ApiParam(value = "查询对象")@RequestBody SearchBasePlatePartsDet searchBasePlatePartsDet);
 }

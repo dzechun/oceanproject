@@ -30,7 +30,7 @@ import java.util.List;
  * Created by wcz on 2020/09/25.
  */
 @RestController
-@Api(tags = "工序信息")
+@Api(tags = "工序信息管理")
 @RequestMapping("/smtProcess")
 @Validated
 public class SmtProcessController {

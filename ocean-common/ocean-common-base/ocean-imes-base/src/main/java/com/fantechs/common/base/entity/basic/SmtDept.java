@@ -31,7 +31,7 @@ public class SmtDept extends ValidGroup implements Serializable  {
      */
     @Column(name = "dept_code")
     @ApiModelProperty(name="deptCode" ,value="部门代码")
-    @Excel(name = "部门代码", height = 20, width = 30)
+    @Excel(name = "部门编码", height = 20, width = 30)
     @NotBlank(message = "部门代码不能为空")
     private String deptCode;
 
@@ -80,7 +80,6 @@ public class SmtDept extends ValidGroup implements Serializable  {
      * 父级ID
      */
     @ApiModelProperty(name="parentId",value = "父级ID")
-    @Excel(name = "父级ID", height = 20, width = 30)
     @Column(name = "parent_id")
     private Long parentId;
 
@@ -104,7 +103,7 @@ public class SmtDept extends ValidGroup implements Serializable  {
      */
     @ApiModelProperty(name="remark",value = "备注")
     @Column(name = "remark")
-    @Excel(name = "父级ID", height = 20, width = 30)
+    @Excel(name = "备注", height = 20, width = 30)
     private String remark;
 
     /**

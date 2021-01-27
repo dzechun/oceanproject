@@ -2,6 +2,9 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessPlanDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
+import com.fantechs.common.base.general.entity.om.MesSchedule;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmProcessPlanService;
 import com.fantechs.provider.mes.pm.mapper.MesPmProcessPlanMapper;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +73,19 @@ public class MesPmProcessPlanServiceImpl extends BaseService<MesPmProcessPlan>  
         mesPmProcessPlan.setIsDelete((byte)1);
         mesPmProcessPlan.setProcessPlanCode(CodeUtils.getId("MPPLAN"));
         return mesPmProcessPlanMapper.insertSelective(mesPmProcessPlan);
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesPmProcessPlan mesPmProcessPlan = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesPmProcessPlan)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+        return super.batchDelete(ids);
     }
 
     @Override

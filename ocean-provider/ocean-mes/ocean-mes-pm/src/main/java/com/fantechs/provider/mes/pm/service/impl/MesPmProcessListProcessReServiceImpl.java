@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessListProcessRe;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListProcessReDTO;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmProcessListProcessReService;
@@ -78,6 +79,19 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
         mesPmProcessListProcessRe.setIsDelete((byte)1);
         mesPmProcessListProcessRe.setProcessListProcessReCode(CodeUtils.getId("MPPLPR"));
         return mesPmProcessListProcessReMapper.insertSelective(mesPmProcessListProcessRe);
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesPmProcessListProcessRe mesPmProcessListProcessRe = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesPmProcessListProcessRe)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+        return super.batchDelete(ids);
     }
 
     @Override
