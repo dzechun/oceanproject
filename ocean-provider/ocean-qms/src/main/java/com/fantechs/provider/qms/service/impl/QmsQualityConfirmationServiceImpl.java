@@ -17,8 +17,8 @@ import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.qms.QmsPoorQuality;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
@@ -100,7 +100,14 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
         //当前流程单的对象
         SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = poolList.get(0);
-        qmsQualityConfirmationDto.setPartsInformationId(smtWorkOrderCardPoolDto.getMaterialId());
+        SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
+        searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderCardPoolDto.getMaterialId());
+        List<BasePlatePartsDetDto> platePartsDetDtoList = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
+        if (StringUtils.isEmpty(platePartsDetDtoList)){
+            throw new BizErrorException("没有找到当前部件与产品的组成信息");
+        }
+        BasePlatePartsDetDto platePartsDetDto = platePartsDetDtoList.get(0);
+        qmsQualityConfirmationDto.setPartsInformationId(platePartsDetDto.getPartsInformationId());
 
         if (smtWorkOrderCardPoolDto.getParentId() == null || smtWorkOrderCardPoolDto.getParentId() == 0){
             throw new BizErrorException("当前为父级流程单");
@@ -121,7 +128,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         if (StringUtils.isNotEmpty(patePartsDtoList)){
             List<BasePlatePartsDetDto> list = patePartsDtoList.get(0).getList();
             for (BasePlatePartsDetDto basePlatePartsDetDto : list) {
-                if (basePlatePartsDetDto.getPartsInformationId() == smtWorkOrderCardPoolDto.getMaterialId()){
+                if (basePlatePartsDetDto.getPartsInformationId() == platePartsDetDto.getPartsInformationId()){
                     routeId = basePlatePartsDetDto.getRouteId();
                     break;
                 }
