@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.general.dto.mes.pm.MesPmExplainProcessPlanDTO;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmExplainProcessPlan;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
 import com.fantechs.provider.mes.pm.service.MesPmExplainProcessPlanService;
 import com.fantechs.provider.mes.pm.mapper.MesPmExplainProcessPlanMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -67,6 +68,19 @@ public class MesPmExplainProcessPlanServiceImpl extends BaseService<MesPmExplain
         mesPmExplainProcessPlan.setCreateUserId(sysUser.getUserId());
         mesPmExplainProcessPlan.setIsDelete((byte)1);
         return mesPmExplainProcessPlanMapper.insertSelective(mesPmExplainProcessPlan);
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesPmExplainProcessPlan mesPmExplainProcessPlan = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesPmExplainProcessPlan)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+        return super.batchDelete(ids);
     }
 
     @Override

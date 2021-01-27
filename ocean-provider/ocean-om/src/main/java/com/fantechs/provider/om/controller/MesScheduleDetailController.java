@@ -1,5 +1,7 @@
 package com.fantechs.provider.om.controller;
 
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchSmtHtOrderListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
 import com.fantechs.common.base.general.dto.om.MesScheduleDetailDTO;
 import com.fantechs.provider.om.service.MesScheduleDetailService;
