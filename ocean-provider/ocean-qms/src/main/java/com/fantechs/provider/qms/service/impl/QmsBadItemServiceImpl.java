@@ -58,7 +58,6 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         qmsBadItem.setModifiedUserId(user.getUserId());
         qmsBadItem.setStatus(StringUtils.isEmpty(qmsBadItem.getStatus())?1:qmsBadItem.getStatus());
         qmsBadItem.setOrganizationId(user.getOrganizationId());
-        qmsBadItem.setBadTypeCode(CodeUtils.getId("QBI"));
 
         int i = qmsBadItemMapper.insertUseGeneratedKeys(qmsBadItem);
 
