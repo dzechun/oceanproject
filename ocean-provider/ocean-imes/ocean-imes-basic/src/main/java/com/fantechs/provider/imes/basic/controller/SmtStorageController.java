@@ -29,7 +29,7 @@ import java.util.List;
  * Created by wcz on 2020/09/23.
  */
 @RestController
-@Api(tags = "储位信息")
+@Api(tags = "储位信息管理")
 @RequestMapping("/smtStorage")
 @Validated
 public class SmtStorageController {

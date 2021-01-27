@@ -28,7 +28,7 @@ import java.util.List;
  * Created by wcz on 2020/11/03.
  */
 @RestController
-@Api(tags = "物料编码关联客户料号")
+@Api(tags = "物料关联客户料号")
 @RequestMapping("/smtMaterialSupplier")
 @Validated
 public class SmtMaterialSupplierController {

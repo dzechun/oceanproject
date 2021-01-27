@@ -32,7 +32,7 @@ import java.util.Map;
  * Created by leifengzhi on 2020/10/15.
  */
 @RestController
-@Api(tags = "工序类别管理")
+@Api(tags = "工序类别信息管理")
 @RequestMapping("/smtProcessCategory")
 @Validated
 public class SmtProcessCategoryController {

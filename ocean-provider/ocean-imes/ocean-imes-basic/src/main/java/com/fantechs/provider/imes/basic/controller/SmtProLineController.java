@@ -34,7 +34,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/smtProLine")
-@Api(tags = "生产线管理")
+@Api(tags = "产线信息管理")
 @Slf4j
 @Validated
 public class SmtProLineController {
