@@ -198,7 +198,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             map.put("factoryCode",smtDept.getDeptCode());
             map.put("codeQueryMark",1);
             List<SmtFactoryDto> list1 = smtFactoryService.findList(map);
-            if (StringUtils.isNotEmpty(list1)){
+            if (StringUtils.isEmpty(list1)){
                 fail.add(i+3);
                 continue;
             }
