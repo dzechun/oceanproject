@@ -1,22 +1,28 @@
 package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
 import com.fantechs.common.base.dto.storage.*;
 import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.SQLExecuteException;
+import com.fantechs.common.base.general.dto.mes.pm.history.MesHtScheduleDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchMesHtScheduleListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchWmsInHtStorageBillsListDTO;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.provider.wms.in.service.WmsInStorageBillsDetService;
 import com.fantechs.provider.wms.in.service.WmsInStorageBillsService;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.in.service.history.WmsInHtStorageBillsService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +44,8 @@ public class WmsInStorageBillsController {
     private WmsInStorageBillsService wmsStorageBillsService;
     @Resource
     private WmsInStorageBillsDetService wmsInStorageBillsDetService;
+    @Autowired
+    private WmsInHtStorageBillsService wmsHtStorageBillsService;
 
     @ApiOperation("查询仓库清单表列表")
     @PostMapping("findList")
@@ -49,6 +57,14 @@ public class WmsInStorageBillsController {
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
         List<WmsInStorageBillsDTO> wmsStorageBillsList = wmsStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsStorageBillsListDTO));
         return ControllerUtil.returnDataSuccess(wmsStorageBillsList,(int)page.getTotal());
+    }
+
+    @ApiOperation(value = "获取仓库清单履历列表",notes = "获取仓库清单履历列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsInHtStorageBillsDTO>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInHtStorageBillsListDTO searchWmsInHtStorageBillsListDTO){
+        Page<Object> page = PageHelper.startPage(searchWmsInHtStorageBillsListDTO.getStartPage(),searchWmsInHtStorageBillsListDTO.getPageSize());
+        List<WmsInHtStorageBillsDTO> wmsInHtStorageBillsDTOS = wmsHtStorageBillsService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchWmsInHtStorageBillsListDTO));
+        return ControllerUtil.returnDataSuccess(wmsInHtStorageBillsDTOS,(int)page.getTotal());
     }
 
     @ApiOperation("通过ID查询仓库清单表")

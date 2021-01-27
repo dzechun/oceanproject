@@ -101,6 +101,19 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
     }
 
     @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesPmMasterPlan mesPmMasterPlan = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesPmMasterPlan)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+        return super.batchDelete(ids);
+    }
+
+    @Override
     public int deleteByKey(Object id) {
         MesPmMasterPlan mesPmMasterPlan = new MesPmMasterPlan();
         mesPmMasterPlan.setMasterPlanId((long)id);

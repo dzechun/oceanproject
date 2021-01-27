@@ -2,8 +2,10 @@ package com.fantechs.provider.wms.in.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBills;
 import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBillsDet;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.storage.WmsInStorageBills;
 import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +107,25 @@ public class WmsInStorageBillsDetServiceImpl extends BaseService<WmsInStorageBil
         }
         recordHistory(wmsStorageBillsDet,"新增");
         return 1;
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        List<WmsInHtStorageBillsDet> wmsInHtStorageBillsDetList=new LinkedList<>();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            WmsInStorageBillsDet wmsInStorageBillsDet = this.selectByKey(id);
+            if(StringUtils.isEmpty(wmsInStorageBillsDet)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            WmsInHtStorageBillsDet wmsInHtStorageBillsDet = new WmsInHtStorageBillsDet();
+            BeanUtils.autoFillEqFields(wmsInStorageBillsDet,wmsInHtStorageBillsDet);
+            wmsInHtStorageBillsDet.setModifiedUserId(sysUser.getUserId());
+            wmsInHtStorageBillsDetList.add(wmsInHtStorageBillsDet);
+        }
+        wmsHtStorageBillsDetService.batchSave(wmsInHtStorageBillsDetList);
+        return super.batchDelete(ids);
     }
 
     @Override

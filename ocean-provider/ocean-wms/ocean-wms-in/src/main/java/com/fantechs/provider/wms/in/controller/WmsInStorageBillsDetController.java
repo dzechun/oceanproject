@@ -1,18 +1,24 @@
 package com.fantechs.provider.wms.in.controller;
 
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDTO;
+import com.fantechs.common.base.dto.basic.history.WmsInHtStorageBillsDetDTO;
 import com.fantechs.common.base.dto.storage.WmsInStorageBillsDetDTO;
 import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchWmsInHtStorageBillsDetListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchWmsInHtStorageBillsListDTO;
 import com.fantechs.provider.wms.in.service.WmsInStorageBillsDetService;
 import com.fantechs.common.base.dto.storage.SearchWmsStorageBillsDetListDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.in.service.history.WmsInHtStorageBillsDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -31,6 +37,8 @@ public class WmsInStorageBillsDetController {
 
     @Resource
     private WmsInStorageBillsDetService wmsStorageBillsDetService;
+    @Autowired
+    private WmsInHtStorageBillsDetService wmsHtStorageBillsDetService;
 
     @ApiOperation("查询仓库清单详情表列表")
     @PostMapping("findList")
@@ -42,6 +50,14 @@ public class WmsInStorageBillsDetController {
         Page<Object> page = PageHelper.startPage(startPage, pageSize);
         List<WmsInStorageBillsDetDTO> wmsStorageBillsDetDTOS = wmsStorageBillsDetService.selectFilterAll(searchWmsStorageBillsDetListDTO.getStorageBillsId());
         return ControllerUtil.returnDataSuccess(wmsStorageBillsDetDTOS,(int)page.getTotal());
+    }
+
+    @ApiOperation(value = "获取仓库清单详情履历列表",notes = "获取仓库清单详情履历列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsInHtStorageBillsDetDTO>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInHtStorageBillsDetListDTO searchWmsInHtStorageBillsDetListDTO){
+        Page<Object> page = PageHelper.startPage(searchWmsInHtStorageBillsDetListDTO.getStartPage(),searchWmsInHtStorageBillsDetListDTO.getPageSize());
+        List<WmsInHtStorageBillsDetDTO> wmsInHtStorageBillsDetDTOList = wmsHtStorageBillsDetService.selectFilterAll(searchWmsInHtStorageBillsDetListDTO.getStorageBillsId());
+        return ControllerUtil.returnDataSuccess(wmsInHtStorageBillsDetDTOList,(int)page.getTotal());
     }
 
     @ApiOperation("通过ID查询仓库清单详情表")
