@@ -31,5 +31,18 @@ public class MesPmExplainProcessPlanDTO extends MesPmExplainProcessPlan implemen
     @ApiModelProperty(value = "组织名称",example = "组织名称")
     @Excel(name = "组织名称")
     private String organizationName;
-
+    /**
+     * 工序编码
+     */
+    @Transient
+    @ApiModelProperty(value = "工序编码",example = "工序编码")
+    @Excel(name = "工序编码")
+    private String processCode;
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(value = "工序名称",example = "工序名称")
+    @Excel(name = "工序名称")
+    private String processName;
 }

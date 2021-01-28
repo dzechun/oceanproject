@@ -6,17 +6,21 @@ import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderBomService;
@@ -60,22 +64,26 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
     @Resource
     private BasicFeignApi basicFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SmtWorkOrder smtWorkOrder) {
         SysUser currentUser = currentUser();
 
-        Example example = new Example(SmtWorkOrder.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
 
-        List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(smtWorkOrders)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
         if(StringUtils.isEmpty(smtWorkOrder.getWorkOrderCode())){
             smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
+        }else{
+            Example example = new Example(SmtWorkOrder.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
+
+            List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(smtWorkOrders)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            }
         }
 
 
@@ -321,7 +329,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         String[] workOrderIds = ids.split(",");
         for (String workOrderId : workOrderIds) {
             SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(workOrderId);
-            if(StringUtils.isNotEmpty(smtWorkOrder.getScheduledQuantity())){
+            if(StringUtils.isNotEmpty(smtWorkOrder.getScheduledQuantity()) && smtWorkOrder.getScheduledQuantity().doubleValue()>0){
                 throw new BizErrorException("工单已排产，不允许删除:"+smtWorkOrder.getWorkOrderCode());
             }
             if (StringUtils.isEmpty(smtWorkOrder)) {
@@ -351,6 +359,17 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         for (SmtWorkOrderDto smtWorkOrderDto : list) {
             if(StringUtils.isEmpty(smtWorkOrderDto.getMaterialCode())){
                 //可能是部件工单，到部件表去找找
+                SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
+                searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderDto.getMaterialId());
+                ResponseEntity<List<BasePlatePartsDetDto>> result = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet);
+                if(StringUtils.isEmpty(result) || result.getCode()!=0){
+                    throw new BizErrorException("未找到部件信息:"+smtWorkOrderDto.getMaterialId());
+                }
+                List<BasePlatePartsDetDto> data = result.getData();
+                if(StringUtils.isNotEmpty(data)){
+                    BasePlatePartsDetDto basePlatePartsDetDto = data.get(0);
+                    BeanUtils.copyProperties(basePlatePartsDetDto,smtWorkOrderDto);
+                }
 
             }
             Long routeId = smtWorkOrderDto.getRouteId();
