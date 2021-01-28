@@ -193,6 +193,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             int num =mesPmBreakBulkDetMapper.updateByExampleSelective(mesPmBreakBulkDet,example);
             if(num>0){
                 MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkDetMapper.reprintDet(searchMesPmBreakBulk);
+                mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 return mesPmBreakBulkPrintDto;
             }else {
                 throw new BizErrorException("更新打印日期失败");
@@ -206,6 +207,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             int num =mesPmBreakBulkMapper.updateByExampleSelective(mesPmBreakBulk,example);
             if(num>0){
                 MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkMapper.reprint(searchMesPmBreakBulk);
+                mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 return mesPmBreakBulkPrintDto;
             }else {
                 throw new BizErrorException("更新打印日期失败");

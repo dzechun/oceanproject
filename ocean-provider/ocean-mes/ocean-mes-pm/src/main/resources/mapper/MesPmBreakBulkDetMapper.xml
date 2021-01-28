@@ -83,7 +83,7 @@ bt.material_quality AS 'materialQuality '
   </select>
 
   <select id="reprintDet" resultType="com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto">
-  SELECT pbd.child_lot_no as "batchNo",sm.material_code,sm.material_name,sm.version,sm.material_desc,sr.route_name,s.user_name as modified_user_name,bt.color AS 'color',
+  SELECT pbd.child_lot_no as 'batchNo',sm.material_code as 'materialCode',sm.material_name as 'materialName',sm.version,sm.material_desc as 'materialDesc',sr.route_name as 'routeName',s.user_name as 'modifiedUserName',bt.color AS 'color',
 spm.product_model_name AS 'productModelName',
 bt.material_quality AS 'materialQuality '
    FROM mes_pm_break_bulk_det pbd
