@@ -132,9 +132,14 @@ public class QmsInspectionType extends ValidGroup implements Serializable {
      * 测试方法
      */
     @ApiModelProperty(name="testMethod",value = "测试方法")
-    @Excel(name = "测试方法", height = 20, width = 30,orderNum="12")
     @Column(name = "test_method")
     private Long testMethod;
+
+    /**
+     * 测试方法
+     */
+    @Excel(name = "测试方法", height = 20, width = 30,orderNum="12")
+    private String testMethodName;
 
     /**
      * 测试次数

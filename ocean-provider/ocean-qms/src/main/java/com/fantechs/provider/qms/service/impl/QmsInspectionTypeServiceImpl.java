@@ -66,7 +66,7 @@ public class QmsInspectionTypeServiceImpl extends BaseService<QmsInspectionType>
             qmsInspectionTypeDto.setInspectionNapeName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionItems.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionNape()+"")))).get("name")+"");
             qmsInspectionTypeDto.setInspectionTypeLevelName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionLevels.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionTypeLevel()+"")))).get("name")+"");
             qmsInspectionTypeDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionTools.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionTool()+"")))).get("name")+"");
-            qmsInspectionTypeDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(testMethods.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getTestMethod()+"")))).get("name")+"");
+            qmsInspectionTypeDto.setTestMethodName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(testMethods.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getTestMethod()+"")))).get("name")+"");
         }
         return list;
     }
