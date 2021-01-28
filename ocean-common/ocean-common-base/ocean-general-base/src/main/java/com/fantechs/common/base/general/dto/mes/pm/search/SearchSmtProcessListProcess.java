@@ -15,6 +15,8 @@ public class SearchSmtProcessListProcess extends BaseQuery implements Serializab
     private static final long serialVersionUID = 1523635375536523661L;
     @ApiModelProperty(value = "工单流程卡任务池ID",example = "工单流程卡任务池ID")
     private Long workOrderCardPoolId;
+    @ApiModelProperty(value = "工单流程卡编码",example = "工单流程卡编码")
+    private String workOrderCardId;
     @ApiModelProperty(value = "工序ID",example = "工序ID")
     private Long processId;
     @ApiModelProperty(value = "产线ID",example = "产线ID")

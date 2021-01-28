@@ -22,4 +22,10 @@ public class SearchMesPmExplainProcessPlanListDTO extends BaseQuery implements S
     @ApiModelProperty(value = "执行计划ID",example = "执行计划ID")
     @Excel(name = "执行计划ID")
     private Long explainPlanId;
+    /**
+     * 工单ID
+     */
+    @ApiModelProperty(value = "工单ID",example = "工单ID")
+    @Excel(name = "工单ID")
+    private Long workOrderId;
 }

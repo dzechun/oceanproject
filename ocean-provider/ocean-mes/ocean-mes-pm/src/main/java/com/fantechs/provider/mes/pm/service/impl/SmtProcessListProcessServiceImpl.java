@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
@@ -11,11 +12,13 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListPr
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -30,10 +33,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
 * @author Mr.Lei
@@ -64,6 +64,8 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     private MesPmExplainPlanService mesPmExplainPlanService;
     @Resource
     private MesPmExplainProcessPlanService mesPmExplainProcessPlanService;
+    @Resource
+    private SmtProcessListProcessService smtProcessListProcessService;
     @Resource
     private OutFeignApi outFeignApi;
 
@@ -184,14 +186,14 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         //=====找到执行计划及执行计划工序，判断当前工序是否属于计划中
         Long parentWorkOrderId=smtWorkOrder.getWorkOrderId();
         //先判断当前流程卡工单是否存在父级
-        if(StringUtils.isNotEmpty(smtWorkOrder.getParentId())){
+        if(StringUtils.isNotEmpty(smtWorkOrder.getParentId()) && smtWorkOrder.getParentId()!=0){
             parentWorkOrderId=smtWorkOrder.getParentId();
         }
         //根据工单找到执行计划（这个地方需要注意，按照东鹏的需求，一个工单只会存在一个执行计划），但是如果是其他的需求有变化的话就需要调整
         //执行计划必须要有个查询标准，才能找到对应的数据
         List<MesPmExplainPlanDTO> mesPmExplainPlanDTOList = mesPmExplainPlanService.selectFilterAll(ControllerUtil.dynamicCondition("workOrderId", parentWorkOrderId));
         if(StringUtils.isEmpty(mesPmExplainPlanDTOList) || mesPmExplainPlanDTOList.size()>1){
-            throw new BizErrorException("为找打执行计划或数据错误，无法进行数据反写");
+            throw new BizErrorException("未找打执行计划或数据错误，无法进行数据反写");
         }
         MesPmExplainPlan mesPmExplainPlan = mesPmExplainPlanDTOList.get(0);
         //在执行计划内找打当前工序
@@ -202,11 +204,15 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             throw new BizErrorException("当前工序不在执行计划内，不允许操作");
         }
         MesPmExplainProcessPlanDTO mesPmExplainProcessPlanDTO = mesPmExplainProcessPlanDTOS.get(0);
+        SmtProcess smtProcess = this.findSmtProcess(processFinishedProductDTO.getProcessId());
+        if(StringUtils.isEmpty(smtProcess)){
+            throw new BizErrorException("未找到工序信息："+processFinishedProductDTO.getProcessId());
+        }
         //判断当前工序是否有相应的操作权限
-        if(processFinishedProductDTO.getProcessType()==1 && mesPmExplainProcessPlanDTO.getIsStartScan() ==0){
+        if(processFinishedProductDTO.getProcessType()==1 && smtProcess.getIsStartScan() ==0){
             throw new BizErrorException("当前工序不允许开工");
         }
-        if(processFinishedProductDTO.getProcessType()==2 && mesPmExplainProcessPlanDTO.getIsJobScan() ==0){
+        if(processFinishedProductDTO.getProcessType()==2 && smtProcess.getIsJobScan() ==0){
             throw new BizErrorException("当前工序不允许报工");
         }
 
@@ -214,11 +220,11 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         mesPmExplainProcessPlan.setExplainProcessPlanId(mesPmExplainProcessPlanDTO.getExplainProcessPlanId());
         //=====
 
-        //=====判断是否扫描的主工单
-        //是，则需要按照排产数生成部件工单及流程卡
-        //否，则进行部件流程卡过站
-        if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId())){
-            //是
+        //=====判断是否是操作开料
+        if(processFinishedProductDTO.getPutInto()==1){
+            if(StringUtils.isNotEmpty(smtWorkOrderCardPool.getParentId()) && smtWorkOrderCardPool.getParentId()!=0){
+                throw new BizErrorException("只有工单流转卡允许进行开料");
+            }
             double workOrderQuantity = smtWorkOrder.getWorkOrderQuantity().doubleValue();
             double productQuantity = smtWorkOrder.getProductionQuantity().doubleValue();
             if(processFinishedProductDTO.getCurOutputQty().doubleValue()>(workOrderQuantity-productQuantity)){
@@ -228,6 +234,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             turnWorkOrderCardPoolDTO.setGenerate(true);
             turnWorkOrderCardPoolDTO.setMasterPlanId(mesPmExplainPlan.getMasterPlanId());
             turnWorkOrderCardPoolDTO.setScheduleQty(processFinishedProductDTO.getCurOutputQty());
+            turnWorkOrderCardPoolDTO.setPlatePartsDetIdList(processFinishedProductDTO.getPlatePartsDetIdList());
             if(mesPmMasterPlanService.turnWorkOrderCardPool(turnWorkOrderCardPoolDTO)<=0){
                 throw new BizErrorException("投产失败");
             }
@@ -235,7 +242,32 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 smtWorkOrder.setWorkOrderStatus(2);
                 smtWorkOrderService.update(smtWorkOrder);
             }
+            //====将所有生成的部件流程卡过站开工确认
+            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+            searchSmtWorkOrderCardPool.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+            searchSmtWorkOrderCardPool.setCardStatus((byte)0);
+            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+            if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
+                throw new BizErrorException("开料失败");
+            }
+            List<SmtProcessListProcess> smtProcessListProcessList=new LinkedList<>();
+            for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtoList) {
+                SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
+                smtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                smtProcessListProcess.setProcessId(processFinishedProductDTO.getProcessId());
+                smtProcessListProcess.setProcessType((byte)1);
+                smtProcessListProcess.setStatus((byte)2);
+                Date date = new Date();
+                smtProcessListProcess.setInboundTime(date);
+                smtProcessListProcess.setOutboundTime(date);
+                smtProcessListProcess.setOutputQuantity(processFinishedProductDTO.getCurOutputQty());
+                smtProcessListProcess.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+                smtProcessListProcessList.add(smtProcessListProcess);
+            }
+            smtProcessListProcessService.batchSave(smtProcessListProcessList);
+            //====
         }else{
+            //进行开工报工等操作
             //=====判断操作是否正常
             if(smtWorkOrderCardPool.getCardStatus()==0){
                 //流程卡未开工
@@ -328,13 +360,85 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                     throw new BizErrorException(responseEntity.getMessage());
                 }
             }
+            //=====
         }
         //=====
-
-
-
         return 1;
     }
+
+    /**
+     * 工单流程卡进行报工
+     * @param id 工单流转卡ID
+     * @param curProcessId 当前报工工序ID
+     * @return
+     */
+    private int workOrderCarReport(Long id,Long curProcessId,double outPutQty){
+        //工单流程卡报工即对所有的部件流程卡进行报工
+        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+        searchSmtWorkOrderCardPool.setParentId(id);
+        List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+        if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
+            throw new BizErrorException("工单流转卡未找到部件流转卡");
+        }
+        for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtoList) {
+            //找到所有已经报工的部件流程卡里面最小的报工数
+            double minOutPut = findMinOutPut(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+            if(outPutQty>minOutPut){
+                throw new BizErrorException("工单流程卡报工数不允许大于已报工部件流程卡的报工数");
+            }
+            //找到对应的工单
+            SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
+            if(StringUtils.isEmpty(smtWorkOrder)){
+                throw new BizErrorException("部件流程卡未找到对应工单数据+"+smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+            }
+            //判断当前工序在当前流程卡是否已经提交
+            SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+            searchSmtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+            searchSmtProcessListProcess.setProcessId(curProcessId);
+            List<SmtProcessListProcessDto> smtProcessListProcessDtoList = smtProcessListProcessService.findList(searchSmtProcessListProcess);
+            SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
+            if(StringUtils.isNotEmpty(smtProcessListProcessDtoList)){
+                SmtProcessListProcessDto smtProcessListProcessDto = smtProcessListProcessDtoList.get(0);
+                if(smtProcessListProcessDto.getStatus()==2 ){
+                    continue;
+                }
+                BeanUtils.autoFillEqFields(smtProcessListProcessDto,smtProcessListProcess);
+                double outputQuantity = smtProcessListProcess.getOutputQuantity().doubleValue();
+                if((outputQuantity+outPutQty)>smtWorkOrder.getWorkOrderQuantity().doubleValue()){
+                    throw new BizErrorException("报工数不允许大于工单生产数："+smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                }
+                smtProcessListProcess.setOutputQuantity(new BigDecimal(outputQuantity+outPutQty));
+                smtProcessListProcess.setOutboundTime(new Date());
+                smtProcessListProcessService.update(smtProcessListProcess);
+            }else{
+                if(outPutQty>smtWorkOrder.getWorkOrderQuantity().doubleValue()){
+                    throw new BizErrorException("报工数不允许大于工单生产数："+smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                }
+                smtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                smtProcessListProcess.setProcessId(curProcessId);
+                smtProcessListProcess.setProcessType((byte)2);
+                smtProcessListProcess.setStatus((byte)2);
+                Date date = new Date();
+                smtProcessListProcess.setInboundTime(date);
+                smtProcessListProcess.setOutboundTime(date);
+                smtProcessListProcess.setOutputQuantity(new BigDecimal(outPutQty));
+                smtProcessListProcess.setCurOutputQty(new BigDecimal(outPutQty));
+                smtProcessListProcessService.save(smtProcessListProcess);
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    public SmtProcess findSmtProcess(Long id) {
+        return smtProcessListProcessMapper.findSmtProcess(id);
+    }
+
+    @Override
+    public double findMinOutPut(Long workOrderCardPoolId) {
+        return smtProcessListProcessMapper.findMinOutPut(workOrderCardPoolId);
+    }
+
 
     @Transactional(rollbackFor = Exception.class)
     public String generateCode(Long barcodeRuleId) {
