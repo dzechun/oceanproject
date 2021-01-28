@@ -21,7 +21,7 @@ public class BaseHtWorkShift implements Serializable {
      * 班次履历ID
      */
     @ApiModelProperty(name="htWorkShiftId",value = "班次履历ID")
-    @Excel(name = "班次履历ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班次履历ID", height = 20, width = 30)
     @Id
     @Column(name = "ht_work_shift_id")
     private Long htWorkShiftId;
@@ -30,7 +30,7 @@ public class BaseHtWorkShift implements Serializable {
      * 班次ID
      */
     @ApiModelProperty(name="workShiftId",value = "班次ID")
-    @Excel(name = "班次ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班次ID", height = 20, width = 30)
     @Column(name = "work_shift_id")
     private Long workShiftId;
 
@@ -38,7 +38,7 @@ public class BaseHtWorkShift implements Serializable {
      * 班次编码
      */
     @ApiModelProperty(name="workShiftCode",value = "班次编码")
-    @Excel(name = "班次编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班次编码", height = 20, width = 30)
     @Column(name = "work_shift_code")
     private String workShiftCode;
 
@@ -46,7 +46,7 @@ public class BaseHtWorkShift implements Serializable {
      * 班次名称
      */
     @ApiModelProperty(name="workShiftName",value = "班次名称")
-    @Excel(name = "班次名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班次名称", height = 20, width = 30)
     @Column(name = "work_shift_name")
     private String workShiftName;
 
@@ -54,7 +54,7 @@ public class BaseHtWorkShift implements Serializable {
      * 班次描述
      */
     @ApiModelProperty(name="workShiftDesc",value = "班次描述")
-    @Excel(name = "班次描述", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班次描述", height = 20, width = 30)
     @Column(name = "work_shift_desc")
     private String workShiftDesc;
 
@@ -84,14 +84,14 @@ public class BaseHtWorkShift implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
     private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -99,7 +99,7 @@ public class BaseHtWorkShift implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -108,7 +108,7 @@ public class BaseHtWorkShift implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -116,7 +116,7 @@ public class BaseHtWorkShift implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -141,7 +141,7 @@ public class BaseHtWorkShift implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 

@@ -18,7 +18,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -26,7 +26,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String modifiedUserName;
 
     /**
@@ -34,6 +34,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "组织名称", height = 20, width = 30)
     private String organizationName;
 
     /**
@@ -41,6 +42,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="teamCode",value = "班组代码")
+    @Excel(name = "班组代码", height = 20, width = 30)
     private String teamCode;
 
     /**
@@ -48,6 +50,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="teamName",value = "班组名称")
+    @Excel(name = "班组名称", height = 20, width = 30)
     private String teamName;
 
     /**
@@ -92,6 +95,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="factoryCode" ,value="厂别编码")
+    @Excel(name = "工厂编码", height = 20, width = 30)
     private String factoryCode;
 
     /**

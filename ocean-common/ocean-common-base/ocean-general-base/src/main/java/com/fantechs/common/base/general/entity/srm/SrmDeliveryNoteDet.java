@@ -25,7 +25,7 @@ public class SrmDeliveryNoteDet extends ValidGroup implements Serializable {
      * 送货通知明细ID
      */
     @ApiModelProperty(name="deliveryNoteDetId",value = "送货通知明细ID")
-    @Excel(name = "送货通知明细ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "送货通知明细ID", height = 20, width = 30)
     @Id
     @Column(name = "delivery_note_det_id")
     private Long deliveryNoteDetId;
@@ -34,7 +34,7 @@ public class SrmDeliveryNoteDet extends ValidGroup implements Serializable {
      * 送货通知ID
      */
     @ApiModelProperty(name="deliveryNoteId",value = "送货通知ID")
-    @Excel(name = "送货通知ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "送货通知ID", height = 20, width = 30)
     @Column(name = "delivery_note_id")
     private Long deliveryNoteId;
 
@@ -42,7 +42,7 @@ public class SrmDeliveryNoteDet extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料ID", height = 20, width = 30)
     @Column(name = "material_id")
     private Long materialId;
 

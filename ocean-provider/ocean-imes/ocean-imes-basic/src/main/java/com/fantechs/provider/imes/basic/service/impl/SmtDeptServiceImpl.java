@@ -166,6 +166,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
@@ -181,6 +182,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
                     deptCode,deptName,factoryCode
             )){
                 fail.add(i+3);
+                smtDepts.remove(i);
                 continue;
             }
 
@@ -190,16 +192,18 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             criteria.andEqualTo("deptCode",smtDept.getDeptCode());
             if (StringUtils.isNotEmpty(smtDeptMapper.selectOneByExample(example))){
                 fail.add(i+3);
+                smtDepts.remove(i);
                 continue;
             }
 
             //判断工厂是否存在
             HashMap<String, Object> map = new HashMap<>();
-            map.put("factoryCode",smtDept.getDeptCode());
+            map.put("factoryCode",smtDept.getFactoryCode());
             map.put("codeQueryMark",1);
             List<SmtFactoryDto> list1 = smtFactoryService.findList(map);
-            if (StringUtils.isNotEmpty(list1)){
+            if (StringUtils.isEmpty(list1)){
                 fail.add(i+3);
+                smtDepts.remove(i);
                 continue;
             }
 
@@ -207,7 +211,9 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             smtDept.setCreateUserId(currentUser.getUserId());
             smtDept.setModifiedTime(new Date());
             smtDept.setModifiedUserId(currentUser.getUserId());
+            smtDept.setStatus(1);
             smtDept.setFactoryId(list1.get(0).getFactoryId());
+            smtDept.setParentId((long) -1);
             list.add(smtDept);
         }
 
@@ -224,6 +230,20 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         if (StringUtils.isNotEmpty(htList)){
             smtHtDeptMapper.insertList(htList);
         }
+
+        //更新部门的父级ID
+        for (SmtDept smtDept : smtDepts) {
+            String parentCode = smtDept.getParentCode();
+            Example example = new Example(SmtDept.class);
+            if (StringUtils.isNotEmpty(parentCode)){
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("deptCode",parentCode);
+                SmtDept smtDept1 = smtDeptMapper.selectOneByExample(example);
+                smtDept.setParentId(smtDept1.getDeptId());
+            }
+            smtDeptMapper.updateByPrimaryKeySelective(smtDept);
+        }
+
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;

@@ -103,6 +103,9 @@
             <if test="workOrderCardPoolId!= null and workOrderCardPoolId!= ''">
                 and swocp.work_order_card_pool_id=#{workOrderCardPoolId}
             </if>
+            <if test="parentId!= null">
+                and swocp.parent_id=#{parentId}
+            </if>
             and swocp.is_delete = 1
         </where>
         order by swocp.modified_time desc

@@ -24,7 +24,7 @@ public class SrmDeliveryNoteDetDto extends SrmDeliveryNoteDet implements Seriali
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料编码", height = 20, width = 30)
     @Column(name = "material_code")
     private String materialCode;
 
@@ -32,7 +32,7 @@ public class SrmDeliveryNoteDetDto extends SrmDeliveryNoteDet implements Seriali
      * 物料名称
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料名称", height = 20, width = 30)
     @Column(name = "material_name")
     private String materialName;
 
@@ -40,7 +40,7 @@ public class SrmDeliveryNoteDetDto extends SrmDeliveryNoteDet implements Seriali
      * 单位
      */
     @ApiModelProperty(name="unit",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料名称", height = 20, width = 30)
     @Column(name = "unit")
     private String unit;
 
@@ -48,7 +48,7 @@ public class SrmDeliveryNoteDetDto extends SrmDeliveryNoteDet implements Seriali
      * 收货仓库名称
      */
     @ApiModelProperty(name="storageName",value = "收货仓库名称")
-    @Excel(name = "收货仓库名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "收货仓库名称", height = 20, width = 30)
     @Column(name = "storageName")
     private String storageName;
 
@@ -56,7 +56,7 @@ public class SrmDeliveryNoteDetDto extends SrmDeliveryNoteDet implements Seriali
      * 计划交货日期
      */
     @ApiModelProperty(name="planDeliveryDate",value = "计划交货日期")
-    @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "计划交货日期", height = 20, width = 30)
     @Column(name = "plan_delivery_date")
     private Date planDeliveryDate;
 

@@ -27,7 +27,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 工单流转卡配置ID
      */
     @ApiModelProperty(name="workOrderCardCollocationId",value = "工单流转卡配置ID")
-    @Excel(name = "工单流转卡配置ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单流转卡配置ID", height = 20, width = 30)
     @Id
     @Column(name = "work_order_card_collocation_id")
     private Long workOrderCardCollocationId;
@@ -36,7 +36,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单ID", height = 20, width = 30)
     @Column(name = "work_order_id")
     @NotNull(message = "工单ID不能为空")
     private Long workOrderId;
@@ -45,7 +45,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 产生数量
      */
     @ApiModelProperty(name="produceQuantity",value = "产生数量")
-    @Excel(name = "产生数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "产生数量", height = 20, width = 30)
     @Column(name = "produce_quantity")
     @NotNull(message = "产生数量不能为空")
     private Integer produceQuantity;
@@ -54,7 +54,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 已产生数量
      */
     @ApiModelProperty(name="generatedQuantity",value = "已产生数量")
-    @Excel(name = "已产生数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "已产生数量", height = 20, width = 30)
     @Column(name = "generated_quantity")
     private Integer generatedQuantity;
 
@@ -62,7 +62,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 打印ID
      */
     @ApiModelProperty(name="printId",value = "打印ID")
-    @Excel(name = "打印ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "打印ID", height = 20, width = 30)
     @Column(name = "print_id")
     private Long printId;
 
@@ -84,14 +84,14 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 状态（0、未生成 1、部分生成 2、已生成）
      */
     @ApiModelProperty(name="status",value = "状态（0、未生成 1、部分生成 2、已生成）")
-    @Excel(name = "状态（0、未生成 1、部分生成 2、已生成）", height = 20, width = 30,orderNum="")
+    @Excel(name = "状态（0、未生成 1、部分生成 2、已生成）", height = 20, width = 30)
     private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -99,7 +99,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -108,7 +108,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -116,7 +116,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -125,7 +125,7 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -133,21 +133,21 @@ public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializa
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
-    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="")
+    @Excel(name = "扩展字段1", height = 20, width = 30)
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
-    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="")
+    @Excel(name = "扩展字段2", height = 20, width = 30)
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
-    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="")
+    @Excel(name = "扩展字段3", height = 20, width = 30)
     private String option3;
 
     private static final long serialVersionUID = 1L;
