@@ -64,7 +64,11 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         searchQmsQualityConfirmation.setParentWorkOrderCardPoolCode(workOrderCardId);
         List<QmsQualityConfirmationDto> qmsQualityConfirmationDtos = qmsFeignApi.findQualityConfirmationList(searchQmsQualityConfirmation).getData();
         MesPmMatchingOrderDto mesPmMatchingOrderDto = new MesPmMatchingOrderDto();
-        BeanUtils.copyProperties(qmsQualityConfirmationDtos.get(0), mesPmMatchingOrderDto);
+        QmsQualityConfirmationDto qmsQualityConfirmationDto1 = qmsQualityConfirmationDtos.get(0);
+        /*if (StringUtils.isEmpty(qmsQualityConfirmationDto1)){
+            throw new BizErrorException("")
+        }*/
+        BeanUtils.copyProperties(qmsQualityConfirmationDto1, mesPmMatchingOrderDto);
 
         List<BigDecimal> minMatchingQuantitys = new ArrayList<>();//保存最小齐套数量集合
 
