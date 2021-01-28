@@ -14,12 +14,12 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
 
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
     private String createUserName;
 
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 
     @Transient

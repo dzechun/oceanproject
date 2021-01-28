@@ -83,7 +83,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-
         smtMaterial.setCreateUserId(currentUser.getUserId());
         smtMaterial.setCreateTime(new Date());
         smtMaterial.setModifiedUserId(currentUser.getUserId());
@@ -92,6 +91,9 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
         //新增物料页签信息
         BaseTab baseTab = smtMaterial.getBaseTab();
+        if (0 >= baseTab.getTransferQuantity()){
+            throw new BizErrorException("转移批量必须大于0");
+        }
         baseTab.setMaterialId(smtMaterial.getMaterialId());
         baseFeignApi.addTab(baseTab);
 

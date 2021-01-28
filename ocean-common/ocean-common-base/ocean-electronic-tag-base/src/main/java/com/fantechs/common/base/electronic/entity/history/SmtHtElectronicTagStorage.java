@@ -30,7 +30,7 @@ public class SmtHtElectronicTagStorage implements Serializable {
      * 标签Id绑定储位关系历史Id
      */
     @ApiModelProperty(name="htElectronicTagStorageId",value = "标签Id绑定储位关系历史Id")
-    @Excel(name = "标签Id绑定储位关系历史Id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "标签Id绑定储位关系历史Id", height = 20, width = 30)
     @Id
     @Column(name = "ht_electronic_tag_storage_id")
     private Long htElectronicTagStorageId;

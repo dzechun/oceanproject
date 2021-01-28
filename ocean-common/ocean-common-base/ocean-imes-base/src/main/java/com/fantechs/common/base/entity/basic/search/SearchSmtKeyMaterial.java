@@ -15,7 +15,7 @@ public class SearchSmtKeyMaterial extends BaseQuery implements Serializable {
      * 产品类别(2-产品型号 3-产品料号)
      */
     @ApiModelProperty(name="productType",value = "产品类别(2-产品型号 3-产品料号)")
-    @Excel(name = "产品类别(2-产品型号 3-产品料号)", height = 20, width = 30,orderNum="")
+    @Excel(name = "产品类别(2-产品型号 3-产品料号)", height = 20, width = 30)
     @Column(name = "product_type")
     private Byte productType;
 

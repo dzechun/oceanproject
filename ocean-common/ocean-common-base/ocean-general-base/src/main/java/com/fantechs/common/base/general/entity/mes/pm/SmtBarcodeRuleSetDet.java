@@ -37,7 +37,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 条码规则集合ID
      */
     @ApiModelProperty(name="barcodeRuleSetId",value = "条码规则集合ID")
-    @Excel(name = "条码规则集合ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "条码规则集合ID", height = 20, width = 30)
     @Column(name = "barcode_rule_set_id")
     @NotNull(message = "条码规则集合ID不能为空")
     private Long barcodeRuleSetId;
@@ -46,7 +46,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 条码规则ID
      */
     @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
-    @Excel(name = "条码规则ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "条码规则ID", height = 20, width = 30)
     @Column(name = "barcode_rule_id")
     @NotNull(message = "条码规则ID不能为空")
     private Long barcodeRuleId;
@@ -70,7 +70,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -78,7 +78,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -87,7 +87,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -95,7 +95,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -104,7 +104,7 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -112,21 +112,21 @@ public class SmtBarcodeRuleSetDet extends ValidGroup implements Serializable {
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
-    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="")
+    @Excel(name = "扩展字段1", height = 20, width = 30)
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
-    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="")
+    @Excel(name = "扩展字段2", height = 20, width = 30)
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
-    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="")
+    @Excel(name = "扩展字段3", height = 20, width = 30)
     private String option3;
 
 }

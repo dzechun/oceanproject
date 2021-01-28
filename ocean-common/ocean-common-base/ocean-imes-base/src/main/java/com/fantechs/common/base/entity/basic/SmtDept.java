@@ -84,6 +84,13 @@ public class SmtDept extends ValidGroup implements Serializable  {
     private Long parentId;
 
     /**
+     * 上级部门编码
+     */
+    @ApiModelProperty(name="parentCode",value = "上级部门编码")
+    @Excel(name = "上级部门编码", height = 20, width = 30)
+    private String parentCode;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

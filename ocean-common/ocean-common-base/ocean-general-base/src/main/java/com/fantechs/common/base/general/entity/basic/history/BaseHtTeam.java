@@ -22,7 +22,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 班组履历ID
      */
     @ApiModelProperty(name="htTeamId",value = "班组履历ID")
-    @Excel(name = "班组履历ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班组履历ID", height = 20, width = 30)
     @Id
     @Column(name = "ht_team_id")
     private Long htTeamId;
@@ -31,7 +31,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 班组ID
      */
     @ApiModelProperty(name="teamId",value = "班组ID")
-    @Excel(name = "班组ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班组ID", height = 20, width = 30)
     @Column(name = "team_id")
     private Long teamId;
 
@@ -39,7 +39,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 班组代码
      */
     @ApiModelProperty(name="teamCode",value = "班组代码")
-    @Excel(name = "班组代码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班组代码", height = 20, width = 30)
     @Column(name = "team_code")
     private String teamCode;
 
@@ -47,7 +47,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 班组名称
      */
     @ApiModelProperty(name="teamName",value = "班组名称")
-    @Excel(name = "班组名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班组名称", height = 20, width = 30)
     @Column(name = "team_name")
     private String teamName;
 
@@ -55,7 +55,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 班组描述
      */
     @ApiModelProperty(name="teamDesc",value = "班组描述")
-    @Excel(name = "班组描述", height = 20, width = 30,orderNum="") 
+    @Excel(name = "班组描述", height = 20, width = 30)
     @Column(name = "team_desc")
     private String teamDesc;
 
@@ -63,7 +63,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 车间ID
      */
     @ApiModelProperty(name="workShopId",value = "车间ID")
-    @Excel(name = "车间ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "车间ID", height = 20, width = 30)
     @Column(name = "work_shop_id")
     private Long workShopId;
 
@@ -71,21 +71,21 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30)
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织id", height = 20, width = 30)
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -93,7 +93,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -101,7 +101,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -110,7 +110,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -118,7 +118,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -127,7 +127,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -136,7 +136,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -144,7 +144,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 
     /**c
@@ -158,7 +158,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 车间编码
      */
     @Transient
-    @Excel(name = "车间编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "车间编码", height = 20, width = 30)
     @ApiModelProperty(name = "workShopCode",value = "车间编码")
     private String workShopCode;
 
@@ -166,7 +166,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      * 车间名称
      */
     @Transient
-    @Excel(name = "车间名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "车间名称", height = 20, width = 30)
     @ApiModelProperty(name = "workShopName",value = "车间名称")
     private String workShopName;
 
@@ -175,7 +175,7 @@ public class BaseHtTeam extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "workShopDesc",value = "车间描述")
-    @Excel(name = "车间描述", height = 20, width = 30,orderNum="")
+    @Excel(name = "车间描述", height = 20, width = 30)
     private String workShopDesc;
 
     private static final long serialVersionUID = 1L;

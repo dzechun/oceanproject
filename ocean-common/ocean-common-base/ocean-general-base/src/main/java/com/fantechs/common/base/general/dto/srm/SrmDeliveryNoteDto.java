@@ -31,7 +31,7 @@ public class SrmDeliveryNoteDto extends SrmDeliveryNote implements Serializable 
      */
     @Transient
     @ApiModelProperty(name="orderQuantity",value = "订单数量")
-    @Excel(name = "订单数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "订单数量", height = 20, width = 30)
     private BigDecimal orderQuantity;
 
     /**

@@ -15,7 +15,7 @@ public class SearchMesPmMatchingOrder extends BaseQuery implements Serializable 
      * 配套单号
      */
     @ApiModelProperty(name="matchingOrderCode",value = "配套单号")
-    @Excel(name = "配套单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "配套单号", height = 20, width = 30)
     @Column(name = "matching_order_code")
     private String matchingOrderCode;
 
