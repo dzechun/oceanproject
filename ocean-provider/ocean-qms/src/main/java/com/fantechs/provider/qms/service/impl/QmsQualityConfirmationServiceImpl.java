@@ -290,7 +290,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         ResponseEntity<WmsInFinishedProduct> wmsInFinishedProductResponse = inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
         WmsInFinishedProduct inFinishedProduct = wmsInFinishedProductResponse.getData();
-
+        System.out.println("入库单：---------------------"+wmsInFinishedProductResponse.getData());
+        if (StringUtils.isEmpty(inFinishedProduct)){
+            throw new BizErrorException("生成半成品入库单失败");
+        }
 
         //生成领料计划
         WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
