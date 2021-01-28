@@ -213,6 +213,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             smtDept.setModifiedUserId(currentUser.getUserId());
             smtDept.setStatus(1);
             smtDept.setFactoryId(list1.get(0).getFactoryId());
+            smtDept.setParentId((long) -1);
             list.add(smtDept);
         }
 
@@ -230,7 +231,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             smtHtDeptMapper.insertList(htList);
         }
 
-        //设置部门的父级ID
+        //更新部门的父级ID
         for (SmtDept smtDept : smtDepts) {
             String parentCode = smtDept.getParentCode();
             Example example = new Example(SmtDept.class);

@@ -86,6 +86,7 @@ public class SmtDept extends ValidGroup implements Serializable  {
     /**
      * 上级部门编码
      */
+    @Transient
     @ApiModelProperty(name="parentCode",value = "上级部门编码")
     @Excel(name = "上级部门编码", height = 20, width = 30)
     private String parentCode;
