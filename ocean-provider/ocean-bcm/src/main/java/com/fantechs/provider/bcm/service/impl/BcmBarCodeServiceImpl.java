@@ -229,6 +229,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         if(record.getWorkOrderQuantity().compareTo(BigDecimal.valueOf(num+record.getPrintQuantity()))==1){
             throw new BizErrorException("产生数量不能大于工单数量");
         }
+        record.setStatus((byte)1);
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
