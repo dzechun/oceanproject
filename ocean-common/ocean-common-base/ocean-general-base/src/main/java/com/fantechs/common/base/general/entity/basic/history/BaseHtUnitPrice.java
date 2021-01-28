@@ -23,7 +23,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 单价信息历史ID
      */
     @ApiModelProperty(name="htUnitPriceId",value = "单价信息历史ID")
-    @Excel(name = "单价信息历史ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "单价信息历史ID", height = 20, width = 30)
     @Id
     @Column(name = "ht_unit_price_id")
     private Long htUnitPriceId;
@@ -32,7 +32,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 单价信息ID
      */
     @ApiModelProperty(name="unitPriceId",value = "单价信息ID")
-    @Excel(name = "单价信息ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "单价信息ID", height = 20, width = 30)
     @Column(name = "unit_price_id")
     private Long unitPriceId;
 
@@ -40,7 +40,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物料ID", height = 20, width = 30)
     @Column(name = "material_id")
     private Long materialId;
 
@@ -48,14 +48,14 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 开料
      */
     @ApiModelProperty(name="cutting",value = "开料")
-    @Excel(name = "开料", height = 20, width = 30,orderNum="") 
+    @Excel(name = "开料", height = 20, width = 30)
     private BigDecimal cutting;
 
     /**
      * 封边
      */
     @ApiModelProperty(name="sealEdge",value = "封边")
-    @Excel(name = "封边", height = 20, width = 30,orderNum="") 
+    @Excel(name = "封边", height = 20, width = 30)
     @Column(name = "seal_edge")
     private BigDecimal sealEdge;
 
@@ -63,7 +63,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 排钻
      */
     @ApiModelProperty(name="gangDrill",value = "排钻")
-    @Excel(name = "排钻", height = 20, width = 30,orderNum="") 
+    @Excel(name = "排钻", height = 20, width = 30)
     @Column(name = "gang_drill")
     private BigDecimal gangDrill;
 
@@ -71,7 +71,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 锣机
      */
     @ApiModelProperty(name="gongMachine",value = "锣机")
-    @Excel(name = "锣机", height = 20, width = 30,orderNum="") 
+    @Excel(name = "锣机", height = 20, width = 30)
     @Column(name = "gong_machine")
     private BigDecimal gongMachine;
 
@@ -79,7 +79,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 机砂
      */
     @ApiModelProperty(name="sandMachine",value = "机砂")
-    @Excel(name = "机砂", height = 20, width = 30,orderNum="") 
+    @Excel(name = "机砂", height = 20, width = 30)
     @Column(name = "sand_machine")
     private BigDecimal sandMachine;
 
@@ -87,14 +87,14 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 钉装
      */
     @ApiModelProperty(name="nails",value = "钉装")
-    @Excel(name = "钉装", height = 20, width = 30,orderNum="") 
+    @Excel(name = "钉装", height = 20, width = 30)
     private BigDecimal nails;
 
     /**
      * 补土
      */
     @ApiModelProperty(name="repairSoil",value = "补土")
-    @Excel(name = "补土", height = 20, width = 30,orderNum="") 
+    @Excel(name = "补土", height = 20, width = 30)
     @Column(name = "repair_soil")
     private BigDecimal repairSoil;
 
@@ -102,7 +102,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 胶粒螺母
      */
     @ApiModelProperty(name="glueNut",value = "胶粒螺母")
-    @Excel(name = "胶粒螺母", height = 20, width = 30,orderNum="") 
+    @Excel(name = "胶粒螺母", height = 20, width = 30)
     @Column(name = "glue_nut")
     private BigDecimal glueNut;
 
@@ -110,14 +110,14 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * UV
      */
     @ApiModelProperty(name="uv",value = "UV")
-    @Excel(name = "UV", height = 20, width = 30,orderNum="") 
+    @Excel(name = "UV", height = 20, width = 30)
     private BigDecimal uv;
 
     /**
      * 木磨
      */
     @ApiModelProperty(name="woodMill",value = "木磨")
-    @Excel(name = "木磨", height = 20, width = 30,orderNum="") 
+    @Excel(name = "木磨", height = 20, width = 30)
     @Column(name = "wood_mill")
     private BigDecimal woodMill;
 
@@ -125,7 +125,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 灰磨
      */
     @ApiModelProperty(name="greyMill",value = "灰磨")
-    @Excel(name = "灰磨", height = 20, width = 30,orderNum="") 
+    @Excel(name = "灰磨", height = 20, width = 30)
     @Column(name = "grey_mill")
     private BigDecimal greyMill;
 
@@ -133,7 +133,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 底得保
      */
     @ApiModelProperty(name="bottomGuaranteed",value = "底得保")
-    @Excel(name = "底得保", height = 20, width = 30,orderNum="") 
+    @Excel(name = "底得保", height = 20, width = 30)
     @Column(name = "bottom_guaranteed")
     private BigDecimal bottomGuaranteed;
 
@@ -141,14 +141,14 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 底色
      */
     @ApiModelProperty(name="undertone",value = "底色")
-    @Excel(name = "底色", height = 20, width = 30,orderNum="") 
+    @Excel(name = "底色", height = 20, width = 30)
     private BigDecimal undertone;
 
     /**
      * 底油
      */
     @ApiModelProperty(name="baseCoat",value = "底油")
-    @Excel(name = "底油", height = 20, width = 30,orderNum="") 
+    @Excel(name = "底油", height = 20, width = 30)
     @Column(name = "base_coat")
     private BigDecimal baseCoat;
 
@@ -156,14 +156,14 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 擦色
      */
     @ApiModelProperty(name="staining",value = "擦色")
-    @Excel(name = "擦色", height = 20, width = 30,orderNum="") 
+    @Excel(name = "擦色", height = 20, width = 30)
     private BigDecimal staining;
 
     /**
      * 油磨
      */
     @ApiModelProperty(name="oilAbrasion",value = "油磨")
-    @Excel(name = "油磨", height = 20, width = 30,orderNum="") 
+    @Excel(name = "油磨", height = 20, width = 30)
     @Column(name = "oil_abrasion")
     private BigDecimal oilAbrasion;
 
@@ -171,7 +171,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 干刷效果
      */
     @ApiModelProperty(name="dryBurshing",value = "干刷效果")
-    @Excel(name = "干刷效果", height = 20, width = 30,orderNum="") 
+    @Excel(name = "干刷效果", height = 20, width = 30)
     @Column(name = "dry_burshing")
     private BigDecimal dryBurshing;
 
@@ -179,7 +179,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
      * 修黑边
      */
     @ApiModelProperty(name="repairBlackEdge",value = "修黑边")
-    @Excel(name = "修黑边", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修黑边", height = 20, width = 30)
     @Column(name = "repair_black_edge")
     private BigDecimal repairBlackEdge;
 

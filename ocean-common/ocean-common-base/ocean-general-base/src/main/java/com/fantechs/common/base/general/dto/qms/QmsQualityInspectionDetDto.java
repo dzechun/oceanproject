@@ -34,7 +34,7 @@ public class QmsQualityInspectionDetDto extends QmsQualityInspectionDet implemen
      */
     @Transient
     @ApiModelProperty(name="qualityInspectionCode",value = "质检单号")
-    @Excel(name = "质检单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "质检单号", height = 20, width = 30)
     private String qualityInspectionCode;
 
     /**

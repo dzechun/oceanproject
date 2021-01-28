@@ -28,7 +28,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 储位库存明细ID
      */
     @ApiModelProperty(name="storageInventoryDetId",value = "储位库存明细ID")
-    @Excel(name = "储位库存明细ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "储位库存明细ID", height = 20, width = 30)
     @Id
     @Column(name = "storage_inventory_det_id")
     private Long storageInventoryDetId;
@@ -37,7 +37,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 储位库存ID
      */
     @ApiModelProperty(name="storageInventoryId",value = "储位库存ID")
-    @Excel(name = "储位库存ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "储位库存ID", height = 20, width = 30)
     @Column(name = "storage_inventory_id")
     private Long storageInventoryId;
 
@@ -45,7 +45,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 物料条码编码
      */
     @ApiModelProperty(name="materialBarcodeCode",value = "物料条码编码")
-    @Excel(name = "物料条码编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料条码编码", height = 20, width = 30)
     @Column(name = "material_barcode_code")
     private String materialBarcodeCode;
 
@@ -53,7 +53,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 入库单号
      */
     @ApiModelProperty(name="godownEntry",value = "入库单号")
-    @Excel(name = "入库单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "入库单号", height = 20, width = 30)
     @Column(name = "godown_entry")
     private String godownEntry;
 
@@ -61,7 +61,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 物料数量
      */
     @ApiModelProperty(name="materialQuantity",value = "物料数量")
-    @Excel(name = "物料数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料数量", height = 20, width = 30)
     @Column(name = "material_quantity")
     @NotNull(groups = update.class,message = "物料数量不能为空")
     private BigDecimal materialQuantity;
@@ -70,7 +70,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 生产批号
      */
     @ApiModelProperty(name="productionCode",value = "生产批号")
-    @Excel(name = "生产批号", height = 20, width = 30,orderNum="")
+    @Excel(name = "生产批号", height = 20, width = 30)
     @Column(name = "production_code")
     private String productionCode;
 
@@ -78,7 +78,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "生产日期", height = 20, width = 30)
     @Column(name = "production_date")
     private Date productionDate;
 
@@ -86,7 +86,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 供应商ID
      */
     @ApiModelProperty(name="supplierId",value = "供应商ID")
-    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "供应商ID", height = 20, width = 30)
     @Column(name = "supplier_id")
     private Long supplierId;
 
@@ -101,7 +101,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30)
     private Byte status;
 
     /**
@@ -115,7 +115,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -123,7 +123,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -132,7 +132,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -140,7 +140,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -149,7 +149,7 @@ public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 

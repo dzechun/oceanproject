@@ -39,7 +39,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 生产领料表ID
      */
     @ApiModelProperty(name="productionMaterialId",value = "生产领料表ID")
-    @Excel(name = "生产领料表ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "生产领料表ID", height = 20, width = 30) 
     @Column(name = "production_material_id")
     private Long productionMaterialId;
 
@@ -47,7 +47,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 生产领料单号
      */
     @ApiModelProperty(name="productionMaterialCode",value = "生产领料单号")
-    @Excel(name = "生产领料单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "生产领料单号", height = 20, width = 30) 
     @Column(name = "production_material_code")
     private String productionMaterialCode;
 
@@ -55,7 +55,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工单ID", height = 20, width = 30) 
     @Column(name = "work_order_id")
     private Long workOrderId;
 
@@ -63,7 +63,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 产线ID
      */
     @ApiModelProperty(name="proLineId",value = "产线ID")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "产线ID", height = 20, width = 30) 
     @Column(name = "pro_line_id")
     private Long proLineId;
 
@@ -71,7 +71,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物料ID", height = 20, width = 30) 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -79,7 +79,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 计划发料数量
      */
     @ApiModelProperty(name="planQty",value = "计划发料数量")
-    @Excel(name = "计划发料数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "计划发料数量", height = 20, width = 30) 
     @Column(name = "plan_qty")
     private BigDecimal planQty;
 
@@ -87,7 +87,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 实发数量
      */
     @ApiModelProperty(name="realityQty",value = "实发数量")
-    @Excel(name = "实发数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "实发数量", height = 20, width = 30)
     @Column(name = "reality_qty")
     private BigDecimal realityQty;
 
@@ -95,7 +95,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 发料日期
      */
     @ApiModelProperty(name="outTime",value = "发料日期")
-    @Excel(name = "发料日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "发料日期", height = 20, width = 30) 
     @Column(name = "out_time")
     private Date outTime;
 
@@ -103,7 +103,7 @@ public class WmsOutHtProductionMaterial extends ValidGroup implements Serializab
      * 储位ID
      */
     @ApiModelProperty(name="storageId",value = "储位ID")
-    @Excel(name = "储位ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "储位ID", height = 20, width = 30) 
     @Column(name = "storage_id")
     private Long storageId;
 

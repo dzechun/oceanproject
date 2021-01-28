@@ -18,7 +18,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -26,7 +26,7 @@ public class BaseStaffDto extends BaseStaff implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30)
     private String modifiedUserName;
 
     /**

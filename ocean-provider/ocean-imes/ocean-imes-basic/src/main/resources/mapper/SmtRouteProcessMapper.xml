@@ -66,6 +66,7 @@
                 and srp.route_id=#{routeId}
             </if>
         </where>
+        order by srp.order_num
     </select>
 
     <update id="configureProcess" parameterType="map">

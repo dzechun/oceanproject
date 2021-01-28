@@ -23,7 +23,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 物流商履历ID
      */
     @ApiModelProperty(name="htShipmentEnterpriseId",value = "物流商履历ID")
-    @Excel(name = "物流商履历ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物流商履历ID", height = 20, width = 30)
     @Id
     @Column(name = "ht_shipment_enterprise_id")
     private Long htShipmentEnterpriseId;
@@ -32,7 +32,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 物流商ID
      */
     @ApiModelProperty(name="shipmentEnterpriseId",value = "物流商ID")
-    @Excel(name = "物流商ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物流商ID", height = 20, width = 30)
     @Column(name = "shipment_enterprise_id")
     private Long shipmentEnterpriseId;
 
@@ -40,7 +40,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 物流商编码
      */
     @ApiModelProperty(name="shipmentEnterpriseCode",value = "物流商编码")
-    @Excel(name = "物流商编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物流商编码", height = 20, width = 30)
     @Column(name = "shipment_enterprise_code")
     private String shipmentEnterpriseCode;
 
@@ -48,7 +48,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 物流商名称
      */
     @ApiModelProperty(name="shipmentEnterpriseName",value = "物流商名称")
-    @Excel(name = "物流商名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物流商名称", height = 20, width = 30)
     @Column(name = "shipment_enterprise_name")
     private String shipmentEnterpriseName;
 
@@ -73,14 +73,14 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 联系人
      */
     @ApiModelProperty(name="contacts",value = "联系人")
-    @Excel(name = "联系人", height = 20, width = 30,orderNum="") 
+    @Excel(name = "联系人", height = 20, width = 30)
     private String contacts;
 
     /**
      * 联系电话
      */
     @ApiModelProperty(name="phone",value = "联系电话")
-    @Excel(name = "联系电话", height = 20, width = 30,orderNum="") 
+    @Excel(name = "联系电话", height = 20, width = 30)
     private String phone;
 
     /**
@@ -108,14 +108,14 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30)
     private Byte status;
 
     /**
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -123,7 +123,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -132,7 +132,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -140,7 +140,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -149,7 +149,7 @@ public class BaseHtShipmentEnterprise implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
 

@@ -26,7 +26,7 @@ public class QmsHtPdaInspection implements Serializable {
      * PDA质检历史ID
      */
     @ApiModelProperty(name="htPdaInspectionDetId",value = "PDA质检历史ID")
-    @Excel(name = "PDA质检历史ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "PDA质检历史ID", height = 20, width = 30)
     @Id
     @Column(name = "ht_pda_inspection_id")
     private Long htPdaInspectionId;
@@ -35,7 +35,7 @@ public class QmsHtPdaInspection implements Serializable {
      * PDA质检ID
      */
     @ApiModelProperty(name="pdaInspectionDetId",value = "PDA质检ID")
-    @Excel(name = "PDA质检ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "PDA质检ID", height = 20, width = 30)
     @Column(name = "pda_inspection_id")
     private Long pdaInspectionId;
 
@@ -43,7 +43,7 @@ public class QmsHtPdaInspection implements Serializable {
      * PDA质检单号
      */
     @ApiModelProperty(name="pdaInspectionCode",value = "PDA质检单号")
-    @Excel(name = "PDA质检单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "PDA质检单号", height = 20, width = 30)
     @Column(name = "pda_inspection_code")
     private String pdaInspectionCode;
 

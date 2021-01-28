@@ -6,7 +6,11 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmMatchingOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessListWorkOrderDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMatchingOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityConfirmation;
@@ -59,41 +63,73 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     @Override
     public MesPmMatchingOrderDto findMinMatchingQuantity(String workOrderCardId) {
 
-        //获取工单流转卡和部件的流转卡
-        SearchQmsQualityConfirmation searchQmsQualityConfirmation = new SearchQmsQualityConfirmation();
-        searchQmsQualityConfirmation.setParentWorkOrderCardPoolCode(workOrderCardId);
-        List<QmsQualityConfirmationDto> qmsQualityConfirmationDtos = qmsFeignApi.findQualityConfirmationList(searchQmsQualityConfirmation).getData();
-        MesPmMatchingOrderDto mesPmMatchingOrderDto = new MesPmMatchingOrderDto();
-        QmsQualityConfirmationDto qmsQualityConfirmationDto1 = qmsQualityConfirmationDtos.get(0);
-        /*if (StringUtils.isEmpty(qmsQualityConfirmationDto1)){
-            throw new BizErrorException("")
-        }*/
-        BeanUtils.copyProperties(qmsQualityConfirmationDto1, mesPmMatchingOrderDto);
-
-        List<BigDecimal> minMatchingQuantitys = new ArrayList<>();//保存最小齐套数量集合
-
-        for (QmsQualityConfirmationDto qmsQualityConfirmationDto : qmsQualityConfirmationDtos) {
-            //获取部件用量
-            BigDecimal dosage = qmsQualityConfirmationDto.getDosage();
-            if (dosage == null || BigDecimal.valueOf(0).compareTo(dosage) == 0 || BigDecimal.valueOf(0).compareTo(dosage) == 1) {
-                continue;
-            }
-            //合格数量
-            BigDecimal qualifiedQuantity = qmsQualityConfirmationDto.getQualifiedQuantity();
-            if (qualifiedQuantity.compareTo(dosage) == -1) {
-                throw new BizErrorException("质检合格数不足一套");
-            }
-            if (dosage.equals(BigDecimal.ZERO)) {
-                throw new BizErrorException("部件用量不能为0");
-            }
-
-            BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity, 0, RoundingMode.HALF_UP); //最小齐套数
-            minMatchingQuantitys.add(minMatchingQuantity);
+        //通过流转卡号获取流转卡信息
+        ProcessListWorkOrderDTO processListWorkOrderDTO = pmFeignApi.selectWorkOrderDtoByWorkOrderCardId(workOrderCardId).getData();
+        if (StringUtils.isEmpty(processListWorkOrderDTO)){
+            throw new BizErrorException("无法获取该流转卡的相应信息");
         }
-        //获取最小齐套数
-        BigDecimal min = Collections.min(minMatchingQuantitys);
-        mesPmMatchingOrderDto.setMinMatchingQuantity(min);
-        return mesPmMatchingOrderDto;
+
+        //父id为0则该流转卡为工单流转卡
+        if (0 == processListWorkOrderDTO.getParentId()){
+
+            List<BigDecimal> minMatchingQuantitys = new ArrayList<>();//保存最小齐套数量集合
+
+            //1.通过工单流转卡id获取部件流转卡id
+            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+            searchSmtWorkOrderCardPool.setParentId(processListWorkOrderDTO.getWorkOrderCardPoolId());
+            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtos = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+
+            for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos) {
+                //通过部件流转卡ID获取部件配套单
+                MesPmMatchingOrder mesPmMatchingOrder = mesPmMatchingOrderMapper.selectByPrimaryKey(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                minMatchingQuantitys.add(mesPmMatchingOrder.getMinMatchingQuantity());
+
+            }
+            //获取最小齐套数
+            BigDecimal min = Collections.min(minMatchingQuantitys);
+            MesPmMatchingOrderDto mesPmMatchingOrderDto = new MesPmMatchingOrderDto();//保存成品的配套单
+            BeanUtils.copyProperties(processListWorkOrderDTO, mesPmMatchingOrderDto);
+            mesPmMatchingOrderDto.setMinMatchingQuantity(min);
+            return mesPmMatchingOrderDto;
+        }else {
+            //获取部件的流转卡
+            SearchQmsQualityConfirmation searchQmsQualityConfirmation = new SearchQmsQualityConfirmation();
+            searchQmsQualityConfirmation.setParentWorkOrderCardPoolCode(workOrderCardId);
+            List<QmsQualityConfirmationDto> qmsQualityConfirmationDtos = qmsFeignApi.findQualityConfirmationList(searchQmsQualityConfirmation).getData();
+            QmsQualityConfirmationDto qmsQualityConfirmationDto1 = qmsQualityConfirmationDtos.get(0);
+            if (StringUtils.isEmpty(qmsQualityConfirmationDto1)){
+                throw new BizErrorException("流转卡号对应的流转卡不存在");
+            }
+
+            MesPmMatchingOrderDto mesPmMatchingOrderDto = new MesPmMatchingOrderDto();//部件的配套单
+            BeanUtils.copyProperties(qmsQualityConfirmationDto1, mesPmMatchingOrderDto);
+
+            for (QmsQualityConfirmationDto qmsQualityConfirmationDto : qmsQualityConfirmationDtos) {
+                //获取部件用量
+                BigDecimal dosage = qmsQualityConfirmationDto.getDosage();
+
+                //部件用量必须大于0
+                if (dosage == null || BigDecimal.valueOf(0).compareTo(dosage) == 0 || BigDecimal.valueOf(0).compareTo(dosage) == 1) {
+                    throw new BizErrorException("部件用量必须大于0");
+                }
+
+                //合格数量
+                BigDecimal qualifiedQuantity = qmsQualityConfirmationDto.getQualifiedQuantity();
+                if (qualifiedQuantity.compareTo(dosage) == -1) {
+                    throw new BizErrorException("质检合格数不足一套");
+                }
+                if (dosage.equals(BigDecimal.ZERO)) {
+                    throw new BizErrorException("部件用量不能为0");
+                }
+
+                BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity, 0, RoundingMode.HALF_UP); //最小齐套数
+
+                mesPmMatchingOrderDto.setMinMatchingQuantity(minMatchingQuantity);
+            }
+
+            return mesPmMatchingOrderDto;
+        }
+
     }
 
     @Override

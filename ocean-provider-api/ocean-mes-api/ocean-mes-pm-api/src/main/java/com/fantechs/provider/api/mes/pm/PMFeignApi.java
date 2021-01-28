@@ -120,4 +120,14 @@ public interface PMFeignApi {
     ResponseEntity<String> generateMaxCode(
             @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
             @ApiParam(value = "最大条码数")@RequestParam String maxCode);
+
+    @ApiOperation("通过流程单获取工单相关信息")
+    @PostMapping("/smtWorkOrderCardPool/findWO")
+    ResponseEntity<ProcessListWorkOrderDTO> selectWorkOrderDtoByWorkOrderCardId(
+            @ApiParam(value = "流程单编码")@RequestParam String workOrderCardId
+    );
+
+    @ApiOperation("列表")
+    @PostMapping("/smtWorkOrderCardPool/findList")
+    ResponseEntity<List<SmtWorkOrderCardPoolDto>> findWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
 }

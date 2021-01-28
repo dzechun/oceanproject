@@ -243,11 +243,13 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                 }
             }
 
-            if(StringUtils.isEmpty(initialValue)||initialValue<1){
-                throw new BizErrorException("初始值不能为空必须大于0");
-            }
-            if(StringUtils.isEmpty(step)||step<1){
-                throw new BizErrorException("步长不能为空必须大于0");
+            if(specification.contains("S")||specification.contains("F")){
+                if(StringUtils.isEmpty(initialValue)||initialValue<1){
+                    throw new BizErrorException("初始值不能为空必须大于0");
+                }
+                if(StringUtils.isEmpty(step)||step<1){
+                    throw new BizErrorException("步长不能为空必须大于0");
+                }
             }
             smtBarcodeRuleSpec.setBarcodeRuleId(smtBarcodeRule.getBarcodeRuleId());
             specs.add(specification);

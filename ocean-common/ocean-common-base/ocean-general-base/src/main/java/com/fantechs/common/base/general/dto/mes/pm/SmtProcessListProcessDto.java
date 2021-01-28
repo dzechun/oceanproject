@@ -46,7 +46,7 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
      */
     @Transient
     @ApiModelProperty(name="taskCode",value = "任务单号")
-    @Excel(name = "任务单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "任务单号", height = 20, width = 30)
     private String taskCode;
 
     /**
@@ -54,7 +54,7 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
      */
     @Transient
     @ApiModelProperty(name="barcodeTaskCode",value = "条码任务单号")
-    @Excel(name = "条码任务单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "条码任务单号", height = 20, width = 30)
     private String barcodeTaskCode;
 
     /**
