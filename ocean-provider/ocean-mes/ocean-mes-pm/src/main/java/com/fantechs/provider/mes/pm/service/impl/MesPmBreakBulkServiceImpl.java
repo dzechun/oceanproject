@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.*;
@@ -55,6 +56,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             Example example = new Example(MesPmBreakBulkDet.class);
             example.createCriteria().andEqualTo("breakBulkId",li.getBreakBulkId());
             List<MesPmBreakBulkDet> dtoList = mesPmBreakBulkDetMapper.selectByExample(example);
+            li.setModifiedTime(new Date());
             li.setMesPmBreakBulkDets(dtoList);
         });
         return list;
@@ -147,13 +149,13 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     //过站中
                     up.setStatus((byte)1);
                     up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
-                    up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
+                    up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
                     smtProcessListProcessMapper.insertSelective(up);
                     isUp = true;
                 }else{
                     //生成流程单down
                     up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
-                    up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
+                    up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
                     smtProcessListProcessMapper.insertSelective(up);
                 }
             }
@@ -170,9 +172,46 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
             up.setProcessListProcessId(null);
             up.setOutputQuantity(record.getBreakBulkBatchQty());
-            up.setWorkOrderCardPoolId(sm.getWorkOrderCardPoolId());
+            up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
             smtProcessListProcessMapper.insertSelective(up);
         }
         return record;
+    }
+
+    @Override
+    public MesPmBreakBulkPrintDto reprint(SearchMesPmBreakBulk searchMesPmBreakBulk) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if(searchMesPmBreakBulk.getBreakBulkType()==(byte)1){
+            Example example = new Example(MesPmBreakBulkDet.class);
+            example.createCriteria().andEqualTo("childLotNo",searchMesPmBreakBulk.getBatchNo());
+            MesPmBreakBulkDet mesPmBreakBulkDet = new MesPmBreakBulkDet();
+            mesPmBreakBulkDet.setModifiedUserId(user.getUserId());
+            mesPmBreakBulkDet.setModifiedTime(new Date());
+            int num =mesPmBreakBulkDetMapper.updateByExampleSelective(mesPmBreakBulkDet,example);
+            if(num>0){
+                MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkDetMapper.reprintDet(searchMesPmBreakBulk);
+                return mesPmBreakBulkPrintDto;
+            }else {
+                throw new BizErrorException("更新打印日期失败");
+            }
+        }else if (searchMesPmBreakBulk.getBreakBulkType()==(byte)2){
+            Example example = new Example(MesPmBreakBulk.class);
+            example.createCriteria().andEqualTo("batchNo",searchMesPmBreakBulk.getBatchNo());
+            MesPmBreakBulk mesPmBreakBulk = new MesPmBreakBulkDto();
+            mesPmBreakBulk.setModifiedUserId(user.getUserId());
+            mesPmBreakBulk.setModifiedTime(new Date());
+            int num =mesPmBreakBulkMapper.updateByExampleSelective(mesPmBreakBulk,example);
+            if(num>0){
+                MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkMapper.reprint(searchMesPmBreakBulk);
+                return mesPmBreakBulkPrintDto;
+            }else {
+                throw new BizErrorException("更新打印日期失败");
+            }
+
+        }
+        return null;
     }
 }
