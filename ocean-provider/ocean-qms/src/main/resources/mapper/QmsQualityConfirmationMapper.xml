@@ -96,7 +96,7 @@
         and qqc.quality_confirmation_code like CONCAT('%', #{qualityConfirmationCode}, '%')
       </if>
       <if test="workOrderCardPoolCode != null and workOrderCardPoolCode != ''">
-        and swocp.work_order_card_id like CONCAT('%', #{workOrderCardPoolCode}, '%')
+        and swocp.work_order_card_id = #{workOrderCardPoolCode}
       </if>
       <if test="parentWorkOrderCardPoolCode != null and parentWorkOrderCardPoolCode != ''">
         and sswocp.work_order_card_id = #{parentWorkOrderCardPoolCode}
