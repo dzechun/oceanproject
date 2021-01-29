@@ -115,4 +115,11 @@
     left join fantech_imes.smt_factory f on sd.factory_id=f.factory_id
     where f.factory_name=#{factoryName} and sd.dept_name=#{deptName}
   </select>
+
+  <select id="findAllRoleId" parameterType="long" resultType="java.lang.String">
+      select role_id
+      from sys_user_role sur
+      where sur.user_id = #{userId}
+  </select>
+
 </mapper>

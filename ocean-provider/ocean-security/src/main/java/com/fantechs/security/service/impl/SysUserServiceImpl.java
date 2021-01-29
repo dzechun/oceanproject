@@ -226,4 +226,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         return  i;
     }
 
+    @Override
+    public List<String> findAllRoleId(Long userId) {
+        return sysUserMapper.findAllRoleId(userId);
+    }
 }

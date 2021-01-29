@@ -54,6 +54,12 @@ public class QmsHtBadItem extends ValidGroup implements Serializable {
     @Column(name = "bad_type_cause")
     private String badTypeCause;
 
+    /**
+     * 工段ID
+     */
+    @ApiModelProperty(name="sectionId",value = "工段ID")
+    @Column(name = "section_id")
+    private Long sectionId;
 
     /**
      * 工序ID

@@ -42,12 +42,28 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        bo.organization_name
+        bo.organization_name,ss.storage_code,ss.storage_name,sm.material_desc,sm.material_name
         FROM smt_storage_inventory_det ssid
         LEFT JOIN ocean.sys_user su ON ssid.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON ssid.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON ssid.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_inventory_id = ssid.storage_inventory_id
+        LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssi.storage_id
+        LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.storage_id = ssi.storage_id
+        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssm.material_id
         <where>
+            <if test="materialDesc!= null and materialDesc !='' ">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="storageCode!= null and storageCode !='' ">
+                and ss.storage_code like CONCAT('%', #{storageCode}, '%')
+            </if>
+            <if test="storageName!= null and storageName !='' ">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="materialCode!= null and materialCode !='' ">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
