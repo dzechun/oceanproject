@@ -113,6 +113,7 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被工序以用
             Example example = new Example(SmtProcess.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("processCategoryId",smtProcessCategory.getProcessCategoryId());

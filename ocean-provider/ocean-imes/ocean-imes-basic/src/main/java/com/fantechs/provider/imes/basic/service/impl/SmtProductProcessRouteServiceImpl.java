@@ -161,6 +161,7 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
             if(StringUtils.isEmpty(smtProductProcessRoute)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012000,productProcessRouteId);
             }
+
             //新增产品工艺路线历史信息
             SmtHtProductProcessRoute smtHtProductProcessRoute=new SmtHtProductProcessRoute();
             BeanUtils.copyProperties(smtProductProcessRoute,smtHtProductProcessRoute);

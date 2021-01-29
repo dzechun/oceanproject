@@ -126,13 +126,11 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
              smtHtRoute.setModifiedTime(new Date());
              list.add(smtHtRoute);
 
+             //删除工艺路线和工序的绑定关系
              Example example = new Example(SmtRouteProcess.class);
              Example.Criteria criteria = example.createCriteria();
              criteria.andEqualTo("routeId",routeId);
-             List<SmtRouteProcess> smtRouteProcesses = smtRouteProcessMapper.selectByExample(example);
-             if(StringUtils.isNotEmpty(smtRouteProcesses)){
-                 throw new BizErrorException("工艺路线被引用，不能删除");
-             }
+             smtRouteProcessMapper.deleteByExample(example);
          }
          smtHtRouteMapper.insertList(list);
 

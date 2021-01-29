@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.SmtStation;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProcess;
@@ -13,8 +14,10 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProcessMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProcessMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtRouteProcessMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtStationMapper;
 import com.fantechs.provider.imes.basic.service.SmtProcessService;
+import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +37,12 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
 
     @Resource
     private SmtProcessMapper smtProcessMapper;
-
     @Resource
     private SmtHtProcessMapper smtHtProcessMapper;
-
     @Resource
     private SmtStationMapper smtStationMapper;
+    @Resource
+    private SmtRouteProcessMapper smtRouteProcessMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -94,6 +97,15 @@ public class SmtProcessServiceImpl  extends BaseService<SmtProcess> implements S
             criteria.andEqualTo("processId",smtProcess.getProcessId());
             List<SmtStation> smtStations = smtStationMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(smtStations)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+            }
+
+            //被工艺路线引用
+            Example example1 = new Example(SmtRouteProcess.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("processId",smtProcess.getProcessId());
+            List<SmtRouteProcess> smtRouteProcesses = smtRouteProcessMapper.selectByExample(example1);
+            if (StringUtils.isNotEmpty(smtRouteProcesses)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 
