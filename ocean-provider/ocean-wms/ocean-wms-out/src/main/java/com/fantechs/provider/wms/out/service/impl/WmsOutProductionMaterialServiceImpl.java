@@ -70,7 +70,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
         example.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterial.getMaterialId());
         List<WmsOutProductionMaterial> wmsOutProductionMaterials = wmsOutProductionMaterialMapper.selectByExample(example);
         if(wmsOutProductionMaterials.isEmpty()){
-            return 0;
+            return 1;
         }
         wmsOutProductionMaterial = wmsOutProductionMaterials.get(0);
 
