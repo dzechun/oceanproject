@@ -1,6 +1,8 @@
 package com.fantechs.provider.mes.pm.controller.pda;
 
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -48,5 +50,12 @@ public class PDAMesBreakBulkController {
         Page<Object> page = PageHelper.startPage(searchMesPmBreakBulkDet.getStartPage(),searchMesPmBreakBulkDet.getPageSize());
         List<MesPmBreakBulkDetDto> list = mesPmBreakBulkDetService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmBreakBulkDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("pda补打")
+    @PostMapping("/reprint")
+    public ResponseEntity<MesPmBreakBulkPrintDto> reprint(@ApiParam(value = "查询对象")@RequestBody SearchMesPmBreakBulk searchMesPmBreakBulk){
+        MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkService.reprint(searchMesPmBreakBulk);
+        return ControllerUtil.returnDataSuccess(mesPmBreakBulkPrintDto,1);
     }
 }
