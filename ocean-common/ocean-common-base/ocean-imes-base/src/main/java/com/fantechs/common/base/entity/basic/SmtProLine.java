@@ -79,7 +79,6 @@ public class SmtProLine extends ValidGroup implements Serializable {
      */
     @Column(name = "work_shop_id")
     @ApiModelProperty(name="workShopId" ,value="车间ID")
-    @NotNull(message = "车间id不能为空")
     private Long workShopId;
 
     /**
