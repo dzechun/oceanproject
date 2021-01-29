@@ -44,9 +44,9 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
         }
 
         smtStorageInventoryDet.setCreateTime(new Date());
-        smtStorageInventoryDet.setCreateUserId(currentUser.getUserId());
+        smtStorageInventoryDet.setCreateUserId(currentUser == null?0:currentUser.getUserId());
         smtStorageInventoryDet.setModifiedTime(new Date());
-        smtStorageInventoryDet.setModifiedUserId(currentUser.getUserId());
+        smtStorageInventoryDet.setModifiedUserId(currentUser == null?0:currentUser.getUserId());
         smtStorageInventoryDet.setStatus(StringUtils.isEmpty(smtStorageInventoryDet.getStatus())?1:smtStorageInventoryDet.getStatus());
 
         return smtStorageInventoryDetMapper.insertUseGeneratedKeys(smtStorageInventoryDet);
