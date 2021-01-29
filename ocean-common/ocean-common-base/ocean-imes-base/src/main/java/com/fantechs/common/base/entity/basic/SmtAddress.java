@@ -55,10 +55,18 @@ public class SmtAddress extends ValidGroup implements Serializable {
      * 详细地址
      */
     @ApiModelProperty(name="addressDetail",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30,orderNum="1")
+    @Excel(name = "详细地址", height = 20, width = 30)
     @Column(name = "address_detail")
     @NotBlank(message = "详细地址不能为空")
     private String addressDetail;
+
+    /**
+     * 完整地址
+     */
+    @ApiModelProperty(name="addressDetail",value = "完整地址")
+    @Excel(name = "完整地址", height = 20, width = 30,orderNum="1")
+    @Column(name = "complete_detail")
+    private String completeDetail;
 
     /**
      * 邮政编码

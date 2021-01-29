@@ -1,7 +1,10 @@
 package com.fantechs.provider.om.service.impl;
 
 import com.fantechs.common.base.general.dto.om.MesScheduleDetailDTO;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
+import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.provider.om.service.MesScheduleDetailService;
 import com.fantechs.provider.om.mapper.MesScheduleDetailMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +70,19 @@ public class MesScheduleDetailServiceImpl extends BaseService<MesScheduleDetail>
         mesScheduleDetail.setCreateUserId(null);
         mesScheduleDetail.setIsDelete((byte)1);
         return mesScheduleDetailMapper.insertSelective(mesScheduleDetail);
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesScheduleDetail mesScheduleDetail = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesScheduleDetail)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+        return super.batchDelete(ids);
     }
 
     @Override

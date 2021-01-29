@@ -25,7 +25,7 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
      * 拆批作业id
      */
     @ApiModelProperty(name="breakBulkId",value = "拆批作业id")
-    @Excel(name = "拆批作业id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "拆批作业id", height = 20, width = 30)
     @Id
     @Column(name = "break_bulk_id")
     private Long breakBulkId;
@@ -34,7 +34,7 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
      * 拆批作业单号
      */
     @ApiModelProperty(name="breakBulkCode",value = "拆批作业单号")
-    @Excel(name = "拆批作业单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "拆批作业单号", height = 20, width = 30)
     @Column(name = "break_bulk_code")
     private String breakBulkCode;
 
@@ -42,7 +42,7 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工单ID", height = 20, width = 30)
     @Column(name = "work_order_id")
     private Long workOrderId;
 
@@ -62,7 +62,6 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
     /**
      * 工序id
      */
-    @Transient
     @ApiModelProperty(name = "processId",value = "工序id")
     @Column(name = "process_id")
     private Long processId;

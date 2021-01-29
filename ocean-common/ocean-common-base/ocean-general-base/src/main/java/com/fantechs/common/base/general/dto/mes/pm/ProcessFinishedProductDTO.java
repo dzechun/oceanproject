@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @Auther: bingo.ren
@@ -21,7 +23,11 @@ public class ProcessFinishedProductDTO {
     @ApiModelProperty(value = "本次报工数量",example = "本次报工数量")
     private BigDecimal curOutputQty;
     @ApiModelProperty(value = "操作方式(1、保存 2、提交)",example = "操作方式(1、保存 2、提交)")
-    private int operation=1;
+    private Byte operation=1;
     @ApiModelProperty(value = "工序操作类型（1、开工 2、报工）",example = "工序操作类型（1、开工 2、报工）")
     private Byte processType;
+    @ApiModelProperty(value = "开料（0、否 1、是）",example = "开料（0、否 1、是）")
+    private Integer putInto=0;
+    @ApiModelProperty(value = "部件组成ID集合",example = "部件组成ID集合")
+    private List<Long> platePartsDetIdList=new LinkedList<>();
 }

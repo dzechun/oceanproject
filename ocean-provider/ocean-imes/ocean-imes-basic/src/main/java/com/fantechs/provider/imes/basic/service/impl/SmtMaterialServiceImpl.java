@@ -83,7 +83,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-
         smtMaterial.setCreateUserId(currentUser.getUserId());
         smtMaterial.setCreateTime(new Date());
         smtMaterial.setModifiedUserId(currentUser.getUserId());
@@ -92,12 +91,10 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
         //新增物料页签信息
         BaseTab baseTab = smtMaterial.getBaseTab();
+        if (0 >= baseTab.getTransferQuantity()){
+            throw new BizErrorException("转移批量必须大于0");
+        }
         baseTab.setMaterialId(smtMaterial.getMaterialId());
-        baseTab.setCreateUserId(currentUser.getUserId());
-        baseTab.setCreateTime(new Date());
-        baseTab.setModifiedUserId(currentUser.getUserId());
-        baseTab.setModifiedTime(new Date());
-        baseTab.setStatus(smtMaterial.getStatus());
         baseFeignApi.addTab(baseTab);
 
         //新增物料历史信息
@@ -129,21 +126,17 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         smtMaterial.setModifiedTime(new Date());
         int i = smtMaterialMapper.updateByPrimaryKeySelective(smtMaterial);
 
-        //更新页签
         BaseTab baseTab = smtMaterial.getBaseTab();
-        if (StringUtils.isNotEmpty(baseTab)) {
-            if (StringUtils.isNotEmpty(baseTab.getTabId())){
-                baseTab.setModifiedTime(new Date());
-                baseTab.setModifiedUserId(currentUser.getUserId());
-                baseTab.setStatus(smtMaterial.getStatus());
-                baseFeignApi.updateTab(baseTab);
-            }else {
-                baseTab.setCreateUserId(currentUser.getUserId());
-                baseTab.setCreateTime(new Date());
-                baseTab.setModifiedUserId(currentUser.getUserId());
-                baseTab.setModifiedTime(new Date());
-                baseTab.setStatus(material.getStatus());
+        if (StringUtils.isNotEmpty(baseTab)){
+            //判断该物料的页签是否存在
+            SearchBaseTab searchBaseTab = new SearchBaseTab();
+            searchBaseTab.setMaterialId(smtMaterial.getMaterialId());
+            List<BaseTabDto> baseTabDtos = baseFeignApi.findTabList(searchBaseTab).getData();
+            if (StringUtils.isEmpty(baseTabDtos)){
+                //新增页签
                 baseFeignApi.addTab(baseTab);
+            }else {
+                baseFeignApi.updateTab(baseTab);
             }
 
         }
@@ -238,13 +231,11 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         if (StringUtils.isNotEmpty(smtMaterials)) {
             Example example = new Example(SmtMaterial.class);
             for (SmtMaterial smtMaterial : smtMaterials) {
-
                 smtMaterial.setModifiedTime(new Date());
 
                 //更新页签
                 BaseTab baseTab = smtMaterial.getBaseTab();
                 if (StringUtils.isNotEmpty(baseTab)) {
-                    baseTab.setModifiedTime(new Date());
                     baseFeignApi.updateTab(baseTab);
                 }
             }
@@ -311,8 +302,6 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 BaseTab baseTab = smtMaterial.getBaseTab();
                 if (StringUtils.isNotEmpty(baseTab)) {
                     baseTab.setMaterialId(smtMaterial.getMaterialId());
-                    baseTab.setCreateTime(new Date());
-                    baseTab.setModifiedTime(new Date());
                     baseFeignApi.addTab(baseTab);
                 }
             }

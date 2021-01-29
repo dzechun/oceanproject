@@ -1,64 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtSupplierMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtSupplier">
-    <id column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
-    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
-    <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc" />
-    <result column="supplier_type" jdbcType="TINYINT" property="supplierType" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtSupplier">
+        <id column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc"/>
+        <result column="supplier_type" jdbcType="TINYINT" property="supplierType"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-    <collection property="list" column="supplier_id" ofType="com.fantechs.common.base.dto.basic.SmtAddressDto"
-                select="com.fantechs.provider.imes.basic.mapper.SmtAddressMapper.findBySupplierId"></collection>
-  </resultMap>
-  <select id="findList" resultMap="BaseResultMap">
-    select su.supplier_id, su.supplier_code, su.supplier_name, su.supplier_desc,su.supplier_type,
-    su.status, su.create_user_id,u.user_name as createUserName,su.create_time,su.modified_user_id,
-    s.user_name as modifiedUserName, su.modified_time,su.is_delete, su.organization_id, su.remark, bo.organization_name
-    from fantech_imes.smt_supplier su
-    left join ocean.sys_user u on su.create_user_id=u.user_id
-    left join ocean.sys_user s on su.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON su.organization_id = bo.organization_id
-    <if test="addressDetail!=null and addressDetail!=''">
-      LEFT JOIN fantech_imes.smt_supplier_address ssa ON ssa.supplier_id = su.supplier_id
-      LEFT JOIN fantech_imes.smt_address sa ON sa.address_id = ssa.address_id
-    </if>
-    <where>
-      1=1
-      <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-        AND date_format(su.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="supplierCode!=null and supplierCode!=''">
-        and su.supplier_code like CONCAT('%', #{supplierCode}, '%')
-      </if>
-      <if test="supplierName!=null and supplierName!=''">
-        and su.supplier_name like CONCAT('%', #{supplierName}, '%')
-      </if>
-      <if test="supplierDesc!=null and supplierDesc!=''">
-        and su.supplier_desc like CONCAT('%', #{supplierDesc}, '%')
-      </if>
-      <if test="supplierType!=null and supplierType!=''">
-        and su.supplier_type=#{supplierType}
-      </if>
-      <if test="status!=null">
-        and su.status=#{status}
-      </if>
-      <if test="addressDetail!=null and addressDetail!=''">
-        and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
-      </if>
-    </where>
-    order by su.create_time desc
-  </select>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <collection property="list" column="supplier_id" ofType="com.fantechs.common.base.dto.basic.SmtAddressDto"
+                    select="com.fantechs.provider.imes.basic.mapper.SmtAddressMapper.findBySupplierId"></collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ss.supplier_id,
+        ss.supplier_code,
+        ss.supplier_name,
+        ss.supplier_desc,
+        ss.address_id,
+        ss.supplier_abbreviation,
+        ss.supplier_logo,
+        ss.liaison_man,
+        ss.telephone,
+        ss.supplier_type,
+        ss.`status`,
+        ss.remark,
+        ss.organization_id,
+        ss.create_user_id,
+        ss.create_time,
+        ss.modified_user_id,
+        ss.modified_time,
+        ss.is_delete,
+        ss.option1,
+        ss.option2,
+        ss.option3
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes.smt_supplier ss
+        left join ocean.sys_user u on ss.create_user_id=u.user_id
+        left join ocean.sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON ss.organization_id = bo.organization_id
+        <if test="addressDetail!=null and addressDetail!=''">
+            LEFT JOIN fantech_imes.smt_supplier_address ssa ON ssa.supplier_id = ss.supplier_id
+            LEFT JOIN fantech_imes.smt_address sa ON sa.address_id = ssa.address_id
+        </if>
+        <where>
+            <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
+                AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="supplierCode!=null and supplierCode!=''">
+                and ss.supplier_code like CONCAT('%', #{supplierCode}, '%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="supplierDesc!=null and supplierDesc!=''">
+                and ss.supplier_desc like CONCAT('%', #{supplierDesc}, '%')
+            </if>
+            <if test="supplierType!=null and supplierType!=''">
+                and ss.supplier_type=#{supplierType}
+            </if>
+            <if test="status!=null">
+                and ss.status=#{status}
+            </if>
+            <if test="addressDetail!=null and addressDetail!=''">
+                and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
+            </if>
+        </where>
+        order by ss.create_time desc
+    </select>
 </mapper>

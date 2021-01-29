@@ -34,7 +34,7 @@ public class SmtBarcodeRuleSpecServiceImpl extends BaseService<SmtBarcodeRuleSpe
         @Override
         public List<SmtBarcodeRuleSpec> findSpec(SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec) {
                 Example example = new Example(SmtBarcodeRuleSpec.class);
-                example.createCriteria().andEqualTo("BarcodeRuleId",searchSmtBarcodeRuleSpec.getBarcodeRuleId());
+                example.createCriteria().andEqualTo("barcodeRuleId",searchSmtBarcodeRuleSpec.getBarcodeRuleId());
                 return smtBarcodeRuleSpecMapper.selectByExample(example);
         }
 

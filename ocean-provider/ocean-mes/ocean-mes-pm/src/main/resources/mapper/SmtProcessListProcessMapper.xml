@@ -71,6 +71,7 @@
         SELECT
         wo.work_order_code AS 'workOrderCode',
         wo.production_quantity AS 'productionQuantity',
+        wo.work_order_quantity AS 'workOrderQuantity',
         swocp.task_code AS 'taskCode',
         swobp.task_code AS 'barcodeTaskCode',
         swocp.work_order_card_id AS 'workOrderCardId',
@@ -115,18 +116,18 @@
         su1.user_name AS 'createUserName',
         su2.user_name AS 'modifiedUserName'
         FROM
-        smt_process_list_process splp
-        LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_pool_id
-        LEFT JOIN smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id = splp.work_order_barcode_pool_id
-        LEFT JOIN smt_work_order wo ON wo.work_order_id = swocp.work_order_id
-        LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
-        LEFT JOIN base_tab bt ON bt.material_id = sm.material_id
-        LEFT JOIN smt_route sr ON wo.route_id = sr.route_id
-        LEFT JOIN smt_order so ON wo.order_id = so.order_id
-        LEFT JOIN smt_station ss ON ss.process_id = splp.process_id
-        LEFT JOIN smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
-        LEFT JOIN smt_process sp ON sp.process_id = splp.process_id
-        LEFT JOIN base_organization bo ON splp.organization_id = bo.organization_id
+        fantech_imes.smt_process_list_process splp
+        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_pool_id
+        LEFT JOIN fantech_imes.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id = splp.work_order_barcode_pool_id
+        LEFT JOIN fantech_imes.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
+        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = wo.material_id
+        LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes.smt_route sr ON wo.route_id = sr.route_id
+        LEFT JOIN fantech_imes.smt_order so ON wo.order_id = so.order_id
+        LEFT JOIN fantech_imes.smt_station ss ON ss.process_id = splp.process_id
+        LEFT JOIN fantech_imes.smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
+        LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = splp.process_id
+        LEFT JOIN fantech_imes.base_organization bo ON splp.organization_id = bo.organization_id
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = splp.create_user_id
         LEFT JOIN ocean.sys_user su2 ON su2.user_id = splp.modified_user_id
         <where>
@@ -138,6 +139,9 @@
             </if>
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="workOrderCardId!=null and workOrderCardId!=''">
+                and swocp.work_order_card_id like CONCAT('%', #{workOrderCardId}, '%')
             </if>
             <if test="proLineId!=null and proLineId!=''">
                 and sml.pro_line_id=#{proLineId}
@@ -166,7 +170,7 @@
             parameterType="com.fantechs.common.base.entity.basic.SmtRouteProcess">
         select
         route_process_id,route_id,section_id,process_id,next_process_id,previous_process_id,order_num,is_pass,is_must_pass,inspection_time,qualification_id
-        from smt_route_process
+        from fantech_imes.smt_route_process
         <where>
             route_id = #{routdId}
         </where>
@@ -185,8 +189,27 @@
                rp.is_must_pass,
                rp.inspection_time,
                rp.qualification_id
-        FROM smt_work_order wo
+        FROM fantech_imes.smt_work_order wo
                  LEFT JOIN smt_route_process rp ON wo.route_id = rp.route_id
         where wo.work_order_id = #{workOrderId}
+    </select>
+    <select id="findSmtProcess" resultType="com.fantechs.common.base.entity.basic.SmtProcess">
+        SELECT
+            sp.is_job_scan AS 'isJobScan',
+            sp.is_start_scan AS 'isStartScan',
+            sp.is_quality AS 'isQuality'
+        FROM
+            smt_process AS sp
+        where sp.process_id = #{id}
+    </select>
+    <select id="findMinOutPut" parameterType="long">
+        SELECT
+            min( splp.output_quantity )
+        FROM
+            smt_process_list_process splp
+        WHERE
+            splp.work_order_card_pool_id = #{workOrderCardPoolId}
+          AND splp.process_type = 2
+          AND splp.STATUS =2
     </select>
 </mapper>

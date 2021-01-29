@@ -29,8 +29,21 @@
 
 
   <sql id="Base_Column_List">
-    shpu.ht_packing_unit_id,shpu.packing_unit_id,shpu.packing_unit_name,shpu.packing_unit_desc,shpu.is_chief,shpu.status,shpu.create_user_id,shpu.create_time,
-    shpu.modified_user_id,shpu.modified_time,shpu.is_delete,shpu.option1,shpu.option2,shpu.option3, shpu.organization_id,
+    shpu.ht_packing_unit_id,
+    shpu.packing_unit_id,
+    shpu.packing_unit_name,
+    shpu.packing_unit_desc,
+    shpu.is_chief,
+    shpu.status,
+    shpu.create_user_id,
+    shpu.create_time,
+    shpu.modified_user_id,
+    shpu.modified_time,
+    shpu.is_delete,
+    shpu.option1,
+    shpu.option2,
+    shpu.option3,
+    shpu.organization_id,
 	shpu.remark
   </sql>
 

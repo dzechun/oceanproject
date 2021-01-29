@@ -91,11 +91,11 @@ public class SmtProcess extends ValidGroup implements Serializable {
     private Byte isJobScan;
 
     /**
-     * 是否开工工扫描（0、否 1、是）
+     * 是否开工扫描（0、否 1、是）
      */
     @Column(name = "is_start_scan")
-    @ApiModelProperty(name= "isStartScan" ,value="是否开工工扫描")
-    @Excel(name = "是否开工工扫描",  height = 20, width = 30,replace = {"否_0", "是_1"})
+    @ApiModelProperty(name= "isStartScan" ,value="是否开工扫描")
+    @Excel(name = "是否开工扫描",  height = 20, width = 30,replace = {"否_0", "是_1"})
     private Byte isStartScan;
 
     /**

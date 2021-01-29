@@ -14,21 +14,18 @@ public class MesPmExplainPlanDTO extends MesPmExplainPlan implements Serializabl
     */
     @Transient
     @ApiModelProperty(value = "创建用户名称",example = "创建用户名称")
-    @Excel(name = "创建用户名称")
     private String createUserName;
     /**
     * 修改用户名称
     */
     @Transient
     @ApiModelProperty(value = "修改用户名称",example = "修改用户名称")
-    @Excel(name = "修改用户名称")
     private String modifiedUserName;
     /**
      * 组织名称
      */
     @Transient
     @ApiModelProperty(value = "组织名称",example = "组织名称")
-    @Excel(name = "组织名称")
     private String organizationName;
     /**
      * 工单编号
@@ -42,14 +39,14 @@ public class MesPmExplainPlanDTO extends MesPmExplainPlan implements Serializabl
      */
     @Transient
     @ApiModelProperty(value = "物料名称",example = "物料名称")
-    @Excel(name = "物料名称")
+    @Excel(name = "产品名称")
     private String materialName;
     /**
      * 物料编号
      */
     @Transient
     @ApiModelProperty(value = "物料编号",example = "物料编号")
-    @Excel(name = "物料编号")
+    @Excel(name = "产品编号")
     private String materialCode;
     /**
      * 产品型号
@@ -63,7 +60,7 @@ public class MesPmExplainPlanDTO extends MesPmExplainPlan implements Serializabl
      */
     @Transient
     @ApiModelProperty(value = "包装规格名称",example = "包装规格名称")
-    @Excel(name = "包装规格名称")
+    @Excel(name = "包装规格")
     private String packageSpecificationName;
     /**
      * 颜色
@@ -79,4 +76,11 @@ public class MesPmExplainPlanDTO extends MesPmExplainPlan implements Serializabl
     @ApiModelProperty(value = "产线名称",example = "产线名称")
     @Excel(name = "产线名称")
     private String proName;
+    /**
+     * 工单状态
+     */
+    @Transient
+    @ApiModelProperty(value = "工单状态",example = "工单状态")
+    @Excel(name = "工单状态")
+    private Byte workOrderStatus;
 }

@@ -33,7 +33,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 栈板/包箱-储位关系表ID
      */
     @ApiModelProperty(name="storagePalletId",value = "栈板/包箱-储位关系表ID")
-    @Excel(name = "栈板/包箱-储位关系表ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "栈板/包箱-储位关系表ID", height = 20, width = 30) 
     @Column(name = "storage_pallet_id")
     private Long storagePalletId;
 
@@ -41,7 +41,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 栈板号/箱号
      */
     @ApiModelProperty(name="palletCode",value = "栈板号/箱号")
-    @Excel(name = "栈板号/箱号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "栈板号/箱号", height = 20, width = 30) 
     @Column(name = "pallet_code")
     private String palletCode;
 
@@ -49,7 +49,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 储位ID
      */
     @ApiModelProperty(name="storageId",value = "储位ID")
-    @Excel(name = "储位ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "储位ID", height = 20, width = 30) 
     @Column(name = "storage_id")
     private Long storageId;
 
@@ -57,7 +57,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 栈板类型（0、栈板 1、包箱）
      */
     @ApiModelProperty(name="palletType",value = "栈板类型（0、栈板 1、包箱）")
-    @Excel(name = "栈板类型（0、栈板 1、包箱）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "栈板类型（0、栈板 1、包箱）", height = 20, width = 30) 
     @Column(name = "pallet_type")
     private Byte palletType;
 
@@ -65,7 +65,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 是否绑定（0、否 1、是）
      */
     @ApiModelProperty(name="isBinding",value = "是否绑定（0、否 1、是）")
-    @Excel(name = "是否绑定（0、否 1、是）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "是否绑定（0、否 1、是）", height = 20, width = 30) 
     @Column(name = "is_binding")
     private Byte isBinding;
 
@@ -73,21 +73,21 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 是否有效（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "是否有效（0、无效 1、有效）")
-    @Excel(name = "是否有效（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "是否有效（0、无效 1、有效）", height = 20, width = 30) 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30) 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织id", height = 20, width = 30) 
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -95,7 +95,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人ID", height = 20, width = 30) 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -103,7 +103,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -112,7 +112,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30) 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -120,7 +120,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -129,7 +129,7 @@ public class SmtHtStoragePallet extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30) 
     @Column(name = "is_delete")
     private Byte isDelete;
 

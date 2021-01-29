@@ -63,6 +63,9 @@
     LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
     LEFT JOIN fantech_imes.smt_route sr ON sr.route_id = bppd.route_id
     <where>
+      <if test="platePartsDetId != null and platePartsDetId!=''">
+        and bppd.plate_parts_det_id = #{platePartsDetId}
+      </if>
       <if test="platePartsId != null and platePartsId!=''">
         and bppd.plate_parts_id = #{platePartsId}
       </if>

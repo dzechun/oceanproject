@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.mapper;
 
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
 import com.fantechs.common.base.mybatis.MyMapper;
@@ -14,5 +15,7 @@ import java.util.Map;
 public interface MesPmBreakBulkMapper extends MyMapper<MesPmBreakBulk> {
     List<MesPmBreakBulkDto> findList(SearchMesPmBreakBulk searchMesPmBreakBulk);
 
-    MesPmBreakBulk sleProcess(@Param("workOrderCardId")String workOrderCardId);
+    Long sleProcess(@Param("workOrderCardId")String workOrderCardId);
+
+    MesPmBreakBulkPrintDto reprint(SearchMesPmBreakBulk searchMesPmBreakBulk);
 }

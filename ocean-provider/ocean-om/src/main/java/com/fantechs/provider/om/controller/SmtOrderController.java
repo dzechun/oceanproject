@@ -1,5 +1,9 @@
 package com.fantechs.provider.om.controller;
 
+import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.general.dto.mes.pm.history.SearchSmtHtOrderListDTO;
+import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.om.SaveOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
@@ -13,6 +17,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.service.SmtOrderService;
+import com.fantechs.provider.om.service.ht.SmtHtOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -40,6 +45,8 @@ public class SmtOrderController {
 
     @Autowired
     private SmtOrderService smtOrderService;
+    @Autowired
+    private SmtHtOrderService smtHtOrderService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -78,6 +85,14 @@ public class SmtOrderController {
         Page<Object> page = PageHelper.startPage(searchSmtOrder.getStartPage(),searchSmtOrder.getPageSize());
         List<SmtOrderDto> list = smtOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation(value = "获取订单履历列表",notes = "获取订单履历列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<SmtHtOrderDTO>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSmtHtOrderListDTO searchSmtHtOrderListDTO){
+        Page<Object> page = PageHelper.startPage(searchSmtHtOrderListDTO.getStartPage(),searchSmtHtOrderListDTO.getPageSize());
+        List<SmtHtOrderDTO> smtHtOrderDTOList = smtHtOrderService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchSmtHtOrderListDTO));
+        return ControllerUtil.returnDataSuccess(smtHtOrderDTOList,(int)page.getTotal());
     }
 
     @ApiOperation("列表及子列表")

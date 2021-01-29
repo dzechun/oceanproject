@@ -30,7 +30,7 @@ import java.util.List;
  * Created by wcz on 2020/09/24.
  */
 @RestController
-@Api(tags = "物料特征码信息")
+@Api(tags = "物料特征码信息管理")
 @RequestMapping("/smtSignature")
 @Validated
 public class SmtSignatureController {

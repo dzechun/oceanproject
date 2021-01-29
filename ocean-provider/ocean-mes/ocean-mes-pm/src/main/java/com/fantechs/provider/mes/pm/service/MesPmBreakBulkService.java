@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.service;
 
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
 import com.fantechs.common.base.support.IService;
@@ -17,4 +18,6 @@ public interface MesPmBreakBulkService extends IService<MesPmBreakBulk> {
     List<MesPmBreakBulkDto> findList(SearchMesPmBreakBulk searchMesPmBreakBulk);
 
     MesPmBreakBulk saveBreak(MesPmBreakBulk mesPmBreakBulk);
+
+    MesPmBreakBulkPrintDto reprint(SearchMesPmBreakBulk searchMesPmBreakBulk);
 }

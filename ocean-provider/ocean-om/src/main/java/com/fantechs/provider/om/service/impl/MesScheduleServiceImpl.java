@@ -1,5 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
+import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBillsDet;
+import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
@@ -120,8 +122,27 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         if(mesScheduleMapper.insertSelective(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
-        recordHistory(mesSchedule.getScheduleId(),"新增");
+        recordHistory(mesSchedule,"新增");
         return 1;
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser sysUser = this.currentUser();
+        List<MesHtSchedule> mesHtScheduleList=new LinkedList<>();
+        String[] idGroup = ids.split(",");
+        for (String id : idGroup) {
+            MesSchedule mesSchedule = this.selectByKey(id);
+            if(StringUtils.isEmpty(mesSchedule)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            MesHtSchedule mesHtSchedule = new MesHtSchedule();
+            BeanUtils.autoFillEqFields(mesSchedule,mesHtSchedule);
+            mesHtSchedule.setModifiedUserId(sysUser.getUserId());
+            mesHtScheduleList.add(mesHtSchedule);
+        }
+        mesHtScheduleService.batchSave(mesHtScheduleList);
+        return super.batchDelete(ids);
     }
 
     @Override
@@ -151,7 +172,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
         if(mesScheduleMapper.updateByPrimaryKeySelective(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
-        recordHistory(mesSchedule.getScheduleId(),"更新");
+        recordHistory(mesSchedule,"更新");
         return 1;
     }
 
@@ -244,13 +265,12 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
     /**
      * 记录操作历史
-     * @param id
+     * @param mesSchedule
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(MesSchedule mesSchedule,String operation){
         MesHtSchedule mesHtSchedule = new MesHtSchedule();
         mesHtSchedule.setOperation(operation);
-        MesSchedule mesSchedule = selectByKey(id);
         if (StringUtils.isEmpty(mesSchedule)){
             return;
         }

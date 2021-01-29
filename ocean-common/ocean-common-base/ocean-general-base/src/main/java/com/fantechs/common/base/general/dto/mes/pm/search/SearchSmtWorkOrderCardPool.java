@@ -4,6 +4,10 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
@@ -26,4 +30,14 @@ public class SearchSmtWorkOrderCardPool extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="cardStatus" ,value="流转卡状态(0-待投产 1-投产中 2-已完成)")
     private Byte cardStatus;
+    /**
+     * 工单流转卡任务池ID
+     */
+    @ApiModelProperty(name="workOrderCardPoolId" ,value="工单流转卡任务池ID")
+    private Long workOrderCardPoolId;
+    /**
+     * 父级ID
+     */
+    @ApiModelProperty(name="parentId" ,value="父级ID")
+    private Long parentId;
 }

@@ -54,13 +54,18 @@
   pb.modified_time,
   pb.modified_user_id,
   pb.is_delete,
-  pb.break_bulk_type
+  pb.break_bulk_type,
+  bt.color AS 'color',
+spm.product_model_name AS 'productModelName',
+bt.material_quality AS 'materialQuality '
 </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk">
     SELECT <include refid="Base_Column_List"/>,wo.work_order_code,sm.material_code,sm.material_name,sm.version,sm.material_desc,wo.production_quantity,spl.pro_name,wo.work_order_status,sr.route_name,sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,bo.organization_name FROM mes_pm_break_bulk pb
         LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
         LEFT join fantech_imes.smt_material sm on wo.material_id=sm.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
         LEFT join fantech_imes.smt_route sr on wo.route_id=sr.route_id
         LEFT join fantech_imes.smt_pro_line spl on wo.pro_line_id=spl.pro_line_id
         LEFT JOIN smt_process sp on sp.process_id = pb.process_id
@@ -77,10 +82,10 @@
         <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(pb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
         </if>
-        <if test="materialCode!=null and materialCode!=null">
+        <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code LIKE CONCAT('%',#{materialCode},'%')
         </if>
-        <if test="workOrderId != null">
+        <if test="workOrderId != null and workOrderId != ''">
             and wo.work_order_id = #{workOrderCode}
         </if>
         <if test="batchNo != null and batchNo != ''">
@@ -88,9 +93,25 @@
 </if>
     </where>
   </select>
-  <select id="sleProcess" resultType="com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk">
-  select plp.process_id FROM smt_work_order_card_pool wocp
+  <select id="sleProcess" resultType="java.lang.Long">
+  select MAX(plp.process_id) as process_id FROM smt_work_order_card_pool wocp
   left join smt_process_list_process plp on plp.work_order_card_pool_id = wocp.work_order_card_pool_id
   where wocp.work_order_card_id= #{workOrderCardId}
+</select>
+<select id="reprint" resultType="com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto">
+SELECT pb.batch_no as 'batchNo',pb.break_bulk_batch_qty as 'breakBulkBatchQty',sm.material_code as 'materialCode',sm.material_name as 'materialName',sm.version,sm.material_desc as 'materialDesc',sr.route_name as 'routeName',s.user_name as 'modifiedUserName',bt.color AS 'color',
+spm.product_model_name AS 'productModelName',
+bt.material_quality AS 'materialQuality ' FROM mes_pm_break_bulk pb
+        LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
+        LEFT join fantech_imes.smt_material sm on wo.material_id=sm.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
+        LEFT join fantech_imes.smt_route sr on wo.route_id=sr.route_id
+        LEFT join ocean.sys_user s on pb.modified_user_id=s.user_id
+        <where>
+        <if test="batchNo != null and batchNo != ''">
+            and pb.batch_no = #{batchNo}
+        </if>
+</where>
 </select>
 </mapper>

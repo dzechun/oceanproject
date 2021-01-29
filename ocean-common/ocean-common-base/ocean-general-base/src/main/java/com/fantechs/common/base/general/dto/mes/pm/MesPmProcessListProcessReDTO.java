@@ -44,7 +44,7 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
      */
     @Transient
     @ApiModelProperty(name="taskCode",value = "任务单号")
-    @Excel(name = "任务单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "任务单号", height = 20, width = 30)
     private String taskCode;
 
     /**
@@ -52,7 +52,7 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
      */
     @Transient
     @ApiModelProperty(name="barcodeTaskCode",value = "条码任务单号")
-    @Excel(name = "条码任务单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "条码任务单号", height = 20, width = 30)
     private String barcodeTaskCode;
 
     /**
@@ -123,11 +123,17 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
     @ApiModelProperty(name = "materialDesc",value = "产品描述")
     private String materialDesc;
     /**
-     * 生产数量
+     * 投产数量
      */
     @Transient
-    @ApiModelProperty(name = "productionQuantity",value = "生产数量")
+    @ApiModelProperty(name = "productionQuantity",value = "投产数量")
     private BigDecimal productionQuantity;
+    /**
+     * 工单数量
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderQuantity",value = "工单数量")
+    private BigDecimal workOrderQuantity;
     /**
      * 产品型号
      */
@@ -144,6 +150,6 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
      * 报工数量
      */
     @ApiModelProperty(name="outputQuantity",value = "报工数量")
-    @Excel(name = "报工数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "报工数量", height = 20, width = 30)
     private BigDecimal outputQuantity;
 }

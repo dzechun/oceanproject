@@ -1,16 +1,22 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
 import com.fantechs.common.base.general.entity.qms.QmsQualityInspection;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionType;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtQualityInspection;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtInspectionTypeMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionTypeMapper;
 import com.fantechs.provider.qms.service.QmsInspectionTypeService;
@@ -20,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -36,10 +39,36 @@ public class QmsInspectionTypeServiceImpl extends BaseService<QmsInspectionType>
     private QmsInspectionTypeMapper qmsInspectionTypeMapper;
     @Resource
     private QmsHtInspectionTypeMapper qmsHtInspectionTypeMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<QmsInspectionTypeDto> findList(Map<String, Object> map) {
         return qmsInspectionTypeMapper.findList(map);
+    }
+
+    @Override
+    public List<QmsInspectionTypeDto> exportExcel(Map<String, Object> map) {
+        List<QmsInspectionTypeDto> list = this.findList(map);
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("inspectionItem");
+        List<SysSpecItem> inspectionItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        searchSysSpecItem.setSpecCode("inspectionLevel");
+        List<SysSpecItem> inspectionLevels = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        searchSysSpecItem.setSpecCode("inspectionTool");
+        List<SysSpecItem> inspectionTools = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        searchSysSpecItem.setSpecCode("testMethod");
+        List<SysSpecItem> testMethods = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+
+
+        for (QmsInspectionTypeDto qmsInspectionTypeDto : list) {
+            qmsInspectionTypeDto.setInspectionNapeName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionItems.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionNape()+"")))).get("name")+"");
+            qmsInspectionTypeDto.setInspectionTypeLevelName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionLevels.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionTypeLevel()+"")))).get("name")+"");
+            qmsInspectionTypeDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionTools.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getInspectionTool()+"")))).get("name")+"");
+            qmsInspectionTypeDto.setTestMethodName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(testMethods.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionTypeDto.getTestMethod()+"")))).get("name")+"");
+        }
+        return list;
     }
 
     @Override

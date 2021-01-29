@@ -36,44 +36,13 @@ public class MesHtOrderMaterialController {
     private MesHtOrderMaterialService mesHtOrderMaterialService;
 
     @ApiOperation("查询销售订单与物料历史列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<MesHtOrderMaterialDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesHtOrderMaterialListDTO searchMesHtOrderMaterialListDTO
     ){
         Page<Object> page = PageHelper.startPage(searchMesHtOrderMaterialListDTO.getStartPage(), searchMesHtOrderMaterialListDTO.getPageSize());
         List<MesHtOrderMaterialDTO> mesHtOrderMaterialDTOList = mesHtOrderMaterialService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesHtOrderMaterialListDTO));
         return ControllerUtil.returnDataSuccess(mesHtOrderMaterialDTOList,(int)page.getTotal());
-    }
-
-    @ApiOperation("通过ID查询销售订单与物料历史")
-    @GetMapping("one")
-    public ResponseEntity<MesHtOrderMaterial> one(@ApiParam(value = "销售订单与物料历史对象ID",required = true)@RequestParam Long id){
-        MesHtOrderMaterial mesHtOrderMaterial = mesHtOrderMaterialService.selectByKey(id);
-        return ControllerUtil.returnDataSuccess(mesHtOrderMaterial, StringUtils.isEmpty(mesHtOrderMaterial)?0:1);
-    }
-
-    @ApiOperation("增加销售订单与物料历史数据")
-    @PostMapping("add")
-    public ResponseEntity add(@ApiParam(value = "销售订单与物料历史对象",required = true)@RequestBody MesHtOrderMaterial mesHtOrderMaterial){
-        return ControllerUtil.returnCRUD(mesHtOrderMaterialService.save(mesHtOrderMaterial));
-    }
-
-    @ApiOperation("删除销售订单与物料历史数据")
-    @GetMapping("delete")
-    public ResponseEntity delete(@ApiParam(value = "销售订单与物料历史对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesHtOrderMaterialService.deleteByKey(id));
-    }
-
-    @ApiOperation("批量删除销售订单与物料历史数据")
-    @GetMapping("batchDelete")
-    public ResponseEntity batchDelete(@ApiParam(value = "销售订单与物料历史对象ID集，多个用英文逗号隔开",required = true)@RequestParam String ids){
-        return ControllerUtil.returnCRUD(mesHtOrderMaterialService.batchDelete(ids));
-    }
-
-    @ApiOperation("修改销售订单与物料历史数据")
-    @PostMapping("update")
-    public ResponseEntity update(@ApiParam(value = "销售订单与物料历史对象，对象ID必传",required = true)@RequestBody MesHtOrderMaterial mesHtOrderMaterial){
-        return ControllerUtil.returnCRUD(mesHtOrderMaterialService.update(mesHtOrderMaterial));
     }
 
     @PostMapping(value = "export",produces = "application/octet-stream")

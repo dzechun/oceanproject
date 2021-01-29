@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/11/13.
  */
 @RestController
-@Api(tags = "货币信息管理")
+@Api(tags = "币别信息管理")
 @RequestMapping("/smtCurrency")
 @Validated
 public class SmtCurrencyController {

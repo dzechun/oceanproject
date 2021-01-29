@@ -6,17 +6,21 @@ import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderBomService;
@@ -60,22 +64,26 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
     @Resource
     private BasicFeignApi basicFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SmtWorkOrder smtWorkOrder) {
         SysUser currentUser = currentUser();
 
-        /*Example example = new Example(SmtWorkOrder.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
 
-        List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(smtWorkOrders)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }*/
         if(StringUtils.isEmpty(smtWorkOrder.getWorkOrderCode())){
             smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
+        }else{
+            Example example = new Example(SmtWorkOrder.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
+
+            List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(smtWorkOrders)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            }
         }
 
 
@@ -86,7 +94,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         }
 
         //新增工单历史信息
-        recordHistory(smtWorkOrder.getWorkOrderId(),"新增");
+        recordHistory(smtWorkOrder,"新增");
 
 
         //根据产品BOM生成工单BOM
@@ -96,7 +104,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             SmtStock smtStock = new SmtStock();
             smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
             smtStock.setDeliveryMode(new Byte("0"));
-            smtStock.setStatus(new Byte("1"));
+            smtStock.setStatus(new Byte("0"));
             smtStock.setStockCode(CodeUtils.getId("BLD-"));
             // Date date = smtWorkOrder.getPlannedStartTime();
             // Date afterDate = new Date(date.getTime() + 600000);
@@ -134,6 +142,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 BigDecimal quantity = StringUtils.isEmpty(smtProductBomDet.getQuantity())?new BigDecimal(1):smtProductBomDet.getQuantity();
                 BigDecimal baseQuantity = StringUtils.isEmpty(smtProductBomDet.getBaseQuantity())?new BigDecimal(1):smtProductBomDet.getBaseQuantity();
                 smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                smtWorkOrderBom.setPartMaterialId(smtProductBomDet.getMaterialId());
                 smtWorkOrderBom.setSingleQuantity(quantity);
                 if (StringUtils.isNotEmpty(baseQuantity,quantity)){
                     smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity).multiply(baseQuantity));
@@ -145,10 +154,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 //备料单明细
                 SmtStockDet smtStockDet = new SmtStockDet();
                 smtStockDet.setStockId(smtStock.getStockId());
-                smtStockDet.setMaterialId(smtWorkOrderBom.getPartMaterialId());
+                smtStockDet.setMaterialId(StringUtils.isEmpty(smtWorkOrderBom.getPartMaterialId())?smtWorkOrderBom.getSubMaterialId():smtWorkOrderBom.getPartMaterialId());
                 smtStockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
                 smtStockDet.setStockQuantity(StringUtils.isEmpty(smtWorkOrderBom.getBaseQuantity())?new BigDecimal(1):smtWorkOrderBom.getBaseQuantity());
-                smtStockDet.setStatus(new Byte("1"));
+                smtStockDet.setStatus(new Byte("0"));
                 BeanUtils.copyProperties(smtWorkOrderBom, smtStockDet, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
                 stockDetList.add(smtStockDet);
             }
@@ -320,6 +329,9 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         String[] workOrderIds = ids.split(",");
         for (String workOrderId : workOrderIds) {
             SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(workOrderId);
+            if(StringUtils.isNotEmpty(smtWorkOrder.getScheduledQuantity()) && smtWorkOrder.getScheduledQuantity().doubleValue()>0){
+                throw new BizErrorException("工单已排产，不允许删除:"+smtWorkOrder.getWorkOrderCode());
+            }
             if (StringUtils.isEmpty(smtWorkOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
@@ -345,6 +357,21 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     public List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder) {
         List<SmtWorkOrderDto> list = smtWorkOrderMapper.findList(searchSmtWorkOrder);
         for (SmtWorkOrderDto smtWorkOrderDto : list) {
+            if(StringUtils.isEmpty(smtWorkOrderDto.getMaterialCode())){
+                //可能是部件工单，到部件表去找找
+                SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
+                searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderDto.getMaterialId());
+                ResponseEntity<List<BasePlatePartsDetDto>> result = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet);
+                if(StringUtils.isEmpty(result) || result.getCode()!=0){
+                    throw new BizErrorException("未找到部件信息:"+smtWorkOrderDto.getMaterialId());
+                }
+                List<BasePlatePartsDetDto> data = result.getData();
+                if(StringUtils.isNotEmpty(data)){
+                    BasePlatePartsDetDto basePlatePartsDetDto = data.get(0);
+                    BeanUtils.copyProperties(basePlatePartsDetDto,smtWorkOrderDto);
+                }
+
+            }
             Long routeId = smtWorkOrderDto.getRouteId();
             //查询工艺路线配置
             List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
@@ -447,13 +474,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
     /**
      * 记录操作历史
-     * @param id
+     * @param smtWorkOrder
      * @param operation
      */
-    private void recordHistory(Long id,String operation){
+    private void recordHistory(SmtWorkOrder smtWorkOrder,String operation){
         SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
         smtHtWorkOrder.setOption1(operation);
-        SmtWorkOrder smtWorkOrder = selectByKey(id);
         if (StringUtils.isEmpty(smtWorkOrder)){
             return;
         }

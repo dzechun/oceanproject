@@ -23,4 +23,6 @@ public interface MesPmExplainProcessPlanService extends IService<MesPmExplainPro
     List<MesPmExplainProcessPlanDTO> selectFilterAll(Map<String,Object> map);
     //批量新增
     int batchAdd(List<MesPmExplainProcessPlan> mesPmExplainProcessPlanList);
+    //批量更新
+    int batchUpdate(List<MesPmExplainProcessPlan> mesPmExplainProcessPlanList);
 }

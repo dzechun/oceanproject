@@ -200,6 +200,9 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
                     processIds.add(smtRouteProcess.getProcessId());
                 }
             }
+            for (int i = 0; i < smtRouteProcesses.size(); i++) {
+                smtRouteProcesses.get(i).setOrderNum(i);
+            }
             smtRouteProcessMapper.insertList(smtRouteProcesses);
         }
 

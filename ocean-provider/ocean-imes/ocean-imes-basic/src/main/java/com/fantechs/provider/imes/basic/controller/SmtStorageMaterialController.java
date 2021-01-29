@@ -30,7 +30,7 @@ import java.util.List;
  * Created by wcz on 2020/09/24.
  */
 @RestController
-@Api(tags = "储位物料信息")
+@Api(tags = "储位物料信息管理")
 @RequestMapping("/smtStorageMaterial")
 @Validated
 public class SmtStorageMaterialController {

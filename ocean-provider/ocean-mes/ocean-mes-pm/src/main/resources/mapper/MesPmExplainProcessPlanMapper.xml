@@ -6,6 +6,9 @@
         <result column="explain_process_plan_code" jdbcType="VARCHAR" property="explainProcessPlanCode"/>
         <result column="explain_plan_id" jdbcType="BIGINT" property="explainPlanId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="is_job_scan" jdbcType="TINYINT" property="isJobScan"/>
+        <result column="is_start_scan" jdbcType="TINYINT" property="isStartScan"/>
+        <result column="is_quality" jdbcType="TINYINT" property="isQuality"/>
         <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty"/>
         <result column="planed_start_date" jdbcType="TIMESTAMP" property="planedStartDate"/>
         <result column="planed_end_date" jdbcType="TIMESTAMP" property="planedEndDate"/>
@@ -31,6 +34,9 @@
         mpepp.explain_process_plan_code,
         mpepp.explain_plan_id,
         mpepp.process_id,
+        mpepp.is_job_scan,
+        mpepp.is_start_scan,
+        mpepp.is_quality,
         mpepp.finished_qty,
         mpepp.planed_start_date,
         mpepp.planed_end_date,
@@ -48,13 +54,13 @@
         bo.organization_name AS 'organizationName',
         sp.process_code AS 'processCode',
         sp.process_name AS 'processName'
-        FROM mes_pm_explain_process_plan AS mpepp
+        FROM fantech_imes.mes_pm_explain_process_plan AS mpepp
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = mpepp.create_user_id
         LEFT JOIN ocean.sys_user su2 ON su2.user_id = mpepp.modified_user_id
-        LEFT JOIN base_organization bo on bo.organization_id = mpepp.organization_id
-        LEFT JOIN mes_pm_explain_plan mpep on mpep.explain_plan_id = mpepp.explain_plan_id
-        LEFT JOIN smt_work_order swo on swo.work_order_id = mpep.work_order_id
-        LEFT JOIN smt_process sp on sp.process_id = mpepp.process_id
+        LEFT JOIN fantech_imes.base_organization bo on bo.organization_id = mpepp.organization_id
+        LEFT JOIN fantech_imes.mes_pm_explain_plan mpep on mpep.explain_plan_id = mpepp.explain_plan_id
+        LEFT JOIN fantech_imes.smt_work_order swo on swo.work_order_id = mpep.work_order_id
+        LEFT JOIN fantech_imes.smt_process sp on sp.process_id = mpepp.process_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mpepp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -71,13 +77,19 @@
             <if test="explainPlanId!=null">
                 and mpepp.explain_plan_id=#{explainPlanId}
             </if>
+            <if test="processId!=null">
+                and mpepp.process_id=#{processId}
+            </if>
+            <if test="workOrderId!=null">
+                and swo.work_order_id=#{workOrderId}
+            </if>
             and mpepp.is_delete = 1
         </where>
         order by mpepp.modified_time desc
     </select>
 
     <insert id="batchAdd" parameterType="java.util.List">
-        insert into mes_pm_explain_process_plan
+        insert into fantech_imes.mes_pm_explain_process_plan
         (explain_process_plan_code,explain_plan_id,process_id,planed_start_date,planed_end_date)
         values
         <foreach collection="list" separator="," item="item">

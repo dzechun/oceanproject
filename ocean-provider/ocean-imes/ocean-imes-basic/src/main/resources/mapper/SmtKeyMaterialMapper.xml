@@ -15,8 +15,8 @@
         <result column="station_id" jdbcType="BIGINT" property="stationId"/>
         <result column="consumption" jdbcType="DECIMAL" property="consumption"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -40,15 +40,31 @@
         <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-    skm.key_material_id, skm.product_type, skm.product_model_id, skm.material_id, skm.part_material_id,
-    skm.scanning_gun_quantity, skm.process_id, skm.station_id, skm.consumption, skm.status, skm.create_user_id,
-    skm.create_time, skm.modified_user_id, skm.modified_time, skm.is_delete, skm.option1, skm.option2, skm.option3,
-    skm.organization_id, skm.remark
-  </sql>
+        skm.key_material_id,
+        skm.product_type,
+        skm.product_model_id,
+        skm.material_id,
+        skm.part_material_id,
+        skm.scanning_gun_quantity,
+        skm.process_id,
+        skm.station_id,
+        skm.consumption,
+        skm.status,
+        skm.create_user_id,
+        skm.create_time,
+        skm.modified_user_id,
+        skm.modified_time,
+        skm.is_delete,
+        skm.option1,
+        skm.option2,
+        skm.option3,
+        skm.organization_id,
+        skm.remark
+    </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,

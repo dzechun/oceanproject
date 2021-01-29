@@ -124,5 +124,22 @@ public class MesPmBreakBulkDetDto extends MesPmBreakBulkDet implements Serializa
     @ApiModelProperty(name = "processId",value = "工序id")
     private String processId;
 
+    /**
+     * 产品颜色
+     */
+    @ApiModelProperty(name = "color",value = "产品颜色")
+    private String color;
+
+    /**
+     * 产品型号
+     */
+    @ApiModelProperty(name = "productModuleName",value = "产品型号")
+    private String productModuleName;
+    /**
+     * 产品材质
+     */
+    @ApiModelProperty(name = "materialQuality",value = "产品材质")
+    private String materialQuality;
+
     private MesPmBreakBulk mesPmBreakBulk;
 }

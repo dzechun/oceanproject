@@ -1,6 +1,8 @@
 package com.fantechs.provider.mes.pm.mapper;
 
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,4 +21,6 @@ public interface MesPmBreakBulkDetMapper extends MyMapper<MesPmBreakBulkDet> {
      * @return
      */
     List<MesPmBreakBulkDetDto> findList(Map<String, Object> map);
+
+    MesPmBreakBulkPrintDto reprintDet(SearchMesPmBreakBulk searchMesPmBreakBulk);
 }

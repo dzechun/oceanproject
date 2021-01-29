@@ -29,6 +29,7 @@
         SELECT
         wo.work_order_code AS 'workOrderCode',
         wo.production_quantity AS 'productionQuantity',
+        wo.work_order_quantity AS 'workOrderQuantity',
         swocp.task_code AS 'taskCode',
         swobp.task_code AS 'barcodeTaskCode',
         swocp.work_order_card_id AS 'workOrderCardId',
@@ -59,21 +60,21 @@
         mpplpr.modified_time,
         splp.output_quantity AS 'outputQuantity'
         FROM
-        mes_pm_process_list_process_re mpplpr
-        LEFT JOIN smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = mpplpr.work_order_card_pool_id
-        LEFT JOIN smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
+        fantech_imes.mes_pm_process_list_process_re mpplpr
+        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = mpplpr.work_order_card_pool_id
+        LEFT JOIN fantech_imes.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
         mpplpr.work_order_barcode_pool_id
-        LEFT JOIN smt_work_order wo ON wo.work_order_id = swocp.work_order_id
-        LEFT JOIN smt_material sm ON sm.material_id = wo.material_id
-        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
-        left join smt_route sr on wo.route_id=sr.route_id
-        left join smt_order so on wo.order_id=so.order_id
-        LEFT JOIN smt_station ss ON ss.process_id = mpplpr.process_id
-        LEFT JOIN smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
-        LEFT JOIN smt_process sp ON sp.process_id = mpplpr.process_id
-        LEFT JOIN smt_process sp1 ON sp.process_id = mpplpr.re_process_id
-        LEFT JOIN smt_process_list_process splp ON splp.work_order_card_pool_id = swocp.work_order_card_pool_id AND splp.process_id = mpplpr.re_process_id
-        LEFT JOIN base_organization bo ON mpplpr.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
+        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = wo.material_id
+        LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
+        left join fantech_imes.smt_route sr on wo.route_id=sr.route_id
+        left join fantech_imes.smt_order so on wo.order_id=so.order_id
+        LEFT JOIN fantech_imes.smt_station ss ON ss.process_id = mpplpr.process_id
+        LEFT JOIN fantech_imes.smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
+        LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = mpplpr.process_id
+        LEFT JOIN fantech_imes.smt_process sp1 ON sp.process_id = mpplpr.re_process_id
+        LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = swocp.work_order_card_pool_id AND splp.process_id = mpplpr.re_process_id
+        LEFT JOIN fantech_imes.base_organization bo ON mpplpr.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mpplpr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

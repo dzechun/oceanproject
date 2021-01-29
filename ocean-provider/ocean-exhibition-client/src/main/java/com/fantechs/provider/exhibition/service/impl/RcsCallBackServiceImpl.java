@@ -56,7 +56,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
             mQResponseEntity.setCode(1010);
             fanoutSender.send(RabbitConfig.TOPIC_WORK_QUEUE, JSONObject.toJSONString(mQResponseEntity));
-            log.info("发送图片、镭雕信息到客户端：" + JSONObject.toJSONString(mQResponseEntity));
+            log.info("发送消息到客户端，控制伸缩臂进行伸缩取料：" + JSONObject.toJSONString(mQResponseEntity));
         } else {
             SearchSmtStockDet searchSmtStockDet = new SearchSmtStockDet();
             searchSmtStockDet.setRemark(agvCallBackDTO.getTaskCode());

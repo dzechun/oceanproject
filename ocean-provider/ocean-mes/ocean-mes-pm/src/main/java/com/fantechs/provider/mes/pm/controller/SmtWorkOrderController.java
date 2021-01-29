@@ -98,7 +98,7 @@ public class SmtWorkOrderController {
     }
 
     @ApiOperation("工单记录完工数量")
-    @GetMapping("finishedProduct")
+    @GetMapping("/finishedProduct")
     public ResponseEntity<Integer> finishedProduct(
             @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
             @ApiParam(value = "完工数量")@RequestParam Double count

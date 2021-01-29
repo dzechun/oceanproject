@@ -76,7 +76,7 @@ public interface PMFeignApi {
     );
 
     @ApiOperation("查询条码流转卡")
-    @GetMapping("/smtWorkOrderBarcodePool/findList")
+    @PostMapping("/smtWorkOrderBarcodePool/findList")
     ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findWorkOrderBarcodePoolList(@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
 
     @ApiOperation("查询工单流转卡任务池列表")
@@ -112,8 +112,22 @@ public interface PMFeignApi {
     ResponseEntity startJob(@ApiParam(value = "必传：", required = true) @RequestBody SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
 
     @ApiOperation("列表")
-    @PostMapping("/findSpec")
+    @PostMapping("/smtBarcodeRuleSpec/findSpec")
     ResponseEntity<List<SmtBarcodeRuleSpec>> findSpec(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec);
 
-    
+    @ApiOperation(value = "获取最大流水号")
+    @PostMapping("/smtBarcodeRule/generateMaxCode")
+    ResponseEntity<String> generateMaxCode(
+            @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
+            @ApiParam(value = "最大条码数")@RequestParam String maxCode);
+
+    @ApiOperation("通过流程单获取工单相关信息")
+    @PostMapping("/smtWorkOrderCardPool/findWO")
+    ResponseEntity<ProcessListWorkOrderDTO> selectWorkOrderDtoByWorkOrderCardId(
+            @ApiParam(value = "流程单编码")@RequestParam String workOrderCardId
+    );
+
+    @ApiOperation("列表")
+    @PostMapping("/smtWorkOrderCardPool/findList")
+    ResponseEntity<List<SmtWorkOrderCardPoolDto>> findWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
 }

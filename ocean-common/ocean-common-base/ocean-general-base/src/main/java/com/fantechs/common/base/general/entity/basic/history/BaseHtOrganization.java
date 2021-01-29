@@ -21,7 +21,7 @@ public class BaseHtOrganization implements Serializable {
      * 组织履历id
      */
     @ApiModelProperty(name="htOrganizationId",value = "组织履历id")
-    @Excel(name = "组织履历id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织履历id", height = 20, width = 30)
     @Id
     @Column(name = "ht_organization_id")
     private Long htOrganizationId;
@@ -30,7 +30,7 @@ public class BaseHtOrganization implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织id", height = 20, width = 30)
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -38,7 +38,7 @@ public class BaseHtOrganization implements Serializable {
      * 组织编码
      */
     @ApiModelProperty(name="organizationCode",value = "组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织编码", height = 20, width = 30)
     @Column(name = "organization_code")
     private String organizationCode;
 
@@ -46,7 +46,7 @@ public class BaseHtOrganization implements Serializable {
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织名称", height = 20, width = 30)
     @Column(name = "organization_name")
     private String organizationName;
 
@@ -54,7 +54,7 @@ public class BaseHtOrganization implements Serializable {
      * 组织描述
      */
     @ApiModelProperty(name="organizationDesc",value = "组织描述")
-    @Excel(name = "组织描述", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织描述", height = 20, width = 30)
     @Column(name = "organization_desc")
     private String organizationDesc;
 
@@ -69,7 +69,7 @@ public class BaseHtOrganization implements Serializable {
      * 创建人id
      */
     @ApiModelProperty(name="createUserId",value = "创建人id")
-    @Excel(name = "创建人id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "创建人id", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -77,7 +77,7 @@ public class BaseHtOrganization implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -86,7 +86,7 @@ public class BaseHtOrganization implements Serializable {
      * 修改人id
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人id")
-    @Excel(name = "修改人id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人id", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -94,7 +94,7 @@ public class BaseHtOrganization implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -103,7 +103,7 @@ public class BaseHtOrganization implements Serializable {
      * 状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name="status",value = "状态（0、不启用 1、启用）")
-    @Excel(name = "状态（0、不启用 1、启用）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、不启用 1、启用）", height = 20, width = 30)
     private Byte status;
 
     /**

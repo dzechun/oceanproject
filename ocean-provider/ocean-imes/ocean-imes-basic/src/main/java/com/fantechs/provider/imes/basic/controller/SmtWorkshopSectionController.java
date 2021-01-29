@@ -29,7 +29,7 @@ import java.util.List;
  * Created by Mr.Lei on 2020/09/25.
  */
 @RestController
-@Api(tags = "工段信息")
+@Api(tags = "工段信息管理")
 @RequestMapping("/workshopSection")
 @Validated
 public class SmtWorkshopSectionController {

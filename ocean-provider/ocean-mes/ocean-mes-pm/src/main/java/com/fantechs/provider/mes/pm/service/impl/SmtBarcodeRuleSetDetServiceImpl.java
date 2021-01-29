@@ -42,6 +42,9 @@ public class SmtBarcodeRuleSetDetServiceImpl extends BaseService<SmtBarcodeRuleS
                 if(StringUtils.isEmpty(currentUser)){
                         throw new BizErrorException(ErrorCodeEnum.UAC10011039);
                 }
+                if(barcodeRuleIds.size()<1){
+                        throw new BizErrorException("绑定条码规则为空");
+                }
                 List<SmtBarcodeRuleSetDet> list=new ArrayList<>();
                 Example example = new Example(SmtBarcodeRuleSetDet.class);
                 Example.Criteria criteria = example.createCriteria();
