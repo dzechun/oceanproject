@@ -16,4 +16,5 @@ import java.util.Map;
 public interface BaseProductFamilyService extends IService<BaseProductFamily> {
 
     List<BaseProductFamilyDto> findList(Map<String, Object> map);
+    Map<String, Object> importExcel(List<BaseProductFamilyDto> baseProductFamilyDtos);
 }

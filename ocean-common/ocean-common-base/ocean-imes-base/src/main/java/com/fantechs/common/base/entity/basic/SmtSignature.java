@@ -88,6 +88,14 @@ public class SmtSignature extends ValidGroup implements Serializable {
     private String supplierName;
 
     /**
+     * 供应商编码
+     */
+    @Transient
+    @ApiModelProperty(name="supplierCode" ,value="供应商编码")
+    @Excel(name = "供应商编码", height = 20, width = 30)
+    private String supplierCode;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

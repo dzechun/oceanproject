@@ -1,14 +1,8 @@
 package com.fantechs.provider.api.base;
 
-import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
-import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
-import com.fantechs.common.base.general.dto.basic.BaseTabDto;
-import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
+import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
-import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
-import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.github.pagehelper.Page;
@@ -52,4 +46,12 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/basePlatePartsDet/findList")
     ResponseEntity<List<BasePlatePartsDetDto>> findPlatePartsDetList(@ApiParam(value = "查询对象")@RequestBody SearchBasePlatePartsDet searchBasePlatePartsDet);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseUnitPrice/findList")
+    ResponseEntity<List<BaseUnitPriceDto>> findUnitPriceList(@ApiParam(value = "查询对象")@RequestBody SearchBaseUnitPrice searchBaseUnitPrice);
+
+    @ApiOperation("查询产品族信息列表")
+    @PostMapping("/findList")
+    ResponseEntity<List<BaseProductFamilyDto>> findProductFamilyList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductFamily searchBaseProductFamily);
 }

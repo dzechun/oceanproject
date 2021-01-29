@@ -9,8 +9,10 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
@@ -166,11 +168,28 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("当前工序已品质确认");
             }
         }
-
+        //获取当前报工工序信息
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(smtProcessListProcessDto.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
+        List<SmtRouteProcess> routeProcessList = new ArrayList<>();
+        //筛选出当前报工工序的工段对应工艺路线里面的所有工序
+        for (SmtRouteProcess smtRouteProcess : routeProcesses) {
+            if (smtRouteProcess.getSectionId() == smtProcess.getSectionId()){
+                routeProcessList.add(smtRouteProcess);
+            }
+        }
+        if (StringUtils.isEmpty(routeProcessList)){
+            throw new BizErrorException("报工工序不属于当前工艺");
+        }
+        //获取当前报工工序所属工段的最后工序
+        SmtRouteProcess smtRouteProcess = routeProcessList.get(routeProcessList.size() - 1);
+
         Byte isQuality = smtProcess.getIsQuality();
         if (type == 1 && (isQuality == null || isQuality ==0)){
+            throw new BizErrorException("当前工序不能进行品质确认");
+        }
+
+        if (smtRouteProcess.getProcessId() != smtProcess.getProcessId() && type == 1){
             throw new BizErrorException("当前工序不是最后一道工序");
         }
 
@@ -266,6 +285,20 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("未找到该物料的储位");
         }
 
+        SearchSmtWorkOrderBom searchSmtWorkOrderBom = new SearchSmtWorkOrderBom();
+        searchSmtWorkOrderBom.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
+        List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
+        SmtWorkOrderBomDto workOrderBomDto = null;
+        for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
+            if (smtWorkOrderBomDto.getProcessId() == qmsQualityConfirmation.getProcessId()){
+                workOrderBomDto = smtWorkOrderBomDto;
+                break;
+            }
+        }
+        if (StringUtils.isEmpty(workOrderBomDto)){
+            throw new BizErrorException("没有找到当前工序对应的工单BOM信息");
+        }
+
         //半成品完工入库
         WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();
         wmsInFinishedProduct.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
@@ -277,7 +310,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //半成品完工入库明细
         List<WmsInFinishedProductDet> wmsInFinishedProductDetList = new ArrayList<>();
         WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();
-        wmsInFinishedProductDet.setMaterialId(qmsQualityConfirmation.getMaterialId());
+        wmsInFinishedProductDet.setMaterialId(workOrderBomDto.getPartMaterialId());
         wmsInFinishedProductDet.setStorageId(data.get(0).getStorageId());
         wmsInFinishedProductDet.setPlanInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
         wmsInFinishedProductDet.setInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
@@ -290,7 +323,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         ResponseEntity<WmsInFinishedProduct> wmsInFinishedProductResponse = inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
         WmsInFinishedProduct inFinishedProduct = wmsInFinishedProductResponse.getData();
-        System.out.println("入库单：---------------------"+wmsInFinishedProductResponse.getData());
         if (StringUtils.isEmpty(inFinishedProduct)){
             throw new BizErrorException("生成半成品入库单失败");
         }
@@ -299,7 +331,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
         wmsOutProductionMaterial.setFinishedProductCode(inFinishedProduct.getFinishedProductCode());
         wmsOutProductionMaterial.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
-        wmsOutProductionMaterial.setMaterialId(qmsQualityConfirmation.getMaterialId());
+        wmsOutProductionMaterial.setMaterialId(workOrderBomDto.getPartMaterialId());
         wmsOutProductionMaterial.setPlanQty(qmsQualityConfirmation.getQualifiedQuantity());
         wmsOutProductionMaterial.setOutTime(new Date());
         wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
