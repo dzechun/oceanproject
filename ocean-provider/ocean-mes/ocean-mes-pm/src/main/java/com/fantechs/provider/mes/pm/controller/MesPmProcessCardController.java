@@ -3,7 +3,10 @@ package com.fantechs.provider.mes.pm.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessCardDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListCardDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListProcessReDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmProcessCard;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmProcessListCard;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessCard;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -42,5 +45,13 @@ public class MesPmProcessCardController {
     public ResponseEntity<MesPmProcessCardDto> detial(@ApiParam(value = "查询对象")@RequestBody SearchMesPmProcessCard searchMesPmProcessCard) {
         MesPmProcessCardDto list = mesPmProcessCardService.detial(searchMesPmProcessCard);
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
+    }
+
+    @ApiOperation("工序过站记录")
+    @PostMapping("/processList")
+    public ResponseEntity<List<MesPmProcessListCardDto>> processList(@RequestBody(required = true)SearchMesPmProcessListCard searchMesPmProcessListCard){
+        Page<Object> page = PageHelper.startPage(searchMesPmProcessListCard.getStartPage(), searchMesPmProcessListCard.getPageSize());
+        List<MesPmProcessListCardDto> mesPmProcessListCardDto = mesPmProcessCardService.processList(searchMesPmProcessListCard);
+        return ControllerUtil.returnDataSuccess(mesPmProcessListCardDto,(int)page.getTotal());
     }
 }

@@ -92,4 +92,6 @@ public class MesPmBreakBulkPrintDto implements Serializable {
 
     @ApiModelProperty(name = "printDate",value = "打印日期")
     private Date printDate;
+
+    private Long processId;
 }

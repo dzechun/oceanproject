@@ -119,7 +119,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         }
 
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
-        if(!file.isEmpty()){
+        if(file!=null){
             //存放路径：标签类别+名称
             entity.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getName());
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();

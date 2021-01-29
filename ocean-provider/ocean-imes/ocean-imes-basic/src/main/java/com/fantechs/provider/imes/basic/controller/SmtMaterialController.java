@@ -68,7 +68,6 @@ public class SmtMaterialController {
 
     }
 
-
     @ApiOperation("修改物料信息")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "物料信息对象，物料信息Id必传",required = true)@RequestBody @Validated(value = SmtMaterial.update.class) SmtMaterial smtMaterial){
