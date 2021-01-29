@@ -86,6 +86,9 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos) {
                 //通过部件流转卡ID获取部件部件配套单
                 MesPmMatchingOrder mesPmMatchingOrder = mesPmMatchingOrderMapper.selectByPrimaryKey(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                if (StringUtils.isEmpty(mesPmMatchingOrder)){
+                    continue;
+                }
                 minMatchingQuantitys.add(mesPmMatchingOrder.getMinMatchingQuantity());
             }
             //获取最小齐套数
