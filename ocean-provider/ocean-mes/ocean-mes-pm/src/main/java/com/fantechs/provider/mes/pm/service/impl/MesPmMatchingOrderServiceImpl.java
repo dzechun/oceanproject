@@ -92,7 +92,10 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 minMatchingQuantitys.add(mesPmMatchingOrder.getMinMatchingQuantity());
             }
             //获取最小齐套数
-            BigDecimal min = Collections.min(minMatchingQuantitys);
+            BigDecimal min = BigDecimal.valueOf(0);
+            if (StringUtils.isNotEmpty(minMatchingQuantitys)){
+                min = Collections.min(minMatchingQuantitys);
+            }
             MesPmMatchingOrderDto mesPmMatchingOrderDto = new MesPmMatchingOrderDto();//保存成品的配套单
             BeanUtils.copyProperties(processListWorkOrderDTO, mesPmMatchingOrderDto);
             mesPmMatchingOrderDto.setMinMatchingQuantity(min);
