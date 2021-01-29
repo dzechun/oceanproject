@@ -67,8 +67,8 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     @Override
     public BcmBarCodeWorkDto work(SearchBcmBarCode searchBcmBarCode) {
         BcmBarCodeWorkDto bcmBarCodeWorkDto = bcmBarCodeMapper.sel_work_order(searchBcmBarCode);
-        if(StringUtils.isEmpty(bcmBarCodeWorkDto.getBarcodeRuleId())){
-            throw new BizErrorException("此工单没有绑定条码规则");
+        if(StringUtils.isEmpty(bcmBarCodeWorkDto)){
+            throw new BizErrorException("获取工单信息绑定条码规则信息失败");
         }
         //生成规则
         SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
