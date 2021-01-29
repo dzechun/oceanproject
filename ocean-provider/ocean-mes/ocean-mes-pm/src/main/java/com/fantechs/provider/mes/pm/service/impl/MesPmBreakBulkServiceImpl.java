@@ -92,6 +92,13 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         if(StringUtils.isEmpty(processId)){
              throw new BizErrorException("获取当前工序失败！");
         }
+
+        //获取品质确认人员
+        String qmsName = mesPmBreakBulkMapper.confirmation(record.getBatchNo(),processId);
+        if(StringUtils.isEmpty(qmsName)){
+            throw new BizErrorException("品质信息获取失败");
+        }
+        record.setQualityName(qmsName);
         record.setProcessId(processId);
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
@@ -193,6 +200,12 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             int num =mesPmBreakBulkDetMapper.updateByExampleSelective(mesPmBreakBulkDet,example);
             if(num>0){
                 MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkDetMapper.reprintDet(searchMesPmBreakBulk);
+                //获取品质确认人员
+                String qmsName = mesPmBreakBulkMapper.confirmation(mesPmBreakBulkPrintDto.getBatchNo(),mesPmBreakBulkPrintDto.getProcessId());
+                mesPmBreakBulkPrintDto.setQualityName(qmsName);
+                if(StringUtils.isEmpty(qmsName)){
+                    throw new BizErrorException("品质信息获取失败");
+                }
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 return mesPmBreakBulkPrintDto;
             }else {
@@ -207,6 +220,12 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             int num =mesPmBreakBulkMapper.updateByExampleSelective(mesPmBreakBulk,example);
             if(num>0){
                 MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkMapper.reprint(searchMesPmBreakBulk);
+                //获取品质确认人员
+                String qmsName = mesPmBreakBulkMapper.confirmation(mesPmBreakBulkPrintDto.getBatchNo(),mesPmBreakBulkPrintDto.getProcessId());
+                if(StringUtils.isEmpty(qmsName)){
+                    throw new BizErrorException("品质信息获取失败");
+                }
+                mesPmBreakBulkPrintDto.setQualityName(qmsName);
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 return mesPmBreakBulkPrintDto;
             }else {

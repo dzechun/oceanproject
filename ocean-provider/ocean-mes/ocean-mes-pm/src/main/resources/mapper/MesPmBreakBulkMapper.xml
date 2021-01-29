@@ -99,7 +99,7 @@ bt.material_quality AS 'materialQuality '
   where wocp.work_order_card_id= #{workOrderCardId}
 </select>
 <select id="reprint" resultType="com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto">
-SELECT pb.batch_no as 'batchNo',pb.break_bulk_batch_qty as 'breakBulkBatchQty',sm.material_code as 'materialCode',sm.material_name as 'materialName',sm.version,sm.material_desc as 'materialDesc',sr.route_name as 'routeName',s.user_name as 'modifiedUserName',bt.color AS 'color',
+SELECT pb.batch_no as 'batchNo',pb.break_bulk_batch_qty as 'breakBulkBatchQty',sm.material_code as 'materialCode',sm.material_name as 'materialName',sm.version,sm.material_desc as 'materialDesc',sr.route_name as 'routeName',pb.process_id as 'processId',s.user_name as 'modifiedUserName',bt.color AS 'color',
 spm.product_model_name AS 'productModelName',
 bt.material_quality AS 'materialQuality ' FROM mes_pm_break_bulk pb
         LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
@@ -113,5 +113,12 @@ bt.material_quality AS 'materialQuality ' FROM mes_pm_break_bulk pb
             and pb.batch_no = #{batchNo}
         </if>
 </where>
+</select>
+
+<select id="confirmation" resultType="java.lang.String">
+SELECT u.user_name FROM qms_quality_confirmation qc
+				LEFT JOIN smt_work_order_card_pool swocp ON qc.work_order_card_pool_id=swocp.work_order_card_pool_id
+				LEFT join ocean.sys_user u on qc.create_user_id=u.user_id
+				WHERE swocp.work_order_card_id=#{workOrderCardId} AND qc.process_id=#{processId}
 </select>
 </mapper>

@@ -18,4 +18,6 @@ public interface MesPmBreakBulkMapper extends MyMapper<MesPmBreakBulk> {
     Long sleProcess(@Param("workOrderCardId")String workOrderCardId);
 
     MesPmBreakBulkPrintDto reprint(SearchMesPmBreakBulk searchMesPmBreakBulk);
+
+    String confirmation(@Param("workOrderCardId") String workOrderCardId, @Param("processId") Long processId);
 }
