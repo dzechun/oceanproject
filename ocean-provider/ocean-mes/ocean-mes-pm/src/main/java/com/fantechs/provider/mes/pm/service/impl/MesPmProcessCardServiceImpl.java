@@ -3,14 +3,8 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessCardDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmProcessCard;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
+import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessCard;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
@@ -79,5 +73,10 @@ public class MesPmProcessCardServiceImpl extends BaseService<MesPmProcessCard> i
 //            }
 //        }
         return mesPmProcessCardDto;
+    }
+
+    @Override
+    public List<MesPmProcessListCardDto> processList(SearchMesPmProcessListCard searchMesPmProcessListCard) {
+        return mesPmProcessCardMapper.processList(searchMesPmProcessListCard);
     }
 }

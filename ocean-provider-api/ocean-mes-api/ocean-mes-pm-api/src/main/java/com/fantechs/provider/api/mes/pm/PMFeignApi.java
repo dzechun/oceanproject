@@ -131,6 +131,11 @@ public interface PMFeignApi {
     @PostMapping("/smtWorkOrderCardPool/findList")
     ResponseEntity<List<SmtWorkOrderCardPoolDto>> findWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
 
+    @ApiOperation("工单BOM信息列表")
+    @PostMapping("/smtWorkOrderBom/findList")
+    ResponseEntity<List<SmtWorkOrderBomDto>> findWordOrderBomList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom);
+
+
     @ApiOperation("查询条码规则列表")
     @PostMapping("/smtBarcodeRule/findList")
     ResponseEntity<List<SmtBarcodeRuleDto>> findBarcodeRulList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule);
