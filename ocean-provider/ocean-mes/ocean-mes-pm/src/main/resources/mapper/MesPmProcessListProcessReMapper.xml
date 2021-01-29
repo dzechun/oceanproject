@@ -72,7 +72,7 @@
         LEFT JOIN fantech_imes.smt_station ss ON ss.process_id = mpplpr.process_id
         LEFT JOIN fantech_imes.smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
         LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = mpplpr.process_id
-        LEFT JOIN fantech_imes.smt_process sp1 ON sp.process_id = mpplpr.re_process_id
+        LEFT JOIN fantech_imes.smt_process sp1 ON sp1.process_id = mpplpr.re_process_id
         LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = swocp.work_order_card_pool_id AND splp.process_id = mpplpr.re_process_id
         LEFT JOIN fantech_imes.base_organization bo ON mpplpr.organization_id = bo.organization_id
         <where>

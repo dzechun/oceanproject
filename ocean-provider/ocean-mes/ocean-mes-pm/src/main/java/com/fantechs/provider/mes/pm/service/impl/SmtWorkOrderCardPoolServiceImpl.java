@@ -81,4 +81,9 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         //=====
         return processListWorkOrderDTO;
     }
+
+    @Override
+    public int batchUpdateStatus(List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList) {
+        return smtWorkOrderCardPoolMapper.batchUpdateStatus(smtWorkOrderCardPoolList);
+    }
 }
