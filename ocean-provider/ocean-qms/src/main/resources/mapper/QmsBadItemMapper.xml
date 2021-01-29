@@ -57,7 +57,7 @@
         and sp.process_id = #{processId}
       </if>
       <if test="sectionId != null and sectionId != ''">
-        and sws.section_id = #{sectionId}
+        and qbi.section_id = #{sectionId}
       </if>
       <if test="badTypeCode != null and badTypeCode != ''">
         and qbi.bad_type_code like CONCAT('%', #{badTypeCode}, '%')
