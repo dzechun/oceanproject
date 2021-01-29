@@ -1,5 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
 import com.fantechs.common.base.entity.basic.SmtProcessCategory;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
@@ -16,9 +18,11 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
@@ -35,6 +39,7 @@ import java.util.Map;
 @Api(tags = "工序类别信息管理")
 @RequestMapping("/smtProcessCategory")
 @Validated
+@Slf4j
 public class SmtProcessCategoryController {
 
     @Autowired
@@ -95,6 +100,27 @@ public class SmtProcessCategoryController {
         EasyPoiUtils.exportExcel(list, "工序类别信息", "SmtProcessCategory信息", SmtProcessCategoryDto.class, "SmtProcessCategory.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtProcessCategoryDto> smtProcessCategoryDtos = EasyPoiUtils.importExcel(file, SmtProcessCategoryDto.class);
+            Map<String, Object> resultMap = smtProcessCategoryService.importExcel(smtProcessCategoryDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

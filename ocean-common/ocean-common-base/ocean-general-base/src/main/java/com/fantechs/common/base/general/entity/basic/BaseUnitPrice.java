@@ -271,10 +271,10 @@ public class BaseUnitPrice extends ValidGroup implements Serializable {
     private BigDecimal woodenProducts;
 
     /**
-     * 补货
+     * 补件
      */
-    @ApiModelProperty(name="replenishment",value = "补货")
-    @Excel(name = "补货", height = 20, width = 30)
+    @ApiModelProperty(name="replenishment",value = "补件")
+    @Excel(name = "补件", height = 20, width = 30)
     private BigDecimal replenishment;
 
     /**

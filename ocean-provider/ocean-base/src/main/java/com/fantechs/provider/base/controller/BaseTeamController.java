@@ -1,5 +1,7 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
 import com.fantechs.common.base.general.entity.basic.BaseTeam;
@@ -16,14 +18,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,7 @@ import java.util.List;
 @Api(tags = "班组信息管理")
 @RequestMapping("/baseTeam")
 @Validated
+@Slf4j
 public class BaseTeamController {
 
     @Resource
@@ -91,6 +97,27 @@ public class BaseTeamController {
         EasyPoiUtils.exportExcel(list, "导出信息", "BaseTeam信息", BaseTeamDto.class, "BaseTeam.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseTeamDto> baseTeamDtos = EasyPoiUtils.importExcel(file, BaseTeamDto.class);
+            Map<String, Object> resultMap = baseTeamService.importExcel(baseTeamDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

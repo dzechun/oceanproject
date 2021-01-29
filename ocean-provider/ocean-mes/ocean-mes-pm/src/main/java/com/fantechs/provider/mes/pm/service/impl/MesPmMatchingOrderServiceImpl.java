@@ -16,6 +16,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -26,6 +27,7 @@ import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmMatchingOrderService;
+import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.parameters.P;
@@ -54,6 +56,8 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     private BasicFeignApi basicFeignApi;
     @Resource
     private QmsFeignApi qmsFeignApi;
+    @Resource
+    private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
 
     @Override
     public List<MesPmMatchingOrderDto> findList(Map<String, Object> map) {
@@ -77,13 +81,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             //1.通过工单流转卡id获取部件流转卡id
             SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
             searchSmtWorkOrderCardPool.setParentId(processListWorkOrderDTO.getWorkOrderCardPoolId());
-            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtos = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtos = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
 
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos) {
-                //通过部件流转卡ID获取部件配套单
+                //通过部件流转卡ID获取部件部件配套单
                 MesPmMatchingOrder mesPmMatchingOrder = mesPmMatchingOrderMapper.selectByPrimaryKey(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                 minMatchingQuantitys.add(mesPmMatchingOrder.getMinMatchingQuantity());
-
             }
             //获取最小齐套数
             BigDecimal min = Collections.min(minMatchingQuantitys);
@@ -94,12 +97,15 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         }else {
             //获取部件的流转卡
             SearchQmsQualityConfirmation searchQmsQualityConfirmation = new SearchQmsQualityConfirmation();
-            searchQmsQualityConfirmation.setParentWorkOrderCardPoolCode(workOrderCardId);
+            searchQmsQualityConfirmation.setWorkOrderCardPoolCode(workOrderCardId);
+            searchQmsQualityConfirmation.setAffirmStatus((byte) 2);//2表示质检完成
+            searchQmsQualityConfirmation.setQualityType((byte) 1);//表示品质确认
             List<QmsQualityConfirmationDto> qmsQualityConfirmationDtos = qmsFeignApi.findQualityConfirmationList(searchQmsQualityConfirmation).getData();
-            QmsQualityConfirmationDto qmsQualityConfirmationDto1 = qmsQualityConfirmationDtos.get(0);
-            if (StringUtils.isEmpty(qmsQualityConfirmationDto1)){
-                throw new BizErrorException("流转卡号对应的流转卡不存在");
+            if (StringUtils.isEmpty(qmsQualityConfirmationDtos)){
+                throw new BizErrorException("该部件暂未品质确认");
             }
+            QmsQualityConfirmationDto qmsQualityConfirmationDto1 = qmsQualityConfirmationDtos.get(0);
+
 
             MesPmMatchingOrderDto mesPmMatchingOrderDto = new MesPmMatchingOrderDto();//部件的配套单
             BeanUtils.copyProperties(qmsQualityConfirmationDto1, mesPmMatchingOrderDto);
@@ -116,13 +122,13 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 //合格数量
                 BigDecimal qualifiedQuantity = qmsQualityConfirmationDto.getQualifiedQuantity();
                 if (qualifiedQuantity.compareTo(dosage) == -1) {
-                    throw new BizErrorException("质检合格数不足一套");
+                    throw new BizErrorException("没有质检合格的部件");
                 }
                 if (dosage.equals(BigDecimal.ZERO)) {
                     throw new BizErrorException("部件用量不能为0");
                 }
 
-                BigDecimal minMatchingQuantity = qualifiedQuantity.divide(qualifiedQuantity, 0, RoundingMode.HALF_UP); //最小齐套数
+                BigDecimal minMatchingQuantity = qualifiedQuantity.divide(dosage, 0, RoundingMode.HALF_UP); //最小齐套数
 
                 mesPmMatchingOrderDto.setMinMatchingQuantity(minMatchingQuantity);
             }

@@ -2,10 +2,10 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtPackingUnitDto;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtProductBom;
-import com.fantechs.common.base.entity.basic.SmtProductBomDet;
+import com.fantechs.common.base.entity.basic.*;
+import com.fantechs.common.base.entity.basic.history.SmtHtPackingUnit;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -15,19 +15,22 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtHtProductBomMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtMaterialMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductBomDetMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductBomMapper;
+import com.fantechs.provider.imes.basic.service.SmtProductBomDetService;
 import com.fantechs.provider.imes.basic.service.SmtProductBomService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import javax.naming.NamingEnumeration;
+import javax.validation.constraints.NotBlank;
+import java.security.cert.X509Certificate;
+import java.util.*;
 
 /**
  *
@@ -42,6 +45,8 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
     private SmtHtProductBomMapper smtHtProductBomMapper;
     @Resource
     private SmtProductBomDetMapper smtProductBomDetMapper;
+    @Resource
+    private SmtMaterialMapper smtMaterialMapper;
 
 
     @Override
@@ -225,6 +230,66 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
                 findNextLevelProductBomDet(productBomDet);
             }
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtProductBomDto> smtProductBomDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtProductBom> list = new LinkedList<>();
+        for (int i = 0; i < smtProductBomDtos.size(); i++) {
+            SmtProductBomDto smtProductBomDto = smtProductBomDtos.get(i);
+            String productBomCode = smtProductBomDto.getProductBomCode();
+            String materialCode = smtProductBomDto.getMaterialCode();
+            if (StringUtils.isEmpty(
+                    productBomCode,materialCode
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否存在
+            Example example = new Example(SmtProductBom.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("productBomCode",smtProductBomDto.getProductBomCode());
+            if (StringUtils.isNotEmpty(smtProductBomDetMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断物料是否存在
+            Example example1 = new Example(SmtMaterial.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("materialCode",materialCode);
+            SmtMaterial smtMaterial = smtMaterialMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(smtMaterial)){
+                fail.add(i+3);
+                continue;
+            }
+
+            SmtProductBom smtProductBom = new SmtProductBom();
+            BeanUtils.copyProperties(smtProductBomDto,smtProductBom);
+            smtProductBom.setCreateTime(new Date());
+            smtProductBom.setCreateUserId(currentUser.getUserId());
+            smtProductBom.setModifiedTime(new Date());
+            smtProductBom.setModifiedUserId(currentUser.getUserId());
+            smtProductBom.setStatus(1);
+            list.add(smtProductBom);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtProductBomMapper.insertList(list);
+        }
+
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 
 }

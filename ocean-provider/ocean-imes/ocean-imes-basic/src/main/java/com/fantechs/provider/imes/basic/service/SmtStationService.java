@@ -5,6 +5,8 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtStation;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  *
  * Created by wcz on 2020/09/27.
@@ -13,4 +15,5 @@ import java.util.List;
 public interface SmtStationService extends IService<SmtStation> {
 
     List<SmtStation> findList(SearchSmtStation searchSmtStation);
+    Map<String, Object> importExcel(List<SmtStation> smtStations);
 }

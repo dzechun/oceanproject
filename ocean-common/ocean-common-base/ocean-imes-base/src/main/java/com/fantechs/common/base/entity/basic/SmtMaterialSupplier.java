@@ -84,7 +84,7 @@ public class SmtMaterialSupplier extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="6",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="7",replace = {"无效_0", "有效_1"})
     private Integer status;
 
     /**
@@ -98,7 +98,7 @@ public class SmtMaterialSupplier extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;

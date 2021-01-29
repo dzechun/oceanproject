@@ -1,8 +1,12 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkshopSection;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -20,9 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 /**
  *
@@ -128,5 +131,63 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
         }
         smtHtWorkshopSectionMapper.insertList(list);
         return workshopSectionMapper.deleteByIds(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtWorkshopSection> smtWorkshopSections) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtWorkshopSection> list = new LinkedList<>();
+        LinkedList<SmtHtWorkshopSection> htList = new LinkedList<>();
+        for (int i = 0; i < smtWorkshopSections.size(); i++) {
+            SmtWorkshopSection smtWorkshopSection = smtWorkshopSections.get(i);
+            String sectionCode = smtWorkshopSection.getSectionCode();
+            String sectionName = smtWorkshopSection.getSectionName();
+            if (StringUtils.isEmpty(
+                    sectionCode,sectionName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtWorkshopSection.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("sectionCode",sectionCode);
+            if (StringUtils.isNotEmpty(workshopSectionMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            smtWorkshopSection.setCreateTime(new Date());
+            smtWorkshopSection.setCreateUserId(currentUser.getUserId());
+            smtWorkshopSection.setModifiedTime(new Date());
+            smtWorkshopSection.setModifiedUserId(currentUser.getUserId());
+            smtWorkshopSection.setStatus((byte) 1);
+            list.add(smtWorkshopSection);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = workshopSectionMapper.insertList(list);
+        }
+
+        for (SmtWorkshopSection smtWorkshopSection : list) {
+            SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
+            BeanUtils.copyProperties(smtWorkshopSection,smtHtWorkshopSection);
+            htList.add(smtHtWorkshopSection);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtWorkshopSectionMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

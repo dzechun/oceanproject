@@ -15,4 +15,5 @@ import java.util.Map;
 public interface SmtProductBomService extends IService<SmtProductBom> {
 
     List<SmtProductBomDto> findList(Map<String,Object> map);
+    Map<String, Object> importExcel(List<SmtProductBomDto> smtProductBomDtos);
 }

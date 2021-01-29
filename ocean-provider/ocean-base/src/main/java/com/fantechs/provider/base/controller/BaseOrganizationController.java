@@ -1,5 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto;
+import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
@@ -16,17 +20,20 @@ import com.fantechs.provider.base.service.BaseOrganizationService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by leifengzhi on 2020/12/29.
@@ -35,6 +42,7 @@ import java.util.List;
 @Api(tags = "组织信息管理")
 @RequestMapping("/baseOrganization")
 @Validated
+@Slf4j
 public class BaseOrganizationController {
 
     @Autowired
@@ -104,4 +112,24 @@ public class BaseOrganizationController {
         return ControllerUtil.returnCRUD(baseOrganizationService.addUser(organizationId,userIds));
     }
 
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseOrganizationDto> baseOrganizationDtos = EasyPoiUtils.importExcel(file, BaseOrganizationDto.class);
+            Map<String, Object> resultMap = baseOrganizationService.importExcel(baseOrganizationDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
 }

@@ -15,4 +15,5 @@ import java.util.Map;
 public interface BaseWorkShiftService extends IService<BaseWorkShift> {
 
     List<BaseWorkShiftDto> findList(Map<String, Object> map);
+    Map<String, Object> importExcel(List<BaseWorkShiftDto> baseWorkShiftDtos);
 }

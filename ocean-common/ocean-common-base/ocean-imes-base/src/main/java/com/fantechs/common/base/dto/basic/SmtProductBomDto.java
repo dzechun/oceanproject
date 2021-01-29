@@ -5,7 +5,9 @@ import com.fantechs.common.base.entity.basic.SmtProductBom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -137,4 +139,13 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
     @ApiModelProperty(name="processDesc" ,value="工序描述")
     @Excel(name = "工序描述", height = 20, width = 30)
     private String processDesc;
+
+    /**
+     * 父BOM编号
+     */
+    @Column(name = "product_bom_code")
+    @ApiModelProperty(name = "productBomCode", value = "BOM ID")
+    @Excel(name = "BOM ID", height = 20, width = 30)
+    @NotBlank(message = "产品BOM编号不能为空")
+    private String productBomCode;
 }

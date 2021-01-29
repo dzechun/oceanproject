@@ -67,11 +67,18 @@ public class SmtProLine extends ValidGroup implements Serializable {
     private String factoryName;
 
     /**
+     * 厂别编码
+     */
+    @Transient
+    @ApiModelProperty(name="factoryCode" ,value="厂别编码")
+    @Excel(name = "厂别编码", height = 20, width = 30)
+    private String factoryCode;
+
+    /**
      * 车间ID
      */
     @Column(name = "work_shop_id")
     @ApiModelProperty(name="workShopId" ,value="车间ID")
-    @NotNull(message = "车间id不能为空")
     private Long workShopId;
 
     /**
@@ -81,6 +88,14 @@ public class SmtProLine extends ValidGroup implements Serializable {
     @ApiModelProperty(name="workShopName" ,value="车间名称")
     @Excel(name = "车间名称", height = 20, width = 30)
     private String workShopName;
+
+    /**
+     * 车间编码
+     */
+    @Transient
+    @ApiModelProperty(name="workShopCode" ,value="车间编码")
+    @Excel(name = "车间编码", height = 20, width = 30)
+    private String workShopCode;
 
     /**
      * 组织id

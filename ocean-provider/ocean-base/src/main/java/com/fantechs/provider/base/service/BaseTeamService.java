@@ -13,4 +13,6 @@ import java.util.Map;
 
 public interface BaseTeamService extends IService<BaseTeam> {
     List<BaseTeamDto> findList(Map<String, Object> map);
+
+    Map<String, Object> importExcel(List<BaseTeamDto> baseTeamDtos);
 }

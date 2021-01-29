@@ -1,9 +1,12 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
+import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.entity.basic.SmtProcessCategory;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -20,10 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2020/10/15.
@@ -113,6 +114,7 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
+            //被工序以用
             Example example = new Example(SmtProcess.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("processCategoryId",smtProcessCategory.getProcessCategoryId());
@@ -136,5 +138,65 @@ public class SmtProcessCategoryServiceImpl extends BaseService<SmtProcessCategor
     @Override
     public List<SmtProcessCategoryDto> findList(Map<String, Object> map) {
         return smtProcessCategoryMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtProcessCategoryDto> smtProcessCategoryDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtProcessCategory> list = new LinkedList<>();
+        LinkedList<SmtHtProcessCategory> htList = new LinkedList<>();
+        for (int i = 0; i < smtProcessCategoryDtos.size(); i++) {
+            SmtProcessCategoryDto smtProcessCategoryDto = smtProcessCategoryDtos.get(i);
+            String processCategoryCode = smtProcessCategoryDto.getProcessCategoryCode();
+            String processCategoryName = smtProcessCategoryDto.getProcessCategoryName();
+            if (StringUtils.isEmpty(
+                    processCategoryCode,processCategoryName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtProcessCategory.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("processCategoryCode",processCategoryCode);
+            if (StringUtils.isNotEmpty(smtProcessCategoryMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            SmtProcessCategory smtProcessCategory = new SmtProcessCategory();
+            BeanUtils.copyProperties(smtProcessCategoryDto,smtProcessCategory);
+            smtProcessCategory.setCreateTime(new Date());
+            smtProcessCategory.setCreateUserId(currentUser.getUserId());
+            smtProcessCategory.setModifiedTime(new Date());
+            smtProcessCategory.setModifiedUserId(currentUser.getUserId());
+            smtProcessCategory.setStatus((byte) 1);
+            list.add(smtProcessCategory);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtProcessCategoryMapper.insertList(list);
+        }
+
+        for (SmtProcessCategory smtProcessCategory : list) {
+            SmtHtProcessCategory smtHtProcessCategory = new SmtHtProcessCategory();
+            BeanUtils.copyProperties(smtProcessCategory,smtHtProcessCategory);
+            htList.add(smtHtProcessCategory);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtProcessCategoryMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

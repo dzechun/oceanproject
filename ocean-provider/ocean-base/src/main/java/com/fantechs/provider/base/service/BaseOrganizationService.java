@@ -17,4 +17,6 @@ public interface BaseOrganizationService extends IService<BaseOrganization> {
     List<BaseOrganizationDto> findList(Map<String, Object> map);
 
     int addUser(Long roleId, List<Long> userIds);
+
+    Map<String, Object> importExcel(List<BaseOrganizationDto> baseOrganizationDtos);
 }

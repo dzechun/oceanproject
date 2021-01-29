@@ -19,4 +19,6 @@ public interface SmtMaterialService  extends IService<SmtMaterial>{
     int batchUpdateByCode(List<SmtMaterial> smtMaterials);
 
     int batchUpdate(List<SmtMaterial> smtMaterials);
+
+    Map<String, Object> importExcel(List<SmtMaterialDto> smtMaterialDtos);
 }

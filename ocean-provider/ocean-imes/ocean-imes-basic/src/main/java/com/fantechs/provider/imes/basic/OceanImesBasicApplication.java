@@ -12,7 +12,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.imes.basic","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.imes.basic.mapper"})
-@EnableFeignClients(basePackages = "com.fantechs.provider.api.base")
+@EnableFeignClients(basePackages = "com.fantechs.provider.api")
 public class OceanImesBasicApplication {
 
     public static void main(String[] args) {

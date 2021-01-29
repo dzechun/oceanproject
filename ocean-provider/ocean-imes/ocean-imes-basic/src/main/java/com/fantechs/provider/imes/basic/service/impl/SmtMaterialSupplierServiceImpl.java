@@ -2,8 +2,11 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto;
+import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtMaterialSupplier;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -12,13 +15,14 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtMaterialSupplierMapper;
 import com.fantechs.provider.imes.basic.service.SmtMaterialSupplierService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 /**
  *
@@ -98,4 +102,64 @@ public class SmtMaterialSupplierServiceImpl extends BaseService<SmtMaterialSuppl
         public List<SmtMaterialSupplierDto> findList(SearchSmtMaterialSupplier searchSmtMaterialSupplier) {
             return smtMaterialSupplierMapper.findList(searchSmtMaterialSupplier);
         }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtMaterialSupplierDto> smtMaterialSupplierDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtMaterialSupplier> list = new LinkedList<>();
+        //LinkedList<> htList = new LinkedList<>();
+        for (int i = 0; i < smtMaterialSupplierDtos.size(); i++) {
+            SmtMaterialSupplierDto smtMaterialSupplierDto = smtMaterialSupplierDtos.get(i);
+            String materialSupplierCode = smtMaterialSupplierDto.getMaterialSupplierCode();
+            String materialCode = smtMaterialSupplierDto.getMaterialCode();
+            String supplierCode = smtMaterialSupplierDto.getSupplierCode();
+            if (StringUtils.isEmpty(
+                    materialSupplierCode,materialCode,supplierCode
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtMaterialSupplier.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("materialSupplierCode",smtMaterialSupplierDto.getMaterialSupplierCode());
+            if (StringUtils.isNotEmpty(smtMaterialSupplierMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            SmtMaterialSupplier smtMaterialSupplier = new SmtMaterialSupplier();
+            BeanUtils.copyProperties(smtMaterialSupplierDto,smtMaterialSupplier);
+            smtMaterialSupplier.setCreateTime(new Date());
+            smtMaterialSupplier.setCreateUserId(currentUser.getUserId());
+            smtMaterialSupplier.setModifiedTime(new Date());
+            smtMaterialSupplier.setModifiedUserId(currentUser.getUserId());
+            smtMaterialSupplier.setStatus(1);
+            list.add(smtMaterialSupplier);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtMaterialSupplierMapper.insertList(list);
+        }
+
+//        for (SmtFactory smtFactory : list) {
+//            SmtHtFactory smtHtFactory = new SmtHtFactory();
+//            BeanUtils.copyProperties(smtFactory,smtHtFactory);
+//            htList.add(smtHtFactory);
+//        }
+//        if (StringUtils.isNotEmpty(htList)){
+//            smtHtFactoryMapper.insertList(htList);
+//        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
+    }
 }

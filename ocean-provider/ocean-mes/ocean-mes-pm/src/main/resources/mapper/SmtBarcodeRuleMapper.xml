@@ -52,6 +52,9 @@
       <if test="barcodeRuleDesc!=null and barcodeRuleDesc!=''">
         and sbr.barcode_rule_desc like CONCAT('%', #{barcodeRuleDesc}, '%')
       </if>
+      <if test="barcodeRule!=null and barcodeRule!=''">
+        and sbr.barcode_rule = #{barcodeRule}
+      </if>
       <if test="searchType==1 and barcodeRuleSetId!=null and barcodeRuleSetId!=''">
         AND sbr.barcode_rule_id IN (SELECT sbrsd.barcode_rule_id FROM smt_barcode_rule_set_det sbrsd WHERE sbrsd.barcode_rule_set_id=#{barcodeRuleSetId})
         AND sbr.status=1

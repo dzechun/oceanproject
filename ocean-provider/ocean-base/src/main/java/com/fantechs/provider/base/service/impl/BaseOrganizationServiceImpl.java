@@ -2,6 +2,9 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.entity.basic.SmtFactory;
+import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.SysUserRole;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -138,5 +142,64 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
             list.add(sysOrganizationUser);
         }
         return baseOrganizationMapper.insertUser(list);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseOrganizationDto> baseOrganizationDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseOrganization> list = new LinkedList<>();
+        LinkedList<BaseHtOrganization> htList = new LinkedList<>();
+        for (int i = 0; i < baseOrganizationDtos.size(); i++) {
+            BaseOrganizationDto baseOrganizationDto = baseOrganizationDtos.get(i);
+            String organizationCode = baseOrganizationDto.getOrganizationCode();
+            String organizationName = baseOrganizationDto.getOrganizationName();
+            if (StringUtils.isEmpty(
+                    organizationCode,organizationName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtFactory.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationCode",baseOrganizationDto.getOrganizationCode());
+            if (StringUtils.isNotEmpty(baseOrganizationMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            BaseOrganization baseOrganization = new BaseOrganization();
+            BeanUtils.copyProperties(baseOrganizationDto,baseOrganization);
+            baseOrganization.setCreateTime(new Date());
+            baseOrganization.setCreateUserId(currentUser.getUserId());
+            baseOrganization.setModifiedTime(new Date());
+            baseOrganization.setModifiedUserId(currentUser.getUserId());
+            baseOrganization.setStatus((byte) 1);
+            list.add(baseOrganization);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = baseOrganizationMapper.insertList(list);
+        }
+        for (BaseOrganization baseOrganization : list) {
+            BaseHtOrganization baseHtOrganization = new BaseHtOrganization();
+            BeanUtils.copyProperties(baseOrganization,baseHtOrganization);
+            htList.add(baseHtOrganization);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            baseHtOrganizationMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

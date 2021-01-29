@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -15,4 +16,5 @@ import java.util.List;
 public interface SmtMaterialSupplierService extends IService<SmtMaterialSupplier> {
 
     List<SmtMaterialSupplierDto> findList(SearchSmtMaterialSupplier searchSmtMaterialSupplier);
+    Map<String, Object> importExcel(List<SmtMaterialSupplierDto> smtMaterialSupplierDtos);
 }

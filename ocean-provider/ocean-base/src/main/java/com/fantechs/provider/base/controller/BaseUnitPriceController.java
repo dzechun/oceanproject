@@ -42,7 +42,7 @@ public class BaseUnitPriceController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseUnitPrice baseUnitPrice) {
+    public ResponseEntity add(@ApiParam(value = "必传：materialId",required = true)@RequestBody @Validated BaseUnitPrice baseUnitPrice) {
         return ControllerUtil.returnCRUD(baseUnitPriceService.save(baseUnitPrice));
     }
 
