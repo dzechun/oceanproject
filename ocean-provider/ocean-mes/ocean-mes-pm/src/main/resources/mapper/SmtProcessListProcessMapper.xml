@@ -15,6 +15,7 @@
         <result column="is_hold" jdbcType="TINYINT" property="isHold"/>
         <result column="inbound_time" jdbcType="TIMESTAMP" property="inboundTime"/>
         <result column="outbound_time" jdbcType="TIMESTAMP" property="outboundTime"/>
+        <result column="start_work_qty" jdbcType="DECIMAL" property="startWorkQty"/>
         <result column="output_quantity" jdbcType="DECIMAL" property="outputQuantity"/>
         <result column="cur_output_qty" jdbcType="DECIMAL" property="curOutputQty"/>
         <result column="package_num" jdbcType="VARCHAR" property="packageNum"/>
@@ -94,6 +95,7 @@
         splp.is_hold,
         splp.inbound_time,
         splp.outbound_time,
+        splp.start_work_qty,
         splp.output_quantity,
         splp.cur_output_qty,
         splp.package_num,
@@ -117,8 +119,10 @@
         su2.user_name AS 'modifiedUserName'
         FROM
         fantech_imes.smt_process_list_process splp
-        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = splp.work_order_card_pool_id
-        LEFT JOIN fantech_imes.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id = splp.work_order_barcode_pool_id
+        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id =
+        splp.work_order_card_pool_id
+        LEFT JOIN fantech_imes.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
+        splp.work_order_barcode_pool_id
         LEFT JOIN fantech_imes.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = wo.material_id
         LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
@@ -150,7 +154,7 @@
                 and splp.work_order_card_pool_id=#{workOrderCardPoolId}
             </if>
             <if test="processListProcessCode!=null and processListProcessCode!=''">
-                and splp.process_list_process_code=#{processListProcessCode}
+                and splp.process_list_process_code like CONCAT('%', #{processListProcessCode}, '%')
             </if>
             <if test="processId!=null and processId!=''">
                 and splp.process_id=#{processId}
@@ -172,7 +176,7 @@
         route_process_id,route_id,section_id,process_id,next_process_id,previous_process_id,order_num,is_pass,is_must_pass,inspection_time,qualification_id
         from fantech_imes.smt_route_process
         <where>
-            route_id = #{routdId}
+            route_id = #{routeId}
         </where>
     </select>
 
@@ -194,22 +198,61 @@
         where wo.work_order_id = #{workOrderId}
     </select>
     <select id="findSmtProcess" resultType="com.fantechs.common.base.entity.basic.SmtProcess">
-        SELECT
-            sp.is_job_scan AS 'isJobScan',
-            sp.is_start_scan AS 'isStartScan',
-            sp.is_quality AS 'isQuality'
-        FROM
-            smt_process AS sp
+        SELECT sp.is_job_scan   AS 'isJobScan',
+               sp.is_start_scan AS 'isStartScan',
+               sp.is_quality    AS 'isQuality'
+        FROM smt_process AS sp
         where sp.process_id = #{id}
     </select>
-    <select id="findMinOutPut" parameterType="long">
-        SELECT
-            min( splp.output_quantity )
-        FROM
-            smt_process_list_process splp
-        WHERE
-            splp.work_order_card_pool_id = #{workOrderCardPoolId}
+    <select id="findMinOutPut" parameterType="long" resultType="Double">
+        SELECT ifnull(min(splp.output_quantity), 0)
+        FROM smt_process_list_process splp
+        WHERE splp.work_order_card_pool_id = #{workOrderCardPoolId}
           AND splp.process_type = 2
-          AND splp.STATUS =2
+          AND splp.STATUS = 2
+    </select>
+    <select id="isExistProcessInWorkOrder" resultType="int">
+        SELECT count(1)
+        FROM smt_route_process srp
+                 LEFT JOIN smt_work_order swo ON swo.route_id = srp.route_id
+        WHERE swo.work_order_id = #{workOrderId}
+          AND srp.process_id = #{processId}
+    </select>
+    <select id="firstProcessIdInWSection" resultType="long">
+        SELECT srp.process_id
+        FROM smt_route_process srp
+                 LEFT JOIN smt_workshop_section sws ON sws.section_id = srp.section_id
+                 LEFT JOIN smt_process sp ON sp.section_id = sws.section_id
+        WHERE sp.process_id = #{processId} AND srp.route_id = #{routeId}
+        ORDER BY srp.order_num
+        LIMIT 1
+    </select>
+    <select id="firstProcessIdInRoute" resultType="long">
+        SELECT srp.process_id
+        FROM smt_route_process srp
+        WHERE srp.route_id = #{routeId}
+        ORDER BY srp.order_num
+        LIMIT 1
+    </select>
+    <select id="findUp" resultMap="BaseResultMap">
+        SELECT splp.process_list_process_id,
+               splp.process_list_process_code,
+               splp.work_order_card_pool_id,
+               splp.work_order_barcode_pool_id,
+               splp.process_id,
+               splp.process_type,
+               splp.`status`,
+               splp.remark,
+               splp.organization_id,
+               splp.is_hold,
+               splp.inbound_time,
+               splp.outbound_time,
+               splp.start_work_qty,
+               splp.output_quantity,
+               splp.cur_output_qty
+        FROM smt_process_list_process AS splp
+        WHERE splp.process_list_process_id &lt; #{id}
+        ORDER BY splp.process_list_process_id DESC
+        LIMIT 1
     </select>
 </mapper>

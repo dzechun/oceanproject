@@ -74,12 +74,6 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
         //转移批量
         Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
-        if(StringUtils.isEmpty(transferQuantity)){
-            transferQuantity=1;//默认为1
-        }
-        //工单总转移批次
-        int sumBatchQuantity = (int) Math.ceil(workOrderQuantity.doubleValue() / transferQuantity);
-
         //产生数量
         Integer produceQuantity = smtWorkOrderCardCollocation.getProduceQuantity();
         //已产生数量
@@ -90,19 +84,34 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         List<SmtWorkOrderCardCollocation> cardCollocations = smtWorkOrderCardCollocationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(cardCollocations)) {
             SmtWorkOrderCardCollocation workOrderCardCollocation = cardCollocations.get(0);
+            smtWorkOrderCardCollocation.setWorkOrderCardCollocationId(workOrderCardCollocation.getWorkOrderCardCollocationId());
             generatedQuantity = workOrderCardCollocation.getProduceQuantity();
         }
-        if (produceQuantity + generatedQuantity > sumBatchQuantity) {
-            throw new BizErrorException("工单产生流转卡总数量不能大于工单转移批次数量");
-        } else if (produceQuantity + generatedQuantity == sumBatchQuantity) {
-            smtWorkOrderCardCollocation.setStatus((byte) 2);
-        } else {
-            smtWorkOrderCardCollocation.setStatus((byte) 1);
+        if(StringUtils.isEmpty(transferQuantity) || transferQuantity==0){
+            transferQuantity=-1;
+            if (produceQuantity + generatedQuantity > smtWorkOrderDto.getWorkOrderQuantity().intValue()) {
+                throw new BizErrorException("投产数不能大于工单剩余投产数");
+            } else if (produceQuantity + generatedQuantity == smtWorkOrderDto.getWorkOrderQuantity().intValue()) {
+                smtWorkOrderCardCollocation.setStatus((byte) 2);
+            } else {
+                smtWorkOrderCardCollocation.setStatus((byte) 1);
+            }
+        }else{
+            //工单总转移批次
+            int sumBatchQuantity = (int) Math.ceil(workOrderQuantity.doubleValue() / transferQuantity);
+
+            if (produceQuantity + generatedQuantity > sumBatchQuantity) {
+                throw new BizErrorException("工单产生流转卡总数量不能大于工单转移批次数量");
+            } else if (produceQuantity + generatedQuantity == sumBatchQuantity) {
+                smtWorkOrderCardCollocation.setStatus((byte) 2);
+            } else {
+                smtWorkOrderCardCollocation.setStatus((byte) 1);
+            }
         }
 
+
         smtWorkOrderCardCollocation.setGeneratedQuantity(produceQuantity + generatedQuantity);
-        smtWorkOrderCardCollocation.setModifiedUserId(currentUser.getUserId());
-        smtWorkOrderCardCollocation.setModifiedTime(new Date());
+
 
         Long cardCode = null;
         Long barcodeRuleId = null;
@@ -134,12 +143,23 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             throw new BizErrorException("没有找到相关的流转卡条码规则");
         }
         //工单流转卡
-        List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity);
+        //如果转移批次量设置为-1，代表生成流程卡数总为1张，一张代表投产数
+        List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity,transferQuantity);
         //产品条码流转卡
         if (StringUtils.isNotEmpty(barcodeRuleId)) {
             generateBarcode(list, smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
         }
-        return smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
+        int result=0;
+        if(StringUtils.isEmpty(smtWorkOrderCardCollocation.getWorkOrderCardCollocationId())){
+            smtWorkOrderCardCollocation.setCreateUserId(currentUser.getUserId());
+            smtWorkOrderCardCollocation.setCreateTime(new Date());
+            result=smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
+        }else{
+            smtWorkOrderCardCollocation.setModifiedUserId(currentUser.getUserId());
+            smtWorkOrderCardCollocation.setModifiedTime(new Date());
+            result=smtWorkOrderCardCollocationMapper.updateByPrimaryKeySelective(smtWorkOrderCardCollocation);
+        }
+        return result;
     }
 
     /**
@@ -204,7 +224,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public List<SmtWorkOrderCardPool> generateCardCode(SmtWorkOrderCardCollocation smtWorkOrderCardCollocation, Long barcodeRuleId, Integer produceQuantity) {
+    public List<SmtWorkOrderCardPool> generateCardCode(SmtWorkOrderCardCollocation smtWorkOrderCardCollocation, Long barcodeRuleId, Integer produceQuantity,Integer transferQuantity) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<SmtWorkOrderCardPool> workOrderCardPools = new ArrayList<>();
         String workOrderCardCode = null;
@@ -236,7 +256,9 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         }
         //=====
 
-        for (int i = 0; i < produceQuantity; i++) {
+        //循环次数
+        int count=transferQuantity==-1?1:produceQuantity;
+        for (int i = 0; i < count; i++) {
             if (StringUtils.isNotEmpty(list)) {
                 workOrderCardCode = BarcodeRuleUtils.getMaxSerialNumber(list, workOrderCardCode);
                 workOrderCardCode = BarcodeRuleUtils.analysisCode(list, workOrderCardCode, null);
@@ -250,6 +272,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
             smtWorkOrderCardPool.setWorkOrderId(smtWorkOrderCardCollocation.getWorkOrderId());
             smtWorkOrderCardPool.setBarcodeRuleId(barcodeRuleId);
             smtWorkOrderCardPool.setWorkOrderCardId(workOrderCardCode);
+            smtWorkOrderCardPool.setOutPutQty(new BigDecimal(transferQuantity==-1?produceQuantity:transferQuantity));
             smtWorkOrderCardPool.setIsDelete((byte)1);
             smtWorkOrderCardPool.setCardStatus((byte) 0);
             smtWorkOrderCardPool.setStatus((byte) 1);

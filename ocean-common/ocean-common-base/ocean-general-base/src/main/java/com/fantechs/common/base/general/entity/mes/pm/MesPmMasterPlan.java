@@ -76,6 +76,14 @@ public class MesPmMasterPlan implements Serializable {
     private java.math.BigDecimal noScheduleQty;
 
     /**
+     * 转流程卡数量
+     */
+    @ApiModelProperty(value = "转流程卡数量",example = "转流程卡数量")
+    @Column(name = "turn_card_qty")
+    @Excel(name = "转流程卡数量",orderNum = "10")
+    private java.math.BigDecimal turnCardQty;
+
+    /**
     * 完成数量
     */
     @ApiModelProperty(value = "完成数量",example = "完成数量")

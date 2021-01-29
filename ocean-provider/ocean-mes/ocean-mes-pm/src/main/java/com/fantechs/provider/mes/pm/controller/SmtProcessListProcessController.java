@@ -65,7 +65,7 @@ public class SmtProcessListProcessController {
     @ApiOperation("工序报工")
     @PostMapping("/finishedProduct")
     public ResponseEntity finishedProduct(@ApiParam(value = "查询对象")@RequestBody ProcessFinishedProductDTO processFinishedProductDTO) {
-        return ControllerUtil.returnCRUD(smtProcessListProcessService.finishedProduct(processFinishedProductDTO));
+        return ControllerUtil.returnCRUD(smtProcessListProcessService.stationToScan(processFinishedProductDTO));
     }
 
     @PostMapping(value = "/export")
