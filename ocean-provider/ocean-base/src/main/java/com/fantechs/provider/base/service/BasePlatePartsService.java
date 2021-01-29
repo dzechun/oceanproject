@@ -14,4 +14,5 @@ import java.util.Map;
 
 public interface BasePlatePartsService extends IService<BasePlateParts> {
     List<BasePlatePartsDto> findList(Map<String, Object> map);
+    Map<String, Object> importExcel(List<BasePlatePartsDto> basePlatePartsDtos);
 }

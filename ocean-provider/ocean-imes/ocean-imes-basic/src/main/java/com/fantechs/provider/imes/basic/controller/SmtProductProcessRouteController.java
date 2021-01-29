@@ -1,6 +1,8 @@
 package com.fantechs.provider.imes.basic.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
+import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -15,14 +17,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,6 +37,7 @@ import java.util.List;
 @Api(tags = "产品工艺路线信息管理")
 @RequestMapping("/smtProductProcessRoute")
 @Validated
+@Slf4j
 public class SmtProductProcessRouteController {
 
     @Autowired
@@ -88,7 +94,7 @@ public class SmtProductProcessRouteController {
     List<SmtProductProcessRoute> list = smtProductProcessRouteService.findList(searchSmtProductProcessRoute);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出产品工艺路线信息", "产品工艺路线信息", SmtProductProcessRoute.class, "产品工艺路线信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "产品工艺路线信息", "产品工艺路线信息", SmtProductProcessRoute.class, "产品工艺路线信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

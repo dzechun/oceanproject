@@ -1,6 +1,9 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
+import com.fantechs.common.base.entity.basic.SmtProcessCategory;
+import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePartsInformationDto;
@@ -19,12 +22,10 @@ import com.fantechs.provider.base.service.BasePartsInformationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -107,5 +108,66 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
         baseHtPartsInformationMapper.insertList(baseHtPartsInformations);
 
         return basePartsInformationMapper.deleteByIds(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BasePartsInformationDto> basePartsInformationDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BasePartsInformation> list = new LinkedList<>();
+        LinkedList<BaseHtPartsInformation> htList = new LinkedList<>();
+        for (int i = 0; i < basePartsInformationDtos.size(); i++) {
+            BasePartsInformation basePartsInformationDto = basePartsInformationDtos.get(i);
+            String partsInformationCode = basePartsInformationDto.getPartsInformationCode();
+            String partsInformationName = basePartsInformationDto.getPartsInformationName();
+
+            if (StringUtils.isEmpty(
+                    partsInformationCode,partsInformationName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtProcessCategory.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("partsInformationCode",partsInformationCode);
+            if (StringUtils.isNotEmpty(basePartsInformationMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            BasePartsInformation basePartsInformation = new BasePartsInformation();
+            BeanUtils.copyProperties(basePartsInformationDto,basePartsInformation);
+            basePartsInformation.setCreateTime(new Date());
+            basePartsInformation.setCreateUserId(currentUser.getUserId());
+            basePartsInformation.setModifiedTime(new Date());
+            basePartsInformation.setModifiedUserId(currentUser.getUserId());
+            basePartsInformation.setStatus((byte) 1);
+            list.add(basePartsInformation);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = basePartsInformationMapper.insertList(list);
+        }
+        for (BasePartsInformation basePartsInformation : list) {
+            BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
+            BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
+            htList.add(baseHtPartsInformation);
+        }
+
+
+        if (StringUtils.isNotEmpty(htList)){
+            baseHtPartsInformationMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }
