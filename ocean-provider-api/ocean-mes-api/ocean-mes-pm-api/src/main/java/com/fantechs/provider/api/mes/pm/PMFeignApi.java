@@ -130,4 +130,9 @@ public interface PMFeignApi {
     @ApiOperation("列表")
     @PostMapping("/smtWorkOrderCardPool/findList")
     ResponseEntity<List<SmtWorkOrderCardPoolDto>> findWorkOrderCardPoolList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
+
+    @ApiOperation("工单BOM信息列表")
+    @PostMapping("/smtWorkOrderBom/findList")
+    ResponseEntity<List<SmtWorkOrderBomDto>> findWordOrderBomList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom);
+
 }

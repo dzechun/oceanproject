@@ -25,7 +25,7 @@ public class SearchQmsQualityConfirmation extends BaseQuery implements Serializa
      * 流程单ID
      */
     @ApiModelProperty(name="workOrderCardPoolId",value = "流程单ID")
-    private String workOrderCardPoolId;
+    private Long workOrderCardPoolId;
 
     /**
      * 品质确认单号
@@ -58,7 +58,7 @@ public class SearchQmsQualityConfirmation extends BaseQuery implements Serializa
     private Byte affirmStatus;
 
     /**
-     * 品质类型（0、品质确认 1、品质抽检 ）
+     * 品质类型（1、品质确认 2、品质抽检 ）
      */
     @ApiModelProperty(name="qualityType",value = "品质类型（1、品质确认 2、品质抽检 ）")
     private Byte qualityType;

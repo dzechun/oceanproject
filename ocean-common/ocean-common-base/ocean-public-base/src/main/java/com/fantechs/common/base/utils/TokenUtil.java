@@ -33,7 +33,7 @@ public class TokenUtil {
     public static int REPLACEMENT_DELAY=2*60;//2分钟 旧token延期失效时间
     public static String tokenPrefix = "token:";//统一加入 token前缀标识
     public static String refreshTokenPrefix = "refreshToken:";//统一加入 token前缀标识
-    
+
 
     /***
      * @param agent Http头中的user-agent信息
