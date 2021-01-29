@@ -8,9 +8,15 @@ import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
+import com.fantechs.common.base.general.dto.basic.BaseUnitPriceDto;
+import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.BaseUnitPrice;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseUnitPrice;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -25,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 @Service
@@ -197,9 +204,15 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             criteria4.andEqualTo("materialId", materialId);
             List<SmtMaterialSupplier> smtMaterialSuppliers = smtMaterialSupplierMapper.selectByExample(example4);
 
+            //被单价信息引用
+            SearchBaseUnitPrice searchBaseUnitPrice = new SearchBaseUnitPrice();
+            searchBaseUnitPrice.setMaterialId(Long.valueOf(materialId));
+            List<BaseUnitPriceDto> baseUnitPriceDtos = baseFeignApi.findUnitPriceList(searchBaseUnitPrice).getData();
+
+
             if (StringUtils.isNotEmpty(smtSignatures) || StringUtils.isNotEmpty(smtProductProcessRoutes)
                     || StringUtils.isNotEmpty(smtProductBoms) || StringUtils.isNotEmpty(smtProductBomDets)
-                    || StringUtils.isNotEmpty(smtMaterialSuppliers)) {
+                    || StringUtils.isNotEmpty(smtMaterialSuppliers) || StringUtils.isNotEmpty(baseUnitPriceDtos)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 
@@ -216,7 +229,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             smtHtMaterial.setModifiedTime(new Date());
             list.add(smtHtMaterial);
         }
-        //新增页签
+        //删除页签
         baseFeignApi.deleteTab(baseTabs);
 
         i = smtMaterialMapper.deleteByIds(ids);
@@ -308,5 +321,64 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             i = smtMaterialMapper.insertList(smtMaterials);
         }
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtMaterialDto> smtMaterialDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtMaterial> list = new LinkedList<>();
+        LinkedList<SmtHtMaterial> htList = new LinkedList<>();
+        for (int i = 0; i < smtMaterialDtos.size(); i++) {
+            SmtMaterialDto smtMaterialDto = smtMaterialDtos.get(i);
+            String materialCode = smtMaterialDto.getMaterialCode();
+            if (StringUtils.isEmpty(
+                    materialCode
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtMaterial.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("materialCode",smtMaterialDto.getMaterialCode());
+            if (StringUtils.isNotEmpty(smtMaterialMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            SmtMaterial smtMaterial = new SmtMaterial();
+            BeanUtils.copyProperties(smtMaterialDto,smtMaterial);
+            smtMaterial.setCreateTime(new Date());
+            smtMaterial.setCreateUserId(currentUser.getUserId());
+            smtMaterial.setModifiedTime(new Date());
+            smtMaterial.setModifiedUserId(currentUser.getUserId());
+            smtMaterial.setStatus((byte) 1);
+            list.add(smtMaterial);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtMaterialMapper.insertList(list);
+        }
+
+        for (SmtMaterial smtMaterial : list) {
+            SmtHtMaterial smtHtMaterial = new SmtHtMaterial();
+            BeanUtils.copyProperties(smtMaterial,smtHtMaterial);
+            htList.add(smtHtMaterial);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtMaterialMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

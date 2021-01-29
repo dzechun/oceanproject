@@ -2,9 +2,13 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
+import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.SmtProLine;
 import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
 import com.fantechs.common.base.entity.basic.SmtWorkShop;
+import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.history.SmtHtProLine;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProLine;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -16,16 +20,17 @@ import com.fantechs.provider.imes.basic.mapper.SmtHtProLineMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProLineMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProductProcessRouteMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
+import com.fantechs.provider.imes.basic.service.SmtFactoryService;
 import com.fantechs.provider.imes.basic.service.SmtProLineService;
+import com.fantechs.provider.imes.basic.service.SmtWorkShopService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 @Service
 public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements SmtProLineService {
@@ -38,6 +43,12 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
     @Resource
     private SmtProductProcessRouteMapper smtProductProcessRouteMapper;
+
+    @Resource
+    private SmtFactoryService smtFactoryService;
+
+    @Resource
+    private SmtWorkShopMapper smtWorkShopMapper;
 
     @Override
     public List<SmtProLine> findList(SearchSmtProLine searchSmtProLine) {
@@ -137,5 +148,90 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
          smtHtProLineMapper.insertList(list);
          i=smtProLineMapper.deleteByIds(ids);
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtProLine> smtProLines) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtProLine> list = new LinkedList<>();
+        LinkedList<SmtHtProLine> htList = new LinkedList<>();
+
+        for (int i = 0; i < smtProLines.size(); i++) {
+            SmtProLine smtProLine = smtProLines.get(i);
+            String proCode = smtProLine.getProCode();
+            String proName = smtProLine.getProName();
+            String factoryCode = smtProLine.getFactoryCode();
+            String workShopCode = smtProLine.getWorkShopCode();
+            if (StringUtils.isEmpty(
+                    proCode,proName,factoryCode,workShopCode
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtProLine.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("proCode",smtProLine.getProCode());
+            if (StringUtils.isNotEmpty(smtProLineMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断工厂是否存在
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("factoryCode",smtProLine.getFactoryCode());
+            map.put("codeQueryMark",1);
+            List<SmtFactoryDto> list1 = smtFactoryService.findList(map);
+            if (StringUtils.isEmpty(list1)){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断车间是否存在
+            Example example1 = new Example(SmtWorkShop.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("workShopCode",smtProLine.getWorkShopCode());
+            SmtWorkShop smtWorkShop = smtWorkShopMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(smtWorkShop)){
+                fail.add(i+3);
+                continue;
+            }
+
+            smtProLine.setCreateTime(new Date());
+            smtProLine.setCreateUserId(currentUser.getUserId());
+            smtProLine.setModifiedTime(new Date());
+            smtProLine.setModifiedUserId(currentUser.getUserId());
+            smtProLine.setStatus(1);
+            smtProLine.setFactoryId(list1.get(0).getFactoryId());
+            smtProLine.setWorkShopId(smtWorkShop.getWorkShopId());
+            list.add(smtProLine);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtProLineMapper.insertList(list);
+        }
+
+        for (SmtProLine smtProLine : list) {
+            SmtHtProLine smtHtProLine = new SmtHtProLine();
+            BeanUtils.copyProperties(smtProLine,smtHtProLine);
+            htList.add(smtHtProLine);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtProLineMapper.insertList(htList);
+        }
+
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

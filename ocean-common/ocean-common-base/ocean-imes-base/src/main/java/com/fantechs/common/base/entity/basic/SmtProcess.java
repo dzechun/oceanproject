@@ -67,6 +67,14 @@ public class SmtProcess extends ValidGroup implements Serializable {
     private String sectionName;
 
     /**
+     * 工段编码
+     */
+    @Transient
+    @ApiModelProperty(name="sectionCode" ,value="工段编码")
+    @Excel(name = "工段编码", height = 20, width = 30)
+    private String sectionCode;
+
+    /**
      * 工序类别ID
      */
     @Column(name = "process_category_id")
@@ -81,6 +89,14 @@ public class SmtProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="processCategoryName" ,value="工序类别名称")
     @Excel(name = "工序类别",  height = 20, width = 30)
     private String processCategoryName;
+
+    /**
+     * 工序类别编码
+     */
+    @Transient
+    @ApiModelProperty(name="processCategoryCode" ,value="工序类别编码")
+    @Excel(name = "工序类别编码",  height = 20, width = 30)
+    private String processCategoryCode;
 
     /**
      * 是否报工扫描（0、否 1、是）

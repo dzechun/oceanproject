@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -42,6 +44,7 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Excel(name = "物料ID", height = 20, width = 30)
     @Column(name = "material_id")
+    @NotNull(message = "物料ID不能为空")
     private Long materialId;
 
     /**
@@ -278,10 +281,10 @@ public class BaseHtUnitPrice extends ValidGroup implements Serializable {
     private BigDecimal woodenProducts;
 
     /**
-     * 补货
+     * 补件
      */
-    @ApiModelProperty(name="replenishment",value = "补货")
-    @Excel(name = "补货", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="replenishment",value = "补件")
+    @Excel(name = "补件", height = 20, width = 30,orderNum="")
     private BigDecimal replenishment;
 
     /**

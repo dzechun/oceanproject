@@ -15,4 +15,5 @@ import java.util.Map;
 public interface SmtProcessCategoryService extends IService<SmtProcessCategory> {
 
     List<SmtProcessCategoryDto> findList(Map<String,Object> map);
+    Map<String, Object> importExcel(List<SmtProcessCategoryDto> smtProcessCategoryDtos);
 }

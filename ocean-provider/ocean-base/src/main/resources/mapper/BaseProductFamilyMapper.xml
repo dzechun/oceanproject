@@ -51,8 +51,11 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bpf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="productFamilyCode != null and productFamilyCode!=''">
+      <if test="productFamilyCode != null and productFamilyCode!='' and codeQueryMark != 1">
         and bpf.product_family_code like CONCAT('%', #{productFamilyCode}, '%')
+      </if>
+      <if test="productFamilyCode != null and productFamilyCode!='' and codeQueryMark == 1">
+        and bpf.product_family_code = #{productFamilyCode}
       </if>
       <if test="productFamilyName != null and productFamilyName!=''">
         and bpf.product_family_name like CONCAT('%', #{productFamilyName}, '%')

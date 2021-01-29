@@ -68,6 +68,14 @@ public class SmtStation extends ValidGroup implements Serializable {
     private String processName;
 
     /**
+     * 工序编码
+     */
+    @Transient
+    @ApiModelProperty(name = "processCode",value = "工序编码")
+    @Excel(name = "工序编码", height = 20, width = 30)
+    private String processCode;
+
+    /**
      * 工段ID
      */
     @Column(name = "section_id")
@@ -82,6 +90,14 @@ public class SmtStation extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "sectionName",value = "工段名称")
     @Excel(name = "工段名称", height = 20, width = 30)
     private String sectionName;
+
+    /**
+     * 工段编码
+     */
+    @Transient
+    @ApiModelProperty(name = "sectionCode",value = "工段编码")
+    @Excel(name = "工段编码", height = 20, width = 30)
+    private String sectionCode;
 
     /**
      * 组织id

@@ -1,11 +1,15 @@
 package com.fantechs.provider.api.imes.basic;
 
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -44,15 +48,15 @@ public interface BasicFeignApi {
     @PostMapping("/smtMaterial/findList")
     ResponseEntity<List<SmtMaterial>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtMaterial searchSmtMaterial);
 
-    @ApiOperation(value = "批量更新", notes = "批量更新")
+    @ApiOperation(value = "批量更新储位", notes = "批量更新")
     @PostMapping("/smtStorage/batchUpdate")
     ResponseEntity batchUpdate(@ApiParam(value = "储位集合", required = true) @RequestBody List<SmtStorage> smtStorages);
 
-    @ApiOperation(value = "批量新增", notes = "批量新增")
+    @ApiOperation(value = "批量新增储位", notes = "批量新增")
     @PostMapping("/smtStorage/batchSave")
     ResponseEntity batchAdd(@ApiParam(value = "储位集合", required = true) @RequestBody List<SmtStorage> smtStorages);
 
-    @ApiOperation("根据条件查询信息列表")
+    @ApiOperation("根据条件查询储位信息列表")
     @PostMapping("/smtStorage/findList")
     ResponseEntity<List<SmtStorage>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorage searchSmtStorage);
 
@@ -60,11 +64,11 @@ public interface BasicFeignApi {
     @PostMapping("/smtWarehouse/batchUpdateByCode")
     ResponseEntity batchUpdateWarehouseByCode(@ApiParam(value = "编码必传") @RequestBody List<SmtWarehouse> smtWarehouses);
 
-    @ApiOperation("批量新增")
+    @ApiOperation("批量新增仓库信息")
     @PostMapping("/smtWarehouse/batchSave")
     ResponseEntity batchSave(@ApiParam(value = "批量新增") @RequestBody List<SmtWarehouse> smtWarehouses);
 
-    @ApiOperation("根据条件查询信息列表")
+    @ApiOperation("根据条件查询仓库信息列表")
     @PostMapping("/smtWarehouse/findList")
     ResponseEntity<List<SmtWarehouse>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtWarehouse searchSmtWarehouse);
 
@@ -106,4 +110,8 @@ public interface BasicFeignApi {
     @ApiOperation("查询产品工艺路线")
     @GetMapping("/smtRoute/findConfigureRout")
     ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId", required = true) @RequestParam Long routeId);
+
+    @ApiOperation("厂别信息列表")
+    @PostMapping("/smtWorkShop/findList")
+    ResponseEntity<List<SmtFactoryDto>> findFactoryList(@ApiParam(value = "查询对象")@RequestBody SearchSmtFactory searchSmtFactory);
 }

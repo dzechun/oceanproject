@@ -240,8 +240,8 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
                 criteria.andEqualTo("deptCode",parentCode);
                 SmtDept smtDept1 = smtDeptMapper.selectOneByExample(example);
                 smtDept.setParentId(smtDept1.getDeptId());
+                smtDeptMapper.updateByPrimaryKeySelective(smtDept1);
             }
-            smtDeptMapper.updateByPrimaryKeySelective(smtDept);
         }
 
         resutlMap.put("操作成功总数",success);

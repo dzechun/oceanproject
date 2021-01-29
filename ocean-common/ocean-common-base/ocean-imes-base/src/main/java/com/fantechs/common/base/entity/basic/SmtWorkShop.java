@@ -87,7 +87,7 @@ public class SmtWorkShop extends ValidGroup implements Serializable{
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -110,7 +110,7 @@ public class SmtWorkShop extends ValidGroup implements Serializable{
      * 车间状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name = "status",value = "车间状态（0、不启用 1、启用）")
-    @Excel(name = "车间状态", height = 20, width = 30 ,orderNum="5",replace = {"不启用_0", "启用_1"})
+    @Excel(name = "车间状态", height = 20, width = 30 ,orderNum="6",replace = {"不启用_0", "启用_1"})
     private Integer status;
 
     /**

@@ -1,7 +1,9 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProcess;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -14,16 +16,19 @@ import com.fantechs.provider.imes.basic.service.SmtProcessService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,7 @@ import java.util.List;
 @Api(tags = "工序信息管理")
 @RequestMapping("/smtProcess")
 @Validated
+@Slf4j
 public class SmtProcessController {
 
     @Autowired
@@ -97,5 +103,26 @@ public class SmtProcessController {
         Page<Object> page = PageHelper.startPage(searchSmtProcess.getStartPage(),searchSmtProcess.getPageSize());
         List<SmtHtProcess> list = smtHtProcessService.findHtList(searchSmtProcess);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtProcess> smtProcesses = EasyPoiUtils.importExcel(file, SmtProcess.class);
+            Map<String, Object> resultMap = smtProcessService.importExcel(smtProcesses);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
     }
 }

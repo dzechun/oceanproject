@@ -1,6 +1,8 @@
 package com.fantechs.provider.imes.basic.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
 import com.fantechs.common.base.entity.basic.SmtStation;
 import com.fantechs.common.base.entity.basic.history.SmtHtStation;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStation;
@@ -14,16 +16,19 @@ import com.fantechs.provider.imes.basic.service.SmtStationService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,7 @@ import java.util.List;
 @Api(tags = "工位信息管理")
 @RequestMapping("/smtStation")
 @Validated
+@Slf4j
 public class SmtStationController {
 
     @Autowired
@@ -92,6 +98,27 @@ public class SmtStationController {
         EasyPoiUtils.exportExcel(list, "导出工位信息", "工位信息", SmtStation.class, "工位信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtStation> smtStations = EasyPoiUtils.importExcel(file, SmtStation.class);
+            Map<String, Object> resultMap = smtStationService.importExcel(smtStations);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

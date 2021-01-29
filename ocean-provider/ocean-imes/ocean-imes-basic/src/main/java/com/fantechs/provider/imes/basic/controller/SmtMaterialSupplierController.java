@@ -1,5 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto;
 import com.fantechs.common.base.entity.basic.SmtMaterialSupplier;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier;
@@ -14,14 +16,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -31,6 +36,7 @@ import java.util.List;
 @Api(tags = "物料关联客户料号")
 @RequestMapping("/smtMaterialSupplier")
 @Validated
+@Slf4j
 public class SmtMaterialSupplierController {
 
     @Autowired
@@ -79,6 +85,27 @@ public class SmtMaterialSupplierController {
         EasyPoiUtils.exportExcel(list, "导出物料编码关联客户料号信息", "物料编码关联客户料号信息", SmtMaterialSupplierDto.class, "物料编码关联客户料号.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtMaterialSupplierDto> smtMaterialSupplierDtos = EasyPoiUtils.importExcel(file, SmtMaterialSupplierDto.class);
+            Map<String, Object> resultMap = smtMaterialSupplierService.importExcel(smtMaterialSupplierDtos);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

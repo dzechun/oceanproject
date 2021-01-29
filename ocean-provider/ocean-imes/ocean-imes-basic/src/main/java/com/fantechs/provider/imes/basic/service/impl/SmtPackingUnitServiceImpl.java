@@ -4,7 +4,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtPackingUnitDto;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtPackingUnit;
+import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.history.SmtHtPackingUnit;
+import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
@@ -19,10 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2020/11/03.
@@ -119,5 +119,64 @@ public class SmtPackingUnitServiceImpl extends BaseService<SmtPackingUnit> imple
     @Override
     public List<SmtPackingUnitDto> findList(Map<String, Object> map) {
         return smtPackingUnitMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtPackingUnitDto> smtPackingUnitDtos) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtPackingUnit> list = new LinkedList<>();
+        LinkedList<SmtHtPackingUnit> htList = new LinkedList<>();
+        for (int i = 0; i < smtPackingUnitDtos.size(); i++) {
+            SmtPackingUnitDto smtPackingUnitDto = smtPackingUnitDtos.get(i);
+            String packingUnitName = smtPackingUnitDto.getPackingUnitName();
+            if (StringUtils.isEmpty(
+                    packingUnitName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断物料和物料的特征码是否已经存在
+            Example example = new Example(SmtSignature.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("packingUnitName",smtPackingUnitDto.getPackingUnitName());
+            if (StringUtils.isNotEmpty(smtPackingUnitMapper.selectOneByExample(example))){
+                fail.add(i+3);
+                continue;
+            }
+
+            SmtPackingUnit smtPackingUnit = new SmtPackingUnit();
+            BeanUtils.copyProperties(smtPackingUnitDto,smtPackingUnit);
+            smtPackingUnit.setCreateTime(new Date());
+            smtPackingUnit.setCreateUserId(currentUser.getUserId());
+            smtPackingUnit.setModifiedTime(new Date());
+            smtPackingUnit.setModifiedUserId(currentUser.getUserId());
+            smtPackingUnit.setStatus((byte) 1);
+            list.add(smtPackingUnit);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtPackingUnitMapper.insertList(list);
+        }
+
+        for (SmtPackingUnit smtPackingUnit : list) {
+            SmtHtPackingUnit smtHtPackingUnit = new SmtHtPackingUnit();
+            BeanUtils.copyProperties(smtPackingUnit,smtHtPackingUnit);
+            htList.add(smtHtPackingUnit);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtPackingUnitMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }
