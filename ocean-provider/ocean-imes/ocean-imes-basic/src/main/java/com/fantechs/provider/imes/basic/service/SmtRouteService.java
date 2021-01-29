@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -19,4 +20,6 @@ public interface SmtRouteService extends IService<SmtRoute> {
     int addOrUpdateRoute(SmtRoute smtRoute);
 
     public int configureRout(SmtRoute smtRoute);
+
+    Map<String, Object> importExcel(List<SmtRoute> smtRoutes);
 }

@@ -4,9 +4,13 @@ package com.fantechs.provider.imes.basic.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
+import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
+import com.fantechs.common.base.general.entity.basic.BasePlateParts;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtPlateParts;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -20,9 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 /**
  *
@@ -205,5 +208,65 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
         }
 
         return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtRoute> smtRoutes) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtRoute> list = new LinkedList<>();
+        LinkedList<SmtHtRoute> htList = new LinkedList<>();
+        for (int i = 0; i < smtRoutes.size(); i++) {
+            SmtRoute smtRoute = smtRoutes.get(i);
+            String routeCode = smtRoute.getRouteCode();
+            String routeName = smtRoute.getRouteName();
+            if (StringUtils.isEmpty(
+                    routeCode,routeName
+            )){
+                fail.add(i+3);
+                continue;
+            }
+
+            //判断编码和名称是否重复
+            Example example = new Example(SmtRoute.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("routeCode",routeCode)
+                    .orEqualTo("routeName",routeCode);
+            List<SmtRoute> smtRoutes1 = smtRouteMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(smtRoutes1)){
+                fail.add(i+3);
+                continue;
+            }
+
+            smtRoute.setCreateTime(new Date());
+            smtRoute.setCreateUserId(currentUser.getUserId());
+            smtRoute.setModifiedTime(new Date());
+            smtRoute.setModifiedUserId(currentUser.getUserId());
+            smtRoute.setStatus(1);
+            list.add(smtRoute);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = smtRouteMapper.insertList(list);
+        }
+
+        for (SmtRoute smtRoute : list) {
+            SmtHtRoute smtHtRoute = new SmtHtRoute();
+            BeanUtils.copyProperties(smtRoute,smtHtRoute);
+            htList.add(smtHtRoute);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            smtHtRouteMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }
