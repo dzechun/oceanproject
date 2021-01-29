@@ -48,5 +48,9 @@ public class SearchSmtRoute extends BaseQuery implements Serializable {
     @ApiModelProperty(name="routeId" ,value="工艺路线ID")
     private Long routeId;
 
-
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

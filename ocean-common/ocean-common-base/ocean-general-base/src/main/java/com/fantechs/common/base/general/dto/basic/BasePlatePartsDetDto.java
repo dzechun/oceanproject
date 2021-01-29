@@ -39,7 +39,7 @@ public class BasePlatePartsDetDto extends BasePlatePartsDet implements Serializa
      * 工艺路线名称
      */
     @Transient
-    @ApiModelProperty(name="proName",value = "工艺路线名称")
+    @ApiModelProperty(name="routeName",value = "工艺路线名称")
     @Excel(name = "工艺路线名称", height = 20, width = 30,orderNum="")
     private String routeName;
 
