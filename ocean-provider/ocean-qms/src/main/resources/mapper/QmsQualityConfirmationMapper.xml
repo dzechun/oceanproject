@@ -110,7 +110,9 @@
       <if test="qualityType != null and qualityType != ''">
         and qqc.quality_type = #{qualityType}
       </if>
-
+      <if test="workOrderCardPoolId != null and workOrderCardPoolId != ''">
+        and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
