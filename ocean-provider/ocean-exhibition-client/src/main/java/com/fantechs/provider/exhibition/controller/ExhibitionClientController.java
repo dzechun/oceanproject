@@ -1,5 +1,6 @@
 package com.fantechs.provider.exhibition.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
@@ -25,21 +26,36 @@ public class ExhibitionClientController {
     @PostMapping(value="/makingOrders")
     @ApiOperation(value = "订单生产",notes = "订单生产")
     public ResponseEntity makingOrders() {
-        return ControllerUtil.returnCRUD(exhibitionClientService.makingOrders());
+        try {
+            return ControllerUtil.returnCRUD(exhibitionClientService.makingOrders());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
     }
 
     @PostMapping(value = "/agvStockTask")
     @ApiOperation(value = "执行agv任务配送备料单物料")
     public ResponseEntity agvStockTask(@ApiParam(value = "备料单Id", required = true) @RequestParam Long stockId) {
 
-        return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTask(stockId));
+        try {
+            return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTask(stockId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
     }
 
     @PostMapping(value = "/agvStockTaskTest")
     @ApiOperation(value = "执行agv任务配送备料单物料测试")
     public ResponseEntity agvStockTaskTest(@ApiParam(value = "物料编码", required = true) @RequestParam String materialCode) {
 
-        return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTaskTest(materialCode));
+        try {
+            return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTaskTest(materialCode));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
     }
 
     @PostMapping(value = "/agvContinueTask")

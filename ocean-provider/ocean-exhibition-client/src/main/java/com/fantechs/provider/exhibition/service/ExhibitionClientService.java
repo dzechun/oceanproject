@@ -1,8 +1,8 @@
 package com.fantechs.provider.exhibition.service;
 
 public interface ExhibitionClientService {
-    int makingOrders();
-    String agvStockTask(Long stockId);
-    String agvStockTaskTest(String materialCode);
+    int makingOrders() throws Exception;
+    String agvStockTask(Long stockId) throws Exception;
+    String agvStockTaskTest(String materialCode) throws Exception;
     String agvContinueTask();
 }
