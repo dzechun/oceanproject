@@ -13,6 +13,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
+import com.fantechs.common.base.general.entity.basic.BaseOrganization;
 import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.BasePlateParts;
 import com.fantechs.common.base.general.entity.basic.BasePlatePartsDet;
@@ -23,10 +24,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
-import com.fantechs.provider.base.mapper.BaseHtPlatePartsMapper;
-import com.fantechs.provider.base.mapper.BasePartsInformationMapper;
-import com.fantechs.provider.base.mapper.BasePlatePartsDetMapper;
-import com.fantechs.provider.base.mapper.BasePlatePartsMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BasePlatePartsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -53,6 +51,8 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     private BasicFeignApi basicFeignApi;
     @Resource
     private BasePartsInformationMapper basePartsInformationMapper;
+    @Resource
+    private BaseOrganizationMapper baseOrganizationMapper;
 
     @Override
     public List<BasePlatePartsDto> findList(Map<String, Object> map) {
@@ -163,102 +163,130 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
 
+        SmtMaterial smtMaterial = new SmtMaterial();
+        BaseOrganization baseOrganization = new BaseOrganization();
+        SmtRoute smtRoute = new SmtRoute();
+
         //排除不合法的数据
-        for (int i = 0; i < basePlatePartsImports.size(); i++) {
-            BasePlatePartsImport basePlatePartsImport = basePlatePartsImports.get(i);
-            String materialCode = basePlatePartsImport.getMaterialCode();
-            String partsInformationCode = basePlatePartsImport.getPartsInformationCode();
-            String routeCode = basePlatePartsImport.getRouteCode();
-            //物料编码必传
-            if (StringUtils.isEmpty(
-                    materialCode
-            )) {
-                fail.add(i + 3);
-                basePlatePartsImports.remove(i);
-                continue;
-            }
-
-            //输入了部件编码则工艺路线编码必传
-            if (StringUtils.isNotEmpty(partsInformationCode) && StringUtils.isEmpty(routeCode)) {
-                fail.add(i + 3);
-                basePlatePartsImports.remove(i);
-                continue;
-            }
-
-            //判断该物料、部件、工艺路线是否存在
-            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-            searchSmtMaterial.setMaterialCode(materialCode);
-            searchSmtMaterial.setCodeQueryMark(1);
-            SmtMaterial smtMaterial = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData().get(0);
-            if (StringUtils.isEmpty(smtMaterial)) {
-                fail.add(i + 3);
-                basePlatePartsImports.remove(i);
-                continue;
-            }
-
-            if (StringUtils.isNotEmpty(partsInformationCode)) {
-                Example example1 = new Example(BasePartsInformation.class);
-                Example.Criteria criteria = example1.createCriteria();
-                criteria.andEqualTo("partsInformationCode", partsInformationCode);
-                BasePartsInformation basePartsInformation = basePartsInformationMapper.selectOneByExample(example1);
-
-                SearchSmtRoute searchSmtRoute = new SearchSmtRoute();
-                searchSmtRoute.setRouteCode(routeCode);
-                searchSmtRoute.setCodeQueryMark(1);
-                SmtRoute smtRoute = basicFeignApi.findRouteList(searchSmtRoute).getData().get(0);
-                if (StringUtils.isEmpty(basePartsInformation, smtRoute)) {
-                    fail.add(i + 3);
-                    basePlatePartsImports.remove(i);
-                    continue;
-                }
-
-                //判断该产品是否已经配置组成部件
-                Example example = new Example(BasePlateParts.class);
-                example.createCriteria().andEqualTo("materialId", smtMaterial.getMaterialId());
-                List<BasePlateParts> basePlateParts1 = basePlatePartsMapper.selectByExample(example);
-                if (StringUtils.isNotEmpty(basePlateParts1)) {
-                    fail.add(i + 3);
-                    basePlatePartsImports.remove(i);
-                    continue;
-                }
-
-            }
-
-            //对合格数据进行分组
-            Map<String, List<BasePlatePartsImport>> map = basePlatePartsImports.stream().collect(Collectors.groupingBy(BasePlatePartsImport::getMaterialCode, HashMap::new, Collectors.toList()));
-            Set<String> codeList = map.keySet();
-            for (String code : codeList) {
-                List<BasePlatePartsImport> basePlatePartsImports1 = map.get(code);
-                //新增部件组成父表
-                BasePlateParts basePlateParts = new BasePlateParts();
-                BeanUtils.copyProperties(basePlatePartsImports1.get(0), basePlateParts);
-                basePlateParts.setCreateTime(new Date());
-                basePlateParts.setCreateUserId(currentUser.getUserId());
-                basePlateParts.setModifiedTime(new Date());
-                basePlateParts.setModifiedUserId(currentUser.getUserId());
-                basePlatePartsMapper.insertUseGeneratedKeys(basePlateParts);
-
-                //新增部件组成履历
-                BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
-                BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);
-                baseHtPlatePartsMapper.insert(baseHtPlateParts);
-
-                for (BasePlatePartsImport platePartsImport : basePlatePartsImports1) {
-                    //新增部件组成明细
-                    BasePlatePartsDet basePlatePartsDet = new BasePlatePartsDet();
-                    BeanUtils.copyProperties(platePartsImport, basePlatePartsDet);
-                    basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
-                    basePlatePartsDet.setCreateTime(new Date());
-                    basePlatePartsDet.setCreateUserId(currentUser.getUserId());
-                    basePlatePartsDet.setModifiedTime(new Date());
-                    basePlatePartsDet.setModifiedUserId(currentUser.getUserId());
-                    success += basePlatePartsDetMapper.insertSelective(basePlatePartsDet);
-                }
-            }
-
-            resutlMap.put("操作成功总数", success);
-            resutlMap.put("操作失败行数", fail);
+        for (int i = 1; i < basePlatePartsImports.size(); i++) {
+            System.out.println(basePlatePartsImports.get(i));
+//            BasePlatePartsImport basePlatePartsImport = basePlatePartsImports.get(i);
+//            String materialCode = basePlatePartsImport.getMaterialCode();//产品编码
+//            String partsInformationCode = basePlatePartsImport.getPartsInformationCode();//部件编码
+//            String routeCode = basePlatePartsImport.getRouteCode();//工艺路线编码
+//            String organizationCode = basePlatePartsImport.getOrganizationCode();//组织编码
+//
+//            //产品编码必传
+//            if (StringUtils.isEmpty(
+//                    materialCode
+//            )) {
+//                fail.add(i + 3);
+//                basePlatePartsImports.remove(i);
+//                continue;
+//            }
+//
+//            //输入了部件编码则工艺路线编码必传
+//            if (StringUtils.isNotEmpty(partsInformationCode) && StringUtils.isEmpty(routeCode)) {
+//                fail.add(i + 3);
+//                basePlatePartsImports.remove(i);
+//                continue;
+//            }
+//
+//            //判断该物料、部件、工艺路线是否存在
+//            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
+//            searchSmtMaterial.setMaterialCode(materialCode);
+//            searchSmtMaterial.setCodeQueryMark(1);
+//            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
+//            if (StringUtils.isEmpty(smtMaterials)){
+//                fail.add(i + 3);
+//                basePlatePartsImports.remove(i);
+//                continue;
+//            }
+//            smtMaterial = smtMaterials.get(0);
+//
+//            if (StringUtils.isNotEmpty(partsInformationCode)) {
+//                Example example1 = new Example(BasePartsInformation.class);
+//                Example.Criteria criteria = example1.createCriteria();
+//                criteria.andEqualTo("partsInformationCode", partsInformationCode);
+//                BasePartsInformation basePartsInformation = basePartsInformationMapper.selectOneByExample(example1);
+//
+//                SearchSmtRoute searchSmtRoute = new SearchSmtRoute();
+//                searchSmtRoute.setRouteCode(routeCode);
+//                searchSmtRoute.setCodeQueryMark(1);
+//                List<SmtRoute> smtRoutes = basicFeignApi.findRouteList(searchSmtRoute).getData();
+//                if (StringUtils.isEmpty(basePartsInformation, smtRoutes)) {
+//                    fail.add(i + 3);
+//                    basePlatePartsImports.remove(i);
+//                    continue;
+//                }
+//
+//                smtRoute = smtRoutes.get(0);
+//
+//                //判断该产品是否已经配置组成部件
+//                Example example = new Example(BasePlateParts.class);
+//                example.createCriteria().andEqualTo("materialId", smtMaterial.getMaterialId());
+//                List<BasePlateParts> basePlateParts1 = basePlatePartsMapper.selectByExample(example);
+//                if (StringUtils.isNotEmpty(basePlateParts1)) {
+//                    fail.add(i + 3);
+//                    basePlatePartsImports.remove(i);
+//                    continue;
+//                }
+//
+//                if (StringUtils.isNotEmpty(organizationCode)){
+//                    //若组织编码不为空，则判断组织是否存在
+//                    Example example2 = new Example(BaseOrganization.class);
+//                    Example.Criteria criteria1 = example2.createCriteria();
+//                    criteria1.andEqualTo("organizationCode",organizationCode);
+//                    baseOrganization = baseOrganizationMapper.selectOneByExample(example2);
+//                    if (StringUtils.isEmpty(baseOrganization)){
+//                        fail.add(i + 3);
+//                        basePlatePartsImports.remove(i);
+//                        continue;
+//                    }
+//                }
+//
+//            }
+//
+//            //对合格数据进行分组
+//            Map<String, List<BasePlatePartsImport>> map = basePlatePartsImports.stream().collect(Collectors.groupingBy(BasePlatePartsImport::getMaterialCode, HashMap::new, Collectors.toList()));
+//            Set<String> codeList = map.keySet();
+//            for (String code : codeList) {
+//                List<BasePlatePartsImport> basePlatePartsImports1 = map.get(code);
+//                //新增部件组成父表
+//                BasePlateParts basePlateParts = new BasePlateParts();
+//                BeanUtils.copyProperties(basePlatePartsImports1.get(0), basePlateParts);
+//                basePlateParts.setCreateTime(new Date());
+//                basePlateParts.setCreateUserId(currentUser.getUserId());
+//                basePlateParts.setModifiedTime(new Date());
+//                basePlateParts.setModifiedUserId(currentUser.getUserId());
+//                basePlateParts.setOrganizationId(baseOrganization.getOrganizationId());
+//                basePlateParts.setMaterialId(smtMaterial.getMaterialId());
+//                basePlatePartsMapper.insertUseGeneratedKeys(basePlateParts);
+//
+//                //新增部件组成履历
+//                BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
+//                BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);
+//                baseHtPlatePartsMapper.insert(baseHtPlateParts);
+//
+//                for (BasePlatePartsImport platePartsImport : basePlatePartsImports1) {
+//                    //新增部件组成明细
+//                    BasePlatePartsDet basePlatePartsDet = new BasePlatePartsDet();
+//                    BeanUtils.copyProperties(platePartsImport, basePlatePartsDet);
+//                    basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+//                    basePlatePartsDet.setCreateTime(new Date());
+//                    basePlatePartsDet.setCreateUserId(currentUser.getUserId());
+//                    basePlatePartsDet.setModifiedTime(new Date());
+//                    basePlatePartsDet.setModifiedUserId(currentUser.getUserId());
+//                    basePlatePartsDet.setOrganizationId(baseOrganization.getOrganizationId());
+//                    basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+//                    basePlatePartsDet.setRouteId(smtRoute.getRouteId());
+//                    success += basePlatePartsDetMapper.insertSelective(basePlatePartsDet);
+//                }
+//            }
+//
         }
-        return resutlMap;
+//        resutlMap.put("操作成功总数", success);
+//        resutlMap.put("操作失败行", fail);
+        return null;
     }
 }
