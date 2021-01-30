@@ -98,13 +98,13 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         if(StringUtils.isEmpty(qmsName)){
             throw new BizErrorException("品质信息获取失败");
         }
-        record.setQualityName(qmsName);
         record.setProcessId(processId);
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(user.getUserId());
         int num = mesPmBreakBulkMapper.insertUseGeneratedKeys(record);
+        record.setQualityName(qmsName);
 
         SmtWorkOrderCardPool sm = new SmtWorkOrderCardPool();
         sm.setWorkOrderCardId(record.getBatchNo());
