@@ -79,7 +79,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 品质确认状态（0、待确认 1、确认中 2、已确认）
      */
     @ApiModelProperty(name="affirmStatus",value = "品质确认状态（0、待确认 1、确认中 2、已确认）")
-    @Excel(name = "品质确认状态",orderNum = "14",height = 20, width = 30,replace = {"0_待确认","1_确认中","2_已确认"})
+    @Excel(name = "品质确认状态",orderNum = "14",height = 20, width = 30,replace = {"待确认_0","确认中_1","已确认_2"})
     @Column(name = "affirm_status")
     private Byte affirmStatus;
 
@@ -101,7 +101,7 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态", height = 20, width = 30,orderNum="16",replace = {"0_无效","1_有效"})
+    @Excel(name = "状态", height = 20, width = 30,orderNum="16",replace = {"无效_0","有效_1"})
     private Byte status;
 
     /**
