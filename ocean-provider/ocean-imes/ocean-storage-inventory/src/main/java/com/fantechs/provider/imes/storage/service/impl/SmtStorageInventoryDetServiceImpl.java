@@ -39,9 +39,9 @@ public class SmtStorageInventoryDetServiceImpl extends BaseService<SmtStorageInv
     @Transactional(rollbackFor = Exception.class)
     public int save(SmtStorageInventoryDet smtStorageInventoryDet) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(currentUser)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         smtStorageInventoryDet.setCreateTime(new Date());
         smtStorageInventoryDet.setCreateUserId(currentUser == null?0:currentUser.getUserId());

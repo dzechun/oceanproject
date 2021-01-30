@@ -57,7 +57,7 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
                     }
                 }
             }
-            return SecurityConfig.createList();
+            return SecurityConfig.createList("ROLE_guest");
         }
 
         String requestUrl =filterInvocation.getRequestUrl();

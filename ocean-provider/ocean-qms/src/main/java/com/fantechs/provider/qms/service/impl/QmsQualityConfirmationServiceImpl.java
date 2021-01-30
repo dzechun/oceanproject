@@ -47,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -268,10 +269,30 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         List<QmsPoorQualityDto> list = qmsQualityConfirmation.getSeledBadItemList();
         if (StringUtils.isNotEmpty(list)){
+            List<QmsPoorQualityDto> qualityDtoList = new ArrayList<>();
             for (QmsPoorQualityDto qmsPoorQuality : list) {
                 qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
+                boolean b = false;
+                for (QmsPoorQualityDto qmsPoorQualityDto : list) {
+                    if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                        qmsPoorQuality.setBadQuantity( qmsPoorQuality.getBadQuantity().add(qmsPoorQualityDto.getBadQuantity()));
+                        b = true;
+                    }
+                }
+                if (b){
+                    b = true;
+                    for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
+                        if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                            b=false;
+                            break;
+                        }
+                    }
+                    if (b)
+                        qualityDtoList.add(qmsPoorQuality);
+
+                }
             }
-            qmsPoorQualityMapper.insertList(list);
+            qmsPoorQualityMapper.insertList(qualityDtoList);
         }
 
         if (qmsQualityConfirmation.getQualityType() == 2 || !(qmsQualityConfirmation.getAffirmStatus() == 2)){
