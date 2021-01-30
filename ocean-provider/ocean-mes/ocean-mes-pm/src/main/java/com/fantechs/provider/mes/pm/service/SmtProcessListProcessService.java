@@ -13,6 +13,7 @@ import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
@@ -20,7 +21,7 @@ import java.util.List;
 */
 public interface SmtProcessListProcessService extends IService<SmtProcessListProcess> {
     List<SmtProcessListProcessDto> findList(SearchSmtProcessListProcess searchSmtProcessListProcess);
-
+    List<SmtProcessListProcess> selectAll(Map<String,Object> map);
     int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
     //过站操作
     int stationToScan(ProcessFinishedProductDTO processFinishedProductDTO);

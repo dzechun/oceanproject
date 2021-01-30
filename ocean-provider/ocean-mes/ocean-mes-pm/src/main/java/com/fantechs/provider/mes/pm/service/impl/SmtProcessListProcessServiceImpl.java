@@ -87,7 +87,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         return smtProcessListProcessMapper.insertSelective(smtProcessListProcess);
     }
 
-    private List<SmtProcessListProcess> selectAll(Map<String,Object> map) {
+    public List<SmtProcessListProcess> selectAll(Map<String,Object> map) {
         Example example = new Example(SmtProcessListProcess.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
@@ -311,7 +311,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         SmtProcessListProcess preProcessListProcesse=null;//上一道过站记录
         BigDecimal outPutQtyToal=processFinishedProductDTO.getCurOutputQty();//开工总数
         Date date = new Date();//进站时间
-        if(processFinishedProductDTO.getProcessType()==1){
+        if(processFinishedProductDTO.getProcessType()==1 && (StringUtils.isEmpty(smtWorkOrderCardPool.getType()) || smtWorkOrderCardPool.getType()!=3)){
             //首工序不需要开工
             if(firstProcessIdR == processFinishedProductDTO.getProcessId()){
                 throw new BizErrorException("开料工序不需要进行开工确认");
@@ -350,7 +350,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 if(curProcessListProcesse.getStatus()==2){
                     throw new BizErrorException("当前流程卡已开工，请勿重复提交");
                 }
-                outPutQtyToal=outPutQtyToal.add(curProcessListProcesse.getOutputQuantity());
+                outPutQtyToal=outPutQtyToal.add(curProcessListProcesse.getStartWorkQty());
             }else{
                 curProcessListProcesse=new SmtProcessListProcess();
                 curProcessListProcesse.setProcessListProcessCode(CodeUtils.getId("SPLP"));
@@ -362,7 +362,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             if(outPutQtyToal.compareTo(okQty)>0){
                 throw new BizErrorException("开工确认数不能大于品质确认数:"+okQty);
             }
-        }else if(processFinishedProductDTO.getProcessType()==2){
+        }else if(processFinishedProductDTO.getProcessType()==2 && (StringUtils.isEmpty(smtWorkOrderCardPool.getType()) || smtWorkOrderCardPool.getType()!=3)){
             List<SmtProcessListProcess> tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
                     "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
                     "processId", processFinishedProductDTO.getProcessId(),
@@ -389,7 +389,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                         "processType",1,
                         "status",2));
                 if(StringUtils.isEmpty(tempProcessListProcesseList)){
-                    throw new BizErrorException("该流程卡尚未开工");
+                    throw new BizErrorException("该流程卡尚未开工确认");
                 }
                 curStartProcessListProcesse=tempProcessListProcesseList.get(0);
                 if(StringUtils.isEmpty(curStartProcessListProcesse.getStartWorkQty()) || curStartProcessListProcesse.getStartWorkQty().doubleValue()==0){
@@ -446,10 +446,24 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                     }
                     preProcessListProcesse=tempProcessListProcesseList.get(tempProcessListProcesseList.size()-1);
                 }
-
                 if(outPutQtyToal.compareTo(preProcessListProcesse.getOutputQuantity())>0){
                     throw new BizErrorException("工序报工不能大于上工序报工数");
                 }
+            }
+        }else if(StringUtils.isNotEmpty(smtWorkOrderCardPool.getType()) && smtWorkOrderCardPool.getType() == 3){
+            //当前扫描的流程卡为报工退回的流程卡，只能走报工，且报工数不能大于自身的开工数
+            List<SmtProcessListProcess> tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
+                    "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
+                    "processId", processFinishedProductDTO.getProcessId(),
+                    "processType",2,
+                    "status",1));
+            if(StringUtils.isEmpty(tempProcessListProcesseList)){
+                throw new BizErrorException("未找到当前工序退回流程卡");
+            }
+            curProcessListProcesse=tempProcessListProcesseList.get(0);
+            outPutQtyToal=outPutQtyToal.add(curProcessListProcesse.getOutputQuantity());
+            if(outPutQtyToal.compareTo(curProcessListProcesse.getStartWorkQty())>0){
+                throw new BizErrorException("报工数不能大于退回数");
             }
         }
 
@@ -707,7 +721,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             //判断当前工序是否在当前工单所属工艺下
             int count = smtProcessListProcessMapper.isExistProcessInWorkOrder(smtWorkOrder.getWorkOrderId(), curProcessId);
             if(count<=0){
-                throw new BizErrorException("当前工序不允许操作当前流程卡："+smtWorkOrderCardPoolDto.getWorkOrderCardId());
+                continue;
             }
             //判断当前工序在当前流程卡是否已经提交
             SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
@@ -759,18 +773,6 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
 
         return 1;
-    }
-
-    /**
-     * 取出存在redis中未打印的流程卡
-     * @param parentId
-     * @return
-     */
-    public List<SmtWorkOrderCardPoolDto> getNoPutIntoCard(Long parentId){
-        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-        searchSmtWorkOrderCardPool.setParentId(parentId);
-        searchSmtWorkOrderCardPool.setCardStatus((byte)3);//待打印
-        return smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
     }
 
     @Override

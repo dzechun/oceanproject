@@ -56,6 +56,25 @@ public class SmtWorkOrderCardPoolDto extends SmtWorkOrderCardPool implements Ser
     private String version;
 
     /**
+     * 产品型号
+     */
+    @ApiModelProperty(name = "productModuleName",value = "产品型号")
+    private String productModuleName;
+
+    /**
+     * 包装规格-数量
+     */
+    @Transient
+    @ApiModelProperty(name = "packageSpecificationQuantity",value = "包装规格-数量")
+    private String packageSpecificationQuantity;
+
+    /**
+     * 产品颜色
+     */
+    @ApiModelProperty(name = "color",value = "产品颜色")
+    private String color;
+
+    /**
      * 工单数量
      */
     @Transient

@@ -16,7 +16,9 @@ public class RabbitConfig {
     public static final String TOPIC_EXCHANGE = "topic.exchange";
     public static final String TOPIC_IMAGE_QUEUE = "topic.image.queue";
     public static final String TOPIC_WORK_QUEUE = "topic.work.queue";
+    public static final String TOPIC_LISTENER_WORK_QUEUE = "topic.listener.work.queue";
     public static final String TOPIC_PROCESS_LIST_QUEUE = "topic.process.list.queue";
+    public static final String TOPIC_PROCESS_WORK_QUEUE = "topic.process.work.queue";
 
 
 
@@ -57,6 +59,16 @@ public class RabbitConfig {
     @Bean
     public Queue topicWorkQueue() {
         return new Queue(TOPIC_WORK_QUEUE);
+    }
+
+    @Bean
+    public Queue topicListenerWorkQueue() {
+        return new Queue(TOPIC_LISTENER_WORK_QUEUE);
+    }
+
+    @Bean
+    public Queue topicProcessWorkQueue() {
+        return new Queue(TOPIC_PROCESS_WORK_QUEUE);
     }
 
 

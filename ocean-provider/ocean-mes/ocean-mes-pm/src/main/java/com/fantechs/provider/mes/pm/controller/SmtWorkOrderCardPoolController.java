@@ -61,6 +61,15 @@ public class SmtWorkOrderCardPoolController {
         return ControllerUtil.returnDataSuccess(processListWorkOrderDTO,StringUtils.isEmpty(processListWorkOrderDTO)?0:1);
     }
 
+    @ApiOperation("获取未开工的部件流程卡")
+    @GetMapping("/getNoPutIntoCard")
+    public ResponseEntity<List<SmtWorkOrderCardPoolDto>> getNoPutIntoCard(
+            @ApiParam(value = "父级流程卡id")@RequestParam Long parentId
+    ){
+        List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.getNoPutIntoCard(parentId);
+        return ControllerUtil.returnDataSuccess(smtWorkOrderCardPoolDtoList,StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)?0:smtWorkOrderCardPoolDtoList.size());
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")

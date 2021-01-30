@@ -105,6 +105,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
         //当前流程单的对象
         SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = poolList.get(0);
+        if (smtWorkOrderCardPoolDto.getParentId() == null || smtWorkOrderCardPoolDto.getParentId() == 0){
+            throw new BizErrorException("当前为父级流程单");
+        }
         SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
         searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderCardPoolDto.getMaterialId());
         List<BasePlatePartsDetDto> platePartsDetDtoList = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
@@ -114,9 +117,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         BasePlatePartsDetDto platePartsDetDto = platePartsDetDtoList.get(0);
         qmsQualityConfirmationDto.setPartsInformationId(platePartsDetDto.getPartsInformationId());
 
-        if (smtWorkOrderCardPoolDto.getParentId() == null || smtWorkOrderCardPoolDto.getParentId() == 0){
-            throw new BizErrorException("当前为父级流程单");
-        }
+
 
         //当前流程单的父级对象
         searchSmtWorkOrderCardPool.setWorkOrderCardId("");
@@ -152,6 +153,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //查询过站信息（报工数据）
         SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
         searchSmtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+        searchSmtProcessListProcess.setProcessType((byte) 2);
+        searchSmtProcessListProcess.setStatus((byte) 2);
         ResponseEntity<List<SmtProcessListProcessDto>> processListProcessResponse = pmFeignApi.findSmtProcessListProcessList(searchSmtProcessListProcess);
         List<SmtProcessListProcessDto> processListProcessList = processListProcessResponse.getData();
         if (StringUtils.isEmpty(processListProcessList) || processListProcessList.size() == 0){
