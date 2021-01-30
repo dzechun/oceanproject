@@ -463,4 +463,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     public Integer updateQuantity(Map<String, Object> map) {
         return qmsQualityConfirmationMapper.updateQuantity(map);
     }
+
+    @Override
+    public QmsQualityConfirmation getQualityQuantity(Long workOrderCardPoolId) {
+        return qmsQualityConfirmationMapper.getQualityQuantity(workOrderCardPoolId);
+    }
 }
