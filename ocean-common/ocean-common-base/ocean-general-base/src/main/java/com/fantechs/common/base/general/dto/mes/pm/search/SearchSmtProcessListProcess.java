@@ -29,4 +29,6 @@ public class SearchSmtProcessListProcess extends BaseQuery implements Serializab
     private String materialCode;
     @ApiModelProperty(value = "工序操作类型（1、开工 2、报工）",example = "工序操作类型（1、开工 2、报工）")
     private Byte processType;
+    @ApiModelProperty(value = "过站状态(0-待开始 1-过站中 2-OK  3-NG)",example = "过站状态(0-待开始 1-过站中 2-OK  3-NG)")
+    private Byte status;
 }

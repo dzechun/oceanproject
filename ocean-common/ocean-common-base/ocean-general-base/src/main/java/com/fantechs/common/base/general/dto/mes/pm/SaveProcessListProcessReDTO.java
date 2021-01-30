@@ -26,6 +26,9 @@ public class SaveProcessListProcessReDTO {
     @ApiModelProperty(value = "指定退回工序ID",example = "指定退回工序ID")
     private Long reProcessId;
 
+    @ApiModelProperty(value = "工艺路线ID",example = "工艺路线ID")
+    private Long routeId;
+
     @ApiModelProperty(value = "退回数量",example = "退回数量")
     private java.math.BigDecimal reQty;
 
