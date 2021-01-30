@@ -9,7 +9,10 @@ public class ValidGroup {
     public interface add {
 
     }
-    public interface update extends Default {
+    public interface update {
+
+    }
+    public interface submit {
 
     }
 }

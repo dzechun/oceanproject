@@ -22,6 +22,12 @@ public class SearchSmtSorting extends BaseQuery implements Serializable {
     private String sortingCode;
 
     /**
+     * 单据类型（1-调拨单 2领料单）
+     */
+    @ApiModelProperty(name="orderType",value = "单据类型（1-调拨单 2领料单）")
+    private Byte orderType;
+
+    /**
      * 工单号(预留)
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号(预留)")
@@ -44,4 +50,28 @@ public class SearchSmtSorting extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentId",value = "电子标签Id")
     private String equipmentId;
+
+    /**
+     * 区域设备Id
+     */
+    @ApiModelProperty(name="equipmentAreaId",value = "区域设备Id")
+    private String equipmentAreaId;
+
+    /**
+     * 分拣单筛选分组
+     */
+    @ApiModelProperty(name="orderBySortingCode",value = "分拣单筛选分组")
+    private String orderBySortingCode;
+
+    /**
+     * 不包含该分拣单号
+     */
+    @ApiModelProperty(name="notEqualSortingCode",value = "不包含分拣单号")
+    private String notEqualSortingCode;
+
+    /**
+     * 不等于该状态（0-未开始 1-分拣中 2-完成）
+     */
+    @ApiModelProperty(name="statusList",value = "不等于该状态（0-未开始 1-分拣中 2-完成）")
+    private Byte notEqualstatus;
 }

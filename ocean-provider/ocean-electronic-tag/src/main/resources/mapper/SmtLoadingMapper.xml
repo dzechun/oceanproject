@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.electronic.mapper.SmtLoadingMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.SmtLoading">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="loading_id" jdbcType="BIGINT" property="loadingId" />
+    <result column="loading_code" jdbcType="VARCHAR" property="loadingCode" />
+    <result column="source_sys" jdbcType="VARCHAR" property="sourceSys" />
+    <result column="source_sys_id" jdbcType="VARCHAR" property="sourceSysId" />
+    <result column="order_type" jdbcType="TINYINT" property="orderType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_detele" jdbcType="TINYINT" property="isDetele" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    loading_id, loading_code, source_sys, source_sys_id, order_type, status, create_user_id, create_time, modified_user_id, modified_time,
+    is_detele, remark, organization_id
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"></include>
+    from smt_loading
+    <where>
+      is_detele = 1
+      <if test="loadingCode != null and loadingCode != ''">
+        and loading_code = #{loadingCode}
+      </if>
+      <if test="sourceSys != null and sourceSys != ''">
+        and source_sys = #{sourceSys}
+      </if>
+      <if test="orderType != null and orderType != ''">
+        and order_type = #{orderType}
+      </if>
+      <if test="status != null and status != ''">
+        and status = #{status}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+</mapper>

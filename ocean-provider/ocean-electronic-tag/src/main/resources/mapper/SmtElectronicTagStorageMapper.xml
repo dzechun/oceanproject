@@ -36,8 +36,9 @@
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
-        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
@@ -51,13 +52,8 @@
     <sql id="Base_column_List">
     sets.electronic_tag_storage_id,
 	sets.storage_id,
-	sets.storage_code,
 	sets.warehouse_id,
-	sets.warehouse_code,
 	sets.warehouse_area_id,
-	 sets.warehouse_area_code,
-	sets.material_id,
-	sets.material_code,
 	sets.equipment_id,
 	sets.equipment_area_id,
 	sets.electronic_tag_id,
@@ -77,12 +73,18 @@
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_column_List"/>,
         sus.user_name,
+        ss.storage_code,
         ss.storage_desc,
         ss.storage_name,
+        swa.warehouse_area_code,
         swa.warehouse_area_name,
+        sw.warehouse_code,
         sw.warehouse_name,
+        sm.material_id,
+        sm.material_code,
         sm.material_desc,
         sm.material_name,
+        sm.version,
         se.equipment_name,
         se.equipment_code,
         se.equipment_ip,
@@ -96,8 +98,9 @@
         LEFT JOIN smt_equipment se ON sets.equipment_id = se.equipment_id
         LEFT JOIN smt_client_manage scm ON scm.client_id = se.client_id
         LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
-        LEFT JOIN smt_material sm ON sets.material_id = sm.material_id
-        LEFT JOIN smt_warehouse sw ON sets.warehouse_id = sw.warehouse_id
+        LEFT JOIN smt_storage_material ssm on  ssm.storage_id  = ss.storage_id
+        LEFT JOIN smt_material sm ON ssm.material_id = sm.material_id
+        LEFT JOIN smt_warehouse sw ON ss.warehouse_id  = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sets.warehouse_area_id = swa.warehouse_area_id
         LEFT JOIN fantech_imes.base_organization bo ON sets.organization_id = bo.organization_id
         <where>

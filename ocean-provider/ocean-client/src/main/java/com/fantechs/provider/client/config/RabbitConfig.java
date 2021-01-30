@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
     //topic
     public static final String TOPIC_QUEUE1 = "topic.queue1";
+    public static final String TOPIC_QUEUE_PDA = "topic.queue.pda";
     public static final String TOPIC_HEARTBEAT_QUEUE = "topic.heartbeat.queue";
     public static final String TOPIC_EXCHANGE = "topic.exchange";
 
@@ -40,7 +41,10 @@ public class RabbitConfig {
         return new Queue(TOPIC_HEARTBEAT_QUEUE);
     }
 
-
+    @Bean
+    public Queue topicQueuePda() {
+        return new Queue(TOPIC_QUEUE_PDA);
+    }
 
     @Bean
     public TopicExchange topicExchange() {
@@ -53,6 +57,11 @@ public class RabbitConfig {
     @Bean
     public Binding topicBinding2() {
         return BindingBuilder.bind(topicQueue2()).to(topicExchange()).with("lzc.#");
+    }
+
+    @Bean
+    public Binding topicBinding3() {
+        return BindingBuilder.bind(topicQueuePda()).to(topicExchange()).with("lzc.#");
     }
 
 

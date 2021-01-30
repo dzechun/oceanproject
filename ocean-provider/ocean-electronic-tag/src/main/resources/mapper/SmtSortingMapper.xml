@@ -8,11 +8,19 @@
         <id column="sorting_id" jdbcType="BIGINT" property="sortingId"/>
         <result column="sorting_code" jdbcType="VARCHAR" property="sortingCode"/>
         <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="source_sys" jdbcType="VARCHAR" property="sourceSys"/>
+        <result column="source_sys_id" jdbcType="VARCHAR" property="sourceSysId"/>
+        <result column="order_type" jdbcType="TINYINT" property="orderType"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_detele" jdbcType="TINYINT" property="isDetele" />
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -20,15 +28,22 @@
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="equipment_area_id" jdbcType="VARCHAR" property="equipmentAreaId"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_id" jdbcType="VARCHAR" property="materialId" />
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+        <result column="create_user_code" jdbcType="VARCHAR" property="createUserCode"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserCode" />
     </resultMap>
 
     <sql id="Base_Column_List">
     `ssl`.sorting_id,
 	`ssl`.sorting_code,
+	`ssl`.source_sys,
+	`ssl`.order_type,
 	`ssl`.work_order_code,
 	`ssl`.material_code,
 	`ssl`.quantity,
@@ -39,25 +54,35 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT <include refid="Base_Column_List"/>,
+        su.user_code as create_user_code,
+        sus.user_code as modified_user_code,
         ss.storage_code,
         ss.storage_name,
         swa.warehouse_area_name,
         sw.warehouse_name,
+        sm.material_id,
         sm.material_desc,
         sm.material_name,
+        sm.version,
+        sets.equipment_area_id,
         swa.warehouse_area_name,
         bo.organization_name
         FROM smt_sorting `ssl`
+        LEFT JOIN ocean.sys_user su ON ssl.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON ssl.modified_user_id = sus.user_id
         LEFT JOIN smt_material sm ON ssl.material_code= sm.material_code
         LEFT JOIN smt_storage_material ssm ON ssm.material_id = sm.material_id
         LEFT JOIN smt_storage ss ON ss.storage_id = ssm.storage_id
         LEFT JOIN smt_warehouse sw ON ss .warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sw.warehouse_id = swa.warehouse_id
-        LEFT JOIN smt_electronic_tag_storage sets on sets.material_id = sm.material_id
+        LEFT JOIN smt_electronic_tag_storage sets ON sets.storage_id = ss.storage_id
         LEFT JOIN fantech_imes.base_organization bo ON `ssl`.organization_id = bo.organization_id
         <where>
             <if test="sortingCode != null and sortingCode!=''">
                 and `ssl`.sorting_code =#{sortingCode}
+            </if>
+            <if test="orderType!=null and orderType!=''">
+                and `ssl`.order_type=#{orderType}
             </if>
             <if test="workOrderCode != null">
                 and `ssl`.work_order_code like CONCAT('%', #{workOrderCode}, '%')
@@ -74,30 +99,42 @@
             <if test="equipmentId != null and equipmentId!=''">
                 and sets.equipment_Id=#{equipmentId}
             </if>
-            <if test="status!=null">
+            <if test="equipmentAreaId != null and equipmentAreaId!=''">
+                and sets.equipment_area_id = #{equipmentAreaId}
+            </if>
+            <if test="status!=null and status!=''">
                 and `ssl`.status=#{status}
             </if>
+            <if test="notEqualSortingCode!=null and notEqualSortingCode!=''">
+                and `ssl`.sorting_code != #{notEqualSortingCode}
+            </if>
+            <if test="notEqualstatus != null and notEqualstatus != ''">
+                and ssl.status != #{notEqualstatus}
+            </if>
         </where>
+        <if test="orderBySortingCode != null and orderBySortingCode!=''">
+            group by `ssl`.sorting_code
+        </if>
     </select>
 
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" open="" close="" index="index" separator=";">
             update smt_sorting
             <set>
-                <if test="sortingCode!=null and sortingCode!=''">
+                <if test="item.sortingCode != null and item.sortingCode!=''">
                     sorting_code=#{item.sortingCode},
                 </if>
-                <if test="workOrderCode!=null and workOrderCode!=''">
+                <if test="item.workOrderCode!=null and item.workOrderCode!=''">
                     work_order_code=#{item.workOrderCode},
                 </if>
-                <if test="sortingId!=null and sortingId!=''">
-                    sorting_id=#{item.sortingId},
+                <if test="item.materialCode!=null and item.materialCode!=''">
+                    material_code=#{item.materialCode},
                 </if>
-                <if test="quantity!=null and quantity!=''">
+                <if test="item.quantity!=null and item.quantity!=''">
                     quantity=#{item.quantity},
                 </if>
-                <if test="status!=null">
-                    status=#{item.status}
+                <if test="item.status!=null and item.status!=''">
+                    status=#{item.status},
                 </if>
             </set>
             where sorting_id=#{item.sortingId}

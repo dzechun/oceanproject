@@ -38,7 +38,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     @Resource
     private SmtEquipmentServiceImpl smtEquipmentService;
     @Resource
-    private BasicFeignApi storageFeignApi;
+    private BasicFeignApi basicFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -154,7 +154,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             }
 
             //判断该编码对应的储位是否存在
-            SmtStorage storage = storageFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
+            SmtStorage storage = basicFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
             //判断该编码对应的设备是否存在
             SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
             searchSmtEquipment.setEquipmentCode(equipmentCode);
