@@ -134,14 +134,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             mesPmBreakBulkDetMapper.insertUseGeneratedKeys(mesPmBreakBulkDet);
 
             if(record.getBreakBulkType()==(byte)1){
-                //生成流转卡
-                SmtWorkOrderCardPool sms = new SmtWorkOrderCardPool();
-                BeanUtil.copyProperties(smtWorkOrderCardPool,sms);
-                sms.setWorkOrderCardPoolId(null);
-                sms.setType((byte)3);
-                sms.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
-                sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
-                smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);
+
 
                 Example example = new Example(SmtProcessListProcess.class);
                 example.createCriteria().andEqualTo("workOrderCardPoolId",smtWorkOrderCardPool.getWorkOrderCardPoolId());
@@ -152,6 +145,14 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
                 up.setProcessListProcessId(null);
                 if(!isUp){
+                    //生成流转卡
+                    SmtWorkOrderCardPool sms = new SmtWorkOrderCardPool();
+                    BeanUtil.copyProperties(smtWorkOrderCardPool,sms);
+                    sms.setWorkOrderCardPoolId(null);
+                    sms.setType((byte)3);
+                    sms.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+                    sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
+                    smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);
                     //生成流程单up
                     //过站中
                     up.setProcessType((byte)2);
@@ -161,6 +162,13 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     smtProcessListProcessMapper.insertSelective(up);
                     isUp = true;
                 }else{
+                    //生成流转卡
+                    SmtWorkOrderCardPool sms = new SmtWorkOrderCardPool();
+                    BeanUtil.copyProperties(smtWorkOrderCardPool,sms);
+                    sms.setWorkOrderCardPoolId(null);
+                    sms.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+                    sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
+                    smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);
                     //生成流程单down
                     up.setProcessType((byte)2);
                     up.setStatus((byte)2);
