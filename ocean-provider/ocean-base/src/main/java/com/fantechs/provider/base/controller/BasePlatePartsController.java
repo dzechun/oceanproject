@@ -127,12 +127,12 @@ public class BasePlatePartsController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入部件组成信息",notes = "从excel导入部件组成信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BasePlatePartsImport> basePlatePartsImports = EasyPoiUtils.importExcel(file, BasePlatePartsImport.class);
+            List<BasePlatePartsImport> basePlatePartsImports = EasyPoiUtils.importExcel(file,1,2, BasePlatePartsImport.class);
             Map<String, Object> resultMap = basePlatePartsService.importExcel(basePlatePartsImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
