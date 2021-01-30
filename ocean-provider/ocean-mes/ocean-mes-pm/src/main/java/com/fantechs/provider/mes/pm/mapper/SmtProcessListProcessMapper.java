@@ -21,6 +21,14 @@ public interface SmtProcessListProcessMapper extends MyMapper<SmtProcessListProc
     List<ProcessListDto> findProcess(Long workOrderId);
     //查找工序信息
     SmtProcess findSmtProcess(Long id);
-    //查找对应流程卡集合内过站报工数最小的只
+    //查找对应流程卡集合内过站报工数最小的
     double findMinOutPut(Long workOrderCardPoolId);
+    //查找工单工艺下是否存在当前工序
+    int isExistProcessInWorkOrder(Long workOrderId,Long processId);
+    //查找当前工序所属工段的首工序id
+    Long firstProcessIdInWSection(Long processId,Long routeId);
+    //查找当前工艺路线下首工序
+    Long firstProcessIdInRoute(Long routeId);
+    //查找上一条数据
+    SmtProcessListProcess findUp(Long id);
 }

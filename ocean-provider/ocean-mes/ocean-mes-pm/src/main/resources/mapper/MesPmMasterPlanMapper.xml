@@ -10,6 +10,7 @@
         <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
         <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
         <result column="no_schedule_qty" jdbcType="DECIMAL" property="noScheduleQty"/>
+        <result column="turn_card_qty" jdbcType="DECIMAL" property="turnCardQty"/>
         <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty"/>
         <result column="planed_start_date" jdbcType="TIMESTAMP" property="planedStartDate"/>
         <result column="planed_end_date" jdbcType="TIMESTAMP" property="planedEndDate"/>
@@ -40,6 +41,7 @@
         mpmp.product_qty,
         mpmp.scheduled_qty,
         mpmp.no_schedule_qty,
+        mpmp.turn_card_qty,
         mpmp.finished_qty,
         mpmp.planed_start_date,
         mpmp.planed_end_date,

@@ -121,9 +121,6 @@
             <if test="savePath!=null and savePath!=''">
                 and bl.save_path =#{savePath}
             </if>
-            <if test="barCodeType==1">
-                and br.barcode_rule_category_id=1
-            </if>
         </where>
 <!--        SELECT-->
 <!--        sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sw.planned_end_time,-->

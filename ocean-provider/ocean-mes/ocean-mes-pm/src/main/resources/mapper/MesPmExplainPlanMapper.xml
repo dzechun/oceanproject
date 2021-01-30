@@ -100,7 +100,7 @@
             <if test="proLineId!=null and proLineId!=''">
                 and spl.pro_line_id=#{proLineId}
             </if>
-            <if test="workOrderStatus!=null and workOrderStatus!=''">
+            <if test="workOrderStatus!=null">
                 and swo.work_order_status=#{workOrderStatus}
             </if>
             <if test="masterPlanId!=null">

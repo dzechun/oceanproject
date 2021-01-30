@@ -114,7 +114,7 @@ public class SmtFactoryController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入厂别信息",notes = "从excel导入厂别信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                                         @RequestPart(value="file") MultipartFile file){
         try {

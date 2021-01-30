@@ -13,4 +13,6 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     List<SysUser> selectUsers(SearchSysUser searchSysUser);
 
     SmtDept selectDept(String factoryName,String deptName);
+
+    List<String> findAllRoleId(Long userId);
 }

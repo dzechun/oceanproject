@@ -11,7 +11,9 @@ import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
@@ -45,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -186,7 +189,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         Byte isQuality = smtProcess.getIsQuality();
         if (type == 1 && (isQuality == null || isQuality ==0)){
-            throw new BizErrorException("当前工序不能进行品质确认");
+            throw new BizErrorException("当前工序不是品质确认工序");
         }
 
         if (smtRouteProcess.getProcessId() != smtProcess.getProcessId() && type == 1){
@@ -265,12 +268,31 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
 
         List<QmsPoorQualityDto> list = qmsQualityConfirmation.getSeledBadItemList();
-        System.out.println(list.size());
         if (StringUtils.isNotEmpty(list)){
+            List<QmsPoorQualityDto> qualityDtoList = new ArrayList<>();
             for (QmsPoorQualityDto qmsPoorQuality : list) {
                 qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
+                boolean b = false;
+                for (QmsPoorQualityDto qmsPoorQualityDto : list) {
+                    if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                        qmsPoorQuality.setBadQuantity( qmsPoorQuality.getBadQuantity().add(qmsPoorQualityDto.getBadQuantity()));
+                        b = true;
+                    }
+                }
+                if (b){
+                    b = true;
+                    for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
+                        if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                            b=false;
+                            break;
+                        }
+                    }
+                    if (b)
+                        qualityDtoList.add(qmsPoorQuality);
+
+                }
             }
-            qmsPoorQualityMapper.insertList(list);
+            qmsPoorQualityMapper.insertList(qualityDtoList);
         }
 
         if (qmsQualityConfirmation.getQualityType() == 2 || !(qmsQualityConfirmation.getAffirmStatus() == 2)){
@@ -285,8 +307,16 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("未找到该物料的储位");
         }
 
+        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+        searchSmtWorkOrder.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
+        List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+
+        if (StringUtils.isEmpty(workOrderList)){
+            throw new BizErrorException("没有找到工单");
+        }
+
         SearchSmtWorkOrderBom searchSmtWorkOrderBom = new SearchSmtWorkOrderBom();
-        searchSmtWorkOrderBom.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
+        searchSmtWorkOrderBom.setWorkOrderId(workOrderList.get(0).getParentId());
         List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
         SmtWorkOrderBomDto workOrderBomDto = null;
         for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {

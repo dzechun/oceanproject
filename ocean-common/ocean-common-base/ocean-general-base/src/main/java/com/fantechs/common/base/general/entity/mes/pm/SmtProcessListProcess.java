@@ -103,6 +103,14 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
     private Date outboundTime;
 
     /**
+     * 开工数量
+     */
+    @ApiModelProperty(name="startWorkQty",value = "开工数量")
+    @Excel(name = "开工数量", height = 20, width = 30)
+    @Column(name = "start_work_qty")
+    private BigDecimal startWorkQty;
+
+    /**
      * 报工数量
      */
     @ApiModelProperty(name="outputQuantity",value = "报工数量")

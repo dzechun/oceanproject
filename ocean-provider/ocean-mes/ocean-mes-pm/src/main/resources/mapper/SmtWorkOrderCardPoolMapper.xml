@@ -9,6 +9,7 @@
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
         <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="out_put_qty" jdbcType="DECIMAL" property="outPutQty"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="card_status" jdbcType="TINYINT" property="cardStatus"/>
@@ -72,6 +73,8 @@
         swo.planned_end_time,
         swocp.work_order_card_id,
         swocp.card_status,
+        swocp.type,
+        swocp.out_put_qty,
         swocp.STATUS,
         swocp.create_user_id,
         swocp.create_time,
@@ -106,8 +109,19 @@
             <if test="parentId!= null">
                 and swocp.parent_id=#{parentId}
             </if>
+            <if test="cardStatus!= null">
+                and swocp.card_status=#{cardStatus}
+            </if>
             and swocp.is_delete = 1
         </where>
         order by swocp.modified_time desc
     </select>
+    
+    <update id="batchUpdateStatus" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE `smt_work_order_card_pool`
+            SET `card_status` = #{item.cardStatus}
+            WHERE work_order_card_pool_id = #{item.workOrderCardPoolId}
+        </foreach>
+    </update>
 </mapper>
