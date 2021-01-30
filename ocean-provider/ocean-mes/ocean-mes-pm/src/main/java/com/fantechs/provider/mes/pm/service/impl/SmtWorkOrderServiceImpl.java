@@ -357,7 +357,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     public List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder) {
         List<SmtWorkOrderDto> list = smtWorkOrderMapper.findList(searchSmtWorkOrder);
         for (SmtWorkOrderDto smtWorkOrderDto : list) {
-            if(StringUtils.isEmpty(smtWorkOrderDto.getMaterialCode())){
+            if(StringUtils.isNotEmpty(smtWorkOrderDto.getParentId())){
                 //可能是部件工单，到部件表去找找
                 SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
                 searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderDto.getMaterialId());
@@ -368,7 +368,12 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                 List<BasePlatePartsDetDto> data = result.getData();
                 if(StringUtils.isNotEmpty(data)){
                     BasePlatePartsDetDto basePlatePartsDetDto = data.get(0);
-                    BeanUtils.copyProperties(basePlatePartsDetDto,smtWorkOrderDto);
+                    smtWorkOrderDto.setMaterialCode(basePlatePartsDetDto.getPartsInformationCode());
+                    smtWorkOrderDto.setMaterialName(basePlatePartsDetDto.getPartsInformationName());
+                    smtWorkOrderDto.setMaterialDesc(basePlatePartsDetDto.getRemark());
+                    smtWorkOrderDto.setRouteId(basePlatePartsDetDto.getRouteId());
+                    smtWorkOrderDto.setProductModuleName(basePlatePartsDetDto.getMaterialQuality());
+                    smtWorkOrderDto.setPackingUnitName(basePlatePartsDetDto.getUnit());
                 }
 
             }

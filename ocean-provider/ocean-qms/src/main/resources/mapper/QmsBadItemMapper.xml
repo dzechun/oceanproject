@@ -9,6 +9,7 @@
     <result column="bad_type_code" jdbcType="VARCHAR" property="badTypeCode" />
     <result column="bad_type_cause" jdbcType="VARCHAR" property="badTypeCause" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -34,7 +35,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    qbi.bad_item_id,qbi.bad_type_code,qbi.bad_type_cause,qbi.process_id,
+    qbi.bad_item_id,qbi.bad_type_code,qbi.bad_type_cause,qbi.process_id,qbi.section_id,
     qbi.status,qbi.create_user_id, bo.organization_name,qbi.create_time,
     qbi.modified_user_id,qbi.modified_time,qbi.is_delete, qbi.organization_id,qbi.remark
   </sql>
@@ -47,7 +48,7 @@
     LEFT JOIN ocean.sys_user sus ON qbi.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qbi.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = qbi.process_id
-    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = qbi.section_id
     <where>
       <if test="badItemId != null and badItemId != ''">
         and qbi.bad_item_id = #{badItemId}
@@ -56,7 +57,7 @@
         and sp.process_id = #{processId}
       </if>
       <if test="sectionId != null and sectionId != ''">
-        and sws.section_id = #{sectionId}
+        and qbi.section_id = #{sectionId}
       </if>
       <if test="badTypeCode != null and badTypeCode != ''">
         and qbi.bad_type_code like CONCAT('%', #{badTypeCode}, '%')

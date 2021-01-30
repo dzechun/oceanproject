@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -79,6 +80,13 @@ public class SmtWorkOrderCardPool  implements Serializable {
      */
     @ApiModelProperty(name="type",value = "流程卡类型（1、工单流转卡 2、部件流转卡）")
     private Byte type;
+
+    /**
+     * 流程卡投产数
+     */
+    @ApiModelProperty(name="outPutQty",value = "流程卡投产数")
+    @Column(name = "out_put_qty")
+    private BigDecimal outPutQty;
 
     /**
      * 组织id

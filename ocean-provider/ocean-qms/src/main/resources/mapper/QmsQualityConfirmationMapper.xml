@@ -63,7 +63,7 @@
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,sus.user_name AS person_name,
     swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
     sswo.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
     sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,splp.process_id,splp.cur_output_qty AS quantity,
@@ -74,7 +74,7 @@
     LEFT JOIN fantech_imes.base_organization bo ON qqc.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
     LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = qqc.work_order_card_pool_id
-    and splp.process_id = qqc.process_id
+    and splp.process_id = qqc.process_id and splp.process_type = 2
     LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
     LEFT JOIN fantech_imes.base_plate_parts_det bbppd ON bbppd.plate_parts_det_id = swo.material_id
     LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bbppd.parts_information_id
@@ -110,7 +110,9 @@
       <if test="qualityType != null and qualityType != ''">
         and qqc.quality_type = #{qualityType}
       </if>
-
+      <if test="workOrderCardPoolId != null and workOrderCardPoolId != ''">
+        and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
@@ -121,14 +123,11 @@
   <select id="updateQuantity" parameterType="map" resultType="integer">
     select splp.cur_output_qty
     from fantech_imes.smt_process_list_process splp
-    <where>
-      <if test="processId != null and processId != ''">
+    where
         and splp.process_id = #{processId}
-      </if>
-      <if test="workOrderCardPoolId != null and workOrderCardPoolId != ''">
         and splp.work_order_card_pool_id = #{workOrderCardPoolId}
-      </if>
-    </where>
+        and splp.process_type = 2
+        and splp.status = 2
   </select>
 
 

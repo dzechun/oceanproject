@@ -42,7 +42,7 @@ public class QmsQualityInspection extends ValidGroup implements Serializable {
      * 单据状态（0-未检验 1-检验中 2-已检验）
      */
     @ApiModelProperty(name="billsStatus",value = "单据状态（0-未检验 1-检验中 2-已检验）")
-    @Excel(name = "单据状态（0-未检验 1-检验中 2-已检验）", height = 20, width = 30,orderNum="2")
+    @Excel(name = "单据状态", height = 20, width = 30,orderNum="2",replace = {"未检验_0","检验中_1","已检验_2"})
     @Column(name = "bills_status")
     private Byte billsStatus;
 

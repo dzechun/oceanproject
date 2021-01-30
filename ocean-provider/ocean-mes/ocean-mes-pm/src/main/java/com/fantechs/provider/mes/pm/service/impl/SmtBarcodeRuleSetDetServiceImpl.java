@@ -1,7 +1,10 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRule;
+import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRule;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -9,6 +12,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtBarcodeRuleSetDetMapper;
 import com.fantechs.provider.mes.pm.service.SmtBarcodeRuleSetDetService;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,8 @@ public class SmtBarcodeRuleSetDetServiceImpl extends BaseService<SmtBarcodeRuleS
 
         @Resource
         private SmtBarcodeRuleSetDetMapper smtBarcodeRuleSetDetMapper;
+        @Resource
+        private SmtBarcodeRuleMapper smtBarcodeRuleMapper;
 
         @Override
         public List<SmtBarcodeRuleSetDetDto> findList(SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet) {
@@ -51,16 +57,30 @@ public class SmtBarcodeRuleSetDetServiceImpl extends BaseService<SmtBarcodeRuleS
                 criteria.andEqualTo("barcodeRuleSetId",barcodeRuleSetId);
                 smtBarcodeRuleSetDetMapper.deleteByExample(example);
 
+                SearchSmtBarcodeRule searchSmtBarcodeRule = new SearchSmtBarcodeRule();
                 for (Long barcodeRuleId : barcodeRuleIds) {
-                      SmtBarcodeRuleSetDet smtBarcodeRuleSetDet = new SmtBarcodeRuleSetDet();
-                      smtBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
-                      smtBarcodeRuleSetDet.setBarcodeRuleId(barcodeRuleId);
-                      smtBarcodeRuleSetDet.setIsDelete((byte) 1);
-                      smtBarcodeRuleSetDet.setCreateUserId(currentUser.getUserId());
-                      smtBarcodeRuleSetDet.setCreateTime(new Date());
-                      smtBarcodeRuleSetDet.setModifiedUserId(currentUser.getUserId());
-                      smtBarcodeRuleSetDet.setModifiedTime(new Date());
-                      list.add(smtBarcodeRuleSetDet);
+                        searchSmtBarcodeRule.setBarcodeRuleId(barcodeRuleId);
+                        List<SmtBarcodeRuleDto> smtBarcodeRuleDtos = smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
+                        if (StringUtils.isEmpty(smtBarcodeRuleDtos))
+                                throw new BizErrorException("条码规则不存在");
+                        for (SmtBarcodeRuleSetDet smtBarcodeRuleSetDet : list){
+                                searchSmtBarcodeRule.setBarcodeRuleId(smtBarcodeRuleSetDet.getBarcodeRuleId());
+                                List<SmtBarcodeRuleDto> smtBarcodeRuleDtoList = smtBarcodeRuleMapper.findList(searchSmtBarcodeRule);
+                                if (StringUtils.isEmpty(smtBarcodeRuleDtoList))
+                                        throw new BizErrorException("条码规则不存在");
+                                if (smtBarcodeRuleDtos.get(0).getBarcodeRuleCategoryId() == smtBarcodeRuleDtoList.get(0).getBarcodeRuleCategoryId())
+                                        throw new BizErrorException("重复的条码规则类型");
+                        }
+
+                        SmtBarcodeRuleSetDet smtBarcodeRuleSetDet = new SmtBarcodeRuleSetDet();
+                        smtBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
+                        smtBarcodeRuleSetDet.setBarcodeRuleId(barcodeRuleId);
+                        smtBarcodeRuleSetDet.setIsDelete((byte) 1);
+                        smtBarcodeRuleSetDet.setCreateUserId(currentUser.getUserId());
+                        smtBarcodeRuleSetDet.setCreateTime(new Date());
+                        smtBarcodeRuleSetDet.setModifiedUserId(currentUser.getUserId());
+                        smtBarcodeRuleSetDet.setModifiedTime(new Date());
+                        list.add(smtBarcodeRuleSetDet);
                 }
                 return smtBarcodeRuleSetDetMapper.insertList(list);
         }

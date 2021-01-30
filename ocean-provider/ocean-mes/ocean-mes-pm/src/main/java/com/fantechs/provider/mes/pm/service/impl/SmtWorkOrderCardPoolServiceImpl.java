@@ -81,4 +81,17 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         //=====
         return processListWorkOrderDTO;
     }
+
+    @Override
+    public int batchUpdateStatus(List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList) {
+        return smtWorkOrderCardPoolMapper.batchUpdateStatus(smtWorkOrderCardPoolList);
+    }
+
+    @Override
+    public List<SmtWorkOrderCardPoolDto> getNoPutIntoCard(Long parentId) {
+        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+        searchSmtWorkOrderCardPool.setParentId(parentId);
+        searchSmtWorkOrderCardPool.setCardStatus((byte)3);//待打印
+        return this.findList(searchSmtWorkOrderCardPool);
+    }
 }

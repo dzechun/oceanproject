@@ -19,4 +19,6 @@ public interface SysUserService extends IService<SysUser> {
     //用excel导入用户信息
     int importUsers(List<SysUserExcelDTO> sysUsers);
 
+    List<String> findAllRoleId(Long userId);
+
 }

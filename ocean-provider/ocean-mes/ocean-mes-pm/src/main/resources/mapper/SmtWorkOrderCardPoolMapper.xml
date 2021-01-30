@@ -9,6 +9,7 @@
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
         <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="out_put_qty" jdbcType="DECIMAL" property="outPutQty"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="card_status" jdbcType="TINYINT" property="cardStatus"/>
@@ -43,6 +44,8 @@
         <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
         <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModuleName"/>
+        <result column="package_specification_quantity" jdbcType="VARCHAR" property="packageSpecificationQuantity"/>
     </resultMap>
 
     <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool"
@@ -58,6 +61,9 @@
         sm.material_code,
         sm.material_desc,
         sm.version,
+        spm.product_model_name,
+        sps.package_specification_quantity,
+        bt.color,
         bt.transfer_quantity,
         swo.work_order_quantity,
         swo.production_quantity,
@@ -72,6 +78,8 @@
         swo.planned_end_time,
         swocp.work_order_card_id,
         swocp.card_status,
+        swocp.type,
+        swocp.out_put_qty,
         swocp.STATUS,
         swocp.create_user_id,
         swocp.create_time,
@@ -86,7 +94,9 @@
         fantech_imes.smt_work_order_card_pool swocp
         LEFT JOIN fantech_imes.smt_work_order swo ON swocp.work_order_id = swo.work_order_id
         LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
-        LEFT JOIN base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id = bt.package_specification_id
         LEFT JOIN fantech_imes.smt_route sr ON swo.route_id = sr.route_id
         LEFT JOIN fantech_imes.smt_barcode_rule sbr ON swocp.barcode_rule_id = sbr.barcode_rule_id
         LEFT JOIN fantech_imes.smt_order so ON swo.order_id = so.order_id
@@ -106,8 +116,19 @@
             <if test="parentId!= null">
                 and swocp.parent_id=#{parentId}
             </if>
+            <if test="cardStatus!= null">
+                and swocp.card_status=#{cardStatus}
+            </if>
             and swocp.is_delete = 1
         </where>
         order by swocp.modified_time desc
     </select>
+    
+    <update id="batchUpdateStatus" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE `smt_work_order_card_pool`
+            SET `card_status` = #{item.cardStatus}
+            WHERE work_order_card_pool_id = #{item.workOrderCardPoolId}
+        </foreach>
+    </update>
 </mapper>

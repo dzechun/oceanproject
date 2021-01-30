@@ -20,6 +20,12 @@ public class SearchSmtBarcodeRule extends BaseQuery implements Serializable {
     private String barcodeRuleCode;
 
     /**
+     * 条码规则ID
+     */
+    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
+    private Long barcodeRuleId;
+
+    /**
      * 条码规则名称
      */
     @ApiModelProperty(name="barcodeRuleName",value = "条码规则名称")

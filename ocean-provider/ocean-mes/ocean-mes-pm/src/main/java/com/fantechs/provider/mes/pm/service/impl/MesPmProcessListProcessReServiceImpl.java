@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListPr
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessListProcessRe;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListProcessReDTO;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
+import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmProcessListProcessReService;
@@ -130,14 +131,35 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SaveProcessListProcessReDTO saveProcessListProcessReDTO) {
+        if(saveProcessListProcessReDTO.getReProcessId()==saveProcessListProcessReDTO.getProcessId()){
+            throw new BizErrorException("退回工序与被退工工序不能相同");
+        }
+        if(saveProcessListProcessReDTO.getReQty().doubleValue()<=0){
+            throw new BizErrorException("退回数量必须大于0");
+        }
+
         List<MesPmProcessListProcessRe> mesPmProcessListProcessReList = this.selectAll(ControllerUtil.dynamicCondition(
                 "workOrderCardPoolId", saveProcessListProcessReDTO.getWorkOrderCardPoolId(),
                 "processId", saveProcessListProcessReDTO.getProcessId(),
                 "reProcessId", saveProcessListProcessReDTO.getReProcessId()
         ));
+        //查询退回工序已经报工数量，退回数量不允许大于报工数量，及上工序不能退下工序
+        List<SmtProcessListProcess> reProcessListProcesseList = smtProcessListProcessService.selectAll(ControllerUtil.dynamicCondition(
+                "workOrderCardPoolId", saveProcessListProcessReDTO.getWorkOrderCardPoolId(),
+                "processId", saveProcessListProcessReDTO.getReProcessId(),
+                "processType",2,
+                "status",2));
+        if(StringUtils.isEmpty(reProcessListProcesseList)){
+            throw new BizErrorException("指定退回工序不存在已报工信息:"+saveProcessListProcessReDTO.getReProcessId());
+        }
+        SmtProcessListProcess preProcessListProcess = reProcessListProcesseList.get(0);
         MesPmProcessListProcessRe mesPmProcessListProcessRe = new MesPmProcessListProcessRe();
         if(StringUtils.isNotEmpty(mesPmProcessListProcessReList)){
             mesPmProcessListProcessRe=mesPmProcessListProcessReList.get(0);
+            BigDecimal reQtyTotal = mesPmProcessListProcessRe.getReQty().add(saveProcessListProcessReDTO.getReQty());
+            if(reQtyTotal.compareTo(preProcessListProcess.getOutputQuantity())>0){
+                throw new BizErrorException("累计退回数量不允许大于指定退回工序报工数");
+            }
             mesPmProcessListProcessRe.setReQty(new BigDecimal(mesPmProcessListProcessRe.getReQty().doubleValue()+saveProcessListProcessReDTO.getReQty().doubleValue()));
             mesPmProcessListProcessRe.setPreQty(saveProcessListProcessReDTO.getPreQty());
             mesPmProcessListProcessRe.setStatus(saveProcessListProcessReDTO.getOperation());
@@ -145,6 +167,9 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }else{
+            if(saveProcessListProcessReDTO.getReQty().compareTo(preProcessListProcess.getOutputQuantity())>0){
+                throw new BizErrorException("退回数量不允许大于指定退回工序报工数");
+            }
             mesPmProcessListProcessRe.setWorkOrderCardPoolId(saveProcessListProcessReDTO.getWorkOrderCardPoolId());
             mesPmProcessListProcessRe.setProcessId(saveProcessListProcessReDTO.getProcessId());
             mesPmProcessListProcessRe.setReProcessId(saveProcessListProcessReDTO.getReProcessId());
@@ -155,22 +180,15 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }
-        if(saveProcessListProcessReDTO.getOperation()==2){
-            SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
-            searchSmtProcessListProcess.setWorkOrderCardPoolId(saveProcessListProcessReDTO.getWorkOrderCardPoolId());
-            searchSmtProcessListProcess.setProcessId(saveProcessListProcessReDTO.getReProcessId());
-            searchSmtProcessListProcess.setStatus((byte)2);
-            List<SmtProcessListProcessDto> smtProcessListProcessServiceList = smtProcessListProcessService.findList(searchSmtProcessListProcess);
-            if(StringUtils.isEmpty(smtProcessListProcessServiceList)){
-                throw new BizErrorException("没找到流程卡工序过站信息");
-            }
-            SmtProcessListProcessDto smtProcessListProcessDto = smtProcessListProcessServiceList.get(0);
-            smtProcessListProcessDto.setOutputQuantity(new BigDecimal(smtProcessListProcessDto.getOutputQuantity().doubleValue()-mesPmProcessListProcessRe.getReQty().doubleValue()));
-            smtProcessListProcessDto.setStatus((byte)1);
-            if(smtProcessListProcessService.update(smtProcessListProcessDto)<=0){
+
+        //修改退回工序的报工情况
+        /*if(saveProcessListProcessReDTO.getOperation()==2){
+            preProcessListProcess.setOutputQuantity(preProcessListProcess.getOutputQuantity().subtract(saveProcessListProcessReDTO.getReQty()));
+            preProcessListProcess.setStatus((byte)1);
+            if(smtProcessListProcessService.update(preProcessListProcess)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
-        }
+        }*/
         return 1;
     }
 
