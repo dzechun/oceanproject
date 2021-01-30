@@ -154,14 +154,18 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 if(!isUp){
                     //生成流程单up
                     //过站中
+                    up.setProcessType((byte)2);
                     up.setStatus((byte)1);
-                    up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
+                    up.setStartWorkQty(mesPmBreakBulkDet.getBreakBulkQty());
                     up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
                     smtProcessListProcessMapper.insertSelective(up);
                     isUp = true;
                 }else{
                     //生成流程单down
+                    up.setProcessType((byte)2);
+                    up.setStatus((byte)2);
                     up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
+                    up.setCurOutputQty(mesPmBreakBulkDet.getBreakBulkQty());
                     up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
                     smtProcessListProcessMapper.insertSelective(up);
                 }
@@ -178,7 +182,9 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             }
             SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
             up.setProcessListProcessId(null);
-            up.setOutputQuantity(record.getBreakBulkBatchQty());
+            up.setProcessType((byte)2);
+            up.setStatus((byte)1);
+            up.setStartWorkQty(record.getBreakBulkBatchQty());
             up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
             smtProcessListProcessMapper.insertSelective(up);
         }
