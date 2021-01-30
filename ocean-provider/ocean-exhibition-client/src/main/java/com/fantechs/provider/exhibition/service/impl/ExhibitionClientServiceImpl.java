@@ -3,28 +3,28 @@ package com.fantechs.provider.exhibition.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.agv.dto.MaterialAndPositionCodeEnum;
 import com.fantechs.common.base.agv.dto.PositionCodePath;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.agv.dto.RcsResponseDTO;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.SmtStockDetDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtStockDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
-import com.fantechs.common.base.general.entity.mes.pm.*;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.exhibition.config.RabbitConfig;
 import com.fantechs.provider.api.qms.OMFeignApi;
+import com.fantechs.provider.exhibition.config.RabbitConfig;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,13 +42,13 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
     private OMFeignApi omFeignApi;
     @Resource
     private BasicFeignApi basicFeignApi;
-    @Autowired
+    @Resource
     private AgvFeignApi agvFeignApi;
-    @Autowired
+    @Resource
     private FanoutSender fanoutSender;
 
     @Override
-    public int makingOrders() {
+    public int makingOrders() throws Exception{
         //查找所有创建状态的订单
         SearchSmtOrder searchSmtOrder = new SearchSmtOrder();
         searchSmtOrder.setStatus((byte) 0);
@@ -77,6 +77,16 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             }
             //根据工单信息生成工单流转卡、产品流转卡
             SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+
+            SearchSmtStock searchSmtStock = new SearchSmtStock();
+            searchSmtStock.setWorkOrderCode(smtWorkOrderDto.getWorkOrderCode());
+            List<SmtStockDto> smtStockDtos=  pmFeignApi.findSmtStockList(searchSmtStock).getData();
+            if(StringUtils.isEmpty(smtStockDtos)){
+                throw new BizErrorException("该备料单不存在");
+            }
+            //通知AGV去上料
+            agvStockTask(smtStockDtos.get(0).getStockId());
+
             SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
             smtWorkOrderCardCollocation.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
             smtWorkOrderCardCollocation.setProduceQuantity(smtWorkOrderDto.getWorkOrderQuantity().intValue());
@@ -88,8 +98,22 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             searchSmtWorkOrderBarcodePool.setTaskStatus((byte)0);
             searchSmtWorkOrderBarcodePool.setPageSize(99999);
             List<SmtWorkOrderBarcodePoolDto>  smtWorkOrderBarcodePoolDtoList=pmFeignApi.findWorkOrderBarcodePoolList(searchSmtWorkOrderBarcodePool).getData();
+            if(StringUtils.isEmpty(smtWorkOrderBarcodePoolDtoList)){
+                throw new BizErrorException("未找到对应产品条码流转卡");
+            }
+
             for(SmtWorkOrderBarcodePoolDto smtWorkOrderBarcodePoolDto:smtWorkOrderBarcodePoolDtoList){
+                //通过产品流转卡生成过站明细
                 pmFeignApi.startJob(smtWorkOrderBarcodePoolDto);
+                //获取过站工序明细发送客户端
+                SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+                searchSmtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderBarcodePoolDto.getWorkOrderCardPoolId());
+                List<SmtProcessListProcessDto>  smtProcessListProcessDtoList=pmFeignApi.findSmtProcessListProcessList( searchSmtProcessListProcess).getData();
+                MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
+                mQResponseEntity.setCode(1100);
+                mQResponseEntity.setData(smtProcessListProcessDtoList);
+                fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+                log.info("发送过站信息给客户端：" + JSONObject.toJSONString(mQResponseEntity));
             }
         }
 
@@ -97,7 +121,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
     }
 
     @Override
-    public String agvStockTask(Long stockId) {
+    public String agvStockTask(Long stockId) throws Exception{
 
         String taskCode = "";
 
@@ -130,7 +154,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             }
 
             Map<String, Object> map = new HashMap<>();
-            map.put("taskTyp", "c02");
+            map.put("taskTyp", "ZT04");
             List<PositionCodePath> positionCodePathList = new LinkedList<>();
             // 起始地标条码
             PositionCodePath positionCodePath = new PositionCodePath();
@@ -143,7 +167,10 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             positionCodePath2.setType("00");
             positionCodePathList.add(positionCodePath2);
             map.put("positionCodePath", positionCodePathList);
-            taskCode = agvFeignApi.genAgvSchedulingTask(map).getData();
+            String result = agvFeignApi.genAgvSchedulingTask(map).getData();
+            RcsResponseDTO rcsResponseDTO = BeanUtils.convertJson(result, new TypeToken<RcsResponseDTO>(){}.getType());
+            taskCode = rcsResponseDTO.getData();
+            log.info("启动AGV配送任务：请求参数：" + JSONObject.toJSONString(map) + "， 返回结果：" + JSONObject.toJSONString(rcsResponseDTO));
 
             SmtStockDet smtStockDet = smtStockDetDtoList.get(0);
             smtStockDet.setStatus((byte) 1);
@@ -155,7 +182,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
     }
 
     @Override
-    public String agvStockTaskTest(String materialCode) {
+    public String agvStockTaskTest(String materialCode) throws Exception{
         String startPositionCode = "";
         String endPositionCode = "";
         for (MaterialAndPositionCodeEnum.MaterialAndPositionCode materialAndPositionCode : MaterialAndPositionCodeEnum.MaterialAndPositionCode.values()) {
@@ -166,7 +193,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("taskTyp", "c02");
+        map.put("taskTyp", "ZT04");
         List<PositionCodePath> positionCodePathList = new LinkedList<>();
         // 起始地标条码
         PositionCodePath positionCodePath = new PositionCodePath();
@@ -179,7 +206,10 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
         positionCodePath2.setType("00");
         positionCodePathList.add(positionCodePath2);
         map.put("positionCodePath", positionCodePathList);
-        String taskCode = agvFeignApi.genAgvSchedulingTask(map).getData();
+        String result = agvFeignApi.genAgvSchedulingTask(map).getData();
+        RcsResponseDTO rcsResponseDTO = BeanUtils.convertJson(result, new TypeToken<RcsResponseDTO>(){}.getType());
+        String taskCode = rcsResponseDTO.getData();
+        log.info("启动AGV配送任务：请求参数：" + JSONObject.toJSONString(map) + "， 返回结果：" + JSONObject.toJSONString(rcsResponseDTO));
 
         return taskCode;
     }

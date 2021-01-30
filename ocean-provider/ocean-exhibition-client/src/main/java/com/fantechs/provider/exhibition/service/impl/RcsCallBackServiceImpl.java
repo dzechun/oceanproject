@@ -4,16 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.agv.dto.AgvCallBackDTO;
 import com.fantechs.common.base.agv.dto.MaterialAndPositionCodeEnum;
 import com.fantechs.common.base.agv.dto.PositionCodePath;
+import com.fantechs.common.base.agv.dto.RcsResponseDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtStockDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStockDet;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.response.MQResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.exhibition.config.RabbitConfig;
 import com.fantechs.provider.exhibition.service.ExhibitionClientService;
 import com.fantechs.provider.exhibition.service.RcsCallBackService;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +58,9 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             // 发送消息到客户端，控制伸缩臂进行伸缩取料
             MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
             mQResponseEntity.setCode(1010);
-            fanoutSender.send(RabbitConfig.TOPIC_WORK_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+            Map<String,Object> map = new HashMap<>();
+            mQResponseEntity.setData(map);
+            fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
             log.info("发送消息到客户端，控制伸缩臂进行伸缩取料：" + JSONObject.toJSONString(mQResponseEntity));
         } else {
             SearchSmtStockDet searchSmtStockDet = new SearchSmtStockDet();
@@ -72,6 +77,15 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId());
 
             if (StringUtils.isEmpty(taskCode)) {
+
+                // 发送消息到客户端，物料配送完成
+                MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
+                mQResponseEntity.setCode(1013);
+                Map<String,Object> mapMQ = new HashMap<>();
+                mQResponseEntity.setData(mapMQ);
+                fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+                log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
+
                 // 配送小车成品完成
                 String positionCode = "";
                 for(MaterialAndPositionCodeEnum.MaterialAndPositionCode materialAndPositionCode : MaterialAndPositionCodeEnum.MaterialAndPositionCode.values()){
@@ -90,7 +104,9 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 positionCodePath.setType("00");
                 positionCodePathList.add(positionCodePath);
                 map.put("positionCodePath", positionCodePathList);
-                taskCode = agvFeignApi.genAgvSchedulingTask(map).getData();
+                String result = agvFeignApi.genAgvSchedulingTask(map).getData();
+                RcsResponseDTO rcsResponseDTO = BeanUtils.convertJson(result, new TypeToken<RcsResponseDTO>(){}.getType());
+                log.info("启动AGV配送任务：请求参数：" + JSONObject.toJSONString(map) + "， 返回结果：" + JSONObject.toJSONString(rcsResponseDTO));
             }
         }
 
