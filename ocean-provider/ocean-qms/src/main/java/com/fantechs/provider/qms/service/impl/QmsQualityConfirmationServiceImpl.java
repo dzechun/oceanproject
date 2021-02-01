@@ -225,7 +225,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         qmsQualityConfirmationDto.setWorkOrderCode(smtWorkOrderCardPoolDto.getWorkOrderCode());
         qmsQualityConfirmationDto.setMaterialDesc(material.getMaterialDesc());
         qmsQualityConfirmationDto.setMaterialCode(material.getMaterialCode());
-        qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getCurOutputQty());
+        qmsQualityConfirmationDto.setQuantity(smtProcessListProcessDto.getOutputQuantity());
         qmsQualityConfirmationDto.setProductModelName(productModel == null ?"":productModel.getProductModelName());
         qmsQualityConfirmationDto.setUnit(baseTab == null?"":baseTab.getMainUnit());
         qmsQualityConfirmationDto.setProcessName(smtProcess.getProcessName());
@@ -273,27 +273,24 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         List<QmsPoorQualityDto> list = qmsQualityConfirmation.getSeledBadItemList();
         if (StringUtils.isNotEmpty(list)){
             List<QmsPoorQualityDto> qualityDtoList = new ArrayList<>();
-            for (QmsPoorQualityDto qmsPoorQuality : list) {
-                qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
-                boolean b = false;
-                for (QmsPoorQualityDto qmsPoorQualityDto : list) {
-                    if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
-                        qmsPoorQuality.setBadQuantity( qmsPoorQuality.getBadQuantity().add(qmsPoorQualityDto.getBadQuantity()));
-                        b = true;
+            for (int j = 0 ; j < list.size() ; j++) {
+                list.get(j).setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
+                boolean b = true;
+                for (int k = j+1 ; k < list.size() ; k++) {
+                    if (list.get(j).getSectionId() == list.get(k).getSectionId() && list.get(j).getBadItemDetId() == list.get(k).getBadItemDetId()){
+                        list.get(j).setBadQuantity( list.get(j).getBadQuantity().add(list.get(k).getBadQuantity()));
                     }
                 }
                 if (b){
-                    b = true;
                     for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
-                        if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                        if (list.get(j).getBadItemDetId() == qmsPoorQualityDto.getBadItemDetId() && list.get(j).getSectionId() == qmsPoorQualityDto.getSectionId()){
                             b=false;
                             break;
                         }
                     }
-                    if (b)
-                        qualityDtoList.add(qmsPoorQuality);
-
                 }
+                if (b)
+                    qualityDtoList.add(list.get(j));
             }
             qmsPoorQualityMapper.insertList(qualityDtoList);
         }
@@ -462,5 +459,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     @Override
     public Integer updateQuantity(Map<String, Object> map) {
         return qmsQualityConfirmationMapper.updateQuantity(map);
+    }
+
+    @Override
+    public QmsQualityConfirmation getQualityQuantity(Long workOrderCardPoolId) {
+        return qmsQualityConfirmationMapper.getQualityQuantity(workOrderCardPoolId);
     }
 }
