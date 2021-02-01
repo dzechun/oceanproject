@@ -2,11 +2,14 @@ package com.fantechs.common.base.general.entity.basic.search;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -65,5 +68,17 @@ public class SearchBaseStaff extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "factoryName",value = "厂别名称")
     private String factoryName;
+
+    /**
+     * 查询类型
+     */
+    @ApiModelProperty(name = "searchType",value = "查询类型")
+    private Integer searchType;
+
+    /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long processId;
 
 }
