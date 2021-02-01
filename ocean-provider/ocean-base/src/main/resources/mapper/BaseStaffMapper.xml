@@ -106,6 +106,15 @@
             <if test="status !=null">
                 and bs.status=#{status}
             </if>
+
+            <if test="searchType==1 and processId!=null and processId!= ''">
+                and bs.staff_id IN (SELECT bsp.staff_id FROM base_staff_process bsp WHERE bsp.process_id=#{processId})
+                and bs.status=1
+            </if>
+            <if test="searchType==0 and processId!=null and processId!= ''">
+                and bs.staff_id NOT IN (SELECT bsp.staff_id FROM base_staff_process bsp WHERE bsp.process_id=#{processId})
+                and bs.status=1
+            </if>
         </where>
         order by create_time desc
     </select>
