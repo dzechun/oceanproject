@@ -277,7 +277,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 qmsPoorQuality.setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
                 boolean b = false;
                 for (QmsPoorQualityDto qmsPoorQualityDto : list) {
-                    if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                    if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId() && qmsPoorQuality.getBadItemDetId() == qmsPoorQualityDto.getBadItemDetId()){
                         qmsPoorQuality.setBadQuantity( qmsPoorQuality.getBadQuantity().add(qmsPoorQualityDto.getBadQuantity()));
                         b = true;
                     }
@@ -285,7 +285,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 if (b){
                     b = true;
                     for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
-                        if (qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
+                        if (qmsPoorQuality.getBadItemDetId() == qmsPoorQualityDto.getBadItemDetId() && qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
                             b=false;
                             break;
                         }
