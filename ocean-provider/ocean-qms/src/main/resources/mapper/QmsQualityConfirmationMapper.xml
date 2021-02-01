@@ -123,11 +123,18 @@
   <select id="updateQuantity" parameterType="map" resultType="integer">
     select splp.cur_output_qty
     from fantech_imes.smt_process_list_process splp
-    where
-        and splp.process_id = #{processId}
+    where splp.process_id = #{processId}
         and splp.work_order_card_pool_id = #{workOrderCardPoolId}
         and splp.process_type = 2
         and splp.status = 2
+  </select>
+
+  <select id="getQualityQuantity" resultMap="BaseResultMap" parameterType="long">
+    select <include refid="Base_Column_List"></include>
+    from qms_quality_confirmation qqc
+    where qqc.work_order_card_pool_id = #{workOrderCardPoolId} and qqc.process_id = (
+        select process_id from smt_process_list_process splp where work_order_card_pool_id = #{workOrderCardPoolId} order by create_time desc limit 1
+    )
   </select>
 
 
