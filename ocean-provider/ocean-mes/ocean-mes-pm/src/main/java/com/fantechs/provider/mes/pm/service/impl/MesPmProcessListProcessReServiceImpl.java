@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
+import com.fantechs.common.base.general.dto.mes.pm.MaterialAndPartsDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SaveProcessListProcessReDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
@@ -8,6 +9,7 @@ import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListProcessReDTO;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.mes.pm.service.MesPmProcessListProcessReService;
 import com.fantechs.provider.mes.pm.mapper.MesPmProcessListProcessReMapper;
@@ -125,7 +127,16 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
 
    @Override
    public List<MesPmProcessListProcessReDTO> selectFilterAll(Map<String, Object> map) {
-       return mesPmProcessListProcessReMapper.selectFilterAll(map);
+       List<MesPmProcessListProcessReDTO> mesPmProcessListProcessReDTOS = mesPmProcessListProcessReMapper.selectFilterAll(map);
+       if(StringUtils.isNotEmpty(mesPmProcessListProcessReDTOS)){
+           for (MesPmProcessListProcessReDTO mesPmProcessListProcessReDTO : mesPmProcessListProcessReDTOS) {
+               if(StringUtils.isEmpty(mesPmProcessListProcessReDTO.getMaterialCode())){
+                   MaterialAndPartsDTO materialAndPartsDTO = smtProcessListProcessService.findPartsInformation(mesPmProcessListProcessReDTO.getWorkOrderCardPoolId());
+                   BeanUtils.autoFillEqFields(materialAndPartsDTO,mesPmProcessListProcessReDTO);
+               }
+           }
+       }
+       return mesPmProcessListProcessReDTOS;
    }
 
     @Override
@@ -163,6 +174,7 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
             mesPmProcessListProcessRe.setReQty(new BigDecimal(mesPmProcessListProcessRe.getReQty().doubleValue()+saveProcessListProcessReDTO.getReQty().doubleValue()));
             mesPmProcessListProcessRe.setPreQty(saveProcessListProcessReDTO.getPreQty());
             mesPmProcessListProcessRe.setStatus(saveProcessListProcessReDTO.getOperation());
+            mesPmProcessListProcessRe.setStaffId(saveProcessListProcessReDTO.getStaffId());
             if(this.update(mesPmProcessListProcessRe)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
@@ -176,6 +188,7 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
             mesPmProcessListProcessRe.setReQty(new BigDecimal(saveProcessListProcessReDTO.getReQty().doubleValue()));
             mesPmProcessListProcessRe.setPreQty(saveProcessListProcessReDTO.getPreQty());
             mesPmProcessListProcessRe.setStatus(saveProcessListProcessReDTO.getOperation());
+            mesPmProcessListProcessRe.setStaffId(saveProcessListProcessReDTO.getStaffId());
             if(this.save(mesPmProcessListProcessRe)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }

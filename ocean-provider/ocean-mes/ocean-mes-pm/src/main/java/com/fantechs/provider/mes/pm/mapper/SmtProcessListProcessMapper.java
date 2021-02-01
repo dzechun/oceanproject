@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.mapper;
 
 import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.general.dto.mes.pm.MaterialAndPartsDTO;
 import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
@@ -31,4 +32,6 @@ public interface SmtProcessListProcessMapper extends MyMapper<SmtProcessListProc
     Long firstProcessIdInRoute(Long routeId);
     //查找上一条数据
     SmtProcessListProcess findUp(Long id);
+    //查找流程卡对应的部件信息及产品信息
+    MaterialAndPartsDTO findPartsInformation(Long workOrderCardPoolId);
 }
