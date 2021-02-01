@@ -226,7 +226,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example);
         Integer num = bcmBarCodes.stream().mapToInt(BcmBarCode::getPrintQuantity).sum();
 
-        if(record.getWorkOrderQuantity().compareTo(BigDecimal.valueOf(num+record.getPrintQuantity()))==1){
+        if(record.getWorkOrderQuantity().compareTo(BigDecimal.valueOf(num+record.getPrintQuantity()))==-1){
             throw new BizErrorException("产生数量不能大于工单数量");
         }
         record.setStatus((byte)1);
