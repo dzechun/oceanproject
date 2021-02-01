@@ -283,17 +283,15 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                     }
                 }
                 if (b){
-                    b = true;
                     for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
                         if (qmsPoorQuality.getBadItemDetId() == qmsPoorQualityDto.getBadItemDetId() && qmsPoorQuality.getSectionId() == qmsPoorQualityDto.getBadItemDetId()){
                             b=false;
                             break;
                         }
                     }
-                    if (b)
-                        qualityDtoList.add(qmsPoorQuality);
-
                 }
+                if (b)
+                    qualityDtoList.add(qmsPoorQuality);
             }
             qmsPoorQualityMapper.insertList(qualityDtoList);
         }
