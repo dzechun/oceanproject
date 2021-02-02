@@ -29,4 +29,8 @@ public interface BcmBarCodeService extends IService<BcmBarCode> {
     int saveCode(BcmBarCodeWorkDto bcmBarCodeWorkDto);
 
     int updateByContent(List<BcmBarCodeDet> bcmBarCodeDets);
+
+    List<BcmBarCodeDto> reprintList(String workOrderId);
+
+    int reprint(List<String> barCodeId);
 }

@@ -152,6 +152,7 @@ public class MesPmBreakBulk extends ValidGroup implements Serializable {
     private Byte breakBulkType;
 
     @ApiModelProperty(name = "qualityName",value = "抽检员")
+    @Transient
     private String qualityName;
 
     private List<MesPmBreakBulkDet> mesPmBreakBulkDets;

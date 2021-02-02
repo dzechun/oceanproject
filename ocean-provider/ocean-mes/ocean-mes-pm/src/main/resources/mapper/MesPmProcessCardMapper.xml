@@ -37,8 +37,7 @@
         <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
         <result column="order_code" jdbcType="VARCHAR" property="orderCode"/>
 </resultMap>
-<resultMap id="processListMap" type="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmProcessListCard">
-
+<resultMap id="processListMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmProcessListCardDto">
 </resultMap>
   <select id="findList" resultMap="BaseResultMapDto">
   select
@@ -66,7 +65,7 @@
    </select>
 
    <select id="processList" resultMap="processListMap">
-SELECT plp.work_order_card_pool_id,sp.process_name,plp.inbound_time,plp.outbound_time,u.user_name,plp.output_quantity,qc.work_order_card_pool_id,sum(qc.unqualified_quantity) FROM smt_process_list_process plp
+SELECT plp.work_order_card_pool_id,sp.process_name as 'processName',plp.inbound_time as 'inboudeTime',plp.outbound_time as 'outboundTime',u.user_name as 'modifiedUserName',plp.output_quantity as 'outputQuantity',sum(qc.unqualified_quantity) as 'unqualifiedQuantity' FROM smt_process_list_process plp
 				LEFT JOIN smt_work_order_card_pool wocp ON plp.work_order_card_pool_id= wocp.work_order_card_pool_id
 				LEFT JOIN qms_quality_confirmation qc ON plp.work_order_card_pool_id = qc.work_order_card_pool_id AND plp.process_id=qc.process_id
 				left join ocean.sys_user u on plp.modified_user_id=u.user_id
@@ -76,7 +75,7 @@ SELECT plp.work_order_card_pool_id,sp.process_name,plp.inbound_time,plp.outbound
 				and wocp.work_order_card_id=#{workOrderCardId}
 				</if>
 				<if test="workOrderId!=null">
-				and wocp.workOrderId = #{workOrderId}
+				and wocp.work_order_id = #{workOrderId}
 </if>
 
 </where>

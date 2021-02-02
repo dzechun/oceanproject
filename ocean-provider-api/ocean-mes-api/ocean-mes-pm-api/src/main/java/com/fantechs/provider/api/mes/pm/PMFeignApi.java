@@ -65,7 +65,7 @@ public interface PMFeignApi {
     @PostMapping("/smtBarcodeRule/generateCode")
     ResponseEntity<String> generateCode(
             @ApiParam(value = "条码规则集合") @RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数") @RequestParam String maxCode,
+            @ApiParam(value = "最大条码数") @RequestParam(required = false) String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code);
 
     @ApiOperation("工单记录完工数量")
@@ -119,7 +119,7 @@ public interface PMFeignApi {
     @PostMapping("/smtBarcodeRule/generateMaxCode")
     ResponseEntity<String> generateMaxCode(
             @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数")@RequestParam String maxCode);
+            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode);
 
     @ApiOperation("通过流程单获取工单相关信息")
     @PostMapping("/smtWorkOrderCardPool/findWO")

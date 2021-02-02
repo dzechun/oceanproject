@@ -64,6 +64,11 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         return bcmBarCodeMapper.findList(searchBcmBarCode);
     }
 
+    /**
+     * 获取条码解析码
+     * @param searchBcmBarCode
+     * @return
+     */
     @Override
     public BcmBarCodeWorkDto work(SearchBcmBarCode searchBcmBarCode) {
         BcmBarCodeWorkDto bcmBarCodeWorkDto = bcmBarCodeMapper.sel_work_order(searchBcmBarCode);
@@ -77,8 +82,10 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         Example example1 = new Example(BcmBarCode.class);
         example1.createCriteria().andEqualTo("workOrderId",bcmBarCodeWorkDto.getWorkOrderId());
         List<BcmBarCode> bcmBarCodes = bcmBarCodeMapper.selectByExample(example1);
-        String maxQty = bcmBarCodeMapper.selMaxCode(bcmBarCodeWorkDto.getWorkOrderId());
-        String maxCode = pmFeignApi.generateMaxCode(list, maxQty).getData();
+        String maxCode = bcmBarCodeMapper.selMaxCode(bcmBarCodeWorkDto.getWorkOrderId());
+        if(!StringUtils.isEmpty(maxCode)){
+            maxCode = pmFeignApi.generateMaxCode(list, maxCode).getData();
+        }
         String code = pmFeignApi.generateCode(list,maxCode,bcmBarCodeWorkDto.getMaterialCode()).getData();
         bcmBarCodeWorkDto.setBarcode(code);
         return bcmBarCodeWorkDto;
@@ -159,9 +166,9 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         if(StringUtils.isEmpty(bcmBarCodes)){
             throw new BizErrorException("工单没有生成可打印的条码");
         }
-        if(!SocketClient.isConnect){
-            throw new BizErrorException("连接打印服务失败");
-        }
+//        if(!SocketClient.isConnect){
+//            throw new BizErrorException("连接打印服务失败");
+//        }
         try {
             for (BcmBarCode bcmBarCode : bcmBarCodes) {
                 Example example1 = new Example(BcmBarCodeDet.class);
@@ -172,13 +179,18 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                     SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
                     searchSmtWorkOrder.setWorkOrderId(workOrderId);
                     List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
-                    if(smtWorkOrderDto.size()<1){
+                    if(StringUtils.isEmpty(smtWorkOrderDto)){
                         throw new BizErrorException("获取工单信息失败");
                     }
-                    Map<String, Object> map = ControllerUtil.dynamicCondition(smtWorkOrderDto.get(0));
+                    SmtWorkOrderDto sdto = smtWorkOrderDto.get(0);
+                    Map<String, Object> map = JSON.parseObject(JSON.toJSONString(sdto),Map.class);
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
+
+                    //获取抽检员信息
+                    new SocketClient("192.168.200.56",8098);
                     String json = JSON.toJSONString(map);
                     SocketClient.out(json);
+                    SocketClient.closeSocket();
                 }
                 //更新已打印状态
                 bcmBarCode.setStatus((byte)2);
@@ -187,11 +199,17 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                 bcmBarCodeMapper.updateByPrimaryKeySelective(bcmBarCode);
             }
         }catch (Exception e){
-            throw new BizErrorException("打印失败！");
+            throw new BizErrorException("打印失败");
         }
         return 1;
     }
 
+    /**
+     * 入库条码校验
+     * @param QrCode
+     * @param workOrderId
+     * @return
+     */
     @Override
     public BcmBarCodeDet verifyQrCode(String QrCode, Long workOrderId) {
         Example example = new Example(BcmBarCode.class);
@@ -258,6 +276,11 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         return nm;
     }
 
+    /**
+     * 入库条码状态更改
+     * @param bcmBarCodeDets
+     * @return
+     */
     @Override
     public int updateByContent(List<BcmBarCodeDet> bcmBarCodeDets) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -272,6 +295,57 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
             num=+bcmBarCodeDetMapper.updateByPrimaryKeySelective(bcmBarCodeDet);
         }
         return num;
+    }
+
+    /**
+     * 补打列表
+     * @param workOrderId
+     * @return
+     */
+    @Override
+    public List<BcmBarCodeDto> reprintList(String workOrderId) {
+        return bcmBarCodeMapper.reprintList(workOrderId);
+    }
+
+    /**
+     * 补打打印
+     * @param barCodeId
+     * @return
+     */
+    @Override
+    public int reprint(List<String> barCodeId) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUserInfo)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        try {
+            for (String s : barCodeId) {
+                BcmBarCode bcmBarCode = bcmBarCodeMapper.selectByPrimaryKey(Long.parseLong(s));
+                SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+                searchSmtWorkOrder.setWorkOrderId(bcmBarCode.getWorkOrderId());
+                List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+                if(StringUtils.isEmpty(smtWorkOrderDto)){
+                    throw new BizErrorException("获取工单信息失败");
+                }
+                Example example1 = new Example(BcmBarCodeDet.class);
+                example1.createCriteria().andEqualTo("barCodeId",bcmBarCode.getBarCodeId());
+                List<BcmBarCodeDet> bcmBarCodeDets = bcmBarCodeDetMapper.selectByExample(example1);
+                for (BcmBarCodeDet bcmBarCodeDet : bcmBarCodeDets) {
+                    //打印
+                    SmtWorkOrderDto sdto = smtWorkOrderDto.get(0);
+                    Map<String, Object> map = JSON.parseObject(JSON.toJSONString(sdto),Map.class);
+                    map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
+                    //获取抽检员信息
+                    new SocketClient("192.168.200.56",8098);
+                    String json = JSON.toJSONString(map);
+                    SocketClient.out(json);
+                    SocketClient.closeSocket();
+                }
+            }
+            return 1;
+        }catch (Exception e){
+            throw new BizErrorException("打印失败");
+        }
     }
 
     /**

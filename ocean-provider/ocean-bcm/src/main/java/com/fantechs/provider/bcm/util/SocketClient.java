@@ -35,6 +35,7 @@ public class SocketClient {
             new ReadSocket().start();
         }catch (Exception e){
             logger.error("连接失败："+e.getMessage());
+            throw new BizErrorException("Bartender服务连接失败");
         }
     }
 
@@ -65,7 +66,7 @@ public class SocketClient {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             logger.error("打印失败："+e.getMessage());
-            throw new BizErrorException(ErrorCodeEnum.valueOf("打印数据发送失败！请检查服务"));
+            throw new BizErrorException(ErrorCodeEnum.valueOf("打印数据发送失败！请检查Bartender服务"));
         }
     }
 

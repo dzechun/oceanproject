@@ -106,7 +106,7 @@ public class SmtBarcodeRuleController {
     @PostMapping("/generateCode")
     public ResponseEntity<String> generateCode(
             @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数")@RequestParam String maxCode,
+            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)String code){
         String analysisCode = BarcodeRuleUtils.analysisCode(list, maxCode, code);
         return ControllerUtil.returnDataSuccess(analysisCode,1);
@@ -116,7 +116,7 @@ public class SmtBarcodeRuleController {
     @PostMapping("/generateMaxCode")
     public ResponseEntity<String> generateMaxCode(
             @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数")@RequestParam String maxCode){
+            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode){
         String analysisCode = BarcodeRuleUtils.getMaxSerialNumber(list, maxCode);
         return ControllerUtil.returnDataSuccess(analysisCode,1);
     }

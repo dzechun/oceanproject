@@ -157,6 +157,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     //过站中
                     up.setProcessType((byte)2);
                     up.setStatus((byte)1);
+                    up.setProcessListProcessCode(CodeUtils.getId("SPLP"));
                     up.setStartWorkQty(mesPmBreakBulkDet.getBreakBulkQty());
                     up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
                     smtProcessListProcessMapper.insertSelective(up);
@@ -170,12 +171,12 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
                     smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);
                     //生成流程单down
-                    up.setProcessType((byte)2);
-                    up.setStatus((byte)2);
-                    up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
-                    up.setCurOutputQty(mesPmBreakBulkDet.getBreakBulkQty());
-                    up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
-                    smtProcessListProcessMapper.insertSelective(up);
+//                    up.setProcessType((byte)2);
+//                    up.setStatus((byte)2);
+//                    up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
+//                    up.setCurOutputQty(mesPmBreakBulkDet.getBreakBulkQty());
+//                    up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+//                    smtProcessListProcessMapper.insertSelective(up);
                 }
             }
             i++;
@@ -193,6 +194,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             up.setProcessType((byte)2);
             up.setStatus((byte)1);
             up.setStartWorkQty(record.getBreakBulkBatchQty());
+            up.setProcessListProcessCode(CodeUtils.getId("SPLP"));
             up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
             smtProcessListProcessMapper.insertSelective(up);
         }

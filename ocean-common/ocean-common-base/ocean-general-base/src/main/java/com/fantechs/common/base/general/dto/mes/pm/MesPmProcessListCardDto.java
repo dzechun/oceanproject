@@ -59,5 +59,5 @@ public class MesPmProcessListCardDto {
      */
     @ApiModelProperty(name="unqualifiedQuantity",value = "不合格数量")
     @Column(name = "unqualified_quantity")
-    private BigDecimal unqualified_quantity;
+    private BigDecimal unqualifiedQuantity;
 }
