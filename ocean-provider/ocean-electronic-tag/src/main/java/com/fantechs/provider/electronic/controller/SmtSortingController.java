@@ -1,5 +1,6 @@
 package com.fantechs.provider.electronic.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
@@ -15,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,8 @@ public class SmtSortingController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtSorting SmtSorting) {
         return ControllerUtil.returnCRUD(SmtSortingService.save(SmtSorting));
     }
@@ -50,6 +54,8 @@ public class SmtSortingController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtSorting.update.class) SmtSorting SmtSorting) {
         return ControllerUtil.returnCRUD(SmtSortingService.update(SmtSorting));
     }
@@ -90,6 +96,8 @@ public class SmtSortingController {
 
     @ApiOperation("批量新增")
     @PostMapping("/batchSave")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity batchInsert(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated List<SmtSorting> SmtSortings) {
         return ControllerUtil.returnCRUD(SmtSortingService.batchSave(SmtSortings));
     }

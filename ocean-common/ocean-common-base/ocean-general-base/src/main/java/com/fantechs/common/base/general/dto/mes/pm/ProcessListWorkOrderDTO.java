@@ -31,19 +31,24 @@ public class ProcessListWorkOrderDTO {
     @ApiModelProperty(name="workOrderCardId",value = "工单流转卡编码")
     private String workOrderCardId;
     /**
-     * 物料Id
+     * 部件组成明细Id
      */
-    @ApiModelProperty(name="materialId" ,value="物料Id")
+    @ApiModelProperty(name="platePartsDetId" ,value="部件组成明细Id")
+    private Long platePartsDetId;
+    /**
+     * 产品Id
+     */
+    @ApiModelProperty(name="materialId" ,value="产品Id")
     private Long materialId;
     /**
-     * 物料编码.
+     * 产品编码.
      */
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @ApiModelProperty(name="materialCode" ,value="产品编码")
     private String materialCode;
     /**
-     * 物料名称
+     * 产品名称
      */
-    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @ApiModelProperty(name="materialName" ,value="产品名称")
     private String materialName;
     /**
      * 版本
@@ -51,9 +56,9 @@ public class ProcessListWorkOrderDTO {
     @ApiModelProperty(name="version" ,value="版本")
     private String version;
     /**
-     * 物料描述
+     * 产品描述
      */
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    @ApiModelProperty(name="materialDesc" ,value="产品描述")
     private String materialDesc;
     /**
      * 线别名称

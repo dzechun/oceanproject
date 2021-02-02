@@ -8,6 +8,7 @@
         <result column="work_order_barcode_pool_id" jdbcType="BIGINT" property="workOrderBarcodePoolId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="re_process_id" jdbcType="BIGINT" property="reProcessId"/>
+        <result column="staff_id" jdbcType="BIGINT" property="staffId"/>
         <result column="re_qty" jdbcType="DECIMAL" property="reQty"/>
         <result column="pre_qty" jdbcType="DECIMAL" property="preQty"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -48,6 +49,9 @@
         sp.process_name AS 'processName',
         mpplpr.re_process_id,
         sp1.process_name AS 'reProcessName',
+        mpplpr.staff_id,
+        bs.staff_name AS 'staffName',
+        bte.team_name AS 'teamName',
         mpplpr.re_qty,
         mpplpr.pre_qty,
         mpplpr.`status`,
@@ -61,7 +65,8 @@
         splp.output_quantity AS 'outputQuantity'
         FROM
         fantech_imes.mes_pm_process_list_process_re mpplpr
-        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id = mpplpr.work_order_card_pool_id
+        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id =
+        mpplpr.work_order_card_pool_id
         LEFT JOIN fantech_imes.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
         mpplpr.work_order_barcode_pool_id
         LEFT JOIN fantech_imes.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
@@ -73,8 +78,11 @@
         LEFT JOIN fantech_imes.smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
         LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = mpplpr.process_id
         LEFT JOIN fantech_imes.smt_process sp1 ON sp1.process_id = mpplpr.re_process_id
-        LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = swocp.work_order_card_pool_id AND splp.process_id = mpplpr.re_process_id
+        LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id =
+        swocp.work_order_card_pool_id AND splp.process_id = mpplpr.re_process_id
         LEFT JOIN fantech_imes.base_organization bo ON mpplpr.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes.base_staff bs ON bs.staff_id = mpplpr.staff_id
+        LEFT JOIN fantech_imes.base_team bte ON bte.team_id = bs.team_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mpplpr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -92,7 +100,10 @@
                 and mpplpr.work_order_card_pool_id=#{workOrderCardPoolId}
             </if>
             <if test="processListProcessReCode!=null and processListProcessReCode!=''">
-                and mpplpr.process_list_process_re_code=#{processListProcessReCode}
+                and mpplpr.process_list_process_re_code like CONCAT('%', #{processListProcessReCode}, '%')
+            </if>
+            <if test="workOrderCardId!=null and workOrderCardId!=''">
+                and swocp.work_order_card_id like CONCAT('%', #{workOrderCardId}, '%')
             </if>
             <if test="processId!=null and processId!=''">
                 and mpplpr.process_id=#{processId}
@@ -103,7 +114,7 @@
             <if test="status!=null and status!=''">
                 and mpplpr.status=#{status}
             </if>
-            and mpplpr.is_delete = 1
+            and mpplpr.is_delete = 1 and splp.process_type = 2
         </where>
         order by mpplpr.modified_time desc
     </select>

@@ -11,6 +11,7 @@
         <result column="work_order_barcode_pool_id" jdbcType="BIGINT" property="workOrderBarcodePoolId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="process_type" jdbcType="TINYINT" property="processType"/>
+        <result column="staff_id" jdbcType="BIGINT" property="staffId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_hold" jdbcType="TINYINT" property="isHold"/>
         <result column="inbound_time" jdbcType="TIMESTAMP" property="inboundTime"/>
@@ -80,6 +81,8 @@
         sm.material_code AS 'materialCode',
         sm.material_name AS 'materialName',
         sm.version AS 'version',
+        bt.main_unit AS 'packingUnitName',
+        spm.product_model_name AS 'productModuleName',
         wo.route_id AS 'routeId',
         sr.route_name AS 'routeName',
         sml.pro_name AS 'proName',
@@ -89,6 +92,9 @@
         splp.work_order_barcode_pool_id,
         splp.process_id,
         splp.process_type,
+        splp.staff_id,
+        bs.staff_name AS 'staffName',
+        bte.team_name AS 'teamName',
         splp.STATUS,
         splp.remark,
         splp.organization_id,
@@ -126,6 +132,7 @@
         LEFT JOIN fantech_imes.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = wo.material_id
         LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
         LEFT JOIN fantech_imes.smt_route sr ON wo.route_id = sr.route_id
         LEFT JOIN fantech_imes.smt_order so ON wo.order_id = so.order_id
         LEFT JOIN fantech_imes.smt_station ss ON ss.process_id = splp.process_id
@@ -134,6 +141,8 @@
         LEFT JOIN fantech_imes.base_organization bo ON splp.organization_id = bo.organization_id
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = splp.create_user_id
         LEFT JOIN ocean.sys_user su2 ON su2.user_id = splp.modified_user_id
+        LEFT JOIN fantech_imes.base_staff bs ON bs.staff_id = splp.staff_id
+        LEFT JOIN fantech_imes.base_team bte ON bte.team_id = bs.team_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(splp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -254,5 +263,26 @@
         WHERE splp.process_list_process_id &lt; #{id}
         ORDER BY splp.process_list_process_id DESC
         LIMIT 1
+    </select>
+    <select id="findPartsInformation" resultType="com.fantechs.common.base.general.dto.mes.pm.MaterialAndPartsDTO">
+        SELECT
+            sm.material_id AS 'materialId',
+            sm.material_code AS 'materialCode',
+            sm.material_name AS 'materialName',
+            sm.material_desc AS 'materialDesc',
+            sm.version AS 'version',
+            bt.main_unit AS 'packingUnitName',
+            spm.product_model_name AS 'productModuleName',
+            bpi.parts_information_name AS 'partsInformationName'
+        FROM
+            fantech_imes.smt_work_order_card_pool swocp
+                LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
+                LEFT JOIN fantech_imes.smt_work_order swo1 ON swo1.work_order_id = swo.parent_id
+                LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
+                LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo1.material_id
+                LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
+                LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+                LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        WHERE swocp.work_order_card_pool_id = #{workOrderCardPoolId}
     </select>
 </mapper>

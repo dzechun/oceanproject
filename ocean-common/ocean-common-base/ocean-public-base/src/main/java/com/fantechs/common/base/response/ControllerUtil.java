@@ -2,6 +2,7 @@ package com.fantechs.common.base.response;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +146,9 @@ public class ControllerUtil {
                 try {
                     Object o1 = field.get(o);
                     value = o1==null?null:o1;
+                    if(escapeExprSpecialWord(value)){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"非法字符");
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -190,5 +194,23 @@ public class ControllerUtil {
         dto.setMessage(ErrorCodeEnum.GL99990500.getMsg());
         dto.setCode(ErrorCodeEnum.GL99990500.getCode());
         return  dto;
+    }
+
+
+    public  static Boolean escapeExprSpecialWord(Object keyword) {
+        boolean flag = false;
+        if (StringUtils.isNotEmpty(keyword)) {
+            String[] fbsArr = { "\\","$","(",")","*","+",".","?","^","|","'","%" };
+            for (String key : fbsArr) {
+                if(StringUtils.isEmpty(keyword)){
+                    continue;
+                }
+                if (keyword.toString().contains(key)) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
     }
 }
