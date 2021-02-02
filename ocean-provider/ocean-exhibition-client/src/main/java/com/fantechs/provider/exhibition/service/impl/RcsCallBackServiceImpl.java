@@ -7,6 +7,7 @@ import com.fantechs.common.base.agv.dto.PositionCodePath;
 import com.fantechs.common.base.agv.dto.RcsResponseDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtStockDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtStockDet;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -70,21 +71,33 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 throw new Exception("没有找到agv任务单号：" + agvCallBackDTO.getTaskCode() + " 对应的配送物料");
             }
             SmtStockDet smtStockDet = smtStockDetDtoList.get(0);
-            smtStockDet.setStatus((byte) 2);
+            if ("2".equals(agvCallBackDTO.getMethod())) {
+                smtStockDet.setStatus((byte) 2);
+            } else {
+                smtStockDet.setStatus((byte) 4);
+            }
             pmFeignApi.updateSmtStockDet(smtStockDet);
 
             // 查询剩下未配送的物料，进行配送
-            String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId());
+            String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId(), Integer.parseInt(agvCallBackDTO.getMethod()));
 
+            // 配送完成
             if (StringUtils.isEmpty(taskCode)) {
 
-                // 发送消息到客户端，物料配送完成
-                MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
-                mQResponseEntity.setCode(1013);
-                Map<String,Object> mapMQ = new HashMap<>();
-                mQResponseEntity.setData(mapMQ);
-                fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
-                log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
+                if ("2".equals(agvCallBackDTO.getMethod())) {
+                    // 发送消息到客户端，物料配送完成
+                    MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
+                    mQResponseEntity.setCode(1013);
+                    Map<String, Object> mapMQ = new HashMap<>();
+                    mQResponseEntity.setData(mapMQ);
+                    fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+                    log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
+
+                    SmtStock smtStock = new SmtStock();
+                    smtStock.setStockId(smtStockDet.getStockId());
+                    smtStock.setStatus((byte) 2);
+                    pmFeignApi.updateSmtStock(smtStock);
+                }
 
                 // 配送小车成品完成
                 String positionCode = "";

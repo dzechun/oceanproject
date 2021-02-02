@@ -358,24 +358,19 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         List<SmtWorkOrderDto> list = smtWorkOrderMapper.findList(searchSmtWorkOrder);
         for (SmtWorkOrderDto smtWorkOrderDto : list) {
             if(StringUtils.isNotEmpty(smtWorkOrderDto.getParentId())){
-                //可能是部件工单，到部件表去找找
-                SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
-                searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderDto.getMaterialId());
-                ResponseEntity<List<BasePlatePartsDetDto>> result = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet);
-                if(StringUtils.isEmpty(result) || result.getCode()!=0){
-                    throw new BizErrorException("未找到部件信息:"+smtWorkOrderDto.getMaterialId());
+                //部件工单，找到主工单
+                SearchSmtWorkOrder searchSmtWorkOrder1 = new SearchSmtWorkOrder();
+                searchSmtWorkOrder1.setWorkOrderId(smtWorkOrderDto.getParentId());
+                List<SmtWorkOrderDto> workOrderDtoList = this.findList(searchSmtWorkOrder1);
+                if(StringUtils.isNotEmpty(workOrderDtoList)){
+                    SmtWorkOrderDto smtWorkOrderDto1 = workOrderDtoList.get(0);
+                    smtWorkOrderDto.setMaterialCode(smtWorkOrderDto1.getMaterialCode());
+                    smtWorkOrderDto.setMaterialName(smtWorkOrderDto1.getMaterialName());
+                    smtWorkOrderDto.setMaterialDesc(smtWorkOrderDto1.getMaterialDesc());
+                    smtWorkOrderDto.setRouteId(smtWorkOrderDto1.getRouteId());
+                    smtWorkOrderDto.setProductModuleName(smtWorkOrderDto1.getProductModuleName());
+                    smtWorkOrderDto.setPackingUnitName(smtWorkOrderDto1.getPackingUnitName());
                 }
-                List<BasePlatePartsDetDto> data = result.getData();
-                if(StringUtils.isNotEmpty(data)){
-                    BasePlatePartsDetDto basePlatePartsDetDto = data.get(0);
-                    smtWorkOrderDto.setMaterialCode(basePlatePartsDetDto.getPartsInformationCode());
-                    smtWorkOrderDto.setMaterialName(basePlatePartsDetDto.getPartsInformationName());
-                    smtWorkOrderDto.setMaterialDesc(basePlatePartsDetDto.getRemark());
-                    smtWorkOrderDto.setRouteId(basePlatePartsDetDto.getRouteId());
-                    smtWorkOrderDto.setProductModuleName(basePlatePartsDetDto.getMaterialQuality());
-                    smtWorkOrderDto.setPackingUnitName(basePlatePartsDetDto.getUnit());
-                }
-
             }
             Long routeId = smtWorkOrderDto.getRouteId();
             //查询工艺路线配置

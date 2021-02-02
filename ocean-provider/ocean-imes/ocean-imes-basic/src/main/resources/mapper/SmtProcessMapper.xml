@@ -111,7 +111,7 @@
 
             <if test="searchType==1 and staffId!=null and staffId!=''">
                 and sp.process_id IN (SELECT bsp.process_id FROM base_staff_process bsp WHERE bsp.staff_id=#{staffId})
-                and sp.status=1-
+                and sp.status=1
             </if>
             <if test="searchType==0 and staffId!=null and staffId!=''">
                 and sp.process_id NOT IN (SELECT bsp.process_id FROM base_staff_process bsp WHERE bsp.staff_id=#{staffId})

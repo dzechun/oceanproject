@@ -8,6 +8,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
+import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
@@ -85,7 +86,8 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
                 throw new BizErrorException("该备料单不存在");
             }
             //通知AGV去上料
-            agvStockTask(smtStockDtos.get(0).getStockId());
+            String taskCode = agvStockTask(smtStockDtos.get(0).getStockId(), 1);
+            log.info("通知AGV去上料 : " + ", stockId : " + smtStockDtos.get(0).getStockId() + ", taskCode : " + taskCode);
 
             SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
             smtWorkOrderCardCollocation.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
@@ -121,18 +123,22 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
     }
 
     @Override
-    public String agvStockTask(Long stockId) throws Exception{
+    public String agvStockTask(Long stockId, Integer type) throws Exception{
 
         String taskCode = "";
 
-        // 查询未配送的物料
+        // 查询未配送的物料/托盘
         SearchSmtStockDet searchSmtStockDet = new SearchSmtStockDet();
         searchSmtStockDet.setStockId(stockId);
-        searchSmtStockDet.setStatus((byte) 0);
+        if (type == 1) {
+            searchSmtStockDet.setStatus((byte) 0);
+        } else {
+            searchSmtStockDet.setStatus((byte) 2);
+        }
         List<SmtStockDetDto> smtStockDetDtoList = pmFeignApi.findSmtStockDetList(searchSmtStockDet).getData();
         if (StringUtils.isNotEmpty(smtStockDetDtoList)) {
 
-            if (smtStockDetDtoList.size() == 7) {
+            if (smtStockDetDtoList.size() == 7 || type == 1) {
                 // 发送图片、镭雕信息到客户端
                 SearchSmtStock searchSmtStock = new SearchSmtStock();
                 searchSmtStock.setStockId(stockId);
@@ -142,19 +148,33 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
                 mQResponseEntity.setData(smtStockDtoList.get(0));
                 fanoutSender.send(RabbitConfig.TOPIC_IMAGE_QUEUE, JSONObject.toJSONString(mQResponseEntity));
                 log.info("发送图片、镭雕信息到客户端：" + JSONObject.toJSONString(mQResponseEntity));
+
+                SmtStock smtStock = new SmtStock();
+                BeanUtils.autoFillEqFields(smtStockDtoList.get(0), smtStock);
+                smtStock.setStatus((byte) 1);
+                pmFeignApi.updateSmtStock(smtStock);
             }
 
             String startPositionCode = "";
             String endPositionCode = "";
             for(MaterialAndPositionCodeEnum.MaterialAndPositionCode materialAndPositionCode : MaterialAndPositionCodeEnum.MaterialAndPositionCode.values()){
                 if(smtStockDetDtoList.get(0).getMaterialCode().equals(materialAndPositionCode.getMaterialCode())) {
-                    startPositionCode = materialAndPositionCode.getStartPositionCode();
-                    endPositionCode = materialAndPositionCode.getEndPositionCode();
+                    if (type == 1) {
+                        startPositionCode = materialAndPositionCode.getStartPositionCode();
+                        endPositionCode = materialAndPositionCode.getEndPositionCode();
+                    } else {
+                        startPositionCode = materialAndPositionCode.getEndPositionCode();
+                        endPositionCode = materialAndPositionCode.getStartPositionCode();
+                    }
                 }
             }
 
             Map<String, Object> map = new HashMap<>();
-            map.put("taskTyp", "ZT04");
+            if (type == 1) {
+                map.put("taskTyp", "ZT04");
+            } else {
+                map.put("taskTyp", "ZT03");
+            }
             List<PositionCodePath> positionCodePathList = new LinkedList<>();
             // 起始地标条码
             PositionCodePath positionCodePath = new PositionCodePath();
@@ -173,7 +193,11 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
             log.info("启动AGV配送任务：请求参数：" + JSONObject.toJSONString(map) + "， 返回结果：" + JSONObject.toJSONString(rcsResponseDTO));
 
             SmtStockDet smtStockDet = smtStockDetDtoList.get(0);
-            smtStockDet.setStatus((byte) 1);
+            if (type == 1) {
+                smtStockDet.setStatus((byte) 1);
+            } else {
+                smtStockDet.setStatus((byte) 3);
+            }
             smtStockDet.setRemark(taskCode);
             pmFeignApi.updateSmtStockDet(smtStockDet);
         }

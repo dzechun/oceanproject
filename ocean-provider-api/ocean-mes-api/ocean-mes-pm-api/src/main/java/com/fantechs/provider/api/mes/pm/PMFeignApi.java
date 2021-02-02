@@ -95,6 +95,10 @@ public interface PMFeignApi {
     @PostMapping("/smtWorkOrder/detail")
     ResponseEntity<SmtWorkOrder> workOrderDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
+    @ApiOperation("修改")
+    @PostMapping("/smtStock/update")
+    ResponseEntity updateSmtStock(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= SmtStock.update.class) SmtStock smtStock);
+
     @ApiOperation("备料列表")
     @PostMapping("/smtStock/findList")
     ResponseEntity<List<SmtStockDto>> findSmtStockList(@ApiParam(value = "查询对象")@RequestBody SearchSmtStock searchSmtStock);

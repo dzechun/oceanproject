@@ -83,4 +83,11 @@ public class MesPmExplainPlanDTO extends MesPmExplainPlan implements Serializabl
     @ApiModelProperty(value = "工单状态",example = "工单状态")
     @Excel(name = "工单状态")
     private Byte workOrderStatus;
+    /**
+     * 工艺路线ID
+     */
+    @Transient
+    @ApiModelProperty(value = "工艺路线ID",example = "工艺路线ID")
+    @Excel(name = "工艺路线ID",orderNum = "6")
+    private Long routeId;
 }

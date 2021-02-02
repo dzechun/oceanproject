@@ -20,6 +20,8 @@ public class ProcessFinishedProductDTO {
     private Long workOrderCardPoolId;
     @ApiModelProperty(value = "工序ID",example = "工序ID")
     private Long processId;
+    @ApiModelProperty(value = "员工id",example = "员工id")
+    private Long staffId;
     @ApiModelProperty(value = "本次报工数量",example = "本次报工数量")
     private BigDecimal curOutputQty;
     @ApiModelProperty(value = "操作方式(1、保存 2、提交)",example = "操作方式(1、保存 2、提交)")

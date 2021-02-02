@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.storage.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
@@ -15,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,8 @@ public class SmtStorageInventoryDetController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventoryDet smtStorageInventoryDet) {
         return ControllerUtil.returnCRUD(smtStorageInventoryDetService.save(smtStorageInventoryDet));
     }
@@ -50,6 +54,8 @@ public class SmtStorageInventoryDetController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtStorageInventoryDet.update.class) SmtStorageInventoryDet smtStorageInventoryDet) {
         return ControllerUtil.returnCRUD(smtStorageInventoryDetService.update(smtStorageInventoryDet));
     }

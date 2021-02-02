@@ -23,6 +23,8 @@ public class SearchMesPmProcessListProcessReListDTO extends BaseQuery implements
     private Long proLineId;
     @ApiModelProperty(value = "流程单工序退回编码",example = "流程单工序退回编码")
     private String processListProcessReCode;
+    @ApiModelProperty(value = "工单流转卡编码",example = "工单流转卡编码")
+    private String workOrderCardId;
     @ApiModelProperty(value = "工单编号",example = "工单编号")
     private String workOrderCode;
     @ApiModelProperty(value = "产品编号",example = "产品编号")

@@ -61,6 +61,7 @@
         swo.work_order_code AS 'workOrderCode',
         swo.work_order_quantity AS 'workOrderQuantity',
         swo.work_order_status AS 'workOrderStatus',
+        swo.route_id AS 'routeId',
         sm.material_name AS 'materialName',
         sm.material_code AS 'materialCode',
         spm.product_model_name AS 'productModelName',
@@ -84,6 +85,9 @@
             </if>
             <if test="masterPlanCode!=null and masterPlanCode!=''">
                 and mpmp.master_plan_code like CONCAT('%', #{masterPlanCode}, '%')
+            </if>
+            <if test="workOrderId!=null">
+                and mpmp.work_order_id=#{workOrderId}
             </if>
             <if test="workOrderCode!=null and workOrderCode!=''">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
