@@ -1,16 +1,8 @@
 package com.fantechs.provider.api.electronic;
 
-import com.fantechs.common.base.electronic.dto.SmtClientManageDto;
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
-import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
-import com.fantechs.common.base.electronic.dto.SmtSortingDto;
-import com.fantechs.common.base.electronic.entity.SmtClientManage;
-import com.fantechs.common.base.electronic.entity.SmtPaddingMaterial;
-import com.fantechs.common.base.electronic.entity.SmtSorting;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtClientManage;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
+import com.fantechs.common.base.electronic.dto.*;
+import com.fantechs.common.base.electronic.entity.*;
+import com.fantechs.common.base.electronic.entity.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +11,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -60,8 +54,44 @@ public interface ElectronicTagFeignApi {
     @ApiOperation("批量删除分拣单")
     ResponseEntity batchDeleteSorting(@ApiParam(value = "sortingCodes", required = true) @RequestBody List<String> sortingCodes);
 
+    @PostMapping("/smtSorting/batchUpdate")
+    @ApiOperation("批量修改分拣单")
+    ResponseEntity batchUpdateSorting(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  List<SmtSorting> SmtSortings);
+
     @ApiOperation(value = "新增上料", notes = "新增上料")
     @PostMapping("/smtPaddingMaterial/add")
     ResponseEntity addPaddingMaterial(@ApiParam(value = "必传：paddingMaterialCode、materialCode、quantity") @RequestBody SmtPaddingMaterial smtPaddingMaterial);
+
+    @ApiOperation(value = "新增上料单",notes = "新增上料单")
+    @PostMapping("/smtLoading/add")
+    ResponseEntity<SmtLoading> addSmtLoading(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtLoading smtLoading);
+
+    @ApiOperation(value = "修改上料单", notes = "修改上料单")
+    @PostMapping("/smtLoading/update")
+    ResponseEntity updateLoading(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtLoading.update.class) SmtLoading smtLoading);
+
+    @ApiOperation(value = "新增上料单明细",notes = "新增上料单明细")
+    @PostMapping("/smtLoadingDet/add")
+    ResponseEntity addSmtLoadingDet(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtLoadingDet smtLoadingDet);
+
+    @ApiOperation("修改上料单明细")
+    @PostMapping("/smtLoadingDet/update")
+    ResponseEntity updateLoadingDet(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= SmtLoadingDet.update.class) SmtLoadingDet smtLoadingDet);
+
+    @ApiOperation("获取详情")
+    @PostMapping("/smtLoading/detail")
+    ResponseEntity<SmtLoading> detailSmtLoading(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id);
+
+    @PostMapping("/smtLoading/findList")
+    @ApiOperation(value = "获取上料单",notes = "获取上料单")
+    ResponseEntity<List<SmtLoading>> findLoadingList(@ApiParam(value = "查询对象")@RequestBody SearchSmtLoading searchSmtLoading);
+
+    @ApiOperation("获取详情")
+    @PostMapping("/smtLoadingDet/detail")
+    ResponseEntity<SmtLoadingDet> detailSmtLoadingDet(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation("获取上料单明细")
+    @PostMapping("/smtLoadingDet/findList")
+    ResponseEntity<List<SmtLoadingDetDto>> findLoadingDetList(@ApiParam(value = "查询对象")@RequestBody SearchSmtLoadingDet searchSmtLoadingDet);
 
 }

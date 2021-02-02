@@ -1,6 +1,7 @@
 package com.fantechs.provider.electronic.service.Impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.electronic.mapper.SmtSortingMapper;
 import com.fantechs.provider.electronic.service.SmtSortingService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -93,6 +95,8 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public int batchUpdate(List<SmtSorting> smtSortings) {
         int i = 0;
         if (StringUtils.isNotEmpty(smtSortings)){
@@ -102,6 +106,8 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public int delBatchBySortingCode(List<String> smtSortings) {
         return smtSortingMapper.delBatchBySortingCode(smtSortings);
     }

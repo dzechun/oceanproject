@@ -23,7 +23,7 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.pm.SmtStockDetDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.SmtStockDetDto">
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>

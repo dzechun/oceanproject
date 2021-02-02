@@ -36,10 +36,12 @@ public class ExhibitionClientController {
 
     @PostMapping(value = "/agvStockTask")
     @ApiOperation(value = "执行agv任务配送备料单物料")
-    public ResponseEntity agvStockTask(@ApiParam(value = "备料单Id", required = true) @RequestParam Long stockId) {
+    public ResponseEntity agvStockTask(
+            @ApiParam(value = "备料单Id", required = true) @RequestParam Long stockId,
+            @ApiParam(value = "配送类型（1-配送物料 2-配送托盘）", required = true) @RequestParam Integer type) {
 
         try {
-            return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTask(stockId));
+            return ControllerUtil.returnSuccess("操作成功", exhibitionClientService.agvStockTask(stockId, type));
         } catch (Exception e) {
             e.printStackTrace();
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());

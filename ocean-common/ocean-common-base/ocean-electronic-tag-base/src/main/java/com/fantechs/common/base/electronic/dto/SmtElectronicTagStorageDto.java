@@ -13,6 +13,14 @@ import java.math.BigDecimal;
 public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implements Serializable {
 
     /**
+     * 单据类型（1-分拣单 2-上料单）
+     */
+    @ApiModelProperty(name="orderType",value = "单据类型（1-分拣单 2-上料单）")
+    @Excel(name = "单据类型（1-分拣单 2-上料单）", height = 20, width = 30,orderNum="1")
+    @Transient
+    private Byte orderType;
+
+    /**
      * 储位描述
      */
     @ApiModelProperty(name = "storageDesc",value = "储位描述")
@@ -94,6 +102,14 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     private String materialDesc;
 
     /**
+     * 物料版本
+     */
+    @ApiModelProperty(name="version" ,value="物料版本")
+    @Excel(name = "物料版本", height = 20, width = 30,orderNum="12")
+    @Transient
+    private String version;
+
+    /**
      * 创建用户名称
      */
     @Transient
@@ -129,5 +145,12 @@ public class SmtElectronicTagStorageDto extends SmtElectronicTagStorage implemen
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 实际数量
+     */
+    @ApiModelProperty(name="actualQty",value = "实际数量")
+    private BigDecimal actualQty;
+
 
 }

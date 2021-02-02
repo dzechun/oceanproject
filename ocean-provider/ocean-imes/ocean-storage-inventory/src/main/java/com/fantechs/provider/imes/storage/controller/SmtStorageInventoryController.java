@@ -1,5 +1,7 @@
 package com.fantechs.provider.imes.storage.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
@@ -14,6 +16,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +41,8 @@ public class SmtStorageInventoryController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity<SmtStorageInventory> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventory smtStorageInventory) {
         smtStorageInventoryService.save(smtStorageInventory);
         return ControllerUtil.returnDataSuccess(smtStorageInventory, StringUtils.isEmpty(smtStorageInventory)?0:1);
@@ -57,6 +62,8 @@ public class SmtStorageInventoryController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtStorageInventory.update.class) SmtStorageInventory smtStorageInventory) {
         return ControllerUtil.returnCRUD(smtStorageInventoryService.update(smtStorageInventory));
     }
