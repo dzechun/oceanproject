@@ -34,6 +34,12 @@ public class SearchSmtAddress extends BaseQuery implements Serializable {
     private String addressDetail;
 
     /**
+     * 完整地址
+     */
+    @ApiModelProperty(name="completeDetail",value = "完整地址")
+    private String completeDetail;
+
+    /**
      * 邮政编码
      */
     @ApiModelProperty(name="postCode",value = "邮政编码")
