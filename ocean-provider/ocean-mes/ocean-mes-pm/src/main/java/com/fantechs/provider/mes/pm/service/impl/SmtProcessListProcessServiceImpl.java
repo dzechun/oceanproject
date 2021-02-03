@@ -185,7 +185,6 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int stationToScan(ProcessFinishedProductDTO processFinishedProductDTO){
-        SysUser sysUser = this.currentUser();
         //=====判断工单的状态
         SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
         if(StringUtils.isEmpty(smtWorkOrderCardPool)){
@@ -222,22 +221,6 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
         MesPmExplainProcessPlanDTO mesPmExplainProcessPlanDTO = mesPmExplainProcessPlanDTOS.get(0);
 
-        //=====取出当前工序的上工序
-        ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(smtWorkOrder.getRouteId());
-        if(result.getCode()!=0){
-            throw new BizErrorException(result.getMessage());
-        }
-        List<SmtRouteProcess> preProcessList = result.getData();
-        Long preProcessId=null;
-        for (int i = 0; i < preProcessList.size(); i++) {
-            SmtRouteProcess temp = preProcessList.get(i);
-            if(temp.getProcessId()==processFinishedProductDTO.getProcessId() && i>0){
-                preProcessId=preProcessList.get(i-1).getProcessId();
-                break;
-            }
-        }
-        //=====
-
         //找到工序信息判断当前工序是否拥有相关权限
         SmtProcess smtProcess = this.findSmtProcess(processFinishedProductDTO.getProcessId());
         if(StringUtils.isEmpty(smtProcess)){
@@ -256,6 +239,37 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             throw new BizErrorException("当前工序不允许操作当前流程卡："+smtWorkOrderCardPool.getWorkOrderCardId());
         }
 
+        //=====取出当前工序的上工序
+        ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(smtWorkOrder.getRouteId());
+        if(result.getCode()!=0){
+            throw new BizErrorException(result.getMessage());
+        }
+        List<SmtRouteProcess> preProcessList = result.getData();
+        Long preProcessId=null;
+        Boolean isLastProcess=false;
+        for (int i = 0; i < preProcessList.size(); i++) {
+            SmtRouteProcess temp = preProcessList.get(i);
+            if(temp.getProcessId()==processFinishedProductDTO.getProcessId() && i>0){
+                if(i==preProcessList.size()-1){
+                    isLastProcess=true;
+                }
+
+                //====找到上一个必过的工序
+                int tempI=i;
+                while (tempI>0){
+                    tempI--;
+                    if(preProcessList.get(tempI).getIsMustPass()==0){
+                        continue;
+                    }
+                    preProcessId=preProcessList.get(tempI).getProcessId();
+                    break;
+                }
+                //====
+                break;
+            }
+        }
+        //=====
+
         MesPmExplainProcessPlan mesPmExplainProcessPlan = new MesPmExplainProcessPlan();
         mesPmExplainProcessPlan.setExplainProcessPlanId(mesPmExplainProcessPlanDTO.getExplainProcessPlanId());
         //=====
@@ -271,7 +285,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
         if(StringUtils.isEmpty(smtWorkOrderCardPool.getType()) || smtWorkOrderCardPool.getType()!=3){
             if(processFinishedProductDTO.getProcessType()==1) {
-                this.startWork(preProcessId,smtWorkOrder,processFinishedProductDTO);
+                this.startWork(preProcessId,smtWorkOrder,processFinishedProductDTO,isLastProcess);
             }else if(processFinishedProductDTO.getProcessType()==2){
                 if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId()==0){
                     //工单流程卡报工
@@ -320,11 +334,10 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 curProcessListProcesse.setProcessListProcessId(smtProcessListProcess.getProcessListProcessId());
                 this.update(curProcessListProcesse);
             }else{
-                curProcessListProcesse.setProcessListProcessCode(CodeUtils.getId("SPLP"));
                 curProcessListProcesse.setWorkOrderCardPoolId(processFinishedProductDTO.getWorkOrderCardPoolId());
                 curProcessListProcesse.setProcessId(processFinishedProductDTO.getProcessId());
                 curProcessListProcesse.setInboundTime(date);
-                this.save(curProcessListProcesse);
+                this.saveOBJ(curProcessListProcesse);
             }
             //=====
         }
@@ -424,7 +437,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     /**
      *  开工确认
      */
-    private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO){
+    private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO,boolean isLastProcess){
         Long curProcessId=processFinishedProductDTO.getProcessId();
         Long routeId=smtWorkOrder.getRouteId();
         Long firstProcessIdWS = smtProcessListProcessMapper.firstProcessIdInWSection(curProcessId,routeId);
@@ -486,7 +499,6 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             curProcessListProcesse.setProcessListProcessId(smtProcessListProcess.getProcessListProcessId());
             this.update(curProcessListProcesse);
         }else{
-            curProcessListProcesse.setProcessListProcessCode(CodeUtils.getId("SPLP"));
             curProcessListProcesse.setWorkOrderCardPoolId(processFinishedProductDTO.getWorkOrderCardPoolId());
             curProcessListProcesse.setProcessId(processFinishedProductDTO.getProcessId());
             curProcessListProcesse.setInboundTime(date);
@@ -599,7 +611,6 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             curProcessListProcesse.setProcessListProcessId(smtProcessListProcess.getProcessListProcessId());
             this.update(curProcessListProcesse);
         }else{
-            curProcessListProcesse.setProcessListProcessCode(CodeUtils.getId("SPLP"));
             curProcessListProcesse.setWorkOrderCardPoolId(processFinishedProductDTO.getWorkOrderCardPoolId());
             curProcessListProcesse.setProcessId(processFinishedProductDTO.getProcessId());
             curProcessListProcesse.setInboundTime(date);

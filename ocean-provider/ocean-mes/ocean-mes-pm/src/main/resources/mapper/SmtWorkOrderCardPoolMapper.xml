@@ -131,4 +131,27 @@
             WHERE work_order_card_pool_id = #{item.workOrderCardPoolId}
         </foreach>
     </update>
+    <select id="getNoPutIntoCard" resultType="com.fantechs.common.base.general.dto.mes.pm.NoPutIntoCardDTO">
+        SELECT
+            swocp.work_order_card_id AS 'workOrderCardId',
+            sm.material_name AS 'materialName',
+            bpi.parts_information_name AS 'partsInformationName',
+            swocp.out_put_qty AS 'outPutQty',
+            sps.package_specification_quantity AS 'packageSpecificationQuantity',
+            bt.color AS 'color',
+            swo.route_id AS 'routeId'
+        FROM
+            smt_work_order_card_pool swocp
+                LEFT JOIN smt_work_order_card_pool swocp1 ON swocp1.work_order_card_pool_id = swocp.parent_id
+                LEFT JOIN smt_work_order swo ON swo.work_order_id = swocp1.work_order_id
+                LEFT JOIN smt_material sm ON sm.material_id = swo.material_id
+                LEFT JOIN base_tab bt ON bt.material_id = sm.material_id
+                LEFT JOIN smt_package_specification sps ON sps.package_specification_id = bt.package_specification_id
+                LEFT JOIN smt_work_order swo1 ON swo1.work_order_id = swocp.work_order_id
+                LEFT JOIN base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo1.material_id
+                LEFT JOIN base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
+        WHERE
+            swocp.parent_id = #{parentId}
+          AND swocp.card_status = 3
+    </select>
 </mapper>

@@ -38,6 +38,7 @@
         sm.material_code AS 'materialCode',
         sm.material_name AS 'materialName',
         sm.version AS 'version',
+        bt.main_unit AS 'mainUnit',
         wo.route_id AS 'routeId',
         sr.route_name AS 'routeName',
         sml.pro_name AS 'proName',

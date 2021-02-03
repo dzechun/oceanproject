@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.service;
 
+import com.fantechs.common.base.general.dto.mes.pm.NoPutIntoCardDTO;
 import com.fantechs.common.base.general.dto.mes.pm.ProcessListWorkOrderDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
@@ -22,5 +23,5 @@ public interface SmtWorkOrderCardPoolService extends IService<SmtWorkOrderCardPo
     //批量更新流程卡状态
     int batchUpdateStatus(List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList);
     //获取未开工的部件流程卡
-    List<SmtWorkOrderCardPoolDto> getNoPutIntoCard(Long parentId);
+    List<NoPutIntoCardDTO> getNoPutIntoCard(Long parentId);
 }

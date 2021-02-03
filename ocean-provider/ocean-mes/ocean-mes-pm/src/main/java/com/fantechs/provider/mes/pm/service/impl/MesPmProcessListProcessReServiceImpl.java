@@ -152,7 +152,8 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
         List<MesPmProcessListProcessRe> mesPmProcessListProcessReList = this.selectAll(ControllerUtil.dynamicCondition(
                 "workOrderCardPoolId", saveProcessListProcessReDTO.getWorkOrderCardPoolId(),
                 "processId", saveProcessListProcessReDTO.getProcessId(),
-                "reProcessId", saveProcessListProcessReDTO.getReProcessId()
+                "reProcessId", saveProcessListProcessReDTO.getReProcessId(),
+                "status",1
         ));
         //查询退回工序已经报工数量，退回数量不允许大于报工数量，及上工序不能退下工序
         List<SmtProcessListProcess> reProcessListProcesseList = smtProcessListProcessService.selectAll(ControllerUtil.dynamicCondition(
@@ -171,7 +172,7 @@ public class MesPmProcessListProcessReServiceImpl extends BaseService<MesPmProce
             if(reQtyTotal.compareTo(preProcessListProcess.getOutputQuantity())>0){
                 throw new BizErrorException("累计退回数量不允许大于指定退回工序报工数");
             }
-            mesPmProcessListProcessRe.setReQty(new BigDecimal(mesPmProcessListProcessRe.getReQty().doubleValue()+saveProcessListProcessReDTO.getReQty().doubleValue()));
+            mesPmProcessListProcessRe.setReQty(new BigDecimal(saveProcessListProcessReDTO.getReQty().doubleValue()));
             mesPmProcessListProcessRe.setPreQty(saveProcessListProcessReDTO.getPreQty());
             mesPmProcessListProcessRe.setStatus(saveProcessListProcessReDTO.getOperation());
             mesPmProcessListProcessRe.setStaffId(saveProcessListProcessReDTO.getStaffId());

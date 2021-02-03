@@ -76,7 +76,7 @@ public class MesPmProcessListProcessRe implements Serializable {
     */
     @ApiModelProperty(value = "上次报工数量",example = "上次报工数量")
     @Column(name = "pre_qty")
-    @Excel(name = "上次报工数量", height = 20, width = 30,orderNum = "13")
+    @Excel(name = "上工序报工数量", height = 20, width = 30,orderNum = "13")
     private java.math.BigDecimal preQty;
 
     /**
