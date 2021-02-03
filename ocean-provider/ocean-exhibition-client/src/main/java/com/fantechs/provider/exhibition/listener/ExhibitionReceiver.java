@@ -8,7 +8,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -99,13 +102,49 @@ public class ExhibitionReceiver {
             if(StringUtils.isEmpty(smtProcessListProcessDtoList)){
                 throw new BizErrorException("未找到对应产品条码流转卡");
             }
+            processListProcess.setStatus((byte) 2);
+            pmFeignApi.updateSmtProcessListProcess(processListProcess);
+
+            SmtProcessListProcess smtProcessListProcessNext = new SmtProcessListProcess();
+            for (int i=0; i<smtProcessListProcessDtoList.size(); i++) {
+                if (smtProcessListProcessDtoList.get(i).getProcessListProcessId().equals(processListProcess.getProcessListProcessId())) {
+                    smtProcessListProcessNext.setProcessListProcessId(smtProcessListProcessDtoList.get(i+1).getProcessListProcessId());
+                    smtProcessListProcessNext.setStatus((byte) 1);
+                    pmFeignApi.updateSmtProcessListProcess(smtProcessListProcessNext);
+                    break;
+                }
+            }
+
             SmtProcessListProcessDto firstProcessListProcessDto = smtProcessListProcessDtoList.get(0);
             SmtProcessListProcessDto lastProcessListProcessDto = smtProcessListProcessDtoList.get(smtProcessListProcessDtoList.size()-1);
             //首工序
             if(processListProcess.getProcessId() == firstProcessListProcessDto.getProcessId()){
+                SmtWorkOrderCardPool smtWorkOrderCardPool = pmFeignApi.findSmtWorkOrderCardPoolDetail(processListProcess.getWorkOrderCardPoolId()).getData();
+                smtWorkOrderCardPool.setCardStatus((byte) 1);
+                pmFeignApi.updateSmtWorkOrderCardPool(smtWorkOrderCardPool);
 
+                SmtWorkOrderBarcodePool smtWorkOrderBarcodePool = new SmtWorkOrderBarcodePool();
+                smtWorkOrderBarcodePool.setWorkOrderBarcodePoolId(processListProcess.getWorkOrderBarcodePoolId());
+                smtWorkOrderBarcodePool.setTaskStatus((byte) 1);
+                pmFeignApi.updateSmtWorkOrderBarcodePool(smtWorkOrderBarcodePool);
+
+                SmtWorkOrder smtWorkOrder = pmFeignApi.workOrderDetail(smtWorkOrderCardPool.getWorkOrderId()).getData();
+                smtWorkOrder.setWorkOrderStatus(2);
+                pmFeignApi.updateSmtWorkOrder(smtWorkOrder);
             }else if(processListProcess.getProcessId() == lastProcessListProcessDto.getProcessId()){ //最后一道工序
+                SmtWorkOrderCardPool smtWorkOrderCardPool = pmFeignApi.findSmtWorkOrderCardPoolDetail(processListProcess.getWorkOrderCardPoolId()).getData();
+                smtWorkOrderCardPool.setCardStatus((byte) 2);
+                pmFeignApi.updateSmtWorkOrderCardPool(smtWorkOrderCardPool);
 
+                SmtWorkOrderBarcodePool smtWorkOrderBarcodePool = new SmtWorkOrderBarcodePool();
+                smtWorkOrderBarcodePool.setWorkOrderBarcodePoolId(processListProcess.getWorkOrderBarcodePoolId());
+                smtWorkOrderBarcodePool.setTaskStatus((byte) 2);
+                pmFeignApi.updateSmtWorkOrderBarcodePool(smtWorkOrderBarcodePool);
+
+                SmtWorkOrder smtWorkOrder = pmFeignApi.workOrderDetail(smtWorkOrderCardPool.getWorkOrderId()).getData();
+                smtWorkOrder.setOutputQuantity(smtWorkOrder.getOutputQuantity().add(BigDecimal.ONE));
+                smtWorkOrder.setWorkOrderStatus(4);
+                pmFeignApi.updateSmtWorkOrder(smtWorkOrder);
             }
 
         } else if (mqResponseEntity.getCode() == 1011) {
