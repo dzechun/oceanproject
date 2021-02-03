@@ -441,7 +441,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         Map<String,Object> map = new HashMap();
         map.put("workOrderCardPoolId",workOrderCardPoolId);
         map.put("processId",processId);
-        if (processId == null){
+        if (processId == null || processId == 0){
             SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
             searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(workOrderCardPoolId);
             List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
@@ -461,9 +461,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("未找到工艺路线信息");
             }
             for (int i =routeProcessList.size() -1 ; i >= 0 ; i--) {
-                SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(0).getProcessId()).getData();
+                SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
                 if(StringUtils.isNotEmpty(process) && process.getIsQuality() == 1){
                     map.put("processId",process.getProcessId());
+                    break;
                 }
             }
         }
