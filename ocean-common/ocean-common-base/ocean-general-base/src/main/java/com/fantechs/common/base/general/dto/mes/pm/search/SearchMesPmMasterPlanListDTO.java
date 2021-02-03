@@ -23,6 +23,9 @@ public class SearchMesPmMasterPlanListDTO extends BaseQuery implements Serializa
     private Long proLineId;
     @ApiModelProperty(value = "工单状态",example = "工单状态")
     private Byte workOrderStatus;
+    @ApiModelProperty(value = "工单ID",example = "工单ID")
+    private Long workOrderId;
     @ApiModelProperty(value = "工单编码",example = "工单编码")
     private String workOrderCode;
+
 }

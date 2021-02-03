@@ -23,8 +23,8 @@ public class SocketController {
 
     @ApiOperation("打印")
     @PostMapping("/send")
-    public ResponseEntity send(@RequestBody String sss){
-        String ss = socketService.sender(ControllerUtil.dynamicConditionByEntity(sss));
+    public ResponseEntity send(@RequestBody Object object){
+        String ss = socketService.sender(ControllerUtil.dynamicConditionByEntity(object));
         return ControllerUtil.returnSuccess(ss);
     }
 

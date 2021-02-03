@@ -121,6 +121,9 @@
             <if test="savePath!=null and savePath!=''">
                 and bl.save_path =#{savePath}
             </if>
+            <if test="barCodeType==1">
+                and br.barcode_rule_category_id=1
+            </if>
         </where>
 <!--        SELECT-->
 <!--        sw.work_order_id,sw.work_order_code,sw.work_order_type,sm.material_code,sm.version,sw.work_order_quantity,sw.production_quantity,sr.route_name,sw.planned_end_time,-->
@@ -198,4 +201,15 @@
 				LEFT JOIN bcm_bar_code bc ON bcd.bar_code_id = bc.bar_code_id
 				WHERE bc.work_order_id=#{workOrderId})
 </select>
+    <select id="reprintList" resultMap="BaseResultMapWorkDto">
+    SELECT bc.bar_code_id,swo.work_order_code,bc.print_quantity FROM bcm_bar_code bc
+                    LEFT JOIN smt_work_order swo ON swo.work_order_id = bc.work_order_id
+                    <where>
+                    bc.status=2
+                    <if test="workOrderId != null and workOrderId != ''">
+                    and swo.work_order_id = #{workOrderId}
+</if>
+
+</where>
+    </select>
 </mapper>

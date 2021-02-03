@@ -65,7 +65,7 @@ public interface PMFeignApi {
     @PostMapping("/smtBarcodeRule/generateCode")
     ResponseEntity<String> generateCode(
             @ApiParam(value = "条码规则集合") @RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数") @RequestParam String maxCode,
+            @ApiParam(value = "最大条码数") @RequestParam(required = false) String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code);
 
     @ApiOperation("工单记录完工数量")
@@ -123,7 +123,7 @@ public interface PMFeignApi {
     @PostMapping("/smtBarcodeRule/generateMaxCode")
     ResponseEntity<String> generateMaxCode(
             @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数")@RequestParam String maxCode);
+            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode);
 
     @ApiOperation("通过流程单获取工单相关信息")
     @PostMapping("/smtWorkOrderCardPool/findWO")
@@ -143,4 +143,10 @@ public interface PMFeignApi {
     @ApiOperation("查询条码规则列表")
     @PostMapping("/smtBarcodeRule/findList")
     ResponseEntity<List<SmtBarcodeRuleDto>> findBarcodeRulList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule);
+
+    @ApiOperation("查询总计划表（月计划表）列表")
+    @PostMapping("/mesPmMasterPlan/findList")
+    ResponseEntity<List<MesPmMasterPlanDTO>> findPmMasterPlanlist(
+            @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO
+    );
 }

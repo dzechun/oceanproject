@@ -69,22 +69,35 @@ public class BcmBarCodeController {
         bcmBarCodeService.download(savePath,response);
     }
 
-    @ApiModelProperty("/print")
+    @ApiOperation("/print")
     @GetMapping("/print")
     public ResponseEntity print(@ApiParam(value = "必传：workdOrderId",required = true)@RequestParam Long workOrderId){
         return ControllerUtil.returnCRUD(bcmBarCodeService.print(workOrderId));
     }
 
-    @ApiModelProperty("Pda条码对比")
+    @ApiOperation("Pda条码对比")
     @GetMapping("/verifyQrCode")
     public ResponseEntity<BcmBarCodeDet> verifyQrCode(@RequestParam String QrCode, @RequestParam Long workOrderId){
         BcmBarCodeDet bcmBarCodeDet = bcmBarCodeService.verifyQrCode(QrCode,workOrderId);
         return ControllerUtil.returnDataSuccess(bcmBarCodeDet,StringUtils.isEmpty(bcmBarCodeDet)?0:1);
     }
 
-    @ApiModelProperty("条码内容修改条码状态")
+    @ApiOperation("条码内容修改条码状态")
     @PostMapping("/updateByContent")
     public ResponseEntity updateByContent(@RequestBody(required = true)List<BcmBarCodeDet> bcmBarCodeDets){
         return ControllerUtil.returnCRUD(bcmBarCodeService.updateByContent(bcmBarCodeDets));
+    }
+
+    @ApiOperation("补打列表")
+    @GetMapping("/reprintList")
+    public ResponseEntity<List<BcmBarCodeDto>> reprintList(@ApiParam("工单id")@RequestParam(required = false)String workOrderId){
+        List<BcmBarCodeDto> list = bcmBarCodeService.reprintList(workOrderId);
+        return ControllerUtil.returnDataSuccess(list,list.size());
+    }
+
+    @ApiOperation("补打")
+    @PostMapping("/reprint")
+    public ResponseEntity<List<BcmBarCodeDto>> reprint(@ApiParam("条码id")@RequestBody(required = true)List<String> barCodeId){
+        return ControllerUtil.returnCRUD(bcmBarCodeService.reprint(barCodeId));
     }
 }

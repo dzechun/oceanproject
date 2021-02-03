@@ -86,6 +86,9 @@
             <if test="masterPlanCode!=null and masterPlanCode!=''">
                 and mpmp.master_plan_code like CONCAT('%', #{masterPlanCode}, '%')
             </if>
+            <if test="workOrderId!=null">
+                and mpmp.work_order_id=#{workOrderId}
+            </if>
             <if test="workOrderCode!=null and workOrderCode!=''">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
