@@ -22,7 +22,7 @@ public interface QmsFeignApi {
     ResponseEntity<List<QmsQualityConfirmationDto>> findQualityConfirmationList(@ApiParam(value = "查询对象") @RequestBody SearchQmsQualityConfirmation searchQmsQualityConfirmation);
 
     @ApiOperation("获取品质数量")
-    @PostMapping("/getQualityQuantity")
+    @PostMapping("/qmsQualityConfirmation/getQualityQuantity")
     ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId,@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long processId);
 }
 
