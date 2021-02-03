@@ -366,7 +366,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
 
             wmsInFinishedProductDet.setStorageId(smtStorageMaterial.getStorageId());
             wmsInFinishedProductDet.setPlanInQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
-            wmsInFinishedProductDet.setInQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
+            wmsInFinishedProductDet.setInQuantity(BigDecimal.valueOf(0));
             wmsInFinishedProductDet.setInTime(new Date());
             wmsInFinishedProductDet.setDeptId(currentUser.getDeptId());
             wmsInFinishedProductDet.setInStatus((byte) 2);
