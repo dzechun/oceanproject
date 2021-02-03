@@ -97,7 +97,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 BigDecimal qualifiedQuantity = BigDecimal.valueOf(0);//保存同一部件的质检合格数
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                     //通过部件流转卡ID获取质检单
-                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(),null).getData();
+                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), (long) 0).getData();
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                         qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
                     }
