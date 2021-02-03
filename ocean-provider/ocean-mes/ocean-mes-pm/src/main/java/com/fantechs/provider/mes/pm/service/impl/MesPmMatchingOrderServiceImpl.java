@@ -166,6 +166,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             mesPmMatchingDto.setWorkOrderId(processListWorkOrderDTO.getWorkOrderId());
             mesPmMatchingDto.setProductionQuantity(processListWorkOrderDTO.getProductionQuantity());
             mesPmMatchingDto.setWorkOrderQuantity(processListWorkOrderDTO.getWorkOrderQuantity());
+            mesPmMatchingDto.setWorkOrderCode(processListWorkOrderDTO.getWorkOrderCode());
             return mesPmMatchingDto;
         } else {
             throw new BizErrorException("请输入工单流转卡号");
@@ -372,7 +373,6 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             wmsInFinishedProductDet.setInStatus((byte) 2);
             wmsInFinishedProductDet.setOrganizationId(currentUser.getOrganizationId());
             wmsInFinishedProductDets.add(wmsInFinishedProductDet);
-
             wmsInFinishedProduct.setWmsInFinishedProductDetList(wmsInFinishedProductDets);
             inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
 
