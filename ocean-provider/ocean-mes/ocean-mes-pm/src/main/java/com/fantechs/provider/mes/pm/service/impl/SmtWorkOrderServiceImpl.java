@@ -367,9 +367,9 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     smtWorkOrderDto.setMaterialCode(smtWorkOrderDto1.getMaterialCode());
                     smtWorkOrderDto.setMaterialName(smtWorkOrderDto1.getMaterialName());
                     smtWorkOrderDto.setMaterialDesc(smtWorkOrderDto1.getMaterialDesc());
-                    smtWorkOrderDto.setRouteId(smtWorkOrderDto1.getRouteId());
-                    smtWorkOrderDto.setProductModuleName(smtWorkOrderDto1.getProductModuleName());
+                    smtWorkOrderDto.setProductModelName(smtWorkOrderDto1.getProductModelName());
                     smtWorkOrderDto.setPackingUnitName(smtWorkOrderDto1.getPackingUnitName());
+                    smtWorkOrderDto.setMainUnit(smtWorkOrderDto1.getMainUnit());
                 }
             }
             Long routeId = smtWorkOrderDto.getRouteId();

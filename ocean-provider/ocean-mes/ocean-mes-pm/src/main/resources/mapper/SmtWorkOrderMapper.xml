@@ -106,6 +106,7 @@
         sm.material_name AS 'materialName',
         sm.version AS 'version',
         sm.material_desc AS 'materialDesc',
+        bt.main_unit AS 'mainUnit',
         bt.transfer_quantity AS 'transferQuantity',
         spl.pro_name AS 'proName',
         sr.route_name AS 'routeName',
@@ -116,7 +117,7 @@
         bo.organization_name AS 'organizationName',
         bt.color AS 'color',
         spm.product_model_name AS 'productModelName',
-        bt.material_quality AS 'materialQuality ',
+        bt.material_quality AS 'materialQuality',
         swo1.work_order_code AS 'parentWorkOrderCode'
         FROM
         smt_work_order swo

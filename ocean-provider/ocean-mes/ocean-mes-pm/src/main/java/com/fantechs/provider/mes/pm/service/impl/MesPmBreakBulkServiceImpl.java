@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -157,9 +158,11 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     //过站中
                     up.setProcessType((byte)2);
                     up.setStatus((byte)1);
+                    up.setOutputQuantity(new BigDecimal(0));
+                    up.setCurOutputQty(mesPmBreakBulkDet.getBreakBulkQty());
                     up.setProcessListProcessCode(CodeUtils.getId("SPLP"));
                     up.setStartWorkQty(mesPmBreakBulkDet.getBreakBulkQty());
-                    up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+                    up.setWorkOrderCardPoolId(sms.getWorkOrderCardPoolId());
                     smtProcessListProcessMapper.insertSelective(up);
                     isUp = true;
                 }else{

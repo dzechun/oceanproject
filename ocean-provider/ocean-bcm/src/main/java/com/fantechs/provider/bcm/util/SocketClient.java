@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,9 @@ public class SocketClient {
 
     public SocketClient(String ip,Integer port){
         try {
-            socket = new Socket(ip,port);
+            socket = new Socket();
+            SocketAddress socketAddress = new InetSocketAddress(ip, port);
+            socket.connect(socketAddress,5000);
             isConnect = socket.isConnected();
             logger.info("开始连接");
             new ReadSocket().start();

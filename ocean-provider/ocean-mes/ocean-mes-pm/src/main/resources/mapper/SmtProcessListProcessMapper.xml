@@ -81,7 +81,7 @@
         sm.material_code AS 'materialCode',
         sm.material_name AS 'materialName',
         sm.version AS 'version',
-        bt.main_unit AS 'packingUnitName',
+        bt.main_unit AS 'mainUnit',
         spm.product_model_name AS 'productModuleName',
         wo.route_id AS 'routeId',
         sr.route_name AS 'routeName',
@@ -232,7 +232,8 @@
         FROM smt_route_process srp
                  LEFT JOIN smt_workshop_section sws ON sws.section_id = srp.section_id
                  LEFT JOIN smt_process sp ON sp.section_id = sws.section_id
-        WHERE sp.process_id = #{processId} AND srp.route_id = #{routeId}
+        WHERE sp.process_id = #{processId}
+          AND srp.route_id = #{routeId}
         ORDER BY srp.order_num
         LIMIT 1
     </select>
@@ -245,44 +246,49 @@
     </select>
     <select id="findUp" resultMap="BaseResultMap">
         SELECT splp.process_list_process_id,
-               splp.process_list_process_code,
-               splp.work_order_card_pool_id,
-               splp.work_order_barcode_pool_id,
-               splp.process_id,
-               splp.process_type,
-               splp.`status`,
-               splp.remark,
-               splp.organization_id,
-               splp.is_hold,
-               splp.inbound_time,
-               splp.outbound_time,
-               splp.start_work_qty,
-               splp.output_quantity,
-               splp.cur_output_qty
+        splp.process_list_process_code,
+        splp.work_order_card_pool_id,
+        splp.work_order_barcode_pool_id,
+        splp.process_id,
+        splp.process_type,
+        splp.`status`,
+        splp.remark,
+        splp.organization_id,
+        splp.is_hold,
+        splp.inbound_time,
+        splp.outbound_time,
+        splp.start_work_qty,
+        splp.output_quantity,
+        splp.cur_output_qty
         FROM smt_process_list_process AS splp
-        WHERE splp.process_list_process_id &lt; #{id}
+        WHERE splp.work_order_card_pool_id = #{workOrderCardPoolId}
+        AND splp.process_id != #{processId}
+        AND splp.status = 2
+        AND splp.process_type = 2
+        <if test="processListProcessId != null">
+            AND splp.process_list_process_id &lt; #{processListProcessId}
+        </if>
         ORDER BY splp.process_list_process_id DESC
         LIMIT 1
     </select>
     <select id="findPartsInformation" resultType="com.fantechs.common.base.general.dto.mes.pm.MaterialAndPartsDTO">
-        SELECT
-            sm.material_id AS 'materialId',
-            sm.material_code AS 'materialCode',
-            sm.material_name AS 'materialName',
-            sm.material_desc AS 'materialDesc',
-            sm.version AS 'version',
-            bt.main_unit AS 'packingUnitName',
-            spm.product_model_name AS 'productModuleName',
-            bpi.parts_information_name AS 'partsInformationName'
-        FROM
-            fantech_imes.smt_work_order_card_pool swocp
-                LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
-                LEFT JOIN fantech_imes.smt_work_order swo1 ON swo1.work_order_id = swo.parent_id
-                LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
-                LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo1.material_id
-                LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
-                LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
-                LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        SELECT sm.material_id             AS 'materialId',
+               sm.material_code           AS 'materialCode',
+               sm.material_name           AS 'materialName',
+               sm.material_desc           AS 'materialDesc',
+               sm.version                 AS 'version',
+               bt.main_unit               AS 'mainUnit',
+               spm.product_model_name     AS 'productModuleName',
+               bpi.parts_information_name AS 'partsInformationName'
+        FROM fantech_imes.smt_work_order_card_pool swocp
+                 LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
+                 LEFT JOIN fantech_imes.smt_work_order swo1 ON swo1.work_order_id = swo.parent_id
+                 LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
+                 LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo1.material_id
+                 LEFT JOIN fantech_imes.base_parts_information bpi
+                           ON bpi.parts_information_id = bppd.parts_information_id
+                 LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+                 LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
         WHERE swocp.work_order_card_pool_id = #{workOrderCardPoolId}
     </select>
 </mapper>
