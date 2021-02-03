@@ -10,6 +10,7 @@
     <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="quality_type" jdbcType="TINYINT" property="qualityType" />
+    <result column="total" jdbcType="DECIMAL" property="total"/>
     <result column="qualified_quantity" jdbcType="DECIMAL" property="qualifiedQuantity" />
     <result column="unqualified_quantity" jdbcType="DECIMAL" property="unqualifiedQuantity" />
     <result column="affirm_status" jdbcType="TINYINT" property="affirmStatus" />
@@ -66,15 +67,13 @@
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,sus.user_name AS person_name,
     swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
     sswo.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
-    sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,splp.process_id,splp.output_quantity AS quantity,
-    swo.material_id AS parts_information_id,sswo.production_quantity
+    sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,qqc.process_id,qqc.qualified_quantity+qqc.unqualified_quantity AS quantity,
+    swo.material_id AS parts_information_id,sswo.production_quantity,qqc.total
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qqc.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
-    LEFT JOIN fantech_imes.smt_process_list_process splp ON splp.work_order_card_pool_id = qqc.work_order_card_pool_id
-    and splp.process_id = qqc.process_id and splp.process_type = 2
     LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
     LEFT JOIN fantech_imes.base_plate_parts_det bbppd ON bbppd.plate_parts_det_id = swo.material_id
     LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bbppd.parts_information_id
@@ -104,6 +103,9 @@
       <if test="workOrderCode != null and workOrderCode != ''">
         and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>
+      <if test="processId != null and processId != ''">
+        and qqc.process_id = #{processId}
+      </if>
       <if test="affirmStatus != null and affirmStatus != ''">
         and qqc.affirm_status = #{affirmStatus}
       </if>
@@ -121,12 +123,19 @@
   </select>
 
   <select id="updateQuantity" parameterType="map" resultType="integer">
-    select splp.cur_output_qty
-    from fantech_imes.smt_process_list_process splp
-    where splp.process_id = #{processId}
-        and splp.work_order_card_pool_id = #{workOrderCardPoolId}
-        and splp.process_type = 2
-        and splp.status = 2
+    select (
+          select splp.output_quantity
+          from fantech_imes.smt_process_list_process splp
+          where splp.process_id = #{processId}
+            and splp.work_order_card_pool_id = #{workOrderCardPoolId}
+            and splp.process_type = 2
+            and splp.status = 2 order by create_time desc limit 1
+          ) -
+          (
+            select ifnull(sum(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
+            where qqc.process_id = #{processId} and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
+            and qqc.quality_type = 1 and qqc.affirm_status = 2 order by create_time desc limit 1
+          )
   </select>
 
   <select id="getQualityQuantity" resultMap="BaseResultMap" parameterType="long">
