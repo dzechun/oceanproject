@@ -81,10 +81,10 @@ public class ProcessListWorkOrderDTO {
     @ApiModelProperty(name="orderCode" ,value="订单号")
     private String orderCode;
     /**
-     * 包装单位-名称
+     * 单位
      */
-    @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
-    private String packingUnitName;
+    @ApiModelProperty(name = "mainUnit",value = "单位")
+    private String mainUnit;
     /**
      * 包装规格-数量
      */

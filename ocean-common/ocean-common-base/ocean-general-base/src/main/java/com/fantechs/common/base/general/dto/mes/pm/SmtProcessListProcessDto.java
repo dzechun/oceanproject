@@ -156,12 +156,12 @@ public class SmtProcessListProcessDto extends SmtProcessListProcess implements S
     @Excel(name = "产品型号", height = 20, width = 30,orderNum = "6")
     private String productModuleName;
     /**
-     * 包装单位-名称
+     * 单位
      */
     @Transient
-    @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
+    @ApiModelProperty(name = "mainUnit",value = "单位")
     @Excel(name = "单位", height = 20, width = 30,orderNum = "7")
-    private String packingUnitName;
+    private String mainUnit;
     /**
      * 员工名称
      */
