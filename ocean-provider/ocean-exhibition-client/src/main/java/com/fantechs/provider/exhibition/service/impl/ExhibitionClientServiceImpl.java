@@ -166,6 +166,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
                         startPositionCode = materialAndPositionCode.getEndPositionCode();
                         endPositionCode = materialAndPositionCode.getStartPositionCode();
                     }
+                    break;
                 }
             }
 
@@ -214,6 +215,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
                 startPositionCode = materialAndPositionCode.getStartPositionCode();
                 endPositionCode = materialAndPositionCode.getEndPositionCode();
             }
+            break;
         }
 
         Map<String, Object> map = new HashMap<>();
