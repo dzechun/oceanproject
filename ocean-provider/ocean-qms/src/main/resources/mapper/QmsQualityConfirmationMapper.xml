@@ -58,7 +58,7 @@
     qqc.qualified_quantity,
     qqc.unqualified_quantity,
     qqc.affirm_status,
-    qqc.status,qqc.create_user_id, bo.organization_name,qqc.create_time,
+    qqc.status,qqc.create_user_id,qqc.create_time,
     qqc.modified_user_id,qqc.modified_time,qqc.is_delete, qqc.organization_id,qqc.remark
   </sql>
 
@@ -67,7 +67,7 @@
     swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
     sswo.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
     sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,splp.process_id,splp.output_quantity AS quantity,
-    swo.material_id AS parts_information_id,sswo.production_quantity
+    swo.material_id AS parts_information_id,sswo.production_quantity, bo.organization_name
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id

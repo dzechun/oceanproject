@@ -19,7 +19,6 @@ import lombok.Data;
  * @date 2021-01-07 16:16:14
  */
 @Data
-@Table(name = "wms_in_finished_product")
 public class WmsInFinishedProduct extends ValidGroup implements Serializable {
     /**
      * 成品入库单ID
