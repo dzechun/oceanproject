@@ -54,7 +54,6 @@
         left join fantech_imes.smt_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
         left join smt_order so on so.order_id = swo.order_id
         <where>
-        swo.parent_id=0
         <if test="workOrderId != null">
         and swo.work_order_id = #{workOrderId}
         </if>
