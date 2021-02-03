@@ -163,10 +163,10 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             mesPmMatchingDto.setMaterialCode(processListWorkOrderDTO.getMaterialCode());
             mesPmMatchingDto.setMaterialDesc(processListWorkOrderDTO.getMaterialDesc());
             mesPmMatchingDto.setWorkOrderCardPoolId(processListWorkOrderDTO.getWorkOrderCardPoolId());
-            mesPmMatchingDto.setWorkOrderId(processListWorkOrderDTO.getWorkOrderId());
             mesPmMatchingDto.setProductionQuantity(processListWorkOrderDTO.getProductionQuantity());
             mesPmMatchingDto.setWorkOrderQuantity(processListWorkOrderDTO.getWorkOrderQuantity());
             mesPmMatchingDto.setWorkOrderCode(processListWorkOrderDTO.getWorkOrderCode());
+            mesPmMatchingDto.setWorkOrderCardId(processListWorkOrderDTO.getWorkOrderCardId());
             return mesPmMatchingDto;
         } else {
             throw new BizErrorException("请输入工单流转卡号");
