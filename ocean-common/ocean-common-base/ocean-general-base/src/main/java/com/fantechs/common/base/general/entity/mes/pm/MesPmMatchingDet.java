@@ -11,30 +11,22 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 配套单信息表
- * mes_pm_matching_order
+ * 配套单明细表
+ * mes_pm_matching_det
  * @author 53203
  * @date 2021-02-02 15:49:38
  */
 @Data
-@Table(name = "mes_pm_matching_order")
-public class MesPmMatchingOrder extends ValidGroup implements Serializable {
+@Table(name = "mes_pm_matching_det")
+public class MesPmMatchingDet extends ValidGroup implements Serializable {
     /**
-     * 配套单ID
+     * 配套信息明细ID
      */
-    @ApiModelProperty(name="matchingOrderId",value = "配套单ID")
-    @Excel(name = "配套单ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="matchingDetId",value = "配套信息明细ID")
+    @Excel(name = "配套信息明细ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "matching_order_id")
-    private Long matchingOrderId;
-
-    /**
-     * 配套单号
-     */
-    @ApiModelProperty(name="matchingOrderCode",value = "配套单号")
-    @Excel(name = "配套单号", height = 20, width = 30,orderNum="") 
-    @Column(name = "matching_order_code")
-    private String matchingOrderCode;
+    @Column(name = "matching_det_id")
+    private Long matchingDetId;
 
     /**
      * 配套信息ID
@@ -45,35 +37,28 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
     private Long matchingId;
 
     /**
-     * 流程单ID
+     * 部件工单ID
      */
-    @ApiModelProperty(name="workOrderCardPoolId",value = "流程单ID")
-    @Excel(name = "流程单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_card_pool_id")
-    private Long workOrderCardPoolId;
+    @ApiModelProperty(name="workOrderId",value = "部件工单ID")
+    @Excel(name = "部件工单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "work_order_id")
+    private Long workOrderId;
 
     /**
-     * 员工ID
+     * 部件质检合格数量
      */
-    @ApiModelProperty(name="staffId",value = "员工ID")
-    @Excel(name = "员工ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "staff_id")
-    private Long staffId;
+    @ApiModelProperty(name="qualifiedQuantity",value = "部件质检合格数量")
+    @Excel(name = "部件质检合格数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "qualified_quantity")
+    private BigDecimal qualifiedQuantity;
 
     /**
-     * 配套数量
+     * 合格部件使用数量
      */
-    @ApiModelProperty(name="matchingQuantity",value = "配套数量")
-    @Excel(name = "配套数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "matching_quantity")
-    private BigDecimal matchingQuantity;
-
-    /**
-     * 状态(0.待配套，1.配套中  2.配套完成)
-     */
-    @ApiModelProperty(name="status",value = "状态(0.待配套，1.配套中  2.配套完成)")
-    @Excel(name = "状态(0.待配套，1.配套中  2.配套完成)", height = 20, width = 30,orderNum="") 
-    private Byte status;
+    @ApiModelProperty(name="usedQuantity",value = "部件用量")
+    @Excel(name = "合格部件使用数量", height = 20, width = 30,orderNum="")
+    @Column(name = "used_quantity")
+    private BigDecimal usedQuantity;
 
     /**
      * 备注

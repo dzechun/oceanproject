@@ -1,11 +1,8 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -32,6 +29,12 @@ public class SaveMesPmMatchingOrderDto implements Serializable {
     private Long workOrderCardPoolId;
 
     /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    private Long workOrderId;
+
+    /**
      * 员工ID
      */
     @ApiModelProperty(name="staffId",value = "员工ID")
@@ -41,13 +44,13 @@ public class SaveMesPmMatchingOrderDto implements Serializable {
      * 工单数量
      */
     @ApiModelProperty(name="workOrderQuantity",value = "工单数量")
-    private Integer workOrderQuantity;
+    private BigDecimal workOrderQuantity;
 
     /**
      * 生产数量
      */
     @ApiModelProperty(name="productionQuantity",value = "生产数量")
-    private Integer productionQuantity;
+    private BigDecimal productionQuantity;
 
     /**
      * 配套数量
@@ -67,13 +70,6 @@ public class SaveMesPmMatchingOrderDto implements Serializable {
     @ApiModelProperty(name="status",value = "状态(0.待配套 ，1.配套中 2.配套完成)")
     private Byte status;
 
-
-    /**
-     * 工单ID
-     */
-    @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Transient
-    private Long workOrderId;
 
     /**
      * 物料ID

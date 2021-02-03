@@ -7,12 +7,10 @@
         -->
         <id column="matching_order_id" jdbcType="BIGINT" property="matchingOrderId"/>
         <result column="matching_order_code" jdbcType="VARCHAR" property="matchingOrderCode"/>
+        <result column="matching_id" jdbcType="BIGINT" property="matchingId"/>
         <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
         <result column="staff_id" jdbcType="BIGINT" property="staffId"/>
-        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
-        <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
         <result column="matching_quantity" jdbcType="DECIMAL" property="matchingQuantity"/>
-        <result column="min_matching_quantity" jdbcType="DECIMAL" property="minMatchingQuantity"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
@@ -36,25 +34,25 @@
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="min_matching_quantity" jdbcType="DECIMAL" property="minMatchingQuantity"/>
+        <result column="already_matching_quantity" jdbcType="DECIMAL" property="alreadyMatchingQuantity"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         mpmo.matching_order_id,
-	mpmo.matching_order_code,
-	mpmo.work_order_card_pool_id,
-	mpmo.staff_id,
-	mpmo.work_order_quantity,
-	mpmo.production_quantity,
-	mpmo.matching_quantity,
-    mpmo.min_matching_quantity,
-	mpmo.`status`,
-	mpmo.remark,
-	mpmo.organization_id,
-	mpmo.create_user_id,
-	mpmo.create_time,
-	mpmo.modified_user_id,
-	mpmo.modified_time,
-	mpmo.is_delete
+        mpmo.matching_order_code,
+        mpmo.matching_id,
+        mpmo.work_order_card_pool_id,
+        mpmo.staff_id,
+        mpmo.matching_quantity,
+        mpmo.`status`,
+        mpmo.remark,
+        mpmo.organization_id,
+        mpmo.create_user_id,
+        mpmo.create_time,
+        mpmo.modified_user_id,
+        mpmo.modified_time,
+        mpmo.is_delete
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -65,10 +63,12 @@
         swo.work_order_id, swo.work_order_code,
         sm.material_id, sm.material_code, sm.material_desc,
         btt.main_unit,
+        mpm.min_matching_quantity,mpm.already_matching_quantity,
         spm.product_model_name
         from mes_pm_matching_order mpmo
         LEFT JOIN ocean.sys_user su ON mpmo.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON mpmo.modified_user_id = sus.user_id
+        LEFT JOIN mes_pm_matching mpm ON mpmo.matching_id = mpm.matching_id
         LEFT JOIN base_staff bs ON bs.staff_id = mpmo.staff_id
         LEFT JOIN base_team bt ON bs.team_id = bt.team_id
         LEFT JOIN smt_work_order_card_pool swocp ON mpmo.work_order_card_pool_id = swocp.work_order_card_pool_id

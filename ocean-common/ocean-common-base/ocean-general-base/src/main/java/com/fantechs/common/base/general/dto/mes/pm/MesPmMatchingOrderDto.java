@@ -7,7 +7,6 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -118,4 +117,18 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
     @ApiModelProperty(name="storageName",value = "储位名称")
     @Transient
     private String storageName;
+
+    /**
+     * 最小齐套数
+     */
+    @ApiModelProperty(name="minMatchingQuantity",value = "最小齐套数")
+    @Transient
+    private BigDecimal minMatchingQuantity;
+
+    /**
+     * 已配套数
+     */
+    @ApiModelProperty(name="alreadyMatchingQuantity",value = "已配套数")
+    @Transient
+    private BigDecimal alreadyMatchingQuantity;
 }
