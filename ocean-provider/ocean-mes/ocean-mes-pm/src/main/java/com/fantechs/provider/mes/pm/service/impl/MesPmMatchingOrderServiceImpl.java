@@ -94,7 +94,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 //同属一个部件的流转卡
                 List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtos1 = collect.get(workOrderId);
 
-                BigDecimal qualifiedQuantity = BigDecimal.valueOf(0);//保存同一部件的质检合格数
+                BigDecimal qualifiedQuantity = new BigDecimal(0);//保存同一部件的质检合格数
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                     //通过部件流转卡ID获取质检单
                     QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), (long) 0).getData();
@@ -110,8 +110,10 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 MesPmMatchingDet mesPmMatchingDet = mesPmMatchingDetMapper.selectOneByExample(example);
                 if (StringUtils.isNotEmpty(mesPmMatchingDet)) {
                     //获取余料
-                    BigDecimal remainingQuantity = mesPmMatchingDet.getQualifiedQuantity().subtract(mesPmMatchingDet.getUsedQuantity());
-                    qualifiedQuantity = qualifiedQuantity.add(remainingQuantity);
+                    if (StringUtils.isNotEmpty(mesPmMatchingDet.getUsedQuantity())) {
+                        BigDecimal remainingQuantity = mesPmMatchingDet.getQualifiedQuantity().subtract(mesPmMatchingDet.getUsedQuantity());
+                        qualifiedQuantity = qualifiedQuantity.add(remainingQuantity);
+                    }
                 }
 
                 //获取部件信息
@@ -197,9 +199,9 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             //判断配套数量和已配套数量是否大于最小齐套数量
             BigDecimal alreadyMatchingQuantity1 = mesPmMatching.getAlreadyMatchingQuantity();//已配套数量
             BigDecimal matchingQuantity = saveMesPmMatchingOrderDto.getMatchingQuantity();
-            if (StringUtils.isNotEmpty(alreadyMatchingQuantity1)){
+            if (StringUtils.isNotEmpty(alreadyMatchingQuantity1)) {
                 matchingQuantity = matchingQuantity.add(alreadyMatchingQuantity1);
-                if (matchingQuantity.compareTo(saveMesPmMatchingOrderDto.getMinMatchingQuantity()) == 1){
+                if (matchingQuantity.compareTo(saveMesPmMatchingOrderDto.getMinMatchingQuantity()) == 1) {
                     throw new BizErrorException("配套数量大于最小齐套数量");
                 }
             }
@@ -207,7 +209,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             //如果执行的是提交操作，则更新已配套数
             if (saveMesPmMatchingOrderDto.getStatus() == 2) {
                 BigDecimal alreadyMatchingQuantity = mesPmMatching.getAlreadyMatchingQuantity();
-                mesPmMatching.setAlreadyMatchingQuantity(alreadyMatchingQuantity.add(saveMesPmMatchingOrderDto.getMatchingQuantity()));
+                if (StringUtils.isNotEmpty(alreadyMatchingQuantity)) {
+                    mesPmMatching.setAlreadyMatchingQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity().add(alreadyMatchingQuantity));
+                } else {
+                    mesPmMatching.setAlreadyMatchingQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
+
+                }
             }
             mesPmMatchingMapper.updateByPrimaryKeySelective(mesPmMatching);
         } else {
@@ -244,7 +251,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             BigDecimal qualifiedQuantity = BigDecimal.valueOf(0);//保存同一部件的质检合格数
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                 //通过部件流转卡ID获取质检单
-                QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(),null).getData();
+                QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), null).getData();
                 if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                     qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
                 }
@@ -274,7 +281,11 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     //根据配套数量更新合格部件使用数量
                     BigDecimal matchingQuantity = saveMesPmMatchingOrderDto.getMatchingQuantity();//配套数量
                     BigDecimal usedQuantity = mesPmMatchingDet.getUsedQuantity();//已使用合格部件数量
-                    usedQuantity = usedQuantity.add(quantity.multiply(matchingQuantity));
+                    if (saveMesPmMatchingOrderDto.getStatus() == 2 && StringUtils.isNotEmpty(usedQuantity)) {
+                        usedQuantity = usedQuantity.add(quantity.multiply(matchingQuantity));
+                    }else {
+                        usedQuantity = quantity.multiply(matchingQuantity);
+                    }
                     mesPmMatchingDet.setUsedQuantity(usedQuantity);
                     mesPmMatchingDet.setWorkOrderId(workOrderId);
                     mesPmMatchingDet.setCreateTime(new Date());
@@ -288,7 +299,9 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     mesPmMatchingDet.setQualifiedQuantity(qualifiedQuantity);
                     //根据配套数量更新合格部件使用数量
                     BigDecimal matchingQuantity = saveMesPmMatchingOrderDto.getMatchingQuantity();//配套数量
-                    mesPmMatchingDet.setUsedQuantity(quantity.multiply(matchingQuantity));
+                    if (saveMesPmMatchingOrderDto.getStatus() == 2) {
+                        mesPmMatchingDet.setUsedQuantity(quantity.multiply(matchingQuantity));
+                    }
                     mesPmMatchingDet.setWorkOrderId(workOrderId);
                     mesPmMatchingDet.setCreateTime(new Date());
                     mesPmMatchingDet.setCreateUserId(currentUser.getUserId());
