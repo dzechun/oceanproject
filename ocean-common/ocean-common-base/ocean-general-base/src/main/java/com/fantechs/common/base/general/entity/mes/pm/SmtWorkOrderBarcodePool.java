@@ -2,12 +2,14 @@ package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,13 +23,14 @@ import java.util.Date;
  */
 @Data
 @Table(name = "smt_work_order_barcode_pool")
-public class SmtWorkOrderBarcodePool implements Serializable {
+public class SmtWorkOrderBarcodePool extends ValidGroup implements Serializable {
     /**
      * 工单任务池ID
      */
     @ApiModelProperty(name="workOrderBarcodePoolId",value = "工单任务池ID")
     @Id
     @Column(name = "work_order_barcode_pool_id")
+    @NotNull(groups = ValidGroup.update.class,message = "工单任务池ID不能为空")
     private Long workOrderBarcodePoolId;
 
     /**

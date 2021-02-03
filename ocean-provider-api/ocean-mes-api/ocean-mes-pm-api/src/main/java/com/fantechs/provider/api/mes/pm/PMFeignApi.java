@@ -43,6 +43,10 @@ public interface PMFeignApi {
     @PostMapping("/smtWorkOrder/findList")
     ResponseEntity<List<SmtWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchSmtWorkOrder searchSmtWorkOrder);
 
+    @ApiOperation("修改工单")
+    @PostMapping("/smtWorkOrder/update")
+    ResponseEntity updateSmtWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtWorkOrder smtWorkOrder);
+
     @ApiOperation("更新工单状态")
     @PostMapping("/smtWorkOrder/updateStatus")
     ResponseEntity updateStatus(
@@ -75,9 +79,17 @@ public interface PMFeignApi {
             @ApiParam(value = "完工数量") @RequestParam Double count
     );
 
+    @ApiOperation("修改条码流转卡")
+    @PostMapping("/smtWorkOrderBarcodePool/update")
+    ResponseEntity updateSmtWorkOrderBarcodePool(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= SmtWorkOrderBarcodePool.update.class) SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
+
     @ApiOperation("查询条码流转卡")
     @PostMapping("/smtWorkOrderBarcodePool/findList")
     ResponseEntity<List<SmtWorkOrderBarcodePoolDto>> findWorkOrderBarcodePoolList(@RequestBody SearchSmtWorkOrderBarcodePool searchSmtWorkOrderBarcodePool);
+
+    @ApiOperation("修改工单流转卡任务池")
+    @PostMapping("/smtWorkOrderCardPool/update")
+    ResponseEntity updateSmtWorkOrderCardPool(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= SmtWorkOrderCardPool.update.class) SmtWorkOrderCardPool smtWorkOrderCardPool);
 
     @ApiOperation("查询工单流转卡任务池列表")
     @PostMapping("/smtWorkOrderCardPool/findList")
@@ -86,6 +98,10 @@ public interface PMFeignApi {
     @ApiOperation("查询工单流转卡任务池详情")
     @PostMapping("/smtWorkOrderCardPool/detail")
     ResponseEntity<SmtWorkOrderCardPool> findSmtWorkOrderCardPoolDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
+
+    @ApiOperation("修改过站信息")
+    @PostMapping("/smtProcessListProcess/update")
+    ResponseEntity updateSmtProcessListProcess(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SmtProcessListProcess.update.class) SmtProcessListProcess smtProcessListProcess);
 
     @ApiOperation("查询过站信息列表")
     @PostMapping("/smtProcessListProcess/findList")

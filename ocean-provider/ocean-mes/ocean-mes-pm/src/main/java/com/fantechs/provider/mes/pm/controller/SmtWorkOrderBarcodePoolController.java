@@ -36,6 +36,12 @@ public class SmtWorkOrderBarcodePoolController {
     private SmtWorkOrderBarcodePoolService smtWorkOrderBarcodePoolService;
 
 
+    @ApiOperation("修改")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= SmtWorkOrderBarcodePool.update.class) SmtWorkOrderBarcodePool smtWorkOrderBarcodePool) {
+        return ControllerUtil.returnCRUD(smtWorkOrderBarcodePoolService.update(smtWorkOrderBarcodePool));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<SmtWorkOrderBarcodePool> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {

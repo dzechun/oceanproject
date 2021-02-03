@@ -52,10 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lfz on 2020/12/9.
@@ -84,6 +81,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @LcnTransaction
     public List<SmtSortingDto> sendElectronicTagStorage(String sortingCode) throws Exception {
 
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         List<SmtSortingDto> sortingDtoList = new LinkedList<>();
         synchronized (ElectronicTagStorageServiceImpl.class) {
             //是否有在做单据
@@ -149,6 +150,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             SmtSorting smtSorting = new SmtSorting();
             smtSorting.setSortingId(sorting.getSortingId());
             smtSorting.setStatus((byte) 1);
+            smtSorting.setModifiedUserId(currentUser.getUserId());
             smtSortingList.add(smtSorting);
         }
 
@@ -327,6 +329,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @LcnTransaction
     public List<SmtLoadingDetDto> sendLoadingElectronicTagStorage(String loadingCode) throws Exception {
 
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         // 判断是否有其他上料单正在进行中
         List<SmtLoading> smtLoadingList = new LinkedList<>();
         List<SmtLoadingDetDto> smtLoadingDetDtoList = new LinkedList<>();
@@ -359,6 +365,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         SmtLoading smtLoading = new SmtLoading();
         smtLoading.setLoadingId(smtLoadingDetDtoList.get(0).getLoadingId());
         smtLoading.setStatus((byte) 1);
+        smtLoading.setModifiedUserId(currentUser.getUserId());
         electronicTagFeignApi.updateLoading(smtLoading);
 
         for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
@@ -378,6 +385,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
             smtLoadingDet.setLoadingDetId(smtLoadingDetDto.getLoadingDetId());
             smtLoadingDet.setStatus((byte) 1);
+            smtLoadingDet.setModifiedUserId(currentUser.getUserId());
             electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
 
             // 不同的标签可能对应的队列不一样，最终一条一条发给客户端，控制亮灯
