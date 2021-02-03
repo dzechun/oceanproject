@@ -77,19 +77,28 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 smtStockDet.setStatus((byte) 4);
             }
             pmFeignApi.updateSmtStockDet(smtStockDet);
+            Integer type = 1;
+            if (!"2".equals(agvCallBackDTO.getMethod())) {
+                type = Integer.parseInt(agvCallBackDTO.getMethod());
+            }
+
+            // 物料配送到传输带，通知客户端启动传输带
+            MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
+            mQResponseEntity.setCode(1014);
+            Map<String, Object> mapMQ = new HashMap<>();
+            mQResponseEntity.setData(mapMQ);
+            fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
+            log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
 
             // 查询剩下未配送的物料，进行配送
-            String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId(), Integer.parseInt(agvCallBackDTO.getMethod()));
+            String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId(), type);
 
             // 配送完成
             if (StringUtils.isEmpty(taskCode)) {
 
                 if ("2".equals(agvCallBackDTO.getMethod())) {
                     // 发送消息到客户端，物料配送完成
-                    MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
                     mQResponseEntity.setCode(1013);
-                    Map<String, Object> mapMQ = new HashMap<>();
-                    mQResponseEntity.setData(mapMQ);
                     fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
                     log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
 

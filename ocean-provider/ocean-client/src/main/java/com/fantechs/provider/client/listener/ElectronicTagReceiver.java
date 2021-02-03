@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,135 +73,152 @@ public class ElectronicTagReceiver {
         MQResponseEntity mqResponseEntity = JsonUtils.jsonToPojo(encoded, MQResponseEntity.class);
         log.info("接收到客户端消息：" + mqResponseEntity);
         //电子标签熄灭动作
-        if (mqResponseEntity.getCode() == 106) {
-            Map<String, Object> map = JsonUtils.jsonToMap(mqResponseEntity.getData().toString());
-            String equipmentId = map.get("GwId").toString();
-            String electronicTagId = map.get("TagNode").toString();
-            BigInteger b = new BigInteger(electronicTagId).abs();
+        try {
+            if (mqResponseEntity.getCode() == 106) {
+                Map<String, Object> map = JsonUtils.jsonToMap(mqResponseEntity.getData().toString());
+                String equipmentId = map.get("GwId").toString();
+                String electronicTagId = map.get("TagNode").toString();
+                BigInteger b = new BigInteger(electronicTagId).abs();
 
-            //通过标签ID去找当前的分拣单信息
-            SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
-            searchSmtSorting.setElectronicTagId(b.toString());
-            searchSmtSorting.setEquipmentId(equipmentId);
-            searchSmtSorting.setStatus((byte) 1);
-            List<SmtSortingDto> findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
-            log.info("：" + findSortingList);
-            if (StringUtils.isNotEmpty(findSortingList)) {
-                SmtSortingDto smtSortingDto = findSortingList.get(0);
-                SmtSorting smtSorting = new SmtSorting();
-                BeanUtils.copyProperties(smtSortingDto, smtSorting);
-                smtSorting.setStatus((byte) 2);
-                smtSorting.setUpdateStatus((byte) 0);
-                electronicTagFeignApi.updateSmtSorting(smtSorting);
+                //通过标签ID去找当前的分拣单信息
+                SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
+                searchSmtSorting.setElectronicTagId(b.toString());
+                searchSmtSorting.setEquipmentId(equipmentId);
+                searchSmtSorting.setStatus((byte) 1);
+                List<SmtSortingDto> findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+                log.info("：" + findSortingList);
+                if (StringUtils.isNotEmpty(findSortingList)) {
+                    SmtSortingDto smtSortingDto = findSortingList.get(0);
+                    SmtSorting smtSorting = new SmtSorting();
+                    BeanUtils.copyProperties(smtSortingDto, smtSorting);
+                    smtSorting.setStatus((byte) 2);
+                    smtSorting.setUpdateStatus((byte) 0);
+                    electronicTagFeignApi.updateSmtSorting(smtSorting);
 
-                SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-                searchSmtElectronicTagStorage.setMaterialId(smtSortingDto.getMaterialId());
-                List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+                    SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
+                    searchSmtElectronicTagStorage.setMaterialId(smtSortingDto.getMaterialId());
+                    List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
-                if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
-                }
-                if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
-                }
-                smtElectronicTagStorageDtoList.get(0).setQuantity(smtSortingDto.getQuantity());
+                    if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
+                    }
+                    if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
+                    }
+                    smtElectronicTagStorageDtoList.get(0).setQuantity(smtSortingDto.getQuantity());
 
-                // 查询物料库存
-                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-                searchSmtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-                searchSmtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-                searchSmtStorageInventory.setStatus((byte) 1);
-                List<SmtStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
-                if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
+                    // 查询物料库存
+                    SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
+                    searchSmtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
+                    searchSmtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
+                    searchSmtStorageInventory.setStatus((byte) 1);
+                    List<SmtStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+                    if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
 //                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
-                    // 允许负库存
-                    SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                    smtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-                    smtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-                    smtStorageInventory.setQuantity(smtSortingDto.getQuantity().negate());
-                    smtStorageInventory.setStatus((byte) 1);
-                    storageInventoryFeignApi.add(smtStorageInventory);
-                } else {
-                    // 更新物料库存信息
-                    SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                    smtStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-                    smtStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(smtSortingDto.getQuantity()));
-                    storageInventoryFeignApi.update(smtStorageInventory);
-                }
+                        // 允许负库存
+                        SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                        smtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
+                        smtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
+                        smtStorageInventory.setQuantity(smtSortingDto.getQuantity().negate());
+                        smtStorageInventory.setStatus((byte) 1);
+                        storageInventoryFeignApi.add(smtStorageInventory);
+                    } else {
+                        // 更新物料库存信息
+                        SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                        smtStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
+                        smtStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(smtSortingDto.getQuantity()));
+                        storageInventoryFeignApi.update(smtStorageInventory);
+                    }
 
-                // 通过仓库区域ID判断当前区域内查找分拣中的物料
-                if (StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
-                    SearchSmtSorting searchSmtSorting2 = new SearchSmtSorting();
-                    searchSmtSorting2.setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
-                    searchSmtSorting2.setStatus((byte) 1);
-                    findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting2).getData();
-                }
+                    // 通过仓库区域ID判断当前区域内查找分拣中的物料
+                    if (StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
+                        SearchSmtSorting searchSmtSorting2 = new SearchSmtSorting();
+                        searchSmtSorting2.setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
+                        searchSmtSorting2.setStatus((byte) 1);
+                        findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting2).getData();
+                    }
 
-                //不同的标签可能对应的队列不一样，最终一条一条发给客户端
-                MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
-                mQResponseEntity.setCode(1003);
-                mQResponseEntity.setData(smtElectronicTagStorageDtoList.get(0));
-                log.info("===========开始发送消息给客户端===============");
-                //发送给PDA修改数据状态
-                fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PDA,
-                        JSONObject.toJSONString(mQResponseEntity));
-                //发送给客户端控制灭灯
-                fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
-                        JSONObject.toJSONString(mQResponseEntity));
-                //当区域内没有分拣中物料时，发送给客户端控制灭灯
-                if (StringUtils.isEmpty(findSortingList) && StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
+                    //不同的标签可能对应的队列不一样，最终一条一条发给客户端
+                    MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
                     mQResponseEntity.setCode(1003);
-                    smtElectronicTagStorageDtoList.get(0).setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
+                    mQResponseEntity.setData(smtElectronicTagStorageDtoList.get(0));
+                    log.info("===========开始发送消息给客户端===============");
+                    //发送给PDA修改数据状态
+                    fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PDA,
+                            JSONObject.toJSONString(mQResponseEntity));
+                    //发送给客户端控制灭灯
                     fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
                             JSONObject.toJSONString(mQResponseEntity));
-                    log.info("===========队列名称:" + smtElectronicTagStorageDtoList.get(0).getQueueName());
-                    log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
-                    log.info("===========发送消息给客户端完成===============");
-                }
+                    //当区域内没有分拣中物料时，发送给客户端控制灭灯
+                    if (StringUtils.isEmpty(findSortingList) && StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
+                        mQResponseEntity.setCode(1003);
+                        smtElectronicTagStorageDtoList.get(0).setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
+                        fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
+                                JSONObject.toJSONString(mQResponseEntity));
+                        log.info("===========队列名称:" + smtElectronicTagStorageDtoList.get(0).getQueueName());
+                        log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
+                        log.info("===========发送消息给客户端完成===============");
+                    }
 
-                //熄灭时，根据单号查询是否做完
-                SearchSmtSorting searchSmtSorting1 = new SearchSmtSorting();
-                searchSmtSorting1.setSortingCode(smtSortingDto.getSortingCode());
-                searchSmtSorting1.setStatus((byte) 1);
-                findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
-                //分拣单号处理完，回传给MES
-                if (StringUtils.isEmpty(findSortingList)) {
-                    PtlSortingDTO ptlSortingDTO = new PtlSortingDTO();
-                    searchSmtSorting1.setStatus(null);
-                    searchSmtSorting1.setPageSize(99999);
-                    //获取分拣单号的所有物料、储位信息回传MES
+                    //熄灭时，根据单号查询是否做完
+                    SearchSmtSorting searchSmtSorting1 = new SearchSmtSorting();
+                    searchSmtSorting1.setSortingCode(smtSortingDto.getSortingCode());
+                    searchSmtSorting1.setStatus((byte) 1);
                     findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
-                    List<PtlSortingDetailDTO> ptlSortingDetailDTOList = new LinkedList<>();
-                    for (SmtSortingDto smtSortingDto1 : findSortingList) {
-                        PtlSortingDetailDTO ptlSortingDetailDTO = new PtlSortingDetailDTO();
-                        ptlSortingDetailDTO.setCwWarehouseCode(smtSortingDto1.getStorageCode());
-                        ptlSortingDetailDTO.setMaterialCode(smtSortingDto1.getMaterialCode());
-                        ptlSortingDetailDTOList.add(ptlSortingDetailDTO);
-                    }
-                    ptlSortingDTO.setSortingCode(smtSortingDto.getSortingCode());
-                    ptlSortingDTO.setPtlSortingDetailDTOList(ptlSortingDetailDTOList);
-                    ptlSortingDTO.setUser(findSortingList.get(0).getModifiedUserCode());
-                    log.info("分拣单号处理完，回传给" + findSortingList.get(0).getSourceSys() + "：" + ptlSortingDTO);
-                    String url = "";
-                    if ("MES".equals(findSortingList.get(0).getSourceSys())) {
-                        url = resApiUrl;
-                    } else if ("QIS".equals(findSortingList.get(0).getSourceSys())) {
-                        url = confirmOutBillOrderUrl;
-                    }
-                    String result = RestTemplateUtil.postJsonStrForString(ptlSortingDTO, url);
-                    log.info(findSortingList.get(0).getSourceSys() + "返回信息：" + result);
-                    ResponseEntity responseEntity = com.fantechs.common.base.utils.BeanUtils.convertJson(result, new TypeToken<ResponseEntity>(){}.getType());
-                    if (responseEntity.getCode() != 0 && responseEntity.getCode() != 200) {
-                        throw new Exception("分拣单号处理完，回传给" + findSortingList.get(0).getSourceSys() + "失败：" + responseEntity.getMessage());
-                    }
+                    //分拣单号处理完，回传给MES
+                    if (StringUtils.isEmpty(findSortingList)) {
+                        PtlSortingDTO ptlSortingDTO = new PtlSortingDTO();
+                        searchSmtSorting1.setStatus(null);
+                        searchSmtSorting1.setPageSize(99999);
+                        //获取分拣单号的所有物料、储位信息回传MES
+                        findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
+                        List<PtlSortingDetailDTO> ptlSortingDetailDTOList = new LinkedList<>();
+                        for (SmtSortingDto smtSortingDto1 : findSortingList) {
+                            PtlSortingDetailDTO ptlSortingDetailDTO = new PtlSortingDetailDTO();
+                            ptlSortingDetailDTO.setCwWarehouseCode(smtSortingDto1.getStorageCode());
+                            ptlSortingDetailDTO.setMaterialCode(smtSortingDto1.getMaterialCode());
+                            ptlSortingDetailDTOList.add(ptlSortingDetailDTO);
+                        }
+                        ptlSortingDTO.setSortingCode(smtSortingDto.getSortingCode());
+                        ptlSortingDTO.setPtlSortingDetailDTOList(ptlSortingDetailDTOList);
+                        ptlSortingDTO.setUser(findSortingList.get(0).getModifiedUserCode());
+                        log.info("分拣单号处理完，回传给" + findSortingList.get(0).getSourceSys() + "：" + ptlSortingDTO);
+                        String url = "";
+                        if ("MES".equals(findSortingList.get(0).getSourceSys())) {
+                            url = resApiUrl;
+                        } else if ("QIS".equals(findSortingList.get(0).getSourceSys())) {
+                            url = confirmOutBillOrderUrl;
+                        }
+                        String result = RestTemplateUtil.postJsonStrForString(ptlSortingDTO, url);
+                        log.info(findSortingList.get(0).getSourceSys() + "返回信息：" + result);
+                        ResponseEntity responseEntity = com.fantechs.common.base.utils.BeanUtils.convertJson(result, new TypeToken<ResponseEntity>() {
+                        }.getType());
+                        if (responseEntity.getCode() != 0 && responseEntity.getCode() != 200) {
+                            throw new Exception("分拣单号处理完，回传给" + findSortingList.get(0).getSourceSys() + "失败：" + responseEntity.getMessage());
+                        }
 //                   mqResponseEntity.setCode(1003);
 //            fanoutSender.send(RabbitConfig.FANOUT_QUEUE1, JSONObject.toJSONString(mqResponseEntity));
+                    }
                 }
+            } else if (mqResponseEntity.getCode() == 102) {
+
+            } else if (mqResponseEntity.getCode() == 103) {
+
             }
-        } else if (mqResponseEntity.getCode() == 102) {
+        } catch (Exception e) {
+            MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
+            mQResponseEntity.setCode(500);
+            mQResponseEntity.setMessage(e.getMessage());
+            HashMap<String, Object> map = new HashMap<>();
+            mQResponseEntity.setData(map);
+            log.info("===========开始发送异常消息给客户端===============");
+            // 出现异常，发送给PDA展示异常状态
+            fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PDA, JSONObject.toJSONString(mQResponseEntity));
+            log.info("===========队列名称:" + RabbitConfig.TOPIC_QUEUE_PDA);
+            log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
+            log.info("===========发送消息给客户端完成===============");
 
-        } else if (mqResponseEntity.getCode() == 103) {
-
+            throw new Exception(e);
         }
     }
 }

@@ -97,7 +97,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 BigDecimal qualifiedQuantity = BigDecimal.valueOf(0);//保存同一部件的质检合格数
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                     //通过部件流转卡ID获取质检单
-                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(),null).getData();
+                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), (long) 0).getData();
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                         qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
                     }
@@ -163,9 +163,10 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             mesPmMatchingDto.setMaterialCode(processListWorkOrderDTO.getMaterialCode());
             mesPmMatchingDto.setMaterialDesc(processListWorkOrderDTO.getMaterialDesc());
             mesPmMatchingDto.setWorkOrderCardPoolId(processListWorkOrderDTO.getWorkOrderCardPoolId());
-            mesPmMatchingDto.setWorkOrderId(processListWorkOrderDTO.getWorkOrderId());
             mesPmMatchingDto.setProductionQuantity(processListWorkOrderDTO.getProductionQuantity());
             mesPmMatchingDto.setWorkOrderQuantity(processListWorkOrderDTO.getWorkOrderQuantity());
+            mesPmMatchingDto.setWorkOrderCode(processListWorkOrderDTO.getWorkOrderCode());
+            mesPmMatchingDto.setWorkOrderCardId(processListWorkOrderDTO.getWorkOrderCardId());
             return mesPmMatchingDto;
         } else {
             throw new BizErrorException("请输入工单流转卡号");
@@ -366,13 +367,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
 
             wmsInFinishedProductDet.setStorageId(smtStorageMaterial.getStorageId());
             wmsInFinishedProductDet.setPlanInQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
-            wmsInFinishedProductDet.setInQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
+            wmsInFinishedProductDet.setInQuantity(BigDecimal.valueOf(0));
             wmsInFinishedProductDet.setInTime(new Date());
             wmsInFinishedProductDet.setDeptId(currentUser.getDeptId());
             wmsInFinishedProductDet.setInStatus((byte) 2);
             wmsInFinishedProductDet.setOrganizationId(currentUser.getOrganizationId());
             wmsInFinishedProductDets.add(wmsInFinishedProductDet);
-
             wmsInFinishedProduct.setWmsInFinishedProductDetList(wmsInFinishedProductDets);
             inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
 

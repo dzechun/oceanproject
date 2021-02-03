@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -24,6 +26,7 @@ public class SmtStock extends ValidGroup implements Serializable {
     @ApiModelProperty(name="stockId",value = "备料id")
     @Id
     @Column(name = "stock_id")
+    @NotNull(groups = ValidGroup.update.class,message = "备料Id不能为空")
     private Long stockId;
 
     /**

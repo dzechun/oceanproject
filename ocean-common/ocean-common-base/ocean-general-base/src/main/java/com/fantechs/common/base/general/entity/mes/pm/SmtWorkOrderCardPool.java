@@ -2,10 +2,12 @@ package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -19,13 +21,14 @@ import java.util.Date;
  */
 @Data
 @Table(name = "smt_work_order_card_pool")
-public class SmtWorkOrderCardPool  implements Serializable {
+public class SmtWorkOrderCardPool extends ValidGroup implements Serializable {
     /**
      * 工单流转卡任务池ID
      */
     @ApiModelProperty(name="workOrderCardPoolId",value = "工单流转卡任务池ID")
     @Id
     @Column(name = "work_order_card_pool_id")
+    @NotNull(groups = ValidGroup.update.class,message = "工单流转卡任务池ID不能为空")
     @GeneratedValue(strategy= GenerationType.IDENTITY,generator = "JDBC")
     private Long workOrderCardPoolId;
 
