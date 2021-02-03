@@ -23,6 +23,6 @@ public interface QmsFeignApi {
 
     @ApiOperation("获取品质数量")
     @PostMapping("/getQualityQuantity")
-    ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId);
+    ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId,@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long processId);
 }
 

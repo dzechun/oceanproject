@@ -14,5 +14,5 @@ public interface QmsQualityConfirmationMapper extends MyMapper<QmsQualityConfirm
 
     Integer updateQuantity(Map<String, Object> map);
 
-    QmsQualityConfirmation getQualityQuantity(Long workOrderCardPoolId);
+    QmsQualityConfirmation getQualityQuantity(Map<String,Object> map);
 }

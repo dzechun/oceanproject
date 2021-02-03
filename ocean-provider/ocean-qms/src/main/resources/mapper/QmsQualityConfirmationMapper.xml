@@ -130,20 +130,21 @@
             and splp.work_order_card_pool_id = #{workOrderCardPoolId}
             and splp.process_type = 2
             and splp.status = 2 order by create_time desc limit 1
-          ) -
-          (
+          )
+          <if test="qualityType != null and qualityType!= '' and qualityType == 1">
+            -
+            (
             select ifnull(sum(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
             where qqc.process_id = #{processId} and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
             and qqc.quality_type = 1 and qqc.affirm_status = 2 order by create_time desc limit 1
-          )
+            )
+          </if>
   </select>
 
-  <select id="getQualityQuantity" resultMap="BaseResultMap" parameterType="long">
+  <select id="getQualityQuantity" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"></include>
     from qms_quality_confirmation qqc
-    where qqc.work_order_card_pool_id = #{workOrderCardPoolId} and qqc.process_id = (
-        select process_id from smt_process_list_process splp where work_order_card_pool_id = #{workOrderCardPoolId} order by create_time desc limit 1
-    )
+    where qqc.work_order_card_pool_id = #{workOrderCardPoolId} and qqc.process_id = #{processId}
   </select>
 
 

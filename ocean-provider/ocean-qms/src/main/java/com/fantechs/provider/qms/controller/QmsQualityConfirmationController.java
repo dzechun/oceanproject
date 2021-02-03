@@ -57,8 +57,8 @@ public class QmsQualityConfirmationController {
 
     @ApiOperation("获取品质数量")
     @PostMapping("/getQualityQuantity")
-    public ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId) {
-        QmsQualityConfirmation qualityQuantity = qmsQualityConfirmationService.getQualityQuantity(workOrderCardPoolId);
+    public ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId,@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long processId) {
+        QmsQualityConfirmation qualityQuantity = qmsQualityConfirmationService.getQualityQuantity(workOrderCardPoolId,processId);
         return ControllerUtil.returnDataSuccess(qualityQuantity,1);
     }
 

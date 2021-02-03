@@ -437,7 +437,36 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     }
 
     @Override
-    public QmsQualityConfirmation getQualityQuantity(Long workOrderCardPoolId) {
-        return qmsQualityConfirmationMapper.getQualityQuantity(workOrderCardPoolId);
+    public QmsQualityConfirmation getQualityQuantity(Long workOrderCardPoolId,Long processId) {
+        Map<String,Object> map = new HashMap();
+        map.put("workOrderCardPoolId",workOrderCardPoolId);
+        map.put("processId",processId);
+        if (processId == null){
+            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(workOrderCardPoolId);
+            List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+            if (StringUtils.isEmpty(workOrderCardPoolList)){
+                throw new BizErrorException("未找到流程单信息");
+            }
+
+            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+            searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
+            List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            if (StringUtils.isEmpty(workOrderList)){
+                throw new BizErrorException("未找到流程单的工单信息");
+            }
+
+            List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+            if(StringUtils.isEmpty(routeProcessList)){
+                throw new BizErrorException("未找到工艺路线信息");
+            }
+            for (int i =routeProcessList.size() -1 ; i >= 0 ; i--) {
+                SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(0).getProcessId()).getData();
+                if(StringUtils.isNotEmpty(process) && process.getIsQuality() == 1){
+                    map.put("processId",process.getProcessId());
+                }
+            }
+        }
+        return qmsQualityConfirmationMapper.getQualityQuantity(map);
     }
 }
