@@ -137,7 +137,7 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
             qmsBadItemDetMapper.insertList(list);
         }
 
-        int i = qmsBadItemMapper.updateByPrimaryKeySelective(qmsBadItem);
+        int i = qmsBadItemMapper.updateByPrimaryKey(qmsBadItem);
 
         QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
         BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);

@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmMatchingDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmMatchingOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMatchingOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmMatchingOrder;
@@ -26,7 +27,7 @@ import java.util.List;
 
 /**
  *
- * Created by leifengzhi on 2021/01/19.
+ * Created by leifengzhi on 2021/02/02.
  */
 @RestController
 @Api(tags = "配套单信息管理")
@@ -70,14 +71,6 @@ public class MesPmMatchingOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    /*@ApiOperation("历史列表")
-    @PostMapping("/findHtList")
-    public ResponseEntity<List<MesPmMatchingOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmMatchingOrder searchMesPmMatchingOrder) {
-        Page<Object> page = PageHelper.startPage(searchMesPmMatchingOrder.getStartPage(),searchMesPmMatchingOrder.getPageSize());
-        List<MesPmMatchingOrder> list = mesPmMatchingOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchMesPmMatchingOrder));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }*/
-
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
@@ -93,9 +86,9 @@ public class MesPmMatchingOrderController {
 
     @ApiOperation("获取最小齐套数")
     @PostMapping("/findMinMatchingQuantity")
-    public ResponseEntity<MesPmMatchingOrderDto> findMinMatchingQuantity(@ApiParam(value = "查询对象")@RequestParam String workOrderCardId) {
+    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "查询对象")@RequestParam String workOrderCardId) {
 
-        MesPmMatchingOrderDto mesPmMatchingOrderDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId);
-        return ControllerUtil.returnSuccess("",mesPmMatchingOrderDto);
+        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId);
+        return ControllerUtil.returnSuccess("",mesPmMatchingDto);
     }
 }

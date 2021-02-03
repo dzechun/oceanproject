@@ -34,7 +34,7 @@ public class SmtProcessListProcess extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="processListProcessCode",value = "流程单工序编码")
     @Column(name = "process_list_process_code")
-    @Excel(name = "入站时间", height = 20, width = 30,orderNum = "3")
+    @Excel(name = "过站单号", height = 20, width = 30,orderNum = "3")
     private String processListProcessCode;
 
     /**

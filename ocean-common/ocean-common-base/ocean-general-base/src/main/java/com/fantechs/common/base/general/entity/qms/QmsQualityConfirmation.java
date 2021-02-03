@@ -60,6 +60,13 @@ public class QmsQualityConfirmation extends ValidGroup implements Serializable {
     private Byte qualityType;
 
     /**
+     * 总品质确认数量
+     */
+    @ApiModelProperty(name="total",value = "总品质确认数量")
+    @Column(name = "total")
+    private BigDecimal total;
+
+    /**
      * 合格数量
      */
     @ApiModelProperty(name="qualifiedQuantity",value = "合格数量")

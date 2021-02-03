@@ -146,7 +146,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         //如果转移批次量设置为-1，代表生成流程卡数总为1张，一张代表投产数
         List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity,transferQuantity);
         //产品条码流转卡
-        if (StringUtils.isNotEmpty(barcodeRuleId)) {
+        if (StringUtils.isNotEmpty(barcodeRuleId) && transferQuantity!=-1) {
             generateBarcode(list, smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
         }
         int result=0;

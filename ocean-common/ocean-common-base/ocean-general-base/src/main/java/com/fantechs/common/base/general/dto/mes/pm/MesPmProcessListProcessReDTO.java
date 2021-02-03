@@ -52,6 +52,14 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
     private String barcodeTaskCode;
 
     /**
+     * 部件名称
+     */
+    @Transient
+    @ApiModelProperty(name="partsInformationName" ,value="部件名称")
+    @Excel(name = "部件名称", height = 20, width = 30,orderNum = "5")
+    private String partsInformationName;
+
+    /**
      * 物料ID
      */
     @Transient

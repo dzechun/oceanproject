@@ -26,7 +26,7 @@ public class MesPmProcessListProcessRe implements Serializable {
     */
     @ApiModelProperty(value = "流程单工序退回编码",example = "流程单工序退回编码")
     @Column(name = "process_list_process_re_code")
-    @Excel(name = "流程单工序退回编码", height = 20, width = 30,orderNum = "2")
+    @Excel(name = "过站退回编码", height = 20, width = 30,orderNum = "2")
     private String processListProcessReCode;
 
     /**

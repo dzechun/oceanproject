@@ -31,7 +31,7 @@ public interface SmtProcessListProcessMapper extends MyMapper<SmtProcessListProc
     //查找当前工艺路线下首工序
     Long firstProcessIdInRoute(Long routeId);
     //查找上一条数据
-    SmtProcessListProcess findUp(Long id);
+    SmtProcessListProcess findUp(Long processListProcessId,Long workOrderCardPoolId,Long processId);
     //查找流程卡对应的部件信息及产品信息
     MaterialAndPartsDTO findPartsInformation(Long workOrderCardPoolId);
 }

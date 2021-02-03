@@ -104,23 +104,7 @@ public class BasePlatePartsController {
         throw new BizErrorException(e);
         }
     }
-
-    @PostMapping(value = "/download")
-    @ApiOperation(value = "下载部件组成导入模板",notes = "下载部件组成导入模板",produces = "application/octet-stream")
-    public void downloadTemplate(HttpServletResponse response
-    ){
-        BasePlatePartsImport basePlatePartsImport = new BasePlatePartsImport("WL-001","BJ-001","大","个", "1","红色","棉","填写了部件编码则工艺路线必填", "1","ZZ-001");
-        ArrayList<BasePlatePartsImport> basePlatePartsImports = new ArrayList<>();
-        basePlatePartsImports.add(basePlatePartsImport);
-        try {
-            // 生成excel模板
-            EasyPoiUtils.exportExcel(basePlatePartsImports, "部件组成信息导入模板", "部件组成信息导入模板", BasePlatePartsImport.class, "部件组成信息导入模板.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
-    }
-
-
+    
     /**
      * 从excel导入数据
      * @return
@@ -132,7 +116,7 @@ public class BasePlatePartsController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BasePlatePartsImport> basePlatePartsImports = EasyPoiUtils.importExcel(file,1,2, BasePlatePartsImport.class);
+            List<BasePlatePartsImport> basePlatePartsImports = EasyPoiUtils.importExcel(file,2,1,BasePlatePartsImport.class);
             Map<String, Object> resultMap = basePlatePartsService.importExcel(basePlatePartsImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
