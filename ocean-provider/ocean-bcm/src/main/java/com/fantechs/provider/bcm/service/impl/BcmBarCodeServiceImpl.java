@@ -215,6 +215,9 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         Example example = new Example(BcmBarCode.class);
         example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("status",(byte)2);
         List<BcmBarCode> list = bcmBarCodeMapper.selectByExample(example);
+        if(StringUtils.isEmpty(list)){
+            return null;
+        }
         List<Long> ids = list.stream().map(BcmBarCode::getBarCodeId).collect(Collectors.toList());
         Example example1 =new Example(BcmBarCodeDet.class);
         example1.createCriteria().andIn("barCodeId",ids).andEqualTo("barCodeContent",QrCode).andEqualTo("status",(byte)1);
