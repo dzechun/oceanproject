@@ -163,10 +163,10 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             mesPmMatchingDto.setMaterialCode(processListWorkOrderDTO.getMaterialCode());
             mesPmMatchingDto.setMaterialDesc(processListWorkOrderDTO.getMaterialDesc());
             mesPmMatchingDto.setWorkOrderCardPoolId(processListWorkOrderDTO.getWorkOrderCardPoolId());
-            mesPmMatchingDto.setWorkOrderId(processListWorkOrderDTO.getWorkOrderId());
             mesPmMatchingDto.setProductionQuantity(processListWorkOrderDTO.getProductionQuantity());
             mesPmMatchingDto.setWorkOrderQuantity(processListWorkOrderDTO.getWorkOrderQuantity());
             mesPmMatchingDto.setWorkOrderCode(processListWorkOrderDTO.getWorkOrderCode());
+            mesPmMatchingDto.setWorkOrderCardId(processListWorkOrderDTO.getWorkOrderCardId());
             return mesPmMatchingDto;
         } else {
             throw new BizErrorException("请输入工单流转卡号");
@@ -196,12 +196,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         if (StringUtils.isNotEmpty(mesPmMatching)) {
             //判断配套数量和已配套数量是否大于最小齐套数量
             BigDecimal alreadyMatchingQuantity1 = mesPmMatching.getAlreadyMatchingQuantity();//已配套数量
-            if (saveMesPmMatchingOrderDto
-                    .getMatchingQuantity()
-                    .add(alreadyMatchingQuantity1)
-                    .compareTo(saveMesPmMatchingOrderDto.getMinMatchingQuantity()) == 1
-            ) {
-                throw new BizErrorException("配套数量大于最小齐套数量");
+            BigDecimal matchingQuantity = saveMesPmMatchingOrderDto.getMatchingQuantity();
+            if (StringUtils.isNotEmpty(alreadyMatchingQuantity1)){
+                matchingQuantity = matchingQuantity.add(alreadyMatchingQuantity1);
+                if (matchingQuantity.compareTo(saveMesPmMatchingOrderDto.getMinMatchingQuantity()) == 1){
+                    throw new BizErrorException("配套数量大于最小齐套数量");
+                }
             }
             mesPmMatching.setMinMatchingQuantity(saveMesPmMatchingOrderDto.getMinMatchingQuantity());//更新最小齐套数
             //如果执行的是提交操作，则更新已配套数
