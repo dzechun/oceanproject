@@ -25,9 +25,9 @@ public class ExhibitionClientController {
      */
     @PostMapping(value="/makingOrders")
     @ApiOperation(value = "订单生产",notes = "订单生产")
-    public ResponseEntity makingOrders() {
+    public ResponseEntity makingOrders(@ApiParam(value = "订单Id", required = true) @RequestParam Long orderId) {
         try {
-            return ControllerUtil.returnCRUD(exhibitionClientService.makingOrders());
+            return ControllerUtil.returnCRUD(exhibitionClientService.makingOrders(orderId));
         } catch (Exception e) {
             e.printStackTrace();
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());

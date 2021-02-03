@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.mes.pm.SmtStock;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -49,18 +50,19 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
     private FanoutSender fanoutSender;
 
     @Override
-    public int makingOrders() throws Exception{
+    public int makingOrders(Long orderId) throws Exception{
         //查找所有创建状态的订单
-        SearchSmtOrder searchSmtOrder = new SearchSmtOrder();
-        searchSmtOrder.setStatus((byte) 0);
-        List<SmtOrderDto> orderList = omFeignApi.findOrderList(searchSmtOrder).getData();
+//        SearchSmtOrder searchSmtOrder = new SearchSmtOrder();
+//        searchSmtOrder.setStatus((byte) 0);
+//        List<SmtOrderDto> orderList = omFeignApi.findOrderList(searchSmtOrder).getData();
+        SmtOrder smtOrder = omFeignApi.detailSmtOrder(orderId).getData();
         //订单转工单生成备料单、产品BOM、备料明细
-        for (SmtOrderDto smtOrderDto : orderList) {
+//        for (SmtOrderDto smtOrderDto : orderList) {
             SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
             smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
-            smtWorkOrder.setOrderId(smtOrderDto.getOrderId());
-            smtWorkOrder.setMaterialId(smtOrderDto.getMaterialId());
-            smtWorkOrder.setWorkOrderQuantity(new BigDecimal(smtOrderDto.getOrderQuantity()));
+            smtWorkOrder.setOrderId(smtOrder.getOrderId());
+            smtWorkOrder.setMaterialId(smtOrder.getMaterialId());
+            smtWorkOrder.setWorkOrderQuantity(new BigDecimal(smtOrder.getOrderQuantity()));
             smtWorkOrder.setBarcodeRuleSetId(17l);
             smtWorkOrder.setProLineId(1l);
             smtWorkOrder.setRouteId(37l);
@@ -117,7 +119,7 @@ public class ExhibitionClientServiceImpl implements ExhibitionClientService {
                 fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
                 log.info("发送过站信息给客户端：" + JSONObject.toJSONString(mQResponseEntity));
             }
-        }
+//        }
 
         return 1;
     }

@@ -9,7 +9,9 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -25,7 +27,11 @@ public interface OMFeignApi {
     @PostMapping("/smtOrder/findList")
     ResponseEntity<List<SmtOrderDto>> findOrderList(@ApiParam(value = "查询对象") @RequestBody SearchSmtOrder searchSmtOrder);
 
-    @ApiOperation("修改")
-    @PostMapping("/update")
+    @ApiOperation("修改订单")
+    @PostMapping("/smtOrder/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody SmtOrder smtOrder);
+
+    @ApiOperation("获取订单详情")
+    @PostMapping("/smtOrder/detail")
+    ResponseEntity<SmtOrder> detailSmtOrder(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id);
 }
