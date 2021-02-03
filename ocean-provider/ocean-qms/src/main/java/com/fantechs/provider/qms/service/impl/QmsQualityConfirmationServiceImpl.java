@@ -338,6 +338,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         wmsOutProductionMaterial.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
         wmsOutProductionMaterial.setMaterialId(workOrderBomDto.getPartMaterialId());
         wmsOutProductionMaterial.setPlanQty(qmsQualityConfirmation.getQualifiedQuantity());
+        wmsOutProductionMaterial.setRealityQty(qmsQualityConfirmation.getQualifiedQuantity());
         wmsOutProductionMaterial.setOutTime(new Date());
         wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
         wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
