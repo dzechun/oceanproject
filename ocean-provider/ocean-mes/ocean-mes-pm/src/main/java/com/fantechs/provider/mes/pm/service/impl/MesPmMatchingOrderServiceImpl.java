@@ -97,7 +97,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 BigDecimal qualifiedQuantity = BigDecimal.valueOf(0);//保存同一部件的质检合格数
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                     //通过部件流转卡ID获取质检单
-                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId()).getData();
+                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(),null).getData();
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                         qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
                     }
@@ -243,7 +243,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             BigDecimal qualifiedQuantity = BigDecimal.valueOf(0);//保存同一部件的质检合格数
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                 //通过部件流转卡ID获取质检单
-                QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId()).getData();
+                QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(),null).getData();
                 if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                     qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
                 }
@@ -350,6 +350,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             wmsInFinishedProduct.setWorkOrderId(saveMesPmMatchingOrderDto.getWorkOrderId());
             wmsInFinishedProduct.setOperatorUserId(currentUser.getUserId());
             wmsInFinishedProduct.setInType((byte) 0);
+            wmsInFinishedProduct.setInTime(new Date());
             wmsInFinishedProduct.setStatus((byte) 1);
             wmsInFinishedProduct.setCreateTime(new Date());
             wmsInFinishedProduct.setCreateUserId(currentUser.getUserId());
