@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.fantechs.common.base.general.dto.mes.pm.NoPutIntoCardDTO;
 import com.fantechs.common.base.general.dto.mes.pm.ProcessListWorkOrderDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
@@ -69,11 +70,11 @@ public class SmtWorkOrderCardPoolController {
 
     @ApiOperation("获取未开工的部件流程卡")
     @GetMapping("/getNoPutIntoCard")
-    public ResponseEntity<List<SmtWorkOrderCardPoolDto>> getNoPutIntoCard(
+    public ResponseEntity<List<NoPutIntoCardDTO>> getNoPutIntoCard(
             @ApiParam(value = "父级流程卡id")@RequestParam Long parentId
     ){
-        List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.getNoPutIntoCard(parentId);
-        return ControllerUtil.returnDataSuccess(smtWorkOrderCardPoolDtoList,StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)?0:smtWorkOrderCardPoolDtoList.size());
+        List<NoPutIntoCardDTO> noPutIntoCardDTOList = smtWorkOrderCardPoolService.getNoPutIntoCard(parentId);
+        return ControllerUtil.returnDataSuccess(noPutIntoCardDTOList,StringUtils.isEmpty(noPutIntoCardDTOList)?0:noPutIntoCardDTOList.size());
     }
 
     @PostMapping(value = "/export")

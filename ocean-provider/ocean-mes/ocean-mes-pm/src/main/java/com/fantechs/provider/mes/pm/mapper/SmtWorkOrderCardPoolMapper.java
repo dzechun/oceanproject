@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.mapper;
 
+import com.fantechs.common.base.general.dto.mes.pm.NoPutIntoCardDTO;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
@@ -14,4 +15,6 @@ public interface SmtWorkOrderCardPoolMapper extends MyMapper<SmtWorkOrderCardPoo
     List<SmtWorkOrderCardPoolDto> findList(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
     //批量更新流程卡状态
     int batchUpdateStatus(List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList);
+    //获取未打印的流程卡
+    List<NoPutIntoCardDTO> getNoPutIntoCard(Long parentId);
 }

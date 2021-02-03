@@ -1,16 +1,16 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.ProcessListWorkOrderDTO;
-import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper;
 import com.fantechs.provider.mes.pm.service.SmtProcessListProcessService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
@@ -21,6 +21,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -32,6 +33,8 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
     private SmtWorkOrderService smtWorkOrderService;
     @Resource
     private SmtProcessListProcessService smtProcessListProcessService;
+    @Resource
+    private BasicFeignApi basicFeignApi;
 
     @Override
     public List<SmtWorkOrderCardPoolDto> findList(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool) {
@@ -88,10 +91,30 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
     }
 
     @Override
-    public List<SmtWorkOrderCardPoolDto> getNoPutIntoCard(Long parentId) {
-        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-        searchSmtWorkOrderCardPool.setParentId(parentId);
-        searchSmtWorkOrderCardPool.setCardStatus((byte)3);//待打印
-        return this.findList(searchSmtWorkOrderCardPool);
+    public List<NoPutIntoCardDTO> getNoPutIntoCard(Long parentId) {
+        List<NoPutIntoCardDTO> noPutIntoCardDTOList = smtWorkOrderCardPoolMapper.getNoPutIntoCard(parentId);
+        Date date = new Date();
+        if(StringUtils.isNotEmpty(noPutIntoCardDTOList)){
+            for (NoPutIntoCardDTO noPutIntoCardDTO : noPutIntoCardDTOList) {
+                ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
+                if(result.getCode()!=0){
+                    throw new BizErrorException(result.getMessage());
+                }
+                List<SmtRouteProcess> routeProcessList = result.getData();
+                StringBuffer sb=new StringBuffer();
+                if(StringUtils.isNotEmpty(routeProcessList)){
+                    for (int i = 0; i < routeProcessList.size(); i++) {
+                        sb.append(routeProcessList.get(i).getProcessName());
+                        if(i<routeProcessList.size()-1){
+                            sb.append("-");
+                        }
+                    }
+                    noPutIntoCardDTO.setRouteProcess(sb.toString());
+                }
+                noPutIntoCardDTO.setPrintDate(date);
+            }
+
+        }
+        return noPutIntoCardDTOList;
     }
 }

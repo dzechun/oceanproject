@@ -71,7 +71,7 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料料号")
-    @Excel(name = "物料料号", height = 20, width = 30,orderNum = "3")
+    @Excel(name = "产品编码", height = 20, width = 30,orderNum = "3")
     private String materialCode;
 
     /**
@@ -107,7 +107,7 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
      */
     @Transient
     @ApiModelProperty(name="processName" ,value="工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum = "14")
+    @Excel(name = "本工序", height = 20, width = 30,orderNum = "14")
     private String processName;
     /**
      * 退回工序名称
@@ -156,26 +156,31 @@ public class MesPmProcessListProcessReDTO extends MesPmProcessListProcessRe impl
      */
     @Transient
     @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
-    @Excel(name = "单位", height = 20, width = 30,orderNum = "7")
     private String packingUnitName;
+    /**
+     * 单位
+     */
+    @Transient
+    @ApiModelProperty(name = "packingUnitName",value = "单位")
+    @Excel(name = "单位", height = 20, width = 30,orderNum = "7")
+    private String mainUnit;
     /**
      * 报工数量
      */
     @ApiModelProperty(name="outputQuantity",value = "报工数量")
-    @Excel(name = "报工数量", height = 20, width = 30,orderNum = "11")
     private BigDecimal outputQuantity;
     /**
      * 员工名称
      */
     @Transient
     @ApiModelProperty(name = "staffName",value = "员工名称")
-    @Excel(name = "员工名称", height = 20, width = 30,orderNum = "9")
+    @Excel(name = "退回人员", height = 20, width = 30,orderNum = "9")
     private String staffName;
     /**
      * 班组名称
      */
     @Transient
     @ApiModelProperty(name = "teamName",value = "班组名称")
-    @Excel(name = "班组名称", height = 20, width = 30,orderNum = "8")
+    @Excel(name = "退回班组", height = 20, width = 30,orderNum = "8")
     private String teamName;
 }

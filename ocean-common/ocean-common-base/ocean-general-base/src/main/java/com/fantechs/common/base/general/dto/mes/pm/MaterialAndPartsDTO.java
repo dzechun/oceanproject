@@ -59,4 +59,10 @@ public class MaterialAndPartsDTO {
     @Transient
     @ApiModelProperty(name = "packingUnitName",value = "包装单位-名称")
     private String packingUnitName;
+    /**
+     * 单位
+     */
+    @Transient
+    @ApiModelProperty(name = "mainUnit",value = "单位")
+    private String mainUnit;
 }
