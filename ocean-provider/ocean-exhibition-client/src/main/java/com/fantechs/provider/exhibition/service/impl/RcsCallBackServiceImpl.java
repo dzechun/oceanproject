@@ -86,6 +86,13 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
             mQResponseEntity.setCode(1014);
             Map<String, Object> mapMQ = new HashMap<>();
+            mapMQ.put("materialCode", smtStockDetDtoList.get(0).getMaterialCode());
+            for (MaterialAndPositionCodeEnum.MaterialAndPositionCode materialAndPositionCode : MaterialAndPositionCodeEnum.MaterialAndPositionCode.values()) {
+                if (smtStockDetDtoList.get(0).getMaterialCode().equals(materialAndPositionCode.getMaterialCode())) {
+                    mapMQ.put("number", materialAndPositionCode.getNumber());
+                }
+                break;
+            }
             mQResponseEntity.setData(mapMQ);
             fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
             log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
