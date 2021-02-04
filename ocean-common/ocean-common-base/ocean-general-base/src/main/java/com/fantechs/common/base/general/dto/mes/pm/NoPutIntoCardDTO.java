@@ -23,7 +23,7 @@ public class NoPutIntoCardDTO {
     @ApiModelProperty(value = "流程卡数量",example = "流程卡数量")
     private BigDecimal outPutQty;
     @ApiModelProperty(value = "规格",example = "规格")
-    private BigDecimal packageSpecificationQuantity;
+    private String packageSpecificationQuantity;
     @ApiModelProperty(value = "颜色",example = "颜色")
     private String color;
     @ApiModelProperty(value = "颜色",example = "颜色")

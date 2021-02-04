@@ -22,4 +22,6 @@ public interface QmsQualityConfirmationService extends IService<QmsQualityConfir
     Integer updateQuantity(Map<String, Object> map);
 
     QmsQualityConfirmation getQualityQuantity(Long workOrderCardPoolId,Long processId);
+
+    Integer parentUpdateQuantity(Long workOrderCardPoolId,Long processId);
 }

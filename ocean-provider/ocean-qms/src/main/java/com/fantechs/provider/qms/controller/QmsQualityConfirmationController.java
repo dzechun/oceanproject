@@ -55,9 +55,16 @@ public class QmsQualityConfirmationController {
         return ControllerUtil.returnDataSuccess(integer == null?0:integer,1);
     }
 
+    @ApiOperation("获取父级流程卡的报工数据")
+    @PostMapping("/parentUpdateQuantity")
+    public ResponseEntity parentUpdateQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId,@ApiParam(value = "processId",required = true)@RequestParam Long processId) {
+        Integer integer = qmsQualityConfirmationService.parentUpdateQuantity(workOrderCardPoolId,processId);
+        return ControllerUtil.returnDataSuccess(integer == null?0:integer,1);
+    }
+
     @ApiOperation("获取品质数量")
     @PostMapping("/getQualityQuantity")
-    public ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId,@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long processId) {
+    public ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId",required = true)@RequestParam Long workOrderCardPoolId,@ApiParam(value = "processId",required = true)@RequestParam Long processId) {
         QmsQualityConfirmation qualityQuantity = qmsQualityConfirmationService.getQualityQuantity(workOrderCardPoolId,processId);
         return ControllerUtil.returnDataSuccess(qualityQuantity,1);
     }

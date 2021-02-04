@@ -197,6 +197,10 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
 
         for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
 
+            if(wmsInFinishedProductDet.getInQuantity().add(wmsInFinishedProductDet.getCount()).compareTo(wmsInFinishedProductDet.getPlanInQuantity()) > 0){
+                throw new BizErrorException("完工数量不能大于计划入库数量");
+            }
+
             wmsInFinishedProductDet.setModifiedTime(new Date());
             wmsInFinishedProductDet.setModifiedUserId(user.getUserId());
             wmsInFinishedProductDet.setInTime(new Date());
