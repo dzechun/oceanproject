@@ -316,7 +316,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
             //半成品完工入库
             WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();
-            wmsInFinishedProduct.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+            wmsInFinishedProduct.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
             wmsInFinishedProduct.setOperatorUserId(user.getUserId());
             wmsInFinishedProduct.setInTime(new Date());
             wmsInFinishedProduct.setInType(Byte.parseByte("1"));
@@ -345,7 +345,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             //生成领料计划
             WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
             wmsOutProductionMaterial.setFinishedProductCode(inFinishedProduct.getFinishedProductCode());
-            wmsOutProductionMaterial.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+            wmsOutProductionMaterial.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
             wmsOutProductionMaterial.setMaterialId(workOrderBomDto.getPartMaterialId());
             wmsOutProductionMaterial.setPlanQty(minMatchingQuantity);
             wmsOutProductionMaterial.setRealityQty(minMatchingQuantity);
