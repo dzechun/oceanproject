@@ -1,6 +1,7 @@
 package com.fantechs.provider.api.base;
 
 import com.fantechs.common.base.general.dto.basic.*;
+import com.fantechs.common.base.general.entity.basic.BaseStaffProcess;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -52,6 +53,10 @@ public interface BaseFeignApi {
     ResponseEntity<List<BaseUnitPriceDto>> findUnitPriceList(@ApiParam(value = "查询对象")@RequestBody SearchBaseUnitPrice searchBaseUnitPrice);
 
     @ApiOperation("查询产品族信息列表")
-    @PostMapping("/findList")
+    @PostMapping("/baseProductFamily/findList")
     ResponseEntity<List<BaseProductFamilyDto>> findProductFamilyList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductFamily searchBaseProductFamily);
+
+    @ApiOperation("查询员工工种关系列表")
+    @PostMapping("/baseStaffProcess/findList")
+    ResponseEntity<List<BaseStaffProcess>> findStaffProcessList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStaffProcess searchBaseStaffProcess);
 }

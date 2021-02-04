@@ -27,6 +27,8 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="effective_start_time" jdbcType="TIMESTAMP" property="effectiveStartTime"/>
+        <result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">

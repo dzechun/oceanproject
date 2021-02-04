@@ -213,6 +213,20 @@ public class SmtProcess extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     /**
+     * 有效开始时间
+     */
+    @Transient
+    @ApiModelProperty(name="effectiveStartTime" ,value="有效开始时间")
+    private Date effectiveStartTime;
+
+    /**
+     * 有效结束时间
+     */
+    @Transient
+    @ApiModelProperty(name="effectiveEndTime" ,value="有效结束时间")
+    private Date effectiveEndTime;
+
+    /**
      * 扩展字段1
      */
     private String option1;
