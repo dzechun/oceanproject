@@ -118,7 +118,7 @@
         and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(qqc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
     order by create_time desc
@@ -131,12 +131,12 @@
           where splp.process_id = #{processId}
             and splp.work_order_card_pool_id = #{workOrderCardPoolId}
             and splp.process_type = 2
-            and splp.status = 2 order by create_time desc limit 1
+            and splp.status = 2 order by outbound_time desc limit 1
           )
           <if test="qualityType != null and qualityType!= '' and qualityType == 1">
             -
             (
-            select ifnull(sum(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
+            select ifnull( max(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
             where qqc.process_id = #{processId} and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
             and qqc.quality_type = 1 and qqc.affirm_status = 2 order by create_time desc limit 1
             )
