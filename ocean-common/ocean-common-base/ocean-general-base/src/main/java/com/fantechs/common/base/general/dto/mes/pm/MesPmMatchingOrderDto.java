@@ -33,6 +33,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="matchingStaffName",value = "配套员名称")
     @Transient
+    @Excel(name = "配套人员", height = 20, width = 30)
     private String matchingStaffName;
 
     /**
@@ -47,6 +48,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="deptName" ,value="部门名称")
     @Transient
+    @Excel(name = "部门", height = 20, width = 30)
     private String deptName;
 
     /**
@@ -54,6 +56,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="workOrderCardId",value = "工单流转卡编码")
     @Transient
+    @Excel(name = "流程单号", height = 20, width = 30)
     private String workOrderCardId;
 
     /**
@@ -61,6 +64,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号")
     @Transient
+    @Excel(name = "工单号", height = 20, width = 30)
     private String workOrderCode;
 
     /**
@@ -68,6 +72,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
     @Transient
+    @Excel(name = "产品编码", height = 20, width = 30)
     private String materialCode;
 
     /**
@@ -75,6 +80,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
     @Transient
+    @Excel(name = "产品名称", height = 20, width = 30)
     private String materialName;
 
     /**
@@ -82,6 +88,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="materialDesc",value = "物料描述")
     @Transient
+    @Excel(name = "产品描述", height = 20, width = 30)
     private String materialDesc;
 
     /**
@@ -89,6 +96,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="mainUnit",value = "主单位")
     @Transient
+    @Excel(name = "单位", height = 20, width = 30)
     private String mainUnit;
 
     /**
@@ -96,6 +104,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="productModelName",value = "产品型号名称")
     @Transient
+    @Excel(name = "产品型号", height = 20, width = 30)
     private String productModelName;
 
     /**
