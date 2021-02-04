@@ -2,21 +2,16 @@ package com.fantechs.provider.qms.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.*;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
-import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
-import com.fantechs.common.base.general.entity.basic.BaseTab;
-import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.qms.QmsPoorQuality;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
@@ -73,6 +68,19 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
 
         for (QmsQualityConfirmationDto qmsQualityConfirmationDto : list) {
+            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(qmsQualityConfirmationDto.getWorkOrderCardPoolId());
+            List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+            if (StringUtils.isNotEmpty(workOrderCardPoolList) && (workOrderCardPoolList.get(0).getParentId() ==0 ||workOrderCardPoolList.get(0).getParentId() == null)){
+                Integer quantity = this.parentUpdateQuantity(qmsQualityConfirmationDto.getWorkOrderCardPoolId(), qmsQualityConfirmationDto.getProcessId());
+                qmsQualityConfirmationDto.setQuantity(new BigDecimal(quantity));
+            }else {
+                map.put("workOrderCardPoolId",qmsQualityConfirmationDto.getWorkOrderCardPoolId());
+                map.put("processId",qmsQualityConfirmationDto.getProcessId());
+                map.put("qualityType",qmsQualityConfirmationDto.getQualityType());
+                qmsQualityConfirmationDto.setQuantity(new BigDecimal(this.updateQuantity(map)));
+            }
+
             if (qmsQualityConfirmationDto.getRouteId() == null){
                 continue;
             }
@@ -96,8 +104,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("流程单号不正确");
         }
         //当前流程单的对象
-        if (workOrderCardPoolList.get(0).getParentId() == null || workOrderCardPoolList.get(0).getParentId() == 0){
+        if (type ==1 && (workOrderCardPoolList.get(0).getParentId() == null || workOrderCardPoolList.get(0).getParentId() == 0)){
             throw new BizErrorException("当前为父级流程单");
+        }else if (type ==2 && (workOrderCardPoolList.get(0).getParentId() == null || workOrderCardPoolList.get(0).getParentId() == 0)){
+            qmsQualityConfirmationDto.setParentWorkOrderCardPoolId(workOrderCardPoolList.get(0).getWorkOrderCardPoolId());
         }
 
         //获取工艺路线
@@ -250,6 +260,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException("未找到回退流转卡父级信息");
         }
         workOrderCardPoolDto = workOrderCardPoolList.get(0);
+        BigDecimal minMatchingQuantity = new BigDecimal(0);
         if (type != null && type == 3){
             searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(workOrderCardPoolList.get(0).getParentId());
             List<SmtWorkOrderCardPoolDto> parentWorkOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
@@ -257,93 +268,93 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("未找到产品流转卡信息");
             }
             workOrderCardPoolDto = parentWorkOrderCardPoolList.get(0);
-        }
+        }else {
 
-        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-        searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
-        List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
-        if (StringUtils.isEmpty(workOrderList)){
-            throw new BizErrorException("未找到产品工单信息");
-        }
-
-        SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-        searchSmtStorageMaterial.setMaterialId(workOrderList.get(0).getMaterialId());
-        ResponseEntity<List<SmtStorageMaterial>> storageMaterialList = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial);
-        List<SmtStorageMaterial> data = storageMaterialList.getData();
-        if (StringUtils.isEmpty(data)){
-            throw new BizErrorException("未找到该物料的储位");
-        }
-
-//        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-//        searchSmtWorkOrder.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
-//        List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
-//
-//        if (StringUtils.isEmpty(workOrderList)){
-//            throw new BizErrorException("没有找到工单");
-//        }
-
-        SearchSmtWorkOrderBom searchSmtWorkOrderBom = new SearchSmtWorkOrderBom();
-        searchSmtWorkOrderBom.setWorkOrderId(workOrderList.get(0).getWorkOrderId());
-        List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
-        SmtWorkOrderBomDto workOrderBomDto = null;
-        for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
-            if (smtWorkOrderBomDto.getProcessId() == qmsQualityConfirmation.getProcessId()){
-                workOrderBomDto = smtWorkOrderBomDto;
-                break;
+            if (workOrderCardPoolDto.getParentId() == null || workOrderCardPoolDto.getParentId() == 0 ){
+                MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(), qmsQualityConfirmation.getProcessId()).getData();
+                minMatchingQuantity = matchingDto.getMinMatchingQuantity();
             }
         }
-        if (StringUtils.isEmpty(workOrderBomDto)){
-            throw new BizErrorException("没有找到当前工序对应的工单BOM信息");
+
+        if (minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
+            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+            searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+            List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            if (StringUtils.isEmpty(workOrderList)){
+                throw new BizErrorException("未找到产品工单信息");
+            }
+
+            SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
+            searchSmtStorageMaterial.setMaterialId(workOrderList.get(0).getMaterialId());
+            ResponseEntity<List<SmtStorageMaterial>> storageMaterialList = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial);
+            List<SmtStorageMaterial> data = storageMaterialList.getData();
+            if (StringUtils.isEmpty(data)){
+                throw new BizErrorException("未找到该物料的储位");
+            }
+
+            SearchSmtWorkOrderBom searchSmtWorkOrderBom = new SearchSmtWorkOrderBom();
+            searchSmtWorkOrderBom.setWorkOrderId(workOrderList.get(0).getWorkOrderId());
+            List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
+            SmtWorkOrderBomDto workOrderBomDto = null;
+            for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
+                if (smtWorkOrderBomDto.getProcessId() == qmsQualityConfirmation.getProcessId()){
+                    workOrderBomDto = smtWorkOrderBomDto;
+                    break;
+                }
+            }
+            if (StringUtils.isEmpty(workOrderBomDto)){
+                throw new BizErrorException("没有找到当前工序对应的工单BOM信息");
+            }
+
+            SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO = new SearchMesPmMasterPlanListDTO();
+            searchMesPmMasterPlanListDTO.setWorkOrderId(workOrderList.get(0).getWorkOrderId());
+            List<MesPmMasterPlanDTO> pmMasterPlanList = pmFeignApi.findPmMasterPlanlist(searchMesPmMasterPlanListDTO).getData();
+
+            if (StringUtils.isEmpty(pmMasterPlanList)){
+                throw new BizErrorException("未找到产品工单的月计划");
+            }
+
+            //半成品完工入库
+            WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();
+            wmsInFinishedProduct.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+            wmsInFinishedProduct.setOperatorUserId(user.getUserId());
+            wmsInFinishedProduct.setInTime(new Date());
+            wmsInFinishedProduct.setInType(Byte.parseByte("1"));
+            wmsInFinishedProduct.setProjectType("dp");
+            wmsInFinishedProduct.setInStatus(Byte.parseByte("2"));
+            //半成品完工入库明细
+            List<WmsInFinishedProductDet> wmsInFinishedProductDetList = new ArrayList<>();
+            WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();
+            wmsInFinishedProductDet.setMaterialId(workOrderBomDto.getPartMaterialId());
+            wmsInFinishedProductDet.setStorageId(data.get(0).getStorageId());
+            wmsInFinishedProductDet.setPlanInQuantity(minMatchingQuantity);
+            wmsInFinishedProductDet.setInQuantity(minMatchingQuantity);
+            wmsInFinishedProductDet.setInTime(new Date());
+            wmsInFinishedProductDet.setDeptId(user.getDeptId());
+            wmsInFinishedProductDet.setInStatus(Byte.parseByte("2"));
+
+            wmsInFinishedProductDetList.add(wmsInFinishedProductDet);
+            wmsInFinishedProduct.setWmsInFinishedProductDetList(wmsInFinishedProductDetList);
+
+            ResponseEntity<WmsInFinishedProduct> wmsInFinishedProductResponse = inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
+            WmsInFinishedProduct inFinishedProduct = wmsInFinishedProductResponse.getData();
+            if (StringUtils.isEmpty(inFinishedProduct)){
+                throw new BizErrorException("生成半成品入库单失败");
+            }
+
+            //生成领料计划
+            WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
+            wmsOutProductionMaterial.setFinishedProductCode(inFinishedProduct.getFinishedProductCode());
+            wmsOutProductionMaterial.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+            wmsOutProductionMaterial.setMaterialId(workOrderBomDto.getPartMaterialId());
+            wmsOutProductionMaterial.setPlanQty(minMatchingQuantity);
+            wmsOutProductionMaterial.setRealityQty(minMatchingQuantity);
+            wmsOutProductionMaterial.setOutTime(new Date());
+            wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
+            wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
+            wmsOutProductionMaterial.setProLineId(pmMasterPlanList.get(0).getProLineId());
+            outFeignApi.outProductionMaterialAdd(wmsOutProductionMaterial);
         }
-
-        SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO = new SearchMesPmMasterPlanListDTO();
-        searchMesPmMasterPlanListDTO.setWorkOrderId(workOrderList.get(0).getWorkOrderId());
-        List<MesPmMasterPlanDTO> pmMasterPlanList = pmFeignApi.findPmMasterPlanlist(searchMesPmMasterPlanListDTO).getData();
-
-        if (StringUtils.isEmpty(pmMasterPlanList)){
-            throw new BizErrorException("未找到产品工单的月计划");
-        }
-
-        //半成品完工入库
-        WmsInFinishedProduct wmsInFinishedProduct = new WmsInFinishedProduct();
-        wmsInFinishedProduct.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
-        wmsInFinishedProduct.setOperatorUserId(user.getUserId());
-        wmsInFinishedProduct.setInTime(new Date());
-        wmsInFinishedProduct.setInType(Byte.parseByte("1"));
-        wmsInFinishedProduct.setProjectType("dp");
-        wmsInFinishedProduct.setInStatus(Byte.parseByte("2"));
-        //半成品完工入库明细
-        List<WmsInFinishedProductDet> wmsInFinishedProductDetList = new ArrayList<>();
-        WmsInFinishedProductDet wmsInFinishedProductDet = new WmsInFinishedProductDet();
-        wmsInFinishedProductDet.setMaterialId(workOrderBomDto.getPartMaterialId());
-        wmsInFinishedProductDet.setStorageId(data.get(0).getStorageId());
-        wmsInFinishedProductDet.setPlanInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
-        wmsInFinishedProductDet.setInQuantity(qmsQualityConfirmation.getQualifiedQuantity());
-        wmsInFinishedProductDet.setInTime(new Date());
-        wmsInFinishedProductDet.setDeptId(user.getDeptId());
-        wmsInFinishedProductDet.setInStatus(Byte.parseByte("2"));
-
-        wmsInFinishedProductDetList.add(wmsInFinishedProductDet);
-        wmsInFinishedProduct.setWmsInFinishedProductDetList(wmsInFinishedProductDetList);
-
-        ResponseEntity<WmsInFinishedProduct> wmsInFinishedProductResponse = inFeignApi.inFinishedProductAdd(wmsInFinishedProduct);
-        WmsInFinishedProduct inFinishedProduct = wmsInFinishedProductResponse.getData();
-        if (StringUtils.isEmpty(inFinishedProduct)){
-            throw new BizErrorException("生成半成品入库单失败");
-        }
-
-        //生成领料计划
-        WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
-        wmsOutProductionMaterial.setFinishedProductCode(inFinishedProduct.getFinishedProductCode());
-        wmsOutProductionMaterial.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
-        wmsOutProductionMaterial.setMaterialId(workOrderBomDto.getPartMaterialId());
-        wmsOutProductionMaterial.setPlanQty(qmsQualityConfirmation.getQualifiedQuantity());
-        wmsOutProductionMaterial.setRealityQty(qmsQualityConfirmation.getQualifiedQuantity());
-        wmsOutProductionMaterial.setOutTime(new Date());
-        wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
-        wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
-        wmsOutProductionMaterial.setProLineId(pmMasterPlanList.get(0).getProLineId());
-        outFeignApi.outProductionMaterialAdd(wmsOutProductionMaterial);
 
         return i;
     }
@@ -359,9 +370,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         qmsQualityConfirmation.setModifiedTime(new Date());
         qmsQualityConfirmation.setModifiedUserId(user.getUserId());
 
-//        QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
-//        BeanUtils.copyProperties(qmsQualityConfirmation,qmsHtRejectsMrbReview);
-//        qmsHtRejectsMrbReviewMapper.insert(qmsHtRejectsMrbReview);
         return qmsQualityConfirmationMapper.updateByPrimaryKeySelective(qmsQualityConfirmation);
     }
 
@@ -372,7 +380,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-//        List<QmsHtRejectsMrbReview> qmsHtQualityInspections = new ArrayList<>();
         String[] idsArr  = ids.split(",");
         for (String id : idsArr) {
             QmsQualityConfirmation qmsQualityConfirmation = qmsQualityConfirmationMapper.selectByPrimaryKey(id);
@@ -380,12 +387,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
-//            QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
-//            BeanUtils.copyProperties(qmsQualityConfirmation,qmsHtRejectsMrbReview);
-//            qmsHtQualityInspections.add(qmsHtRejectsMrbReview);
         }
 
-//        qmsHtRejectsMrbReviewMapper.insertList(qmsHtQualityInspections);
         Example example = new Example(QmsPoorQuality.class);
         example.createCriteria().andEqualTo("qualityId", Arrays.asList(ids.split(",")));
         qmsPoorQualityMapper.deleteByExample(example);
@@ -435,6 +438,64 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     @Override
     public Integer updateQuantity(Map<String, Object> map) {
         return qmsQualityConfirmationMapper.updateQuantity(map);
+    }
+
+    @Override
+    public Integer parentUpdateQuantity(Long workOrderCardPoolId,Long processId) {
+        BigDecimal quantity = null ;
+        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+        searchSmtWorkOrderCardPool.setParentId(workOrderCardPoolId);
+        List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+        if (StringUtils.isEmpty(workOrderCardPoolList)){
+            if (quantity == null){
+                quantity = new BigDecimal(0);
+            }
+            return quantity.intValue();
+        }
+        //部件流转卡
+        SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
+        SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+        for (SmtWorkOrderCardPoolDto workOrderCardPoolDto : workOrderCardPoolList) {
+            //获取部件流程卡的部件明细数据
+            searchBasePlatePartsDet.setPlatePartsDetId(workOrderCardPoolDto.getMaterialId());
+            List<BasePlatePartsDetDto> platePartsDetList = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
+            if (StringUtils.isEmpty(platePartsDetList)){
+                continue;
+            }
+            BasePlatePartsDetDto basePlatePartsDetDto = platePartsDetList.get(0);
+            //获取部件流程卡的工序报工数据
+            searchSmtProcessListProcess.setWorkOrderCardPoolId(workOrderCardPoolDto.getWorkOrderCardPoolId());
+            searchSmtProcessListProcess.setProcessId(processId);
+            List<SmtProcessListProcessDto> processListProcessList = pmFeignApi.findSmtProcessListProcessList(searchSmtProcessListProcess).getData();
+            if (StringUtils.isEmpty(processListProcessList)){
+                continue;
+            }
+            SmtProcessListProcessDto processListProcess = processListProcessList.get(0);
+            BigDecimal divide = processListProcess.getOutputQuantity().divide(basePlatePartsDetDto.getQuantity());
+            if (quantity == null){
+                quantity = divide;
+                continue;
+            }
+            if(divide.compareTo(quantity) > -1){
+                quantity=divide;
+            }
+        }
+        if (quantity == null){
+            quantity = new BigDecimal(0);
+        }else {
+            Map<String,Object> map = new HashMap();
+            map.put("workOrderCardPoolId",workOrderCardPoolId);
+            map.put("processId",processId);
+            List<QmsQualityConfirmationDto> list = qmsQualityConfirmationMapper.findList(map);
+            if (StringUtils.isNotEmpty(list)){
+                BigDecimal add = list.get(0).getQualifiedQuantity().add(list.get(0).getUnqualifiedQuantity());
+                quantity = quantity.subtract(add);
+            }
+            if(quantity.compareTo(new BigDecimal(0)) > -1){
+                quantity=new BigDecimal(0);
+            }
+        }
+        return quantity.intValue();
     }
 
     @Override

@@ -78,7 +78,7 @@ public class MesPmMatchingOrderController {
     List<MesPmMatchingOrderDto> list = mesPmMatchingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmMatchingOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "MesPmMatchingOrder信息", MesPmMatchingOrderDto.class, "MesPmMatchingOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "配套单信息", "配套单信息", MesPmMatchingOrderDto.class, "MesPmMatchingOrder.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
@@ -86,9 +86,9 @@ public class MesPmMatchingOrderController {
 
     @ApiOperation("获取最小齐套数")
     @PostMapping("/findMinMatchingQuantity")
-    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "查询对象")@RequestParam String workOrderCardId) {
+    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long processId) {
 
-        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId);
+        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId,processId);
         return ControllerUtil.returnSuccess("",mesPmMatchingDto);
     }
 }

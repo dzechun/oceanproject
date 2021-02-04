@@ -16,6 +16,14 @@ import java.util.List;
 public class QmsQualityConfirmationDto extends QmsQualityConfirmation implements Serializable {
 
     /**
+     * 父级流转卡ID
+     */
+    @Transient
+    @ApiModelProperty(name = "parentWorkOrderCardPoolId",value = "父级流转卡ID")
+    private Long parentWorkOrderCardPoolId;
+
+
+    /**
      * 工单ID
      */
     @Transient

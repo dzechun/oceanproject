@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,18 +13,28 @@ import java.math.BigDecimal;
 public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Serializable {
 
     /**
-     * 员工编码
+     * 创建用户名称
      */
-    @ApiModelProperty(name="staffCode",value = "员工编码")
     @Transient
-    private String staffCode;
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
+    private String createUserName;
 
     /**
-     * 员工名称
+     * 修改用户名称
      */
-    @ApiModelProperty(name="staffName",value = "员工名称")
     @Transient
-    private String staffName;
+    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
+    private String modifiedUserName;
+
+    /**
+     * 配套员名称
+     */
+    @ApiModelProperty(name="matchingStaffName",value = "配套员名称")
+    @Transient
+    @Excel(name = "配套人员", height = 20, width = 30)
+    private String matchingStaffName;
 
     /**
      * 部门代码
@@ -39,6 +48,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="deptName" ,value="部门名称")
     @Transient
+    @Excel(name = "部门", height = 20, width = 30)
     private String deptName;
 
     /**
@@ -46,6 +56,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="workOrderCardId",value = "工单流转卡编码")
     @Transient
+    @Excel(name = "流程单号", height = 20, width = 30)
     private String workOrderCardId;
 
     /**
@@ -53,6 +64,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号")
     @Transient
+    @Excel(name = "工单号", height = 20, width = 30)
     private String workOrderCode;
 
     /**
@@ -60,13 +72,23 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
     @Transient
+    @Excel(name = "产品编码", height = 20, width = 30)
     private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    @Transient
+    @Excel(name = "产品名称", height = 20, width = 30)
+    private String materialName;
 
     /**
      * 物料描述
      */
     @ApiModelProperty(name="materialDesc",value = "物料描述")
     @Transient
+    @Excel(name = "产品描述", height = 20, width = 30)
     private String materialDesc;
 
     /**
@@ -74,6 +96,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="mainUnit",value = "主单位")
     @Transient
+    @Excel(name = "单位", height = 20, width = 30)
     private String mainUnit;
 
     /**
@@ -81,6 +104,7 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
      */
     @ApiModelProperty(name="productModelName",value = "产品型号名称")
     @Transient
+    @Excel(name = "产品型号", height = 20, width = 30)
     private String productModelName;
 
     /**
@@ -131,4 +155,18 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
     @ApiModelProperty(name="alreadyMatchingQuantity",value = "已配套数")
     @Transient
     private BigDecimal alreadyMatchingQuantity;
+
+    /**
+     * 工单数量
+     */
+    @ApiModelProperty(name="workOrderQuantity",value = "工单数量")
+    @Transient
+    private BigDecimal workOrderQuantity;
+
+    /**
+     * 投产数量
+     */
+    @ApiModelProperty(name="productionQuantity",value = "投产数量")
+    @Transient
+    private BigDecimal productionQuantity;
 }

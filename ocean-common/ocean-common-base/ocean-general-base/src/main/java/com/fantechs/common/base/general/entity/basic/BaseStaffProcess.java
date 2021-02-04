@@ -53,7 +53,7 @@ public class BaseStaffProcess extends ValidGroup implements Serializable {
      * 有效开始时间
      */
     @ApiModelProperty(name="effectiveStartTime",value = "有效开始时间")
-    @Excel(name = "有效开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "有效开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "effective_start_time")
@@ -63,7 +63,7 @@ public class BaseStaffProcess extends ValidGroup implements Serializable {
      * 有效结束时间
      */
     @ApiModelProperty(name="effectiveEndTime",value = "有效结束时间")
-    @Excel(name = "有效结束时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "有效结束时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "effective_end_time")

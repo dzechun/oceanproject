@@ -23,7 +23,6 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 配套单ID
      */
     @ApiModelProperty(name="matchingOrderId",value = "配套单ID")
-    @Excel(name = "配套单ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "matching_order_id")
     private Long matchingOrderId;
@@ -32,7 +31,7 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 配套单号
      */
     @ApiModelProperty(name="matchingOrderCode",value = "配套单号")
-    @Excel(name = "配套单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "配套单号", height = 20, width = 30)
     @Column(name = "matching_order_code")
     private String matchingOrderCode;
 
@@ -40,7 +39,6 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 配套信息ID
      */
     @ApiModelProperty(name="matchingId",value = "配套信息ID")
-    @Excel(name = "配套信息ID", height = 20, width = 30,orderNum="") 
     @Column(name = "matching_id")
     private Long matchingId;
 
@@ -48,23 +46,21 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 流程单ID
      */
     @ApiModelProperty(name="workOrderCardPoolId",value = "流程单ID")
-    @Excel(name = "流程单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "work_order_card_pool_id")
     private Long workOrderCardPoolId;
 
     /**
-     * 员工ID
+     * 配套员ID
      */
-    @ApiModelProperty(name="staffId",value = "员工ID")
-    @Excel(name = "员工ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "staff_id")
-    private Long staffId;
+    @ApiModelProperty(name="matchingStaffId",value = "配套员ID")
+    @Column(name = "matching_staff_id")
+    private Long matchingStaffId;
 
     /**
-     * 配套数量
+     * 本次配套数量
      */
     @ApiModelProperty(name="matchingQuantity",value = "配套数量")
-    @Excel(name = "配套数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "本次配套数量", height = 20, width = 30)
     @Column(name = "matching_quantity")
     private BigDecimal matchingQuantity;
 
@@ -72,21 +68,19 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 状态(0.待配套，1.配套中  2.配套完成)
      */
     @ApiModelProperty(name="status",value = "状态(0.待配套，1.配套中  2.配套完成)")
-    @Excel(name = "状态(0.待配套，1.配套中  2.配套完成)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0.待配套，1.配套中  2.配套完成)", height = 20, width = 30,replace = {"待配套_0","配套中_1","配套完成_2"})
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -94,7 +88,6 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -102,7 +95,7 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -111,7 +104,7 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -119,7 +112,7 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -128,7 +121,6 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
