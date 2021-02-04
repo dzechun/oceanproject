@@ -399,7 +399,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             mesPmMatchingOrder.setModifiedUserId(currentUser.getUserId());
             mesPmMatchingOrder.setOrganizationId(currentUser.getOrganizationId());
             mesPmMatchingOrder.setMatchingId(mesPmMatching.getMatchingId());
-            mesPmMatchingOrder1.setMatchingStaffId(currentUser.getUserId());
+            mesPmMatchingOrder.setMatchingStaffId(currentUser.getUserId());
             if (saveMesPmMatchingOrderDto.getStatus() == 1) {
                 mesPmMatchingOrder.setStatus((byte) 1);
             } else {

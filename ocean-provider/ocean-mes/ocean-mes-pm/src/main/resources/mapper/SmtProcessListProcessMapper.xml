@@ -291,4 +291,10 @@
                  LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
         WHERE swocp.work_order_card_pool_id = #{workOrderCardPoolId}
     </select>
+    <select id="getQuantityByWorkOrderId" resultType="java.math.BigDecimal">
+        SELECT bppd.quantity
+        FROM base_plate_parts_det bppd
+                 LEFT JOIN smt_work_order swo ON swo.material_id = bppd.plate_parts_det_id
+        WHERE swo.work_order_id = #{workOrderId}
+    </select>
 </mapper>
