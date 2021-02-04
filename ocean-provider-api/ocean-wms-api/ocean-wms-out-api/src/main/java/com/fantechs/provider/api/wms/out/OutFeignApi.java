@@ -20,7 +20,7 @@ public interface OutFeignApi {
 
     @ApiOperation(value = "发料计划新增", notes = "发料计划新增")
     @PostMapping("/wmsOutProductionMaterial/add")
-    ResponseEntity outProductionMaterialAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsOutProductionMaterial wmsOutProductionMaterial);
+    ResponseEntity<WmsOutProductionMaterial> outProductionMaterialAdd(@ApiParam(value = "必传：", required = true) @RequestBody @Validated WmsOutProductionMaterial wmsOutProductionMaterial);
 
     @ApiOperation(value = "发料计划明细新增",notes = "发料计划明细新增")
     @PostMapping("/wmsOutProductionMaterialdDet/add")
