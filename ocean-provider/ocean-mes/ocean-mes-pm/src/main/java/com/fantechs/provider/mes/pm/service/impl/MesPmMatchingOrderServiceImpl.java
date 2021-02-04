@@ -1,17 +1,21 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatching;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
@@ -26,6 +30,7 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingDetMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmMatchingOrderService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
 import org.springframework.beans.BeanUtils;
@@ -61,6 +66,8 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     private MesPmMatchingMapper mesPmMatchingMapper;
     @Resource
     private MesPmMatchingDetMapper mesPmMatchingDetMapper;
+    @Resource
+    private SmtWorkOrderMapper smtWorkOrderMapper;
 
     @Override
     public List<MesPmMatchingOrderDto> findList(Map<String, Object> map) {
@@ -68,12 +75,42 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     }
 
     @Override
-    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId) {
+    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long processId) {
+
 
         //通过流转卡号获取流转卡信息
         ProcessListWorkOrderDTO processListWorkOrderDTO = smtWorkOrderCardPoolService.selectWorkOrderDtoByWorkOrderCardId(workOrderCardId);
         if (StringUtils.isEmpty(processListWorkOrderDTO)) {
             throw new BizErrorException("无法获取该流转卡的相应信息");
+        }
+
+        if (processId == null || processId == 0) {
+            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(processListWorkOrderDTO.getWorkOrderCardPoolId());
+            List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+            if (StringUtils.isEmpty(workOrderCardPoolList)) {
+                throw new BizErrorException("未找到流程单信息");
+            }
+
+            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+            searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
+            List<SmtWorkOrderDto> workOrderList = smtWorkOrderMapper.findList(searchSmtWorkOrder);
+            if (StringUtils.isEmpty(workOrderList)) {
+                throw new BizErrorException("未找到流程单的工单信息");
+            }
+
+            List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+            if (StringUtils.isEmpty(routeProcessList)) {
+                throw new BizErrorException("未找到工艺路线信息");
+            }
+            for (int i = routeProcessList.size() - 1; i >= 0; i--) {
+                SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                if (StringUtils.isNotEmpty(process) && process.getIsQuality() == 1) {
+                    processId = process.getProcessId();
+                    break;
+                }
+            }
+
         }
 
 
@@ -97,7 +134,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 BigDecimal qualifiedQuantity = new BigDecimal(0);//保存同一部件的质检合格数
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
                     //通过部件流转卡ID获取质检单
-                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), (long) 0).getData();
+                    QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), processId).getData();
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                         qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
                     }
@@ -178,6 +215,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
         } else {
             throw new BizErrorException("请输入工单流转卡号");
         }
+
     }
 
 

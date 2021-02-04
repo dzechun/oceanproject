@@ -50,12 +50,14 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
 
         Example example = new Example(SmtElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId())
-                .andEqualTo("equipmentId",smtElectronicTagStorage.getEquipmentId())
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId());
+        criteria1.andEqualTo("equipmentId",smtElectronicTagStorage.getEquipmentId())
                 .andEqualTo("electronicTagId",smtElectronicTagStorage.getElectronicTagId());
+        example.or(criteria1);
         List<SmtElectronicTagStorage> smtElectronicTagStorages = smtElectronicTagStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtElectronicTagStorages)){
-            throw new BizErrorException("该绑定关系已存在");
+            throw new BizErrorException("绑定关系已存在");
         }
 
         smtElectronicTagStorage.setCreateUserId(user.getUserId());
@@ -81,11 +83,19 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         }
         Example example = new Example(SmtElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId());
-        criteria.andNotEqualTo("electronicTagStorageId",smtElectronicTagStorage.getElectronicTagStorageId());
-        example.and(criteria);
+        criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId())
+        .andNotEqualTo("electronicTagStorageId",smtElectronicTagStorage.getElectronicTagStorageId());
         List<SmtElectronicTagStorage> smtElectronicTagStorages = smtElectronicTagStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtElectronicTagStorages)){
+            throw new BizErrorException("储位id已存在");
+        }
+
+        example.clear();
+        criteria.andEqualTo("equipmentId",smtElectronicTagStorage.getEquipmentId())
+                .andEqualTo("electronicTagId",smtElectronicTagStorage.getElectronicTagId())
+                .andNotEqualTo("electronicTagStorageId",smtElectronicTagStorage.getElectronicTagStorageId());
+        List<SmtElectronicTagStorage> smtElectronicTagStorages1 = smtElectronicTagStorageMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(smtElectronicTagStorages1)){
             throw new BizErrorException("储位id已存在");
         }
 
