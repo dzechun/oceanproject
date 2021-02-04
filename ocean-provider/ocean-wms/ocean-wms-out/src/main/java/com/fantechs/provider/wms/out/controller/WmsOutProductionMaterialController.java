@@ -39,7 +39,7 @@ public class WmsOutProductionMaterialController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutProductionMaterial wmsOutProductionMaterial) {
-        return ControllerUtil.returnCRUD(wmsOutProductionMaterialService.save(wmsOutProductionMaterial));
+        return ControllerUtil.returnDataSuccess(wmsOutProductionMaterial,wmsOutProductionMaterialService.save(wmsOutProductionMaterial));
     }
 
     @ApiOperation("删除")
