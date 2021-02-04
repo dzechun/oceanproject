@@ -85,6 +85,11 @@ public class RabbitConfig {
         return BindingBuilder.bind(topicQueue2()).to(topicExchange()).with("lzc.#");
     }
 
+    @Bean
+    public Binding topicBinding3() {
+        return BindingBuilder.bind(topicProcessWorkQueue()).to(topicExchange()).with("lzc.#");
+    }
+
 
     /**
      * Fanout模式
