@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterialdDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtProductionMaterial;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -15,6 +16,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtProductionMaterialMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutProductionMaterialMapper;
+import com.fantechs.provider.wms.out.mapper.WmsOutProductionMaterialdDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutProductionMaterialService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
     @Resource
     private WmsOutProductionMaterialMapper wmsOutProductionMaterialMapper;
+    @Resource
+    private WmsOutProductionMaterialdDetMapper wmsOutProductionMaterialdDetMapper;
     @Resource
     private WmsOutHtProductionMaterialMapper wmsOutHtProductionMaterialMapper;
     @Resource
@@ -65,6 +69,14 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
         if (StringUtils.isEmpty(wmsOutProductionMaterial.getWorkOrderId())) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
+
+//        Example example = new Example(WmsOutProductionMaterialdDet.class);
+//        example.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterial.getMaterialId());
+//        List<WmsOutProductionMaterialdDet> wmsOutProductionMaterialdDets = wmsOutProductionMaterialdDetMapper.selectByExample(example);
+//        if(wmsOutProductionMaterialdDets.isEmpty()){
+//            return 1;
+//        }
+//        WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = wmsOutProductionMaterialdDets.get(0);
 
         Example example = new Example(WmsOutProductionMaterial.class);
         example.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterial.getMaterialId());

@@ -114,6 +114,7 @@ public class WmsOutProductionMaterial extends ValidGroup implements Serializable
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="14")
     private String remark;
 
     /**
@@ -133,7 +134,7 @@ public class WmsOutProductionMaterial extends ValidGroup implements Serializable
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
