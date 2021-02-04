@@ -9,7 +9,7 @@
         <result column="matching_order_code" jdbcType="VARCHAR" property="matchingOrderCode"/>
         <result column="matching_id" jdbcType="BIGINT" property="matchingId"/>
         <result column="work_order_card_pool_id" jdbcType="BIGINT" property="workOrderCardPoolId"/>
-        <result column="staff_id" jdbcType="BIGINT" property="staffId"/>
+        <result column="matching_staff_id" jdbcType="BIGINT" property="matchingStaffId"/>
         <result column="matching_quantity" jdbcType="DECIMAL" property="matchingQuantity"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -23,11 +23,12 @@
 
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.pm.MesPmMatchingOrderDto"
                extends="BaseResultMap">
-        <result column="staff_code" jdbcType="VARCHAR" property="staffCode"/>
-        <result column="staff_name" jdbcType="VARCHAR" property="staffName"/>
+        <result column="matching_staff_name" jdbcType="VARCHAR" property="matchingStaffName"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="work_order_card_id" jdbcType="VARCHAR" property="workOrderCardId"/>
         <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
         <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
@@ -36,6 +37,10 @@
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="min_matching_quantity" jdbcType="DECIMAL" property="minMatchingQuantity"/>
         <result column="already_matching_quantity" jdbcType="DECIMAL" property="alreadyMatchingQuantity"/>
+        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
+        <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -43,7 +48,7 @@
         mpmo.matching_order_code,
         mpmo.matching_id,
         mpmo.work_order_card_pool_id,
-        mpmo.staff_id,
+        mpmo.matching_staff_id,
         mpmo.matching_quantity,
         mpmo.`status`,
         mpmo.remark,
@@ -57,20 +62,21 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select
-        <include refid="Base_Column_List"></include>, su.user_name as createName,su.user_name,
-        bs.staff_code, bs.staff_name,
+        <include refid="Base_Column_List"></include>, su.user_name as create_user_name,sus.user_name as modified_user_name,
         swocp.work_order_card_id,
         swo.work_order_id, swo.work_order_code,
-        sm.material_id, sm.material_code, sm.material_desc,
+        sm.material_id, sm.material_code, sm.material_desc,sm.material_name,
         btt.main_unit,
-        mpm.min_matching_quantity,mpm.already_matching_quantity,
-        spm.product_model_name
+        mpm.min_matching_quantity,mpm.already_matching_quantity,mpm.work_order_quantity,mpm.production_quantity,
+        spm.product_model_name,
+        suss.user_name AS matching_staff_name,
+        sd.dept_name
         from mes_pm_matching_order mpmo
         LEFT JOIN ocean.sys_user su ON mpmo.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON mpmo.modified_user_id = sus.user_id
+        LEFT JOIN ocean.sys_user suss ON mpmo.matching_staff_id = suss.user_id
+        LEFT JOIN smt_dept sd ON suss.dept_id = sd.dept_id
         LEFT JOIN mes_pm_matching mpm ON mpmo.matching_id = mpm.matching_id
-        LEFT JOIN base_staff bs ON bs.staff_id = mpmo.staff_id
-        LEFT JOIN base_team bt ON bs.team_id = bt.team_id
         LEFT JOIN smt_work_order_card_pool swocp ON mpmo.work_order_card_pool_id = swocp.work_order_card_pool_id
         LEFT JOIN smt_work_order swo ON swocp.work_order_id = swo.work_order_id
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
@@ -79,7 +85,7 @@
         LEFT JOIN smt_product_model spm ON btt.product_model_id = spm.product_model_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(mppp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                and date_format(mpmo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
             <if test="workOrderCode!=null and workOrderCode!=''">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')

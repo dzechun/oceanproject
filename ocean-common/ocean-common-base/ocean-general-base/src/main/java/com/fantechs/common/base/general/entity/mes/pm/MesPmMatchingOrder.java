@@ -23,7 +23,7 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 配套单ID
      */
     @ApiModelProperty(name="matchingOrderId",value = "配套单ID")
-    @Excel(name = "配套单ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "配套单ID", height = 20, width = 30)
     @Id
     @Column(name = "matching_order_id")
     private Long matchingOrderId;
@@ -32,7 +32,7 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 配套单号
      */
     @ApiModelProperty(name="matchingOrderCode",value = "配套单号")
-    @Excel(name = "配套单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "配套单号", height = 20, width = 30)
     @Column(name = "matching_order_code")
     private String matchingOrderCode;
 
@@ -53,12 +53,12 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
     private Long workOrderCardPoolId;
 
     /**
-     * 员工ID
+     * 配套员ID
      */
-    @ApiModelProperty(name="staffId",value = "员工ID")
-    @Excel(name = "员工ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "staff_id")
-    private Long staffId;
+    @ApiModelProperty(name="matchingStaffId",value = "配套员ID")
+    @Excel(name = "配套员ID", height = 20, width = 30,orderNum="")
+    @Column(name = "matching_staff_id")
+    private Long matchingStaffId;
 
     /**
      * 配套数量

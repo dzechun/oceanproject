@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,18 +13,27 @@ import java.math.BigDecimal;
 public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Serializable {
 
     /**
-     * 员工编码
+     * 创建用户名称
      */
-    @ApiModelProperty(name="staffCode",value = "员工编码")
     @Transient
-    private String staffCode;
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
+    private String createUserName;
 
     /**
-     * 员工名称
+     * 修改用户名称
      */
-    @ApiModelProperty(name="staffName",value = "员工名称")
     @Transient
-    private String staffName;
+    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
+    private String modifiedUserName;
+
+    /**
+     * 配套员名称
+     */
+    @ApiModelProperty(name="matchingStaffName",value = "配套员名称")
+    @Transient
+    private String matchingStaffName;
 
     /**
      * 部门代码
@@ -61,6 +69,13 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
     @ApiModelProperty(name="materialCode",value = "物料编码")
     @Transient
     private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    @Transient
+    private String materialName;
 
     /**
      * 物料描述
@@ -131,4 +146,18 @@ public class MesPmMatchingOrderDto extends MesPmMatchingOrder implements Seriali
     @ApiModelProperty(name="alreadyMatchingQuantity",value = "已配套数")
     @Transient
     private BigDecimal alreadyMatchingQuantity;
+
+    /**
+     * 工单数量
+     */
+    @ApiModelProperty(name="workOrderQuantity",value = "工单数量")
+    @Transient
+    private BigDecimal workOrderQuantity;
+
+    /**
+     * 投产数量
+     */
+    @ApiModelProperty(name="productionQuantity",value = "投产数量")
+    @Transient
+    private BigDecimal productionQuantity;
 }

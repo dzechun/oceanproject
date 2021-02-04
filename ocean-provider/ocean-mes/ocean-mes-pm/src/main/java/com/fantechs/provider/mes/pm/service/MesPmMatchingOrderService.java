@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.mes.pm.SaveMesPmMatchingOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -17,7 +18,9 @@ import java.util.Map;
 public interface MesPmMatchingOrderService extends IService<MesPmMatchingOrder> {
     List<MesPmMatchingOrderDto> findList(Map<String, Object> map);
 
-    MesPmMatchingDto findMinMatchingQuantity(String work_order_card_id);
+    MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId);
 
     int save(SaveMesPmMatchingOrderDto saveMesPmMatchingOrderDto);
+
+    //BigDecimal findMatchingQuantity(String workOrderCardId,Long processId);
 }

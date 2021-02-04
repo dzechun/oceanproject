@@ -81,15 +81,12 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
         }
         Example example = new Example(SmtElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId())
-                .orEqualTo("equipmentId",smtElectronicTagStorage.getEquipmentId())
-                .orEqualTo("electronicTagId",smtElectronicTagStorage.getElectronicTagId());
-        criteria1.andNotEqualTo("electronicTagStorageId",smtElectronicTagStorage.getElectronicTagStorageId());
-        example.and(criteria1);
+        criteria.andEqualTo("storageId",smtElectronicTagStorage.getStorageId());
+        criteria.andNotEqualTo("electronicTagStorageId",smtElectronicTagStorage.getElectronicTagStorageId());
+        example.and(criteria);
         List<SmtElectronicTagStorage> smtElectronicTagStorages = smtElectronicTagStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtElectronicTagStorages)){
-            throw new BizErrorException("储位id或电子标签控制器id或电子标签id已存在");
+            throw new BizErrorException("储位id已存在");
         }
 
         smtElectronicTagStorage.setModifiedTime(new Date());
