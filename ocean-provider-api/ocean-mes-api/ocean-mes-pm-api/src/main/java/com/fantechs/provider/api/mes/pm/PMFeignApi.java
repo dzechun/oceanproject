@@ -165,4 +165,8 @@ public interface PMFeignApi {
     ResponseEntity<List<MesPmMasterPlanDTO>> findPmMasterPlanlist(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPmMasterPlanListDTO searchMesPmMasterPlanListDTO
     );
+
+    @ApiOperation("获取最小齐套数")
+    @PostMapping("/mesPmMatchingOrder/findMinMatchingQuantity")
+    ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long processId);
 }
