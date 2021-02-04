@@ -37,6 +37,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 * @author Mr.Lei
@@ -149,8 +150,6 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 packageNumRuleId = smtBarcodeRule.getBarcodeRuleId();
                 continue;
             }
-
-
         }
 
         Long barcodeRuleId = smtWorkOrderBarcodePool.getBarcodeRuleId();
@@ -292,7 +291,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                     workOrderCarReport(smtWorkOrder.getRouteId(),preProcessId,processFinishedProductDTO);
                     return 1;
                 }
-                this.finishWork(smtWorkOrder.getRouteId(),preProcessId,processFinishedProductDTO);
+                this.finishWork(smtWorkOrder.getRouteId(),preProcessId,processFinishedProductDTO,false);
             }
         }else if(StringUtils.isNotEmpty(smtWorkOrderCardPool.getType()) && smtWorkOrderCardPool.getType() == 3){
             //当前扫描的流程卡为报工退回的流程卡，只能走报工，且报工数不能大于自身的开工数
@@ -305,8 +304,17 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             BigDecimal outPutQtyTotal=processFinishedProductDTO.getCurOutputQty();
             if(StringUtils.isNotEmpty(tempProcessListProcesseList)){
                 for (SmtProcessListProcess smtProcessListProcess : tempProcessListProcesseList) {
-                    startWorkQtyTotal=smtProcessListProcess.getStartWorkQty();
                     outPutQtyTotal=outPutQtyTotal.add(smtProcessListProcess.getOutputQuantity());
+                }
+            }
+            tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
+                    "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
+                    "processId", processFinishedProductDTO.getProcessId(),
+                    "processType",2,
+                    "status",1));
+            if(StringUtils.isNotEmpty(tempProcessListProcesseList)){
+                for (SmtProcessListProcess smtProcessListProcess : tempProcessListProcesseList) {
+                    startWorkQtyTotal=smtProcessListProcess.getStartWorkQty();
                 }
             }
             if(outPutQtyTotal.compareTo(startWorkQtyTotal)>0){
@@ -367,6 +375,8 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
     /**
      * 投产开料
+     * @param processFinishedProductDTO
+     * @param mesPmExplainPlan
      * @return
      */
     private int outPut(ProcessFinishedProductDTO processFinishedProductDTO,MesPmExplainPlan mesPmExplainPlan){
@@ -435,7 +445,12 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     }
 
     /**
-     *  开工确认
+     * 开工确认
+     * @param preProcessId
+     * @param smtWorkOrder
+     * @param processFinishedProductDTO
+     * @param isLastProcess
+     * @return
      */
     private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO,boolean isLastProcess){
         Long curProcessId=processFinishedProductDTO.getProcessId();
@@ -461,7 +476,10 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         if(StringUtils.isEmpty(qualityConfirmation)){
             throw new BizErrorException("未找到品质确认数据");
         }
-        BigDecimal okQty=qualityConfirmation.getQualifiedQuantity();
+        BigDecimal okQty=qualityConfirmation.getTotal();
+        if(StringUtils.isEmpty(okQty) || okQty.doubleValue()<=0){
+            throw new BizErrorException("未品质确认，不允许开工");
+        }
         //====
         BigDecimal startWorkQtyTotal=processFinishedProductDTO.getCurOutputQty();
         List<SmtProcessListProcess> tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
@@ -514,9 +532,14 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     }
 
     /**
-     *  报工
+     * 报工
+     * @param routeId
+     * @param preProcessId
+     * @param processFinishedProductDTO
+     * @param finishRemain 是否一次性完成剩余
+     * @return
      */
-    private int finishWork(Long routeId,Long preProcessId,ProcessFinishedProductDTO processFinishedProductDTO){
+    private int finishWork(Long routeId,Long preProcessId,ProcessFinishedProductDTO processFinishedProductDTO,boolean finishRemain){
         SysUser sysUser = this.currentUser();
         Long curProcessId=processFinishedProductDTO.getProcessId();
         List<SmtProcessListProcess> tempProcessListProcesseList ;
@@ -534,6 +557,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
         BigDecimal startWorkQtyTotal=new BigDecimal(0);
         BigDecimal outPutQtyToal=processFinishedProductDTO.getCurOutputQty();
+        BigDecimal curOutPutQty=processFinishedProductDTO.getCurOutputQty();
 
         SmtProcessListProcess preProcessListProcesse=null;//上一道报工工序记录
         SmtProcessListProcess curProcessListProcesse=new SmtProcessListProcess();//上一道报工工序记录
@@ -548,6 +572,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 outPutQtyToal=outPutQtyToal.add(smtProcessListProcess.getCurOutputQty());
             }
         }
+
         if(firstProcessIdR == processFinishedProductDTO.getProcessId() || firstProcessIdWS == processFinishedProductDTO.getProcessId()){
             //首工序，则它的报工数不能大于开工确认数
             tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
@@ -561,7 +586,23 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             for (SmtProcessListProcess smtProcessListProcess : tempProcessListProcesseList) {
                 startWorkQtyTotal=startWorkQtyTotal.add(smtProcessListProcess.getCurOutputQty());
             }
+            if(finishRemain){
+                //====本次报工数如果大于剩余报工数，则剩余报工数一次性全部报，如果小于剩余报工数，则正常进行
+                outPutQtyToal=outPutQtyToal.subtract(processFinishedProductDTO.getCurOutputQty());
+                BigDecimal remainQty=startWorkQtyTotal.subtract(outPutQtyToal);
+                if(remainQty.doubleValue()==0){
+                    return 1;
+                }
+                if(remainQty.compareTo(processFinishedProductDTO.getCurOutputQty())>=0){
+                    outPutQtyToal=outPutQtyToal.add(processFinishedProductDTO.getCurOutputQty());
+                    processFinishedProductDTO.setCurOutputQty(new BigDecimal(0));
+                }else if(remainQty.compareTo(processFinishedProductDTO.getCurOutputQty())<0){
+                    outPutQtyToal=outPutQtyToal.add(remainQty);
+                    curOutPutQty=remainQty;
+                    processFinishedProductDTO.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().subtract(remainQty));
+                }
 
+            }
             if(outPutQtyToal.compareTo(startWorkQtyTotal)>0){
                 throw new BizErrorException("首工序报工不能大于开工数");
             }
@@ -585,6 +626,23 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 throw new BizErrorException("上工序未进行报工");
             }
             preProcessListProcesse=preProcessListProcesseList.get(preProcessListProcesseList.size()-1);
+            if(finishRemain){
+                //====本次报工数如果大于剩余报工数，则剩余报工数一次性全部报，如果小于剩余报工数，则正常进行
+                outPutQtyToal=outPutQtyToal.subtract(processFinishedProductDTO.getCurOutputQty());
+                BigDecimal remainQty=preProcessListProcesse.getOutputQuantity().subtract(outPutQtyToal);
+                if(remainQty.doubleValue()==0){
+                    return 1;
+                }
+                if(remainQty.compareTo(processFinishedProductDTO.getCurOutputQty())>=0){
+                    outPutQtyToal=outPutQtyToal.add(processFinishedProductDTO.getCurOutputQty());
+                    processFinishedProductDTO.setCurOutputQty(new BigDecimal(0));
+                }else if(remainQty.compareTo(processFinishedProductDTO.getCurOutputQty())<0){
+                    outPutQtyToal=outPutQtyToal.add(remainQty);
+                    curOutPutQty=remainQty;
+                    processFinishedProductDTO.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().subtract(remainQty));
+                }
+
+            }
             //中间工序报工，报工数不能大于上工序报工数
             if(outPutQtyToal.compareTo(preProcessListProcesse.getOutputQuantity())>0){
                 throw new BizErrorException("工序报工不能大于上工序报工数");
@@ -592,7 +650,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
 
         curProcessListProcesse.setStaffId(processFinishedProductDTO.getStaffId());
-        curProcessListProcesse.setCurOutputQty(processFinishedProductDTO.getCurOutputQty());
+        curProcessListProcesse.setCurOutputQty(curOutPutQty);
         curProcessListProcesse.setProcessType(processFinishedProductDTO.getProcessType());
         curProcessListProcesse.setStatus((processFinishedProductDTO.getOperation()));
         Date date = new Date();
@@ -646,6 +704,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
     /**
      * 工单流程卡报工
      * @param routeId
+     * @param preProcessId
      * @param processFinishedProductDTO
      * @return
      */
@@ -657,12 +716,51 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
             throw new BizErrorException("工单流转卡未找到部件流转卡");
         }
-        int result=0;//报工部件流程卡数
-        for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtoList) {
-            processFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
-            this.finishWork(routeId,preProcessId, processFinishedProductDTO);
+        //将找到的所有部件流程卡按照部件工单进行一个分类
+        Map<Long, List<SmtWorkOrderCardPoolDto>> map = smtWorkOrderCardPoolDtoList.stream().collect(Collectors.groupingBy(SmtWorkOrderCardPool::getWorkOrderId));
+        Set<Long> longSet = map.keySet();
+        int result=0;//进行过报工的流程卡
+        for (Long workOrderId : longSet) {
+            List<SmtWorkOrderCardPoolDto> temp = map.get(workOrderId);
+            //根据工单找到部件的用量
+            BigDecimal quantity = smtProcessListProcessMapper.getQuantityByWorkOrderId(workOrderId);
+            if(StringUtils.isEmpty(quantity) || quantity.doubleValue()==0){
+                throw new BizErrorException("当前工单部件用量错误："+workOrderId);
+            }
+            BigDecimal outPutQtyTotal=processFinishedProductDTO.getCurOutputQty().multiply(quantity);
+            //====计算当前部件的报工总数是否超出已开料部件的开料总数
+            BigDecimal startQtyTotal=new BigDecimal(0);
+            for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : temp) {
+                startQtyTotal=startQtyTotal.add(smtWorkOrderCardPoolDto.getOutPutQty());
+            }
+            if(outPutQtyTotal.compareTo(startQtyTotal)>0){
+                throw new BizErrorException("当前部件流程卡报工总数超出开料总数："+workOrderId);
+            }
+            //====
+            BigDecimal remainQty=new BigDecimal(0);
+            for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : temp) {
+                ProcessFinishedProductDTO tempProcessFinishedProductDTO = new ProcessFinishedProductDTO();
+                BeanUtils.autoFillEqFields(processFinishedProductDTO,tempProcessFinishedProductDTO);
+                tempProcessFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                tempProcessFinishedProductDTO.setCurOutputQty(outPutQtyTotal);
+                this.finishWork(routeId,preProcessId, tempProcessFinishedProductDTO,true);
+                remainQty=tempProcessFinishedProductDTO.getCurOutputQty();
+                if(remainQty.doubleValue()==0){
+                    result++;
+                    break;
+                }
+            }
+
+            //如果剩余数量变量，且不等于0，说明超报工了。如果是等于报工数，则认为该流程卡已经全部完成，跳过
+            if(remainQty.doubleValue()>0 && remainQty.compareTo(outPutQtyTotal)<0){
+                //当前流程卡全部报工完成后还有剩余，说明此次工单报工超出了
+                throw new BizErrorException("当前部件报工超报工："+remainQty.doubleValue()+"，工单："+workOrderId);
+            }
         }
-        return result;
+        if(result==0){
+            throw new BizErrorException("所有部件流程卡已经报工完成");
+        }
+        return 1;
     }
 
     @Override
