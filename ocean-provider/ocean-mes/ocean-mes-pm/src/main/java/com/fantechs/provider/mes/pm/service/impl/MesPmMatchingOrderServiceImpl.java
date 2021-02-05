@@ -154,7 +154,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     //通过部件流转卡ID获取质检单
                     QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), processId).getData();
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
-                        qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotal());
+                        qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
                     }
                 }
                 if (processId == -1){
@@ -322,7 +322,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 //通过部件流转卡ID获取质检单
                 QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), (long) 0).getData();
                 if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
-                    qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
+                    qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
                 }
             }
 
@@ -452,8 +452,11 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             //获取储位ID
             SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
             searchSmtStorageMaterial.setMaterialId(saveMesPmMatchingOrderDto.getMaterialId());
-            SmtStorageMaterial smtStorageMaterial = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData().get(0);
-
+            List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
+            if (StringUtils.isEmpty(smtStorageMaterials)){
+                throw new BizErrorException("该产品还未绑定储位");
+            }
+            SmtStorageMaterial smtStorageMaterial = smtStorageMaterials.get(0);
             wmsInFinishedProductDet.setStorageId(smtStorageMaterial.getStorageId());
             wmsInFinishedProductDet.setPlanInQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
             wmsInFinishedProductDet.setInQuantity(BigDecimal.valueOf(0));
