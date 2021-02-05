@@ -104,7 +104,6 @@ public class MesPmMatchingOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 

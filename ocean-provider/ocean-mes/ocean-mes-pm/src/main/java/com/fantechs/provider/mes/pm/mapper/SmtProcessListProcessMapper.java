@@ -11,6 +11,7 @@ import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -34,4 +35,6 @@ public interface SmtProcessListProcessMapper extends MyMapper<SmtProcessListProc
     SmtProcessListProcess findUp(Long processListProcessId,Long workOrderCardPoolId,Long processId);
     //查找流程卡对应的部件信息及产品信息
     MaterialAndPartsDTO findPartsInformation(Long workOrderCardPoolId);
+    //根据工单查询部件的用量
+    BigDecimal getQuantityByWorkOrderId(Long workOrderId);
 }

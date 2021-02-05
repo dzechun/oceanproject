@@ -17,6 +17,7 @@ import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterialdDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -189,21 +190,58 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         Map map = new HashMap();
         map.put("workOrderCardPoolId",qmsQualityConfirmation.getWorkOrderCardPoolId());
         map.put("processId",qmsQualityConfirmation.getProcessId());
+        //如果是成品抽检就打印条码
+        if (StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) && (type == null || type != 3)){
+            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+            searchSmtWorkOrder.setWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
+            List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            if(StringUtils.isNotEmpty(workOrderList)){
+                //获取成品工艺路线
+                List<SmtRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+                //判断成品抽检的工序是否是最后一道工序
+                if (StringUtils.isNotEmpty(routeProcesses) && routeProcesses.get(routeProcesses.size()-1).getProcessId() == qmsQualityConfirmation.getProcessId()){
+                    //打印成品条码
+                }
+            }
+        }
+
         if (type != null && type == 3){
+            if (qmsQualityConfirmation.getQualityType() == 1){
+                qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
+                qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
+                if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
+                    QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
+                    qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal()==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotal()));
+                }
+            }
+
             map.put("workOrderCardPoolId",smtWorkOrderCardPool.getParentId());
             qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
+
             QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
             qmsQualityConfirmationDto.setQualifiedQuantity(qmsQualityConfirmationDto.getQualifiedQuantity().add(qmsQualityConfirmation.getQualifiedQuantity()));
             qmsQualityConfirmationDto.setUnqualifiedQuantity(qmsQualityConfirmationDto.getUnqualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
+            qmsQualityConfirmationDto.setQualityType((byte) 1);
+
             qmsQualityConfirmationMapper.updateByPrimaryKey(qmsQualityConfirmationDto);
+            qmsQualityConfirmation.setCreateTime(new Date());
+            qmsQualityConfirmation.setCreateUserId(user.getUserId());
+            qmsQualityConfirmation.setModifiedTime(new Date());
+            qmsQualityConfirmation.setModifiedUserId(user.getUserId());
+            qmsQualityConfirmation.setStatus(StringUtils.isEmpty(qmsQualityConfirmation.getStatus())?1:qmsQualityConfirmation.getStatus());
+            qmsQualityConfirmation.setOrganizationId(user.getOrganizationId());
+            qmsQualityConfirmation.setQualityConfirmationCode(CodeUtils.getId("PZQR"));
             i = qmsQualityConfirmationMapper.insertUseGeneratedKeys(qmsQualityConfirmation);
         } else if (qmsQualityConfirmation.getQualityConfirmationId() == null ||qmsQualityConfirmation.getQualityConfirmationId() == 0){
-            qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
-            qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity());
-            if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
-                QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
-                qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmationDto.getTotal()));
+            if (qmsQualityConfirmation.getQualityType() == 1){
+                qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
+                qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
+                if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
+                    QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
+                    qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal() ==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotal()));
+                }
             }
+
             qmsQualityConfirmation.setCreateTime(new Date());
             qmsQualityConfirmation.setCreateUserId(user.getUserId());
             qmsQualityConfirmation.setModifiedTime(new Date());
@@ -277,6 +315,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
 
         if (minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
+
             SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
             searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
             List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
@@ -353,7 +392,23 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
             wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
             wmsOutProductionMaterial.setProLineId(pmMasterPlanList.get(0).getProLineId());
-            outFeignApi.outProductionMaterialAdd(wmsOutProductionMaterial);
+            wmsOutProductionMaterial = outFeignApi.outProductionMaterialAdd(wmsOutProductionMaterial).getData();
+
+            if (wmsOutProductionMaterial != null){
+                searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+                searchSmtWorkOrderCardPool.setParentId(smtWorkOrderCardPool.getParentId());
+                List<SmtWorkOrderCardPoolDto> workOrderCardPoolDtoList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+                if (StringUtils.isNotEmpty(workOrderCardPoolDtoList)){
+                    for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : workOrderCardPoolDtoList) {
+                        WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = new WmsOutProductionMaterialdDet();
+                        wmsOutProductionMaterialdDet.setProductionMaterialId(wmsOutProductionMaterial.getProductionMaterialId());
+                        wmsOutProductionMaterialdDet.setMaterialId(smtWorkOrderCardPoolDto.getMaterialId());
+                        wmsOutProductionMaterialdDet.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
+                        wmsOutProductionMaterialdDet.setRealityQty(minMatchingQuantity);
+                        outFeignApi.add(wmsOutProductionMaterialdDet);
+                    }
+                }
+            }
         }
 
         return i;
@@ -471,12 +526,12 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 continue;
             }
             SmtProcessListProcessDto processListProcess = processListProcessList.get(0);
-            BigDecimal divide = processListProcess.getOutputQuantity().divide(basePlatePartsDetDto.getQuantity());
+            BigDecimal divide = processListProcess.getOutputQuantity().divide(basePlatePartsDetDto.getQuantity(),0);
             if (quantity == null){
                 quantity = divide;
                 continue;
             }
-            if(divide.compareTo(quantity) > -1){
+            if(quantity.compareTo(divide) > -1){
                 quantity=divide;
             }
         }
@@ -491,7 +546,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 BigDecimal add = list.get(0).getQualifiedQuantity().add(list.get(0).getUnqualifiedQuantity());
                 quantity = quantity.subtract(add);
             }
-            if(quantity.compareTo(new BigDecimal(0)) > -1){
+            if(quantity.compareTo(new BigDecimal(0)) < 1){
                 quantity=new BigDecimal(0);
             }
         }
