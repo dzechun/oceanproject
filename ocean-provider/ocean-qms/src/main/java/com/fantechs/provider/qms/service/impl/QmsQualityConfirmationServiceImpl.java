@@ -209,9 +209,11 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (qmsQualityConfirmation.getQualityType() == 1){
                 qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
                 qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
+                qmsQualityConfirmation.setTotalQualified(qmsQualityConfirmation.getQualifiedQuantity());
                 if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
                     QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
                     qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal()==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotal()));
+                    qmsQualityConfirmation.setTotalQualified(qmsQualityConfirmation.getTotalQualified().add(qmsQualityConfirmationDto.getTotalQualified()==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotalQualified()));
                 }
             }
 
@@ -236,9 +238,11 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (qmsQualityConfirmation.getQualityType() == 1){
                 qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
                 qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
+                qmsQualityConfirmation.setTotalQualified(qmsQualityConfirmation.getQualifiedQuantity());
                 if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
                     QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
                     qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal() ==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotal()));
+                    qmsQualityConfirmation.setTotalQualified(qmsQualityConfirmation.getTotalQualified().add(qmsQualityConfirmationDto.getTotalQualified()==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotalQualified()));
                 }
             }
 
