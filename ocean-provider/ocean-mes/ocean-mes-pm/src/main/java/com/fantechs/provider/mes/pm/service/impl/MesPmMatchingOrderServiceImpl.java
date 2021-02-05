@@ -75,7 +75,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     }
 
     @Override
-    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long processId) {
+    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId) {
 
 
         //通过流转卡号获取流转卡信息
@@ -84,35 +84,8 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             throw new BizErrorException("无法获取该流转卡的相应信息");
         }
 
-        if (processId == null || processId == 0) {
-            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(processListWorkOrderDTO.getWorkOrderCardPoolId());
-            List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
-            if (StringUtils.isEmpty(workOrderCardPoolList)) {
-                throw new BizErrorException("未找到流程单信息");
-            }
-
-            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-            searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
-            List<SmtWorkOrderDto> workOrderList = smtWorkOrderMapper.findList(searchSmtWorkOrder);
-            if (StringUtils.isEmpty(workOrderList)) {
-                throw new BizErrorException("未找到流程单的工单信息");
-            }
-
-            List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
-            if (StringUtils.isEmpty(routeProcessList)) {
-                throw new BizErrorException("未找到工艺路线信息");
-            }
-            for (int i = routeProcessList.size() - 1; i >= 0; i--) {
-                SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
-                if (StringUtils.isNotEmpty(process) && process.getIsQuality() == 1) {
-                    processId = process.getProcessId();
-                    break;
-                }
-            }
-
-        }
-
+        boolean b = true;
+        Long processId = Long.valueOf(-1);
 
         //父id为0则该流转卡为工单流转卡
         if (0 == processListWorkOrderDTO.getParentId()) {
@@ -133,11 +106,59 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
 
                 BigDecimal qualifiedQuantity = new BigDecimal(0);//保存同一部件的质检合格数
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
+
+                    if (sectionId == null || sectionId == 0) {
+                        b = false;
+                        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool1 = new SearchSmtWorkOrderCardPool();
+                        searchSmtWorkOrderCardPool1.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                        List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool1);
+                        if (StringUtils.isEmpty(workOrderCardPoolList)) {
+                            throw new BizErrorException("未找到流程单信息");
+                        }
+
+                        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+                        searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
+                        List<SmtWorkOrderDto> workOrderList = smtWorkOrderMapper.findList(searchSmtWorkOrder);
+                        if (StringUtils.isEmpty(workOrderList)) {
+                            throw new BizErrorException("未找到流程单的工单信息");
+                        }
+
+                        List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+                        if (StringUtils.isEmpty(routeProcessList)) {
+                            throw new BizErrorException("未找到工艺路线信息");
+                        }
+                        for (int i = routeProcessList.size() - 1; i >= 0; i--) {
+                            SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                            if (StringUtils.isNotEmpty(process) && process.getIsQuality() == 1) {
+                                processId = process.getProcessId();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (b){
+                        Long routeId = smtWorkOrderCardPoolDto.getRouteId();
+                        List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(routeId).getData();
+                        if (StringUtils.isEmpty(routeProcessList)) {
+                            throw new BizErrorException("未找到工艺路线信息");
+                        }
+                        for (int i = routeProcessList.size() - 1; i >= 0; i--) {
+                            //SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                            if (routeProcessList.get(i).getSectionId() == sectionId) {
+                                processId = routeProcessList.get(i).getProcessId();
+                                break;
+                            }
+                        }
+                    }
+
                     //通过部件流转卡ID获取质检单
                     QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), processId).getData();
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
-                        qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getQualifiedQuantity());
+                        qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotal());
                     }
+                }
+                if (processId == -1){
+                    continue;
                 }
 
                 /*//判断该部件的配套明细是否存在
