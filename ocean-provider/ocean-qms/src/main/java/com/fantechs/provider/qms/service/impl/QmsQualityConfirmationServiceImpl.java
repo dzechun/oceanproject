@@ -320,7 +320,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             }
         }
 
-        if (minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
+        if (minMatchingQuantity != null && minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
             System.out.println("生成生产领料计划");
             SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
             searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
@@ -358,7 +358,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (StringUtils.isEmpty(pmMasterPlanList)){
                 throw new BizErrorException("未找到产品工单的月计划");
             }
-
+            alreadyMatchingQuantity = alreadyMatchingQuantity == null ? new BigDecimal(0):alreadyMatchingQuantity;
             BigDecimal quantity = minMatchingQuantity.subtract(alreadyMatchingQuantity);
             if (quantity.compareTo(new BigDecimal(0)) < 1){
                 return i;
