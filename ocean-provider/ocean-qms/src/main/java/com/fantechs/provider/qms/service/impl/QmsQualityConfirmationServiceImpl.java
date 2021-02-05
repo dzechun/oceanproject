@@ -313,8 +313,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 SmtProcess process = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId()).getData();
                 if (StringUtils.isNotEmpty(process)){
                     MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(),process.getSectionId()).getData();
-                    minMatchingQuantity = matchingDto.getMinMatchingQuantity();
-                    alreadyMatchingQuantity = matchingDto.getAlreadyMatchingQuantity();
+                    if (matchingDto != null){
+                        minMatchingQuantity = matchingDto.getMinMatchingQuantity();
+                        alreadyMatchingQuantity = matchingDto.getAlreadyMatchingQuantity();
+                    }
                 }
 
             }
