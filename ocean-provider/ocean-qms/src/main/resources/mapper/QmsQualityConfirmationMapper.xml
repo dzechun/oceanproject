@@ -11,6 +11,7 @@
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="quality_type" jdbcType="TINYINT" property="qualityType" />
     <result column="total" jdbcType="DECIMAL" property="total"/>
+    <result column="total_qualified" jdbcType="DECIMAL" property="totalQualified"/>
     <result column="quantity_declared" jdbcType="DECIMAL" property="quantityDeclared"/>
     <result column="qualified_quantity" jdbcType="DECIMAL" property="qualifiedQuantity" />
     <result column="unqualified_quantity" jdbcType="DECIMAL" property="unqualifiedQuantity" />
@@ -62,7 +63,7 @@
     qqc.affirm_status,
     qqc.status,qqc.create_user_id,qqc.create_time,
     qqc.modified_user_id,qqc.modified_time,qqc.is_delete, qqc.organization_id,qqc.remark,
-    qqc.total,qqc.quantity_declared
+    qqc.total,qqc.quantity_declared,qqc.total_qualified
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
