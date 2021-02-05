@@ -202,7 +202,12 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 if (StringUtils.isNotEmpty(routeProcesses) && routeProcesses.get(routeProcesses.size()-1).getProcessId() == qmsQualityConfirmation.getProcessId()){
                     //打印成品条码
                 }
+                //修改工单状态
+                if(workOrderList.get(0).getWorkOrderQuantity().compareTo(qmsQualityConfirmation.getQualifiedQuantity()) == 0){
+                    pmFeignApi.updateStatus(workOrderList.get(0).getWorkOrderId(),4);
+                }
             }
+
         }
 
         if (type != null && type == 3){
@@ -316,7 +321,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (workOrderCardPoolDto.getParentId() == null || workOrderCardPoolDto.getParentId() == 0 ){
                 SmtProcess process = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId()).getData();
                 if (StringUtils.isNotEmpty(process)){
-                    MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(),process.getSectionId()).getData();
+                    MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(),process.getSectionId(),qmsQualityConfirmation.getTotalQualified()==null?new BigDecimal(0):qmsQualityConfirmation.getTotalQualified()).getData();
                     if (matchingDto != null){
                         minMatchingQuantity = matchingDto.getMinMatchingQuantity();
                         alreadyMatchingQuantity = matchingDto.getAlreadyMatchingQuantity();
