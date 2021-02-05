@@ -168,5 +168,5 @@ public interface PMFeignApi {
 
     @ApiOperation("获取最小齐套数")
     @PostMapping("/mesPmMatchingOrder/findMinMatchingQuantity")
-    ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long processId);
+    ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long sectionId);
 }
