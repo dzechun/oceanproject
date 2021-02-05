@@ -211,7 +211,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
                 if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
                     QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
-                    qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal()));
+                    qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal()==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotal()));
                 }
             }
 
@@ -238,7 +238,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
                 if (StringUtils.isNotEmpty(qualityConfirmationDtos)){
                     QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
-                    qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal()));
+                    qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getTotal().add(qmsQualityConfirmationDto.getTotal() ==null?new BigDecimal(0):qmsQualityConfirmationDto.getTotal()));
                 }
             }
 
