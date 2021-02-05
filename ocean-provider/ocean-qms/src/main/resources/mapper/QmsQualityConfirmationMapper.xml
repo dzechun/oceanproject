@@ -67,10 +67,14 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,sus.user_name AS person_name,
-    swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,sm.material_desc,sm.material_code,spm.product_model_name,
-    sswo.material_id,bt.main_unit AS unit,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
-    sp.process_name,sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,qqc.process_id,qqc.qualified_quantity+qqc.unqualified_quantity AS quantity,
-    swo.material_id AS parts_information_id,sswo.production_quantity
+    swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,
+    sswo.material_id,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
+    sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,qqc.process_id,qqc.qualified_quantity+qqc.unqualified_quantity AS quantity,
+    swo.material_id AS parts_information_id,sswo.production_quantity,sp.process_name,
+    (CASE WHEN swo.parent_id = 0 THEN sbt.main_unit WHEN swo.parent_id != 0 THEN bt.main_unit END) AS unit,
+    (CASE WHEN swo.parent_id = 0 THEN ssm.material_desc WHEN swo.parent_id != 0 THEN sm.material_desc END),
+    (CASE WHEN swo.parent_id = 0 THEN ssm.material_code WHEN swo.parent_id != 0 THEN sm.material_code END),
+    (CASE WHEN swo.parent_id = 0 THEN sspm.product_model_name WHEN swo.parent_id != 0 THEN spm.product_model_name END)
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
@@ -83,11 +87,16 @@
     LEFT JOIN fantech_imes.smt_work_order sswo ON sswo.work_order_id = sswocp.work_order_id
     LEFT JOIN fantech_imes.base_plate_parts bpp ON bpp.material_id = sswo.material_id
     LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_id = bpp.plate_parts_id AND bppd.parts_information_id = bbppd.parts_information_id
-    LEFT JOIN fantech_imes.smt_material sm ON sswo.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_process sp ON qqc.process_id = sp.process_id
     LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+
+    LEFT JOIN fantech_imes.smt_material sm ON sswo.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_material ssm ON swo.material_id = ssm.material_id
     LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+
+    LEFT JOIN fantech_imes.base_tab sbt ON sbt.material_id = ssm.material_id
+    LEFT JOIN fantech_imes.smt_product_model sspm ON sspm.product_model_id = sbt.product_model_id
     LEFT JOIN fantech_imes.smt_dept sd ON sd.dept_id = su.dept_id
     <where>
       <if test="qualityConfirmationId != null and qualityConfirmationId != ''">
@@ -118,7 +127,7 @@
         and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(qqc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
     order by create_time desc
@@ -131,12 +140,12 @@
           where splp.process_id = #{processId}
             and splp.work_order_card_pool_id = #{workOrderCardPoolId}
             and splp.process_type = 2
-            and splp.status = 2 order by create_time desc limit 1
+            and splp.status = 2 order by outbound_time desc limit 1
           )
           <if test="qualityType != null and qualityType!= '' and qualityType == 1">
             -
             (
-            select ifnull(sum(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
+            select ifnull( max(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
             where qqc.process_id = #{processId} and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
             and qqc.quality_type = 1 and qqc.affirm_status = 2 order by create_time desc limit 1
             )

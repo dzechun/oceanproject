@@ -11,9 +11,11 @@ import com.fantechs.provider.wms.out.mapper.WmsOutProductionMaterialdDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutProductionMaterialdDetService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -40,9 +42,19 @@ public class WmsOutProductionMaterialdDetServiceImpl extends BaseService<WmsOutP
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        wmsOutProductionMaterialdDet.setOrganizationId(user.getOrganizationId());
-        wmsOutProductionMaterialdDet.setCreateUserId(user.getCreateUserId());
-        wmsOutProductionMaterialdDet.setCreateTime(new Date());
-        return wmsOutProductionMaterialdDetMapper.insertSelective(wmsOutProductionMaterialdDet);
+
+        Example ex = new Example(WmsOutProductionMaterialdDet.class);
+        ex.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterialdDet.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterialdDet.getMaterialId());
+        List<WmsOutProductionMaterialdDet> wmsOutProductionMaterialdDets = wmsOutProductionMaterialdDetMapper.selectByExample(ex);
+        if(wmsOutProductionMaterialdDets.size() > 0){
+            wmsOutProductionMaterialdDets.get(0).setRealityQty(wmsOutProductionMaterialdDets.get(0).getRealityQty().add(wmsOutProductionMaterialdDet.getRealityQty()));
+            wmsOutProductionMaterialdDetMapper.updateByPrimaryKeySelective(wmsOutProductionMaterialdDets.get(0));
+        } else {
+            wmsOutProductionMaterialdDet.setOrganizationId(user.getOrganizationId());
+            wmsOutProductionMaterialdDet.setCreateUserId(user.getCreateUserId());
+            wmsOutProductionMaterialdDet.setCreateTime(new Date());
+            return wmsOutProductionMaterialdDetMapper.insertSelective(wmsOutProductionMaterialdDet);
+        }
+        return 1;
     }
 }
