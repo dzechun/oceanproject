@@ -86,9 +86,9 @@ public class MesPmMatchingOrderController {
 
     @ApiOperation("获取最小齐套数")
     @PostMapping("/findMinMatchingQuantity")
-    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long processId) {
+    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long sectionId) {
 
-        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId,processId);
+        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId,sectionId);
         return ControllerUtil.returnSuccess("",mesPmMatchingDto);
     }
 }
