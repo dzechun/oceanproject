@@ -306,11 +306,15 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("未找到产品流转卡信息");
             }
             workOrderCardPoolDto = parentWorkOrderCardPoolList.get(0);
-        }else {
+        }else if (qmsQualityConfirmation.getQualityType() != null && qmsQualityConfirmation.getQualityType() == 1) {
 
             if (workOrderCardPoolDto.getParentId() == null || workOrderCardPoolDto.getParentId() == 0 ){
-                MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(), qmsQualityConfirmation.getProcessId()).getData();
-                minMatchingQuantity = matchingDto.getMinMatchingQuantity();
+                SmtProcess process = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId()).getData();
+                if (StringUtils.isNotEmpty(process)){
+                    MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(),process.getSectionId()).getData();
+                    minMatchingQuantity = matchingDto.getMinMatchingQuantity();
+                }
+
             }
         }
 

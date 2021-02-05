@@ -67,14 +67,15 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,sus.user_name AS person_name,
-    swo.work_order_id,swo.work_order_code,swocp.work_order_card_id,
+    swo.work_order_id,swocp.work_order_card_id,
     sswo.material_id,bpi.parts_information_name,sd.dept_name,su.user_name AS personName,
     sws.section_name,bppd.quantity AS dosage,sswo.production_quantity,bppd.route_id,qqc.process_id,qqc.qualified_quantity+qqc.unqualified_quantity AS quantity,
     swo.material_id AS parts_information_id,sswo.production_quantity,sp.process_name,
+    (CASE WHEN swo.parent_id = 0 THEN sswo.work_order_code WHEN swo.parent_id != 0 THEN swo.work_order_code END) AS work_order_code,
     (CASE WHEN swo.parent_id = 0 THEN sbt.main_unit WHEN swo.parent_id != 0 THEN bt.main_unit END) AS unit,
-    (CASE WHEN swo.parent_id = 0 THEN ssm.material_desc WHEN swo.parent_id != 0 THEN sm.material_desc END),
-    (CASE WHEN swo.parent_id = 0 THEN ssm.material_code WHEN swo.parent_id != 0 THEN sm.material_code END),
-    (CASE WHEN swo.parent_id = 0 THEN sspm.product_model_name WHEN swo.parent_id != 0 THEN spm.product_model_name END)
+    (CASE WHEN swo.parent_id = 0 THEN ssm.material_desc WHEN swo.parent_id != 0 THEN sm.material_desc END) AS material_desc,
+    (CASE WHEN swo.parent_id = 0 THEN ssm.material_code WHEN swo.parent_id != 0 THEN sm.material_code END) AS material_code,
+    (CASE WHEN swo.parent_id = 0 THEN sspm.product_model_name WHEN swo.parent_id != 0 THEN spm.product_model_name END) AS product_model_name
     from fantech_imes.qms_quality_confirmation qqc
     LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
