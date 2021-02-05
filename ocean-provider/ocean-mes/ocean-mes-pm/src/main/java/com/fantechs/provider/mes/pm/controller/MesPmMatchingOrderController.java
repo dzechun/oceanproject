@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -86,9 +87,9 @@ public class MesPmMatchingOrderController {
 
     @ApiOperation("获取最小齐套数")
     @PostMapping("/findMinMatchingQuantity")
-    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId,@ApiParam(value = "工序ID")@RequestParam long sectionId) {
+    public ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId, @ApiParam(value = "工段ID")@RequestParam long sectionId,@ApiParam(value = "数量")@RequestParam BigDecimal qualityQuantity) {
 
-        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId,sectionId);
+        MesPmMatchingDto mesPmMatchingDto = mesPmMatchingOrderService.findMinMatchingQuantity(workOrderCardId,sectionId,qualityQuantity);
         return ControllerUtil.returnSuccess("",mesPmMatchingDto);
     }
 }
