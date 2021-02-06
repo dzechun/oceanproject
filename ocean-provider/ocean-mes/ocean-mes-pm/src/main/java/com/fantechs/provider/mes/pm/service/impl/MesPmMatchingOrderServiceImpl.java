@@ -203,7 +203,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     minMatchingQuantitys.add(minMatchingQuantity);
                     continue;
                 } else {
-                    BigDecimal minMatchingQuantity = qualifiedQuantity.divide(quantity, 0, RoundingMode.HALF_UP); //最小齐套数
+                    BigDecimal minMatchingQuantity = qualifiedQuantity.divide(quantity, 0, BigDecimal.ROUND_DOWN); //最小齐套数
                     minMatchingQuantitys.add(minMatchingQuantity);
                 }
 
