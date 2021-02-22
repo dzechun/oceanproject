@@ -43,6 +43,12 @@ public class SearchWmsOutProductionMaterial extends BaseQuery implements Seriali
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     private String warehouseName;
 
+    /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    private Long workOrderId;
+
 
 
 

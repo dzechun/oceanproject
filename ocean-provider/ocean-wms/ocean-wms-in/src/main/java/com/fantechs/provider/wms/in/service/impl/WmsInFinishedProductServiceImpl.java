@@ -257,7 +257,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
 
         //获取最新子表数据判断主表状态
         Map<String, Object> map = new HashMap();
-        map.put("finishedProductCode", wmsInFinishedProduct.getFinishedProductId());
+        map.put("finishedProductId", wmsInFinishedProduct.getFinishedProductId());
         List<WmsInFinishedProductDetDto> wmsInFinishedProductDets = wmsInFinishedProductDetMapper.findList(map);
 
         Boolean flag = true;

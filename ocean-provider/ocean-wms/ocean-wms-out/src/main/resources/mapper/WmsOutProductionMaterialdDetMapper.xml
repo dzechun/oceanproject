@@ -11,6 +11,7 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="reality_qty" jdbcType="DECIMAL" property="realityQty" />
     <result column="scan_qty" jdbcType="DECIMAL" property="scanQty" />
+    <result column="use_qty" jdbcType="DECIMAL" property="useQty" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
