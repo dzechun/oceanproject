@@ -81,7 +81,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 map.put("workOrderCardPoolId",qmsQualityConfirmationDto.getWorkOrderCardPoolId());
                 map.put("processId",qmsQualityConfirmationDto.getProcessId());
                 map.put("qualityType",qmsQualityConfirmationDto.getQualityType());
-                qmsQualityConfirmationDto.setQuantity(new BigDecimal(this.updateQuantity(map)));
+
+                Integer quantity = this.updateQuantity(map);
+                qmsQualityConfirmationDto.setQuantity(new BigDecimal(quantity == null?0:quantity));
             }
 
             if (qmsQualityConfirmationDto.getRouteId() == null){
