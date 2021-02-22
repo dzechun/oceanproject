@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsPoorQualityDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.qms.QmsPoorQuality;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
@@ -18,6 +19,7 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterialdDet;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutProductionMaterial;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -324,14 +326,23 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                     MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(),process.getSectionId(),qmsQualityConfirmation.getTotalQualified()==null?new BigDecimal(0):qmsQualityConfirmation.getTotalQualified()).getData();
                     if (matchingDto != null){
                         minMatchingQuantity = matchingDto.getMinMatchingQuantity();
-                        alreadyMatchingQuantity = matchingDto.getAlreadyMatchingQuantity();
+                        SearchWmsOutProductionMaterial searchWmsOutProductionMaterial = new SearchWmsOutProductionMaterial();
+                        searchWmsOutProductionMaterial.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+                        List<WmsOutProductionMaterialDto> outProductionMaterialList = outFeignApi.findList(searchWmsOutProductionMaterial).getData();
+                        for (WmsOutProductionMaterialDto wmsOutProductionMaterialDto : outProductionMaterialList) {
+                            alreadyMatchingQuantity = alreadyMatchingQuantity.add(wmsOutProductionMaterialDto.getPlanQty());
+                        }
                     }
                 }
 
             }
         }
 
-        if (minMatchingQuantity != null && minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
+        alreadyMatchingQuantity = alreadyMatchingQuantity == null ? new BigDecimal(0):alreadyMatchingQuantity;
+        minMatchingQuantity = minMatchingQuantity == null ? new BigDecimal(0):minMatchingQuantity;
+
+        BigDecimal quantity = minMatchingQuantity.subtract(alreadyMatchingQuantity);
+        if (!(quantity.compareTo(new BigDecimal(0)) < 1) && minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
             System.out.println("生成生产领料计划");
             SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
             searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
@@ -368,11 +379,6 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
             if (StringUtils.isEmpty(pmMasterPlanList)){
                 throw new BizErrorException("未找到产品工单的月计划");
-            }
-            alreadyMatchingQuantity = alreadyMatchingQuantity == null ? new BigDecimal(0):alreadyMatchingQuantity;
-            BigDecimal quantity = minMatchingQuantity.subtract(alreadyMatchingQuantity);
-            if (quantity.compareTo(new BigDecimal(0)) < 1){
-                return i;
             }
 
             //半成品完工入库
