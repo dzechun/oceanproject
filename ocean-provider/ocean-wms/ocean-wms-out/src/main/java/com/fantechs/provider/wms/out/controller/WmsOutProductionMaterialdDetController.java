@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/02/04.
  */
 @RestController
-@Api(tags = "wmsOutProductionMaterialdDet控制器")
+@Api(tags = "生产领料明细表（发料计划）控制器")
 @RequestMapping("/wmsOutProductionMaterialdDet")
 @Validated
 public class WmsOutProductionMaterialdDetController {
