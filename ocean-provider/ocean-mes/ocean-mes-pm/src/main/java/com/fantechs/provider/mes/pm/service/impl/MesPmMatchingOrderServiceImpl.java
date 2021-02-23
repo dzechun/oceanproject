@@ -161,7 +161,9 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                         switch2 = false;
                     }
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
-                        qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
+                        if (StringUtils.isNotEmpty(qmsQualityConfirmation.getTotalQualified())){
+                            qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
+                        }
                     }
                 }
                 if (processId == -1){
