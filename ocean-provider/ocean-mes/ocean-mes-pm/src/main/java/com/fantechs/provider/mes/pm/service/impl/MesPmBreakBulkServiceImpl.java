@@ -73,11 +73,11 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
         if(StringUtils.isEmpty(record.getMesPmBreakBulkDets())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
-        Example codeEx = new Example(MesPmBreakBulk.class);
-        codeEx.createCriteria().andEqualTo("batchNo",record.getBatchNo());
-        if(mesPmBreakBulkMapper.selectByExample(codeEx).size()>0 && record.getBreakBulkType()==(byte)1){
-            throw new BizErrorException("该流程单已经拆批");
-        }
+//        Example codeEx = new Example(MesPmBreakBulk.class);
+//        codeEx.createCriteria().andEqualTo("batchNo",record.getBatchNo());
+//        if(mesPmBreakBulkMapper.selectByExample(codeEx).size()>0 && record.getBreakBulkType()==(byte)1){
+//            throw new BizErrorException("该流程单已经拆批");
+//        }
         record.setBreakBulkCode(CodeUtils.getId("BREAK"));
         //合批作业生成母批次号
         if(record.getBreakBulkType()==(byte)2){
@@ -113,8 +113,9 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
 
         boolean isUp = false;
 
+        int counter = mesPmBreakBulkMapper.batchCount(record.getBatchNo());
         //添加明细
-        int i = 1;
+        int i = counter>0?counter:1;
         for (MesPmBreakBulkDet mesPmBreakBulkDet : record.getMesPmBreakBulkDets()) {
 
             //拆批作业生产子批次号≤µ˚≥

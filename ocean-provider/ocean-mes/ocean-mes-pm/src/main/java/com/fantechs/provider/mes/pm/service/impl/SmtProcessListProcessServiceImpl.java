@@ -245,13 +245,9 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
         List<SmtRouteProcess> preProcessList = result.getData();
         Long preProcessId=null;
-        Boolean isLastProcess=false;
         for (int i = 0; i < preProcessList.size(); i++) {
             SmtRouteProcess temp = preProcessList.get(i);
             if(temp.getProcessId()==processFinishedProductDTO.getProcessId() && i>0){
-                if(i==preProcessList.size()-1){
-                    isLastProcess=true;
-                }
 
                 //====找到上一个必过的工序
                 int tempI=i;
@@ -284,7 +280,12 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
         if(StringUtils.isEmpty(smtWorkOrderCardPool.getType()) || smtWorkOrderCardPool.getType()!=3){
             if(processFinishedProductDTO.getProcessType()==1) {
-                this.startWork(preProcessId,smtWorkOrder,processFinishedProductDTO,isLastProcess);
+                if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId()==0){
+                    //工单流程卡开工确认
+                    workOrderStartWork(preProcessId,processFinishedProductDTO);
+                    return 1;
+                }
+                this.startWork(preProcessId,smtWorkOrder,processFinishedProductDTO);
             }else if(processFinishedProductDTO.getProcessType()==2){
                 if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId()==0){
                     //工单流程卡报工
@@ -449,10 +450,9 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
      * @param preProcessId
      * @param smtWorkOrder
      * @param processFinishedProductDTO
-     * @param isLastProcess
      * @return
      */
-    private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO,boolean isLastProcess){
+    private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO){
         Long curProcessId=processFinishedProductDTO.getProcessId();
         Long routeId=smtWorkOrder.getRouteId();
         Long firstProcessIdWS = smtProcessListProcessMapper.firstProcessIdInWSection(curProcessId,routeId);
@@ -697,6 +697,31 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getMessage());
+        }
+        return 1;
+    }
+
+    /**
+     * 工单开工确认
+     * @param preProcessId
+     * @param processFinishedProductDTO
+     * @return
+     */
+    private int workOrderStartWork(Long preProcessId,ProcessFinishedProductDTO processFinishedProductDTO){
+        //工单流程卡开工确认即对所有的部件流程卡进行开工确认
+        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+        searchSmtWorkOrderCardPool.setParentId(processFinishedProductDTO.getWorkOrderCardPoolId());
+        List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+        if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
+            throw new BizErrorException("工单流转卡未找到部件流转卡");
+        }
+        for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtoList) {
+            SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
+            //根据工单找到部件的用量
+            BigDecimal quantity = smtProcessListProcessMapper.getQuantityByWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
+            processFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+            processFinishedProductDTO.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().multiply(quantity));
+            startWork(preProcessId,smtWorkOrder,processFinishedProductDTO);
         }
         return 1;
     }

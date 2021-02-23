@@ -10,6 +10,7 @@
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
     <result column="reality_qty" jdbcType="DECIMAL" property="realityQty" />
     <result column="out_time" jdbcType="TIMESTAMP" property="outTime" />
@@ -42,6 +43,7 @@
     pm.work_order_id,
     pm.pro_line_id,
     pm.material_id,
+    pm.process_id,
     pm.plan_qty,
     pm.reality_qty,
     pm.out_time,
@@ -92,6 +94,12 @@
       </if>
       <if test="warehouseName != null and warehouseName != ''">
         and  w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="workOrderId != null">
+        and  pm.work_order_id = #{workOrderId}
+      </if>
+      <if test="processId != null">
+        and  pm.process_id = #{processId}
       </if>
     </where>
     order by pm.create_time desc

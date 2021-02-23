@@ -59,6 +59,13 @@ public class WmsOutProductionMaterialdDet extends ValidGroup implements Serializ
     private Long materialId;
 
     /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
+
+    /**
      * 实发数量
      */
     @ApiModelProperty(name="realityQty",value = "实发数量")
@@ -73,6 +80,14 @@ public class WmsOutProductionMaterialdDet extends ValidGroup implements Serializ
     @Excel(name = "开工扫描数量", height = 20, width = 30,orderNum="") 
     @Column(name = "scan_qty")
     private BigDecimal scanQty;
+
+    /**
+     * 已配套数量
+     */
+    @ApiModelProperty(name="useQty",value = "已配套数量")
+    @Excel(name = "已配套数量", height = 20, width = 30,orderNum="")
+    @Column(name = "use_qty")
+    private BigDecimal useQty;
 
     /**
      * 组织id

@@ -20,4 +20,6 @@ public interface MesPmBreakBulkMapper extends MyMapper<MesPmBreakBulk> {
     MesPmBreakBulkPrintDto reprint(SearchMesPmBreakBulk searchMesPmBreakBulk);
 
     String confirmation(@Param("workOrderCardId") String workOrderCardId, @Param("processId") Long processId);
+
+    Integer batchCount(@Param("batchNo")String batchNo);
 }

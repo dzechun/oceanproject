@@ -38,6 +38,9 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="color" jdbcType="VARCHAR" property="color"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModuleName"/>
+        <result column="material_quality" jdbcType="VARCHAR" property="materialQuality"/>
   </resultMap>
 
  <sql id="Base_Column_List">
@@ -55,9 +58,9 @@
   pb.modified_user_id,
   pb.is_delete,
   pb.break_bulk_type,
-  bt.color AS 'color',
-spm.product_model_name AS 'productModelName',
-bt.material_quality AS 'materialQuality '
+  bt.color,
+spm.product_model_name,
+bt.material_quality
 </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk">
@@ -120,5 +123,9 @@ SELECT u.user_name FROM qms_quality_confirmation qc
 				LEFT JOIN smt_work_order_card_pool swocp ON qc.work_order_card_pool_id=swocp.work_order_card_pool_id
 				LEFT join ocean.sys_user u on qc.create_user_id=u.user_id
 				WHERE swocp.work_order_card_id=#{workOrderCardId} AND qc.process_id=#{processId}
+</select>
+
+<select id="batchCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+SELECT COUNT(*) FROM mes_pm_break_bulk_det bd LEFT JOIN mes_pm_break_bulk bb ON bd.break_bulk_id = bb.break_bulk_id WHERE bb.batch_no=#{batchNo}
 </select>
 </mapper>
