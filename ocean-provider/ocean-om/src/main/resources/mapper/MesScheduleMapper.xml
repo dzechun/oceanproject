@@ -31,6 +31,7 @@
         ms.schedule_id,
         ms.organization_id,
         ms.schedule_code,
+        ms.pro_line_id,
         ms.total,
         ms.finished,
         ms.`status`,
@@ -49,9 +50,7 @@
         fantech_imes.mes_schedule AS ms
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = ms.create_user_id
         LEFT JOIN ocean.sys_user su2 ON su2.user_id = ms.modified_user_id
-        LEFT JOIN fantech_imes.mes_schedule_detail msd ON msd.schedule_id = ms.schedule_id
-        LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = msd.work_order_id
-        LEFT JOIN fantech_imes.smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
+        LEFT JOIN fantech_imes.smt_pro_line spl ON spl.pro_line_id = ms.pro_line_id
         <where>
             <if test="proLineId != null and proLineId != ''">
                 and spl.pro_line_id = #{proLineId}
