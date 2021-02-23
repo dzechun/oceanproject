@@ -203,10 +203,10 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             if(StringUtils.isEmpty(smtOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"未找到订单数据");
             }
-            if(smtOrder.getStatus()==2){
+            if(smtOrder.getScheduleStatus()==2){
                 throw new BizErrorException("订单已完成排产");
             }
-            smtOrder.setStatus((byte)1);
+            smtOrder.setScheduleStatus((byte)1);
             if(smtOrderService.update(smtOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
@@ -227,13 +227,14 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             }
             //生成排产详情
             MesScheduleDetail mesScheduleDetail = new MesScheduleDetail();
-            mesScheduleDetail.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            mesScheduleDetail.setWorkOrderId((long)responseEntity.getData());
             mesScheduleDetail.setOrderId(smtOrder.getOrderId());
             mesScheduleDetailList.add(mesScheduleDetail);
             total+=mesOrderMaterialDTO.getTotal().doubleValue();
         }
         //生成排产单
         MesSchedule mesSchedule = new MesSchedule();
+        mesSchedule.setProLineId(proLineId);
         mesSchedule.setTotal(new BigDecimal(total));
         if(this.save(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);

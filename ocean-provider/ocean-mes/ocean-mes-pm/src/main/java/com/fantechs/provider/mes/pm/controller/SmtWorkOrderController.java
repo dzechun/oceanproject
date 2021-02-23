@@ -50,7 +50,8 @@ public class SmtWorkOrderController {
     @ApiOperation(value = "新增及更新工单及BOM",notes = "新增及更新工单及BOM")
     @PostMapping("/save")
     public ResponseEntity save(@ApiParam(value = "保存工单及工单BOM",required = true)@RequestBody SaveWorkOrderAndBom saveWorkOrderAndBom) {
-        return ControllerUtil.returnCRUD(smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom));
+        smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom);
+        return ControllerUtil.returnDataSuccess(saveWorkOrderAndBom.getSmtWorkOrder().getWorkOrderId(),1);
     }
 
     @ApiOperation("删除")

@@ -103,6 +103,9 @@
             <if test="status!=null">
                 and so.status=#{status}
             </if>
+            <if test="scheduleStatus!=null">
+                and so.schedule_status=#{scheduleStatus}
+            </if>
         AND so.is_delete = 1
         </where>
         order by so.modified_time desc

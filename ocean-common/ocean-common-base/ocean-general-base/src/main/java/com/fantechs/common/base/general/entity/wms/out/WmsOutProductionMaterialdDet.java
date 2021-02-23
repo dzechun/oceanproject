@@ -66,10 +66,17 @@ public class WmsOutProductionMaterialdDet extends ValidGroup implements Serializ
     private Long processId;
 
     /**
+     * 用量
+     */
+    @ApiModelProperty(name="quantity",value = "用量")
+    @Column(name = "quantity")
+    private BigDecimal quantity;
+
+    /**
      * 实发数量
      */
     @ApiModelProperty(name="realityQty",value = "实发数量")
-    @Excel(name = "实发数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "实发数量", height = 20, width = 30,orderNum="")
     @Column(name = "reality_qty")
     private BigDecimal realityQty;
 
