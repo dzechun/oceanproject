@@ -75,6 +75,14 @@ public class WmsOutProductionMaterialdDet extends ValidGroup implements Serializ
     private BigDecimal scanQty;
 
     /**
+     * 已配套数量
+     */
+    @ApiModelProperty(name="useQty",value = "已配套数量")
+    @Excel(name = "已配套数量", height = 20, width = 30,orderNum="")
+    @Column(name = "use_qty")
+    private BigDecimal useQty;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
