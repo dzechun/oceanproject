@@ -59,6 +59,13 @@ public class WmsOutProductionMaterialdDet extends ValidGroup implements Serializ
     private Long materialId;
 
     /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
+
+    /**
      * 实发数量
      */
     @ApiModelProperty(name="realityQty",value = "实发数量")

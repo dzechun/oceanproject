@@ -122,7 +122,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
             //计算发料数量
             Example example = new Example(WmsOutProductionMaterial.class);
-            example.createCriteria().andEqualTo("workOrderId", wmsOutProductionMaterial.getWorkOrderId()).andNotEqualTo("outStatus", (byte) 2);
+            example.createCriteria().andEqualTo("workOrderId", wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("processId",wmsOutProductionMaterial.getProcessId()).andNotEqualTo("outStatus", (byte) 2);
             example.setOrderByClause("create_time");
 
             List<WmsOutProductionMaterial> dataResources = wmsOutProductionMaterialMapper.selectByExample(example);
