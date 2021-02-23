@@ -720,9 +720,11 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
             //根据工单找到部件的用量
             BigDecimal quantity = smtProcessListProcessMapper.getQuantityByWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
-            processFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
-            processFinishedProductDTO.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().multiply(quantity));
-            startWork(preProcessId,smtWorkOrder,processFinishedProductDTO);
+            ProcessFinishedProductDTO temp = new ProcessFinishedProductDTO();
+            BeanUtils.autoFillEqFields(processFinishedProductDTO,temp);
+            temp.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+            temp.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().multiply(quantity));
+            startWork(preProcessId,smtWorkOrder,temp);
         }
         return 1;
     }
