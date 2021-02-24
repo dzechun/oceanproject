@@ -107,6 +107,7 @@ public class SmtOrderController {
                 smtOrderAndMaterialDTO.setSmtOrderDto(smtOrderDto);
                 SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
                 searchMesOrderMaterialListDTO.setOrderId(smtOrderDto.getOrderId());
+                searchMesOrderMaterialListDTO.setScheduleStatus((byte)0);
                 List<MesOrderMaterialDTO> orderMaterial = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
                 smtOrderAndMaterialDTO.setMesOrderMaterialDTOList(orderMaterial);
                 smtOrderAndMaterialDTOList.add(smtOrderAndMaterialDTO);

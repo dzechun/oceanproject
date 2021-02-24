@@ -39,27 +39,28 @@
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <resultMap id="MesOrderMaterialDTOMap" type="com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO">
-        <result column="order_material_id" jdbcType="BIGINT" property="orderMaterialId" />
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="order_id" jdbcType="BIGINT" property="orderId" />
-        <result column="material_id" jdbcType="BIGINT" property="materialId" />
-        <result column="total" jdbcType="DECIMAL" property="total" />
-        <result column="box_code" jdbcType="VARCHAR" property="boxCode" />
-        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
-        <result column="size" jdbcType="DECIMAL" property="size" />
-        <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight" />
-        <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
-        <result column="spec_file" jdbcType="VARCHAR" property="specFile" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="order_material_id" jdbcType="BIGINT" property="orderMaterialId"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="total" jdbcType="DECIMAL" property="total"/>
+        <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+        <result column="size" jdbcType="DECIMAL" property="size"/>
+        <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight"/>
+        <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
+        <result column="spec_file" jdbcType="VARCHAR" property="specFile"/>
+        <result column="schedule_status" jdbcType="TINYINT" property="scheduleStatus"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -69,7 +70,8 @@
     so.contract_code,so.order_date
   </sql>
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-        select<include refid="Base_Column_List"/>,sm.material_name, sm.material_code,sm.version,sm.material_desc,spm.product_model_name,
+        select<include refid="Base_Column_List"/>,sm.material_name,
+        sm.material_code,sm.version,sm.material_desc,spm.product_model_name,
         ss.supplier_name, bo.organization_name,
         u.user_name as create_user_name, s.user_name as modified_user_name
         from smt_order so
@@ -103,13 +105,20 @@
             <if test="status!=null">
                 and so.status=#{status}
             </if>
-        AND so.is_delete = 1
+            <if test="scheduleStatus !=null and scheduleStatus==4">
+                and (so.schedule_status= '0' or so.schedule_status= '1')
+            </if>
+            <if test="scheduleStatus !=null and scheduleStatus != 4">
+                and so.schedule_status=#{scheduleStatus}
+            </if>
+            AND so.is_delete = 1
         </where>
         order by so.modified_time desc
     </select>
 
-    <insert id="batchAddOrderMaterial" parameterType="java.util.List" >
-        insert into mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
+    <insert id="batchAddOrderMaterial" parameterType="java.util.List">
+        insert into
+        mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
         values
         <foreach collection="list" item="item" separator="," index="index">
             (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packingUnitName},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})
@@ -121,37 +130,37 @@
 
     <select id="findOrderMaterial" resultMap="MesOrderMaterialDTOMap">
         SELECT
-            mom.order_material_id,
-            mom.organization_id,
-            mom.order_id,
-            mom.material_id,
-            mom.total,
-            mom.box_code,
-            mom.packing_unit_name,
-            mom.size,
-            mom.rough_weight,
-            mom.net_weight,
-            mom.spec_file,
-            mom.is_delete,
-            mom.remark,
-            mom.create_user_id,
-            mom.create_time,
-            mom.modified_user_id,
-            mom.modified_time,
-            su1.user_name AS 'createUserName',
-            su2.user_name AS 'modifiedUserName',
-            spm.product_model_name AS 'productModelName',
-            sm.material_code AS 'materialCode',
-            sm.version AS 'version',
-            sm.material_desc AS 'materialDesc'
+        mom.order_material_id,
+        mom.organization_id,
+        mom.order_id,
+        mom.material_id,
+        mom.total,
+        mom.box_code,
+        mom.packing_unit_name,
+        mom.size,
+        mom.rough_weight,
+        mom.net_weight,
+        mom.spec_file,
+        mom.is_delete,
+        mom.remark,
+        mom.create_user_id,
+        mom.create_time,
+        mom.modified_user_id,
+        mom.modified_time,
+        su1.user_name AS 'createUserName',
+        su2.user_name AS 'modifiedUserName',
+        spm.product_model_name AS 'productModelName',
+        sm.material_code AS 'materialCode',
+        sm.version AS 'version',
+        sm.material_desc AS 'materialDesc'
         FROM
-            mes_order_material AS mom
-                LEFT JOIN ocean.sys_user su1 ON su1.user_id = mom.create_user_id
-                LEFT JOIN ocean.sys_user su2 ON su2.user_id = mom.modified_user_id
-                LEFT JOIN fantech_imes.base_organization bo ON mom.organization_id = bo.organization_id
-                LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
-                LEFT JOIN base_tab bt on bt.material_id = sm.material_id
-                LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        mes_order_material AS mom
+        LEFT JOIN ocean.sys_user su1 ON su1.user_id = mom.create_user_id
+        LEFT JOIN ocean.sys_user su2 ON su2.user_id = mom.modified_user_id
+        LEFT JOIN fantech_imes.base_organization bo ON mom.organization_id = bo.organization_id
+        LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
+        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
         <where>
             <if test="orderId != null and orderId !=''">
                 and mom.order_id = #{orderId}
@@ -159,9 +168,19 @@
             <if test="orderMaterialId != null and orderMaterialId !=''">
                 and mom.order_material_id = #{orderMaterialId}
             </if>
+            <if test="scheduleStatus != null">
+                and mom.schedule_status = #{scheduleStatus}
+            </if>
             AND mom.is_delete = 1
         </where>
         ORDER BY
-            mom.modified_time desc
+        mom.modified_time desc
     </select>
+
+    <update id="orderMaterialSchedule" parameterType="long">
+        UPDATE mes_order_material
+        SET schedule_status = 1
+        WHERE
+            order_material_id = #{orderMaterialId}
+    </update>
 </mapper>

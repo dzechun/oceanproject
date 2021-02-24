@@ -330,6 +330,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                         minMatchingQuantity = matchingDto.getMinMatchingQuantity();
                         SearchWmsOutProductionMaterial searchWmsOutProductionMaterial = new SearchWmsOutProductionMaterial();
                         searchWmsOutProductionMaterial.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+                        searchWmsOutProductionMaterial.setProcessId(qmsQualityConfirmation.getProcessId());
                         List<WmsOutProductionMaterialDto> outProductionMaterialList = outFeignApi.findList(searchWmsOutProductionMaterial).getData();
                         for (WmsOutProductionMaterialDto wmsOutProductionMaterialDto : outProductionMaterialList) {
                             alreadyMatchingQuantity = alreadyMatchingQuantity.add(wmsOutProductionMaterialDto.getPlanQty());
@@ -344,7 +345,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         minMatchingQuantity = minMatchingQuantity == null ? new BigDecimal(0):minMatchingQuantity;
 
         BigDecimal quantity = minMatchingQuantity.subtract(alreadyMatchingQuantity);
-        if (!(quantity.compareTo(new BigDecimal(0)) < 1) && minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
+        if (quantity.compareTo(new BigDecimal(0)) == 1 && minMatchingQuantity.compareTo(new BigDecimal(0)) == 1) {
             System.out.println("生成生产领料计划");
             SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
             searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
@@ -418,6 +419,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             wmsOutProductionMaterial.setMaterialId(workOrderBomDto.getPartMaterialId());
             wmsOutProductionMaterial.setPlanQty(quantity);
             wmsOutProductionMaterial.setRealityQty(new BigDecimal(0));
+            wmsOutProductionMaterial.setProcessId(qmsQualityConfirmation.getProcessId());
             wmsOutProductionMaterial.setOutTime(new Date());
             wmsOutProductionMaterial.setOutStatus(Byte.parseByte("0"));
             wmsOutProductionMaterial.setStorageId(data.get(0).getStorageId());
@@ -430,8 +432,13 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 List<SmtWorkOrderCardPoolDto> workOrderCardPoolDtoList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
                 if (StringUtils.isNotEmpty(workOrderCardPoolDtoList)){
                     for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : workOrderCardPoolDtoList) {
+                        SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
+                        searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderCardPoolDto.getMaterialId());
+                        List<BasePlatePartsDetDto> basePlatePartsDetDtos = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
                         WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = new WmsOutProductionMaterialdDet();
+                        wmsOutProductionMaterialdDet.setQuantity(basePlatePartsDetDtos.size() != 0?basePlatePartsDetDtos.get(0).getQuantity():new BigDecimal(1));
                         wmsOutProductionMaterialdDet.setProductionMaterialId(wmsOutProductionMaterial.getProductionMaterialId());
+                        wmsOutProductionMaterialdDet.setProcessId(qmsQualityConfirmation.getProcessId());
                         wmsOutProductionMaterialdDet.setMaterialId(smtWorkOrderCardPoolDto.getMaterialId());
                         wmsOutProductionMaterialdDet.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
                         wmsOutProductionMaterialdDet.setRealityQty(minMatchingQuantity);

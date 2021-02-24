@@ -200,7 +200,7 @@ public class ControllerUtil {
     public  static Boolean escapeExprSpecialWord(Object keyword) {
         boolean flag = false;
         if (StringUtils.isNotEmpty(keyword)) {
-            String[] fbsArr = { "\\","$","(",")","*","+",".","?","^","|","'","%" };
+            String[] fbsArr = { "\\","$","(",")","*","+","?","^","|","'","%" };
             for (String key : fbsArr) {
                 if(StringUtils.isEmpty(keyword)){
                     continue;

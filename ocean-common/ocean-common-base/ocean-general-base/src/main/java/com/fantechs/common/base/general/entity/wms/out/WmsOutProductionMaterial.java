@@ -64,6 +64,13 @@ public class WmsOutProductionMaterial extends ValidGroup implements Serializable
     private Long materialId;
 
     /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
+
+    /**
      * 计划发料数量
      */
     @ApiModelProperty(name="planQty",value = "计划发料数量")

@@ -18,4 +18,6 @@ public class SearchMesOrderMaterialListDTO extends BaseQuery implements Serializ
     private Long orderId;
     @ApiModelProperty(value = "订单物料ID",example = "订单物料ID")
     private Long orderMaterialId;
+    @ApiModelProperty(value = "排产状态（0、待排产 1、已排产）",example = "排产状态（0、待排产 1、已排产）")
+    private Byte scheduleStatus;
 }

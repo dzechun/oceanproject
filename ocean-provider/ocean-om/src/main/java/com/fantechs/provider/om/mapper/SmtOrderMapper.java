@@ -16,6 +16,7 @@ public interface SmtOrderMapper extends MyMapper<SmtOrder> {
     List<SmtOrderDto> findList(Map<String,Object> parm);
     int batchAddOrderMaterial(List<MesOrderMaterial> mesOrderMaterialList);
     int deleteMaterialByOrderId(long orderId);
+    int orderMaterialSchedule(Long orderMaterialId);
     //根据销售订单找到产品相关信息
     List<MesOrderMaterialDTO> findOrderMaterial(SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO);
 }

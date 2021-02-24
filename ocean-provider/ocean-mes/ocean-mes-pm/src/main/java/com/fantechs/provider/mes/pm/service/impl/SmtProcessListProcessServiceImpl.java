@@ -526,7 +526,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
         if(processFinishedProductDTO.getProcessType()==1 && processFinishedProductDTO.getOperation()==2){
             if(processFinishedProductDTO.getProcessId() == firstProcessIdWS && processFinishedProductDTO.getProcessId() != firstProcessIdR)
-                sendMaterial(smtWorkOrder.getWorkOrderId(),smtWorkOrder.getMaterialId(),processFinishedProductDTO.getCurOutputQty().doubleValue());
+                sendMaterial(preProcessId,smtWorkOrder.getWorkOrderId(),smtWorkOrder.getMaterialId(),processFinishedProductDTO.getCurOutputQty().doubleValue());
         }
         return 1;
     }
@@ -685,9 +685,10 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
      * @param outPutQty
      * @return
      */
-    private int sendMaterial(Long workOrderId,Long materialId,double outPutQty){
+    private int sendMaterial(Long preProcessId,Long workOrderId,Long materialId,double outPutQty){
         //工序开工需要进行发料计划实发数反写
         WmsOutProductionMaterial wmsOutProductionMaterial = new WmsOutProductionMaterial();
+        wmsOutProductionMaterial.setProcessId(preProcessId);
         wmsOutProductionMaterial.setWorkOrderId(workOrderId);
         wmsOutProductionMaterial.setMaterialId(materialId);
         wmsOutProductionMaterial.setRealityQty(new BigDecimal(outPutQty));
@@ -719,9 +720,11 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
             //根据工单找到部件的用量
             BigDecimal quantity = smtProcessListProcessMapper.getQuantityByWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
-            processFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
-            processFinishedProductDTO.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().multiply(quantity));
-            startWork(preProcessId,smtWorkOrder,processFinishedProductDTO);
+            ProcessFinishedProductDTO temp = new ProcessFinishedProductDTO();
+            BeanUtils.autoFillEqFields(processFinishedProductDTO,temp);
+            temp.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+            temp.setCurOutputQty(processFinishedProductDTO.getCurOutputQty().multiply(quantity));
+            startWork(preProcessId,smtWorkOrder,temp);
         }
         return 1;
     }
