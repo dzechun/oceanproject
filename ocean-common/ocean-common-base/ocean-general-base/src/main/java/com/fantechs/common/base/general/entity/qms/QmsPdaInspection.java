@@ -74,7 +74,6 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      * 单据类型（0、首检单 1、成品检验单）
      */
     @ApiModelProperty(name="documentsType",value = "单据类型（0、首检单 1、成品检验单）")
-    @Excel(name = "单据类型（0、首检单 1、成品检验单）", height = 20, width = 30,orderNum="6")
     @Column(name = "documents_type")
     private Byte documentsType;
 
