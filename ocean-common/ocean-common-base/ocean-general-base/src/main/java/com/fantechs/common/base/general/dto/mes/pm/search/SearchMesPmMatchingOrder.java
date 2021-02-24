@@ -31,4 +31,10 @@ public class SearchMesPmMatchingOrder extends BaseQuery implements Serializable 
     @ApiModelProperty(name="workOrderCode",value = "工单号")
     private String workOrderCode;
 
+    /**
+     * 工单Id
+     */
+    @ApiModelProperty(name="workOrderId",value = "工单Id")
+    private Long workOrderId;
+
 }
