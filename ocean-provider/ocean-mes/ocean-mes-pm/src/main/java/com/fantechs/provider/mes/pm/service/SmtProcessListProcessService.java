@@ -28,4 +28,5 @@ public interface SmtProcessListProcessService extends IService<SmtProcessListPro
     double findMinOutPut(Long workOrderCardPoolId);
     //查找流程卡对应的部件信息及产品信息
     MaterialAndPartsDTO findPartsInformation(Long workOrderCardPoolId);
+
 }

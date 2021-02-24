@@ -141,6 +141,7 @@
         mom.rough_weight,
         mom.net_weight,
         mom.spec_file,
+        mom.schedule_status,
         mom.is_delete,
         mom.remark,
         mom.create_user_id,

@@ -37,7 +37,7 @@ public class PDAWmsInStorageBillsController {
     private WmsInStorageBillsService wmsStorageBillsService;
 
     @ApiOperation("查询仓库清单表列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<WmsInStorageBillsDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchWmsStorageBillsListDTO searchWmsStorageBillsListDTO,
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
