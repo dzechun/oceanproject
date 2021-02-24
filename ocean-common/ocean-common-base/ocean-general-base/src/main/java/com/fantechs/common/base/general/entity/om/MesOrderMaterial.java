@@ -99,6 +99,14 @@ public class MesOrderMaterial implements Serializable {
     private String specFile;
 
     /**
+     * 排产状态（0、待排产 1、已排产）
+     */
+    @ApiModelProperty(value = "排产状态（0、待排产 1、已排产）",example = "排产状态（0、待排产 1、已排产）")
+    @Column(name = "schedule_status")
+    @Excel(name = "排产状态（0、待排产 1、已排产）")
+    private Byte scheduleStatus;
+
+    /**
     * 逻辑删除（0、删除 1、正常）
     */
     @ApiModelProperty(value = "逻辑删除（0、删除 1、正常）",example = "逻辑删除（0、删除 1、正常）")

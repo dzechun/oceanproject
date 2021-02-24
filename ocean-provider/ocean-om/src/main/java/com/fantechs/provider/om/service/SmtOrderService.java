@@ -19,7 +19,8 @@ import java.util.Map;
 public interface SmtOrderService extends IService<SmtOrder> {
 
     List<SmtOrderDto> findList(Map<String,Object> parm);
-
+    //修改订单物料为排产
+    int orderMaterialSchedule(Long orderMaterialId);
     //保存销售订单与产品相关
     int saveOrderMaterial(SaveOrderMaterialDTO saveOrderMaterialDTO);
     //根据销售订单找到产品相关信息

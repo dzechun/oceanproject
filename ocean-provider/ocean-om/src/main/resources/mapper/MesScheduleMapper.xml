@@ -5,6 +5,7 @@
         <result column="schedule_id" jdbcType="BIGINT" property="scheduleId"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="schedule_code" jdbcType="VARCHAR" property="scheduleCode"/>
+        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
         <result column="total" jdbcType="DECIMAL" property="total"/>
         <result column="finished" jdbcType="DECIMAL" property="finished"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
