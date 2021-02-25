@@ -18,4 +18,6 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
     List<SmtBarcodeRuleSpec> findBarcodeRule(Long packageSpecificationId);
     //查找条码打印总次数
     int findPrintBarcodeCount();
+    //查询还剩余可打印数量
+    int remainQty(Long workOrderId,int type);
 }

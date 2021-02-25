@@ -189,8 +189,11 @@
             <if test="workOrderCode!=null and workOrderCode!=''">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
-            <if test="workOrderStatus!=null and workOrderStatus!=''">
+            <if test="workOrderStatus!=null and workOrderStatus!=6">
                 and swo.work_order_status = #{workOrderStatus}
+            </if>
+            <if test="workOrderStatus!=null and workOrderStatus==6">
+                and (swo.work_order_status = 1 or swo.work_order_status = 2)
             </if>
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}
