@@ -18,7 +18,7 @@ import java.util.Map;
 public interface MesPmMatchingOrderService extends IService<MesPmMatchingOrder> {
     List<MesPmMatchingOrderDto> findList(Map<String, Object> map);
 
-    MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long processId,BigDecimal qualityQuantity);
+    MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long processId,BigDecimal qualityQuantity,Long workOrderCardPoolId);
 
     int save(SaveMesPmMatchingOrderDto saveMesPmMatchingOrderDto);
 

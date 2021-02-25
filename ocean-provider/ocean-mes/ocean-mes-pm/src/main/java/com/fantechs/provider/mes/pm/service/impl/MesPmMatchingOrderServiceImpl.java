@@ -75,7 +75,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     }
 
     @Override
-    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId,BigDecimal qualityQuantity) {
+    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId,BigDecimal qualityQuantity,Long workOrderCardPoolId) {
 
 
         //通过流转卡号获取流转卡信息
@@ -155,11 +155,16 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     //通过部件流转卡ID获取质检单
                     QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), processId).getData();
 
-                    if (StringUtils.isEmpty(qmsQualityConfirmation) && switch2){
+                    if (StringUtils.isEmpty(qmsQualityConfirmation)){
                         qmsQualityConfirmation = new QmsQualityConfirmation();
-                        qmsQualityConfirmation.setTotalQualified(qualityQuantity);
+                        qmsQualityConfirmation.setTotalQualified(BigDecimal.valueOf(0));
+                    }
+
+                    if (smtWorkOrderCardPoolDto.getWorkOrderCardPoolId().equals(workOrderCardPoolId) && switch2){
+                        qualifiedQuantity = qualifiedQuantity.add(qualityQuantity);
                         switch2 = false;
                     }
+
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
                         if (StringUtils.isNotEmpty(qmsQualityConfirmation.getTotalQualified())){
                             qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
