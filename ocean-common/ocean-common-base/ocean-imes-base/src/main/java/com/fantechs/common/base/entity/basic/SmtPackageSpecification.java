@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -69,7 +70,6 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Column(name = "material_id")
-    @NotNull(message = "物料ID不能为空")
     private Long materialId;
 
     /**
@@ -84,7 +84,6 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
      */
     @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
     @Column(name = "barcode_rule_id")
-    @NotNull(message = "条码规则ID不能为空")
     private Long barcodeRuleId;
 
     /**
@@ -92,7 +91,6 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
      */
     @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
     @Column(name = "packing_unit_id")
-    @NotNull(message = "包装单位ID不能为空")
     private Long packingUnitId;
 
     /**
@@ -172,6 +170,12 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
+
+    /**
+     * 包装规格物料关系集合
+     */
+    @ApiModelProperty(name="smtMaterialPackages",value = "包装规格物料关系集合")
+    private List<SmtMaterialPackage> smtMaterialPackages;
 
     private static final long serialVersionUID = 1L;
 }
