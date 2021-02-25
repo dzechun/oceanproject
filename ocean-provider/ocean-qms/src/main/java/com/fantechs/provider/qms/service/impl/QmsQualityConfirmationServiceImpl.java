@@ -237,6 +237,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             qmsQualityConfirmationMapper.updateByPrimaryKey(qmsQualityConfirmationDto);
             qmsQualityConfirmation.setCreateTime(new Date());
             qmsQualityConfirmation.setCreateUserId(user.getUserId());
+            qmsQualityConfirmation.setWorkOrderCardPoolId(qmsQualityConfirmationDto.getWorkOrderCardPoolId());
             qmsQualityConfirmation.setModifiedTime(new Date());
             qmsQualityConfirmation.setModifiedUserId(user.getUserId());
             qmsQualityConfirmation.setStatus(StringUtils.isEmpty(qmsQualityConfirmation.getStatus())?1:qmsQualityConfirmation.getStatus());
