@@ -182,6 +182,9 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getMessage());
             }
+        }else{
+            //如果打印包箱需要限制，已打印包箱的产品总数不能大于工单数量
+
         }
         return mesPackageManager;
     }

@@ -166,16 +166,16 @@
         swo.work_order_code,
         swo.parent_id,
         swo.work_order_quantity,
-        sm.material_id AS 'materialId',
+        sm.material_id,
         sm.material_code AS 'materialCode',
         sm.material_desc AS 'materialDesc',
         sm.version AS 'version',
         spl.pro_line_id AS 'proLineId',
         spl.pro_name AS 'proName',
-        sps.packing_unit_id AS 'packingUnitId ',
-        spu.packing_unit_name AS 'packingUnitName ',
-        sps.package_specification_id AS 'packageSpecificationId ',
-        sps.package_specification_quantity AS 'packageSpecificationQuantity '
+        sps.packing_unit_id AS 'packingUnitId',
+        spu.packing_unit_name AS 'packingUnitName',
+        sps.package_specification_id AS 'packageSpecificationId',
+        sps.package_specification_quantity AS 'packageSpecificationQuantity'
         FROM
         smt_work_order swo
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
