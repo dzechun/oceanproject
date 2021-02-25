@@ -230,8 +230,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
 
             QmsQualityConfirmationDto qmsQualityConfirmationDto = qualityConfirmationDtos.get(0);
-            qmsQualityConfirmationDto.setQualifiedQuantity(qmsQualityConfirmationDto.getQualifiedQuantity().add(qmsQualityConfirmation.getQualifiedQuantity()));
-            qmsQualityConfirmationDto.setUnqualifiedQuantity(qmsQualityConfirmationDto.getUnqualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
+            qmsQualityConfirmationDto.setTotalQualified(qmsQualityConfirmationDto.getQualifiedQuantity().add(qmsQualityConfirmation.getQualifiedQuantity()));
+            //qmsQualityConfirmationDto.setUnqualifiedQuantity(qmsQualityConfirmationDto.getUnqualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
             qmsQualityConfirmationDto.setQualityType((byte) 1);
 
             qmsQualityConfirmationMapper.updateByPrimaryKey(qmsQualityConfirmationDto);
