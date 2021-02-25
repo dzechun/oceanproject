@@ -6,6 +6,7 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -175,7 +176,7 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
      * 包装规格物料关系集合
      */
     @ApiModelProperty(name="smtMaterialPackages",value = "包装规格物料关系集合")
-    private List<SmtMaterialPackage> smtMaterialPackages;
+    private List<SmtMaterialPackage> smtMaterialPackages = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }
