@@ -59,4 +59,8 @@ public interface BaseFeignApi {
     @ApiOperation("查询员工工种关系列表")
     @PostMapping("/baseStaffProcess/findList")
     ResponseEntity<List<BaseStaffProcess>> findStaffProcessList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStaffProcess searchBaseStaffProcess);
+
+    @ApiOperation("查询组织信息列表")
+    @PostMapping("/baseOrganization/findList")
+    ResponseEntity<List<BaseOrganizationDto>> findOrganizationList(@ApiParam(value = "查询对象") @RequestBody SearchBaseOrganization searchBaseOrganization);
 }

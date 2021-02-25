@@ -42,9 +42,8 @@ public class WmsOutProductionMaterialdDetServiceImpl extends BaseService<WmsOutP
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-
         Example ex = new Example(WmsOutProductionMaterialdDet.class);
-        ex.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterialdDet.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterialdDet.getMaterialId());
+        ex.createCriteria().andEqualTo("workOrderId",wmsOutProductionMaterialdDet.getWorkOrderId()).andEqualTo("materialId",wmsOutProductionMaterialdDet.getMaterialId()).andEqualTo("processId",wmsOutProductionMaterialdDet.getProcessId());
         List<WmsOutProductionMaterialdDet> wmsOutProductionMaterialdDets = wmsOutProductionMaterialdDetMapper.selectByExample(ex);
         if(wmsOutProductionMaterialdDets.size() > 0){
             wmsOutProductionMaterialdDets.get(0).setRealityQty(wmsOutProductionMaterialdDets.get(0).getRealityQty().add(wmsOutProductionMaterialdDet.getRealityQty()));

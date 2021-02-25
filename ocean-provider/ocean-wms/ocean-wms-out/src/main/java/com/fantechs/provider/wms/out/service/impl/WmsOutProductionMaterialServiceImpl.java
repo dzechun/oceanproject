@@ -72,13 +72,18 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
         //更新发料明细表开工扫描数量
         Example ex = new Example(WmsOutProductionMaterialdDet.class);
-        ex.createCriteria().andEqualTo("workOrderId", wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId", wmsOutProductionMaterial.getMaterialId());
+        ex.createCriteria().andEqualTo("workOrderId", wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("materialId", wmsOutProductionMaterial.getMaterialId()).andEqualTo("processId", wmsOutProductionMaterial.getProcessId());
         List<WmsOutProductionMaterialdDet> wmsOutProductionMaterialdDets = wmsOutProductionMaterialdDetMapper.selectByExample(ex);
         if (wmsOutProductionMaterialdDets.isEmpty()) {
             return 1;
         }
         WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = wmsOutProductionMaterialdDets.get(0);
-        wmsOutProductionMaterialdDet.setScanQty(wmsOutProductionMaterialdDet.getScanQty().add(wmsOutProductionMaterial.getRealityQty()));
+        //部件数量除于用量
+        BigDecimal bigDecimal = wmsOutProductionMaterial.getRealityQty().divide(wmsOutProductionMaterialdDet.getQuantity());
+        if (new BigDecimal(bigDecimal.intValue()).compareTo(bigDecimal) != 0) {
+            throw new BizErrorException("请输入正确的扫描数量");
+        }
+        wmsOutProductionMaterialdDet.setScanQty(wmsOutProductionMaterialdDet.getScanQty().add(bigDecimal));
         if (wmsOutProductionMaterialdDet.getScanQty().compareTo(wmsOutProductionMaterialdDet.getRealityQty()) > 0) {
             throw new BizErrorException("扫描数量不能大于发料数量");
         }
@@ -122,7 +127,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
             //计算发料数量
             Example example = new Example(WmsOutProductionMaterial.class);
-            example.createCriteria().andEqualTo("workOrderId", wmsOutProductionMaterial.getWorkOrderId()).andNotEqualTo("outStatus", (byte) 2);
+            example.createCriteria().andEqualTo("workOrderId", wmsOutProductionMaterial.getWorkOrderId()).andEqualTo("processId", wmsOutProductionMaterial.getProcessId()).andNotEqualTo("outStatus", (byte) 2);
             example.setOrderByClause("create_time");
 
             List<WmsOutProductionMaterial> dataResources = wmsOutProductionMaterialMapper.selectByExample(example);

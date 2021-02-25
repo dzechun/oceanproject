@@ -41,6 +41,7 @@ public class SmtRouteProcess extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="routeName" ,value="工艺路线名称")
     private String routeName;
+
     /**
      * 工段ID
      */

@@ -40,7 +40,7 @@ public class PDAMesPackageManagerController {
     private MesPackageManagerService mesPackageManagerService;
 
     @ApiOperation("查询包装管理列表")
-    @PostMapping("list")
+    @PostMapping("findList")
     public ResponseEntity<List<MesPackageManagerDTO>> list(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO
     ){

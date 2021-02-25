@@ -75,7 +75,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     }
 
     @Override
-    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId,BigDecimal qualityQuantity) {
+    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId,BigDecimal qualityQuantity,Long workOrderCardPoolId) {
 
 
         //通过流转卡号获取流转卡信息
@@ -84,7 +84,8 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             throw new BizErrorException("无法获取该流转卡的相应信息");
         }
 
-        boolean b = true;
+        boolean switch1 = true;
+        boolean switch2 = true;
         Long processId = Long.valueOf(-1);
 
         //父id为0则该流转卡为工单流转卡
@@ -108,7 +109,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : smtWorkOrderCardPoolDtos1) {
 
                     if (sectionId == null || sectionId == 0) {
-                        b = false;
+                        switch1 = false;
                         SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool1 = new SearchSmtWorkOrderCardPool();
                         searchSmtWorkOrderCardPool1.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                         List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool1);
@@ -136,7 +137,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                         }
                     }
 
-                    if (b){
+                    if (switch1){
                         Long routeId = smtWorkOrderCardPoolDto.getRouteId();
                         List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(routeId).getData();
                         if (StringUtils.isEmpty(routeProcessList)) {
@@ -156,10 +157,18 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
 
                     if (StringUtils.isEmpty(qmsQualityConfirmation)){
                         qmsQualityConfirmation = new QmsQualityConfirmation();
-                        qmsQualityConfirmation.setTotalQualified(qualityQuantity);
+                        qmsQualityConfirmation.setTotalQualified(BigDecimal.valueOf(0));
                     }
+
+                    if (smtWorkOrderCardPoolDto.getWorkOrderCardPoolId().equals(workOrderCardPoolId) && switch2){
+                        qualifiedQuantity = qualifiedQuantity.add(qualityQuantity);
+                        switch2 = false;
+                    }
+
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
-                        qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
+                        if (StringUtils.isNotEmpty(qmsQualityConfirmation.getTotalQualified())){
+                            qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
+                        }
                     }
                 }
                 if (processId == -1){

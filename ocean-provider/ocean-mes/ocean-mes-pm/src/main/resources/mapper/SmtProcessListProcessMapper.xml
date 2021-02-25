@@ -297,4 +297,27 @@
                  LEFT JOIN smt_work_order swo ON swo.material_id = bppd.plate_parts_det_id
         WHERE swo.work_order_id = #{workOrderId}
     </select>
+
+    <select id="isLastSectionInRoute" resultType="int">
+        SELECT
+            count(1)
+        FROM
+            smt_route_process srp1
+        WHERE
+            srp1.process_id = #{processId}
+            AND srp1.route_id = #{routeId}
+            AND srp1.section_id = (
+            SELECT
+                srp.section_id
+            FROM
+                smt_route_process srp
+            WHERE
+                srp.route_id = #{routeId}
+            GROUP BY
+                srp.section_id
+            ORDER BY
+                srp.route_process_id DESC
+            LIMIT 1
+            )
+    </select>
 </mapper>

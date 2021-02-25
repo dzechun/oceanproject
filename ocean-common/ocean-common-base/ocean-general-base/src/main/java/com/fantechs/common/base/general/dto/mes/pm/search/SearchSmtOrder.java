@@ -44,4 +44,10 @@ public class SearchSmtOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="status" ,value="状态（0、创建 1、下载完成 2、已完工 3、作废）")
     private Byte status;
+
+    /**
+     * 排产状态（0、待排产 1、排产中 2、排产完成 3、订单完工）
+     */
+    @ApiModelProperty(name="scheduleStatus" ,value="排产状态（0、待排产 1、排产中 2、排产完成 3、订单完工 4、待排产及排除中）")
+    private Byte scheduleStatus;
 }

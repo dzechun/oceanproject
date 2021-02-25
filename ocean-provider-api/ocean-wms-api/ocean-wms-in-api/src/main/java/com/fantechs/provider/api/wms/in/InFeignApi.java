@@ -20,7 +20,7 @@ import java.util.List;
 @FeignClient(name = "ocean-wms-in")
 public interface InFeignApi {
 
-    @PostMapping("/pda/mesPackageManager/list")
+    @PostMapping("/pda/mesPackageManager/findList")
     ResponseEntity<List<MesPackageManagerDTO>> list(@RequestBody(required = false) SearchMesPackageManagerListDTO searchMesPackageManagerListDTO);
 
     @ApiOperation(value = "成品入库新增", notes = "成品入库新增")

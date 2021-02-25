@@ -2,8 +2,8 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProductProcessRoute;
-import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductProcessRoute;
+import com.fantechs.common.base.dto.basic.imports.SmtProductProcessRouteImport;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductProcessRoute;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -18,11 +18,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -40,10 +40,10 @@ import java.util.Map;
 @Slf4j
 public class SmtProductProcessRouteController {
 
-    @Autowired
+    @Resource
     private SmtProductProcessRouteService smtProductProcessRouteService;
 
-    @Autowired
+    @Resource
     private SmtHtProductProcessRouteService smtHtProductProcessRouteService;
 
     @ApiOperation(value = "新增",notes = "新增")
@@ -97,6 +97,27 @@ public class SmtProductProcessRouteController {
         EasyPoiUtils.exportExcel(list, "产品工艺路线信息", "产品工艺路线信息", SmtProductProcessRoute.class, "产品工艺路线信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入部件组成信息",notes = "从excel导入部件组成信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtProductProcessRouteImport> smtProductProcessRouteImports = EasyPoiUtils.importExcel(file, 2, 1, SmtProductProcessRouteImport.class);
+            Map<String, Object> resultMap = smtProductProcessRouteService.importExcel(smtProductProcessRouteImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

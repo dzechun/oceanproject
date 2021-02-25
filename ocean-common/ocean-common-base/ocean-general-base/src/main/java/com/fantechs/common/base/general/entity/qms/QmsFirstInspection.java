@@ -57,7 +57,7 @@ public class QmsFirstInspection  extends ValidGroup implements Serializable {
      * 检验结果（0、未知 1、合格 2、不合格）
      */
     @ApiModelProperty(name="inspectionResult",value = "检验结果（0、未知 1、合格 2、不合格）")
-    @Excel(name = "检验结果（0、未知 1、合格 2、不合格）", height = 20, width = 30,orderNum="9")
+    @Excel(name = "检验结果", height = 20, width = 30,orderNum="9",replace ={"未知_0","合格_1","不合格_2"})
     @Column(name = "inspection_result")
     private Byte inspectionResult;
 
@@ -80,7 +80,6 @@ public class QmsFirstInspection  extends ValidGroup implements Serializable {
      * 单据类型
      */
     @ApiModelProperty(name="receiptsType",value = "单据类型")
-    @Excel(name = "单据类型", height = 20, width = 30,orderNum="12")
     @Column(name = "receipts_type")
     private Byte receiptsType;
 

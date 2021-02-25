@@ -72,8 +72,11 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="processCode!=null and processCode!=''">
+            <if test="processCode!=null and processCode!='' and codeQueryMark == null">
                 and sp.process_code like CONCAT('%', #{processCode}, '%')
+            </if>
+            <if test="processCode!=null and processCode!='' and codeQueryMark == 1">
+                and sp.process_code = #{processCode}
             </if>
             <if test="processName!=null and processName!=''">
                 and sp.process_name like CONCAT('%', #{processName}, '%')

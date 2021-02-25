@@ -18,7 +18,6 @@ public class MesSchedule implements Serializable {
     @Column(name = "schedule_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    @Excel(name = "排产单id")
     private Long scheduleId;
 
     /**
@@ -36,6 +35,13 @@ public class MesSchedule implements Serializable {
     @Column(name = "schedule_code")
     @Excel(name = "排产单编号")
     private String scheduleCode;
+
+    /**
+     * 产线id
+     */
+    @ApiModelProperty(value = "产线id",example = "产线id")
+    @Column(name = "pro_line_id")
+    private Long proLineId;
 
     /**
     * 排产总数

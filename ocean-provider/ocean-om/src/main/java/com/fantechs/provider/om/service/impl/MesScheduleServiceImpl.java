@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.dto.om.MesScheduleDTO;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
@@ -24,6 +25,7 @@ import com.fantechs.provider.om.mapper.MesScheduleMapper;
 import com.fantechs.provider.om.service.MesScheduleService;
 import com.fantechs.provider.om.service.SmtOrderService;
 import com.fantechs.provider.om.service.ht.MesHtScheduleService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -116,8 +118,9 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
     @Override
     public int save(MesSchedule mesSchedule) {
+        SysUser sysUser = this.currentUser();
         mesSchedule.setScheduleCode(CodeUtils.getId("SCHED"));
-        mesSchedule.setCreateUserId(null);
+        mesSchedule.setCreateUserId(sysUser.getUserId());
         mesSchedule.setIsDelete((byte)1);
         if(mesScheduleMapper.insertSelective(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
@@ -168,7 +171,8 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
     @Override
     public int update(MesSchedule mesSchedule) {
-        mesSchedule.setModifiedUserId(null);
+        SysUser sysUser = this.currentUser();
+        mesSchedule.setModifiedUserId(sysUser.getUserId());
         if(mesScheduleMapper.updateByPrimaryKeySelective(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
@@ -203,20 +207,22 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             if(StringUtils.isEmpty(smtOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"未找到订单数据");
             }
-            if(smtOrder.getStatus()==2){
+            if(smtOrder.getScheduleStatus()==2){
                 throw new BizErrorException("订单已完成排产");
             }
-            smtOrder.setStatus((byte)1);
+            smtOrder.setScheduleStatus((byte)1);
             if(smtOrderService.update(smtOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
+            smtOrderService.orderMaterialSchedule(mesOrderMaterialDTO.getOrderMaterialId());
             //根据产品信息生成工单
             SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
             smtWorkOrder.setOrderId(smtOrder.getOrderId());
             smtWorkOrder.setProLineId(proLineId);
             smtWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
-            smtWorkOrder.setProductionQuantity(mesOrderMaterialDTO.getTotal());
+            smtWorkOrder.setWorkOrderQuantity(mesOrderMaterialDTO.getTotal());
             smtWorkOrder.setContractNo(smtOrder.getContractCode());
+            smtWorkOrder.setWorkOrderStatus(1);
             smtWorkOrder.setRemark("无BOM");
             SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
             saveWorkOrderAndBom.setSmtWorkOrder(smtWorkOrder);
@@ -227,13 +233,14 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             }
             //生成排产详情
             MesScheduleDetail mesScheduleDetail = new MesScheduleDetail();
-            mesScheduleDetail.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            mesScheduleDetail.setWorkOrderId(Long.parseLong(responseEntity.getData()+""));
             mesScheduleDetail.setOrderId(smtOrder.getOrderId());
             mesScheduleDetailList.add(mesScheduleDetail);
             total+=mesOrderMaterialDTO.getTotal().doubleValue();
         }
         //生成排产单
         MesSchedule mesSchedule = new MesSchedule();
+        mesSchedule.setProLineId(proLineId);
         mesSchedule.setTotal(new BigDecimal(total));
         if(this.save(mesSchedule)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);

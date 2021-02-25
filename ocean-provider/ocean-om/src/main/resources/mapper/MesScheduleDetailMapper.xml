@@ -40,7 +40,8 @@
         sm.material_code as 'materialCode',
         sm.version,
         sm.material_desc as 'materialDesc',
-        swo.work_order_quantity as 'workOrderQuantity'
+        swo.work_order_quantity as 'workOrderQuantity',
+        swo.output_quantity as 'outputQuantity'
         FROM
         fantech_imes.mes_schedule_detail AS msd
         LEFT JOIN fantech_imes.smt_work_order swo on swo.work_order_id = msd.work_order_id

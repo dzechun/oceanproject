@@ -22,7 +22,6 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -93,10 +92,13 @@ public class ExhibitionReceiver {
     public void receiveTopicProcessWorkQueue(byte[]  bytes ) throws Exception {
         String encoded= new String(bytes,"UTF-8");
         MQResponseEntity mqResponseEntity= JsonUtils.jsonToPojo(encoded,MQResponseEntity.class);
-        log.info("监听客户端队列 : TOPIC_LISTENER_WORK_QUEUE 信息 : " + JSONObject.toJSONString(mqResponseEntity));
+        log.info("监听客户端队列 : TOPIC_PROCESS_WORK_QUEUE 信息 : " + JSONObject.toJSONString(mqResponseEntity));
         if (mqResponseEntity.getCode() == 1101) {
             SmtProcessListProcess processListProcess =  JsonUtils.jsonToPojo(mqResponseEntity.getData().toString(),SmtProcessListProcess.class);
             SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+            if(StringUtils.isEmpty(processListProcess.getWorkOrderCardPoolId())){
+                throw new BizErrorException("未找到对应产品条码流转卡");
+            }
             searchSmtProcessListProcess.setWorkOrderCardPoolId(processListProcess.getWorkOrderCardPoolId());
             List<SmtProcessListProcessDto>  smtProcessListProcessDtoList=pmFeignApi.findSmtProcessListProcessList( searchSmtProcessListProcess).getData();
             if(StringUtils.isEmpty(smtProcessListProcessDtoList)){

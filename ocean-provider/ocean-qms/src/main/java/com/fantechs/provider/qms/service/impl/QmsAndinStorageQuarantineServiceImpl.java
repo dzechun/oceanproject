@@ -53,13 +53,13 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
 
         Object barcode = map.get("barcode");
         SearchMesPackageManagerListDTO search = new SearchMesPackageManagerListDTO();
-        search.setBarcode(barcode.toString());
+        search.setBarcode(barcode == null?"-1":barcode.toString());
         ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(search);
         Long parentId = 0L;
         //判断是箱码还是栈板码
         if (StringUtils.isEmpty(list.getData())){
             throw new BizErrorException("该条码不存在");
-        }else if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getParentId() > 0){
+        }else if (StringUtils.isNotEmpty(list.getData()) && (list.getData().get(0).getParentId() > 0 || list.getData().get(0).getType() == 2)){
             parentId = list.getData().get(0).getParentId();
         }else{
             parentId = list.getData().get(0).getPackageManagerId();

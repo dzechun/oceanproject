@@ -118,4 +118,8 @@ public interface BasicFeignApi {
     @ApiOperation("查询工艺路线信息列表")
     @PostMapping("/smtRoute/findList")
     ResponseEntity<List<SmtRoute>> findRouteList(@ApiParam(value = "查询对象")@RequestBody SearchSmtRoute searchSmtRoute);
+
+    @ApiOperation("根据条件查询工序信息列表")
+    @PostMapping("/smtProcess/findList")
+    ResponseEntity<List<SmtProcess>> findProcessList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtProcess searchSmtProcess);
 }

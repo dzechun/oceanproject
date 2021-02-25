@@ -83,6 +83,7 @@ public class SmtProductBom extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="position" ,value="位置")
     @Excel(name = "位置", height = 20, width = 30)
+    @Column(name = "position")
     private String position;
 
     /**
@@ -116,6 +117,7 @@ public class SmtProductBom extends ValidGroup implements Serializable {
     /**
      * 节拍数量(秒)
      */
+    @Column(name = "takt")
     @ApiModelProperty(name = "takt", value = "节拍数量(秒)")
     private Integer takt;
 
@@ -152,6 +154,7 @@ public class SmtProductBom extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name = "status", value = "状态（0、无效 1、有效）")
     @Excel(name = "状态", height = 20, width = 30, replace = {"无效_0", "有效_1"})
+    @Column(name = "status")
     private Integer status;
 
     /**

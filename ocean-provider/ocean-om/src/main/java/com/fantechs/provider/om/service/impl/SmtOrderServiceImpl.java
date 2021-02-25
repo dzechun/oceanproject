@@ -118,6 +118,11 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     }
 
     @Override
+    public int orderMaterialSchedule(Long orderMaterialId) {
+        return smtOrderMapper.orderMaterialSchedule(orderMaterialId);
+    }
+
+    @Override
     public int saveOrderMaterial(SaveOrderMaterialDTO saveOrderMaterialDTO) {
         SmtOrder smtOrder = saveOrderMaterialDTO.getSmtOrder();
         List<MesOrderMaterial> mesOrderMaterialList = saveOrderMaterialDTO.getMesOrderMaterialList();
