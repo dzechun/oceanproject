@@ -123,6 +123,7 @@ SELECT u.user_name FROM qms_quality_confirmation qc
 				LEFT JOIN smt_work_order_card_pool swocp ON qc.work_order_card_pool_id=swocp.work_order_card_pool_id
 				LEFT join ocean.sys_user u on qc.create_user_id=u.user_id
 				WHERE swocp.work_order_card_id=#{workOrderCardId} AND qc.process_id=#{processId}
+				ORDER BY qc.quality_confirmation_code DESC LIMIT 1
 </select>
 
 <select id="batchCount" resultType="java.lang.Integer" parameterType="java.lang.String">
