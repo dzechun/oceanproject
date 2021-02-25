@@ -70,11 +70,13 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             }
         }
 
-        if (map.get("propertyQueryMark").equals(1)){
-            for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
-                BaseTab baseTab = smtMaterialDto.getBaseTab();
-                if (baseTab.getMaterialProperty() != 0 || baseTab.getMaterialProperty() != 1){
-                    smtMaterialDtos.remove(smtMaterialDto);
+        if (map.containsKey("propertyQueryMark")){
+            if (map.get("propertyQueryMark").equals(1)){
+                for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
+                    BaseTab baseTab = smtMaterialDto.getBaseTab();
+                    if (baseTab.getMaterialProperty() != 0 || baseTab.getMaterialProperty() != 1){
+                        smtMaterialDtos.remove(smtMaterialDto);
+                    }
                 }
             }
         }
