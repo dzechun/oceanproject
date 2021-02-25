@@ -4,8 +4,8 @@ server:
     max-http-post-size: 0
     buffer-size: 1024
     direct-buffers: true
-  tomcat:
-    basedir: /home/dev/temp
+#  tomcat:
+#    basedir: /home/dev/temp
 
 spring:
   datasource:
