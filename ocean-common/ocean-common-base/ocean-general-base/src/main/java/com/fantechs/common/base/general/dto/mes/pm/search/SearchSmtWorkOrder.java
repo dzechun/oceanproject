@@ -26,9 +26,9 @@ public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="parentId" ,value="父工单ID")
     private Long parentId;
     /**
-     * 工单状态
+     * 工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起 6、待首检及生产中)
      */
-    @ApiModelProperty(name="workOrderCode" ,value="工单状态")
+    @ApiModelProperty(name="workOrderCode" ,value="工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起 6、待首检及生产中)")
     private String workOrderStatus;
 
     /**

@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -163,6 +164,15 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     @Transactional(rollbackFor = Exception.class)
     public MesPackageManager saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO) {
         MesPackageManager mesPackageManager = saveMesPackageManagerDTO.getMesPackageManager();
+        if(mesPackageManager.getType()==1){
+            //查询剩余可打印数量
+            int result = mesPackageManagerMapper.remainQty(mesPackageManager.getWorkOrderId(), mesPackageManager.getType());
+            if(result==0){
+                throw new BizErrorException("已全部包装完毕，不允许再打印");
+            }else if(mesPackageManager.getTotal().intValue()>result){
+                throw new BizErrorException("包装产品数量超过剩余待包装数量");
+            }
+        }
         this.printCode(mesPackageManager);
 
         if(this.save(mesPackageManager)<=0){
@@ -182,9 +192,6 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getMessage());
             }
-        }else{
-            //如果打印包箱需要限制，已打印包箱的产品总数不能大于工单数量
-
         }
         return mesPackageManager;
     }

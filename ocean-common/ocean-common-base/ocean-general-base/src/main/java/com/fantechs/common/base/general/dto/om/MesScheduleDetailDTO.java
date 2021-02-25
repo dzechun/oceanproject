@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
 @Data
@@ -71,7 +73,14 @@ public class MesScheduleDetailDTO extends MesScheduleDetail implements Serializa
     @Transient
     @ApiModelProperty(value = "产品数量",example = "产品数量")
     @Excel(name = "产品数量")
-    private Double workOrderQuantity;
+    private BigDecimal workOrderQuantity;
+    /**
+     * 完工数量
+     */
+    @Transient
+    @ApiModelProperty(value = "完工数量",example = "完工数量")
+    @Excel(name = "完工数量")
+    private BigDecimal outputQuantity;
     /**
      * 产品描述
      */

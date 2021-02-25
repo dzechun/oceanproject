@@ -147,4 +147,15 @@
         FROM
             mes_package_manager mpm
     </select>
+
+    <select id="remainQty" resultType="int">
+        SELECT
+        if(sum( mpm.total ) is null ,(select swo1.work_order_quantity from smt_work_order swo1 where swo1.work_order_id = #{workOrderId}),IF ( sum( mpm.total ) >= swo.work_order_quantity, 0, swo.work_order_quantity-sum( mpm.total ) ))
+        FROM
+            mes_package_manager mpm
+            LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+        WHERE
+            mpm.work_order_id = #{workOrderId}
+            AND mpm.type = #{type}
+    </select>
 </mapper>
