@@ -71,7 +71,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           ResponseEntity<List<MesPackageManagerDTO>> list = inFeignApi.list(search);
 
           //判断是否是箱码
-          if (StringUtils.isNotEmpty(list.getData()) && (list.getData().get(0).getParentId() > 0 || list.getData().get(0).getType() == 2)){
+          if (StringUtils.isNotEmpty(list.getData()) && (list.getData().get(0).getParentId() > 0 || list.getData().get(0).getType() == 1)){
                Example example = new Example(QmsPdaInspectionDet.class);
                Example.Criteria criteria = example.createCriteria();
                criteria.andEqualTo("packageManagerId", list.getData().get(0).getPackageManagerId());
