@@ -4,9 +4,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtRoute;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
+import com.fantechs.common.base.dto.basic.imports.SmtRouteImport;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -129,13 +129,13 @@ public class SmtRouteController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入部件组成信息",notes = "从excel导入部件组成信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtRoute> smtRoutes = EasyPoiUtils.importExcel(file, SmtRoute.class);
-            Map<String, Object> resultMap = smtRouteService.importExcel(smtRoutes);
+            List<SmtRouteImport> smtRouteImports = EasyPoiUtils.importExcel(file, 2, 1, SmtRouteImport.class);
+            Map<String, Object> resultMap = smtRouteService.importExcel(smtRouteImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

@@ -80,6 +80,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
      */
     @ApiModelProperty(name="proCode" ,value="线别代码")
     @Excel(name = "线别代码", height = 20, width = 30)
+    @Transient
     private String proCode;
 
     /**
@@ -87,6 +88,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
      */
     @ApiModelProperty(name="proName" ,value="线别名称")
     @Excel(name = "线别名称", height = 20, width = 30)
+    @Transient
     private String proName;
 
     /**
@@ -94,6 +96,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
      */
     @ApiModelProperty(name="proDesc" ,value="线别描述")
     @Excel(name = "线别描述", height = 20, width = 30)
+    @Transient
     private String proDesc;
 
     /**
@@ -124,6 +127,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
      */
     @ApiModelProperty(name="processCode" ,value="线别代码")
     @Excel(name = "工序代码", height = 20, width = 30)
+    @Transient
     private String processCode;
 
     /**
@@ -131,6 +135,7 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
      */
     @ApiModelProperty(name="processName" ,value="工序名称")
     @Excel(name = "工序名称", height = 20, width = 30)
+    @Transient
     private String processName;
 
     /**
@@ -138,14 +143,13 @@ public class SmtProductBomDto extends SmtProductBom implements Serializable {
      */
     @ApiModelProperty(name="processDesc" ,value="工序描述")
     @Excel(name = "工序描述", height = 20, width = 30)
+    @Transient
     private String processDesc;
 
     /**
      * 父BOM编号
      */
-    @Column(name = "product_bom_code")
-    @ApiModelProperty(name = "productBomCode", value = "BOM ID")
-    @Excel(name = "BOM ID", height = 20, width = 30)
-    @NotBlank(message = "产品BOM编号不能为空")
-    private String productBomCode;
+    @ApiModelProperty(name = "productBomCode", value = "父BOM编号")
+    @Transient
+    private String parentProductBomCode;
 }

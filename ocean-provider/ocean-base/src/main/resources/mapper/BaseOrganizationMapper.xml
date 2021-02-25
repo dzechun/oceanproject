@@ -49,6 +49,12 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="organizationCode != null and organizationCode!='' and codeQueryMark == null">
+        and bo.organization_code like CONCAT('%', #{organizationCode}, '%')
+      </if>
+      <if test="organizationCode != null and organizationCode!='' and codeQueryMark != null">
+        and bo.organization_code = #{organizationCode}
+      </if>
       <if test="organizationCode != null and organizationCode!=''">
         and bo.organization_code like CONCAT('%', #{organizationCode}, '%')
       </if>

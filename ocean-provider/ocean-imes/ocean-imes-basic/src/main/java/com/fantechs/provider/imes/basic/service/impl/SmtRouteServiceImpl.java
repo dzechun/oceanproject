@@ -4,17 +4,18 @@ package com.fantechs.provider.imes.basic.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtRoute;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.dto.basic.imports.SmtRouteImport;
 import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
-import com.fantechs.common.base.general.entity.basic.BasePlateParts;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtPlateParts;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.entity.basic.BaseOrganization;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtProductProcessRouteService;
 import com.fantechs.provider.imes.basic.service.SmtRouteService;
@@ -24,8 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -46,6 +50,8 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
       private SmtProcessCategoryMapper smtProcessCategoryMapper;
       @Resource
       private SmtProcessMapper smtProcessMapper;
+      @Resource
+      private BaseFeignApi baseFeignApi;
 
       @Override
       @Transactional(rollbackFor = Exception.class)
@@ -212,61 +218,122 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtRoute> smtRoutes) {
+    public Map<String, Object> importExcel(List<SmtRouteImport> smtRouteImports) throws ParseException {
+
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
+        if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
-        LinkedList<SmtRoute> list = new LinkedList<>();
-        LinkedList<SmtHtRoute> htList = new LinkedList<>();
-        for (int i = 0; i < smtRoutes.size(); i++) {
-            SmtRoute smtRoute = smtRoutes.get(i);
-            String routeCode = smtRoute.getRouteCode();
-            String routeName = smtRoute.getRouteName();
+
+        //排除不合法的数据
+        Iterator<SmtRouteImport> iterator = smtRouteImports.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            SmtRouteImport smtRouteImport = iterator.next();
+            String routeCode = smtRouteImport.getRouteCode();
+            String routeName = smtRouteImport.getRouteName();
+            String processCode = smtRouteImport.getProcessCode();
+            Integer orderNum = smtRouteImport.getOrderNum();
+            String organizationCode = smtRouteImport.getOrganizationCode();
+
+            //判断必传字段
             if (StringUtils.isEmpty(
-                    routeCode,routeName
-            )){
-                fail.add(i+3);
+                    routeCode,routeName,processCode,orderNum
+            )) {
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
                 continue;
             }
 
-            //判断编码和名称是否重复
+            //判断工艺路线编码是否重复
             Example example = new Example(SmtRoute.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("routeCode",routeCode)
-                    .orEqualTo("routeName",routeCode);
-            List<SmtRoute> smtRoutes1 = smtRouteMapper.selectByExample(example);
-            if (StringUtils.isNotEmpty(smtRoutes1)){
-                fail.add(i+3);
+            criteria.andEqualTo("routeCode",routeCode);
+            SmtRoute smtRoute = smtRouteMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(smtRoute)){
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
                 continue;
             }
 
+            //判断工序信息是否存在
+            Example example1 = new Example(SmtProcess.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("processCode",processCode);
+            SmtProcess smtProcess = smtProcessMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(smtProcess)){
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
+                continue;
+            }
+            smtRouteImport.setProcessId(smtProcess.getProcessId());
+            smtRouteImport.setSectionId(smtProcess.getSectionId());
+
+            //如果组织编码不为空，则判断组织是否存在
+            if (StringUtils.isNotEmpty(organizationCode)){
+                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+                searchBaseOrganization.setOrganizationCode(organizationCode);
+                searchBaseOrganization.setCodeQueryMark(1);
+                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
+                if (StringUtils.isNotEmpty(baseOrganizationDtos)){
+                    BaseOrganization baseOrganization = baseOrganizationDtos.get(0);
+                    if (StringUtils.isEmpty(baseOrganization)){
+                        fail.add(i + 4);
+                        iterator.remove();
+                        i++;
+                        continue;
+                    }
+                    smtRouteImport.setOrganizationId(baseOrganization.getOrganizationId());
+                }else {
+                    fail.add(i + 4);
+                    iterator.remove();
+                    i++;
+                    continue;
+                }
+            }
+            i++;
+        }
+
+
+        //对合格数据进行分组
+        Map<String, List<SmtRouteImport>> map = smtRouteImports.stream().collect(Collectors.groupingBy(SmtRouteImport::getRouteCode, HashMap::new, Collectors.toList()));
+        Set<String> codeList = map.keySet();
+        for (String code : codeList) {
+            List<SmtRouteImport> smtRouteImports1 = map.get(code);
+            //新增工艺路线信息
+            SmtRoute smtRoute = new SmtRoute();
+            BeanUtils.copyProperties(smtRouteImports1.get(0), smtRoute);
             smtRoute.setCreateTime(new Date());
             smtRoute.setCreateUserId(currentUser.getUserId());
             smtRoute.setModifiedTime(new Date());
             smtRoute.setModifiedUserId(currentUser.getUserId());
             smtRoute.setStatus(1);
-            list.add(smtRoute);
-        }
+            smtRouteMapper.insertUseGeneratedKeys(smtRoute);
 
-        if (StringUtils.isNotEmpty(list)){
-            success = smtRouteMapper.insertList(list);
-        }
-
-        for (SmtRoute smtRoute : list) {
-            SmtHtRoute smtHtRoute = new SmtHtRoute();
+            //新增工艺路线历史信息
+            SmtHtRoute smtHtRoute=new SmtHtRoute();
             BeanUtils.copyProperties(smtRoute,smtHtRoute);
-            htList.add(smtHtRoute);
-        }
+            smtHtRouteMapper.insertSelective(smtHtRoute);
 
-        if (StringUtils.isNotEmpty(htList)){
-            smtHtRouteMapper.insertList(htList);
+            for (SmtRouteImport smtRouteImport : smtRouteImports1) {
+                SmtRouteProcess smtRouteProcess = new SmtRouteProcess();
+                BeanUtils.copyProperties(smtRouteImport,smtRouteProcess);
+                smtRouteProcess.setRouteId(smtRoute.getRouteId());
+                smtRouteProcess.setStandardTime(smtRouteImport.getStandardTime());
+                smtRouteProcess.setReadinessTime(smtRouteImport.getReadinessTime());
+
+                success += smtRouteProcessMapper.insertSelective(smtRouteProcess);
+            }
         }
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行", fail);
+        return resultMap;
     }
 }

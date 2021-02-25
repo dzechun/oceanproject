@@ -1,11 +1,10 @@
 package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtPackingUnitDto;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.entity.basic.SmtProductBom;
-import com.fantechs.common.base.entity.basic.SmtProductBomDet;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
+import com.fantechs.common.base.dto.basic.imports.SmtProductBomImport;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -48,7 +47,7 @@ public class SmtProductBomController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：productBomCode、processId、materialId", required = true) @RequestBody @Validated SmtProductBom smtProductBom) {
+    public ResponseEntity add(@ApiParam(value = "必传：productBomCode、materialId", required = true) @RequestBody @Validated SmtProductBom smtProductBom) {
         return ControllerUtil.returnCRUD(smtProductBomService.save(smtProductBom));
     }
 
@@ -106,13 +105,13 @@ public class SmtProductBomController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入部件组成信息",notes = "从excel导入部件组成信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtProductBomDto> smtProductBomDtos = EasyPoiUtils.importExcel(file, SmtProductBomDto.class);
-            Map<String, Object> resultMap = smtProductBomService.importExcel(smtProductBomDtos);
+            List<SmtProductBomImport> smtProductBomImports = EasyPoiUtils.importExcel(file, 2, 1, SmtProductBomImport.class);
+            Map<String, Object> resultMap = smtProductBomService.importExcel(smtProductBomImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

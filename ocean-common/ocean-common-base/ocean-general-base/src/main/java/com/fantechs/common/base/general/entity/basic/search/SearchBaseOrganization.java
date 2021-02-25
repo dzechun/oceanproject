@@ -34,4 +34,10 @@ public class SearchBaseOrganization extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="status",value = "状态（0、不启用 1、启用）")
     private Byte status;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

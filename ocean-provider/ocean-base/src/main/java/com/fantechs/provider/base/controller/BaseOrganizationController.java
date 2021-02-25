@@ -45,7 +45,7 @@ import java.util.Map;
 @Slf4j
 public class BaseOrganizationController {
 
-    @Autowired
+    @Resource
     private BaseOrganizationService baseOrganizationService;
     @Resource
     private BaseHtOrganizationService baseHtOrganizationService;

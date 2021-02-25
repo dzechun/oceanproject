@@ -84,4 +84,10 @@ public class SearchSmtProcess extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name= "isStartScan" ,value="是否开工工扫描")
     private Byte isStartScan;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }
