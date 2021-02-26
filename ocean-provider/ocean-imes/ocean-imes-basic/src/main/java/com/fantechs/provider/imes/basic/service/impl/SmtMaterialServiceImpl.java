@@ -78,7 +78,11 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 while (iterator.hasNext()){
                     SmtMaterialDto smtMaterialDto = iterator.next();
                     BaseTab baseTab = smtMaterialDto.getBaseTab();
-                    if (!(baseTab.getMaterialProperty() != null && (baseTab.getMaterialProperty() == 0 || baseTab.getMaterialProperty() == 1))){
+                    if (StringUtils.isNotEmpty(baseTab)){
+                        if (!(baseTab.getMaterialProperty() != null && (baseTab.getMaterialProperty() == 0 || baseTab.getMaterialProperty() == 1))){
+                            iterator.remove();
+                        }
+                    }else {
                         iterator.remove();
                     }
                 }
