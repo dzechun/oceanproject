@@ -95,7 +95,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             }
             mQResponseEntity.setData(mapMQ);
             fanoutSender.send(RabbitConfig.TOPIC_PROCESS_LIST_QUEUE, JSONObject.toJSONString(mQResponseEntity));
-            log.info("发送消息到客户端，物料配送完成：" + JSONObject.toJSONString(mQResponseEntity));
+            log.info("发送消息到客户端，物料配送到传输带：" + JSONObject.toJSONString(mQResponseEntity));
 
             // 查询剩下未配送的物料，进行配送
 //            String taskCode = exhibitionClientService.agvStockTask(smtStockDet.getStockId(), type);

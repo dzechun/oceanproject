@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.storage;
 
+import com.codingapi.txlcn.tc.config.EnableDistributedTransaction;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -12,6 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ComponentScan({"com.fantechs.provider.imes.storage","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.imes.storage.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider.api.imes.basic")
+@EnableDistributedTransaction
 public class OceanStorageInventoryApplication {
     public static void main(String[] args) {
         SpringApplication.run(OceanStorageInventoryApplication.class,args);
