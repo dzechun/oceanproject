@@ -8,7 +8,7 @@
     <id column="ht_first_inspection_id" jdbcType="BIGINT" property="htFirstInspectionId" />
     <result column="first_inspection_id" jdbcType="BIGINT" property="firstInspectionId" />
     <result column="first_inspection_code" jdbcType="VARCHAR" property="firstInspectionCode" />
-    <result column="work_order _id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="selected_total_quantity" jdbcType="DECIMAL" property="selectedTotalQuantity" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="handler" jdbcType="BIGINT" property="handler" />
