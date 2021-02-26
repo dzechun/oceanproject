@@ -64,7 +64,11 @@
         left join ocean.sys_user sus on sm.modified_user_id=sus.user_id
         LEFT JOIN fantech_imes.smt_barcode_rule_set sbrs on sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
         LEFT JOIN fantech_imes.base_organization bo ON sm.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes.base_tab bt on sm.material_id = bt.material_id
         <where>
+            <if test="propertyQueryMark!=null and propertyQueryMark == 1">
+                and bt.material_property in(0,1)
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

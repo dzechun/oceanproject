@@ -72,7 +72,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         }
 
 
-        if (map.containsKey("propertyQueryMark")){
+        /*if (map.containsKey("propertyQueryMark")){
             if (map.get("propertyQueryMark").equals(1)){
                 Iterator<SmtMaterialDto> iterator = smtMaterialDtos.iterator();
                 while (iterator.hasNext()){
@@ -88,7 +88,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 }
 
             }
-        }
+        }*/
         return smtMaterialDtos;
     }
 
