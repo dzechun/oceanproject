@@ -53,7 +53,7 @@ public class QmsHtFirstInspection implements Serializable {
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     @Excel(name = "工单ID", height = 20, width = 30)
-    @Column(name = "`work_order _id`")
+    @Column(name = "`work_order_id`")
     private Long workOrderId;
 
     /**

@@ -59,14 +59,17 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         //判断是箱码还是栈板码
         if (StringUtils.isEmpty(list.getData())){
             throw new BizErrorException("该条码不存在");
-        }else if (StringUtils.isNotEmpty(list.getData()) && (list.getData().get(0).getParentId() > 0 || list.getData().get(0).getType() == 1)){
+        }else if (StringUtils.isNotEmpty(list.getData()) && list.getData().get(0).getType() == 1){
             parentId = list.getData().get(0).getParentId();
+            if (parentId == 0){
+                throw new BizErrorException("该箱码未绑定栈板");
+            }
         }else{
             parentId = list.getData().get(0).getPackageManagerId();
         }
 
         search.setBarcode("");
-        search.setParentId(parentId);
+        search.setPackageManagerId(parentId);
         list = inFeignApi.list(search);
 
         int total = 0;
