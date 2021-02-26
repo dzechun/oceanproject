@@ -2,6 +2,7 @@ package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.dto.basic.SmtMaterialPackageDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -66,33 +67,33 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
     @Column(name = "package_specification_quantity")
     private BigDecimal packageSpecificationQuantity;
 
-    /**
-     * 物料ID
-     */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    @Column(name = "material_id")
-    private Long materialId;
-
-    /**
-     * 工序ID
-     */
-    @ApiModelProperty(name="processId",value = "工序ID")
-    @Column(name = "process_id")
-    private Long processId;
-
-    /**
-     * 条码规则ID
-     */
-    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
-    @Column(name = "barcode_rule_id")
-    private Long barcodeRuleId;
-
-    /**
-     * 包装单位ID
-     */
-    @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
-    @Column(name = "packing_unit_id")
-    private Long packingUnitId;
+//    /**
+//     * 物料ID
+//     */
+//    @ApiModelProperty(name="materialId",value = "物料ID")
+//    @Column(name = "material_id")
+//    private Long materialId;
+//
+//    /**
+//     * 工序ID
+//     */
+//    @ApiModelProperty(name="processId",value = "工序ID")
+//    @Column(name = "process_id")
+//    private Long processId;
+//
+//    /**
+//     * 条码规则ID
+//     */
+//    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
+//    @Column(name = "barcode_rule_id")
+//    private Long barcodeRuleId;
+//
+//    /**
+//     * 包装单位ID
+//     */
+//    @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
+//    @Column(name = "packing_unit_id")
+//    private Long packingUnitId;
 
     /**
      * 组织id
@@ -176,7 +177,7 @@ public class SmtPackageSpecification extends ValidGroup implements Serializable 
      * 包装规格物料关系集合
      */
     @ApiModelProperty(name="smtMaterialPackages",value = "包装规格物料关系集合")
-    private List<SmtMaterialPackage> smtMaterialPackages = new ArrayList<>();
+    private List<SmtMaterialPackageDto> smtMaterialPackages = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

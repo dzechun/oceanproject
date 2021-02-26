@@ -1,12 +1,14 @@
 package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtMaterialPackageDto;
 import com.fantechs.common.base.dto.basic.SmtPackageSpecificationDto;
 import com.fantechs.common.base.dto.basic.SmtPackingUnitDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtPackageSpecification;
 import com.fantechs.common.base.entity.basic.history.SmtHtPackingUnit;
+import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialPackage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleDto;
@@ -75,7 +77,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         smtPackageSpecificationMapper.insertUseGeneratedKeys(smtPackageSpecification);
 
         //新增包装规格和物料关系
-        List<SmtMaterialPackage> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
+        List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
         for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
             smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
         }
@@ -117,7 +119,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         smtMaterialPackageMapper.deleteByExample(example1);
 
         //新增绑定关系
-        List<SmtMaterialPackage> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
+        List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
         for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
             smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
         }
@@ -157,7 +159,16 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
     @Override
     public List<SmtPackageSpecificationDto> findList(Map<String, Object> map) {
-        return smtPackageSpecificationMapper.findList(map);
+        List<SmtPackageSpecificationDto> smtPackageSpecificationDtos = smtPackageSpecificationMapper.findList(map);
+        SearchSmtMaterialPackage searchSmtMaterialPackage = new SearchSmtMaterialPackage();
+        for (SmtPackageSpecificationDto smtPackageSpecificationDto : smtPackageSpecificationDtos) {
+            searchSmtMaterialPackage.setPackageSpecificationId(smtPackageSpecificationDto.getPackageSpecificationId());
+            List<SmtMaterialPackageDto> smtMaterialPackageDtos = smtMaterialPackageMapper.findList(searchSmtMaterialPackage);
+            if (StringUtils.isNotEmpty(smtMaterialPackageDtos)){
+                smtPackageSpecificationDto.setSmtMaterialPackages(smtMaterialPackageDtos);
+            }
+        }
+        return smtPackageSpecificationDtos;
     }
 
     @Override
@@ -176,12 +187,8 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
             SmtPackageSpecificationDto smtPackageSpecificationDto = smtPackageSpecificationDtos.get(i);
             String packageSpecificationCode = smtPackageSpecificationDto.getPackageSpecificationCode();
             String packageSpecificationName = smtPackageSpecificationDto.getPackageSpecificationName();
-            String barcodeRule = smtPackageSpecificationDto.getBarcodeRule();
-            String materialCode = smtPackageSpecificationDto.getMaterialCode();
-            String packingUnitName = smtPackageSpecificationDto.getPackingUnitName();
-            String processCode = smtPackageSpecificationDto.getProcessCode();
             if (StringUtils.isEmpty(
-                    packageSpecificationCode,packageSpecificationName,barcodeRule,materialCode,packingUnitName,processCode
+                    packageSpecificationCode,packageSpecificationName
             )){
                 fail.add(i+3);
                 continue;
@@ -196,44 +203,6 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
                 continue;
             }
 
-            //判断条码规则是否存在
-            SearchSmtBarcodeRule searchSmtBarcodeRule = new SearchSmtBarcodeRule();
-            searchSmtBarcodeRule.setBarcodeRule(barcodeRule);
-            SmtBarcodeRuleDto smtBarcodeRuleDto = pmFeignApi.findBarcodeRulList(searchSmtBarcodeRule).getData().get(0);
-            if (StringUtils.isEmpty(smtBarcodeRuleDto)){
-                fail.add(i+3);
-                continue;
-            }
-
-            //判断物料是否存在
-            Example example1 = new Example(SmtMaterial.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("materialCode",materialCode);
-            SmtMaterial smtMaterial = smtMaterialMapper.selectOneByExample(example1);
-            if (StringUtils.isEmpty(smtMaterial)){
-                fail.add(i+3);
-                continue;
-            }
-
-            //判断包装单位是否存在
-            Example example2 = new Example(SmtPackingUnit.class);
-            Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("packingUnitName",packingUnitName);
-            SmtPackingUnit smtPackingUnit = smtPackingUnitMapper.selectOneByExample(example2);
-            if (StringUtils.isEmpty(smtPackingUnit)){
-                fail.add(i+3);
-                continue;
-            }
-
-            //判断工序是否存在
-            Example example3 = new Example(SmtProcess.class);
-            Example.Criteria criteria3 = example3.createCriteria();
-            criteria3.andEqualTo("processCode",processCode);
-            SmtProcess smtProcess = smtProcessMapper.selectOneByExample(example);
-            if (StringUtils.isEmpty(smtProcess)){
-                fail.add(i+3);
-                continue;
-            }
 
             SmtPackageSpecification smtPackageSpecification = new SmtPackageSpecification();
             BeanUtils.copyProperties(smtPackageSpecificationDto,smtPackageSpecification);
@@ -242,10 +211,6 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
             smtPackageSpecification.setModifiedTime(new Date());
             smtPackageSpecification.setModifiedUserId(currentUser.getUserId());
             smtPackageSpecification.setStatus((byte) 1);
-            smtPackageSpecification.setBarcodeRuleId(smtBarcodeRuleDto.getBarcodeRuleId());
-            smtPackageSpecification.setMaterialId(smtMaterial.getMaterialId());
-            smtPackageSpecification.setPackingUnitId(smtPackingUnit.getPackingUnitId());
-            smtPackageSpecification.setProcessId(smtProcess.getProcessId());
             list.add(smtPackageSpecification);
         }
 

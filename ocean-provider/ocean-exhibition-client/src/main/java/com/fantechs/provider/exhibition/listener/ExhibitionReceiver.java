@@ -109,7 +109,7 @@ public class ExhibitionReceiver {
 
             SmtProcessListProcess smtProcessListProcessNext = new SmtProcessListProcess();
             for (int i=0; i<smtProcessListProcessDtoList.size(); i++) {
-                if (smtProcessListProcessDtoList.get(i).getProcessListProcessId().equals(processListProcess.getProcessListProcessId())) {
+                if (smtProcessListProcessDtoList.get(i).getProcessListProcessId().equals(processListProcess.getProcessListProcessId()) && i != smtProcessListProcessDtoList.size() - 1) {
                     smtProcessListProcessNext.setProcessListProcessId(smtProcessListProcessDtoList.get(i+1).getProcessListProcessId());
                     smtProcessListProcessNext.setStatus((byte) 1);
                     pmFeignApi.updateSmtProcessListProcess(smtProcessListProcessNext);
