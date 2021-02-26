@@ -37,6 +37,7 @@
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
     <result column="total_quantity" jdbcType="DECIMAL" property="totalQuantity"/>
+    <result column="unqualified_quantity" jdbcType="DECIMAL" property="unqualifiedQuantity"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -48,9 +49,9 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    sm.material_code,sm.material_desc,ss.storage_name,spm.product_model_name,mpm.package_manager_code AS pallet_code,
-    bmpm.package_manager_code AS box_code,bmpm.total AS total_quantity,bt.main_unit AS unit,1 AS checkout_type,
-    swa.warehouse_area_name
+    sm.material_code,sm.material_desc,ss.storage_name,spm.product_model_name,mpm.bar_code AS pallet_code,
+    bmpm.bar_code AS box_code,bmpm.total AS total_quantity,bt.main_unit AS unit,1 AS checkout_type,
+    swa.warehouse_area_name,qpid.inspection_quantity - qpid.qualified_quantity AS unqualified_quantity
     from fantech_imes.qms_pda_inspection_det qpid
     LEFT JOIN ocean.sys_user su ON qpid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qpid.modified_user_id = sus.user_id

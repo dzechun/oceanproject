@@ -83,6 +83,14 @@ public class QmsPdaInspectionDetDto extends QmsPdaInspectionDet implements Seria
     private BigDecimal totalQuantity;
 
     /**
+     * 不合格数量
+     */
+    @Transient
+    @ApiModelProperty(name = "unqualifiedQuantity",value = "不合格数量")
+    @Excel(name = "总数量", height = 20, width = 30)
+    private BigDecimal unqualifiedQuantity;
+
+    /**
      * 单位
      */
     @Transient

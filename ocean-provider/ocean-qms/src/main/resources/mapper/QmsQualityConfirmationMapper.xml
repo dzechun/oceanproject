@@ -86,7 +86,7 @@
     LEFT JOIN fantech_imes.base_plate_parts_det bbppd ON bbppd.plate_parts_det_id = swo.material_id
     LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bbppd.parts_information_id
     LEFT JOIN fantech_imes.smt_work_order_card_pool sswocp ON sswocp.work_order_card_pool_id = swocp.parent_id
-    LEFT JOIN fantech_imes.smt_work_order sswo ON sswo.work_order_id = sswocp.work_order_id
+    LEFT JOIN fantech_imes.smt_work_order sswo ON sswo.work_order_id = swo.parent_id
     LEFT JOIN fantech_imes.base_plate_parts bpp ON bpp.material_id = sswo.material_id
     LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_id = bpp.plate_parts_id AND bppd.parts_information_id = bbppd.parts_information_id
     LEFT JOIN fantech_imes.smt_process sp ON qqc.process_id = sp.process_id

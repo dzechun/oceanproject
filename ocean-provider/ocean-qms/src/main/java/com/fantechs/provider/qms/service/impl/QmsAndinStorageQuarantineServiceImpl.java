@@ -64,12 +64,13 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
             if (parentId == 0){
                 throw new BizErrorException("该箱码未绑定栈板");
             }
+
         }else{
             parentId = list.getData().get(0).getPackageManagerId();
         }
 
         search.setBarcode("");
-        search.setPackageManagerId(parentId);
+        search.setParentId(parentId);
         list = inFeignApi.list(search);
 
         int total = 0;
@@ -78,6 +79,10 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
                 total += datum.getTotal().intValue();
             }
         }
+
+        search.setPackageManagerId(parentId);
+        search.setParentId(null);
+        list = inFeignApi.list(search);
 
         if (StringUtils.isNotEmpty(list.getData()) && list.getData().size() != 0){
 
