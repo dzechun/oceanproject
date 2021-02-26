@@ -71,6 +71,14 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
     private Date documentsTime;
 
     /**
+     * 反馈事项
+     */
+    @ApiModelProperty(name="feedbackMatters",value = "反馈事项")
+    @Excel(name = "单据时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "feedback_matters")
+    private String feedbackMatters;
+
+    /**
      * 单据类型（0、首检单 1、成品检验单）
      */
     @ApiModelProperty(name="documentsType",value = "单据类型（0、首检单 1、成品检验单）")

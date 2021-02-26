@@ -12,6 +12,9 @@
     <result column="surveyor_id" jdbcType="BIGINT" property="surveyorId" />
     <result column="documents_time" jdbcType="TIMESTAMP" property="documentsTime" />
     <result column="documents_type" jdbcType="TINYINT" property="documentsType" />
+
+    <result column="feedback_matters" jdbcType="VARCHAR" property="feedbackMatters" />
+
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -40,6 +43,7 @@
     qpi.work_order_id,
     qpi.package_manager_id,
     qpi.surveyor_id,
+    qpi.feedback_matters,
     qpi.documents_time,
     qpi.documents_type,
     qpi.status,qpi.create_user_id, bo.organization_name,qpi.create_time,bo.organization_code,

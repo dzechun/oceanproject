@@ -75,6 +75,12 @@ public class QmsPdaInspectionController {
         return  ControllerUtil.returnDataSuccess(qmsPdaInspectionDto,StringUtils.isEmpty(qmsPdaInspectionDto)?0:1);
     }
 
+    @ApiOperation("整改反馈")
+    @PostMapping("/rectificationFeedback")
+    public ResponseEntity rectificationFeedback(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsPdaInspection.update.class) QmsPdaInspection qmsPdaInspection) {
+        return ControllerUtil.returnCRUD(qmsPdaInspectionService.rectificationFeedback(qmsPdaInspection));
+    }
+
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<QmsPdaInspectionDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsPdaInspection searchQmsPdaInspection) {

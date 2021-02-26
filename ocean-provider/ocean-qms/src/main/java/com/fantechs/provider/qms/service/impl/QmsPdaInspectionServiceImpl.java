@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -196,6 +197,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      }
 
      @Override
+     @Transactional(rollbackFor = Exception.class)
      public int update(QmsPdaInspection qmsPdaInspection) {
           SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
           if(StringUtils.isEmpty(user)){
@@ -213,6 +215,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      }
 
      @Override
+     @Transactional(rollbackFor = Exception.class)
      public int batchDelete(String ids) {
           SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
           if(StringUtils.isEmpty(user)){
@@ -241,5 +244,28 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           qmsPdaInspectionDetMapper.deleteByExample(example);
 
           return qmsPdaInspectionMapper.deleteByIds(ids);
+     }
+
+     @Override
+     @Transactional(rollbackFor = Exception.class)
+     public int rectificationFeedback(QmsPdaInspection qmsPdaInspection) {
+//          SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+//          if(StringUtils.isEmpty(user)){
+//               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//          }
+
+          Map<String,Object> map = new HashMap<>();
+          map.put("pdaInspectionId",qmsPdaInspection.getPdaInspectionId());
+          List<QmsPdaInspectionDetDto> list = qmsPdaInspectionDetMapper.findList(map);
+          for (QmsPdaInspectionDetDto qmsPdaInspectionDetDto : list) {
+               BigDecimal all = qmsPdaInspectionDetDto.getQualifiedQuantity().add(qmsPdaInspectionDetDto.getUnqualifiedQuantity());
+               qmsPdaInspectionDetDto.setQualifiedQuantity(all);
+               qmsPdaInspectionDetDto.setInspectionResult((byte) 1);
+               qmsPdaInspectionDetDto.setUnqualifiedQuantity(new BigDecimal(0));
+               qmsPdaInspectionDetMapper.updateByPrimaryKeySelective(qmsPdaInspectionDetDto);
+          }
+          qmsPdaInspection.setModifiedTime(new Date());
+//          qmsPdaInspection.setModifiedUserId(user.getUserId());
+          return qmsPdaInspectionMapper.updateByPrimaryKeySelective(qmsPdaInspection);
      }
 }
