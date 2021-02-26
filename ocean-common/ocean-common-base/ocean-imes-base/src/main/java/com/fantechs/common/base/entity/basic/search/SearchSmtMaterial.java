@@ -61,4 +61,10 @@ public class SearchSmtMaterial extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    /**
+     * 物料属性查询标记（传1表示查询成品和半成品）
+     */
+    @ApiModelProperty(name = "propertyQueryMark",value = "物料属性查询标记（传1表示查询成品和半成品）")
+    private Integer propertyQueryMark;
 }

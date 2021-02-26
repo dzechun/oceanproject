@@ -171,6 +171,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     SmtWorkOrderCardPool sms = new SmtWorkOrderCardPool();
                     BeanUtil.copyProperties(smtWorkOrderCardPool,sms);
                     sms.setWorkOrderCardPoolId(null);
+                    sms.setType((byte)3);
                     sms.setParentId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
                     sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
                     smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);

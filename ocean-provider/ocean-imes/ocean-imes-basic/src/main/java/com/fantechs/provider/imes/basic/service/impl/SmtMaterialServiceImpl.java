@@ -33,6 +33,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements SmtMaterialService {
@@ -65,6 +66,17 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 if (StringUtils.isNotEmpty(baseTabs)) {
                     BaseTab baseTab = baseTabs.get(0);
                     smtMaterialDto.setBaseTab(baseTab);
+                }
+            }
+        }
+
+        if (map.containsKey("propertyQueryMark")){
+            if (map.get("propertyQueryMark").equals(1)){
+                for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
+                    BaseTab baseTab = smtMaterialDto.getBaseTab();
+                    if (baseTab.getMaterialProperty() != 0 || baseTab.getMaterialProperty() != 1){
+                        smtMaterialDtos.remove(smtMaterialDto);
+                    }
                 }
             }
         }

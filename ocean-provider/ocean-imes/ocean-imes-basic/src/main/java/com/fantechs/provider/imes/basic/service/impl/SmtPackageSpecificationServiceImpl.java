@@ -46,6 +46,9 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
     private SmtPackingUnitMapper smtPackingUnitMapper;
     @Resource
     private SmtProcessMapper smtProcessMapper;
+    @Resource
+    private SmtMaterialPackageMapper smtMaterialPackageMapper;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -57,11 +60,10 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
         Example example = new Example(SmtPackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("packageSpecificationCode", smtPackageSpecification.getPackageSpecificationCode())
-                .orEqualTo("materialId", smtPackageSpecification.getMaterialId());
+        criteria.andEqualTo("packageSpecificationCode", smtPackageSpecification.getPackageSpecificationCode());
         List<SmtPackageSpecification> smtPackageSpecifications = smtPackageSpecificationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtPackageSpecifications)) {
-            throw new BizErrorException("包装规格编码或物料ID已存在");
+            throw new BizErrorException("包装规格编码已存在");
         }
 
         smtPackageSpecification.setCreateUserId(user.getUserId());
@@ -69,11 +71,19 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         smtPackageSpecification.setModifiedUserId(user.getUserId());
         smtPackageSpecification.setModifiedTime(new Date());
 
+        //新增包装规格
         smtPackageSpecificationMapper.insertUseGeneratedKeys(smtPackageSpecification);
+
+        //新增包装规格和物料关系
+        List<SmtMaterialPackage> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
+        for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
+            smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
+        }
+        smtMaterialPackageMapper.insertList(smtMaterialPackages);
+
         SmtHtPackageSpecification smtHtPackageSpecification = new SmtHtPackageSpecification();
         BeanUtils.copyProperties(smtPackageSpecification, smtHtPackageSpecification);
-
-        return  smtHtPackageSpecificationMapper.insert(smtHtPackageSpecification);
+        return smtHtPackageSpecificationMapper.insert(smtHtPackageSpecification);
     }
 
     @Override
@@ -86,14 +96,11 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
         Example example = new Example(SmtPackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
-        Example.Criteria criteria1 = example.createCriteria();
         criteria.andEqualTo("packageSpecificationCode", smtPackageSpecification.getPackageSpecificationCode())
-                .orEqualTo("materialId", smtPackageSpecification.getMaterialId());
-        criteria1.andNotEqualTo("packageSpecificationId",smtPackageSpecification.getPackageSpecificationId());
-        example.and(criteria1);
+        .andNotEqualTo("packageSpecificationId",smtPackageSpecification.getPackageSpecificationId());
         List<SmtPackageSpecification> smtPackageSpecifications = smtPackageSpecificationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtPackageSpecifications)) {
-            throw new BizErrorException("包装规格编码或物料ID已存在");
+            throw new BizErrorException("包装规格编码已存在");
         }
 
         smtPackageSpecification.setModifiedUserId(user.getUserId());
@@ -103,6 +110,18 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         BeanUtils.copyProperties(smtPackageSpecification, smtHtPackageSpecification);
         smtHtPackageSpecificationMapper.insert(smtHtPackageSpecification);
 
+        //移除旧的绑定关系
+        Example example1 = new Example(SmtMaterialPackage.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("packageSpecificationId",smtPackageSpecification.getPackageSpecificationId());
+        smtMaterialPackageMapper.deleteByExample(example1);
+
+        //新增绑定关系
+        List<SmtMaterialPackage> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
+        for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
+            smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
+        }
+        smtMaterialPackageMapper.insertList(smtMaterialPackages);
         return smtPackageSpecificationMapper.updateByPrimaryKeySelective(smtPackageSpecification);
     }
 
@@ -125,6 +144,12 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
             smtHtPackageSpecification.setModifiedTime(new Date());
             smtHtPackageSpecification.setModifiedUserId(user.getUserId());
             smtPackageSpecifications.add(smtHtPackageSpecification);
+
+            //删除包装规格物料绑定关系
+            Example example = new Example(SmtMaterialPackage.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("packageSpecificationId",smtHtPackageSpecification.getPackageSpecificationId());
+            smtMaterialPackageMapper.deleteByExample(example);
         }
         smtHtPackageSpecificationMapper.insertList(smtPackageSpecifications);
         return smtPackageSpecificationMapper.deleteByIds(ids);
