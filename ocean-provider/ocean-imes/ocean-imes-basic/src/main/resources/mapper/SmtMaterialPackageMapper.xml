@@ -1,17 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.basic.mapper.SmtMaterialPackageMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtMaterialPackage">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="material_package_id" jdbcType="BIGINT" property="materialPackageId" />
-    <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="process_id" jdbcType="BIGINT" property="processId" />
-    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
-    <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.basic.SmtMaterialPackage">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="material_package_id" jdbcType="BIGINT" property="materialPackageId"/>
+        <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
+        <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtMaterialPackageDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+        <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        smp.material_package_id,
+	smp.package_specification_id,
+	smp.material_id,
+	smp.process_id,
+	smp.barcode_rule_id,
+	smp.packing_unit_id,
+	smp.`status`,
+	smp.is_delete
+    </sql>
+
+    <select id="findList" parameterType="com.fantechs.common.base.entity.basic.search.SearchSmtMaterialPackage"
+            resultMap="BaseResultMapDto">
+        select
+        <include refid="Base_Column_List"></include>,
+        spu.packing_unit_name, spu.packing_unit_desc,
+        sm.material_code, sm.material_desc, sm.version,
+        sp.process_name,
+        sbr.barcode_rule
+        from fantech_imes.smt_material_package smp
+        left join fantech_imes.smt_material sm on smp.material_id = sm.material_id
+        left join fantech_imes.smt_process sp on smp.process_id = sp.process_id
+        left join fantech_imes.smt_barcode_rule sbr on smp.barcode_rule_id = sbr.barcode_rule_id
+        left join fantech_imes.smt_packing_unit spu on smp.packing_unit_id = spu.packing_unit_id
+        <where>
+            <if test="packageSpecificationId!= null">
+                and smp.package_specification_id = #{packageSpecificationId}
+            </if>
+        </where>
+    </select>
 </mapper>

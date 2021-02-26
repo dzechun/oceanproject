@@ -11,6 +11,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseUnitPriceDto;
+import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.BaseUnitPrice;
@@ -56,7 +57,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     private BaseFeignApi baseFeignApi;
 
     @Override
-    public List<SmtMaterialDto> findList(Map<String, Object> map) {
+    public List<SmtMaterialDto> findList(Map<String, Object> map){
         List<SmtMaterialDto> smtMaterialDtos = smtMaterialMapper.findList(map);
         if (StringUtils.isNotEmpty(smtMaterialDtos)) {
             for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
@@ -70,14 +71,18 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             }
         }
 
+
         if (map.containsKey("propertyQueryMark")){
             if (map.get("propertyQueryMark").equals(1)){
-                for (SmtMaterialDto smtMaterialDto : smtMaterialDtos) {
+                Iterator<SmtMaterialDto> iterator = smtMaterialDtos.iterator();
+                while (iterator.hasNext()){
+                    SmtMaterialDto smtMaterialDto = iterator.next();
                     BaseTab baseTab = smtMaterialDto.getBaseTab();
-                    if (baseTab.getMaterialProperty() != 0 || baseTab.getMaterialProperty() != 1){
-                        smtMaterialDtos.remove(smtMaterialDto);
+                    if (!(baseTab.getMaterialProperty() != null && (baseTab.getMaterialProperty() == 0 || baseTab.getMaterialProperty() == 1))){
+                        iterator.remove();
                     }
                 }
+
             }
         }
         return smtMaterialDtos;
