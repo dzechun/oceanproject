@@ -9,7 +9,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://10.182.163.191:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    url: jdbc:mysql://192.168.204.164:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     type: com.alibaba.druid.pool.DruidDataSource
     username: root
     password: 123456
@@ -30,7 +30,7 @@ spring:
     filters: stat,wall,slf4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   redis:
-    host: 10.182.163.81
+    host: 192.168.204.151
     #host: 10.182.163.246
     port: 6379
     password:
@@ -50,7 +50,7 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@localhost:8761/eureka/
+      defaultZone: http://root:root@192.168.204.155:8761/eureka/
 ribbon:
   eureka:
     enabled: true
@@ -91,3 +91,7 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
+#提高日志级别为WARN
+logging:
+  level:
+    com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver: WARN

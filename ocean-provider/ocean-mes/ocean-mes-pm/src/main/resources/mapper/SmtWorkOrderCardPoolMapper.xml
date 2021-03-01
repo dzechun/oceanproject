@@ -119,6 +119,9 @@
             <if test="cardStatus!= null">
                 and swocp.card_status=#{cardStatus}
             </if>
+            <if test="type != null">
+                and swocp.type=#{type}
+            </if>
             and swocp.is_delete = 1
         </where>
         order by swocp.modified_time desc
