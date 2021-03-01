@@ -40,4 +40,9 @@ public class SearchSmtWorkOrderCardPool extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="parentId" ,value="父级ID")
     private Long parentId;
+    /**
+     * 流程卡类型（1、工单流转卡 2、部件流转卡 3、拆批流程卡）
+     */
+    @ApiModelProperty(name="type",value = "流程卡类型（1、工单流转卡 2、部件流转卡 3、拆批流程卡）")
+    private Byte type;
 }
