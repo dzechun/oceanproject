@@ -11,3 +11,15 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+  rabbitmq:
+    host: 10.182.164.100
+    port: 5672
+    username: admin
+    password: admin
+  mail:
+    host: smtp.qq.com
+    username: 1613582568@qq.com
+    password: kmspanpsslilcfgd
+    port: 587
+    protocol: smtp
+    default-encoding: UTF-8
