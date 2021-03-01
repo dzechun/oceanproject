@@ -180,7 +180,8 @@
         smt_work_order swo
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
         LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
-        LEFT JOIN smt_package_specification sps ON sps.material_id = sm.material_id
+        LEFT JOIN smt_material_package smp ON smp.material_id = sm.material_id
+        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = smp.package_specification_id
         LEFT JOIN smt_packing_unit spu ON spu.packing_unit_id = sps.packing_unit_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -211,7 +212,7 @@
                 and swo.work_order_id = #{workOrderId}
             </if>
             <if test="processId!=null and processId!=''">
-                and sps.process_id = #{processId}
+                and smp.process_id = #{processId}
             </if>
             and swo.is_delete = 1
         </where>
