@@ -183,6 +183,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
         SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
         searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(qmsQualityConfirmation.getWorkOrderCardPoolId());
+
         List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
         if (StringUtils.isEmpty(smtWorkOrderCardPoolList)){
             throw new BizErrorException("未找到流程单信息");
@@ -215,6 +216,15 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
 
         if (type != null && type == 3){
+            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(null);
+            searchSmtWorkOrderCardPool.setWorkOrderId(qmsQualityConfirmation.getWorkOrderId());
+            searchSmtWorkOrderCardPool.setType((byte) 2);
+            List<SmtWorkOrderCardPoolDto> workOrderCardPoolDtoList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+            if (StringUtils.isNotEmpty(workOrderCardPoolDtoList)){
+                map.put("workOrderCardPoolId",workOrderCardPoolDtoList.get(0).getWorkOrderCardPoolId());
+            }
+
+
             if (qmsQualityConfirmation.getQualityType() == 1){
                 qualityConfirmationDtos = qmsQualityConfirmationMapper.findList(map);
                 qmsQualityConfirmation.setTotal(qmsQualityConfirmation.getQualifiedQuantity().add(qmsQualityConfirmation.getUnqualifiedQuantity()));
