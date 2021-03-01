@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtDeptImport;
 import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtMaterialCategory;
@@ -10,10 +11,14 @@ import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.SmtDeptMapper;
+import com.fantechs.provider.imes.basic.mapper.SmtFactoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtHtDeptMapper;
 import com.fantechs.provider.imes.basic.service.SmtDeptService;
 import com.fantechs.provider.imes.basic.service.SmtFactoryService;
@@ -37,7 +42,9 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
     @Resource
     private SmtHtDeptMapper smtHtDeptMapper;
     @Resource
-    private SmtFactoryService smtFactoryService;
+    private SmtFactoryMapper smtFactoryMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<SmtDept> findList(SearchSmtDept searchSmtDept) {
@@ -161,60 +168,120 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtDept> smtDepts) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+    public Map<String, Object> importExcel(List<SmtDeptImport> smtDeptImports) {
+        /*SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        }*/
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtDept> list = new LinkedList<>();
         LinkedList<SmtHtDept> htList = new LinkedList<>();
+        ArrayList<SmtDeptImport> smtDeptImportList = new ArrayList<>();
 
-        for (int i = 0; i < smtDepts.size(); i++) {
-            SmtDept smtDept = smtDepts.get(i);
-            String deptCode = smtDept.getDeptCode();
-            String deptName = smtDept.getDeptName();
-            String factoryCode = smtDept.getFactoryCode();
+        for (int i = 0; i < smtDeptImports.size(); i++) {
+            SmtDeptImport smtDeptImport = smtDeptImports.get(i);
+            String deptCode = smtDeptImport.getDeptCode();
+            String deptName = smtDeptImport.getDeptName();
+            String factoryCode = smtDeptImport.getFactoryCode();
+            String organizationCode = smtDeptImport.getOrganizationCode();
+            String parentCode = smtDeptImport.getParentCode();
             if (StringUtils.isEmpty(
                     deptCode,deptName,factoryCode
             )){
-                fail.add(i+3);
-                smtDepts.remove(i);
+                fail.add(i+4);
                 continue;
             }
 
             //判断编码是否重复
             Example example = new Example(SmtDept.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("deptCode",smtDept.getDeptCode());
+            criteria.andEqualTo("deptCode",deptCode);
             if (StringUtils.isNotEmpty(smtDeptMapper.selectOneByExample(example))){
-                fail.add(i+3);
-                smtDepts.remove(i);
+                fail.add(i+4);
                 continue;
             }
 
             //判断工厂是否存在
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("factoryCode",smtDept.getFactoryCode());
-            map.put("codeQueryMark",1);
-            List<SmtFactoryDto> list1 = smtFactoryService.findList(map);
-            if (StringUtils.isEmpty(list1)){
-                fail.add(i+3);
-                smtDepts.remove(i);
+            Example example1 = new Example(SmtFactory.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("factoryCode",factoryCode);
+            SmtFactory smtFactory = smtFactoryMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(smtFactory)){
+                fail.add(i+4);
+                continue;
+            }
+            smtDeptImport.setFactoryId(smtFactory.getFactoryId());
+
+            //判断集合中是否存在同样得数据
+            boolean tag1 = false;
+            if (StringUtils.isNotEmpty(smtDeptImportList)){
+                for (SmtDeptImport deptImport : smtDeptImportList) {
+                    if (!deptImport.getDeptCode().equals(deptCode)){
+                        tag1 = true;
+                    }
+                }
+            }
+            if (tag1){
+                fail.add(i+4);
                 continue;
             }
 
-            smtDept.setCreateTime(new Date());
-            smtDept.setCreateUserId(currentUser.getUserId());
-            smtDept.setModifiedTime(new Date());
-            smtDept.setModifiedUserId(currentUser.getUserId());
-            smtDept.setStatus(1);
-            smtDept.setFactoryId(list1.get(0).getFactoryId());
-            smtDept.setParentId((long) -1);
-            list.add(smtDept);
+            //组织编码不为空则组织的数据必须存在
+            if (StringUtils.isNotEmpty(organizationCode)){
+                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+                searchBaseOrganization.setCodeQueryMark(1);
+                searchBaseOrganization.setOrganizationCode(organizationCode);
+                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
+                if (StringUtils.isEmpty(baseOrganizationDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtDeptImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
+            }
+
+            //若父级编码不为空，判断父级是否维护
+            if (StringUtils.isNotEmpty(parentCode)){
+
+                //判断数据库中是否存在
+                example.clear();
+                Example.Criteria criteria2 = example.createCriteria();
+                criteria2.andEqualTo("deptCode",parentCode);
+                SmtDept smtDept = smtDeptMapper.selectOneByExample(example);
+
+                //判断是否在excel中提前维护
+                boolean tag2 = false;
+                if (StringUtils.isNotEmpty(smtDeptImportList)){
+
+                    for (SmtDeptImport deptImport : smtDeptImportList) {
+                        if (deptImport.getDeptCode().equals(parentCode)){
+                            tag2 = true;
+                        }
+                    }
+                }
+                if (!tag2 && StringUtils.isEmpty(smtDept)){
+                    fail.add(i+4);
+                    continue;
+                }
+            }else {
+                smtDeptImport.setParentId((long) -1);
+            }
+
+            smtDeptImportList.add(smtDeptImport);
+        }
+
+        if (StringUtils.isNotEmpty(smtDeptImportList)){
+            for (SmtDeptImport smtDeptImport : smtDeptImportList) {
+                SmtDept smtDept = new SmtDept();
+                BeanUtils.copyProperties(smtDeptImport,smtDept);
+                smtDept.setCreateTime(new Date());
+                //smtDept.setCreateUserId(currentUser.getUserId());
+                smtDept.setModifiedTime(new Date());
+                //smtDept.setModifiedUserId(currentUser.getUserId());
+                list.add(smtDept);
+            }
         }
 
         if (StringUtils.isNotEmpty(list)){
@@ -232,7 +299,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
         }
 
         //更新部门的父级ID
-        for (SmtDept smtDept : smtDepts) {
+        for (SmtDept smtDept : list) {
             String parentCode = smtDept.getParentCode();
             Example example = new Example(SmtDept.class);
             if (StringUtils.isNotEmpty(parentCode)){

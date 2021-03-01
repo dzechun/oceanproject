@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service;
 
 
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtFactoryImport;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.support.IService;
 
@@ -15,5 +16,5 @@ import java.util.Map;
 public interface SmtFactoryService  extends IService<SmtFactory>{
     List<SmtFactoryDto> findList(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<SmtFactoryDto> smtFactoryDtos);
+    Map<String, Object> importExcel(List<SmtFactoryImport> smtFactoryImports);
 }

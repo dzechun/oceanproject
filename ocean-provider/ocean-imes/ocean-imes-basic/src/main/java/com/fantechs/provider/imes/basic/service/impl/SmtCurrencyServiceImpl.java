@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.imes.basic.mapper.SmtCurrencyMapper;
 import com.fantechs.provider.imes.basic.service.SmtCurrencyService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -28,6 +29,7 @@ public class SmtCurrencyServiceImpl extends BaseService<SmtCurrency> implements 
     private SmtCurrencyMapper smtCurrencyMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SmtCurrency smtCurrency) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
@@ -50,6 +52,7 @@ public class SmtCurrencyServiceImpl extends BaseService<SmtCurrency> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SmtCurrency smtCurrency) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
@@ -74,6 +77,7 @@ public class SmtCurrencyServiceImpl extends BaseService<SmtCurrency> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
