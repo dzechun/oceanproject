@@ -281,7 +281,23 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             return 1;
         }
 
-        if(StringUtils.isEmpty(smtWorkOrderCardPool.getType()) || smtWorkOrderCardPool.getType()!=3){
+        if(processFinishedProductDTO.getProcessType()==1) {
+            if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId()==0){
+                //工单流程卡开工确认
+                workOrderStartWork(preProcessId,processFinishedProductDTO);
+                return 1;
+            }
+            this.startWork(preProcessId,smtWorkOrder,processFinishedProductDTO,false);
+        }else if(processFinishedProductDTO.getProcessType()==2){
+            if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId()==0){
+                //工单流程卡报工
+                workOrderCarReport(smtWorkOrder.getRouteId(),preProcessId,processFinishedProductDTO);
+                return 1;
+            }
+            this.finishWork(smtWorkOrder.getRouteId(),preProcessId,processFinishedProductDTO,false);
+        }
+        //以下注释暂时保留，功能测试完毕可删除
+        /*if(StringUtils.isEmpty(smtWorkOrderCardPool.getType()) || smtWorkOrderCardPool.getType()!=3){
             if(processFinishedProductDTO.getProcessType()==1) {
                 if(StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId()==0){
                     //工单流程卡开工确认
@@ -297,7 +313,8 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 }
                 this.finishWork(smtWorkOrder.getRouteId(),preProcessId,processFinishedProductDTO,false);
             }
-        }else if(StringUtils.isNotEmpty(smtWorkOrderCardPool.getType()) && smtWorkOrderCardPool.getType() == 3){
+        }
+        else if(StringUtils.isNotEmpty(smtWorkOrderCardPool.getType()) && smtWorkOrderCardPool.getType() == 3){
             //当前扫描的流程卡为报工退回的流程卡，只能走报工，且报工数不能大于自身的开工数
             List<SmtProcessListProcess> tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
                     "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
@@ -352,7 +369,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 this.saveOBJ(curProcessListProcesse);
             }
             //=====
-        }
+        }*/
 
 
         //=====执行计划与工序的数据回写
@@ -439,6 +456,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
             SmtWorkOrderCardPool smtWorkOrderCardPool1 = new SmtWorkOrderCardPool();
             smtWorkOrderCardPool1.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
             smtWorkOrderCardPool1.setCardStatus((byte)3);
+            smtWorkOrderCardPool1.setType((byte)2);
             smtWorkOrderCardPoolList.add(smtWorkOrderCardPool1);
         }
         smtWorkOrderCardPool.setCardStatus((byte)1);//工单流转卡投产中
@@ -455,7 +473,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
      * @param processFinishedProductDTO
      * @return
      */
-    private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO,boolean startRemain,boolean isLastSection){
+    private int startWork(Long preProcessId,SmtWorkOrder smtWorkOrder,ProcessFinishedProductDTO processFinishedProductDTO,boolean startRemain){
         Long curProcessId=processFinishedProductDTO.getProcessId();
         Long routeId=smtWorkOrder.getRouteId();
         Long firstProcessIdWS = smtProcessListProcessMapper.firstProcessIdInWSection(curProcessId,routeId);
@@ -544,7 +562,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
         //=====
 
-        if(processFinishedProductDTO.getProcessType()==1 && processFinishedProductDTO.getOperation()==2 && !isLastSection){
+        if(processFinishedProductDTO.getProcessType()==1 && processFinishedProductDTO.getOperation()==2){
             if(processFinishedProductDTO.getProcessId() == firstProcessIdWS && processFinishedProductDTO.getProcessId() != firstProcessIdR)
                 sendMaterial(preProcessId,smtWorkOrder.getWorkOrderId(),smtWorkOrder.getMaterialId(),processFinishedProductDTO.getCurOutputQty().doubleValue());
         }
@@ -643,9 +661,29 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                     "processType",2,
                     "status",2));
             if(StringUtils.isEmpty(preProcessListProcesseList)){
-                throw new BizErrorException("上工序未进行报工");
+                if(StringUtils.isNotEmpty(smtWorkOrderCardPool.getType()) && smtWorkOrderCardPool.getType()==3){
+                    //流程卡属于拆批流程卡，又未找到上工序的报工情况，那判断为当前流程卡拆批后首次扫描，那么不能大于自身开工数（与拆批程序协同完成）
+                    tempProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
+                            "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
+                            "processId", processFinishedProductDTO.getProcessId(),
+                            "processType",2,
+                            "status",1));
+                    if(StringUtils.isNotEmpty(tempProcessListProcesseList)){
+                        for (SmtProcessListProcess smtProcessListProcess : tempProcessListProcesseList) {
+                            startWorkQtyTotal=smtProcessListProcess.getStartWorkQty();
+                        }
+                        preProcessListProcesse=new SmtProcessListProcess();
+                        preProcessListProcesse.setOutputQuantity(startWorkQtyTotal);
+                    }else{
+                        throw new BizErrorException("拆批数据不正确");
+                    }
+                }else{
+                    throw new BizErrorException("上工序未进行报工");
+                }
+            }else{
+                preProcessListProcesse=preProcessListProcesseList.get(preProcessListProcesseList.size()-1);
             }
-            preProcessListProcesse=preProcessListProcesseList.get(preProcessListProcesseList.size()-1);
+
             if(finishRemain){
                 //====本次报工数如果大于剩余报工数，则剩余报工数一次性全部报，如果小于剩余报工数，则正常进行
                 outPutQtyToal=outPutQtyToal.subtract(processFinishedProductDTO.getCurOutputQty());
@@ -732,10 +770,8 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         //=====工单流程卡开工，判断当前工序是否属于工艺路线下最后一个工段
         SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
         SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPool.getWorkOrderId());
-        boolean isLastSection=false;
         int resultCount = smtProcessListProcessMapper.isLastSectionInRoute(smtWorkOrder.getRouteId(), processFinishedProductDTO.getProcessId());
         if(resultCount>0){
-            isLastSection=true;
             SearchMesPmMatchingOrder searchMesPmMatchingOrder = new SearchMesPmMatchingOrder();
             searchMesPmMatchingOrder.setWorkOrderId(smtWorkOrder.getWorkOrderId());
             List<MesPmMatchingOrderDto> mesPmMatchingOrderDtoList = mesPmMatchingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmMatchingOrder));
@@ -771,7 +807,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                 BeanUtils.autoFillEqFields(processFinishedProductDTO,tempProcessFinishedProductDTO);
                 tempProcessFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                 tempProcessFinishedProductDTO.setCurOutputQty(remainQty);
-                this.startWork(preProcessId,smtWorkOrder,tempProcessFinishedProductDTO,true,isLastSection);
+                this.startWork(preProcessId,smtWorkOrder,tempProcessFinishedProductDTO,true);
                 remainQty=tempProcessFinishedProductDTO.getCurOutputQty();
                 if(remainQty.doubleValue()==0){
                     result++;

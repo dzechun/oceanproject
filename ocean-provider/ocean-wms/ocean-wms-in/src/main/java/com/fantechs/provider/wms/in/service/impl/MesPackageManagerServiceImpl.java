@@ -250,7 +250,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
         ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
         if(responseEntity.getCode()!=0){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012008);
+            throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
         if(StringUtils.isEmpty(mesPackageManager.getPrintBarcodeCount())){
             mesPackageManager.setPrintBarcodeCount(1);
