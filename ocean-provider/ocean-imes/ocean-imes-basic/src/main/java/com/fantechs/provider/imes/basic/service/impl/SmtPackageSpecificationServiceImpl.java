@@ -21,6 +21,7 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtPackageSpecificationService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -141,7 +142,9 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
                 smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
             }
         }
-        smtMaterialPackageMapper.insertList(smtMaterialPackages);
+        if (StringUtils.isNotEmpty(smtMaterialPackages)){
+            smtMaterialPackageMapper.insertList(smtMaterialPackages);
+        }
         return smtPackageSpecificationMapper.updateByPrimaryKeySelective(smtPackageSpecification);
     }
 
