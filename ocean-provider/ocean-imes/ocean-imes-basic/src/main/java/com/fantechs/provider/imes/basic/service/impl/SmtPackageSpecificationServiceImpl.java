@@ -70,18 +70,24 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
         //新增包装规格和物料关系
         List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
-        for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
-            /*Example example1 = new Example(SmtMaterialPackage.class);
+        if (StringUtils.isNotEmpty(smtMaterialPackages)){
+            for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
+
+            Example example1 = new Example(SmtMaterialPackage.class);
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
                     .andEqualTo("processId",smtMaterialPackage.getProcessId());
             List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example1);
             if (StringUtils.isNotEmpty(smtMaterialPackages1)){
                 throw new BizErrorException("物料在工序下的包装规格已存在");
-            }*/
-            smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
+            }
+
+                smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
+            }
         }
-        smtMaterialPackageMapper.insertList(smtMaterialPackages);
+        if (StringUtils.isNotEmpty(smtMaterialPackages)){
+            smtMaterialPackageMapper.insertList(smtMaterialPackages);
+        }
 
         SmtHtPackageSpecification smtHtPackageSpecification = new SmtHtPackageSpecification();
         BeanUtils.copyProperties(smtPackageSpecification, smtHtPackageSpecification);
@@ -120,16 +126,20 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
         //新增绑定关系
         List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
-        for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
-            /*Example example2 = new Example(SmtMaterialPackage.class);
-            Example.Criteria criteria2 = example1.createCriteria();
+        if (StringUtils.isNotEmpty(smtMaterialPackages)){
+            for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
+
+            Example example2 = new Example(SmtMaterialPackage.class);
+            Example.Criteria criteria2 = example2.createCriteria();
             criteria2.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
                     .andEqualTo("processId",smtMaterialPackage.getProcessId());
             List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example2);
             if (StringUtils.isNotEmpty(smtMaterialPackages1)){
                 throw new BizErrorException("物料在工序下的包装规格已存在");
-            }*/
-            smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
+            }
+
+                smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
+            }
         }
         smtMaterialPackageMapper.insertList(smtMaterialPackages);
         return smtPackageSpecificationMapper.updateByPrimaryKeySelective(smtPackageSpecification);
