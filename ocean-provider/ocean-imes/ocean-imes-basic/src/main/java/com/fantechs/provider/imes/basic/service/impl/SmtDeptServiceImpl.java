@@ -169,10 +169,10 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<SmtDeptImport> smtDeptImports) {
-        /*SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }*/
+        }
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -219,7 +219,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             boolean tag1 = false;
             if (StringUtils.isNotEmpty(smtDeptImportList)){
                 for (SmtDeptImport deptImport : smtDeptImportList) {
-                    if (!deptImport.getDeptCode().equals(deptCode)){
+                    if (deptImport.getDeptCode().equals(deptCode)){
                         tag1 = true;
                     }
                 }
@@ -277,9 +277,10 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
                 SmtDept smtDept = new SmtDept();
                 BeanUtils.copyProperties(smtDeptImport,smtDept);
                 smtDept.setCreateTime(new Date());
-                //smtDept.setCreateUserId(currentUser.getUserId());
+                smtDept.setCreateUserId(currentUser.getUserId());
                 smtDept.setModifiedTime(new Date());
-                //smtDept.setModifiedUserId(currentUser.getUserId());
+                smtDept.setModifiedUserId(currentUser.getUserId());
+                smtDept.setStatus(1);
                 list.add(smtDept);
             }
         }
@@ -307,7 +308,7 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
                 criteria.andEqualTo("deptCode",parentCode);
                 SmtDept smtDept1 = smtDeptMapper.selectOneByExample(example);
                 smtDept.setParentId(smtDept1.getDeptId());
-                smtDeptMapper.updateByPrimaryKeySelective(smtDept1);
+                smtDeptMapper.updateByPrimaryKeySelective(smtDept);
             }
         }
 
