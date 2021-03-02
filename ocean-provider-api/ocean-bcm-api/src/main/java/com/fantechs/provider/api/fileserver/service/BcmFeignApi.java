@@ -33,12 +33,12 @@ public interface BcmFeignApi {
 
     @ApiOperation("简单文本邮件")
     @GetMapping("/mail/sendSimpleMail")
-    void sendSimpleMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
+    ResponseEntity sendSimpleMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
                                @ApiParam(value = "标题",required = true)@RequestParam String subject,
                                @ApiParam(value = "内容",required = true)@RequestParam String contnet);
     @ApiOperation("HTML 文本邮件")
     @GetMapping("/mail/sendHtmlMail")
-    void sendHtmlMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
+    ResponseEntity sendHtmlMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
                              @ApiParam(value = "标题",required = true)@RequestParam String subject,
                              @ApiParam(value = "内容",required = true)@RequestParam String contnet);
 

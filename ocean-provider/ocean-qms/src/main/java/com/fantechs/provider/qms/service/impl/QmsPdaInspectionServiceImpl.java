@@ -136,6 +136,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           int i = 1;
           if (StringUtils.isEmpty(list) || (StringUtils.isNotEmpty(list)&&list.size() == 0)){
                qmsPdaInspection.setCreateTime(new Date());
+               qmsPdaInspection.setDocumentsTime(new Date());
                qmsPdaInspection.setCreateUserId(user.getUserId());
                qmsPdaInspection.setModifiedTime(new Date());
                qmsPdaInspection.setModifiedUserId(user.getUserId());
@@ -205,7 +206,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           }
           qmsPdaInspection.setModifiedTime(new Date());
           qmsPdaInspection.setModifiedUserId(user.getUserId());
-
+          qmsPdaInspection.setDocumentsTime(new Date());
           QmsHtPdaInspection qmsHtPdaInspection = new QmsHtPdaInspection();
           BeanUtils.copyProperties(qmsPdaInspection,qmsHtPdaInspection);
           qmsHtPdaInspection.setOperation("修改");
