@@ -39,15 +39,15 @@ public class MailServiceImpl implements MailService {
      * 简单文本邮件
      * @param to 接收者邮件
      * @param subject 邮件主题
-     * @param contnet 邮件内容
+     * @param content 邮件内容
      */
     @Override
-    public void sendSimpleMail(String to, String subject, String contnet){
+    public void sendSimpleMail(String to, String subject, String content){
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
             message.setSubject(subject);
-            message.setText(contnet);
+            message.setText(content);
             message.setFrom(from);
 
             mailSender.send(message);
@@ -61,18 +61,18 @@ public class MailServiceImpl implements MailService {
      * HTML 文本邮件
      * @param to 接收者邮件
      * @param subject 邮件主题
-     * @param contnet HTML内容
+     * @param content HTML内容
      * @throws MessagingException
      */
     @Override
-    public void sendHtmlMail(String to, String subject, String contnet){
+    public void sendHtmlMail(String to, String subject, String content){
         try {
             MimeMessage message = mailSender.createMimeMessage();
 
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(contnet, true);
+            helper.setText(content, true);
             helper.setFrom(from);
 
             mailSender.send(message);
@@ -87,12 +87,12 @@ public class MailServiceImpl implements MailService {
      * 附件邮件
      * @param to 接收者邮件
      * @param subject 邮件主题
-     * @param contnet HTML内容
+     * @param content HTML内容
      * @param multipartFile 附件路径
      * @throws MessagingException
      */
     @Override
-    public void sendAttachmentsMail(String to, String subject, String contnet,
+    public void sendAttachmentsMail(String to, String subject, String content,
                                     MultipartFile multipartFile) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -100,7 +100,7 @@ public class MailServiceImpl implements MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(contnet, true);
+            helper.setText(content, true);
             helper.setFrom(from);
 
             FileSystemResource file = new FileSystemResource(multipartFileToFile(multipartFile));
@@ -118,15 +118,15 @@ public class MailServiceImpl implements MailService {
      * 图片邮件
      * @param to 接收者邮件
      * @param subject 邮件主题
-     * @param contnet HTML内容
+     * @param content HTML内容
      * @param rscPath 图片路径
      * @param rscId 图片ID
      * @throws MessagingException
      */
     @Override
-    public void sendInlinkResourceMail(String to, String subject, String contnet,
+    public void sendInlinkResourceMail(String to, String subject, String content,
                                        String rscPath, String rscId) {
-        logger.info("发送静态邮件开始: {},{},{},{},{}", to, subject, contnet, rscPath, rscId);
+        logger.info("发送静态邮件开始: {},{},{},{},{}", to, subject, content, rscPath, rscId);
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = null;
@@ -136,7 +136,7 @@ public class MailServiceImpl implements MailService {
             helper = new MimeMessageHelper(message, true);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(contnet, true);
+            helper.setText(content, true);
             helper.setFrom(from);
             FileSystemResource res = new FileSystemResource(new File(rscPath));
             helper.addInline(rscId, res);
