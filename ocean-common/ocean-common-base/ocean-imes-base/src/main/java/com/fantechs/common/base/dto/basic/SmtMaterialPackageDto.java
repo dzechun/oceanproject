@@ -1,13 +1,10 @@
 package com.fantechs.common.base.dto.basic;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.entity.basic.SmtMaterialPackage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -26,6 +23,13 @@ public class SmtMaterialPackageDto extends SmtMaterialPackage implements Seriali
     @Transient
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
 
     /**
      * 版本

@@ -18,6 +18,7 @@
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtMaterialPackageDto" extends="BaseResultMap">
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule"/>
         <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
@@ -40,7 +41,7 @@
         select
         <include refid="Base_Column_List"></include>,
         spu.packing_unit_name, spu.packing_unit_desc,
-        sm.material_code, sm.material_desc, sm.version,
+        sm.material_code, sm.material_desc,sm.material_name, sm.version,
         sp.process_name,
         sbr.barcode_rule
         from fantech_imes.smt_material_package smp
