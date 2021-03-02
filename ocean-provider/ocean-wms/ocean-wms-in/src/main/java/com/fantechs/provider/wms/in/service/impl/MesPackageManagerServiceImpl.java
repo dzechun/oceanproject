@@ -246,6 +246,9 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
         List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
+        if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
+            throw new BizErrorException("请设置包箱条码规则");
+        }
         //取总共条码生成数
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
         ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
