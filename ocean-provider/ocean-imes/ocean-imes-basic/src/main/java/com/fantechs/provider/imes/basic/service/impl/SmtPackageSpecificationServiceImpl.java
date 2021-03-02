@@ -41,14 +41,6 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
     @Resource
     private SmtHtPackageSpecificationMapper smtHtPackageSpecificationMapper;
     @Resource
-    private PMFeignApi pmFeignApi;
-    @Resource
-    private SmtMaterialMapper smtMaterialMapper;
-    @Resource
-    private SmtPackingUnitMapper smtPackingUnitMapper;
-    @Resource
-    private SmtProcessMapper smtProcessMapper;
-    @Resource
     private SmtMaterialPackageMapper smtMaterialPackageMapper;
 
 
@@ -79,6 +71,14 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         //新增包装规格和物料关系
         List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
         for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
+            /*Example example1 = new Example(SmtMaterialPackage.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
+                    .andEqualTo("processId",smtMaterialPackage.getProcessId());
+            List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example1);
+            if (StringUtils.isNotEmpty(smtMaterialPackages1)){
+                throw new BizErrorException("物料在工序下的包装规格已存在");
+            }*/
             smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
         }
         smtMaterialPackageMapper.insertList(smtMaterialPackages);
@@ -121,6 +121,14 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         //新增绑定关系
         List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
         for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
+            /*Example example2 = new Example(SmtMaterialPackage.class);
+            Example.Criteria criteria2 = example1.createCriteria();
+            criteria2.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
+                    .andEqualTo("processId",smtMaterialPackage.getProcessId());
+            List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example2);
+            if (StringUtils.isNotEmpty(smtMaterialPackages1)){
+                throw new BizErrorException("物料在工序下的包装规格已存在");
+            }*/
             smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
         }
         smtMaterialPackageMapper.insertList(smtMaterialPackages);

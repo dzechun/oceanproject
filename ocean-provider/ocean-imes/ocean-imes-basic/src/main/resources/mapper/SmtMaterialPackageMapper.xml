@@ -15,7 +15,7 @@
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtMaterialPackageDto">
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.basic.SmtMaterialPackageDto" extends="BaseResultMap">
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>

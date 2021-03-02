@@ -3,21 +3,28 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtFactoryImport;
 import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtWorkShop;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.entity.basic.BaseOrganization;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.SmtDeptMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtFactoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtHtFactoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
 import com.fantechs.provider.imes.basic.service.SmtFactoryService;
+import com.sun.jersey.spi.container.ResourceFilters;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.statement.execute.Execute;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +47,8 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
     private SmtDeptMapper smtDeptMapper;
     @Resource
     private SmtWorkShopMapper smtWorkShopMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
 
     @Override
@@ -153,7 +162,7 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtFactoryDto> smtFactoryDtos) {
+    public Map<String, Object> importExcel(List<SmtFactoryImport> smtFactoryImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -163,28 +172,54 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtFactory> list = new LinkedList<>();
         LinkedList<SmtHtFactory> htList = new LinkedList<>();
-        for (int i = 0; i < smtFactoryDtos.size(); i++) {
-            SmtFactoryDto smtFactoryDto = smtFactoryDtos.get(i);
-            String factoryCode = smtFactoryDto.getFactoryCode();
-            String factoryName = smtFactoryDto.getFactoryName();
+        for (int i = 0; i < smtFactoryImports.size(); i++) {
+            SmtFactoryImport smtFactoryImport = smtFactoryImports.get(i);
+
+            String factoryCode = smtFactoryImport.getFactoryCode();
+            String factoryName = smtFactoryImport.getFactoryName();
+            String organizationCode = smtFactoryImport.getOrganizationCode();
             if (StringUtils.isEmpty(
                     factoryCode,factoryName
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
             //判断编码是否重复
             Example example = new Example(SmtFactory.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("factoryCode",smtFactoryDto.getFactoryCode());
+            criteria.andEqualTo("factoryCode",factoryCode);
             if (StringUtils.isNotEmpty(smtFactoryMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
+            //如果组织编码不为空，判断组织信息是否存在
+            if (StringUtils.isNotEmpty(organizationCode)){
+                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+                searchBaseOrganization.setOrganizationCode(organizationCode);
+                searchBaseOrganization.setCodeQueryMark(1);
+                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
+                if (StringUtils.isEmpty(baseOrganizationDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtFactoryImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
+            }
+
+            //判断集合中是否已经存在同样的数据
+            if (StringUtils.isNotEmpty(list)){
+                for (SmtFactory smtFactory : list) {
+                    if (smtFactory.getFactoryCode().equals(factoryCode)){
+                        fail.add(i+4);
+                        continue;
+                    }
+                }
+            }
+
+
             SmtFactory smtFactory = new SmtFactory();
-            BeanUtils.copyProperties(smtFactoryDto,smtFactory);
+            BeanUtils.copyProperties(smtFactoryImport,smtFactory);
             smtFactory.setCreateTime(new Date());
             smtFactory.setCreateUserId(currentUser.getUserId());
             smtFactory.setModifiedTime(new Date());

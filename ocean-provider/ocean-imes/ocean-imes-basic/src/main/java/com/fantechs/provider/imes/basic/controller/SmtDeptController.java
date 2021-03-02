@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtDeptImport;
 import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
@@ -124,8 +125,8 @@ public class SmtDeptController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtDept> smtDepts = EasyPoiUtils.importExcel(file, SmtDept.class);
-            Map<String, Object> resultMap = smtDeptService.importExcel(smtDepts);
+            List<SmtDeptImport> smtDeptImports = EasyPoiUtils.importExcel(file, 2, 1, SmtDeptImport.class);
+            Map<String, Object> resultMap = smtDeptService.importExcel(smtDeptImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

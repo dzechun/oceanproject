@@ -6,6 +6,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.security.mapper.SysCustomFormMapper;
 import com.fantechs.security.service.SysCustomFormService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,5 +25,11 @@ public class SysCustomFormServiceImpl  extends BaseService<SysCustomForm> implem
     @Override
     public List<SysCustomFormDto> findList(Map<String, Object> map) {
         return sysCustomFormMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(SysCustomForm sysCustomForm) {
+        return sysCustomFormMapper.updateByPrimaryKey(sysCustomForm);
     }
 }

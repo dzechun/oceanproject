@@ -20,6 +20,20 @@
             <groupId>com.codingapi.txlcn</groupId>
             <artifactId>txlcn-tm</artifactId>
             <version>5.0.2.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.codingapi.txlcn</groupId>
+                    <artifactId>txlcn-tc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.codingapi.txlcn</groupId>
+                    <artifactId>txlcn-txmsg-netty</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
