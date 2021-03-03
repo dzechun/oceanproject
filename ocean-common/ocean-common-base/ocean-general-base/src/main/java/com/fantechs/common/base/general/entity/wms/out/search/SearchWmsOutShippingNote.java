@@ -29,13 +29,13 @@ public class SearchWmsOutShippingNote extends BaseQuery implements Serializable 
      * 操作人
      */
     @ApiModelProperty(name="operatorUserName",value = "操作人")
-    private Long operatorUserName;
+    private String operatorUserName;
 
     /**
      * 处理人
      */
     @ApiModelProperty(name="processorUserName",value = "处理人")
-    private Long processorUserName;
+    private String processorUserName;
 
     /**
      * 单据状态（0-待备料 1-备料中 2- 备料完成）

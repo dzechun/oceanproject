@@ -101,13 +101,18 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
             if(StringUtils.isEmpty(smtStorageInventoryDtos)){
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
+            Boolean flag = false;
             for (SmtStorageInventoryDto smtStorageInventoryDto : smtStorageInventoryDtos) {
-                if(smtStorageInventoryDto.getMaterialId() != wmsOutShippingNoteDets.get(0).getMaterialId()){
-                    throw new BizErrorException(ErrorCodeEnum.STO30012001);
+                if(smtStorageInventoryDto.getMaterialId().equals(wmsOutShippingNoteDets.get(0).getMaterialId())){
+                    if(smtStorageInventoryDto.getQuantity().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) >= 0){
+                        flag = true;
+                        break;
+                    }
                 }
-                if(smtStorageInventoryDto.getQuantity().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) < 0){
-                    throw new BizErrorException(ErrorCodeEnum.STO30012000);
-                }
+            }
+
+            if(!flag){
+                throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
 
             //删除关系表

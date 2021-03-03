@@ -50,11 +50,11 @@
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
     SELECT <include refid="Base_Column_List"></include>,
-    su.user_name AS create_user_name,
-    sus.user_name AS modified_user_name,
-    sy.user_name AS operator_user_name,
-    bo.organization_code AS organization_code,
-    swo.work_order_code AS work_order_code
+        su.user_name AS create_user_name,
+        sus.user_name AS modified_user_name,
+        sy.user_name AS operator_user_name,
+        bo.organization_code AS organization_code,
+        swo.work_order_code AS work_order_code
     FROM
         wms_in_finished_product AS fp
     LEFT JOIN ocean.sys_user su ON fp.create_user_id = su.user_id
@@ -91,6 +91,6 @@
         and sy.user_name like CONCAT('%', #{operatorUserName}, '%')
       </if>
     </where>
-
+    order by fp.create_time desc
   </select>
 </mapper>
