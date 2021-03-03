@@ -99,8 +99,8 @@ public class ProcessListWorkOrderDTO {
     /**
      * 产品型号
      */
-    @ApiModelProperty(name = "productModuleName",value = "产品型号")
-    private String productModuleName;
+    @ApiModelProperty(name = "productModelName",value = "产品型号")
+    private String productModelName;
     /**
      * 已报工总数
      */
