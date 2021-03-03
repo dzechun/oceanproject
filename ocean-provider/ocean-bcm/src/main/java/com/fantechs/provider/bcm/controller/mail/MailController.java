@@ -1,5 +1,7 @@
 package com.fantechs.provider.bcm.controller.mail;
 
+import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.bcm.service.Mail.MailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,17 +27,19 @@ public class MailController {
 
     @ApiOperation("简单文本邮件")
     @GetMapping("/sendSimpleMail")
-    public void sendSimpleMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
-                               @ApiParam(value = "标题",required = true)@RequestParam String subject,
-                               @ApiParam(value = "内容",required = true)@RequestParam String contnet){
-        mailService.sendSimpleMail(to,subject,contnet);
+    public ResponseEntity sendSimpleMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
+                                         @ApiParam(value = "标题",required = true)@RequestParam String subject,
+                                         @ApiParam(value = "内容",required = true)@RequestParam String content){
+        mailService.sendSimpleMail(to,subject,content);
+        return ControllerUtil.returnSuccess();
     }
 
     @ApiOperation("HTML 文本邮件")
     @GetMapping("/sendHtmlMail")
-    public void sendHtmlMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
-                             @ApiParam(value = "标题",required = true)@RequestParam String subject,
-                             @ApiParam(value = "内容",required = true)@RequestParam String contnet){
-        mailService.sendHtmlMail(to,subject,contnet);
+    public ResponseEntity sendHtmlMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
+                                                                         @ApiParam(value = "标题",required = true)@RequestParam String subject,
+                                                                         @ApiParam(value = "内容",required = true)@RequestParam String content){
+        mailService.sendHtmlMail(to,subject,content);
+        return ControllerUtil.returnSuccess();
     }
 }

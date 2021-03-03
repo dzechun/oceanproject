@@ -112,7 +112,7 @@ public class BaseWorkShiftController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseWorkShiftDto> baseWorkShiftDtos = EasyPoiUtils.importExcel(file, BaseWorkShiftDto.class);
+            List<BaseWorkShiftDto> baseWorkShiftDtos = EasyPoiUtils.importExcel(file,2,1, BaseWorkShiftDto.class);
             Map<String, Object> resultMap = baseWorkShiftService.importExcel(baseWorkShiftDtos);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

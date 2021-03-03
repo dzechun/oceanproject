@@ -2,10 +2,13 @@ package com.fantechs.common.base.entity.basic.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.dto.basic.SmtMaterialPackageDto;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
@@ -67,77 +70,77 @@ public class SmtHtPackageSpecification implements Serializable {
     @Column(name = "package_specification_quantity")
     private BigDecimal packageSpecificationQuantity;
 
-    /**
-     * 物料ID
-     */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30)
-    @Column(name = "material_id")
-    private Long materialId;
-
-    /**
-     * 物料编码
-     */
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Transient
-    @Excel(name = "物料编码", height = 20, width = 30)
-    private String materialCode;
-
-
-    /**
-     * 物料描述
-     */
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Transient
-    @Excel(name = "物料描述", height = 20, width = 30)
-    private String materialDesc;
-
-    /**
-     * 版本
-     */
-    @ApiModelProperty(name="version" ,value="版本")
-    @Transient
-    private String version;
-
-    /**
-     * 条码规则集合ID
-     */
-    @ApiModelProperty(name="barcodeRuleId",value = "条码规则集合ID")
-    @Excel(name = "条码规则集合ID", height = 20, width = 30)
-    @Column(name = "barcode_rule_id")
-    private Long barcodeRuleId;
-
-    /**
-     * 条码规则
-     */
-    @ApiModelProperty(name="barcodeRule",value = "条码规则")
-    @Excel(name = "条码规则", height = 20, width = 30,orderNum="13")
-    @Transient
-    private String barcodeRule;
-
-    /**
-     * 包装单位ID
-     */
-    @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
-    @Excel(name = "包装单位ID", height = 20, width = 30)
-    @Column(name = "packing_unit_id")
-    private Long packingUnitId;
-
-    /**
-     * 包装单位名称
-     */
-    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
-    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="1")
-    @Transient
-    private String packingUnitName;
-
-    /**
-     * 包装单位描述
-     */
-    @ApiModelProperty(name="packingUnitDesc",value = "包装单位描述")
-    @Excel(name = "包装单位描述", height = 20, width = 30,orderNum="2")
-    @Transient
-    private String packingUnitDesc;
+//    *
+//     * 物料ID
+//
+//    @ApiModelProperty(name="materialId",value = "物料ID")
+//    @Excel(name = "物料ID", height = 20, width = 30)
+//    @Column(name = "material_id")
+//    private Long materialId;
+//
+//    *
+//     * 物料编码
+//
+//    @ApiModelProperty(name="materialCode" ,value="物料编码")
+//    @Transient
+//    @Excel(name = "物料编码", height = 20, width = 30)
+//    private String materialCode;
+//
+//
+//    *
+//     * 物料描述
+//
+//    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+//    @Transient
+//    @Excel(name = "物料描述", height = 20, width = 30)
+//    private String materialDesc;
+//
+//    *
+//     * 版本
+//
+//    @ApiModelProperty(name="version" ,value="版本")
+//    @Transient
+//    private String version;
+//
+//    *
+//     * 条码规则集合ID
+//
+//    @ApiModelProperty(name="barcodeRuleId",value = "条码规则集合ID")
+//    @Excel(name = "条码规则集合ID", height = 20, width = 30)
+//    @Column(name = "barcode_rule_id")
+//    private Long barcodeRuleId;
+//
+//    *
+//     * 条码规则
+//
+//    @ApiModelProperty(name="barcodeRule",value = "条码规则")
+//    @Excel(name = "条码规则", height = 20, width = 30,orderNum="13")
+//    @Transient
+//    private String barcodeRule;
+//
+//    *
+//     * 包装单位ID
+//
+//    @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
+//    @Excel(name = "包装单位ID", height = 20, width = 30)
+//    @Column(name = "packing_unit_id")
+//    private Long packingUnitId;
+//
+//    *
+//     * 包装单位名称
+//
+//    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
+//    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="1")
+//    @Transient
+//    private String packingUnitName;
+//
+//    *
+//     * 包装单位描述
+//
+//    @ApiModelProperty(name="packingUnitDesc",value = "包装单位描述")
+//    @Excel(name = "包装单位描述", height = 20, width = 30,orderNum="2")
+//    @Transient
+//    private String packingUnitDesc;
 
     /**
      * 组织id
@@ -245,6 +248,12 @@ public class SmtHtPackageSpecification implements Serializable {
     @ApiModelProperty(name="option3",value = "扩展字段3")
     @Excel(name = "扩展字段3", height = 20, width = 30)
     private String option3;
+
+    /**
+     * 包装规格物料关系集合
+     */
+    @ApiModelProperty(name="smtMaterialPackages",value = "包装规格物料关系集合")
+    private List<SmtMaterialPackageDto> smtMaterialPackages = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

@@ -47,7 +47,6 @@ public class SmtWorkShopDto extends SmtWorkShop implements Serializable {
     @Excel(name = "工厂编码", height = 20, width = 30,orderNum="5")
     private String factoryCode;
 
-
     /**
      * 组织名称
      */

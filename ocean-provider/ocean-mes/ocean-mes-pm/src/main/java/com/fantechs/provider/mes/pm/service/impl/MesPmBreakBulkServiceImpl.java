@@ -96,9 +96,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
 
         //获取品质确认人员
         String qmsName = mesPmBreakBulkMapper.confirmation(record.getBatchNo(),processId);
-        if(StringUtils.isEmpty(qmsName)){
-            throw new BizErrorException("品质信息获取失败");
-        }
+
         record.setProcessId(processId);
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
