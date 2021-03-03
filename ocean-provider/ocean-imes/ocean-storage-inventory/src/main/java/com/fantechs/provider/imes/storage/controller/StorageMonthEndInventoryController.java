@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.storage.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto;
 import com.fantechs.common.base.entity.storage.StorageMonthEndInventory;
 import com.fantechs.common.base.entity.storage.search.SearchStorageMonthEndInventory;
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,8 +51,8 @@ public class StorageMonthEndInventoryController {
     }
 
     @ApiOperation(value = "记录月末库存数据",notes = "记录月末库存数据")
-    @PostMapping("/add")
-    public ResponseEntity add() {
+    @PostMapping("/record")
+    public ResponseEntity record() {
         return ControllerUtil.returnCRUD(storageMonthEndInventoryService.record());
     }
 
@@ -82,7 +84,7 @@ public class StorageMonthEndInventoryController {
     List<StorageMonthEndInventoryDto> list = storageMonthEndInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchStorageMonthEndInventory));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出月末库存信息", "月末库存信息", StorageMonthEndInventoryDto.class, "StorageMonthEndInventory.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出月末库存信息", "月末库存信息", StorageMonthEndInventoryDto.class, "月末库存.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

@@ -47,6 +47,9 @@ public class WmsOutProductionMaterialdDetServiceImpl extends BaseService<WmsOutP
         List<WmsOutProductionMaterialdDet> wmsOutProductionMaterialdDets = wmsOutProductionMaterialdDetMapper.selectByExample(ex);
         if(wmsOutProductionMaterialdDets.size() > 0){
             wmsOutProductionMaterialdDets.get(0).setRealityQty(wmsOutProductionMaterialdDets.get(0).getRealityQty().add(wmsOutProductionMaterialdDet.getRealityQty()));
+            wmsOutProductionMaterialdDets.get(0).setModifiedTime(new Date());
+            wmsOutProductionMaterialdDets.get(0).setModifiedUserId(user.getCreateUserId());
+            wmsOutProductionMaterialdDets.get(0).setOrganizationId(user.getOrganizationId());
             wmsOutProductionMaterialdDetMapper.updateByPrimaryKeySelective(wmsOutProductionMaterialdDets.get(0));
         } else {
             wmsOutProductionMaterialdDet.setOrganizationId(user.getOrganizationId());

@@ -130,6 +130,18 @@ public class MesPmBreakBulkDto extends MesPmBreakBulk implements Serializable {
     @Transient
     @ApiModelProperty(name = "materialQuality",value = "产品材质")
     private String materialQuality;
+    /**
+     * 工艺路线ID
+     */
+    @Column(name = "route_id")
+    @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    private Long routeId;
+    /**
+     * 工序链
+     */
+    @Transient
+    @ApiModelProperty(name = "processLink",value = "工序链")
+    private String processLink;
 
     @ApiModelProperty(name = "qualityName",value = "抽检员")
     private String qualityName;

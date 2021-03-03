@@ -5,6 +5,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -21,6 +22,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -71,13 +73,25 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
         searchSmtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
         searchSmtProcessListProcess.setStatus((byte)2);
+        searchSmtProcessListProcess.setProcessType((byte)2);
         List<SmtProcessListProcessDto> smtProcessListProcessDtoList = smtProcessListProcessService.findList(searchSmtProcessListProcess);
         double outputTotalQty=0.0;
+        double preQty=0.0;
         if(StringUtils.isNotEmpty(smtProcessListProcessDtoList)){
-            for (SmtProcessListProcessDto smtProcessListProcessDto : smtProcessListProcessDtoList) {
-                outputTotalQty+=smtProcessListProcessDto.getOutputQuantity().doubleValue();
+            smtProcessListProcessDtoList.sort(Comparator.comparing(SmtProcessListProcess::getProcessListProcessId));
+            //最后一个工序报工信息
+            SmtProcessListProcessDto lastProcessListProcessDto = smtProcessListProcessDtoList.get(smtProcessListProcessDtoList.size() - 1);
+            outputTotalQty=lastProcessListProcessDto.getOutputQuantity().doubleValue();
+
+            //找到当前工序的上一个工序报工情况
+            for (int i = smtProcessListProcessDtoList.size()-1; i > 0; i--) {
+                SmtProcessListProcessDto smtProcessListProcessDto = smtProcessListProcessDtoList.get(i);
+                if(!smtProcessListProcessDto.getProcessId().equals(lastProcessListProcessDto.getProcessId())){
+                    preQty=smtProcessListProcessDto.getOutputQuantity().doubleValue();
+                    break;
+                }
             }
-            processListWorkOrderDTO.setPreQty(smtProcessListProcessDtoList.get(0).getOutputQuantity());
+            processListWorkOrderDTO.setPreQty(new BigDecimal(preQty));
         }
 
         processListWorkOrderDTO.setOutputTotalQty(new BigDecimal(outputTotalQty));

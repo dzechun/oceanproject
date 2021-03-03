@@ -52,20 +52,18 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
     ,sw.warehouse_name,swa.warehouse_area_name,ss.storage_name,sm.material_code,sm.material_desc,
-    ssi.quantity,spm.product_model_name,
-    ifnull(CEILING(ssi.quantity / (
-    	select sps.package_specification_quantity from smt_package_specification sps where sps.package_specification_id = bt.package_specification_id
-    )),0) AS box_number
+    ssi.quantity,spm.product_model_name
     FROM storage_month_end_inventory smei
-    LEFT JOIN ocean.sys_user su ON ssi.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON ssi.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON ssi.organization_id = bo.organization_id
-    left join smt_storage ss on smei.storage_id = ss.storage_id
-    left join smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
-    left join smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
-    left join smt_material sm on sm.material_id = smei.material_id
-    left join base_tab bt on bt.material_id = ssi.material_id
-    left join smt_product_model spm on spm.product_model_id = bt.product_model_id
+    LEFT JOIN ocean.sys_user su ON smei.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON smei.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON smei.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_id = smei.storage_id and ssi.material_id = smei.material_id
+    LEFT JOIN fantech_imes.smt_storage ss on smei.storage_id = ss.storage_id
+    LEFT JOIN fantech_imes.smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
+    LEFT JOIN fantech_imes.smt_material sm on sm.material_id = smei.material_id
+    LEFT JOIN fantech_imes.base_tab bt on bt.material_id = ssi.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm on spm.product_model_id = bt.product_model_id
     <where>
       <if test="warehouseName != null and warehouseName != ''">
         and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
@@ -84,6 +82,9 @@
       </if>
       <if test="productModelName != null and productModelName != ''">
         and spm.productModelName like CONCAT('%', #{productModelName}, '%')
+      </if>
+      <if test="month != null and month != ''">
+        and smei.create_time like CONCAT(#{month}, '%')
       </if>
     </where>
   </select>

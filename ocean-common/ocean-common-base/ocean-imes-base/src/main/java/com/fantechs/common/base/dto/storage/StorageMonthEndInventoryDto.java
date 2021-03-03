@@ -18,7 +18,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="1")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="1")
     private String warehouseName;
 
     /**
@@ -26,7 +26,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name="warehouseAreaName",value = "仓库区域名称")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="2")
+    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="2")
     private String warehouseAreaName;
 
     /**
@@ -34,7 +34,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name="storageName",value = "储位名称")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="3")
+    @Excel(name = "储位名称", height = 20, width = 30,orderNum="3")
     private String storageName;
 
     /**
@@ -42,7 +42,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name="materialCode",value = "产品料号")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="4")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="4")
     private String materialCode;
 
     /**
@@ -50,7 +50,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name="materialDesc",value = "产品料号编码")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="5")
+    @Excel(name = "产品料号编码", height = 20, width = 30,orderNum="5")
     private String materialDesc;
 
     /**
@@ -58,7 +58,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name="productModelName",value = "产品型号")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="6")
+    @Excel(name = "产品型号", height = 20, width = 30,orderNum="6")
     private String productModelName;
 
     /**

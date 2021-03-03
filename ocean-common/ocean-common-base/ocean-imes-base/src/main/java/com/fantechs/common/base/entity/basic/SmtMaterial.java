@@ -1,6 +1,7 @@
 package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -176,5 +177,5 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "baseTab",value = "页签")
-    private BaseTab baseTab;
+    private BaseTabDto baseTabDto;
 }

@@ -2,10 +2,12 @@ package com.fantechs.common.base.entity.storage.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
-
+@Data
 public class SearchStorageMonthEndInventory extends BaseQuery implements Serializable {
 
     /**
@@ -43,5 +45,11 @@ public class SearchStorageMonthEndInventory extends BaseQuery implements Seriali
      */
     @ApiModelProperty(name="productModelName",value = "产品型号")
     private String productModelName;
+
+    /**
+     * 月份
+     */
+    @ApiModelProperty(name="month",value = "月份")
+    private String month;
 
 }

@@ -191,4 +191,10 @@ public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
     @ApiModelProperty(value = "父工单编码",example = "父工单编码")
     @Excel(name = "父工单编码")
     private String parentWorkOrderCode;
+    /**
+     * 工序链
+     */
+    @Transient
+    @ApiModelProperty(name = "processLink",value = "工序链")
+    private String processLink;
 }

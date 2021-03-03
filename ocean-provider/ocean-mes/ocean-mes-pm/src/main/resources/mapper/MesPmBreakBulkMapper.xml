@@ -41,6 +41,7 @@
         <result column="color" jdbcType="VARCHAR" property="color"/>
         <result column="product_model_name" jdbcType="VARCHAR" property="productModuleName"/>
         <result column="material_quality" jdbcType="VARCHAR" property="materialQuality"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
   </resultMap>
 
  <sql id="Base_Column_List">
@@ -60,7 +61,8 @@
   pb.break_bulk_type,
   bt.color,
 spm.product_model_name,
-bt.material_quality
+bt.material_quality,
+wo.route_id
 </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk">
@@ -102,7 +104,7 @@ bt.material_quality
   where wocp.work_order_card_id= #{workOrderCardId}
 </select>
 <select id="reprint" resultType="com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto">
-SELECT pb.batch_no as 'batchNo',pb.break_bulk_batch_qty as 'breakBulkBatchQty',sm.material_code as 'materialCode',sm.material_name as 'materialName',sm.version,sm.material_desc as 'materialDesc',sr.route_name as 'routeName',pb.process_id as 'processId',s.user_name as 'modifiedUserName',bt.color AS 'color',
+SELECT pb.batch_no as 'batchNo',pb.break_bulk_batch_qty as 'breakBulkBatchQty',sm.material_code as 'materialCode',sm.material_name as 'materialName',sm.version,sm.material_desc as 'materialDesc',sr.route_id as 'routeId',sr.route_name as 'routeName',pb.process_id as 'processId',s.user_name as 'modifiedUserName',bt.color AS 'color',
 spm.product_model_name AS 'productModelName',
 bt.material_quality AS 'materialQuality ' FROM mes_pm_break_bulk pb
         LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id

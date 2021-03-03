@@ -65,8 +65,8 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 searchBaseTab.setMaterialId(smtMaterialDto.getMaterialId());
                 List<BaseTabDto> baseTabs = baseFeignApi.findTabList(searchBaseTab).getData();
                 if (StringUtils.isNotEmpty(baseTabs)) {
-                    BaseTab baseTab = baseTabs.get(0);
-                    smtMaterialDto.setBaseTab(baseTab);
+                    BaseTabDto baseTabDto = baseTabs.get(0);
+                    smtMaterialDto.setBaseTabDto(baseTabDto);
                 }
             }
         }
@@ -118,7 +118,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         int i = smtMaterialMapper.insertUseGeneratedKeys(smtMaterial);
 
         //新增物料页签信息
-        BaseTab baseTab = smtMaterial.getBaseTab();
+        BaseTab baseTab = smtMaterial.getBaseTabDto();
         if (0 >= baseTab.getTransferQuantity()){
             throw new BizErrorException("转移批量必须大于0");
         }
@@ -154,7 +154,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         smtMaterial.setModifiedTime(new Date());
         int i = smtMaterialMapper.updateByPrimaryKeySelective(smtMaterial);
 
-        BaseTab baseTab = smtMaterial.getBaseTab();
+        BaseTab baseTab = smtMaterial.getBaseTabDto();
         if (StringUtils.isNotEmpty(baseTab)){
             //判断该物料的页签是否存在
             SearchBaseTab searchBaseTab = new SearchBaseTab();
@@ -268,7 +268,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 smtMaterial.setModifiedTime(new Date());
 
                 //更新页签
-                BaseTab baseTab = smtMaterial.getBaseTab();
+                BaseTab baseTab = smtMaterial.getBaseTabDto();
                 if (StringUtils.isNotEmpty(baseTab)) {
                     baseFeignApi.updateTab(baseTab);
                 }
@@ -333,7 +333,7 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
                 smtMaterial.setModifiedTime(new Date());
 
                 //新增物料页签信息
-                BaseTab baseTab = smtMaterial.getBaseTab();
+                BaseTab baseTab = smtMaterial.getBaseTabDto();
                 if (StringUtils.isNotEmpty(baseTab)) {
                     baseTab.setMaterialId(smtMaterial.getMaterialId());
                     baseFeignApi.addTab(baseTab);
