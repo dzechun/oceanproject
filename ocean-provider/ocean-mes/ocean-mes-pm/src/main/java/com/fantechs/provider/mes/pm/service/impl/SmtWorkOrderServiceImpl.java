@@ -370,12 +370,19 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                     smtWorkOrderDto.setProductModelName(smtWorkOrderDto1.getProductModelName());
                     smtWorkOrderDto.setPackingUnitName(smtWorkOrderDto1.getPackingUnitName());
                     smtWorkOrderDto.setMainUnit(smtWorkOrderDto1.getMainUnit());
+                    smtWorkOrderDto.setColor(smtWorkOrderDto1.getColor());
+                    smtWorkOrderDto.setPackageSpecificationQuantity(smtWorkOrderDto1.getPackageSpecificationQuantity());
                 }
             }
             Long routeId = smtWorkOrderDto.getRouteId();
             //查询工艺路线配置
             List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
             if (StringUtils.isNotEmpty(routeProcesses)) {
+                StringBuffer sb =new StringBuffer();
+                for (SmtRouteProcess routeProcess : routeProcesses) {
+                    sb.append(routeProcess.getProcessName()+"-");
+                }
+                smtWorkOrderDto.setProcessLink(sb.substring(0,sb.length()-1));
                 //投入工序
                 smtWorkOrderDto.setPutIntoProcessName(routeProcesses.get(0).getProcessName());
                 //产出工序
