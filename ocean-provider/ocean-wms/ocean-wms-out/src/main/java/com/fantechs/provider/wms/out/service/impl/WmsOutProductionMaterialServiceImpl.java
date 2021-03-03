@@ -78,15 +78,16 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
             return 1;
         }
         WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = wmsOutProductionMaterialdDets.get(0);
-        //部件数量除于用量
+/*        //部件数量除于用量
         BigDecimal bigDecimal = wmsOutProductionMaterial.getRealityQty().divide(wmsOutProductionMaterialdDet.getQuantity());
         if (new BigDecimal(bigDecimal.intValue()).compareTo(bigDecimal) != 0) {
             throw new BizErrorException("请输入正确的扫描数量");
         }
-        wmsOutProductionMaterialdDet.setScanQty(wmsOutProductionMaterialdDet.getScanQty().add(bigDecimal));
         if (wmsOutProductionMaterialdDet.getScanQty().compareTo(wmsOutProductionMaterialdDet.getRealityQty()) > 0) {
             throw new BizErrorException("扫描数量不能大于发料数量");
-        }
+        }*/
+        //累加扫描数量(配件数量)
+        wmsOutProductionMaterialdDet.setScanQty(wmsOutProductionMaterialdDet.getScanQty().add(wmsOutProductionMaterial.getRealityQty()));
         wmsOutProductionMaterialdDetMapper.updateByPrimaryKeySelective(wmsOutProductionMaterialdDet);
 
         //计算最小齐套数 再更新实发数量
@@ -94,10 +95,16 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
         ex.clear();
         ex.createCriteria().andEqualTo("productionMaterialId", wmsOutProductionMaterialdDet.getProductionMaterialId());
         wmsOutProductionMaterialdDets = wmsOutProductionMaterialdDetMapper.selectByExample(ex);
-        //按最小数量排序
-        List<WmsOutProductionMaterialdDet> temp = wmsOutProductionMaterialdDets.stream().sorted(Comparator.comparing(WmsOutProductionMaterialdDet::getScanQty)).collect(Collectors.toList());
 
-        BigDecimal lastQty = temp.get(0).getScanQty().subtract(temp.get(0).getUseQty());
+        List<BigDecimal> list = new ArrayList<>();
+        for (WmsOutProductionMaterialdDet outProductionMaterialdDet : wmsOutProductionMaterialdDets) {
+            list.add(outProductionMaterialdDet.getScanQty().divide(outProductionMaterialdDet.getQuantity()).setScale(0, BigDecimal.ROUND_DOWN));//扫描数量除于用量 向下取整
+        }
+
+//        //按最小数量排序
+//        List<WmsOutProductionMaterialdDet> temp = wmsOutProductionMaterialdDets.stream().sorted(Comparator.comparing(WmsOutProductionMaterialdDet::getScanQty)).collect(Collectors.toList());
+        Collections.sort(list);
+        BigDecimal lastQty = list.get(0).subtract(wmsOutProductionMaterialdDets.get(0).getUseQty());
         //最小齐套数大于0
         if (lastQty.compareTo(new BigDecimal(0)) > 0) {
 
@@ -108,7 +115,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
             }
 
             //其中一张发料单
-            wmsOutProductionMaterial = wmsOutProductionMaterialMapper.selectByPrimaryKey(temp.get(0).getProductionMaterialId());
+            wmsOutProductionMaterial = wmsOutProductionMaterialMapper.selectByPrimaryKey(wmsOutProductionMaterialdDets.get(0).getProductionMaterialId());
 
             //库存数据
             SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
@@ -133,7 +140,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
             List<WmsOutProductionMaterial> dataResources = wmsOutProductionMaterialMapper.selectByExample(example);
 
             for (WmsOutProductionMaterial dataResource : dataResources) {
-                if (dataResource.getRealityQty().add(lastQty).compareTo(dataResource.getPlanQty()) >= 0) {
+                if (dataResource.getRealityQty().add(lastQty).compareTo(dataResource.getPlanQty()) > 0) {
                     lastQty = lastQty.subtract(dataResource.getPlanQty().subtract(dataResource.getRealityQty()));
                     dataResource.setRealityQty(dataResource.getPlanQty());
                     dataResource.setOutStatus((byte) 2);
@@ -144,7 +151,11 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
                     wmsOutProductionMaterialMapper.updateByPrimaryKeySelective(dataResource);
                 } else {
                     dataResource.setRealityQty(dataResource.getRealityQty().add(lastQty));
-                    dataResource.setOutStatus((byte) 1);
+                    if (dataResource.getRealityQty().compareTo(dataResource.getPlanQty()) == 0) {
+                        dataResource.setOutStatus((byte) 2);
+                    } else {
+                        dataResource.setOutStatus((byte) 1);
+                    }
                     wmsOutProductionMaterialMapper.updateByPrimaryKeySelective(dataResource);
                     //履历
                     WmsOutHtProductionMaterial wmsOutHtProductionMaterial = new WmsOutHtProductionMaterial();
