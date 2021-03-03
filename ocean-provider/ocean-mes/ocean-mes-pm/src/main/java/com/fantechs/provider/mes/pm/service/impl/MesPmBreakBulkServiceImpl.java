@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
@@ -222,10 +223,17 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 //获取品质确认人员
                 String qmsName = mesPmBreakBulkMapper.confirmation(mesPmBreakBulkPrintDto.getBatchNo(),mesPmBreakBulkPrintDto.getProcessId());
                 mesPmBreakBulkPrintDto.setQualityName(qmsName);
-                if(StringUtils.isEmpty(qmsName)){
-                    throw new BizErrorException("品质信息获取失败");
-                }
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
+                Long routeId = mesPmBreakBulkPrintDto.getRouteId();
+                //查询工艺路线配置
+                List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                if (StringUtils.isNotEmpty(routeProcesses)) {
+                    StringBuffer sb =new StringBuffer();
+                    for (SmtRouteProcess routeProcess : routeProcesses) {
+                        sb.append(routeProcess.getProcessName()+"-");
+                    }
+                    mesPmBreakBulkPrintDto.setProcessLink(sb.substring(0,sb.length()-1));
+                }
                 return mesPmBreakBulkPrintDto;
             }else {
                 throw new BizErrorException("更新打印日期失败");
@@ -241,11 +249,18 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 MesPmBreakBulkPrintDto mesPmBreakBulkPrintDto = mesPmBreakBulkMapper.reprint(searchMesPmBreakBulk);
                 //获取品质确认人员
                 String qmsName = mesPmBreakBulkMapper.confirmation(mesPmBreakBulkPrintDto.getBatchNo(),mesPmBreakBulkPrintDto.getProcessId());
-                if(StringUtils.isEmpty(qmsName)){
-                    throw new BizErrorException("品质信息获取失败");
-                }
                 mesPmBreakBulkPrintDto.setQualityName(qmsName);
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
+                Long routeId = mesPmBreakBulkPrintDto.getRouteId();
+                //查询工艺路线配置
+                List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                if (StringUtils.isNotEmpty(routeProcesses)) {
+                    StringBuffer sb =new StringBuffer();
+                    for (SmtRouteProcess routeProcess : routeProcesses) {
+                        sb.append(routeProcess.getProcessName()+"-");
+                    }
+                    mesPmBreakBulkPrintDto.setProcessLink(sb.substring(0,sb.length()-1));
+                }
                 return mesPmBreakBulkPrintDto;
             }else {
                 throw new BizErrorException("更新打印日期失败");
