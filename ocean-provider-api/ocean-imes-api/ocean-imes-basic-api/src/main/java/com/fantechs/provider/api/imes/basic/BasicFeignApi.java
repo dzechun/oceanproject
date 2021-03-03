@@ -2,6 +2,7 @@ package com.fantechs.provider.api.imes.basic;
 
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
+import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
@@ -122,4 +123,8 @@ public interface BasicFeignApi {
     @ApiOperation("根据条件查询工序信息列表")
     @PostMapping("/smtProcess/findList")
     ResponseEntity<List<SmtProcess>> findProcessList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchSmtProcess searchSmtProcess);
+
+    @ApiOperation("查询车间信息列表")
+    @PostMapping("/smtWorkShop/findList")
+    ResponseEntity<List<SmtWorkShopDto>> findWorkShopList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop);
 }

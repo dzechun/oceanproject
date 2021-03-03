@@ -48,6 +48,12 @@ public class SearchSmtPackageSpecification extends BaseQuery implements Serializ
     private String packingUnitDesc;
 
     /**
+     * 物料Id
+     */
+    @ApiModelProperty(name="materialId" ,value="物料Id")
+    private Long materialId;
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")

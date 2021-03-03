@@ -2,12 +2,15 @@ package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
+import com.fantechs.common.base.entity.basic.search.SearchSmtWorkShop;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseTeamImport;
 import com.fantechs.common.base.general.entity.basic.BaseTeam;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtTeam;
@@ -20,6 +23,7 @@ import com.fantechs.provider.base.mapper.BaseHtTeamMapper;
 import com.fantechs.provider.base.mapper.BaseTeamMapper;
 import com.fantechs.provider.base.service.BaseTeamService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -128,72 +132,94 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<BaseTeamDto> baseTeamDtos) {
+    public Map<String, Object> importExcel(List<BaseTeamImport> baseTeamImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseTeam> list = new LinkedList<>();
         LinkedList<BaseHtTeam> htList = new LinkedList<>();
-        for (int i = 0; i < baseTeamDtos.size(); i++) {
-            BaseTeamDto baseTeamDto = baseTeamDtos.get(i);
-            String factoryCode = baseTeamDto.getFactoryCode();
-            String teamCode = baseTeamDto.getTeamCode();
-            String teamName = baseTeamDto.getTeamName();
+        ArrayList<BaseTeamImport> baseTeamImportList = new ArrayList<>();
+        for (int i = 0; i < baseTeamImports.size(); i++) {
+            BaseTeamImport baseTeamImport = baseTeamImports.get(i);
+            String teamCode = baseTeamImport.getTeamCode();
+            String teamName = baseTeamImport.getTeamName();
+            String workShopCode = baseTeamImport.getWorkShopCode();
             if (StringUtils.isEmpty(
-                    factoryCode,teamCode,teamName
+                    teamCode,teamName,workShopCode
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
             //判断编码是否重复
-            Example example = new Example(SmtFactory.class);
+            Example example = new Example(BaseTeam.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("teamCode",baseTeamDto.getTeamCode());
+            criteria.andEqualTo("teamCode",teamCode);
             if (StringUtils.isNotEmpty(baseTeamMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
-            //判断工厂是否存在
-            SearchSmtFactory searchSmtFactory = new SearchSmtFactory();
-            searchSmtFactory.setFactoryCode(baseTeamDto.getFactoryCode());
-            searchSmtFactory.setCodeQueryMark((byte) 1);
-            SmtFactoryDto smtFactoryDto = basicFeignApi.findFactoryList(searchSmtFactory).getData().get(0);
-            if (StringUtils.isEmpty(smtFactoryDto)){
-                fail.add(i+3);
+            //判断车间是否存在
+            SearchSmtWorkShop searchSmtWorkShop = new SearchSmtWorkShop();
+            searchSmtWorkShop.setWorkShopCode(workShopCode);
+            searchSmtWorkShop.setCodeQueryMark(1);
+            List<SmtWorkShopDto> smtWorkShopDtos = basicFeignApi.findWorkShopList(searchSmtWorkShop).getData();
+            if (StringUtils.isEmpty(smtWorkShopDtos)){
+                fail.add(i+4);
+                continue;
+            }
+            baseTeamImport.setWorkShopId(smtWorkShopDtos.get(0).getWorkShopId());
+
+            //判断集合中是否存在该条数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(baseTeamImportList)){
+                for (BaseTeamImport teamImport : baseTeamImportList) {
+                    if (teamImport.getTeamCode().equals(teamCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
                 continue;
             }
 
-            BaseTeam baseTeam = new BaseTeam();
-            BeanUtils.copyProperties(baseTeamDto,baseTeam);
-            baseTeam.setCreateTime(new Date());
-            baseTeam.setCreateUserId(currentUser.getUserId());
-            baseTeam.setModifiedTime(new Date());
-            baseTeam.setModifiedUserId(currentUser.getUserId());
-            baseTeam.setStatus((byte) 1);
-            list.add(baseTeam);
+            baseTeamImportList.add(baseTeamImport);
+        }
+
+        if (StringUtils.isNotEmpty(baseTeamImportList)){
+            for (BaseTeamImport baseTeamImport : baseTeamImportList) {
+                BaseTeam baseTeam = new BaseTeam();
+                BeanUtils.copyProperties(baseTeamImport,baseTeam);
+                baseTeam.setCreateTime(new Date());
+                baseTeam.setCreateUserId(currentUser.getUserId());
+                baseTeam.setModifiedTime(new Date());
+                baseTeam.setModifiedUserId(currentUser.getUserId());
+                list.add(baseTeam);
+            }
         }
 
         if (StringUtils.isNotEmpty(list)){
             success = baseTeamMapper.insertList(list);
+
+            for (BaseTeam baseTeam : list) {
+                BaseHtTeam baseHtTeam = new BaseHtTeam();
+                BeanUtils.copyProperties(baseTeam,baseHtTeam);
+                htList.add(baseHtTeam);
+            }
+
+            if (StringUtils.isNotEmpty(htList)){
+                baseHtTeamMapper.insertList(htList);
+            }
         }
 
-        for (BaseTeam baseTeam : list) {
-            BaseHtTeam baseHtTeam = new BaseHtTeam();
-            BeanUtils.copyProperties(baseTeam,baseHtTeam);
-            htList.add(baseHtTeam);
-        }
-
-        if (StringUtils.isNotEmpty(htList)){
-            baseHtTeamMapper.insertList(htList);
-        }
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }
