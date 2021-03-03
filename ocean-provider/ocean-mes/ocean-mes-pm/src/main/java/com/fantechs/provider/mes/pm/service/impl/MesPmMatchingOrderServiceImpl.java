@@ -237,7 +237,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             }
             mesPmMatchingDto.setMinMatchingQuantity(min);
             mesPmMatchingDto.setMaterialId(processListWorkOrderDTO.getMaterialId());
-            mesPmMatchingDto.setProductModuleName(processListWorkOrderDTO.getProductModuleName());
+            mesPmMatchingDto.setProductModuleName(processListWorkOrderDTO.getProductModelName());
             mesPmMatchingDto.setWorkOrderId(processListWorkOrderDTO.getWorkOrderId());
             mesPmMatchingDto.setMaterialCode(processListWorkOrderDTO.getMaterialCode());
             mesPmMatchingDto.setMaterialDesc(processListWorkOrderDTO.getMaterialDesc());
