@@ -26,6 +26,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -65,6 +66,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     private InFeignApi inFeignApi;
     @Resource
     private OutFeignApi outFeignApi;
+    @Resource
+    private BcmFeignApi bcmFeignApi;
 
     @Override
     public List<QmsQualityConfirmationDto> findList(Map<String, Object> map) {
@@ -277,7 +280,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }else{
             qmsQualityConfirmation.setModifiedTime(new Date());
             qmsQualityConfirmation.setModifiedUserId(user.getUserId());
-
+            qmsQualityConfirmation.setOrganizationId(user.getOrganizationId());
             Example example = new Example(QmsPoorQuality.class);
             example.createCriteria().andEqualTo("qualityId",qmsQualityConfirmation.getQualityConfirmationId());
             qmsPoorQualityMapper.deleteByExample(example);
@@ -452,10 +455,14 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                         wmsOutProductionMaterialdDet.setMaterialId(smtWorkOrderCardPoolDto.getMaterialId());
                         wmsOutProductionMaterialdDet.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
                         wmsOutProductionMaterialdDet.setRealityQty(minMatchingQuantity);
+                        wmsOutProductionMaterialdDet.setScanQty(new BigDecimal(0));
+                        wmsOutProductionMaterialdDet.setUseQty(new BigDecimal(0));
                         outFeignApi.add(wmsOutProductionMaterialdDet);
                     }
                 }
             }
+            //发送邮箱
+//            bcmFeignApi.sendHtmlMail()
         }
 
         return i;
