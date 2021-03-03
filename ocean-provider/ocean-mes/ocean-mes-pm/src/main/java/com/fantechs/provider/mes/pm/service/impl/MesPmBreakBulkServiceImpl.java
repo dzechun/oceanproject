@@ -113,7 +113,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
 
         int counter = mesPmBreakBulkMapper.batchCount(record.getBatchNo());
         //添加明细
-        int i = counter>0?counter:1;
+        int i = counter>0?counter+1:1;
         for (MesPmBreakBulkDet mesPmBreakBulkDet : record.getMesPmBreakBulkDets()) {
 
             //拆批作业生产子批次号≤µ˚≥
