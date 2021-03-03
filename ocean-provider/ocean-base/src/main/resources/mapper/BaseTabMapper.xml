@@ -61,6 +61,7 @@
         <result column="inspection_type_name" jdbcType="VARCHAR" property="inspectionTypeName" />
         <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode" />
         <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
+        <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity" />
         <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
         <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
         <result column="label_category_code" jdbcType="VARCHAR" property="labelCategoryCode" />
@@ -125,7 +126,7 @@
     select <include refid="Base_Column_List"/>,
       qii.inspection_item_code,qii.inspection_item_name,
       qit.inspection_type_code,qit.inspection_type_name,
-      sps.package_specification_code,sps.package_specification_name,
+      sps.package_specification_code,sps.package_specification_name,sps.package_specification_quantity,
       spm.product_model_code,spm.product_model_name,
       blc.label_category_code,blc.label_category_name,
       bl.label_code,bl.label_name,

@@ -1,11 +1,14 @@
 package com.fantechs.common.base.general.dto.basic;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class BaseTabDto extends BaseTab implements Serializable {
@@ -51,6 +54,13 @@ public class BaseTabDto extends BaseTab implements Serializable {
     @ApiModelProperty(name="packageSpecificationName",value = "包装规格名称")
     @Transient
     private String packageSpecificationName;
+
+    /**
+     * 包装规格数量
+     */
+    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格数量")
+    @Transient
+    private BigDecimal packageSpecificationQuantity;
 
     /**
      *  产品型号编码
