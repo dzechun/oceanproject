@@ -104,8 +104,9 @@ public class BadRequestExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception e){
         log.error(getExceptionInfo(e));
-        return ControllerUtil.returnFail(ErrorCodeEnum.GL99990500.getMsg()+"："+e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
     }
+
 
     private static String getExceptionInfo(Exception ex) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
