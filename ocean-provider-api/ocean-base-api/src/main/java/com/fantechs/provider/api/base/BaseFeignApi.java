@@ -1,5 +1,7 @@
 package com.fantechs.provider.api.base;
 
+import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
+import com.fantechs.common.base.entity.basic.search.SearchSmtWorkShop;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.entity.basic.BaseStaffProcess;
 import com.fantechs.common.base.general.entity.basic.BaseTab;

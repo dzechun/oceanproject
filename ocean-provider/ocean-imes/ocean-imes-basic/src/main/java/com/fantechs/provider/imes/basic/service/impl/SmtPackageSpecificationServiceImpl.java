@@ -182,6 +182,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
     public List<SmtPackageSpecificationDto> findList(Map<String, Object> map) {
         List<SmtPackageSpecificationDto> smtPackageSpecificationDtos = smtPackageSpecificationMapper.findList(map);
         SearchSmtMaterialPackage searchSmtMaterialPackage = new SearchSmtMaterialPackage();
+
         for (SmtPackageSpecificationDto smtPackageSpecificationDto : smtPackageSpecificationDtos) {
             searchSmtMaterialPackage.setPackageSpecificationId(smtPackageSpecificationDto.getPackageSpecificationId());
             List<SmtMaterialPackageDto> smtMaterialPackageDtos = smtMaterialPackageMapper.findList(searchSmtMaterialPackage);
@@ -189,6 +190,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
                 smtPackageSpecificationDto.setSmtMaterialPackages(smtMaterialPackageDtos);
             }
         }
+
         return smtPackageSpecificationDtos;
     }
 

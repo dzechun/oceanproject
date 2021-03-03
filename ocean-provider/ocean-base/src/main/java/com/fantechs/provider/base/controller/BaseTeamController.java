@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseTeamImport;
 import com.fantechs.common.base.general.entity.basic.BaseTeam;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtTeam;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
@@ -111,8 +112,8 @@ public class BaseTeamController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseTeamDto> baseTeamDtos = EasyPoiUtils.importExcel(file, BaseTeamDto.class);
-            Map<String, Object> resultMap = baseTeamService.importExcel(baseTeamDtos);
+            List<BaseTeamImport> baseTeamImports = EasyPoiUtils.importExcel(file, 2, 1, BaseTeamImport.class);
+            Map<String, Object> resultMap = baseTeamService.importExcel(baseTeamImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
