@@ -93,5 +93,18 @@ public class MesPmBreakBulkPrintDto implements Serializable {
     @ApiModelProperty(name = "printDate",value = "打印日期")
     private Date printDate;
 
+    /**
+     * 工艺路线ID
+     */
+    @Column(name = "route_id")
+    @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    private Long routeId;
+    /**
+     * 工序链
+     */
+    @Transient
+    @ApiModelProperty(name = "processLink",value = "工序链")
+    private String processLink;
+
     private Long processId;
 }

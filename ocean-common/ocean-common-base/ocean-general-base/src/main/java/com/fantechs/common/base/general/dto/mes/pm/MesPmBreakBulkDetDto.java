@@ -83,6 +83,12 @@ public class MesPmBreakBulkDetDto extends MesPmBreakBulkDet implements Serializa
     @Excel(name = "工单状态", height = 20, width = 30 ,orderNum="8",replace = {"待生产_0", "生产中_1","暂停生产_2","生产完成_3"})
     private Integer workOrderStatus;
     /**
+     * 工艺路线ID
+     */
+    @Column(name = "route_id")
+    @ApiModelProperty(name="routeId" ,value="工艺路线ID")
+    private Long routeId;
+    /**
      * 工艺路线名称
      */
     @Transient
@@ -127,12 +133,14 @@ public class MesPmBreakBulkDetDto extends MesPmBreakBulkDet implements Serializa
     /**
      * 产品颜色
      */
+    @Transient
     @ApiModelProperty(name = "color",value = "产品颜色")
     private String color;
 
     /**
      * 产品型号
      */
+    @Transient
     @ApiModelProperty(name = "productModuleName",value = "产品型号")
     private String productModuleName;
     /**
@@ -140,6 +148,13 @@ public class MesPmBreakBulkDetDto extends MesPmBreakBulkDet implements Serializa
      */
     @ApiModelProperty(name = "materialQuality",value = "产品材质")
     private String materialQuality;
+
+    /**
+     * 工序链
+     */
+    @Transient
+    @ApiModelProperty(name = "processLink",value = "工序链")
+    private String processLink;
 
     private MesPmBreakBulk mesPmBreakBulk;
 }

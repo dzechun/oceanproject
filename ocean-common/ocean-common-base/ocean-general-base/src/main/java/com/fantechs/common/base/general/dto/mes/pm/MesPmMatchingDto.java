@@ -48,9 +48,9 @@ public class MesPmMatchingDto extends MesPmMatching implements Serializable {
     /**
      * 产品型号
      */
-    @ApiModelProperty(name = "productModuleName",value = "产品型号")
+    @ApiModelProperty(name = "productModelName",value = "产品型号")
     @Transient
-    private String productModuleName;
+    private String productModelName;
 
     /**
      * 工单号
