@@ -318,22 +318,23 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
 
         SmtWorkOrderCardPoolDto workOrderCardPoolDto = null;
-        searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(smtWorkOrderCardPool.getParentId());
-        List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
-        if (StringUtils.isEmpty(workOrderCardPoolList)){
-            throw new BizErrorException("未找到回退流转卡父级信息");
-        }
-        workOrderCardPoolDto = workOrderCardPoolList.get(0);
+//        searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(smtWorkOrderCardPool.getParentId());
+//        List<SmtWorkOrderCardPoolDto> workOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+//        if (StringUtils.isEmpty(workOrderCardPoolList)){
+//            throw new BizErrorException("未找到回退流转卡父级信息");
+//        }
+//        workOrderCardPoolDto = workOrderCardPoolList.get(0);
         BigDecimal minMatchingQuantity = new BigDecimal(0);
         BigDecimal alreadyMatchingQuantity = new BigDecimal(0);
-        if (type != null && type == 3){
-            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(workOrderCardPoolList.get(0).getParentId());
-            List<SmtWorkOrderCardPoolDto> parentWorkOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
-            if (StringUtils.isEmpty(parentWorkOrderCardPoolList)){
-                throw new BizErrorException("未找到产品流转卡信息");
-            }
-            workOrderCardPoolDto = parentWorkOrderCardPoolList.get(0);
-        }else if (qmsQualityConfirmation.getQualityType() != null && qmsQualityConfirmation.getQualityType() == 1) {
+//        if (type != null && type == 3){
+//            searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(workOrderCardPoolList.get(0).getParentId());
+//            List<SmtWorkOrderCardPoolDto> parentWorkOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
+//            if (StringUtils.isEmpty(parentWorkOrderCardPoolList)){
+//                throw new BizErrorException("未找到产品流转卡信息");
+//            }
+//            workOrderCardPoolDto = parentWorkOrderCardPoolList.get(0);
+//        }else
+        if (qmsQualityConfirmation.getQualityType() != null && qmsQualityConfirmation.getQualityType() == 1) {
 
             if (workOrderCardPoolDto.getParentId() == null || workOrderCardPoolDto.getParentId() == 0 ){
                 SmtProcess process = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId()).getData();
