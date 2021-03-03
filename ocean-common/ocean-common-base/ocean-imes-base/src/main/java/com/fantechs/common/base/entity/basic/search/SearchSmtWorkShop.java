@@ -38,4 +38,9 @@ public class SearchSmtWorkShop  extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "factoryId",value = "厂别id")
     private String factoryId;
 
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

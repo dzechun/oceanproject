@@ -29,7 +29,7 @@ public class BaseTeamDto extends BaseTeam implements Serializable {
     @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 
-    /**c
+    /**
      * 组织名称
      */
     @Transient

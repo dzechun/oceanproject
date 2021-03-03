@@ -2,7 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtDept;
+import com.fantechs.common.base.dto.basic.imports.SmtProLineImport;
 import com.fantechs.common.base.entity.basic.SmtProLine;
 import com.fantechs.common.base.entity.basic.history.SmtHtProLine;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProLine;
@@ -118,8 +118,8 @@ public class SmtProLineController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtProLine> smtProLines = EasyPoiUtils.importExcel(file, SmtProLine.class);
-            Map<String, Object> resultMap = smtProLineService.importExcel(smtProLines);
+            List<SmtProLineImport> smtProLineImports = EasyPoiUtils.importExcel(file, 2, 1, SmtProLineImport.class);
+            Map<String, Object> resultMap = smtProLineService.importExcel(smtProLineImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

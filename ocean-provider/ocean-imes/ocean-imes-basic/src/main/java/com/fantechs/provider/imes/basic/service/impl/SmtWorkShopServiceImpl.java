@@ -4,6 +4,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
+import com.fantechs.common.base.dto.basic.imports.SmtWorkShopImport;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtProLine;
 import com.fantechs.common.base.entity.basic.SmtWorkShop;
@@ -12,7 +13,9 @@ import com.fantechs.common.base.entity.basic.history.SmtHtWorkShop;
 import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTeam;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -20,6 +23,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.imes.basic.mapper.SmtFactoryMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtHtWorkShopMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtProLineMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkShopMapper;
@@ -50,7 +54,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SmtFactoryService  smtFactoryService;
+    private SmtFactoryMapper smtFactoryMapper;
 
     @Override
     public List<SmtWorkShopDto> findList(Map<String, Object> map) {
@@ -155,7 +159,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtWorkShopDto> smtWorkShopDtos) {
+    public Map<String, Object> importExcel(List<SmtWorkShopImport> smtWorkShopImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -165,45 +169,77 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtWorkShop> list = new LinkedList<>();
         LinkedList<SmtHtWorkShop> htList = new LinkedList<>();
-        for (int i = 0; i < smtWorkShopDtos.size(); i++) {
-            SmtWorkShopDto smtWorkShopDto = smtWorkShopDtos.get(i);
-            String factoryCode = smtWorkShopDto.getFactoryCode();
-            String workShopCode = smtWorkShopDto.getWorkShopCode();
-            String workShopName = smtWorkShopDto.getWorkShopName();
+        ArrayList<SmtWorkShopImport> workShopImportList = new ArrayList<>();
+        for (int i = 0; i < smtWorkShopImports.size(); i++) {
+            SmtWorkShopImport smtWorkShopImport = smtWorkShopImports.get(i);
+            String workShopCode = smtWorkShopImport.getWorkShopCode();
+            String workShopName = smtWorkShopImport.getWorkShopName();
+            String factoryCode = smtWorkShopImport.getFactoryCode();
+            String organizationCode = smtWorkShopImport.getOrganizationCode();
             if (StringUtils.isEmpty(
-                    factoryCode,workShopCode,workShopName
+                    workShopCode,workShopName,factoryCode
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
             //判断编码是否重复
-            Example example = new Example(SmtFactory.class);
+            Example example = new Example(SmtWorkShop.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workShopCode",smtWorkShopDto.getWorkShopCode());
+            criteria.andEqualTo("workShopCode",workShopCode);
             if (StringUtils.isNotEmpty(smtWorkShopMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
             //判断工厂是否存在
-            SearchSmtFactory searchSmtFactory = new SearchSmtFactory();
-            searchSmtFactory.setFactoryCode(smtWorkShopDto.getFactoryCode());
-            searchSmtFactory.setCodeQueryMark((byte) 1);
-            SmtFactoryDto factoryDto = smtFactoryService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtFactory)).get(0);
-            if (StringUtils.isEmpty(factoryDto)){
-                fail.add(i+3);
+            Example example1 = new Example(SmtFactory.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("factoryCode",factoryCode);
+            SmtFactory smtFactory = smtFactoryMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(smtFactory)){
+                fail.add(i+4);
                 continue;
             }
+            smtWorkShopImport.setFactoryId(smtFactory.getFactoryId());
 
+            //若组织编码不为空则判断组织是否存在
+            if (StringUtils.isNotEmpty(organizationCode)){
+                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+                searchBaseOrganization.setOrganizationCode(organizationCode);
+                searchBaseOrganization.setCodeQueryMark(1);
+                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
+                if (StringUtils.isEmpty(baseOrganizationDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtWorkShopImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
+            }
+
+            //判断集合中是否存在该车间
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(workShopImportList)){
+                for (SmtWorkShopImport workShopImport : workShopImportList) {
+                    if (workShopImport.getWorkShopCode().equals(workShopCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+            workShopImportList.add(smtWorkShopImport);
+        }
+
+        for (SmtWorkShopImport smtWorkShopImport : workShopImportList) {
             SmtWorkShop smtWorkShop = new SmtWorkShop();
-            BeanUtils.copyProperties(smtWorkShopDto,smtWorkShop);
+            BeanUtils.copyProperties(smtWorkShopImport,smtWorkShop);
+            smtWorkShop.setStatus(1);
             smtWorkShop.setCreateTime(new Date());
             smtWorkShop.setCreateUserId(currentUser.getUserId());
             smtWorkShop.setModifiedTime(new Date());
             smtWorkShop.setModifiedUserId(currentUser.getUserId());
-            smtWorkShop.setFactoryId(factoryDto.getFactoryId());
-            smtWorkShop.setStatus(1);
             list.add(smtWorkShop);
         }
 
