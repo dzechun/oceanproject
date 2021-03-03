@@ -250,23 +250,27 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      @Override
      @Transactional(rollbackFor = Exception.class)
      public int rectificationFeedback(QmsPdaInspection qmsPdaInspection) {
-//          SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//          if(StringUtils.isEmpty(user)){
-//               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//          }
+          SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+          if(StringUtils.isEmpty(user)){
+               throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+          }
 
           Map<String,Object> map = new HashMap<>();
           map.put("pdaInspectionId",qmsPdaInspection.getPdaInspectionId());
           List<QmsPdaInspectionDetDto> list = qmsPdaInspectionDetMapper.findList(map);
+          Example example = new Example(QmsDisqualification.class);
           for (QmsPdaInspectionDetDto qmsPdaInspectionDetDto : list) {
                BigDecimal all = qmsPdaInspectionDetDto.getQualifiedQuantity().add(qmsPdaInspectionDetDto.getUnqualifiedQuantity());
                qmsPdaInspectionDetDto.setQualifiedQuantity(all);
                qmsPdaInspectionDetDto.setInspectionResult((byte) 1);
                qmsPdaInspectionDetDto.setUnqualifiedQuantity(new BigDecimal(0));
                qmsPdaInspectionDetMapper.updateByPrimaryKeySelective(qmsPdaInspectionDetDto);
+               example.createCriteria().andEqualTo("firstInspectionIdId",qmsPdaInspectionDetDto.getPdaInspectionDetId())
+                       .andEqualTo("checkoutType",1);
+               qmsDisqualificationMapper.deleteByExample(example);
           }
           qmsPdaInspection.setModifiedTime(new Date());
-//          qmsPdaInspection.setModifiedUserId(user.getUserId());
+          qmsPdaInspection.setModifiedUserId(user.getUserId());
           return qmsPdaInspectionMapper.updateByPrimaryKeySelective(qmsPdaInspection);
      }
 }
