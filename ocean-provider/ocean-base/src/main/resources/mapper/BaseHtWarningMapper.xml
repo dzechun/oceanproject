@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtWarningMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtWarning">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_warning_id" jdbcType="BIGINT" property="htWarningId" />
+    <result column="warning_id" jdbcType="BIGINT" property="warningId" />
+    <result column="warning_type" jdbcType="BIGINT" property="warningType" />
+    <result column="personnel_level" jdbcType="TINYINT" property="personnelLevel" />
+    <result column="notification_method" jdbcType="TINYINT" property="notificationMethod" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhw.ht_warning_id,
+	bhw.warning_id,
+	bhw.warning_type,
+	bhw.personnel_level,
+	bhw.notification_method,
+	bhw.`status`,
+	bhw.remark,
+	bhw.organization_id,
+	bhw.create_user_id,
+	bhw.create_time,
+	bhw.modified_user_id,
+	bhw.modified_time,
+	bhw.is_delete
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM fantech_imes.base_ht_warning bhw
+    left join ocean.sys_user su on bhw.create_user_id = su.user_id
+    left join ocean.sys_user sus on bhw.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bhw.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="warningType != null and warningType != ''">
+        and bhw.warning_type = #{materialCode}
+      </if>
+      <if test="personnelLevel != null and personnelLevel != ''">
+        and bhw.personnel_level = #{personnelLevel}
+      </if>
+      <if test="notificationMethod != null and notificationMethod != ''">
+        and bhw.notification_method = #{materialId}
+      </if>
+    </where>
+  </select>
+
+</mapper>
