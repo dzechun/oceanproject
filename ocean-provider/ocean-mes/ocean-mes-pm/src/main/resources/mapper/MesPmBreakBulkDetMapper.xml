@@ -53,8 +53,8 @@
   pbd.modified_time,
   pbd.modified_user_id,
   pbd.is_delete,
-  bt.color
-spm.product_model_name
+  bt.color,
+spm.product_model_name,
 bt.material_quality,
 wo.route_id
 </sql>
