@@ -27,7 +27,6 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 预警ID
      */
     @ApiModelProperty(name="warningId",value = "预警ID")
-    @Excel(name = "预警ID", height = 20, width = 30)
     @Id
     @Column(name = "warning_id")
     @NotNull(groups = update.class,message = "预警ID不能为空")
@@ -46,7 +45,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 人员等级（0、一级人员 1、二级人员 2、三级人员）
      */
     @ApiModelProperty(name="personnelLevel",value = "人员等级（0、一级人员 1、二级人员 2、三级人员）")
-    @Excel(name = "人员等级（0、一级人员 1、二级人员 2、三级人员）", height = 20, width = 30)
+    @Excel(name = "人员等级（0、一级人员 1、二级人员 2、三级人员）", height = 20, width = 30,replace = {"一级人员_0","二级人员_1","三级人员_2"})
     @Column(name = "personnel_level")
     @NotNull(message = "人员等级不能为空")
     private Byte personnelLevel;
@@ -55,7 +54,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 通知方式（0、微信 1、短信 2、钉钉）
      */
     @ApiModelProperty(name="notificationMethod",value = "通知方式（0、微信 1、短信 2、钉钉）")
-    @Excel(name = "通知方式（0、微信 1、短信 2、钉钉）", height = 20, width = 30)
+    @Excel(name = "通知方式（0、微信 1、短信 2、钉钉）", height = 20, width = 30,replace = {"微信_0","短信_1","钉钉_2"})
     @Column(name = "notification_method")
     @NotNull(message = "通知方式不能为空")
     private Byte notificationMethod;
@@ -64,7 +63,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,replace = {"无效_0","有效_1"})
     private Byte status;
 
     /**

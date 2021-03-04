@@ -97,6 +97,7 @@ wo.route_id
         and pb.batch_no = #{batchNo}
 </if>
     </where>
+    order by pb.create_time desc
   </select>
   <select id="sleProcess" resultType="java.lang.Long">
   select MAX(plp.process_id) as process_id FROM smt_work_order_card_pool wocp
