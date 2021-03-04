@@ -491,13 +491,16 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
     //使用递归获取子批的部件流转卡
     public SmtWorkOrderCardPoolDto getSubbatchPart(long parentId){
         SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-        searchSmtWorkOrderCardPool.setParentId(parentId);
+        searchSmtWorkOrderCardPool.setWorkOrderCardPoolId(parentId);
         List<SmtWorkOrderCardPoolDto> parentWorkOrderCardPoolList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
         if (StringUtils.isEmpty(parentWorkOrderCardPoolList)){
             return null;
         }
-        if (parentWorkOrderCardPoolList.get(0).getType() == 2){
+        if (parentWorkOrderCardPoolList.get(0).getType() != null && parentWorkOrderCardPoolList.get(0).getType() == 2){
             return parentWorkOrderCardPoolList.get(0);
+        }
+        if (parentWorkOrderCardPoolList.get(0).getParentId() == null || parentWorkOrderCardPoolList.get(0).getParentId() == 0){
+            throw new BizErrorException("流程卡类型数据不完整");
         }
         return this.getSubbatchPart(parentWorkOrderCardPoolList.get(0).getParentId());
     }
