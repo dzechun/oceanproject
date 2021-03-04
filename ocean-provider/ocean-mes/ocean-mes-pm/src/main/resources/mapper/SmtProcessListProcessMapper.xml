@@ -154,7 +154,7 @@
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
             <if test="workOrderCardId!=null and workOrderCardId!=''">
-                and swocp.work_order_card_id = like CONCAT('%', #{workOrderCardId}, '%')
+                and swocp.work_order_card_id like CONCAT('%', #{workOrderCardId}, '%')
             </if>
             <if test="proLineId!=null and proLineId!=''">
                 and sml.pro_line_id=#{proLineId}
@@ -313,8 +313,6 @@
                 smt_route_process srp
             WHERE
                 srp.route_id = #{routeId}
-            GROUP BY
-                srp.section_id
             ORDER BY
                 srp.route_process_id DESC
             LIMIT 1

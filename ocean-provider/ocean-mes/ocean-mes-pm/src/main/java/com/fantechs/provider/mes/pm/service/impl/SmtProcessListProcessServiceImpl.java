@@ -564,7 +564,7 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
 
         if(processFinishedProductDTO.getProcessType()==1 && processFinishedProductDTO.getOperation()==2){
             if(processFinishedProductDTO.getProcessId() == firstProcessIdWS && processFinishedProductDTO.getProcessId() != firstProcessIdR)
-                sendMaterial(preProcessId,smtWorkOrder.getWorkOrderId(),smtWorkOrder.getMaterialId(),processFinishedProductDTO.getCurOutputQty().doubleValue());
+                sendMaterial(preProcessId,smtWorkOrder.getWorkOrderId(),smtWorkOrder.getMaterialId(),curStartWorkQty.doubleValue());
         }
         return 1;
     }

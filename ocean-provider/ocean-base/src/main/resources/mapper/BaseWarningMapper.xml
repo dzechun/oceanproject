@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseWarningMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseWarning">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="warning_id" jdbcType="BIGINT" property="warningId" />
+    <result column="warning_type" jdbcType="BIGINT" property="warningType" />
+    <result column="personnel_level" jdbcType="TINYINT" property="personnelLevel" />
+    <result column="notification_method" jdbcType="TINYINT" property="notificationMethod" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseWarningDto" extends="BaseResultMap">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    bw.warning_id,
+	bw.warning_type,
+	bw.personnel_level,
+	bw.notification_method,
+	bw.`status`,
+	bw.remark,
+	bw.organization_id,
+	bw.create_user_id,
+	bw.create_time,
+	bw.modified_user_id,
+	bw.modified_time,
+	bw.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM fantech_imes.base_warning bw
+    left join ocean.sys_user su on bw.create_user_id = su.user_id
+    left join ocean.sys_user sus on bw.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bw.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="warningType != null and warningType != ''">
+        and bw.warning_type = #{materialCode}
+      </if>
+      <if test="personnelLevel != null and personnelLevel != ''">
+        and bw.personnel_level = #{personnelLevel}
+      </if>
+      <if test="notificationMethod != null and notificationMethod != ''">
+        and bw.notification_method = #{materialId}
+      </if>
+    </where>
+  </select>
+</mapper>
