@@ -127,4 +127,8 @@ public interface BasicFeignApi {
     @ApiOperation("查询车间信息列表")
     @PostMapping("/smtWorkShop/findList")
     ResponseEntity<List<SmtWorkShopDto>> findWorkShopList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkShop searchSmtWorkShop);
+
+    @ApiOperation("查询部门信息列表")
+    @PostMapping("/smtDept/findList")
+    ResponseEntity<List<SmtDept>> selectDepts(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtDept searchSmtDept);
 }

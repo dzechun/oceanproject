@@ -59,8 +59,11 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="deptCode!=null and deptCode!=''">
+      <if test="deptCode!=null and deptCode!='' and codeQueryMark != 1">
         and sd.dept_code like CONCAT('%', #{deptCode}, '%')
+      </if>
+      <if test="deptCode!=null and deptCode!='' and codeQueryMark == 1">
+        and sd.dept_code = #{deptCode}
       </if>
       <if test="deptName!=null and deptName!=''">
         and sd.dept_name like CONCAT('%', #{deptName}, '%')

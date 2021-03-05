@@ -1,13 +1,11 @@
 package com.fantechs.common.base.entity.security.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
