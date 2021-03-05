@@ -75,9 +75,9 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
     @Override
     public int save(SmtStorageInventory storageInventory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         Example example =new Example(SmtStorageInventory.class);
         example.createCriteria().andEqualTo("storageId",storageInventory.getStorageId())
@@ -97,11 +97,13 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
         } else {
             //新增库存
             storageInventory.setCreateTime(new Date());
-            storageInventory.setCreateUserId(user.getUserId());
             storageInventory.setModifiedTime(new Date());
-            storageInventory.setModifiedUserId(user.getUserId());
             storageInventory.setStatus(StringUtils.isEmpty(storageInventory.getStatus())?1:storageInventory.getStatus());
-            storageInventory.setOrganizationId(user.getOrganizationId());
+            if (StringUtils.isNotEmpty(user)) {
+                storageInventory.setCreateUserId(user.getUserId());
+                storageInventory.setModifiedUserId(user.getUserId());
+                storageInventory.setOrganizationId(user.getOrganizationId());
+            }
 
             i = smtStorageInventoryMapper.insertUseGeneratedKeys(storageInventory);
         }
