@@ -187,7 +187,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
 
                     //获取抽检员信息
-                    new SocketClient("192.168.200.56",8098);
+                    new SocketClient("192.168.204.159",8098);
                     String json = JSON.toJSONString(map);
                     SocketClient.out(json);
                     SocketClient.closeSocket();
@@ -285,6 +285,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int updateByContent(List<BcmBarCodeDet> bcmBarCodeDets) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
@@ -316,6 +317,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int reprint(List<String> barCodeId) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
