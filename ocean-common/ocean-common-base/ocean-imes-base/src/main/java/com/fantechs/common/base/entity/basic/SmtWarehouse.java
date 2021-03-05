@@ -8,7 +8,9 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -179,6 +181,12 @@ public class SmtWarehouse extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     @ApiModelProperty(name = "isDelete",value = "逻辑删除")
     private Byte isDelete;
+
+    /**
+     * 仓库人员关系集合
+     */
+    @ApiModelProperty(name = "smtWarehousePersonnels",value = "仓库人员关系集合")
+    private List<SmtWarehousePersonnel> smtWarehousePersonnels = new ArrayList<>();
 
     /**
      * 扩展字段1

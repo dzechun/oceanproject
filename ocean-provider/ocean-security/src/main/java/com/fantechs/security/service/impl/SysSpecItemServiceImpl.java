@@ -47,7 +47,8 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
         Example example = new Example(SysSpecItem.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("specCode",sysSpecItem.getSpecCode());
+        criteria.andEqualTo("specCode",sysSpecItem.getSpecCode())
+                .orEqualTo("specName",sysSpecItem.getSpecName());
         List<SysSpecItem> sysSpecItems = sysSpecItemMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(sysSpecItems)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);

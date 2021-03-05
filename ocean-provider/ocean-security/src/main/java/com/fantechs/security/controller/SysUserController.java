@@ -1,6 +1,7 @@
 package com.fantechs.security.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.imports.SmtFactoryImport;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: wcz
@@ -107,17 +109,17 @@ public class SysUserController {
     @ApiOperation(value = "从excel导入用户信息",notes = "从excel导入用户信息")
     public ResponseEntity importUsers(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
-        int i=0;
         try {
             // 导入操作
-            List<SysUserExcelDTO> sysUsers = EasyPoiUtils.importExcel(file,SysUserExcelDTO.class);
-            i= sysUserService.importUsers(sysUsers);
+            List<SysUserExcelDTO> sysUserExcelDTOS = EasyPoiUtils.importExcel(file, 2, 1, SysUserExcelDTO.class);
+            Map<String, Object> resultMap = sysUserService.importUsers(sysUserExcelDTOS);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
-        return ControllerUtil.returnCRUD(i);
+
     }
 
     @PostMapping("/findHtList")

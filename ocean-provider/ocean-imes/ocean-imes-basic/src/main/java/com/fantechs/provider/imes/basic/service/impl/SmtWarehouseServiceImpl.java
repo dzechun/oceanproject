@@ -5,17 +5,16 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.SmtWarehouse;
 import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
+import com.fantechs.common.base.entity.basic.SmtWarehousePersonnel;
 import com.fantechs.common.base.entity.basic.history.SmtHtWarehouse;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.entity.basic.search.SearchSmtWarehousePersonnel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.basic.mapper.SmtHtWarehouseMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtStorageMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtWarehouseAreaMapper;
-import com.fantechs.provider.imes.basic.mapper.SmtWarehouseMapper;
+import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtWarehouseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,9 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
     @Resource
     private SmtWarehouseAreaMapper smtWarehouseAreaMapper;
 
+    @Resource
+    private SmtWarehousePersonnelMapper smtWarehousePersonnelMapper;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -64,19 +66,26 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         smtWarehouse.setCreateTime(new Date());
         smtWarehouse.setModifiedUserId(currentUser.getUserId());
         smtWarehouse.setModifiedTime(new Date());
-         smtWarehouseMapper.insertUseGeneratedKeys(smtWarehouse);
+        smtWarehouseMapper.insertUseGeneratedKeys(smtWarehouse);
 
         //新增仓库历史信息
-        SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
+        SmtHtWarehouse smtHtWarehouse = new SmtHtWarehouse();
         BeanUtils.copyProperties(smtWarehouse,smtHtWarehouse);
         int i = smtHtWarehouseMapper.insertSelective(smtHtWarehouse);
+
+        //新增仓库人员关系
+        List<SmtWarehousePersonnel> smtWarehousePersonnels = smtWarehouse.getSmtWarehousePersonnels();
+        if (StringUtils.isNotEmpty(smtWarehousePersonnels)){
+            for (SmtWarehousePersonnel smtWarehousePersonnel : smtWarehousePersonnels) {
+                smtWarehousePersonnel.setWarehouseId(smtWarehouse.getWarehouseId());
+            }
+        }
         return i;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
-        int i=0;
         List<SmtHtWarehouse> list=new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -106,6 +115,12 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
             smtHtWarehouse.setModifiedUserId(currentUser.getUserId());
             smtHtWarehouse.setModifiedTime(new Date());
             list.add(smtHtWarehouse);
+
+            //删除仓库人员关系
+            Example example1 = new Example(SmtWarehousePersonnel.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("warehouseId",warehouseId);
+            smtWarehousePersonnelMapper.deleteByExample(example1);
         }
         smtHtWarehouseMapper.insertList(list);
 
@@ -134,6 +149,20 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
         smtWarehouse.setModifiedTime(new Date());
         int i= smtWarehouseMapper.updateByPrimaryKeySelective(smtWarehouse);
 
+        //删除原有绑定关系
+        Example example1 = new Example(SmtWarehousePersonnel.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("warehouseId",smtWarehouse.getWarehouseId());
+        smtWarehousePersonnelMapper.deleteByExample(example1);
+
+        //新增绑定关系
+        List<SmtWarehousePersonnel> smtWarehousePersonnels = smtWarehouse.getSmtWarehousePersonnels();
+        if (StringUtils.isNotEmpty(smtWarehousePersonnels)){
+            for (SmtWarehousePersonnel smtWarehousePersonnel : smtWarehousePersonnels) {
+                smtWarehousePersonnel.setWarehouseId(smtWarehouse.getWarehouseId());
+            }
+        }
+
         //新增仓库历史信息
         SmtHtWarehouse smtHtWarehouse=new SmtHtWarehouse();
         BeanUtils.copyProperties(smtWarehouse,smtHtWarehouse);
@@ -144,7 +173,19 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
     @Override
     public List<SmtWarehouse> findList(SearchSmtWarehouse searchSmtWarehouse) {
-        return smtWarehouseMapper.findList(searchSmtWarehouse);
+        List<SmtWarehouse> smtWarehouses = smtWarehouseMapper.findList(searchSmtWarehouse);
+        if (StringUtils.isNotEmpty(smtWarehouses)){
+            SearchSmtWarehousePersonnel searchSmtWarehousePersonnel = new SearchSmtWarehousePersonnel();
+
+            for (SmtWarehouse smtWarehouse : smtWarehouses) {
+                searchSmtWarehousePersonnel.setWarehouseId(smtWarehouse.getWarehouseId());
+                List<SmtWarehousePersonnel> list = smtWarehousePersonnelMapper.findList(searchSmtWarehousePersonnel);
+                if (StringUtils.isNotEmpty(list)){
+                    smtWarehouse.setSmtWarehousePersonnels(list);
+                }
+            }
+        }
+        return smtWarehouses;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SysUserService extends IService<SysUser> {
 
@@ -17,7 +18,7 @@ public interface SysUserService extends IService<SysUser> {
 
 
     //用excel导入用户信息
-    int importUsers(List<SysUserExcelDTO> sysUsers);
+    Map<String, Object> importUsers(List<SysUserExcelDTO> sysUsers);
 
     List<String> findAllRoleId(Long userId);
 

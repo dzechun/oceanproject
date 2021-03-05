@@ -1,8 +1,11 @@
 package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
 import com.fantechs.common.base.entity.basic.SmtDept;
+import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
+import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
@@ -10,6 +13,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.security.mapper.SysHtUserMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import com.fantechs.security.service.SysUserService;
@@ -20,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserService {
@@ -32,6 +33,9 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Resource
     private SysHtUserMapper sysHtUserMapper;
+
+    @Resource
+    private BasicFeignApi basicFeignApi;
 
 
     @Override
@@ -159,71 +163,119 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int importUsers(List<SysUserExcelDTO> sysUsers) {
-        int i = 0;
+    public Map<String, Object> importUsers(List<SysUserExcelDTO> sysUsers) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
-            return ErrorCodeEnum.UAC10011039.getCode();
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
 
         List<SysUser> list = new LinkedList<>();
         List<SysHtUser> htUsers = new LinkedList<>();
-        for (SysUserExcelDTO sysUserExcelDTO : sysUsers) {
-            if (StringUtils.isEmpty(sysUserExcelDTO.getUserCode(), sysUserExcelDTO.getUserName(),
-                    sysUserExcelDTO.getNickName(), sysUserExcelDTO.getPassword())) {
+        ArrayList<SysUserExcelDTO> sysUserExcelDTOS = new ArrayList<>();
+
+        for (int i = 0; i < sysUserExcelDTOS.size(); i++) {
+            SysUserExcelDTO sysUserExcelDTO = sysUserExcelDTOS.get(i);
+
+            String deptCode = sysUserExcelDTO.getDeptCode();
+            String userCode = sysUserExcelDTO.getUserCode();
+            String factoryCode = sysUserExcelDTO.getFactoryCode();
+            String userName = sysUserExcelDTO.getUserName();
+            String nickName = sysUserExcelDTO.getNickName();
+            if (StringUtils.isEmpty(deptCode, userCode, factoryCode,userName,nickName)) {
+                fail.add(i+4);
                 continue;
             }
+
 
             Example example = new Example(SysUser.class);
             Example.Criteria criteria = example.createCriteria();
-            Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andNotEqualTo("userId",sysUserExcelDTO.getUserId());
-            criteria1.andEqualTo("status",1).orIsNull("status");
-            example.and(criteria1);
-            criteria.andEqualTo("userName", sysUserExcelDTO.getUserName()).orEqualTo("userCode",sysUserExcelDTO.getUserCode());
-            SysUser oneByUser = sysUserMapper.selectOneByExample(example);
-            if (StringUtils.isNotEmpty(oneByUser)) {
+            criteria.andEqualTo("status",1).orIsNull("status")
+                    .andEqualTo("userName", sysUserExcelDTO.getUserName())
+                    .orEqualTo("userCode",sysUserExcelDTO.getUserCode());
+            List<SysUser> sysUsers1 = sysUserMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(sysUsers1)) {
+                fail.add(i+4);
                 continue;
             }
 
-            SysUser sysUser=new SysUser();
-            BeanUtils.copyProperties(sysUserExcelDTO,sysUser);
-            if(StringUtils.isNotEmpty(sysUserExcelDTO.getPassword())){
-                sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUserExcelDTO.getPassword()));
+            //如果工厂编码不为空则判断厂别信息是否存在
+            if (StringUtils.isNotEmpty(factoryCode)){
+                SearchSmtFactory searchSmtFactory = new SearchSmtFactory();
+                searchSmtFactory.setCodeQueryMark((byte) 1);
+                searchSmtFactory.setFactoryCode(factoryCode);
+                List<SmtFactoryDto> smtFactoryDtos = basicFeignApi.findFactoryList(searchSmtFactory).getData();
+                if (StringUtils.isEmpty(smtFactoryDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                sysUserExcelDTO.setFactoryId(smtFactoryDtos.get(0).getFactoryId());
             }
 
-            String factoryName = sysUser.getFactoryName();
-            String deptName = sysUser.getDeptName();
-            if(StringUtils.isNotEmpty(factoryName)&&StringUtils.isNotEmpty(deptName)){
-                SmtDept smtDept = sysUserMapper.selectDept(factoryName,deptName);
+            //如果部门编码不为空则判断部门信息是否存在
+            if (StringUtils.isNotEmpty(deptCode)){
+                SearchSmtDept searchSmtDept = new SearchSmtDept();
+                searchSmtDept.setCodeQueryMark(1);
+                searchSmtDept.setDeptCode(deptCode);
+                List<SmtDept> smtDepts = basicFeignApi.selectDepts(searchSmtDept).getData();
+                if (StringUtils.isEmpty(smtDepts)){
+                    fail.add(i+4);
+                    continue;
+                }
+                sysUserExcelDTO.setDeptId(smtDepts.get(0).getDeptId());
+            }
 
-                if(StringUtils.isNotEmpty(smtDept)){
-                    //导入厂别
-                    sysUser.setFactoryId(smtDept.getFactoryId());
-                    //导入部门
-                    sysUser.setDeptId(smtDept.getDeptId());
+            //判断集合中是否已经存在该用户
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(sysUserExcelDTOS)){
+                for (SysUserExcelDTO userExcelDTO : sysUserExcelDTOS) {
+                    if (userExcelDTO.getUserCode().equals(userCode)){
+                        tag = true;
+                    }
                 }
             }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
 
-            sysUser.setCreateUserId(currentUser.getUserId());
-            sysUser.setCreateTime(new Date());
-            sysUser.setIsDelete((byte) 1);
-            list.add(sysUser);
-        }
-        if (StringUtils.isNotEmpty(list)) {
-            i = sysUserMapper.insertList(list);
+            sysUserExcelDTOS.add(sysUserExcelDTO);
         }
 
-        for (SysUser sysUser : list) {
-            //新增用户历史信息
-            SysHtUser sysHtUser=new SysHtUser();
-            BeanUtils.copyProperties(sysUser,sysHtUser);
-            htUsers.add(sysHtUser);
+        if (StringUtils.isNotEmpty(sysUserExcelDTOS)){
+            for (SysUserExcelDTO sysUserExcelDTO : sysUserExcelDTOS) {
+                SysUser sysUser=new SysUser();
+                BeanUtils.copyProperties(sysUserExcelDTO,sysUser);
+                if(StringUtils.isNotEmpty(sysUserExcelDTO.getPassword())){
+                    sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUserExcelDTO.getPassword()));
+                }
+                sysUser.setCreateUserId(currentUser.getUserId());
+                sysUser.setCreateTime(new Date());
+                sysUser.setIsDelete((byte) 1);
+                list.add(sysUser);
+            }
+
+            if (StringUtils.isNotEmpty(list)) {
+                success = sysUserMapper.insertList(list);
+            }
+
+            for (SysUser sysUser : list) {
+                //新增用户历史信息
+                SysHtUser sysHtUser=new SysHtUser();
+                BeanUtils.copyProperties(sysUser,sysHtUser);
+                htUsers.add(sysHtUser);
+            }
+            if (StringUtils.isNotEmpty(list)) {
+                sysHtUserMapper.insertList(htUsers);
+            }
         }
-        if (StringUtils.isNotEmpty(list)) {
-            sysHtUserMapper.insertList(htUsers);
-        }
-        return  i;
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 
     @Override

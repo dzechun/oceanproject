@@ -50,4 +50,10 @@ public class SearchSmtDept  extends BaseQuery implements Serializable {
     @ApiModelProperty(name="parentId",value = "父级ID")
     private Long parentId;
 
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
+
 }
