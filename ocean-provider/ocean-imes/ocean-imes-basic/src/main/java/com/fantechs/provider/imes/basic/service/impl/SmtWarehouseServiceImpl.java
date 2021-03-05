@@ -79,7 +79,9 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
             for (SmtWarehousePersonnel smtWarehousePersonnel : smtWarehousePersonnels) {
                 smtWarehousePersonnel.setWarehouseId(smtWarehouse.getWarehouseId());
             }
+            smtWarehousePersonnelMapper.insertList(smtWarehousePersonnels);
         }
+
         return i;
     }
 
@@ -137,11 +139,10 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
 
         Example example = new Example(SmtWarehouse.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("warehouseCode",smtWarehouse.getWarehouseCode());
-
+        criteria.andEqualTo("warehouseCode",smtWarehouse.getWarehouseCode())
+                .andNotEqualTo("warehouseId",smtWarehouse.getWarehouseId());
         SmtWarehouse warehouse = smtWarehouseMapper.selectOneByExample(example);
-
-        if(StringUtils.isNotEmpty(warehouse)&&!warehouse.getWarehouseId().equals(smtWarehouse.getWarehouseId())){
+        if(StringUtils.isNotEmpty(warehouse)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
@@ -161,6 +162,7 @@ public class SmtWarehouseServiceImpl extends BaseService<SmtWarehouse> implement
             for (SmtWarehousePersonnel smtWarehousePersonnel : smtWarehousePersonnels) {
                 smtWarehousePersonnel.setWarehouseId(smtWarehouse.getWarehouseId());
             }
+            smtWarehousePersonnelMapper.insertList(smtWarehousePersonnels);
         }
 
         //新增仓库历史信息
