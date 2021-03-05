@@ -155,10 +155,10 @@ public class ElectronicTagReceiver {
                         smtElectronicTagStorageDtoList.get(0).setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
                         fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
                                 JSONObject.toJSONString(mQResponseEntity));
-                        log.info("===========队列名称:" + smtElectronicTagStorageDtoList.get(0).getQueueName());
-                        log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
-                        log.info("===========发送消息给客户端完成===============");
                     }
+                    log.info("===========队列名称:" + smtElectronicTagStorageDtoList.get(0).getQueueName());
+                    log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
+                    log.info("===========发送消息给客户端完成===============");
 
                     //熄灭时，根据单号查询是否做完
                     SearchSmtSorting searchSmtSorting1 = new SearchSmtSorting();

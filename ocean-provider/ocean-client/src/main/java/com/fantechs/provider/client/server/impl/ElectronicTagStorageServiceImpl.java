@@ -151,6 +151,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             smtSorting.setSortingId(sorting.getSortingId());
             smtSorting.setStatus((byte) 1);
             smtSorting.setModifiedUserId(currentUser.getUserId());
+            smtSorting.setModifiedTime(new Date());
             smtSortingList.add(smtSorting);
         }
 
@@ -237,6 +238,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             }
 
             sorting.setStatus((byte) 0);
+            sorting.setCreateTime(new Date());
+            sorting.setModifiedTime(new Date());
+            sorting.setIsDetele((byte) 1);
             list.add(sorting);
 
         }
@@ -738,5 +742,33 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
 
         return sortingDtoList;
+    }
+
+    @Override
+    public String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception {
+
+        SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
+        searchSmtMaterial.setMaterialCode(materialCode);
+        List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
+        if (StringUtils.isEmpty(smtMaterials)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
+        }
+        SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
+        searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
+        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+
+        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
+        }
+        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
+        }
+        smtElectronicTagStorageDtoList.get(0).setQuantity(BigDecimal.valueOf(100));
+        smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
+
+        //不同的标签可能对应的队列不一样，最终一条一条发给客户端
+        fanoutSender(code, smtElectronicTagStorageDtoList.get(0));
+
+        return "0";
     }
 }

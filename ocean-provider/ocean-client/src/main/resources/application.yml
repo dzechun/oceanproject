@@ -19,7 +19,10 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
 mesAPI:
-  resApi: http://10.182.163.82:8099/getForPtlAPI/getPtlSortingOrder
+  resApi: http://192.168.61.43:8099/getForPtlAPI/getPtlSortingOrder
+#  resApi: http://10.182.163.82:8099/getForPtlAPI/getPtlSortingOrder
 qisAPI:
-  confirmInBillOrder: http://192.168.200.237:8180/qisapi/api/confirmInBillOrder
-  confirmOutBillOrder: http://192.168.200.237:8180/qisapi/api/confirmOutBillOrder
+  confirmInBillOrder: http://14.18.66.233:8092/qisapi/api/confirmInBillOrder
+  confirmOutBillOrder: http://14.18.66.233:8092/qisapi/api/confirmOutBillOrder
+#  confirmInBillOrder: http://192.168.200.237:8180/qisapi/api/confirmInBillOrder
+#  confirmOutBillOrder: http://192.168.200.237:8180/qisapi/api/confirmOutBillOrder
