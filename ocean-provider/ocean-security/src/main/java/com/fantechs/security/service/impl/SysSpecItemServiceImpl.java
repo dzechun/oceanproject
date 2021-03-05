@@ -9,6 +9,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysHtSpecItemMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
@@ -28,7 +29,8 @@ import java.util.Map;
 public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements SysSpecItemService {
     @Resource
     private SysSpecItemMapper sysSpecItemMapper;
-
+    @Resource
+    private RedisUtil redisUtil;
     @Resource
     private SysHtSpecItemMapper sysHtSpecItemMapper;
 
@@ -89,6 +91,11 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
         SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
         BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
         sysHtSpecItemMapper.insertSelective(sysHtSpecItem);
+
+        if (sysSpecItem.getSpecCode().equals("specialWord")){
+            redisUtil.set("specialWord",sysSpecItem);
+        }
+
         return i;
     }
 

@@ -1,23 +1,27 @@
 package com.fantechs.common.base.response;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.SpringUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用于操作controller公共方法的工具类
  */
 public class ControllerUtil {
     private static Logger log= LoggerFactory.getLogger(ControllerUtil.class);
+
+    private static RedisUtil redisUtil=(RedisUtil) SpringUtil.getBean("redisUtil");
+
     /***
      * 统一返回成功的DTO
      */
@@ -200,7 +204,13 @@ public class ControllerUtil {
     public  static Boolean escapeExprSpecialWord(Object keyword) {
         boolean flag = false;
         if (StringUtils.isNotEmpty(keyword)) {
-            String[] fbsArr = { "\\","$","(",")","*","+","?","^","|","'","%" };
+            Object specialWord = redisUtil.get("specialWord");
+            if (StringUtils.isEmpty(specialWord)){
+                return false;
+            }
+            SysSpecItem sysSpecItem = JSONObject.parseObject(JSONObject.toJSONString(specialWord), SysSpecItem.class);
+
+            String[] fbsArr = sysSpecItem.getParaValue().split(",");
             for (String key : fbsArr) {
                 if(StringUtils.isEmpty(keyword)){
                     continue;
