@@ -7,7 +7,6 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
-import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionItem;
@@ -28,11 +27,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 
 /**
- *
  * Created by leifengzhi on 2020/12/25.
  */
 @Service
@@ -68,10 +64,10 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
         List<SysSpecItem> testMethods = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
         for (QmsInspectionItemDto qmsInspectionItemDto : list) {
-            qmsInspectionItemDto.setInspectionNapeName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionItems.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionNape()+"")))).get("name")+"");
-            qmsInspectionItemDto.setInspectionItemLevelName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionLevels.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionItemLevel()+"")))).get("name")+"");
-            qmsInspectionItemDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionTools.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionTool()+"")))).get("name")+"");
-            qmsInspectionItemDto.setTestMethodName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(testMethods.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getTestMethod()+"")))).get("name")+"");
+            qmsInspectionItemDto.setInspectionNapeName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionItems.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionNape() + "")))).get("name") + "");
+            qmsInspectionItemDto.setInspectionItemLevelName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionLevels.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionItemLevel() + "")))).get("name") + "");
+            qmsInspectionItemDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionTools.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionTool() + "")))).get("name") + "");
+            qmsInspectionItemDto.setTestMethodName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(testMethods.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getTestMethod() + "")))).get("name") + "");
         }
 
         return list;
@@ -81,7 +77,7 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
     @Transactional(rollbackFor = Exception.class)
     public int save(QmsInspectionItem qmsInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
@@ -89,13 +85,13 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
         qmsInspectionItem.setCreateUserId(user.getUserId());
         qmsInspectionItem.setModifiedTime(new Date());
         qmsInspectionItem.setModifiedUserId(user.getUserId());
-        qmsInspectionItem.setStatus(StringUtils.isEmpty(qmsInspectionItem.getStatus())?1:qmsInspectionItem.getStatus());
+        qmsInspectionItem.setStatus(StringUtils.isEmpty(qmsInspectionItem.getStatus()) ? 1 : qmsInspectionItem.getStatus());
         qmsInspectionItem.setInspectionItemCode(getOdd());
 
         int i = qmsInspectionItemMapper.insertUseGeneratedKeys(qmsInspectionItem);
 
         QmsHtInspectionItem baseHtProductFamily = new QmsHtInspectionItem();
-        BeanUtils.copyProperties(qmsInspectionItem,baseHtProductFamily);
+        BeanUtils.copyProperties(qmsInspectionItem, baseHtProductFamily);
         qmsHtInspectionItemMapper.insert(baseHtProductFamily);
 
         return i;
@@ -105,14 +101,14 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
     @Transactional(rollbackFor = Exception.class)
     public int update(QmsInspectionItem qmsInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         qmsInspectionItem.setModifiedTime(new Date());
         qmsInspectionItem.setModifiedUserId(user.getUserId());
 
         QmsHtInspectionItem baseHtProductFamily = new QmsHtInspectionItem();
-        BeanUtils.copyProperties(qmsInspectionItem,baseHtProductFamily);
+        BeanUtils.copyProperties(qmsInspectionItem, baseHtProductFamily);
         qmsHtInspectionItemMapper.insert(baseHtProductFamily);
 
         return qmsInspectionItemMapper.updateByPrimaryKeySelective(qmsInspectionItem);
@@ -122,19 +118,19 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         List<QmsHtInspectionItem> qmsHtQualityInspections = new ArrayList<>();
-        String[] idsArr  = ids.split(",");
+        String[] idsArr = ids.split(",");
         for (String id : idsArr) {
             QmsInspectionItem qmsInspectionItem = qmsInspectionItemMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(qmsInspectionItem)){
+            if (StringUtils.isEmpty(qmsInspectionItem)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
             QmsHtInspectionItem qmsHtInspectionItem = new QmsHtInspectionItem();
-            BeanUtils.copyProperties(qmsInspectionItem,qmsHtInspectionItem);
+            BeanUtils.copyProperties(qmsInspectionItem, qmsHtInspectionItem);
             qmsHtQualityInspections.add(qmsHtInspectionItem);
         }
 
@@ -143,7 +139,7 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
         Example example = new Example(QmsInspectionItemDet.class);
         Example.Criteria criteria = example.createCriteria();
         String[] split = ids.split(",");
-        criteria.andIn("inspectionItemId",Arrays.asList(split));
+        criteria.andIn("inspectionItemId", Arrays.asList(split));
         qmsInspectionItemDetMapper.deleteByExample(example);
 
         return qmsInspectionItemMapper.deleteByIds(ids);
@@ -151,14 +147,15 @@ public class QmsInspectionItemServiceImpl extends BaseService<QmsInspectionItem>
 
     /**
      * 生成检验项目单号
+     *
      * @return
      */
-    public String getOdd(){
+    public String getOdd() {
         String before = "JYXM";
         String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsInspectionItem qmsInspectionItem = qmsInspectionItemMapper.getMax();
-        String qmsInspectionItemCode = before+amongst+"0000";
-        if (StringUtils.isNotEmpty(qmsInspectionItem)){
+        String qmsInspectionItemCode = before + amongst + "0000";
+        if (StringUtils.isNotEmpty(qmsInspectionItem)) {
             qmsInspectionItemCode = qmsInspectionItem.getInspectionItemCode();
         }
         Integer maxCode = Integer.parseInt(qmsInspectionItemCode.substring(10, qmsInspectionItemCode.length()));

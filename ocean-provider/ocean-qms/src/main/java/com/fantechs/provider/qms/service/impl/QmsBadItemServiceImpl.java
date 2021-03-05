@@ -5,8 +5,9 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDetDto;
 import com.fantechs.common.base.general.dto.qms.QmsBadItemDto;
-import com.fantechs.common.base.general.entity.qms.*;
-import com.fantechs.common.base.general.entity.qms.history.*;
+import com.fantechs.common.base.general.entity.qms.QmsBadItem;
+import com.fantechs.common.base.general.entity.qms.QmsBadItemDet;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtBadItem;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -24,7 +25,6 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- *
  * Created by leifengzhi on 2021/01/16.
  */
 @Service
@@ -46,14 +46,14 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
     @Transactional(rollbackFor = Exception.class)
     public int save(QmsBadItem qmsBadItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
         Example example = new Example(QmsBadItem.class);
-        example.createCriteria().andEqualTo("badTypeCode",qmsBadItem.getBadTypeCode());
+        example.createCriteria().andEqualTo("badTypeCode", qmsBadItem.getBadTypeCode());
         List<QmsBadItem> qmsBadItems = qmsBadItemMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(qmsBadItems)){
+        if (StringUtils.isNotEmpty(qmsBadItems)) {
             throw new BizErrorException("不良项目类型编码重复");
         }
 
@@ -61,17 +61,17 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         qmsBadItem.setCreateUserId(user.getUserId());
         qmsBadItem.setModifiedTime(new Date());
         qmsBadItem.setModifiedUserId(user.getUserId());
-        qmsBadItem.setStatus(StringUtils.isEmpty(qmsBadItem.getStatus())?1:qmsBadItem.getStatus());
+        qmsBadItem.setStatus(StringUtils.isEmpty(qmsBadItem.getStatus()) ? 1 : qmsBadItem.getStatus());
         qmsBadItem.setOrganizationId(user.getOrganizationId());
 
         int i = qmsBadItemMapper.insertUseGeneratedKeys(qmsBadItem);
 
         QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
-        BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);
+        BeanUtils.copyProperties(qmsBadItem, qmsHtBadItem);
         qmsHtBadItemMapper.insert(qmsHtBadItem);
 
         List<QmsBadItemDetDto> list = qmsBadItem.getList();
-        if (StringUtils.isNotEmpty(list)){
+        if (StringUtils.isNotEmpty(list)) {
             for (QmsBadItemDetDto qmsBadItemDetDto : list) {
                 qmsBadItemDetDto.setBadPhenomenonCode(CodeUtils.getId("BPC"));
                 qmsBadItemDetDto.setBadItemId(qmsBadItem.getBadItemId());
@@ -86,20 +86,20 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
         List<QmsHtBadItem> qmsHtBadItems = new ArrayList<>();
-        String[] idsArr  = ids.split(",");
+        String[] idsArr = ids.split(",");
         for (String id : idsArr) {
             QmsBadItem qmsBadItem = qmsBadItemMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(qmsBadItem)){
+            if (StringUtils.isEmpty(qmsBadItem)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
             QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
-            BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);
+            BeanUtils.copyProperties(qmsBadItem, qmsHtBadItem);
             qmsHtBadItems.add(qmsHtBadItem);
         }
 
@@ -118,7 +118,7 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
     @Transactional(rollbackFor = Exception.class)
     public int update(QmsBadItem qmsBadItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         qmsBadItem.setModifiedTime(new Date());
@@ -126,10 +126,10 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         qmsBadItem.setOrganizationId(user.getOrganizationId());
 
         Example example = new Example(QmsBadItemDet.class);
-        example.createCriteria().andEqualTo("badItemId",qmsBadItem.getBadItemId());
+        example.createCriteria().andEqualTo("badItemId", qmsBadItem.getBadItemId());
         qmsBadItemDetMapper.deleteByExample(example);
         List<QmsBadItemDetDto> list = qmsBadItem.getList();
-        if (StringUtils.isNotEmpty(list)){
+        if (StringUtils.isNotEmpty(list)) {
             for (QmsBadItemDetDto qmsBadItemDetDto : list) {
                 qmsBadItemDetDto.setBadPhenomenonCode(CodeUtils.getId("BPC"));
                 qmsBadItemDetDto.setBadItemId(qmsBadItem.getBadItemId());
@@ -140,7 +140,7 @@ public class QmsBadItemServiceImpl extends BaseService<QmsBadItem> implements Qm
         int i = qmsBadItemMapper.updateByPrimaryKey(qmsBadItem);
 
         QmsHtBadItem qmsHtBadItem = new QmsHtBadItem();
-        BeanUtils.copyProperties(qmsBadItem,qmsHtBadItem);
+        BeanUtils.copyProperties(qmsBadItem, qmsHtBadItem);
         qmsHtBadItemMapper.insert(qmsHtBadItem);
 
         return i;
