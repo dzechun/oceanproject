@@ -205,19 +205,19 @@ public class ControllerUtil {
         boolean flag = false;
         if (StringUtils.isNotEmpty(keyword)) {
             Object specialWord = redisUtil.get("specialWord");
-            if (StringUtils.isEmpty(specialWord)){
-                return false;
-            }
-            SysSpecItem sysSpecItem = JSONObject.parseObject(JSONObject.toJSONString(specialWord), SysSpecItem.class);
+            if (StringUtils.isNotEmpty(specialWord)) {
 
-            String[] fbsArr = sysSpecItem.getParaValue().split(",");
-            for (String key : fbsArr) {
-                if(StringUtils.isEmpty(keyword)){
-                    continue;
-                }
-                if (keyword.toString().contains(key)) {
-                    flag = true;
-                    break;
+                SysSpecItem sysSpecItem = JSONObject.parseObject(JSONObject.toJSONString(specialWord), SysSpecItem.class);
+
+                String[] fbsArr = sysSpecItem.getParaValue().split(",");
+                for (String key : fbsArr) {
+                    if (StringUtils.isEmpty(keyword)) {
+                        continue;
+                    }
+                    if (keyword.toString().contains(key)) {
+                        flag = true;
+                        break;
+                    }
                 }
             }
         }
