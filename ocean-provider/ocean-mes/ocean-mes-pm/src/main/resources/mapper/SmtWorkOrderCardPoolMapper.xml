@@ -130,7 +130,7 @@
     <update id="batchUpdateStatus" parameterType="list">
         <foreach collection="list" item="item" separator=";">
             UPDATE `smt_work_order_card_pool`
-            SET `card_status` = #{item.cardStatus}
+            SET `card_status` = #{item.cardStatus} , `type` = #{item.type}
             WHERE work_order_card_pool_id = #{item.workOrderCardPoolId}
         </foreach>
     </update>
