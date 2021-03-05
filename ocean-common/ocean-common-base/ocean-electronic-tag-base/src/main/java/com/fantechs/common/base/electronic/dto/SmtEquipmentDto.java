@@ -5,10 +5,8 @@ import com.fantechs.common.base.electronic.entity.SmtEquipment;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class SmtEquipmentDto extends SmtEquipment implements Serializable {

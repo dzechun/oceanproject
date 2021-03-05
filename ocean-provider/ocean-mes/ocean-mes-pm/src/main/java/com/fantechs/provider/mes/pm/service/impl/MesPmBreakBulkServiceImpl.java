@@ -175,12 +175,14 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                     sms.setWorkOrderCardId(mesPmBreakBulkDet.getChildLotNo());
                     smtWorkOrderCardPoolMapper.insertUseGeneratedKeys(sms);
                     //生成流程单down
-//                    up.setProcessType((byte)2);
-//                    up.setStatus((byte)2);
-//                    up.setOutputQuantity(mesPmBreakBulkDet.getBreakBulkQty());
-//                    up.setCurOutputQty(mesPmBreakBulkDet.getBreakBulkQty());
-//                    up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
-//                    smtProcessListProcessMapper.insertSelective(up);
+                    up.setProcessType((byte)2);
+                    up.setStatus((byte)1);
+                    up.setOutputQuantity(new BigDecimal(0));
+                    up.setCurOutputQty(mesPmBreakBulkDet.getBreakBulkQty());
+                    up.setProcessListProcessCode(CodeUtils.getId("SPLP"));
+                    up.setStartWorkQty(mesPmBreakBulkDet.getBreakBulkQty());
+                    up.setWorkOrderCardPoolId(sms.getWorkOrderCardPoolId());
+                    smtProcessListProcessMapper.insertSelective(up);
                 }
             }
             i++;

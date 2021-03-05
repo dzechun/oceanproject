@@ -15,6 +15,7 @@ import com.fantechs.provider.bcm.mapper.BcmLabelMaterialMapper;
 import com.fantechs.provider.bcm.service.BcmLabelMaterialService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -40,6 +41,7 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(BcmLabelMaterial record) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
@@ -63,6 +65,7 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(BcmLabelMaterial entity) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
@@ -89,6 +92,7 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){

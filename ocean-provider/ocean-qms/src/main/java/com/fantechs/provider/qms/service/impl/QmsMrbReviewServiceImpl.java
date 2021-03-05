@@ -4,9 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsMrbReviewDto;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
 import com.fantechs.common.base.general.entity.qms.QmsMrbReview;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionType;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtMrbReview;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * Created by leifengzhi on 2020/12/24.
  */
 @Service
@@ -46,7 +43,7 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
     @Transactional(rollbackFor = Exception.class)
     public int save(QmsMrbReview qmsMrbReview) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
@@ -54,13 +51,13 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
         qmsMrbReview.setCreateUserId(user.getUserId());
         qmsMrbReview.setModifiedTime(new Date());
         qmsMrbReview.setModifiedUserId(user.getUserId());
-        qmsMrbReview.setStatus(StringUtils.isEmpty(qmsMrbReview.getStatus())?1:qmsMrbReview.getStatus());
+        qmsMrbReview.setStatus(StringUtils.isEmpty(qmsMrbReview.getStatus()) ? 1 : qmsMrbReview.getStatus());
         qmsMrbReview.setMrbReviewCode(getOdd());
 
         int i = qmsMrbReviewMapper.insertUseGeneratedKeys(qmsMrbReview);
 
         QmsHtMrbReview baseHtProductFamily = new QmsHtMrbReview();
-        BeanUtils.copyProperties(qmsMrbReview,baseHtProductFamily);
+        BeanUtils.copyProperties(qmsMrbReview, baseHtProductFamily);
         qmsHtMrbReviewMapper.insert(baseHtProductFamily);
 
         return i;
@@ -70,14 +67,14 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
     @Transactional(rollbackFor = Exception.class)
     public int update(QmsMrbReview qmsMrbReview) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         qmsMrbReview.setModifiedTime(new Date());
         qmsMrbReview.setModifiedUserId(user.getUserId());
 
         QmsHtMrbReview baseHtProductFamily = new QmsHtMrbReview();
-        BeanUtils.copyProperties(qmsMrbReview,baseHtProductFamily);
+        BeanUtils.copyProperties(qmsMrbReview, baseHtProductFamily);
         qmsHtMrbReviewMapper.insert(baseHtProductFamily);
 
         return qmsMrbReviewMapper.updateByPrimaryKeySelective(qmsMrbReview);
@@ -87,19 +84,19 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         List<QmsHtMrbReview> qmsHtQualityInspections = new ArrayList<>();
-        String[] idsArr  = ids.split(",");
+        String[] idsArr = ids.split(",");
         for (String id : idsArr) {
             QmsMrbReview qmsMrbReview = qmsMrbReviewMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(qmsMrbReview)){
+            if (StringUtils.isEmpty(qmsMrbReview)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
             QmsHtMrbReview qmsHtInspectionType = new QmsHtMrbReview();
-            BeanUtils.copyProperties(qmsMrbReview,qmsHtInspectionType);
+            BeanUtils.copyProperties(qmsMrbReview, qmsHtInspectionType);
             qmsHtQualityInspections.add(qmsHtInspectionType);
         }
 
@@ -110,14 +107,15 @@ public class QmsMrbReviewServiceImpl extends BaseService<QmsMrbReview> implement
 
     /**
      * 生成评审单号
+     *
      * @return
      */
-    public String getOdd(){
+    public String getOdd() {
         String before = "MRB";
         String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsMrbReview qmsMrbReview = qmsMrbReviewMapper.getMax();
-        String qmsInspectionTypeCode = before+amongst+"0000";
-        if (StringUtils.isNotEmpty(qmsMrbReview)){
+        String qmsInspectionTypeCode = before + amongst + "0000";
+        if (StringUtils.isNotEmpty(qmsMrbReview)) {
             qmsInspectionTypeCode = qmsMrbReview.getMrbReviewCode();
         }
         Integer maxCode = Integer.parseInt(qmsInspectionTypeCode.substring(9, qmsInspectionTypeCode.length()));

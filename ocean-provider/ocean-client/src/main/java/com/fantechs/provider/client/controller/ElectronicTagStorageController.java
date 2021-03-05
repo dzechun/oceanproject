@@ -15,10 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -150,12 +147,25 @@ public class ElectronicTagStorageController {
         }
     }
 
-    @PostMapping(value = "/sendElectronicTagStorageTest")
+    @GetMapping(value = "/sendElectronicTagStorageTest")
     @ApiOperation(value = "拣取发送灭灯测试", notes = "拣取发送灭灯测试")
     public ResponseEntity<List<SmtSortingDto>> sendElectronicTagStorageTest(@RequestParam(value = "sortingCode") String sortingCode) {
         try {
             List<SmtSortingDto> smtSortingDtoList = electronicTagStorageService.sendElectronicTagStorageTest(sortingCode);
             return ControllerUtil.returnDataSuccess(smtSortingDtoList, smtSortingDtoList.size());
+        } catch (Exception e) {
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
+    }
+
+    @GetMapping(value = "/sendElectronicTagStorageLightTest")
+    @ApiOperation(value = "发送电子标签亮灯/灭灯测试", notes = "发送电子标签亮灯/灭灯测试")
+    public ResponseEntity<String> sendElectronicTagStorageLightTest(
+            @RequestParam(value = "materialCode") String materialCode,
+            @RequestParam(value = "code(1001-亮灯 1003-灭灯)") Integer code) {
+        try {
+            String result = electronicTagStorageService.sendElectronicTagStorageLightTest(materialCode, code);
+            return ControllerUtil.returnSuccess();
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
