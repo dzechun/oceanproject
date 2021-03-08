@@ -78,7 +78,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
                 wmsInnerTransferSlipDet.setCreateTime(new Date());
                 wmsInnerTransferSlipDet.setCreateUserId(user.getUserId());
-                wmsInnerTransferSlipDet.setMaterialId(user.getUserId());
+                wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
                 wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
@@ -108,7 +108,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         Example example = new Example(WmsInnerTransferSlipDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("transferSlipId",wmsInnerTransferSlip.getTransferSlipId());
-        wmsInnerTransferSlipMapper.deleteByExample(example);
+        wmsInnerTransferSlipDetMapper.deleteByExample(example);
 
         List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
