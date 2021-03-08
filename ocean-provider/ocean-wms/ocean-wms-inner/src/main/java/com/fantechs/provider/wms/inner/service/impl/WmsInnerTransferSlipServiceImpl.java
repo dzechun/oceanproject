@@ -82,6 +82,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
                 wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
+                wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDet);
             }
             if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
                 wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
@@ -111,11 +112,12 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
 
         List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
-            ArrayList<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDets = new ArrayList<>();
+            ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
+                wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDet);
             }
             if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
                 wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
