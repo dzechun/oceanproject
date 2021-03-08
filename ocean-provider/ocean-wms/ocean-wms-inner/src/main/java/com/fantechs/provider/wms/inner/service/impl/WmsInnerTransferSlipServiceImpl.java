@@ -66,7 +66,9 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         wmsInnerTransferSlip.setModifiedTime(new Date());
         wmsInnerTransferSlip.setModifiedUserId(user.getUserId());
         wmsInnerTransferSlip.setTransferSlipTime(new Date());
-        wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
+        if (StringUtils.isEmpty(wmsInnerTransferSlip.getTransferSlipStatus())){
+            wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
+        }
         wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
 
         //新增调拨单
@@ -80,7 +82,9 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 wmsInnerTransferSlipDet.setCreateUserId(user.getUserId());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
-                wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
+                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getTransferSlipStatus())){
+                    wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
+                }
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
                 wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDet);
             }
