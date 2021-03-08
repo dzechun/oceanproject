@@ -83,7 +83,9 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
             }
-            wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
+                wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            }
         }
 
         return i;
@@ -115,7 +117,10 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
             }
-            wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
+                wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            }
+
         }
         return i;
     }
