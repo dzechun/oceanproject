@@ -1,6 +1,5 @@
 package com.fantechs.provider.qms.mapper;
 
-import com.fantechs.common.base.general.dto.qms.QmsQualityInspectionDto;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtQualityInspection;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;

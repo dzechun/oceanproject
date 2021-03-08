@@ -25,4 +25,5 @@ public interface ElectronicTagStorageService {
     int revokeLoading(String loadingCode) throws Exception;
     int comfirmLoadingDet(SmtLoadingDetDto smtLoadingDetDto) throws Exception;
     List<SmtSortingDto> sendElectronicTagStorageTest(String sortingCode) throws Exception;
+    String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception;
 }

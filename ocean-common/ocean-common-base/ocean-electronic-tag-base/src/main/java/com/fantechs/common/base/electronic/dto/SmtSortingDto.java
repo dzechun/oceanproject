@@ -5,9 +5,7 @@ import com.fantechs.common.base.electronic.entity.SmtSorting;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data

@@ -4,9 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsRejectsMrbReviewDto;
-import com.fantechs.common.base.general.entity.qms.QmsMrbReview;
 import com.fantechs.common.base.general.entity.qms.QmsRejectsMrbReview;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtMrbReview;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtRejectsMrbReview;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * Created by leifengzhi on 2020/12/28.
  */
 @Service
@@ -39,7 +36,7 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
     @Override
     public int save(QmsRejectsMrbReview qmsRejectsMrbReview) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
@@ -47,24 +44,23 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
         qmsRejectsMrbReview.setCreateUserId(user.getUserId());
         qmsRejectsMrbReview.setModifiedTime(new Date());
         qmsRejectsMrbReview.setModifiedUserId(user.getUserId());
-        qmsRejectsMrbReview.setStatus(StringUtils.isEmpty(qmsRejectsMrbReview.getStatus())?1:qmsRejectsMrbReview.getStatus());
+        qmsRejectsMrbReview.setStatus(StringUtils.isEmpty(qmsRejectsMrbReview.getStatus()) ? 1 : qmsRejectsMrbReview.getStatus());
         qmsRejectsMrbReview.setRejectsMrbReviewCode(getOdd());
 
         int i = qmsRejectsMrbReviewMapper.insertUseGeneratedKeys(qmsRejectsMrbReview);
 
         QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
-        BeanUtils.copyProperties(qmsRejectsMrbReview,qmsHtRejectsMrbReview);
+        BeanUtils.copyProperties(qmsRejectsMrbReview, qmsHtRejectsMrbReview);
         qmsHtRejectsMrbReviewMapper.insert(qmsHtRejectsMrbReview);
 
         return i;
     }
 
 
-
     @Override
     public int update(QmsRejectsMrbReview qmsRejectsMrbReview) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
@@ -72,7 +68,7 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
         qmsRejectsMrbReview.setModifiedUserId(user.getUserId());
 
         QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
-        BeanUtils.copyProperties(qmsRejectsMrbReview,qmsHtRejectsMrbReview);
+        BeanUtils.copyProperties(qmsRejectsMrbReview, qmsHtRejectsMrbReview);
         qmsHtRejectsMrbReviewMapper.insert(qmsHtRejectsMrbReview);
         return qmsRejectsMrbReviewMapper.updateByPrimaryKeySelective(qmsRejectsMrbReview);
     }
@@ -80,19 +76,19 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
+        if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         List<QmsHtRejectsMrbReview> qmsHtQualityInspections = new ArrayList<>();
-        String[] idsArr  = ids.split(",");
+        String[] idsArr = ids.split(",");
         for (String id : idsArr) {
             QmsRejectsMrbReview qmsMrbReview = qmsRejectsMrbReviewMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(qmsMrbReview)){
+            if (StringUtils.isEmpty(qmsMrbReview)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
             QmsHtRejectsMrbReview qmsHtRejectsMrbReview = new QmsHtRejectsMrbReview();
-            BeanUtils.copyProperties(qmsMrbReview,qmsHtRejectsMrbReview);
+            BeanUtils.copyProperties(qmsMrbReview, qmsHtRejectsMrbReview);
             qmsHtQualityInspections.add(qmsHtRejectsMrbReview);
         }
 
@@ -108,14 +104,15 @@ public class QmsRejectsMrbReviewServiceImpl extends BaseService<QmsRejectsMrbRev
 
     /**
      * 生成不良品评审单号
+     *
      * @return
      */
-    public String getOdd(){
+    public String getOdd() {
         String before = "BLD";
         String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
         QmsRejectsMrbReview qmsMrbReview = qmsRejectsMrbReviewMapper.getMax();
-        String qmsInspectionTypeCode = before+amongst+"0000";
-        if (StringUtils.isNotEmpty(qmsMrbReview)){
+        String qmsInspectionTypeCode = before + amongst + "0000";
+        if (StringUtils.isNotEmpty(qmsMrbReview)) {
             qmsInspectionTypeCode = qmsMrbReview.getRejectsMrbReviewCode();
         }
         Integer maxCode = Integer.parseInt(qmsInspectionTypeCode.substring(9, qmsInspectionTypeCode.length()));
