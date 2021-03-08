@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author mr.lei
@@ -195,14 +196,28 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             if(processListProcesses.size()<1){
                 throw new BizErrorException("获取流程单失败");
             }
-            SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
-            up.setProcessListProcessId(null);
-            up.setProcessType((byte)2);
-            up.setStatus((byte)1);
-            up.setStartWorkQty(record.getBreakBulkBatchQty());
-            up.setProcessListProcessCode(CodeUtils.getId("SPLP"));
-            up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
-            smtProcessListProcessMapper.insertSelective(up);
+
+            List<SmtProcessListProcess> processListStart = processListProcesses.stream().filter(pl->pl.getProcessType()==(byte)1).collect(Collectors.toList());
+            List<SmtProcessListProcess> processListRe = processListProcesses.stream().filter(pl->pl.getProcessType()==(byte)2).collect(Collectors.toList());
+
+            //开工最后一个过站记录
+            SmtProcessListProcess start = processListStart.get(processListStart.size()-1);
+            start.setProcessListProcessId(null);
+            start.setStartWorkQty(record.getBreakBulkBatchQty() );
+            start.setCurOutputQty(start.getCurOutputQty().add(record.getBreakBulkBatchQty()));
+            start.setProcessListProcessCode(CodeUtils.getId("SPLP"));
+            start.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+            smtProcessListProcessMapper.insertSelective(start);
+
+            //报工最后一个过站记录
+            SmtProcessListProcess re = processListRe.get(processListRe.size()-1);
+            re.setProcessListProcessId(null);
+            re.setOutputQuantity(record.getBreakBulkBatchQty());
+            re.setCurOutputQty(re.getCurOutputQty().add(record.getBreakBulkBatchQty()));
+            re.setProcessListProcessCode(CodeUtils.getId("SPLP"));
+            re.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
+            smtProcessListProcessMapper.insertSelective(re);
+
         }
         return record;
     }
