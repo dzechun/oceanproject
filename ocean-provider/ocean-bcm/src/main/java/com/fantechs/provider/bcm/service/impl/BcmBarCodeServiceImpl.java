@@ -29,6 +29,7 @@ import com.fantechs.provider.bcm.service.BcmBarCodeService;
 import com.fantechs.provider.bcm.util.FTPUtil;
 import com.fantechs.provider.bcm.util.SocketClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -58,6 +59,11 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
     private BcmBarCodeDetMapper bcmBarCodeDetMapper;
     @Resource
     private PMFeignApi pmFeignApi;
+
+    @Value("${print.ip}")
+    private String ip;
+    @Value("${print.port}")
+    private Integer port;
 
     @Override
     public List<BcmBarCodeDto> findList(SearchBcmBarCode searchBcmBarCode) {
@@ -187,7 +193,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
 
                     //获取抽检员信息
-                    new SocketClient("192.168.204.159",8098);
+                    new SocketClient(ip,port);
                     String json = JSON.toJSONString(map);
                     SocketClient.out(json);
                     SocketClient.closeSocket();

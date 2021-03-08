@@ -197,9 +197,13 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
             }
             SmtProcessListProcess up = processListProcesses.get(processListProcesses.size()-1);
             up.setProcessListProcessId(null);
-            up.setProcessType((byte)2);
-            up.setStatus((byte)1);
-            up.setStartWorkQty(record.getBreakBulkBatchQty());
+            if(up.getProcessType()==(byte)1){
+                up.setStartWorkQty(record.getBreakBulkBatchQty() );
+            }
+            if(up.getProcessType()==(byte)2){
+                up.setOutputQuantity(record.getBreakBulkBatchQty());
+            }
+            up.setCurOutputQty(up.getCurOutputQty().add(record.getBreakBulkBatchQty()));
             up.setProcessListProcessCode(CodeUtils.getId("SPLP"));
             up.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());
             smtProcessListProcessMapper.insertSelective(up);
