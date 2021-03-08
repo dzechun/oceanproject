@@ -59,7 +59,7 @@
         and date_format(wits.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="transferSlipCode!=null and transferSlipCode != ''">
-        and wits.transferSlip_code like CONCAT("%",#{transferSlipCode},"%")
+        and wits.transfer_slip_code like CONCAT("%",#{transferSlipCode},"%")
       </if>
       <if test="processorUserId!=null">
         and suss.user_id = #{processorUserId}

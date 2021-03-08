@@ -100,6 +100,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         }
 
         wmsInnerTransferSlip.setTransferSlipTime(new Date());
+        wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
 
         //更新调拨单
         int i = wmsInnerTransferSlipMapper.updateByPrimaryKeySelective(wmsInnerTransferSlip);
