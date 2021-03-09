@@ -495,6 +495,10 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }
         QmsQualityConfirmation qualityConfirmation = result.getData();
         if(StringUtils.isEmpty(qualityConfirmation)){
+            if(startRemain){
+                //如果是工单流程卡开工，又找不到品质确认数，直接跳过。因为可能此部件流程卡还尚未开始做等等原因
+                return 1;
+            }
             throw new BizErrorException("未找到品质确认数据");
         }
         BigDecimal okQty=qualityConfirmation.getTotalQualified();
