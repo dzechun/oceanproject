@@ -623,6 +623,10 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                     "processType",1,
                     "status",2));
             if(StringUtils.isEmpty(tempProcessListProcesseList)){
+                if(finishRemain){
+                    //如果是工单流程卡报工，需要过滤掉没有开工确认的流程卡，有可能该流程卡还尚未开始做
+                    return 1;
+                }
                 throw new BizErrorException("该流程卡尚未开工确认");
             }
             for (SmtProcessListProcess smtProcessListProcess : tempProcessListProcesseList) {
@@ -657,7 +661,11 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
         }else{
             //上工序已报工完成的记录
             if(StringUtils.isEmpty(preProcessId)){
-                throw new BizErrorException("上工序未进行报工");
+                if(finishRemain){
+                    //如果是工单流程卡报工，需要过滤掉没有开工确认的流程卡，有可能该流程卡还尚未开始做
+                    return 1;
+                }
+                throw new BizErrorException("上工序未进行报工："+processFinishedProductDTO.getWorkOrderCardPoolId());
             }
             List<SmtProcessListProcess> preProcessListProcesseList = this.selectAll(ControllerUtil.dynamicCondition(
                     "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
@@ -682,7 +690,11 @@ public class SmtProcessListProcessServiceImpl  extends BaseService<SmtProcessLis
                         throw new BizErrorException("拆批数据不正确");
                     }
                 }else{
-                    throw new BizErrorException("上工序未进行报工");
+                    if(finishRemain){
+                        //如果是工单流程卡报工，需要过滤掉没有开工确认的流程卡，有可能该流程卡还尚未开始做
+                        return 1;
+                    }
+                    throw new BizErrorException("上工序未进行报工："+processFinishedProductDTO.getWorkOrderCardPoolId());
                 }
             }else{
                 preProcessListProcesse=preProcessListProcesseList.get(preProcessListProcesseList.size()-1);
