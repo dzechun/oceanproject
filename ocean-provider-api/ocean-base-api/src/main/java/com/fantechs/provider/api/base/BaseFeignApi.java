@@ -30,6 +30,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseTab/add")
     ResponseEntity addTab(@ApiParam(value = "必传：", required = true) @RequestBody @Validated BaseTab baseTab);
 
+    @ApiOperation(value = "批量新增页签",notes = "批量新增页签")
+    @PostMapping("/baseTab/insertList")
+    ResponseEntity insertTabList(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<BaseTab> baseTabs);
+
     @ApiOperation("删除页签")
     @PostMapping("/baseTab/delete")
     ResponseEntity deleteTab(@ApiParam(value = "页签集合") @RequestBody @Validated List<BaseTab> baseTabs);

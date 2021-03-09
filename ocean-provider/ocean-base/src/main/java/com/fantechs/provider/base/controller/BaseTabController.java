@@ -89,4 +89,10 @@ public class BaseTabController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/insertList")
+    public ResponseEntity insertList(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<BaseTab> baseTabs) {
+        return ControllerUtil.returnCRUD(baseTabService.insertList(baseTabs));
+    }
 }
