@@ -4,6 +4,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtMaterialDto;
+import com.fantechs.common.base.dto.basic.imports.SmtMaterialImport;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
@@ -117,8 +118,8 @@ public class SmtMaterialController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtMaterialDto> smtMaterialDtos = EasyPoiUtils.importExcel(file, SmtMaterialDto.class);
-            Map<String, Object> resultMap = smtMaterialService.importExcel(smtMaterialDtos);
+            List<SmtMaterialImport> smtMaterialImports = EasyPoiUtils.importExcel(file, SmtMaterialImport.class);
+            Map<String, Object> resultMap = smtMaterialService.importExcel(smtMaterialImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
