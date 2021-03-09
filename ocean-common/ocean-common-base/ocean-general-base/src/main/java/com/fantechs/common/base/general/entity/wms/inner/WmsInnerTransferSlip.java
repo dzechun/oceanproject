@@ -37,7 +37,7 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 调拨单号
      */
     @ApiModelProperty(name="transferSlipCode",value = "调拨单号")
-    @Excel(name = "调拨单号", height = 20, width = 30,orderNum="2")
+    @Excel(name = "调拨单号", height = 20, width = 30,orderNum="1")
     @Column(name = "transfer_slip_code")
     private String transferSlipCode;
 
