@@ -61,6 +61,9 @@
         LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON bl.organization_id = bo.organization_id
         <where>
+            <if test="labelCode!=null and labelCode!='' and ">
+                and bl.label_code LIKE CONCAT('%',#{labelCode},'%')
+            </if>
             <if test="labelCode!=null and labelCode!=''">
                 and bl.label_code LIKE CONCAT('%',#{labelCode},'%')
             </if>

@@ -7,8 +7,6 @@
         -->
         <id column="unit_price_id" jdbcType="BIGINT" property="unitPriceId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="unit_price" jdbcType="DECIMAL" property="materialId"/>
-        <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -28,16 +26,12 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-        <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
-        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
-        <result column="process_desc" jdbcType="VARCHAR" property="processDesc"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">
         bup.unit_price_id,
         bup.material_id,
-        bup.unit_price,
-        bup.process_id,
         bup.organization_id,
         bup.remark,
         bup.`status`,
@@ -53,13 +47,11 @@
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         sm.material_code,sm.material_name,
         spm.product_model_code,spm.product_model_name,
-        sp.process_code,sp.process_name,sp.process_desc,
         bo.organization_name
         FROM fantech_imes.base_unit_price bup
         LEFT JOIN fantech_imes.smt_material sm ON bup.material_id = sm.material_id
         LEFT JOIN fantech_imes.base_tab bt ON sm.material_id = bt.material_id
         LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-        LEFT JOIN fantech_imes.smt_process sp ON bup.process_id = sp.process_id
         left join ocean.sys_user su on bup.create_user_id = su.user_id
         left join ocean.sys_user sus on bup.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON bup.organization_id = bo.organization_id

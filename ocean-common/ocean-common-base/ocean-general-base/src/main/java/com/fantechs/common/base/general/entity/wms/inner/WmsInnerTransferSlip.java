@@ -37,7 +37,7 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 调拨单号
      */
     @ApiModelProperty(name="transferSlipCode",value = "调拨单号")
-    @Excel(name = "调拨单号", height = 20, width = 30,orderNum="1")
+    @Excel(name = "调拨单号", height = 20, width = 30,orderNum="2")
     @Column(name = "transfer_slip_code")
     private String transferSlipCode;
 
@@ -45,7 +45,6 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 处理人
      */
     @ApiModelProperty(name="processorUserId",value = "处理人")
-    @Excel(name = "处理人", height = 20, width = 30,orderNum="2")
     @Column(name = "processor_user_id")
     private Long processorUserId;
 
@@ -53,7 +52,7 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 单据日期
      */
     @ApiModelProperty(name="transferSlipTime",value = "单据日期")
-    @Excel(name = "单据日期", height = 20, width = 30,orderNum="3")
+    @Excel(name = "单据日期", height = 20, width = 30,orderNum="3",exportFormat = "yyyy-MM-dd")
     @Column(name = "transfer_slip_time")
     private Date transferSlipTime;
 
@@ -61,7 +60,7 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 单据状态（0-待调拨 1-调拨中 2-调拨完成）
      */
     @ApiModelProperty(name="transferSlipStatus",value = "单据状态（0-待调拨 1-调拨中 2-调拨完成）")
-    @Excel(name = "单据状态（0-待调拨 1-调拨中 2-调拨完成）", height = 20, width = 30,orderNum="4",replace = {"待调拨_0","调拨中_1","调拨完成_2"})
+    @Excel(name = "单据状态（0-待调拨 1-调拨中 2-调拨完成）", height = 20, width = 30,orderNum="6",replace = {"待调拨_0","调拨中_1","调拨完成_2"})
     @Column(name = "transfer_slip_status")
     private Byte transferSlipStatus;
 
@@ -69,14 +68,14 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 是否有效（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "是否有效（0、无效 1、有效）")
-    @Excel(name = "是否有效（0、无效 1、有效）", height = 20, width = 30,orderNum="5")
+    @Excel(name = "是否有效（0、无效 1、有效）", height = 20, width = 30,orderNum="7",replace = {"无效_0","有效_1"})
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="6")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="8")
     private String remark;
 
     /**
@@ -97,7 +96,7 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -113,7 +112,7 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
