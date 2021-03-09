@@ -68,4 +68,28 @@ public class BaseUnitPriceDto extends BaseUnitPrice implements Serializable {
     @ApiModelProperty(name="productModelName" ,value="产品型号名称")
     @Excel(name = "产品型号名称", height = 20, width = 30)
     private String productModelName;
+
+    /**
+     * 工序代码
+     */
+    @Transient
+    @ApiModelProperty(name="processCode" ,value="工序代码")
+    @Excel(name = "工序代码", height = 20, width = 30)
+    private String processCode;
+
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name="processName" ,value="工序名称")
+    @Excel(name = "工序名称", height = 20, width = 30)
+    private String processName;
+
+    /**
+     * 工序描述
+     */
+    @Transient
+    @ApiModelProperty(name="processDesc" ,value="工序描述")
+    @Excel(name = "工序描述", height = 20, width = 30)
+    private String processDesc;
 }

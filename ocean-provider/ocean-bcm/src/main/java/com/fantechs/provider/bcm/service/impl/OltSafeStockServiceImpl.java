@@ -84,6 +84,10 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         return list;
     }
 
+    /**
+     * 安全库存预警
+     * @return
+     */
     @Override
     public int inventeryWarning() {
         List<OltSafeStockDto> list = findList(new SearchOltSafeStock());

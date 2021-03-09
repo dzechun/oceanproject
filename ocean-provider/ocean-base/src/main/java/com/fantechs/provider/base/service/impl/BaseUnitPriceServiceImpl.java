@@ -51,10 +51,11 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
 
         Example example = new Example(BaseUnitPrice.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",baseUnitPrice.getMaterialId());
+        criteria.andEqualTo("materialId",baseUnitPrice.getMaterialId())
+                .andEqualTo("processId",baseUnitPrice.getProcessId());
         BaseUnitPrice baseUnitPrice1 = baseUnitPriceMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseUnitPrice1)){
-            throw new BizErrorException("该物料的单价信息已经存在");
+            throw new BizErrorException("该物料在工序下的单价信息已经存在");
         }
 
         baseUnitPrice.setCreateTime(new Date());
@@ -83,7 +84,7 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
                 .andNotEqualTo("unitPriceId",baseUnitPrice.getUnitPriceId());
         BaseUnitPrice baseUnitPrice1 = baseUnitPriceMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseUnitPrice1)){
-            throw new BizErrorException("该物料的单价信息已经存在");
+            throw new BizErrorException("该物料在工序下的单价信息已经存在");
         }
 
         baseUnitPrice.setModifiedTime(new Date());

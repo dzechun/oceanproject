@@ -1,6 +1,5 @@
 package com.fantechs.provider.imes.basic.mapper;
 
-import com.fantechs.common.base.entity.basic.SmtPackageSpecification;
 import com.fantechs.common.base.entity.basic.history.SmtHtPackageSpecification;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;

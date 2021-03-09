@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtProductModelImport;
 import com.fantechs.common.base.entity.basic.SmtDept;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtProductModel;
@@ -166,7 +167,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtProductModel> smtProductModels) {
+    public Map<String, Object> importExcel(List<SmtProductModelImport> smtProductModelImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -177,62 +178,75 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtProductModel> list = new LinkedList<>();
         LinkedList<SmtHtProductModel> htList = new LinkedList<>();
+        ArrayList<SmtProductModelImport> smtProductModelImports1 = new ArrayList<>();
 
-        for (int i = 0; i < smtProductModels.size(); i++) {
-            SmtProductModel smtProductModel = smtProductModels.get(i);
-            String productModelCode = smtProductModel.getProductModelCode();
-            String productModelName = smtProductModel.getProductModelName();
-            String productFamilyCode = smtProductModel.getProductFamilyCode();
+        for (int i = 0; i < smtProductModelImports.size(); i++) {
+            SmtProductModelImport smtProductModelImport = smtProductModelImports.get(i);
+            String productModelCode = smtProductModelImport.getProductModelCode();
+            String productModelName = smtProductModelImport.getProductModelName();
+            String productFamilyCode = smtProductModelImport.getProductFamilyCode();
+            String organizationCode = smtProductModelImport.getOrganizationCode();
             if (StringUtils.isEmpty(
                     productModelCode, productModelName, productFamilyCode
             )) {
-                fail.add(i + 3);
-                smtProductModels.remove(i);
+                fail.add(i + 4);
                 continue;
             }
 
             //判断编码是否重复
             Example example = new Example(SmtProductModel.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productModelCode", smtProductModel.getProductModelCode());
+            criteria.andEqualTo("productModelCode", productModelCode);
             if (StringUtils.isNotEmpty(smtProductModelMapper.selectOneByExample(example))) {
-                fail.add(i + 3);
-                smtProductModels.remove(i);
+                fail.add(i + 4);
                 continue;
             }
 
             //判断产品族是否存在
             SearchBaseProductFamily searchBaseProductFamily = new SearchBaseProductFamily();
-            searchBaseProductFamily.setProductFamilyCode(smtProductModel.getProductFamilyCode());
+            searchBaseProductFamily.setProductFamilyCode(productFamilyCode);
             searchBaseProductFamily.setCodeQueryMark((byte) 1);
-            BaseProductFamilyDto baseProductFamilyDto = baseFeignApi.
-                    findProductFamilyList(searchBaseProductFamily).
-                    getData().get(0);
+            BaseProductFamilyDto baseProductFamilyDto = baseFeignApi.findProductFamilyList(searchBaseProductFamily).getData().get(0);
             if (StringUtils.isEmpty(baseProductFamilyDto)) {
-                fail.add(i + 3);
-                smtProductModels.remove(i);
+                fail.add(i + 4);
+                continue;
+            }
+            smtProductModelImport.setProductFamilyId(baseProductFamilyDto.getProductFamilyId());
+
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(smtProductModelImports1)){
+                for (SmtProductModelImport productModelImport : smtProductModelImports1) {
+                    if (productModelImport.getProductModelCode().equals(productModelCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i + 4);
                 continue;
             }
 
-            smtProductModel.setCreateTime(new Date());
-            smtProductModel.setCreateUserId(currentUser.getUserId());
-            smtProductModel.setModifiedTime(new Date());
-            smtProductModel.setModifiedUserId(currentUser.getUserId());
-            smtProductModel.setStatus(1);
-            smtProductModel.setProductFamilyId(baseProductFamilyDto.getProductFamilyId());
-            list.add(smtProductModel);
+            smtProductModelImports1.add(smtProductModelImport);
         }
+        if (StringUtils.isNotEmpty(smtProductModelImports1)){
+            for (SmtProductModelImport smtProductModelImport : smtProductModelImports1) {
+                SmtProductModel smtProductModel = new SmtProductModel();
+                BeanUtils.copyProperties(smtProductModelImport,smtProductModel);
+                smtProductModel.setCreateTime(new Date());
+                smtProductModel.setCreateUserId(currentUser.getUserId());
+                smtProductModel.setModifiedTime(new Date());
+                smtProductModel.setModifiedUserId(currentUser.getUserId());
+                list.add(smtProductModel);
+            }
 
-        if (StringUtils.isNotEmpty(list)) {
             success = smtProductModelMapper.insertList(list);
-        }
-        for (SmtProductModel smtProductModel : list) {
-            SmtHtProductModel smtHtProductModel = new SmtHtProductModel();
-            BeanUtils.copyProperties(smtProductModel,smtHtProductModel);
-            htList.add(smtHtProductModel);
-        }
 
-        if (StringUtils.isNotEmpty(htList)) {
+            for (SmtProductModel smtProductModel : list) {
+                SmtHtProductModel smtHtProductModel = new SmtHtProductModel();
+                BeanUtils.copyProperties(smtProductModel,smtHtProductModel);
+                htList.add(smtHtProductModel);
+            }
             smtHtProductModelMapper.insertList(htList);
         }
 

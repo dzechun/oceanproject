@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerTransferSlipDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="transfer_slip_det_id" jdbcType="BIGINT" property="transferSlipDetId" />
+    <result column="transfer_slip_id" jdbcType="BIGINT" property="transferSlipId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId" />
+    <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId" />
+    <result column="plan_carton_qty" jdbcType="DECIMAL" property="planCartonQty" />
+    <result column="plan_total_qty" jdbcType="DECIMAL" property="planTotalQty" />
+    <result column="reality_carton_qty" jdbcType="DECIMAL" property="realityCartonQty" />
+    <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
+    <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerTransferSlipDetDto" extends="BaseResultMap">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="productModel_code" jdbcType="VARCHAR" property="productModelCode"/>
+    <result column="productModel_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="productModel_desc" jdbcType="VARCHAR" property="productModelDesc"/>
+    <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
+    <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
+    <result column="out_warehouse_area_id" jdbcType="VARCHAR" property="outWarehouseAreaName"/>
+    <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
+    <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>
+    <result column="in_warehouse_area_id" jdbcType="VARCHAR" property="inWarehouseAreaName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    witsd.transfer_slip_det_id,
+	witsd.transfer_slip_id,
+	witsd.material_id,
+	witsd.out_storage_id,
+	witsd.in_storage_id,
+	witsd.plan_carton_qty,
+	witsd.plan_total_qty,
+	witsd.reality_carton_qty,
+	witsd.reality_total_qty,
+	witsd.transfer_slip_status,
+	witsd.`status`,
+	witsd.remark,
+	witsd.organization_id,
+	witsd.create_user_id,
+	witsd.create_time,
+	witsd.modified_user_id,
+	witsd.modified_time,
+	witsd.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name,
+    sm.material_code,sm.material_desc,
+    spm.product_model_code,spm.product_model_name,
+    ss.storage_name AS out_storage_name,swa.warehouse_area_name AS out_warehouse_area_name,sw.warehouse_name AS out_warehouse_name,
+    sss.storage_name AS in_storage_name,swas.warehouse_area_name AS in_warehouse_area_name,sws.warehouse_name AS in_warehouse_name
+    from fantech_imes.wms_inner_transfer_slip_det witsd
+    LEFT JOIN ocean.sys_user su  ON witsd.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON witsd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.smt_material sm ON witsd.material_id = sm.material_id
+    LEFT JOIN fantech_imes.base_tab bt ON sm.material_id = bt.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes.base_organization bo ON witsd.organization_id = bo.organization_id
+
+        /*调出*/
+    LEFT JOIN fantech_imes.smt_storage ss ON witsd.out_storage_id = ss.storage_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+    LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
+
+        /*调入*/
+    LEFT JOIN fantech_imes.smt_storage sss ON witsd.in_storage_id = sss.storage_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swas ON sss.warehouse_area_id = swas.warehouse_area_id
+    LEFT JOIN fantech_imes.smt_warehouse sws ON swas.warehouse_id = sws.warehouse_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(witsd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="transferSlipId != null">
+        and witsd.transfer_slip_id = #{transferSlipId}
+      </if>
+    </where>
+    order by witsd.create_time desc
+  </select>
+</mapper>

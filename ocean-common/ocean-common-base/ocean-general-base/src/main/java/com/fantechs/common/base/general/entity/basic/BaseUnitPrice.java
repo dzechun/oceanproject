@@ -21,6 +21,7 @@ import lombok.Data;
 @Data
 @Table(name = "base_unit_price")
 public class BaseUnitPrice extends ValidGroup implements Serializable {
+
     /**
      * 单价信息ID
      */
@@ -38,244 +39,19 @@ public class BaseUnitPrice extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 开料
+     * 单价
      */
-    @ApiModelProperty(name="cutting",value = "开料")
-    @Excel(name = "开料", height = 20, width = 30)
-    private BigDecimal cutting = BigDecimal.valueOf(0);
+    @ApiModelProperty(name="unitPrice",value = "单价")
+    @Excel(name = "单价", height = 20, width = 30)
+    @Column(name = "unit_price")
+    private BigDecimal unitPrice;
 
     /**
-     * 封边
+     * 工序ID
      */
-    @ApiModelProperty(name="sealEdge",value = "封边")
-    @Excel(name = "封边", height = 20, width = 30)
-    @Column(name = "seal_edge")
-    private BigDecimal sealEdge = BigDecimal.valueOf(0);
-
-    /**
-     * 排钻
-     */
-    @ApiModelProperty(name="gangDrill",value = "排钻")
-    @Excel(name = "排钻", height = 20, width = 30)
-    @Column(name = "gang_drill")
-    private BigDecimal gangDrill = BigDecimal.valueOf(0);
-
-    /**
-     * 锣机
-     */
-    @ApiModelProperty(name="gongMachine",value = "锣机")
-    @Excel(name = "锣机", height = 20, width = 30)
-    @Column(name = "gong_machine")
-    private BigDecimal gongMachine = BigDecimal.valueOf(0);
-
-    /**
-     * 机砂
-     */
-    @ApiModelProperty(name="sandMachine",value = "机砂")
-    @Excel(name = "机砂", height = 20, width = 30)
-    @Column(name = "sand_machine")
-    private BigDecimal sandMachine = BigDecimal.valueOf(0);
-
-    /**
-     * 钉装
-     */
-    @ApiModelProperty(name="nails",value = "钉装")
-    @Excel(name = "钉装", height = 20, width = 30)
-    private BigDecimal nails = BigDecimal.valueOf(0);
-
-    /**
-     * 补土
-     */
-    @ApiModelProperty(name="repairSoil",value = "补土")
-    @Excel(name = "补土", height = 20, width = 30)
-    @Column(name = "repair_soil")
-    private BigDecimal repairSoil = BigDecimal.valueOf(0);
-
-    /**
-     * 胶粒螺母
-     */
-    @ApiModelProperty(name="glueNut",value = "胶粒螺母")
-    @Excel(name = "胶粒螺母", height = 20, width = 30)
-    @Column(name = "glue_nut")
-    private BigDecimal glueNut = BigDecimal.valueOf(0);
-
-    /**
-     * UV
-     */
-    @ApiModelProperty(name="uv",value = "UV")
-    @Excel(name = "UV", height = 20, width = 30)
-    private BigDecimal uv = BigDecimal.valueOf(0);
-
-    /**
-     * 木磨
-     */
-    @ApiModelProperty(name="woodMill",value = "木磨")
-    @Excel(name = "木磨", height = 20, width = 30)
-    @Column(name = "wood_mill")
-    private BigDecimal woodMill = BigDecimal.valueOf(0);
-
-    /**
-     * 灰磨
-     */
-    @ApiModelProperty(name="greyMill",value = "灰磨")
-    @Excel(name = "灰磨", height = 20, width = 30)
-    @Column(name = "grey_mill")
-    private BigDecimal greyMill = BigDecimal.valueOf(0);
-
-    /**
-     * 底得保
-     */
-    @ApiModelProperty(name="bottomGuaranteed",value = "底得保")
-    @Excel(name = "底得保", height = 20, width = 30)
-    @Column(name = "bottom_guaranteed")
-    private BigDecimal bottomGuaranteed = BigDecimal.valueOf(0);
-
-    /**
-     * 底色
-     */
-    @ApiModelProperty(name="undertone",value = "底色")
-    @Excel(name = "底色", height = 20, width = 30)
-    private BigDecimal undertone = BigDecimal.valueOf(0);
-
-    /**
-     * 底油
-     */
-    @ApiModelProperty(name="baseCoat",value = "底油")
-    @Excel(name = "底油", height = 20, width = 30)
-    @Column(name = "base_coat")
-    private BigDecimal baseCoat = BigDecimal.valueOf(0);
-
-    /**
-     * 擦色
-     */
-    @ApiModelProperty(name="staining",value = "擦色")
-    @Excel(name = "擦色", height = 20, width = 30)
-    private BigDecimal staining = BigDecimal.valueOf(0);
-
-    /**
-     * 油磨
-     */
-    @ApiModelProperty(name="oilAbrasion",value = "油磨")
-    @Excel(name = "油磨", height = 20, width = 30)
-    @Column(name = "oil_abrasion")
-    private BigDecimal oilAbrasion = BigDecimal.valueOf(0);
-
-    /**
-     * 干刷效果
-     */
-    @ApiModelProperty(name="dryBurshing",value = "干刷效果")
-    @Excel(name = "干刷效果", height = 20, width = 30)
-    @Column(name = "dry_burshing")
-    private BigDecimal dryBurshing = BigDecimal.valueOf(0);
-
-    /**
-     * 修黑边
-     */
-    @ApiModelProperty(name="repairBlackEdge",value = "修黑边")
-    @Excel(name = "修黑边", height = 20, width = 30)
-    @Column(name = "repair_black_edge")
-    private BigDecimal repairBlackEdge = BigDecimal.valueOf(0);
-
-    /**
-     * 面油
-     */
-    @ApiModelProperty(name="facialOil",value = "面油")
-    @Excel(name = "面油", height = 20, width = 30)
-    @Column(name = "facial_oil")
-    private BigDecimal facialOil = BigDecimal.valueOf(0);
-
-    /**
-     * 贴报纸
-     */
-    @ApiModelProperty(name="postNewspaper",value = "贴报纸")
-    @Excel(name = "贴报纸", height = 20, width = 30)
-    @Column(name = "post_newspaper")
-    private BigDecimal postNewspaper = BigDecimal.valueOf(0);
-
-    /**
-     * 白胚安装
-     */
-    @ApiModelProperty(name="whiteEmbryoInstall",value = "白胚安装")
-    @Excel(name = "白胚安装", height = 20, width = 30)
-    @Column(name = "white_embryo_install")
-    private BigDecimal whiteEmbryoInstall = BigDecimal.valueOf(0);
-
-    /**
-     * 装电
-     */
-    @ApiModelProperty(name="installPower",value = "装电")
-    @Excel(name = "装电", height = 20, width = 30)
-    @Column(name = "install_power")
-    private BigDecimal installPower = BigDecimal.valueOf(0);
-
-    /**
-     * 成品安装
-     */
-    @ApiModelProperty(name="finishedProductInstall",value = "成品安装")
-    @Excel(name = "成品安装", height = 20, width = 30)
-    @Column(name = "finished_product_install")
-    private BigDecimal finishedProductInstall = BigDecimal.valueOf(0);
-
-    /**
-     * 收货
-     */
-    @ApiModelProperty(name="receipts",value = "收货")
-    @Excel(name = "收货", height = 20, width = 30)
-    private BigDecimal receipts = BigDecimal.valueOf(0);
-
-    /**
-     * 配件包
-     */
-    @ApiModelProperty(name="accessoriesBag",value = "配件包")
-    @Excel(name = "配件包", height = 20, width = 30)
-    @Column(name = "accessories_bag")
-    private BigDecimal accessoriesBag = BigDecimal.valueOf(0);
-
-    /**
-     * 贴拉手
-     */
-    @ApiModelProperty(name="pasteShakeHandshandle",value = "贴拉手")
-    @Excel(name = "贴拉手", height = 20, width = 30)
-    @Column(name = "paste_shake_handshandle")
-    private BigDecimal pasteShakeHandshandle = BigDecimal.valueOf(0);
-
-    /**
-     * 贴镜
-     */
-    @ApiModelProperty(name="stickMirror",value = "贴镜")
-    @Excel(name = "贴镜", height = 20, width = 30)
-    @Column(name = "stick_mirror")
-    private BigDecimal stickMirror = BigDecimal.valueOf(0);
-
-    /**
-     * 包装
-     */
-    @ApiModelProperty(name="pack",value = "包装")
-    @Excel(name = "包装", height = 20, width = 30)
-    private BigDecimal pack = BigDecimal.valueOf(0);
-
-    /**
-     * 木条
-     */
-    @ApiModelProperty(name="woodBars",value = "木条")
-    @Excel(name = "木条", height = 20, width = 30)
-    @Column(name = "wood_bars")
-    private BigDecimal woodBars = BigDecimal.valueOf(0);
-
-    /**
-     * 木架成品
-     */
-    @ApiModelProperty(name="woodenProducts",value = "木架成品")
-    @Excel(name = "木架成品", height = 20, width = 30)
-    @Column(name = "wooden_products")
-    private BigDecimal woodenProducts = BigDecimal.valueOf(0);
-
-    /**
-     * 补件
-     */
-    @ApiModelProperty(name="replenishment",value = "补件")
-    @Excel(name = "补件", height = 20, width = 30)
-    private BigDecimal replenishment = BigDecimal.valueOf(0);
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
 
     /**
      * 组织id

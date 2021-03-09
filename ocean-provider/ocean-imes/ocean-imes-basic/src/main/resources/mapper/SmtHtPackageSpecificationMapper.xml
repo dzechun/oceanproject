@@ -103,6 +103,6 @@
 <!--        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')-->
 <!--      </if>-->
     </where>
-    order by  shps.modified_time desc
+    order by shps.modified_time desc
   </select>
 </mapper>
