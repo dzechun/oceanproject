@@ -174,17 +174,31 @@
         sm.version AS 'version',
         spl.pro_line_id AS 'proLineId',
         spl.pro_name AS 'proName',
-        sps.packing_unit_id AS 'packingUnitId',
-        spu.packing_unit_name AS 'packingUnitName',
-        sps.package_specification_id AS 'packageSpecificationId',
-        sps.package_specification_quantity AS 'packageSpecificationQuantity'
-        FROM
-        smt_work_order swo
+        bt.main_unit AS 'packingUnitName',
+        <if test="processId!=null and processId!=''">
+            IF(swo.order_id = 0 or swo.order_id is null,ssps.package_specification_id,sps.package_specification_id) AS
+            'packageSpecificationId',
+            IF(swo.order_id = 0 or swo.order_id is
+            null,ssps.package_specification_quantity,sps.package_specification_quantity)AS
+            'packageSpecificationQuantity'
+        </if>
+        <if test="processId == null or processId ==''">
+            IF(swo.order_id = 0 or swo.order_id is null,0,sps.package_specification_id) AS 'packageSpecificationId',
+            IF(swo.order_id = 0 or swo.order_id is null,0,sps.package_specification_quantity)AS
+            'packageSpecificationQuantity'
+        </if>
+
+        FROM smt_work_order swo
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
         LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
-        LEFT JOIN smt_material_package smp ON smp.material_id = sm.material_id
-        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = smp.package_specification_id
-        LEFT JOIN smt_packing_unit spu ON spu.packing_unit_id = sps.packing_unit_id
+        LEFT JOIN base_tab bt ON bt.material_id = swo.material_id
+        <if test="processId!=null and processId!=''">
+            LEFT JOIN smt_material_package ssmp ON ssmp.material_id = sm.material_id and swo.order_id = 0
+            LEFT JOIN smt_package_specification ssps ON ssps.package_specification_id = ssmp.package_specification_id
+            and swo.order_id = 0
+        </if>
+        LEFT JOIN mes_order_material mom ON swo.order_id = mom.order_id and swo.material_id = mom.material_id
+        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mom.package_specification_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -214,7 +228,7 @@
                 and swo.work_order_id = #{workOrderId}
             </if>
             <if test="processId!=null and processId!=''">
-                and smp.process_id = #{processId}
+                and ssmp.process_id = #{processId}
             </if>
             and swo.is_delete = 1
         </where>

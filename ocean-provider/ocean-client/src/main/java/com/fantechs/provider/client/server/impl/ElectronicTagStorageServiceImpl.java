@@ -428,7 +428,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         SmtLoading smtLoading = new SmtLoading();
         smtLoading.setLoadingId(smtLoadingList.get(0).getLoadingId());
         Byte status = 3;
-        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtos = new LinkedList<>();
         for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
 
             SmtLoadingDet smtLoadingDet = electronicTagFeignApi.detailSmtLoadingDet(smtLoadingDetDto.getLoadingDetId()).getData();
@@ -506,7 +505,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             smtElectronicTagStorageDtoList.get(0).setQuantity(smtLoadingDetDto.getPlanQty().subtract(smtLoadingDetDto.getActualQty()));
             smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
 
-            smtElectronicTagStorageDtos.add(smtElectronicTagStorageDtoList.get(0));
+            // 发给客户端，控制灭灯
+            fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
 
             if (BigDecimal.ZERO.compareTo(smtLoadingDetDto.getActualQty()) != 0) {
                 PtlLoadingDetDTO ptlLoadingDetDTO = new PtlLoadingDetDTO();
@@ -537,10 +537,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         ResponseEntity responseEntity = com.fantechs.common.base.utils.BeanUtils.convertJson(result, new TypeToken<ResponseEntity>(){}.getType());
         if (responseEntity.getCode() != 0 && responseEntity.getCode() != 200) {
             throw new Exception("分拣单号处理完，回传给MES失败：" + responseEntity.getMessage());
-        }
-        for (SmtElectronicTagStorageDto smtElectronicTagStorageDto : smtElectronicTagStorageDtos) {
-            // 发给客户端，控制灭灯
-            fanoutSender(1003, smtElectronicTagStorageDto);
         }
 
         return 1;

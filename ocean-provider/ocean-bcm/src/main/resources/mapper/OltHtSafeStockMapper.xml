@@ -23,4 +23,57 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+  <resultMap id="BaseColumnMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.OltSafeStockDto">
+<result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+</resultMap>
+<sql id="SqlColumn">
+os.olt_ht_safe_stock_id
+os.safe_stock_id,
+os.safe_stock_type,
+os.warehouse_id,
+os.material_category_id,
+os.material_id,
+os.safe_stock_quantity,
+os.status,
+os.organization_id,
+os.create_user_id,
+os.create_time,
+os.modified_user_id,
+os.modified_time,
+os.is_delete,
+os.option1,os.option2,os.option3
+</sql>
+<select id="findHtList" resultMap="BaseColumnMap" parameterType="com.fantechs.common.base.general.entity.bcm.search.SearchOltSafeStock">
+SELECT <include refid="SqlColumn"/>,sw.warehouse_name as 'warehouseName',smc.material_category_name as 'materialCategoryName',sm.material_code as 'materialCode',
+sm.material_name as 'materialName',sm.material_desc as 'materialDesc',sm.version,
+su.user_name
+create_user_name,sus.user_name as modified_user_name, bo.organization_name
+FROM olt_safe_stock os
+LEFT JOIN smt_warehouse sw ON os.warehouse_id=sw.warehouse_id
+LEFT JOIN smt_material_category smc ON os.material_category_id = smc.material_category_id
+LEFT JOIN smt_material sm ON os.material_id = sm.material_id
+LEFT JOIN ocean.sys_user su ON os.create_user_id = su.user_id
+LEFT JOIN ocean.sys_user sus ON os.modified_user_id = sus.user_id
+LEFT JOIN fantech_imes.base_organization bo ON os.organization_id = bo.organization_id
+<where>
+<if test="safeStockType != null">
+and os.safe_stock_type = #{safeStockType}
+</if>
+<if test="warehouseName != null and warehouseName != ''">
+and sw.warehouse_name Like CONCAT('%',#{warehouseName},'%',)
+</if>
+<if test="materialCategoryName != null and materialCategoryName != ''">
+and smc.material_category_name like CONCAT('%',#{materialCategoryName},'%')
+</if>
+<if test="materialId != null">
+and sm.material_id = #{materialId}
+</if>
+<if test="materialDesc != null and materialDesc != ''">
+and sm.material_desc like CONCAT('%',#{materialDesc},'%')
+</if>
+</where>
+order by os.create_time desc
+</select>
 </mapper>

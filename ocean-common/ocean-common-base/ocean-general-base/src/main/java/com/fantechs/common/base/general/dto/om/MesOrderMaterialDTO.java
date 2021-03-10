@@ -57,4 +57,12 @@ public class MesOrderMaterialDTO extends MesOrderMaterial {
     @Excel(name = "产品描述")
     private String materialDesc;
 
+    /**
+     * 包装方式
+     */
+    @ApiModelProperty(value = "包装方式",example = "包装方式")
+    @Column(name = "packing_unit_name")
+    @Excel(name = "包装方式")
+    private String packingUnitName;
+
 }

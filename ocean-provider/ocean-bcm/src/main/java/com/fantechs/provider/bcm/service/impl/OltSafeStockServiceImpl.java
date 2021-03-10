@@ -48,11 +48,11 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         for (OltSafeStockDto oltSafeStockDto : list) {
             //按仓库查询总数
             if(oltSafeStockDto.getSafeStockType()==1){
-                BigDecimal countQty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());
+                BigDecimal countQty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId());
                 oltSafeStockDto.setCountQty(countQty);
             }else if(oltSafeStockDto.getSafeStockType()==2){
                 //按物料类别查询总数
-                BigDecimal countQty = oltSafeStockMapper.selectCountByCate(oltSafeStockDto.getMaterialCategoryId(),oltSafeStockDto.getMaterialId());
+                BigDecimal countQty = oltSafeStockMapper.selectCountByCate(oltSafeStockDto.getMaterialCategoryId());
                 oltSafeStockDto.setCountQty(countQty);
             }else if(oltSafeStockDto.getSafeStockType()==3){
                 //按物料查询总数
@@ -69,11 +69,11 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         for (OltSafeStockDto oltSafeStockDto : list) {
             //按仓库查询总数
             if(oltSafeStockDto.getSafeStockType()==1){
-                BigDecimal countQty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());
+                BigDecimal countQty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId());
                 oltSafeStockDto.setCountQty(countQty);
             }else if(oltSafeStockDto.getSafeStockType()==2){
                 //按物料类别查询总数
-                BigDecimal countQty = oltSafeStockMapper.selectCountByCate(oltSafeStockDto.getMaterialCategoryId(),oltSafeStockDto.getMaterialId());
+                BigDecimal countQty = oltSafeStockMapper.selectCountByCate(oltSafeStockDto.getMaterialCategoryId());
                 oltSafeStockDto.setCountQty(countQty);
             }else if(oltSafeStockDto.getSafeStockType()==3){
                 //按物料查询总数
@@ -97,9 +97,9 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
             sb.append("安全库存预警：\n");
             for (OltSafeStockDto oltSafeStockDto : list) {
                 if(oltSafeStockDto.getSafeStockType()==1){
-                    sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"    物料："+oltSafeStockDto.getMaterialName()+"\n");
+                    sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"   现有数量："+oltSafeStockDto.getCountQty());
                 }else if(oltSafeStockDto.getSafeStockType()==2){
-                    sb.append("物料类型："+oltSafeStockDto.getWarehouseName()+"   物料："+oltSafeStockDto.getMaterialName()+"\n");
+                    sb.append("物料类型："+oltSafeStockDto.getWarehouseName()+"   现有数量："+oltSafeStockDto.getCountQty());
                 }else if(oltSafeStockDto.getSafeStockType()==3){
                     sb.append("物料："+oltSafeStockDto.getMaterialName()+"\n");
                 }

@@ -45,7 +45,7 @@ spring:
     #通过connectProperties属性来打开mergesql功能罗慢sQL记录
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500;
   redis:
-    host: 192.168.100.96
+    host: 192.168.61.55
     port: 6379
     password: 'qwe!@#.'
   jackson:
@@ -64,7 +64,7 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@192.168.100.96:8761/eureka/
+      defaultZone: http://root:root@192.168.61.55:8761/eureka/
 ribbon:
   eureka:
     enabled: true

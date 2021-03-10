@@ -79,13 +79,13 @@ order by os.create_time desc
     LEFT JOIN smt_storage ss ON ssi.storage_id=ss.storage_id
     LEFT JOIN smt_warehouse_area wa ON ss.warehouse_area_id =wa.warehouse_area_id
     LEFT JOIN smt_warehouse sw ON wa.warehouse_id=sw.warehouse_id
-    WHERE sw.warehouse_id = #{warehouseId} and ssi.material_id =#{materialId}
+    WHERE sw.warehouse_id = #{warehouseId}
  </select>
 <select id="selectCountByCate" resultType="java.math.BigDecimal">
 SELECT sum(ssi.quantity) FROM smt_storage_inventory ssi
 LEFT JOIN base_tab bt ON ssi.material_id = bt.material_id
 LEFT JOIN smt_material_category smc ON bt.material_type = smc.material_category_id
-WHERE smc.material_category_id= #{materialCategoryId} and ssi.material_id =#{materialId}
+WHERE smc.material_category_id= #{materialCategoryId}
 </select>
 <select id="selectCountByCode" resultType="java.math.BigDecimal">
  SELECT sum(quantity) FROM smt_storage_inventory where material_id =#{materialId}

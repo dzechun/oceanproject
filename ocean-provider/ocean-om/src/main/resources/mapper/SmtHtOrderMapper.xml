@@ -28,6 +28,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1" />
         <result column="option2" jdbcType="VARCHAR" property="option2" />
         <result column="option3" jdbcType="VARCHAR" property="option3" />
+        <result column="freight_num" jdbcType="VARCHAR" property="freightNum"/>
     </resultMap>
 
 <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO" extends="BaseResultMap">
@@ -36,7 +37,7 @@
   <sql id="Base_Column_List">
     sho.ht_order_id,sho.order_id, sho.order_code, sho.supplier_id, sho.material_id, sho.order_quantity, sho.delivered_quantity, sho.Inkjet_paint,
     sho.radium_carving, sho.status, sho.delivery_date, sho.photo_url, sho.create_user_id, sho.create_time, sho.modified_user_id,
-    sho.modified_time, sho.is_delete, sho.option1, sho.option2, sho.option3,sho.organization_id, sho.remark
+    sho.modified_time, sho.is_delete, sho.option1, sho.option2, sho.option3,sho.organization_id, sho.remark,sho.freight_num
   </sql>
  <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
    select<include refid="Base_Column_List"/>,sm.material_name, sm.material_code,sm.version,sm.material_desc,spm.product_model_name,
