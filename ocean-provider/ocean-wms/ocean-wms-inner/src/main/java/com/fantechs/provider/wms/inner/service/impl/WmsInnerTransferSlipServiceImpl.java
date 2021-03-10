@@ -152,8 +152,10 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(WmsInnerTransferSlipDet.class);
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
+            example.clear();
             WmsInnerTransferSlip wmsInnerTransferSlip = wmsInnerTransferSlipMapper.selectByPrimaryKey(id);
             if (StringUtils.isEmpty(wmsInnerTransferSlip)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -164,14 +166,13 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             wmsInnerHtTransferSlipMapper.insertSelective(wmsInnerHtTransferSlip);
 
             //删除调拨单明细
-            Example example = new Example(WmsInnerTransferSlipDet.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("transferSlipId",wmsInnerTransferSlip.getTransferSlipId());
-            wmsInnerTransferSlipMapper.deleteByExample(example);
+            wmsInnerTransferSlipDetMapper.deleteByExample(example);
         }
 
         //删除调拨单
-        return wmsInnerTransferSlipDetMapper.deleteByIds(ids);
+        return wmsInnerTransferSlipMapper.deleteByIds(ids);
 
     }
 }
