@@ -15,4 +15,5 @@ import java.util.Map;
 public interface BaseTabService extends IService<BaseTab> {
 
     List<BaseTabDto> findList(Map<String, Object> map);
+    int insertList(List<BaseTab> baseTabs);
 }

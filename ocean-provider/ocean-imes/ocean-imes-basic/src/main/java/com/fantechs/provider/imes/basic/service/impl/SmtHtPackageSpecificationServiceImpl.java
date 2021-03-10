@@ -31,7 +31,7 @@ public class SmtHtPackageSpecificationServiceImpl extends BaseService<SmtHtPacka
 
         List<SmtHtPackageSpecification> smtHtPackageSpecifications = smtHtPackageSpecificationMapper.findHtList(map);
 
-        SearchSmtMaterialPackage searchSmtMaterialPackage = new SearchSmtMaterialPackage();
+        /*SearchSmtMaterialPackage searchSmtMaterialPackage = new SearchSmtMaterialPackage();
 
         for (SmtHtPackageSpecification smtHtPackageSpecification : smtHtPackageSpecifications) {
             searchSmtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
@@ -39,7 +39,7 @@ public class SmtHtPackageSpecificationServiceImpl extends BaseService<SmtHtPacka
             if (StringUtils.isNotEmpty(smtMaterialPackageDtos)){
                 smtHtPackageSpecification.setSmtMaterialPackages(smtMaterialPackageDtos);
             }
-        }
+        }*/
 
         return smtHtPackageSpecifications;
     }

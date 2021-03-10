@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerHtTransferSlipMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.history.WmsInnerHtTransferSlip">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_transfer_slip_id" jdbcType="BIGINT" property="htTransferSlipId" />
+    <result column="transfer_slip_id" jdbcType="BIGINT" property="transferSlipId" />
+    <result column="transfer_slip_code" jdbcType="VARCHAR" property="transferSlipCode" />
+    <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
+    <result column="transfer_slip_time" jdbcType="TIMESTAMP" property="transferSlipTime" />
+    <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="processor_user_name" jdbcType="VARCHAR" property="processorUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wihts.ht_transfer_slip_id,
+	wihts.transfer_slip_id,
+	wihts.transfer_slip_code,
+	wihts.processor_user_id,
+	wihts.transfer_slip_time,
+	wihts.transfer_slip_status,
+	wihts.remark,
+	wihts.organization_id,
+	wihts.create_user_id,
+	wihts.create_time,
+	wihts.modified_user_id,
+	wihts.modified_time,
+	wihts.is_delete
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    suss.user_name AS processor_user_name,
+    bo.organization_name,bo.organization_code
+    from fantech_imes.wms_inner_ht_transfer_slip wihts
+    LEFT JOIN ocean.sys_user su  ON wihts.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON wihts.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user suss ON wihts.processor_user_id = suss.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON wihts.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(wihts.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="transferSlipCode!=null and transferSlipCode != ''">
+        and wihts.transfer_slip_code like CONCAT("%",#{transferSlipCode},"%")
+      </if>
+      <if test="modifiedUserName!=null and modifiedUserName != ''">
+        and sus.user_name like CONCAT("%",#{modifiedUserName},"%")
+      </if>
+      <if test="processorUserName!=null and processorUserName != ''">
+        and suss.user_name like CONCAT("%",#{processorUserName},"%")
+      </if>
+      <if test="status!=null">
+        and wihts.status=#{status}
+      </if>
+      <if test="transferSlipStatus !=null">
+        and wihts.transfer_slip_status=#{transferSlipStatus}
+      </if>
+    </where>
+    order by wihts.create_time desc
+  </select>
+</mapper>

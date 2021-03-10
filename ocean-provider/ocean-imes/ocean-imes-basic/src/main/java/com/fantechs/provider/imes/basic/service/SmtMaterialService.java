@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.service;
 
 
 import com.fantechs.common.base.dto.basic.SmtMaterialDto;
+import com.fantechs.common.base.dto.basic.imports.SmtMaterialImport;
 import com.fantechs.common.base.entity.basic.SmtMaterial;
 import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
@@ -20,5 +21,5 @@ public interface SmtMaterialService  extends IService<SmtMaterial>{
 
     int batchUpdate(List<SmtMaterial> smtMaterials);
 
-    Map<String, Object> importExcel(List<SmtMaterialDto> smtMaterialDtos);
+    Map<String, Object> importExcel(List<SmtMaterialImport> smtMaterialImports);
 }

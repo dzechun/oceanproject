@@ -15,7 +15,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatching;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
@@ -33,14 +32,12 @@ import com.fantechs.provider.mes.pm.mapper.MesPmMatchingOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmMatchingOrderService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -75,8 +72,21 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     }
 
     @Override
-    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId,BigDecimal qualityQuantity,Long workOrderCardPoolId) {
+    public MesPmMatchingDto findMinMatchingQuantity(String workOrderCardId, Long sectionId, BigDecimal qualityQuantity, Long workOrderCardPoolId) {
 
+        //如果是子批流转卡拿到该子批的任意部件流转卡
+        SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool2 = new SearchSmtWorkOrderCardPool();
+        searchSmtWorkOrderCardPool2.setWorkOrderCardPoolId(workOrderCardPoolId);
+        List<SmtWorkOrderCardPoolDto> list = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool2);
+        if (StringUtils.isNotEmpty(list) && list.get(0).getType() == 3) {
+            searchSmtWorkOrderCardPool2.setWorkOrderId(list.get(0).getWorkOrderId());
+            searchSmtWorkOrderCardPool2.setType((byte) 2);
+            searchSmtWorkOrderCardPool2.setWorkOrderCardPoolId(null);
+            list = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool2);
+            if (StringUtils.isNotEmpty(list)) {
+                workOrderCardPoolId = list.get(0).getWorkOrderCardPoolId();
+            }
+        }
 
         //通过流转卡号获取流转卡信息
         ProcessListWorkOrderDTO processListWorkOrderDTO = smtWorkOrderCardPoolService.selectWorkOrderDtoByWorkOrderCardId(workOrderCardId);
@@ -137,7 +147,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                         }
                     }
 
-                    if (switch1){
+                    if (switch1) {
                         Long routeId = smtWorkOrderCardPoolDto.getRouteId();
                         List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(routeId).getData();
                         if (StringUtils.isEmpty(routeProcessList)) {
@@ -155,23 +165,23 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     //通过部件流转卡ID获取质检单
                     QmsQualityConfirmation qmsQualityConfirmation = qmsFeignApi.getQualityQuantity(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId(), processId).getData();
 
-                    if (StringUtils.isEmpty(qmsQualityConfirmation)){
+                    if (StringUtils.isEmpty(qmsQualityConfirmation)) {
                         qmsQualityConfirmation = new QmsQualityConfirmation();
                         qmsQualityConfirmation.setTotalQualified(BigDecimal.valueOf(0));
                     }
 
-                    if (smtWorkOrderCardPoolDto.getWorkOrderCardPoolId().equals(workOrderCardPoolId) && switch2){
+                    if (smtWorkOrderCardPoolDto.getWorkOrderCardPoolId().equals(workOrderCardPoolId) && switch2) {
                         qualifiedQuantity = qualifiedQuantity.add(qualityQuantity);
                         switch2 = false;
                     }
 
                     if (StringUtils.isNotEmpty(qmsQualityConfirmation)) {
-                        if (StringUtils.isNotEmpty(qmsQualityConfirmation.getTotalQualified())){
+                        if (StringUtils.isNotEmpty(qmsQualityConfirmation.getTotalQualified())) {
                             qualifiedQuantity = qualifiedQuantity.add(qmsQualityConfirmation.getTotalQualified());
                         }
                     }
                 }
-                if (processId == -1){
+                if (processId == -1) {
                     continue;
                 }
 
@@ -467,7 +477,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
             searchSmtStorageMaterial.setMaterialId(saveMesPmMatchingOrderDto.getMaterialId());
             List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-            if (StringUtils.isEmpty(smtStorageMaterials)){
+            if (StringUtils.isEmpty(smtStorageMaterials)) {
                 throw new BizErrorException("该产品还未绑定储位");
             }
             SmtStorageMaterial smtStorageMaterial = smtStorageMaterials.get(0);

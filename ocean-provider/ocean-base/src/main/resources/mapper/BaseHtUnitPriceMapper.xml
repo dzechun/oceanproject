@@ -8,37 +8,8 @@
     <id column="ht_unit_price_id" jdbcType="BIGINT" property="htUnitPriceId" />
     <result column="unit_price_id" jdbcType="BIGINT" property="unitPriceId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="cutting" jdbcType="DECIMAL" property="cutting" />
-    <result column="seal_edge" jdbcType="DECIMAL" property="sealEdge" />
-    <result column="gang_drill" jdbcType="DECIMAL" property="gangDrill" />
-    <result column="gong_machine" jdbcType="DECIMAL" property="gongMachine" />
-    <result column="sand_machine" jdbcType="DECIMAL" property="sandMachine" />
-    <result column="nails" jdbcType="DECIMAL" property="nails" />
-    <result column="repair_soil" jdbcType="DECIMAL" property="repairSoil" />
-    <result column="glue_nut" jdbcType="DECIMAL" property="glueNut" />
-    <result column="uv" jdbcType="DECIMAL" property="uv" />
-    <result column="wood_mill" jdbcType="DECIMAL" property="woodMill" />
-    <result column="grey_mill" jdbcType="DECIMAL" property="greyMill" />
-    <result column="bottom_guaranteed" jdbcType="DECIMAL" property="bottomGuaranteed" />
-    <result column="undertone" jdbcType="DECIMAL" property="undertone" />
-    <result column="base_coat" jdbcType="DECIMAL" property="baseCoat" />
-    <result column="staining" jdbcType="DECIMAL" property="staining" />
-    <result column="oil_abrasion" jdbcType="DECIMAL" property="oilAbrasion" />
-    <result column="dry_burshing" jdbcType="DECIMAL" property="dryBurshing" />
-    <result column="repair_black_edge" jdbcType="DECIMAL" property="repairBlackEdge" />
-    <result column="facial_oil" jdbcType="DECIMAL" property="facialOil" />
-    <result column="post_newspaper" jdbcType="DECIMAL" property="postNewspaper" />
-    <result column="white_embryo_install" jdbcType="DECIMAL" property="whiteEmbryoInstall" />
-    <result column="install_power" jdbcType="DECIMAL" property="installPower" />
-    <result column="finished_product_install" jdbcType="DECIMAL" property="finishedProductInstall" />
-    <result column="receipts" jdbcType="DECIMAL" property="receipts" />
-    <result column="accessories_bag" jdbcType="DECIMAL" property="accessoriesBag" />
-    <result column="paste_shake_handshandle" jdbcType="DECIMAL" property="pasteShakeHandshandle" />
-    <result column="stick_mirror" jdbcType="DECIMAL" property="stickMirror" />
-    <result column="pack" jdbcType="DECIMAL" property="pack" />
-    <result column="wood_bars" jdbcType="DECIMAL" property="woodBars" />
-    <result column="wooden_products" jdbcType="DECIMAL" property="woodenProducts" />
-    <result column="replenishment" jdbcType="DECIMAL" property="replenishment" />
+    <result column="unit_price" jdbcType="DECIMAL" property="materialId"/>
+    <result column="process_id" jdbcType="BIGINT" property="processId"/>
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -55,43 +26,17 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="process_desc" jdbcType="VARCHAR" property="processDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
         bhup.ht_unit_price_id,
         bhup.unit_price_id,
         bhup.material_id,
-        bhup.cutting,
-        bhup.seal_edge,
-        bhup.gang_drill,
-        bhup.gong_machine,
-        bhup.sand_machine,
-        bhup.nails,
-        bhup.repair_soil,
-        bhup.glue_nut,
-        bhup.uv,
-        bhup.wood_mill,
-        bhup.grey_mill,
-        bhup.bottom_guaranteed,
-        bhup.undertone,
-        bhup.base_coat,
-        bhup.staining,
-        bhup.oil_abrasion,
-        bhup.dry_burshing,
-        bhup.repair_black_edge,
-        bhup.facial_oil,
-        bhup.post_newspaper,
-        bhup.white_embryo_install,
-        bhup.install_power,
-        bhup.finished_product_install,
-        bhup.receipts,
-        bhup.accessories_bag,
-        bhup.paste_shake_handshandle,
-        bhup.stick_mirror,
-        bhup.pack,
-        bhup.wood_bars,
-        bhup.wooden_products,
-        bhup.replenishment,
+        bhup.unit_price,
+        bhup.process_id,
         bhup.organization_id,
         bhup.remark,
         bhup.`status`,
@@ -107,13 +52,15 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     sm.material_code,sm.material_name,
     spm.product_model_code,spm.product_model_name,
+    sp.process_code,sp.process_name,sp.process_desc,
     bo.organization_name
     FROM fantech_imes.base_ht_unit_price bhup
     LEFT JOIN fantech_imes.smt_material sm ON bhup.material_id = sm.material_id
     LEFT JOIN fantech_imes.base_tab bt ON sm.material_id = bt.material_id
     LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-    left join ocean.sys_user su on bhup.create_user_id = su.user_id
-    left join ocean.sys_user sus on bhup.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.smt_process sp ON bhup.process_id = sp.process_id
+    LEFT JOIN ocean.sys_user su on bhup.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus on bhup.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON sm.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

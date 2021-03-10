@@ -26,6 +26,8 @@
       <fileNamePattern>${LOG_PATH}/info/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
       <maxHistory>10</maxHistory><!--  保留30天日志 -->
       <maxFileSize>100MB</maxFileSize>
+      <!--日志文件的总大小-->
+      <totalSizeCap>5GB</totalSizeCap>
     </rollingPolicy>
   </appender>
 
@@ -41,6 +43,8 @@
       <fileNamePattern>${LOG_PATH}/info/${LOG_FILE}-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
       <maxHistory>10</maxHistory>
       <maxFileSize>100MB</maxFileSize>
+      <!--日志文件的总大小-->
+      <totalSizeCap>1GB</totalSizeCap>
     </rollingPolicy>
     <encoder charset="UTF-8">
       <Pattern>%date [%level] [%thread] %logger{60} [%file : %line] %msg%n</Pattern>

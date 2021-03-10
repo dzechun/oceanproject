@@ -525,7 +525,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         ptlLoadingDTO.setPtlLoadingDetDTOList(ptlLoadingDetDTOList);
 
-        log.info("上料单号处理完，回传给MES：" + ptlLoadingDTO);
+        log.info("上料单号处理完，回传给MES：" + JSONObject.toJSONString(ptlLoadingDTO));
         String url = "";
         if ("MES".equals(smtLoading.getSourceSys())) {
             url = "";
