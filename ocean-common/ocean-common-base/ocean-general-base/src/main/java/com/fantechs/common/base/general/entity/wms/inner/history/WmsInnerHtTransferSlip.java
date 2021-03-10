@@ -10,19 +10,19 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 调拨单
+ * 调拨单履历信息表
  * wms_inner_ht_transfer_slip
- * @author hyc
- * @date 2021-03-04 10:38:09
+ * @author 53203
+ * @date 2021-03-09 15:59:51
  */
 @Data
 @Table(name = "wms_inner_ht_transfer_slip")
 public class WmsInnerHtTransferSlip extends ValidGroup implements Serializable {
     /**
-     * 调拨单ID
+     * 调拨单履历ID
      */
-    @ApiModelProperty(name="htTransferSlipId",value = "调拨单ID")
-    @Excel(name = "调拨单ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htTransferSlipId",value = "调拨单履历ID")
+    @Excel(name = "调拨单履历ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "ht_transfer_slip_id")
     private Long htTransferSlipId;
@@ -66,13 +66,6 @@ public class WmsInnerHtTransferSlip extends ValidGroup implements Serializable {
     @Excel(name = "单据状态（0-待调拨 1-调拨中 2-调拨完成）", height = 20, width = 30,orderNum="") 
     @Column(name = "transfer_slip_status")
     private Byte transferSlipStatus;
-
-    /**
-     * 是否有效（0、无效 1、有效）
-     */
-    @ApiModelProperty(name="status",value = "是否有效（0、无效 1、有效）")
-    @Excel(name = "是否有效（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
-    private Byte status;
 
     /**
      * 备注
@@ -130,6 +123,46 @@ public class WmsInnerHtTransferSlip extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "处理人", height = 20, width = 30,orderNum="6")
+    private String organizationName;
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
+    private String modifiedUserName;
+
+    /**
+     * 处理人
+     */
+    @Transient
+    @ApiModelProperty(name = "processorUserName",value = "处理人")
+    @Excel(name = "处理人", height = 20, width = 30,orderNum="11")
+    private String processorUserName;
+
+    /**
+     * 组织编码
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationCode",value = "组织编码")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="12")
+    private String organizationCode;
 
     private static final long serialVersionUID = 1L;
 }

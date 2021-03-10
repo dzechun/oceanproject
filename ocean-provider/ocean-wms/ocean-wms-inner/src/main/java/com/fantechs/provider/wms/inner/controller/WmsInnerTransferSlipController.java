@@ -3,11 +3,13 @@ package com.fantechs.provider.wms.inner.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerTransferSlipDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerTransferSlip;
+import com.fantechs.common.base.general.entity.wms.inner.history.WmsInnerHtTransferSlip;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerTransferSlip;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.inner.service.WmsInnerHtTransferSlipService;
 import com.fantechs.provider.wms.inner.service.WmsInnerTransferSlipService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -35,6 +37,8 @@ public class WmsInnerTransferSlipController {
 
     @Resource
     private WmsInnerTransferSlipService wmsInnerTransferSlipService;
+    @Resource
+    private WmsInnerHtTransferSlipService wmsInnerHtTransferSlipService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -69,13 +73,13 @@ public class WmsInnerTransferSlipController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    /*@ApiOperation("历史列表")
+    @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsInnerTransferSlip>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerTransferSlip searchWmsInnerTransferSlip) {
+    public ResponseEntity<List<WmsInnerHtTransferSlip>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerTransferSlip searchWmsInnerTransferSlip) {
         Page<Object> page = PageHelper.startPage(searchWmsInnerTransferSlip.getStartPage(),searchWmsInnerTransferSlip.getPageSize());
-        List<WmsInnerTransferSlip> list = wmsInnerTransferSlipService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerTransferSlip));
+        List<WmsInnerHtTransferSlip> list = wmsInnerHtTransferSlipService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerTransferSlip));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }*/
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

@@ -26,8 +26,10 @@ import com.fantechs.provider.client.dto.PtlSortingDTO;
 import com.fantechs.provider.client.dto.PtlSortingDetailDTO;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import com.google.gson.reflect.TypeToken;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +70,7 @@ public class ElectronicTagReceiver {
     @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public void receiveTopic1(byte[] bytes) throws Exception {
+    public void receiveTopic1(byte[] bytes, Message message, Channel channel) throws Exception {
         String encoded = new String(bytes, "UTF-8");
         MQResponseEntity mqResponseEntity = JsonUtils.jsonToPojo(encoded, MQResponseEntity.class);
         log.info("接收到客户端消息：" + mqResponseEntity);
@@ -149,8 +151,8 @@ public class ElectronicTagReceiver {
                     //发送给客户端控制灭灯
                     fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
                             JSONObject.toJSONString(mQResponseEntity));
-                    //当区域内没有分拣中物料时，发送给客户端控制灭灯
-                    if (StringUtils.isEmpty(findSortingList) && StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
+                    //当区域内没有分拣中物料时，发送给客户端控制灭区域灯
+                    if (findSortingList.size() == 1 && StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
                         mQResponseEntity.setCode(1003);
                         smtElectronicTagStorageDtoList.get(0).setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
                         fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
@@ -166,7 +168,7 @@ public class ElectronicTagReceiver {
                     searchSmtSorting1.setStatus((byte) 1);
                     findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
                     //分拣单号处理完，回传给MES
-                    if (StringUtils.isEmpty(findSortingList)) {
+                    if (findSortingList.size() == 1) {
                         PtlSortingDTO ptlSortingDTO = new PtlSortingDTO();
                         searchSmtSorting1.setStatus(null);
                         searchSmtSorting1.setPageSize(99999);
@@ -182,7 +184,7 @@ public class ElectronicTagReceiver {
                         ptlSortingDTO.setSortingCode(smtSortingDto.getSortingCode());
                         ptlSortingDTO.setPtlSortingDetailDTOList(ptlSortingDetailDTOList);
                         ptlSortingDTO.setUser(findSortingList.get(0).getModifiedUserCode());
-                        log.info("分拣单号处理完，回传给" + findSortingList.get(0).getSourceSys() + "：" + ptlSortingDTO);
+                        log.info("分拣单号处理完，回传给" + findSortingList.get(0).getSourceSys() + "：" + JSONObject.toJSONString(ptlSortingDTO));
                         String url = "";
                         if ("MES".equals(findSortingList.get(0).getSourceSys())) {
                             url = resApiUrl;
@@ -217,6 +219,8 @@ public class ElectronicTagReceiver {
             log.info("===========队列名称:" + RabbitConfig.TOPIC_QUEUE_PDA);
             log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
             log.info("===========发送消息给客户端完成===============");
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            log.warn("===========删除消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息===============> " + JSONObject.toJSONString(mqResponseEntity));
 
             throw new Exception(e);
         }
