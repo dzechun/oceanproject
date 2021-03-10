@@ -87,7 +87,9 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
                 baseWarningPersonnel.setWarningId(baseWarning.getWarningId());
             }
         }
-        baseWarningPersonnelMapper.insertList(baseWarningPersonnelList);
+        if (StringUtils.isNotEmpty(baseWarningPersonnelList)){
+            baseWarningPersonnelMapper.insertList(baseWarningPersonnelList);
+        }
 
         return i;
     }
@@ -132,6 +134,9 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
             for (BaseWarningPersonnel baseWarningPersonnel : baseWarningPersonnelList) {
                 baseWarningPersonnel.setWarningId(baseWarning.getWarningId());
             }
+        }
+        if (StringUtils.isNotEmpty(baseWarningPersonnelList)){
+            baseWarningPersonnelMapper.insertList(baseWarningPersonnelList);
         }
 
         return i;

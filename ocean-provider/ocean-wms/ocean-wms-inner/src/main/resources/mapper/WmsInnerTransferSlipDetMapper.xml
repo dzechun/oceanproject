@@ -37,10 +37,10 @@
     <result column="productModel_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
     <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
-    <result column="out_warehouse_area_id" jdbcType="VARCHAR" property="outWarehouseAreaName"/>
+    <result column="out_warehouse_area_name" jdbcType="VARCHAR" property="outWarehouseAreaName"/>
     <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
     <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>
-    <result column="in_warehouse_area_id" jdbcType="VARCHAR" property="inWarehouseAreaName"/>
+    <result column="in_warehouse_area_name" jdbcType="VARCHAR" property="inWarehouseAreaName"/>
   </resultMap>
 
   <sql id="Base_Column_List">

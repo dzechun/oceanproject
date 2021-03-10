@@ -7,37 +7,6 @@
         -->
         <id column="unit_price_id" jdbcType="BIGINT" property="unitPriceId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="cutting" jdbcType="DECIMAL" property="cutting"/>
-        <result column="seal_edge" jdbcType="DECIMAL" property="sealEdge"/>
-        <result column="gang_drill" jdbcType="DECIMAL" property="gangDrill"/>
-        <result column="gong_machine" jdbcType="DECIMAL" property="gongMachine"/>
-        <result column="sand_machine" jdbcType="DECIMAL" property="sandMachine"/>
-        <result column="nails" jdbcType="DECIMAL" property="nails"/>
-        <result column="repair_soil" jdbcType="DECIMAL" property="repairSoil"/>
-        <result column="glue_nut" jdbcType="DECIMAL" property="glueNut"/>
-        <result column="uv" jdbcType="DECIMAL" property="uv"/>
-        <result column="wood_mill" jdbcType="DECIMAL" property="woodMill"/>
-        <result column="grey_mill" jdbcType="DECIMAL" property="greyMill"/>
-        <result column="bottom_guaranteed" jdbcType="DECIMAL" property="bottomGuaranteed"/>
-        <result column="undertone" jdbcType="DECIMAL" property="undertone"/>
-        <result column="base_coat" jdbcType="DECIMAL" property="baseCoat"/>
-        <result column="staining" jdbcType="DECIMAL" property="staining"/>
-        <result column="oil_abrasion" jdbcType="DECIMAL" property="oilAbrasion"/>
-        <result column="dry_burshing" jdbcType="DECIMAL" property="dryBurshing"/>
-        <result column="repair_black_edge" jdbcType="DECIMAL" property="repairBlackEdge"/>
-        <result column="facial_oil" jdbcType="DECIMAL" property="facialOil"/>
-        <result column="post_newspaper" jdbcType="DECIMAL" property="postNewspaper"/>
-        <result column="white_embryo_install" jdbcType="DECIMAL" property="whiteEmbryoInstall"/>
-        <result column="install_power" jdbcType="DECIMAL" property="installPower"/>
-        <result column="finished_product_install" jdbcType="DECIMAL" property="finishedProductInstall"/>
-        <result column="receipts" jdbcType="DECIMAL" property="receipts"/>
-        <result column="accessories_bag" jdbcType="DECIMAL" property="accessoriesBag"/>
-        <result column="paste_shake_handshandle" jdbcType="DECIMAL" property="pasteShakeHandshandle"/>
-        <result column="stick_mirror" jdbcType="DECIMAL" property="stickMirror"/>
-        <result column="pack" jdbcType="DECIMAL" property="pack"/>
-        <result column="wood_bars" jdbcType="DECIMAL" property="woodBars"/>
-        <result column="wooden_products" jdbcType="DECIMAL" property="woodenProducts"/>
-        <result column="replenishment" jdbcType="DECIMAL" property="replenishment"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -57,42 +26,12 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">
         bup.unit_price_id,
         bup.material_id,
-        bup.cutting,
-        bup.seal_edge,
-        bup.gang_drill,
-        bup.gong_machine,
-        bup.sand_machine,
-        bup.nails,
-        bup.repair_soil,
-        bup.glue_nut,
-        bup.uv,
-        bup.wood_mill,
-        bup.grey_mill,
-        bup.bottom_guaranteed,
-        bup.undertone,
-        bup.base_coat,
-        bup.staining,
-        bup.oil_abrasion,
-        bup.dry_burshing,
-        bup.repair_black_edge,
-        bup.facial_oil,
-        bup.post_newspaper,
-        bup.white_embryo_install,
-        bup.install_power,
-        bup.finished_product_install,
-        bup.receipts,
-        bup.accessories_bag,
-        bup.paste_shake_handshandle,
-        bup.stick_mirror,
-        bup.pack,
-        bup.wood_bars,
-        bup.wooden_products,
-        bup.replenishment,
         bup.organization_id,
         bup.remark,
         bup.`status`,

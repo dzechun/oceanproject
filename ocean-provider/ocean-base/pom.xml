@@ -54,10 +54,10 @@
                 <!--打包时去除第三方依赖-->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
+                <!--<configuration>
                     <layout>ZIP</layout>
                     <includes>
-                        <!--此处可以指定包含jar包-->
+                        &lt;!&ndash;此处可以指定包含jar包&ndash;&gt;
                         <include>
                             <groupId>com.fantechs.common.base</groupId>
                             <artifactId>ocean-public-base</artifactId>
@@ -71,10 +71,10 @@
                             <artifactId>ocean-security-api</artifactId>
                         </include>
                     </includes>
-                </configuration>
+                </configuration>-->
             </plugin>
             <!--拷贝第三方依赖文件到指定目录-->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -89,7 +89,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 

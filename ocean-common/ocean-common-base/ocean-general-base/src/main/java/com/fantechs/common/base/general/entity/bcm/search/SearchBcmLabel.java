@@ -40,4 +40,10 @@ public class SearchBcmLabel extends BaseQuery implements Serializable {
     @ApiModelProperty(name="labelCategoryName",value = "标签类别名称")
     @Column(name = "label_category_name")
     private String labelCategoryName;
+
+    /**
+     * 编码查询标记(1.等值查询 2.模糊查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

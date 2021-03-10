@@ -59,16 +59,19 @@
         and date_format(wits.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="transferSlipCode!=null and transferSlipCode != ''">
-        and wits.transferSlip_code like CONCAT("%",#{transferSlipCode},"%")
+        and wits.transfer_slip_code like CONCAT("%",#{transferSlipCode},"%")
       </if>
-      <if test="processorUserId!=null">
-        and suss.user_id = #{processorUserId}
+      <if test="modifiedUserName!=null and modifiedUserName != ''">
+        and sus.user_name like CONCAT("%",#{modifiedUserName},"%")
       </if>
-      <if test="modifiedUserId!=null">
-        and wits.modified_user_id=#{modifiedUserId}
+      <if test="processorUserName!=null and processorUserName != ''">
+        and suss.user_name like CONCAT("%",#{processorUserName},"%")
       </if>
       <if test="status!=null">
         and wits.status=#{status}
+      </if>
+      <if test="transferSlipStatus !=null">
+        and wits.transfer_slip_status=#{transferSlipStatus}
       </if>
     </where>
     order by wits.create_time desc

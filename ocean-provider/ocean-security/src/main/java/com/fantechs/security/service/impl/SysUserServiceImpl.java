@@ -163,7 +163,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importUsers(List<SysUserExcelDTO> sysUsers) {
+    public Map<String, Object> importUsers(List<SysUserExcelDTO> sysUserExcelDTOS) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -175,7 +175,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         List<SysUser> list = new LinkedList<>();
         List<SysHtUser> htUsers = new LinkedList<>();
-        ArrayList<SysUserExcelDTO> sysUserExcelDTOS = new ArrayList<>();
+        ArrayList<SysUserExcelDTO> sysUserExcelDTOS1 = new ArrayList<>();
 
         for (int i = 0; i < sysUserExcelDTOS.size(); i++) {
             SysUserExcelDTO sysUserExcelDTO = sysUserExcelDTOS.get(i);
@@ -185,7 +185,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
             String factoryCode = sysUserExcelDTO.getFactoryCode();
             String userName = sysUserExcelDTO.getUserName();
             String nickName = sysUserExcelDTO.getNickName();
-            if (StringUtils.isEmpty(deptCode, userCode, factoryCode,userName,nickName)) {
+            if (StringUtils.isEmpty(userCode,userName,nickName)) {
                 fail.add(i+4);
                 continue;
             }
@@ -193,9 +193,11 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
             Example example = new Example(SysUser.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("status",1).orIsNull("status")
-                    .andEqualTo("userName", sysUserExcelDTO.getUserName())
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria.andEqualTo("status",1).orIsNull("status");
+            criteria1.andEqualTo("userName", sysUserExcelDTO.getUserName())
                     .orEqualTo("userCode",sysUserExcelDTO.getUserCode());
+            example.and(criteria1);
             List<SysUser> sysUsers1 = sysUserMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(sysUsers1)) {
                 fail.add(i+4);
@@ -230,8 +232,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
             //判断集合中是否已经存在该用户
             boolean tag = false;
-            if (StringUtils.isNotEmpty(sysUserExcelDTOS)){
-                for (SysUserExcelDTO userExcelDTO : sysUserExcelDTOS) {
+            if (StringUtils.isNotEmpty(sysUserExcelDTOS1)){
+                for (SysUserExcelDTO userExcelDTO : sysUserExcelDTOS1) {
                     if (userExcelDTO.getUserCode().equals(userCode)){
                         tag = true;
                     }
@@ -242,11 +244,11 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
                 continue;
             }
 
-            sysUserExcelDTOS.add(sysUserExcelDTO);
+            sysUserExcelDTOS1.add(sysUserExcelDTO);
         }
 
-        if (StringUtils.isNotEmpty(sysUserExcelDTOS)){
-            for (SysUserExcelDTO sysUserExcelDTO : sysUserExcelDTOS) {
+        if (StringUtils.isNotEmpty(sysUserExcelDTOS1)){
+            for (SysUserExcelDTO sysUserExcelDTO : sysUserExcelDTOS1) {
                 SysUser sysUser=new SysUser();
                 BeanUtils.copyProperties(sysUserExcelDTO,sysUser);
                 if(StringUtils.isNotEmpty(sysUserExcelDTO.getPassword())){
@@ -255,6 +257,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
                 sysUser.setCreateUserId(currentUser.getUserId());
                 sysUser.setCreateTime(new Date());
                 sysUser.setIsDelete((byte) 1);
+                sysUser.setStatus(1);
                 list.add(sysUser);
             }
 

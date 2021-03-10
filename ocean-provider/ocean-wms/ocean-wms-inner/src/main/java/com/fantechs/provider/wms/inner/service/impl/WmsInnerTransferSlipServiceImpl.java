@@ -7,15 +7,18 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerTransferSlipDetDto
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerTransferSlipDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerTransferSlip;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerTransferSlipDet;
+import com.fantechs.common.base.general.entity.wms.inner.history.WmsInnerHtTransferSlip;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerTransferSlipDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerHtTransferSlipMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerTransferSlipService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -36,6 +39,8 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
     private WmsInnerTransferSlipMapper wmsInnerTransferSlipMapper;
     @Resource
     private WmsInnerTransferSlipDetMapper wmsInnerTransferSlipDetMapper;
+    @Resource
+    private WmsInnerHtTransferSlipMapper wmsInnerHtTransferSlipMapper;
 
     @Override
     public List<WmsInnerTransferSlipDto> findList(Map<String, Object> map) {
@@ -66,11 +71,17 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         wmsInnerTransferSlip.setModifiedTime(new Date());
         wmsInnerTransferSlip.setModifiedUserId(user.getUserId());
         wmsInnerTransferSlip.setTransferSlipTime(new Date());
-        wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
+        if (StringUtils.isEmpty(wmsInnerTransferSlip.getTransferSlipStatus())){
+            wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
+        }
         wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
 
         //新增调拨单
         int i = wmsInnerTransferSlipMapper.insertUseGeneratedKeys(wmsInnerTransferSlip);
+
+        WmsInnerHtTransferSlip wmsInnerHtTransferSlip = new WmsInnerHtTransferSlip();
+        BeanUtils.copyProperties(wmsInnerTransferSlip,wmsInnerHtTransferSlip);
+        wmsInnerHtTransferSlipMapper.insertSelective(wmsInnerHtTransferSlip);
 
         List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
@@ -78,12 +89,17 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
                 wmsInnerTransferSlipDet.setCreateTime(new Date());
                 wmsInnerTransferSlipDet.setCreateUserId(user.getUserId());
-                wmsInnerTransferSlipDet.setMaterialId(user.getUserId());
+                wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
-                wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
+                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getTransferSlipStatus())){
+                    wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
+                }
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
+                wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDet);
             }
-            wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
+                wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            }
         }
 
         return i;
@@ -97,25 +113,34 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         }
 
         wmsInnerTransferSlip.setTransferSlipTime(new Date());
+        wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
 
         //更新调拨单
         int i = wmsInnerTransferSlipMapper.updateByPrimaryKeySelective(wmsInnerTransferSlip);
+
+        WmsInnerHtTransferSlip wmsInnerHtTransferSlip = new WmsInnerHtTransferSlip();
+        BeanUtils.copyProperties(wmsInnerTransferSlip,wmsInnerHtTransferSlip);
+        wmsInnerHtTransferSlipMapper.insertSelective(wmsInnerHtTransferSlip);
 
         //删除原调拨单明细
         Example example = new Example(WmsInnerTransferSlipDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("transferSlipId",wmsInnerTransferSlip.getTransferSlipId());
-        wmsInnerTransferSlipMapper.deleteByExample(example);
+        wmsInnerTransferSlipDetMapper.deleteByExample(example);
 
         List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
-            ArrayList<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDets = new ArrayList<>();
+            ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
+                wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDet);
             }
-            wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
+                wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
+            }
+
         }
         return i;
     }
@@ -133,6 +158,10 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             if (StringUtils.isEmpty(wmsInnerTransferSlip)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            WmsInnerHtTransferSlip wmsInnerHtTransferSlip = new WmsInnerHtTransferSlip();
+            BeanUtils.copyProperties(wmsInnerTransferSlip,wmsInnerHtTransferSlip);
+            wmsInnerHtTransferSlipMapper.insertSelective(wmsInnerHtTransferSlip);
 
             //删除调拨单明细
             Example example = new Example(WmsInnerTransferSlipDet.class);

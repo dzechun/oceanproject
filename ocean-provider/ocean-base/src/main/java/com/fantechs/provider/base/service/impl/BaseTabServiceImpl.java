@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseTabMapper;
 import com.fantechs.provider.base.service.BaseTabService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(BaseTab baseTab) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -42,6 +44,7 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(BaseTab baseTab) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -52,6 +55,7 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(List<BaseTab> baseTabs) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -69,5 +73,16 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
             }
         }
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int insertList(List<BaseTab> baseTabs) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        return baseTabMapper.insertList(baseTabs);
     }
 }
