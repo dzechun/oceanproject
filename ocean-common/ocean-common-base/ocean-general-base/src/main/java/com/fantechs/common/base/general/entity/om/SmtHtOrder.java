@@ -221,4 +221,11 @@ public class SmtHtOrder implements Serializable {
     @Excel(name = "扩展字段3")
     private String option3;
 
+    /**
+     * 客货号
+     */
+    @Column(name = "freight_num")
+    @ApiModelProperty(name="freightNum" ,value="客货号")
+    private String freightNum;
+
 }

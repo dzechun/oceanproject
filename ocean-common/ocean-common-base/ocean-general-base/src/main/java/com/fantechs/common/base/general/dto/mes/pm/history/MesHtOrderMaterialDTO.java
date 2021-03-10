@@ -23,4 +23,12 @@ public class MesHtOrderMaterialDTO extends MesHtOrderMaterial implements Seriali
     @ApiModelProperty(value = "修改用户名称",example = "修改用户名称")
     @Excel(name = "修改用户名称")
     private String modifiedUserName;
+
+    /**
+     * 包装方式
+     */
+    @ApiModelProperty(value = "包装方式",example = "包装方式")
+    @Column(name = "packing_unit_name")
+    @Excel(name = "包装方式")
+    private String packingUnitName;
 }
