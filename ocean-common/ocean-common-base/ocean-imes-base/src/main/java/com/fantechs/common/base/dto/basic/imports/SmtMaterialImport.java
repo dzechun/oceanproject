@@ -14,7 +14,7 @@ public class SmtMaterialImport implements Serializable {
      * 物料编码
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
+    @Excel(name = "物料编码(必填)", height = 20, width = 30)
     private String materialCode;
 
     /**

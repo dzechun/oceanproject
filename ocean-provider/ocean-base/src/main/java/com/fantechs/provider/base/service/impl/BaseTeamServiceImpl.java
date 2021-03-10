@@ -200,6 +200,7 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
                 baseTeam.setCreateUserId(currentUser.getUserId());
                 baseTeam.setModifiedTime(new Date());
                 baseTeam.setModifiedUserId(currentUser.getUserId());
+                baseTeam.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseTeam);
             }
         }

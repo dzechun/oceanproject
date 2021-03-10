@@ -2,9 +2,13 @@ package com.fantechs.provider.api.fileserver.service;
 
 
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
+import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
+import com.fantechs.common.base.general.dto.bcm.BcmLabelDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
+import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabel;
+import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabelCategory;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,5 +45,13 @@ public interface BcmFeignApi {
     ResponseEntity sendHtmlMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
                              @ApiParam(value = "标题",required = true)@RequestParam String subject,
                              @ApiParam(value = "内容",required = true)@RequestParam String content);
+
+    @ApiOperation("获取标签信息列表")
+    @PostMapping("/bcmLabel/findList")
+    ResponseEntity<List<BcmLabelDto>> findLabelList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabel searchBcmLabel);
+
+    @ApiOperation("获取标签类别信息列表")
+    @PostMapping("/bcmLabelCategory/findList")
+    ResponseEntity<List<BcmLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory);
 
 }

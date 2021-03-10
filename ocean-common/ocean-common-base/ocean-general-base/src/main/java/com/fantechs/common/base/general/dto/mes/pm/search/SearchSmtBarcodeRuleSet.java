@@ -28,4 +28,10 @@ public class SearchSmtBarcodeRuleSet extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="barcodeRuleSetDesc",value = "条码规则集合描述")
     private String barcodeRuleSetDesc;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

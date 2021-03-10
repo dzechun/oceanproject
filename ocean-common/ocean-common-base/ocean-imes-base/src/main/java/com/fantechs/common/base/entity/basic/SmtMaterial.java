@@ -176,6 +176,6 @@ public class SmtMaterial extends ValidGroup implements Serializable {
      * 页签
      */
     @Transient
-    @ApiModelProperty(name = "baseTab",value = "页签")
+    @ApiModelProperty(name = "baseTabDto",value = "页签")
     private BaseTabDto baseTabDto;
 }
