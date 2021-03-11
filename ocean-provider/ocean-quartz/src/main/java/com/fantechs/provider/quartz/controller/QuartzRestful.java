@@ -5,13 +5,12 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.quartz.config.QuartzDoInterface;
-import com.fantechs.provider.quartz.config.QuartzManager;
+import com.fantechs.provider.quartz.service.QuartzManagerService;
 import com.fantechs.provider.quartz.entity.QuartzSearch;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.quartz.SchedulerException;
-import org.springframework.scheduling.SchedulingException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,10 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Auther: bingo.ren
- * @Date: 2020/5/11 17:23
- * @Description:
- * @Version: 1.0
+ * @Auther: Mr.Lei
+ * @Date: 2021/3/8
  */
 @RestController
 @Api(tags = "任务调度对外开发接口",basePath = "/restful/quartz/dointerface")
@@ -30,7 +27,7 @@ import java.util.Map;
 public class QuartzRestful {
 
     @Resource
-    private QuartzManager quartzManager;
+    private QuartzManagerService quartzManager;
 
     @ApiOperation(value = "获取任务列表")
     @GetMapping("findList")
