@@ -73,19 +73,6 @@ public class SmtProductProcessRouteImport implements Serializable {
     private String materialCode;
 
     /**
-     * 组织Id
-     */
-    @ApiModelProperty(name="organizationId",value = "组织Id")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @ApiModelProperty(name="organizationCode",value = "组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30)
-    private String organizationCode;
-
-    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

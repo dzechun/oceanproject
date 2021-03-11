@@ -292,6 +292,7 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             smtRoute.setModifiedTime(new Date());
             smtRoute.setModifiedUserId(currentUser.getUserId());
             smtRoute.setStatus(1);
+            smtRoute.setOrganizationId(currentUser.getOrganizationId());
             smtRouteMapper.insertUseGeneratedKeys(smtRoute);
 
             //新增工艺路线历史信息
@@ -304,6 +305,7 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
                 BeanUtils.copyProperties(smtRouteImport,smtRouteProcess);
                 smtRouteProcess.setRouteId(smtRoute.getRouteId());
                 smtRouteProcess.setStandardTime(smtRouteImport.getStandardTime());
+                smtRouteProcess.setOrganizationId(currentUser.getOrganizationId());
                 smtRouteProcess.setReadinessTime(smtRouteImport.getReadinessTime());
 
                 success += smtRouteProcessMapper.insertSelective(smtRouteProcess);

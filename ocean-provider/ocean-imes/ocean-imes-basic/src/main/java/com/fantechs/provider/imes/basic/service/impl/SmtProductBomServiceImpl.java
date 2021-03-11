@@ -253,7 +253,6 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
             String proCode = smtProductBomImport.getProCode();
             String subMaterialCode = smtProductBomImport.getSubMaterialCode();
             String processCode = smtProductBomImport.getProcessCode();
-            String organizationCode = smtProductBomImport.getOrganizationCode();
 
             //判断必传字段
             if (StringUtils.isEmpty(
@@ -320,25 +319,6 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
                     continue;
                 }
                 smtProductBomImport.setProcessId(smtProcess.getProcessId());
-            }
-
-            //如果组织编码不为空，则判断组织是否存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                searchBaseOrganization.setCodeQueryMark(1);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isNotEmpty(baseOrganizationDtos)){
-                    BaseOrganization baseOrganization = baseOrganizationDtos.get(0);
-                    if (StringUtils.isEmpty(baseOrganization)){
-                        fail.add(i + 4);
-                        continue;
-                    }
-                    smtProductBomImport.setOrganizationId(baseOrganization.getOrganizationId());
-                }else {
-                    fail.add(i + 4);
-                    continue;
-                }
             }
 
             //判断子BOM物料是否已被上级BOM引用

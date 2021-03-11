@@ -177,7 +177,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
 
             String factoryCode = smtFactoryImport.getFactoryCode();
             String factoryName = smtFactoryImport.getFactoryName();
-            String organizationCode = smtFactoryImport.getOrganizationCode();
             if (StringUtils.isEmpty(
                     factoryCode,factoryName
             )){
@@ -192,19 +191,6 @@ public class SmtFactoryServiceImpl extends BaseService<SmtFactory> implements Sm
             if (StringUtils.isNotEmpty(smtFactoryMapper.selectOneByExample(example))){
                 fail.add(i+4);
                 continue;
-            }
-
-            //如果组织编码不为空，判断组织信息是否存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                searchBaseOrganization.setCodeQueryMark(1);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isEmpty(baseOrganizationDtos)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtFactoryImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
             }
 
             //判断集合中是否已经存在同样的数据

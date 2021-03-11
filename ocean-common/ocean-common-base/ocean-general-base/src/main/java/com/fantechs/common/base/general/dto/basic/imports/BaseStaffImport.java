@@ -91,19 +91,6 @@ public class BaseStaffImport implements Serializable {
     private Integer isTeamPiecework;
 
     /**
-     * 组织ID
-     */
-    @ApiModelProperty(name = "organizationId",value = "组织ID")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @ApiModelProperty(name = "organizationCode",value = "组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30)
-    private String organizationCode;
-
-    /**
      * 员工状态（0、不启用 1、启用）
      */
     @ApiModelProperty(name="status",value = "员工状态（0、不启用 1、启用）")
