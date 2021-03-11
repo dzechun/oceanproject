@@ -67,12 +67,8 @@
                             <artifactId>ocean-public-base</artifactId>
                         </include>
                         <include>
-                            <groupId>com.fantechs.common.config</groupId>
-                            <artifactId>ocean-base-config</artifactId>
-                        </include>
-                        <include>
-                            <groupId>>com.fantechs.provider.api.security</groupId>
-                            <artifactId>ocean-security-api</artifactId>
+                            <groupId>com.fantechs.common.base.general</groupId>
+                            <artifactId>ocean-general-base</artifactId>
                         </include>
                     </includes>
                 </configuration>
