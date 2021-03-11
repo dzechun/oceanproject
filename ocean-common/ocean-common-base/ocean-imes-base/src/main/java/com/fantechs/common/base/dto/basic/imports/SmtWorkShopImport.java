@@ -44,19 +44,6 @@ public class SmtWorkShopImport implements Serializable {
     private String factoryCode;
 
     /**
-     * 组织id
-     */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @Excel(name = "工厂编码", height = 20, width = 30)
-    @ApiModelProperty(name = "organizationCode",value = "组织编码")
-    private String organizationCode;
-
-    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

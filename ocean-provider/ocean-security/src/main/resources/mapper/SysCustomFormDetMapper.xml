@@ -20,6 +20,9 @@
         <result column="event_trigger_mode" jdbcType="TINYINT" property="eventTriggerMode"/>
         <result column="event_trigger_name" jdbcType="TINYINT" property="eventTriggerName"/>
         <result column="is_required" jdbcType="TINYINT" property="isRequired"/>
+        <result column="format" jdbcType="TINYINT" property="format"/>
+        <result column="value_format" jdbcType="TINYINT" property="valueFormat"/>
+        <result column="date_type" jdbcType="TINYINT" property="dateType"/>
         <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -55,6 +58,9 @@
     cfd.spec_code,
     cfd.enum_data,
     cfd.is_required,
+    cfd.format,
+    cfd.value_format,
+    cfd.date_type,
     cfd.order_num,
     cfd.create_user_id,
     cfd.create_time,

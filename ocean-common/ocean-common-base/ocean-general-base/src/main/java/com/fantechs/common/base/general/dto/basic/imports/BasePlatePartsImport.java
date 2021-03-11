@@ -91,17 +91,4 @@ public class BasePlatePartsImport implements Serializable {
     @Excel(name = "是否是定制产品（0、否 1、是）", height = 20, width = 30)
     private String ifCustomized;
 
-    /**
-     * 组织ID
-     */
-    @ApiModelProperty(name="organizationId",value = "组织ID")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @ApiModelProperty(name="organizationCode",value = "组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30)
-    private String organizationCode;
-
 }

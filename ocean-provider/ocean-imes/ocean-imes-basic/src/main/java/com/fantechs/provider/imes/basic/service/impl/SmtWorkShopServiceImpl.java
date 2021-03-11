@@ -175,7 +175,6 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
             String workShopCode = smtWorkShopImport.getWorkShopCode();
             String workShopName = smtWorkShopImport.getWorkShopName();
             String factoryCode = smtWorkShopImport.getFactoryCode();
-            String organizationCode = smtWorkShopImport.getOrganizationCode();
             if (StringUtils.isEmpty(
                     workShopCode,workShopName,factoryCode
             )){
@@ -203,18 +202,6 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
             }
             smtWorkShopImport.setFactoryId(smtFactory.getFactoryId());
 
-            //若组织编码不为空则判断组织是否存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                searchBaseOrganization.setCodeQueryMark(1);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isEmpty(baseOrganizationDtos)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtWorkShopImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
-            }
 
             //判断集合中是否存在该车间
             boolean tag = false;
@@ -240,6 +227,7 @@ public class SmtWorkShopServiceImpl extends BaseService<SmtWorkShop> implements 
             smtWorkShop.setCreateUserId(currentUser.getUserId());
             smtWorkShop.setModifiedTime(new Date());
             smtWorkShop.setModifiedUserId(currentUser.getUserId());
+            smtWorkShop.setOrganizationId(currentUser.getOrganizationId());
             list.add(smtWorkShop);
         }
 

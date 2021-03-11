@@ -164,6 +164,30 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private Byte eventTriggerName;
 
     /**
+     * 时间显示格式
+     */
+    @ApiModelProperty(name="format",value = "时间显示格式")
+    @Excel(name = "事件触发名称", height = 20, width = 30)
+    @Column(name = "format")
+    private Byte format;
+
+    /**
+     * 后台所需时间格式
+     */
+    @ApiModelProperty(name="valueFormat",value = "后台所需时间格式")
+    @Excel(name = "事件触发名称", height = 20, width = 30)
+    @Column(name = "value_format")
+    private Byte valueFormat;
+
+    /**
+     * 时间类型
+     */
+    @ApiModelProperty(name="dateType",value = "时间类型")
+    @Excel(name = "事件触发名称", height = 20, width = 30)
+    @Column(name = "date_type")
+    private Byte dateType;
+
+    /**
      * 排序
      */
     @ApiModelProperty(name="orderNum",value = "排序")
