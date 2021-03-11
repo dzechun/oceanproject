@@ -186,7 +186,6 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             String deptCode = smtDeptImport.getDeptCode();
             String deptName = smtDeptImport.getDeptName();
             String factoryCode = smtDeptImport.getFactoryCode();
-            String organizationCode = smtDeptImport.getOrganizationCode();
             String parentCode = smtDeptImport.getParentCode();
             if (StringUtils.isEmpty(
                     deptCode,deptName,factoryCode
@@ -227,19 +226,6 @@ public class SmtDeptServiceImpl extends BaseService<SmtDept> implements SmtDeptS
             if (tag1){
                 fail.add(i+4);
                 continue;
-            }
-
-            //组织编码不为空则组织的数据必须存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setCodeQueryMark(1);
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isEmpty(baseOrganizationDtos)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtDeptImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
             }
 
             //若父级编码不为空，判断父级是否维护

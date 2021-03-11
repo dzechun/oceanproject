@@ -41,7 +41,10 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sbrs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="barcodeRuleSetCode!=null and barcodeRuleSetCode!=''">
+            <if test="barcodeRuleSetCode!=null and barcodeRuleSetCode!='' and codeQueryMark == 1">
+                and sbrs.barcode_rule_set_code = #{barcodeRuleSetCode}
+            </if>
+            <if test="barcodeRuleSetCode!=null and barcodeRuleSetCode!='' and codeQueryMark == null">
                 and sbrs.barcode_rule_set_code like CONCAT('%', #{barcodeRuleSetCode}, '%')
             </if>
             <if test="barcodeRuleSetName!=null and barcodeRuleSetName!=''">

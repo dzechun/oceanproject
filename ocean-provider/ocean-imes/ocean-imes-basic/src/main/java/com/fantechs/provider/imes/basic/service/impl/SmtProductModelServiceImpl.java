@@ -14,10 +14,12 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtProductModel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -44,15 +46,12 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
 
     @Resource
     private SmtProductModelMapper smtProductModelMapper;
-
     @Resource
     private SmtHtProductModelMapper smtHtProductModelMapper;
-
     @Resource
     private SmtMaterialMapper smtMaterialMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
-
     @Resource
     private SmtProductProcessRouteMapper smtProductProcessRouteMapper;
 
@@ -185,7 +184,6 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             String productModelCode = smtProductModelImport.getProductModelCode();
             String productModelName = smtProductModelImport.getProductModelName();
             String productFamilyCode = smtProductModelImport.getProductFamilyCode();
-            String organizationCode = smtProductModelImport.getOrganizationCode();
             if (StringUtils.isEmpty(
                     productModelCode, productModelName, productFamilyCode
             )) {
@@ -203,17 +201,19 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
             }
 
             //判断产品族是否存在
-            SearchBaseProductFamily searchBaseProductFamily = new SearchBaseProductFamily();
-            searchBaseProductFamily.setProductFamilyCode(productFamilyCode);
-            searchBaseProductFamily.setCodeQueryMark((byte) 1);
-            BaseProductFamilyDto baseProductFamilyDto = baseFeignApi.findProductFamilyList(searchBaseProductFamily).getData().get(0);
-            if (StringUtils.isEmpty(baseProductFamilyDto)) {
-                fail.add(i + 4);
-                continue;
+            if (StringUtils.isNotEmpty(productFamilyCode)){
+                SearchBaseProductFamily searchBaseProductFamily = new SearchBaseProductFamily();
+                searchBaseProductFamily.setProductFamilyCode(productFamilyCode);
+                searchBaseProductFamily.setCodeQueryMark((byte) 1);
+                BaseProductFamilyDto baseProductFamilyDto = baseFeignApi.findProductFamilyList(searchBaseProductFamily).getData().get(0);
+                if (StringUtils.isEmpty(baseProductFamilyDto)) {
+                    fail.add(i + 4);
+                    continue;
+                }
+                smtProductModelImport.setProductFamilyId(baseProductFamilyDto.getProductFamilyId());
             }
-            smtProductModelImport.setProductFamilyId(baseProductFamilyDto.getProductFamilyId());
 
-            //判断集合中是否存在重复数据
+           //判断集合中是否存在重复数据
             boolean tag = false;
             if (StringUtils.isNotEmpty(smtProductModelImports1)){
                 for (SmtProductModelImport productModelImport : smtProductModelImports1) {
@@ -237,6 +237,7 @@ public class SmtProductModelServiceImpl extends BaseService<SmtProductModel> imp
                 smtProductModel.setCreateUserId(currentUser.getUserId());
                 smtProductModel.setModifiedTime(new Date());
                 smtProductModel.setModifiedUserId(currentUser.getUserId());
+                smtProductModel.setOrganizationId(currentUser.getOrganizationId());
                 list.add(smtProductModel);
             }
 

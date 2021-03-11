@@ -50,7 +50,10 @@
     LEFT JOIN ocean.sys_user sus ON blc.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON blc.organization_id = bo.organization_id
     <where>
-      <if test="labelCategoryCode!=null and labelCategoryCode!=''">
+      <if test="labelCategoryCode!=null and labelCategoryCode!='' and codeQueryMark == 1">
+        and blc.label_category_code = #{labelCategoryCode}
+      </if>
+      <if test="labelCategoryCode!=null and labelCategoryCode!='' and codeQueryMark == null">
         and blc.label_category_code LIKE CONCAT('%',#{labelCategoryCode},'%')
       </if>
       <if test="labelCategoryName!=null and labelCategoryName!=''">

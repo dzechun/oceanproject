@@ -43,19 +43,6 @@ public class SmtRouteImport implements Serializable {
     private Integer routeType;
 
     /**
-     * 组织ID
-     */
-    @ApiModelProperty(name="organizationId",value = "组织ID")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @ApiModelProperty(name="organizationCode",value = "组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30)
-    private String organizationCode;
-
-    /**
      * 工序ID
      */
     @ApiModelProperty(name="processId" ,value="工序ID")

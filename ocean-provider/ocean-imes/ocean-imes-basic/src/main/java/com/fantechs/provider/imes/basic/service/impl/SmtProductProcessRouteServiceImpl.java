@@ -211,7 +211,6 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
             String productModelCode = smtProductProcessRouteImport.getProductModelCode();
             String proCode = smtProductProcessRouteImport.getProCode();
             String materialCode = smtProductProcessRouteImport.getMaterialCode();
-            String organizationCode = smtProductProcessRouteImport.getOrganizationCode();
 
             List<Integer> arrayList = asList(0,1,2,3);
             //判断必传字段
@@ -280,21 +279,6 @@ public class SmtProductProcessRouteServiceImpl extends BaseService<SmtProductPro
                 smtProductProcessRouteImport.setMaterialId(smtMaterial.getMaterialId());
             }
 
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setCodeQueryMark(1);
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isNotEmpty(baseOrganizationDtos)){
-                    BaseOrganization baseOrganization = baseOrganizationDtos.get(0);
-                    smtProductProcessRouteImport.setOrganizationId(baseOrganization.getOrganizationId());
-                }else {
-                    fail.add(i + 4);
-                    iterator.remove();
-                    i++;
-                    continue;
-                }
-            }
             i++;
         }
 

@@ -14,21 +14,33 @@ import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseUnitPriceDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
+import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
+import com.fantechs.common.base.general.dto.bcm.BcmLabelDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSet;
+import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
+import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.BaseUnitPrice;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseUnitPrice;
+import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabel;
+import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabelCategory;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSet;
-import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.imes.basic.mapper.*;
 import com.fantechs.provider.imes.basic.service.SmtMaterialService;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +76,12 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
     private SmtPackageSpecificationMapper smtPackageSpecificationMapper;
     @Resource
     private SmtProductModelMapper smtProductModelMapper;
+    @Resource
+    private BcmFeignApi bcmFeignApi;
+    @Resource
+    private QmsFeignApi qmsFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<SmtMaterialDto> findList(Map<String, Object> map){
@@ -381,10 +399,11 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
             String packageSpecificationCode = smtMaterialImport.getPackageSpecificationCode();//包装规格编码
             String productModelCode = smtMaterialImport.getProductModelCode();//产品型号编码
             String barcodeRuleSetCode = smtMaterialImport.getBarcodeRuleSetCode();//条码规则集合编码
+            Integer transferQuantity = smtMaterialImport.getTransferQuantity();//转移批量
 
             if (StringUtils.isEmpty(
-                    materialCode
-            )){
+                    materialCode,transferQuantity
+            ) || transferQuantity <= 0){
                 fail.add(i+4);
                 continue;
             }
@@ -400,6 +419,14 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
             //标签编码不为空判断标签信息是否存在
             if (StringUtils.isNotEmpty(labelCode)){
+                SearchBcmLabel searchBcmLabel = new SearchBcmLabel();
+                searchBcmLabel.setCodeQueryMark(1);
+                searchBcmLabel.setLabelCode(labelCode);
+                List<BcmLabelDto> bcmLabelDtos = bcmFeignApi.findLabelList(searchBcmLabel).getData();
+                if (StringUtils.isEmpty(bcmLabelDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
 
             }
 
@@ -418,17 +445,41 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
             //检验项目单号不为空判断检验项目信息是否存在
             if (StringUtils.isNotEmpty(inspectionItemCode)){
-
+                SearchQmsInspectionItem searchQmsInspectionItem = new SearchQmsInspectionItem();
+                searchQmsInspectionItem.setInspectionItemCode(inspectionItemCode);
+                searchQmsInspectionItem.setCodeQueryMark((byte) 1);
+                List<QmsInspectionItemDto> qmsInspectionItemDtos = qmsFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
+                if (StringUtils.isEmpty(qmsInspectionItemDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtMaterialImport.setInspectionItemId(qmsInspectionItemDtos.get(0).getInspectionItemId());
             }
 
             //检验类型编码不为空则判断检查类型信息是否存在
             if (StringUtils.isNotEmpty(inspectionTypeCode)){
-
+                SearchQmsInspectionType searchQmsInspectionType = new SearchQmsInspectionType();
+                searchQmsInspectionType.setCodeQueryMark((byte) 1);
+                searchQmsInspectionType.setInspectionTypeCode(inspectionTypeCode);
+                List<QmsInspectionTypeDto> qmsInspectionTypeDtos = qmsFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
+                if (StringUtils.isEmpty(qmsInspectionTypeDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtMaterialImport.setInspectionTypeId(qmsInspectionTypeDtos.get(0).getInspectionTypeId());
             }
 
             //标签类别编码不为空则判断标签类别信息是否存在
             if (StringUtils.isNotEmpty(labelCategoryCode)){
-
+                SearchBcmLabelCategory searchBcmLabelCategory = new SearchBcmLabelCategory();
+                searchBcmLabelCategory.setCodeQueryMark(1);
+                searchBcmLabelCategory.setLabelCategoryCode(labelCategoryCode);
+                List<BcmLabelCategoryDto> bcmLabelCategoryDtos = bcmFeignApi.findLabelCategoryList(searchBcmLabelCategory).getData();
+                if (StringUtils.isEmpty(bcmLabelCategoryDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtMaterialImport.setLabelId(bcmLabelCategoryDtos.get(0).getLabelCategoryId());
             }
 
             //包装规格编码不为空则判断包装规格信息是否存在
@@ -459,16 +510,21 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
 
             //条码规则集合编码不为空则判断条码规则集合信息是否存在
             if (StringUtils.isNotEmpty(barcodeRuleSetCode)){
-                Example example1 = new Example(SmtBarcodeRuleSet.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("barcodeRuleSetCode",barcodeRuleSetCode);
-
+                SearchSmtBarcodeRuleSet searchSmtBarcodeRuleSet = new SearchSmtBarcodeRuleSet();
+                searchSmtBarcodeRuleSet.setCodeQueryMark(1);
+                searchSmtBarcodeRuleSet.setBarcodeRuleSetCode(barcodeRuleSetCode);
+                List<SmtBarcodeRuleSetDto> smtBarcodeRuleSetDtos = pmFeignApi.findBarcodeRuleSetList(searchSmtBarcodeRuleSet).getData();
+                if (StringUtils.isEmpty(smtBarcodeRuleSetDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                smtMaterialImport.setBarcodeRuleSetId(smtBarcodeRuleSetDtos.get(0).getBarcodeRuleSetId());
             }
 
             //判断集合中是否存在重复数据
             boolean tag = false;
             if (StringUtils.isNotEmpty(materialImports)){
-                for (SmtMaterialImport materialImport : smtMaterialImports) {
+                for (SmtMaterialImport materialImport : materialImports) {
                     if (materialImport.getMaterialCode().equals(materialCode)){
                         tag = true;
                     }

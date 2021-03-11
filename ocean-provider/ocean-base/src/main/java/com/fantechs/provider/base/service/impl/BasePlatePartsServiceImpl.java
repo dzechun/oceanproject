@@ -171,7 +171,6 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             String materialCode = basePlatePartsImport.getMaterialCode();//产品编码
             String partsInformationCode = basePlatePartsImport.getPartsInformationCode();//部件编码
             String routeCode = basePlatePartsImport.getRouteCode();//工艺路线编码
-            String organizationCode = basePlatePartsImport.getOrganizationCode();//组织编码
 
             //产品编码必传
             if (StringUtils.isEmpty(
@@ -219,21 +218,6 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
                 i++;
                 continue;
             }
-
-            if (StringUtils.isNotEmpty(organizationCode)) {
-                //若组织编码不为空，则判断组织是否存在
-                Example example2 = new Example(BaseOrganization.class);
-                Example.Criteria criteria1 = example2.createCriteria();
-                criteria1.andEqualTo("organizationCode", organizationCode);
-                BaseOrganization baseOrganization = baseOrganizationMapper.selectOneByExample(example2);
-                if (StringUtils.isEmpty(baseOrganization)) {
-                    fail.add(i + 4);
-                    iterator.remove();
-                    i++;
-                    continue;
-                }
-                basePlatePartsImport.setOrganizationId(baseOrganization.getOrganizationId());
-            }
             i++;
         }
 
@@ -250,6 +234,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             basePlateParts.setModifiedTime(new Date());
             basePlateParts.setModifiedUserId(currentUser.getUserId());
             basePlateParts.setStatus((byte) 1);
+            basePlateParts.setOrganizationId(currentUser.getOrganizationId());
             basePlatePartsMapper.insertUseGeneratedKeys(basePlateParts);
 
             //新增部件组成履历
@@ -267,6 +252,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
                 basePlatePartsDet.setModifiedUserId(currentUser.getUserId());
                 basePlatePartsDet.setStatus((byte) 1);
                 basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
+                basePlatePartsDet.setOrganizationId(currentUser.getOrganizationId());
                 success += basePlatePartsDetMapper.insertSelective(basePlatePartsDet);
             }
         }

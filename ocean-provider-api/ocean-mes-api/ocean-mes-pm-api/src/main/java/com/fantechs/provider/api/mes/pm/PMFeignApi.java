@@ -170,4 +170,8 @@ public interface PMFeignApi {
     @ApiOperation("获取最小齐套数")
     @PostMapping("/mesPmMatchingOrder/findMinMatchingQuantity")
     ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId, @ApiParam(value = "工段ID")@RequestParam long sectionId,@ApiParam(value = "数量")@RequestParam BigDecimal qualityQuantity,@ApiParam(value = "流转卡ID") @RequestParam(required = false) Long workOrderCardPoolId);
+
+    @ApiOperation("条码规则集合列表")
+    @PostMapping("/smtBarcodeRuleSet/findList")
+    ResponseEntity<List<SmtBarcodeRuleSetDto>> findBarcodeRuleSetList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSet searchSmtBarcodeRuleSet);
 }

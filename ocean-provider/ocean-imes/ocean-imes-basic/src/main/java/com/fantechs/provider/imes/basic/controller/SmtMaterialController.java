@@ -118,7 +118,7 @@ public class SmtMaterialController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtMaterialImport> smtMaterialImports = EasyPoiUtils.importExcel(file, SmtMaterialImport.class);
+            List<SmtMaterialImport> smtMaterialImports = EasyPoiUtils.importExcel(file,2,1, SmtMaterialImport.class);
             Map<String, Object> resultMap = smtMaterialService.importExcel(smtMaterialImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

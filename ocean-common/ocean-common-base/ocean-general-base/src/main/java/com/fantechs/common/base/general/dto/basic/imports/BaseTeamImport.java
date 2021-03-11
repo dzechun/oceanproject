@@ -56,17 +56,4 @@ public class BaseTeamImport implements Serializable {
     @ApiModelProperty(name="remark",value = "备注")
     @Excel(name = "备注", height = 20, width = 30)
     private String remark;
-
-    /**
-     * 组织id
-     */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @ApiModelProperty(name = "organizationCode",value = "组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30)
-    private String organizationCode;
 }

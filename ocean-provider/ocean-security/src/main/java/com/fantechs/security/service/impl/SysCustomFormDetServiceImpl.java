@@ -18,8 +18,8 @@ import java.util.Map;
 @Service
 public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> implements SysCustomFormDetService {
 
-         @Resource
-         private SysCustomFormDetMapper sysCustomFormDetMapper;
+     @Resource
+     private SysCustomFormDetMapper sysCustomFormDetMapper;
 
     @Override
     public List<SysCustomFormDetDto> findList(Map<String, Object> map) {

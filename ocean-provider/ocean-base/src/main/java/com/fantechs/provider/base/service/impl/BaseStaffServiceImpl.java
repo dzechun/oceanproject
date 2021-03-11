@@ -181,7 +181,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
             String teamCode = baseStaffImport.getTeamCode();
             String staffCode = baseStaffImport.getStaffCode();
             String processCode = baseStaffImport.getProcessCode();
-            String organizationCode = baseStaffImport.getOrganizationCode();
 
             //判断必传字段
             if (StringUtils.isEmpty(
@@ -225,18 +224,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
                 baseStaffImport.setTeamId(baseTeam.getTeamId());
             }
 
-            //如果组织编码不为空，则判断组织是否存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                Example example1 = new Example(BaseOrganization.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("organizationCode",organizationCode);
-                BaseOrganization baseOrganization = baseOrganizationMapper.selectOneByExample(example1);
-                if (StringUtils.isEmpty(baseOrganization)){
-                    fail.add(i + 4);
-                    continue;
-                }
-                baseStaffImport.setOrganizationId(baseOrganization.getOrganizationId());
-            }
             baseStaffImportList.add(baseStaffImport);
         }
 

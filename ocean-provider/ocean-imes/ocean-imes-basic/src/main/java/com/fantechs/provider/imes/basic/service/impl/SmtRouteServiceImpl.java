@@ -238,7 +238,6 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             String routeName = smtRouteImport.getRouteName();
             String processCode = smtRouteImport.getProcessCode();
             Integer orderNum = smtRouteImport.getOrderNum();
-            String organizationCode = smtRouteImport.getOrganizationCode();
 
             //判断必传字段
             if (StringUtils.isEmpty(
@@ -276,28 +275,6 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             smtRouteImport.setProcessId(smtProcess.getProcessId());
             smtRouteImport.setSectionId(smtProcess.getSectionId());
 
-            //如果组织编码不为空，则判断组织是否存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                searchBaseOrganization.setCodeQueryMark(1);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isNotEmpty(baseOrganizationDtos)){
-                    BaseOrganization baseOrganization = baseOrganizationDtos.get(0);
-                    if (StringUtils.isEmpty(baseOrganization)){
-                        fail.add(i + 4);
-                        iterator.remove();
-                        i++;
-                        continue;
-                    }
-                    smtRouteImport.setOrganizationId(baseOrganization.getOrganizationId());
-                }else {
-                    fail.add(i + 4);
-                    iterator.remove();
-                    i++;
-                    continue;
-                }
-            }
             i++;
         }
 
@@ -315,6 +292,7 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             smtRoute.setModifiedTime(new Date());
             smtRoute.setModifiedUserId(currentUser.getUserId());
             smtRoute.setStatus(1);
+            smtRoute.setOrganizationId(currentUser.getOrganizationId());
             smtRouteMapper.insertUseGeneratedKeys(smtRoute);
 
             //新增工艺路线历史信息
@@ -327,6 +305,7 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
                 BeanUtils.copyProperties(smtRouteImport,smtRouteProcess);
                 smtRouteProcess.setRouteId(smtRoute.getRouteId());
                 smtRouteProcess.setStandardTime(smtRouteImport.getStandardTime());
+                smtRouteProcess.setOrganizationId(currentUser.getOrganizationId());
                 smtRouteProcess.setReadinessTime(smtRouteImport.getReadinessTime());
 
                 success += smtRouteProcessMapper.insertSelective(smtRouteProcess);
