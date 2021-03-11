@@ -2,6 +2,7 @@ package com.fantechs.controller;
 
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.dto.EmpWorkload;
 import com.fantechs.entity.search.SearchEmpWorkload;
 import com.fantechs.service.EmpWorkloadService;
 import com.github.pagehelper.Page;
@@ -35,7 +36,14 @@ public class EmpWorkloadController {
     @PostMapping("/findHistogram")
     public ResponseEntity<List<Map<String, Object>>> findHistogram(@ApiParam(value = "查询对象") @RequestBody SearchEmpWorkload searchEmpWorkload) {
         Page<Object> page = PageHelper.startPage(searchEmpWorkload.getStartPage(), searchEmpWorkload.getPageSize());
-        return ControllerUtil.returnDataSuccess(empWorkloadService.findHistogram(searchEmpWorkload), 10);
+        return ControllerUtil.returnDataSuccess(empWorkloadService.findHistogram(searchEmpWorkload), (int) page.getTotal());
+    }
+
+    @ApiOperation("员工工作量列表查询")
+    @PostMapping("/findHistogramList")
+    public ResponseEntity<List<EmpWorkload>> findHistogramList(@ApiParam(value = "查询对象") @RequestBody SearchEmpWorkload searchEmpWorkload) {
+        Page<Object> page = PageHelper.startPage(searchEmpWorkload.getStartPage(), searchEmpWorkload.getPageSize());
+        return ControllerUtil.returnDataSuccess(empWorkloadService.findHistogramList(searchEmpWorkload), (int) page.getTotal());
     }
 
 }

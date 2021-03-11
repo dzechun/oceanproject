@@ -14,4 +14,6 @@ import java.util.Map;
 public interface EmpWorkloadService extends IService<EmpWorkload> {
 
     List<Map<String, Object>> findHistogram(SearchEmpWorkload searchEmpWorkload);
+
+    List<EmpWorkload> findHistogramList(SearchEmpWorkload searchEmpWorkload);
 }

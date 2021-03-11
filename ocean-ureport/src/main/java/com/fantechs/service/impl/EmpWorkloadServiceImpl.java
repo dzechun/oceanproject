@@ -24,4 +24,10 @@ public class EmpWorkloadServiceImpl extends BaseService<EmpWorkload> implements 
         return empWorkloadMapper.findHistogram(searchEmpWorkload);
     }
 
+    @Override
+    public List<EmpWorkload> findHistogramList(SearchEmpWorkload searchEmpWorkload) {
+
+        return empWorkloadMapper.findHistogramList(searchEmpWorkload);
+    }
+
 }

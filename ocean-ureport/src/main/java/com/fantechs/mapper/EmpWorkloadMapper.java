@@ -13,4 +13,5 @@ public interface EmpWorkloadMapper extends MyMapper<EmpWorkload> {
 
     List<Map<String, Object>> findHistogram(SearchEmpWorkload searchEmpWorkload);
 
+    List<EmpWorkload> findHistogramList(SearchEmpWorkload searchEmpWorkload);
 }

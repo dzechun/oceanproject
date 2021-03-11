@@ -8,24 +8,29 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="level" jdbcType="VARCHAR" property="level"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
-        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <collection property="smtStorageInventoryDets"
+                    ofType="com.fantechs.common.base.entity.storage.SmtStorageInventoryDet"
+                    column="storage_inventory_id"
+                    select="com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper.findById"></collection>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -35,7 +40,8 @@
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-        SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS
+        modified_user_name,
         ss.storage_name,ss.storage_code,sm.material_desc,sm.version, bo.organization_name
         FROM smt_storage_inventory ssi
         LEFT JOIN ocean.sys_user su ON ssi.create_user_id = su.user_id
