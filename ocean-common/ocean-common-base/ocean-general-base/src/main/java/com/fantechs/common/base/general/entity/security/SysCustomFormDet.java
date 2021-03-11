@@ -169,7 +169,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="format",value = "时间显示格式")
     @Excel(name = "事件触发名称", height = 20, width = 30)
     @Column(name = "format")
-    private Byte format;
+    private String format;
 
     /**
      * 后台所需时间格式
@@ -177,7 +177,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="valueFormat",value = "后台所需时间格式")
     @Excel(name = "事件触发名称", height = 20, width = 30)
     @Column(name = "value_format")
-    private Byte valueFormat;
+    private String valueFormat;
 
     /**
      * 时间类型
@@ -185,7 +185,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="dateType",value = "时间类型")
     @Excel(name = "事件触发名称", height = 20, width = 30)
     @Column(name = "date_type")
-    private Byte dateType;
+    private String dateType;
 
     /**
      * 排序
