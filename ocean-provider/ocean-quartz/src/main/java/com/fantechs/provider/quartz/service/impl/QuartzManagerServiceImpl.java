@@ -1,23 +1,22 @@
-package com.fantechs.provider.quartz.config;
+package com.fantechs.provider.quartz.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fantechs.provider.quartz.service.QuartzManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * @Auther: bingo.ren
- * @Date: 2020/5/7 11:47
- * @Description:
- * @Version: 1.0
+ * @Auther: Mr.Lei
+ * @Date: 2021/3/8
  */
-@Component
 @Slf4j
-public class QuartzManager {
+@Service
+public class QuartzManagerServiceImpl implements QuartzManagerService {
 
     @Resource
     private Scheduler scheduler;
@@ -31,6 +30,7 @@ public class QuartzManager {
      * @param params
      * @throws Exception
      */
+    @Override
     public void addJob(Class clazz, String jobName, String jobGroupName, String cronExpression,Map<String,Object> params) throws Exception {
 //        Class<? extends Job> aClass = (Class<? extends Job>) Class.forName(clazz).newInstance().getClass();
         // 任务名，任务组，任务执行类
@@ -63,6 +63,7 @@ public class QuartzManager {
      * @param jobGroupName
      * @param cronExpression
      */
+    @Override
     public void addJob(Class clazz, String jobName, String jobGroupName, String cronExpression) throws Exception {
         addJob(clazz, jobName, jobGroupName, cronExpression, null);
     }
@@ -74,6 +75,7 @@ public class QuartzManager {
      * @param jobGroupName
      * @throws SchedulerException
      */
+    @Override
     public void stopJob(String jobName, String jobGroupName) throws SchedulerException {
         scheduler.pauseJob(JobKey.jobKey(jobName, jobGroupName));
         log.info("任务已经暂停");
@@ -85,6 +87,7 @@ public class QuartzManager {
      * @param jobGroupName
      * @throws SchedulerException
      */
+    @Override
     public void resumeJob(String jobName, String jobGroupName) throws SchedulerException {
         scheduler.resumeJob(JobKey.jobKey(jobName, jobGroupName));
         log.info("任务已经恢复");
@@ -98,6 +101,7 @@ public class QuartzManager {
      * @param cronExpression
      * @throws Exception
      */
+    @Override
     public void updateJob(String jobName, String jobGroupName, String cronExpression) throws Exception {
         updateJob(jobName, jobGroupName, cronExpression,null);
     }
@@ -111,6 +115,7 @@ public class QuartzManager {
      * @param argMap
      * @throws Exception
      */
+    @Override
     public void updateJob(String jobName, String jobGroupName, String cronExpression, Map<String, Object> argMap) throws Exception {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
 
@@ -124,10 +129,10 @@ public class QuartzManager {
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
         trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
 
-        if(argMap != null)
+        if(argMap != null){
+            trigger.getJobDataMap().putAll(argMap);
+        }
         //修改map
-        trigger.getJobDataMap().putAll(argMap);
-
         // 按新的trigger重新设置job执行
         scheduler.rescheduleJob(triggerKey, trigger);
         log.info("任务已被重新执行");
@@ -141,6 +146,7 @@ public class QuartzManager {
      * @param argMap
      * @throws Exception
      */
+    @Override
     public void updateJob(String jobName, String jobGroupName, Map<String, Object> argMap) throws Exception {
         updateJob(jobName, jobGroupName,null,argMap);
         log.info("已更新任务参数："+ JSONObject.toJSONString(argMap));
@@ -153,6 +159,7 @@ public class QuartzManager {
      * @param jobGroupName
      * @throws Exception
      */
+    @Override
     public void immediately(String jobName, String jobGroupName) throws Exception {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
         CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
@@ -167,6 +174,7 @@ public class QuartzManager {
      * @param jobGroupName
      * @throws Exception
      */
+    @Override
     public void deleteJob(String jobName, String jobGroupName) throws Exception {
         scheduler.pauseTrigger(TriggerKey.triggerKey(jobName, jobGroupName));
         scheduler.unscheduleJob(TriggerKey.triggerKey(jobName, jobGroupName));
@@ -178,6 +186,7 @@ public class QuartzManager {
     /**
      * 启动所有job
      */
+    @Override
     public void startAllJobs() {
         try {
             scheduler.start();
@@ -190,6 +199,7 @@ public class QuartzManager {
     /**
      * 关闭所有job
      */
+    @Override
     public void shutdownAllJobs() {
         try {
             if (!scheduler.isShutdown()) {
@@ -208,6 +218,7 @@ public class QuartzManager {
      * @return
      * @throws SchedulerException
      */
+    @Override
     public List<Map<String, Object>> getAllJob() throws SchedulerException {
         GroupMatcher<JobKey> matcher = GroupMatcher.anyJobGroup();
         Set<JobKey> jobKeys = scheduler.getJobKeys(matcher);
@@ -227,9 +238,65 @@ public class QuartzManager {
                     String cronExpression = cronTrigger.getCronExpression();
                     job.put("cronExpression", cronExpression);
                 }
+                JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+                job.put("uri",jobDetail.getJobDataMap().get("uri"));
+                job.put("method",jobDetail.getJobDataMap().get("method")=="1"?"GET":"POST");
+                job.put("map",jobDetail.getJobDataMap().get("map")!=null?jobDetail.getJobDataMap().get("map"):"");
                 jobList.add(job);
             }
         }
         return jobList;
     }
+
+    @Override
+    public List<Map<String, Object>> getJob(String name, String group) throws SchedulerException {
+        JobKey jobKey = new JobKey(name, group);
+        List<Map<String, Object>> jobList = new ArrayList<Map<String, Object>>();
+        List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+        for (Trigger trigger : triggers) {
+            Map<String, Object> job = new HashMap<String, Object>();
+            job.put("jobName", jobKey.getName());
+            job.put("jobGroupName", jobKey.getGroup());
+            job.put("trigger", trigger.getKey());
+            Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+            job.put("jobStatus", STATUS_ENUM.valueOf(triggerState.name()).getStatus());
+            if (trigger instanceof CronTrigger) {
+                CronTrigger cronTrigger = (CronTrigger) trigger;
+                String cronExpression = cronTrigger.getCronExpression();
+                job.put("cronExpression", cronExpression);
+            }
+            JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+            job.put("uri",jobDetail.getJobDataMap().get("uri"));
+            job.put("method",jobDetail.getJobDataMap().get("method")=="1"?"GET":"POST");
+            job.put("map",jobDetail.getJobDataMap().get("map")!=null?jobDetail.getJobDataMap().get("map"):"");
+            jobList.add(job);
+        }
+
+        return jobList;
+    }
+    public enum  STATUS_ENUM{
+        STATE_BLOCKED("BLOCKED","阻塞"),
+        STATE_COMPLETE("COMPLETE","完成"),
+        STATE_ERROR("ERROR","错误"),
+        STATE_NONE("NONE","不存在"),
+        STATE_NORMAL("NORMAL","正常"),
+        STATE_PAUSED("PAUSED","暂停");
+
+        private String name;
+        private String status;
+        STATUS_ENUM(String name,String status){
+            this.name = name;
+            this.status = status;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+    }
 }
+
+

@@ -1,9 +1,12 @@
 package com.fantechs.provider.quartz.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fantechs.provider.quartz.service.QuartzManagerService;
 import lombok.SneakyThrows;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -19,25 +22,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @Auther: bingo.ren
- * @Date: 2020/5/7 10:29
- * @Description:
- * @Version: 1.0
+ * @Auther: Mr.Lei
+ * @Date: 2021/3/8
  */
-
+//持久化
+@PersistJobDataAfterExecution
+//禁止并发执行(Quartz不要并发地执行同一个job定义（这里指一个job类的多个实例）)
+@DisallowConcurrentExecution
 public class QuartzDoInterface extends QuartzJobBean {
     @Resource
-    private QuartzManager quartzManager;
+    private QuartzManagerService quartzManager;
     private static Logger log= LoggerFactory.getLogger(QuartzDoInterface.class);
     private Map<String,Object> map=new HashMap<>();
-    private String uri;
+    private String url;
     private String method;
     public void setMap(Map<String, Object> map) {
         this.map = map;
     }
 
     public void setUri(String uri) {
-        this.uri = uri;
+        this.url = uri;
     }
 
     public void setMethod(String method) {
@@ -50,7 +54,7 @@ public class QuartzDoInterface extends QuartzJobBean {
         //解析出参数
         RestTemplate restTemplate=new RestTemplate();
         ResponseEntity<String> exchange=null;
-        log.info("任务调度接口："+uri+"，传递参数："+ map+"，访问方式："+(method.equals("1")?"GET":"POST"));
+        log.info("任务调度接口："+url+"，传递参数："+ map+"，访问方式："+(method.equals("1")?"GET":"POST"));
         try{
             if(method.equals("1")){
                 String params="";
@@ -61,12 +65,12 @@ public class QuartzDoInterface extends QuartzJobBean {
                     }
                     params="?"+params.substring(1);
                 }
-                exchange = restTemplate.getForEntity(uri+params, String.class);
+                exchange = restTemplate.getForEntity(url+params, String.class);
             }else if (method.equals("2")){
                 HttpHeaders requestHeaders = new HttpHeaders();
                 requestHeaders.add("Content-Type", "application/json;charset=utf-8");
                 HttpEntity<String> requestEntity = new HttpEntity<String>((map != null && map.size()>0)? JSONObject.toJSONString(map):"", requestHeaders);
-                exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+                exchange = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             }
         }catch (Exception e){
             log.error(e.getMessage());
