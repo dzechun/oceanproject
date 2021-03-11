@@ -217,4 +217,10 @@ public class  SmtOrder extends ValidGroup implements Serializable {
      */
     private String option3;
 
+    /**
+     * 客货号
+     */
+    @Column(name = "freight_num")
+    @ApiModelProperty(name="freightNum" ,value="客货号")
+    private String freightNum;
 }

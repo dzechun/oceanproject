@@ -28,6 +28,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="freight_num" jdbcType="VARCHAR" property="freightNum"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.SmtOrderDto">
@@ -49,7 +50,7 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="total" jdbcType="DECIMAL" property="total"/>
         <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
-        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+        <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
         <result column="size" jdbcType="DECIMAL" property="size"/>
         <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight"/>
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
@@ -67,7 +68,7 @@
     so.order_id, so.order_code, so.supplier_id, so.material_id, so.order_quantity, so.delivered_quantity, so.Inkjet_paint,
     so.radium_carving, so.schedule_status,so.status, so.delivery_date, so.photo_url, so.create_user_id, so.create_time, so.modified_user_id,
     so.modified_time, so.is_delete, so.option1, so.option2, so.option3,so.organization_id, so.remark, so.sales_man_name,so.schedule_date,
-    so.contract_code,so.order_date
+    so.contract_code,so.order_date,so.freight_num
   </sql>
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>,sm.material_name,
@@ -121,7 +122,7 @@
         mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
         values
         <foreach collection="list" item="item" separator="," index="index">
-            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packingUnitName},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})
+            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packageSpecificationId},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})
         </foreach>
     </insert>
     <delete id="deleteMaterialByOrderId" parameterType="long">
@@ -136,7 +137,7 @@
         mom.material_id,
         mom.total,
         mom.box_code,
-        mom.packing_unit_name,
+        mom.package_specification_id,
         mom.size,
         mom.rough_weight,
         mom.net_weight,
@@ -153,7 +154,8 @@
         spm.product_model_name AS 'productModelName',
         sm.material_code AS 'materialCode',
         sm.version AS 'version',
-        sm.material_desc AS 'materialDesc'
+        sm.material_desc AS 'materialDesc',
+        sps.package_specification_name as 'packingUnitName'
         FROM
         mes_order_material AS mom
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = mom.create_user_id
@@ -162,6 +164,7 @@
         LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        left join smt_package_specification sps on  mhom.package_specification_id = sps.package_specification_id
         <where>
             <if test="orderId != null and orderId !=''">
                 and mom.order_id = #{orderId}

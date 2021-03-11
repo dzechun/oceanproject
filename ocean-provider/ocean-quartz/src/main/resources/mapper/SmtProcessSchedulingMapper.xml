@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.quartz.mapper.SmtProcessSchedulingMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.SmtProcessScheduling">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="process_scheduling_id" jdbcType="BIGINT" property="processSchedulingId" />
+    <result column="process_scheduling_name" jdbcType="VARCHAR" property="processSchedulingName" />
+    <result column="data_ interaction_type" jdbcType="TINYINT" property="dataInteractionType" />
+    <result column="execute_object" jdbcType="VARCHAR" property="executeObject" />
+    <result column="execute_object_type" jdbcType="TINYINT" property="executeObjectType" />
+    <result column="cron" jdbcType="VARCHAR" property="cron" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="execute_status" jdbcType="TINYINT" property="executeStatus" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto" extends="BaseResultMap">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+</resultMap>
+<sql id="BaseColumnList">
+sps.process_scheduling_id,
+sps.process_scheduling_name,
+sps.data_interaction_type,
+sps.execute_object,
+sps.execute_object_type,
+sps.cron,
+sps.organization_id,
+sps.create_user_id,
+sps.create_time,
+sps.modified_user_id,
+sps.modified_time,
+sps.execute_status
+</sql>
+<select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="BaseColumnList"/>,su.user_name as create_user_name, bo.organization_name,
+       sus.user_name as modified_user_name FROM smt_process_scheduling sps
+    LEFT JOIN ocean.sys_user su ON sps.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON sps.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON sps.organization_id = bo.organization_id
+</select>
+</mapper>

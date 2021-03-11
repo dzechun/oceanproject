@@ -7,10 +7,8 @@ import org.springframework.scheduling.quartz.AdaptableJobFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * @Auther: bingo.ren
- * @Date: 2020/5/7 15:00
- * @Description:
- * @Version: 1.0
+ * @Auther: Mr.Lei
+ * @Date: 2021/3/8
  */
 @Component
 public class TaskJobFactory extends AdaptableJobFactory {

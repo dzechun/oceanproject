@@ -15,10 +15,8 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 /**
- * @Auther: bingo.ren
- * @Date: 2020/5/7 14:59
- * @Description:
- * @Version: 1.0
+ * @Auther: Mr.Lei
+ * @Date: 2021/3/8
  */
 @Configuration
 public class QuartzConfig {
