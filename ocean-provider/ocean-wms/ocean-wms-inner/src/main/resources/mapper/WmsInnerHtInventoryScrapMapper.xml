@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerHtInventoryScrapMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.history.WmsInnerHtInventoryScrap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_inventory_scrap_id" jdbcType="BIGINT" property="htInventoryScrapId" />
+    <result column="inventory_scrap_id" jdbcType="BIGINT" property="inventoryScrapId" />
+    <result column="inventory_scrap_code" jdbcType="VARCHAR" property="inventoryScrapCode" />
+    <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
+    <result column="transfer_slip_time" jdbcType="TIMESTAMP" property="transferSlipTime" />
+    <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="processor_user_name" jdbcType="VARCHAR" property="processorUserName"/>
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    iis.ht_inventory_scrap_id,
+    iis.inventory_scrap_code,
+    iis.processor_user_id,
+    iis.inventory_scrap_time,
+    iis.inventory_scrap_status,
+    iis.`status`,
+    iis.remark,
+    iis.organization_id,
+    iis.create_user_id,
+    iis.create_time,
+    iis.modified_user_id,
+    iis.modified_time,
+    iis.is_delete
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    suss.user_name AS processor_user_name,
+    bo.organization_code AS organization_code
+    FROM
+    wms_inner_ht_inventory_scrap AS iis
+    LEFT JOIN ocean.sys_user su ON iis.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON iis.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user suss ON iis.processor_user_id = suss.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON iis.organization_id = bo.organization_id
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(iis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="inventoryScrapCode !=null and inventoryScrapCode != ''">
+        and iis.inventory_scrap_code like CONCAT("%",#{inventoryScrapCode},"%")
+      </if>
+      <if test="modifiedUserName != null and modifiedUserName != ''">
+        and sus.user_name like CONCAT("%",#{modifiedUserName},"%")
+      </if>
+      <if test="processorUserName != null and processorUserName != ''">
+        and suss.user_name like CONCAT("%",#{processorUserName},"%")
+      </if>
+      <if test="inventoryScrapStatus != null">
+        and iis.inventory_scrap_status = #{inventoryScrapStatus}
+      </if>
+    </where>
+    order by iis.create_time desc
+
+  </select>
+</mapper>
