@@ -10,5 +10,8 @@ import java.util.Map;
 
 @Mapper
 public interface StorageMonthEndInventoryMapper extends MyMapper<StorageMonthEndInventory> {
+
+    List<StorageMonthEndInventoryDto> findMonthEndList(Map<String, Object> map);
+
     List<StorageMonthEndInventoryDto> findList(Map<String, Object> map);
 }

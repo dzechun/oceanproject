@@ -66,6 +66,13 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
     private Integer total;
 
     /**
+     * 物料总数
+     */
+    @ApiModelProperty(name = "materialTotal", value = "物料总数")
+    @Excel(name = "总数", height = 20, width = 30, orderNum = "9")
+    private Integer materialTotal;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name = "remark", value = "备注")
@@ -95,7 +102,7 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 创建时间
      */
     @ApiModelProperty(name = "createTime", value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30, orderNum = "10", exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30, orderNum = "11", exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -111,7 +118,7 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 修改时间
      */
     @ApiModelProperty(name = "modifiedTime", value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30, orderNum = "12", exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30, orderNum = "13", exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
