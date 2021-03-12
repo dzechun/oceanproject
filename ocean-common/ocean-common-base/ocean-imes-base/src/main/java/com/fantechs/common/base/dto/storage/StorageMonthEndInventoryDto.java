@@ -78,14 +78,14 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(value = "创建用户名称", example = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30, orderNum = "9")
+    @Excel(name = "创建用户名称", height = 20, width = 30, orderNum = "10")
     private String createUserName;
     /**
      * 修改用户名称
      */
     @Transient
     @ApiModelProperty(value = "修改用户名称", example = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30, orderNum = "11")
+    @Excel(name = "修改用户名称", height = 20, width = 30, orderNum = "12")
     private String modifiedUserName;
 
     /**
