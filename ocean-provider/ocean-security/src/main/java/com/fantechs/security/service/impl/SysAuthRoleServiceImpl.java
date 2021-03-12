@@ -29,14 +29,15 @@ public class SysAuthRoleServiceImpl extends BaseService<SysAuthRole> implements 
     public int updateBatch(List<SysAuthRole> list, Byte menuType) {
         List<Long> menuIds = sysMenuInfoMapper.selectMenuId(menuType);
 
-        //清除现有角色菜单权限
-        Example example = new Example(SysAuthRole.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("roleId", list.get(0).getRoleId());
         if (StringUtils.isNotEmpty(menuIds)) {
+            //清除现有角色菜单权限
+            Example example = new Example(SysAuthRole.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("roleId", list.get(0).getRoleId());
             criteria.andIn("menuId", menuIds);
+            smtAuthRoleMapper.deleteByExample(example);
         }
-        smtAuthRoleMapper.deleteByExample(example);
+
 
         return smtAuthRoleMapper.updateBatch(list);
     }
