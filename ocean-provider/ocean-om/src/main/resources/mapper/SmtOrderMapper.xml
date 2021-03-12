@@ -50,7 +50,7 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="total" jdbcType="DECIMAL" property="total"/>
         <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
-        <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
+        <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
         <result column="size" jdbcType="DECIMAL" property="size"/>
         <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight"/>
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
@@ -122,7 +122,7 @@
         mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
         values
         <foreach collection="list" item="item" separator="," index="index">
-            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packageSpecificationId},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})
+            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packingUnitId},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})
         </foreach>
     </insert>
     <delete id="deleteMaterialByOrderId" parameterType="long">
@@ -137,7 +137,7 @@
         mom.material_id,
         mom.total,
         mom.box_code,
-        mom.package_specification_id,
+        mom.packing_unit_id,
         mom.size,
         mom.rough_weight,
         mom.net_weight,
@@ -155,7 +155,7 @@
         sm.material_code AS 'materialCode',
         sm.version AS 'version',
         sm.material_desc AS 'materialDesc',
-        sps.package_specification_name as 'packingUnitName'
+        spu.packing_unit_name as 'packingUnitName'
         FROM
         mes_order_material AS mom
         LEFT JOIN ocean.sys_user su1 ON su1.user_id = mom.create_user_id
@@ -164,7 +164,7 @@
         LEFT JOIN smt_material sm ON sm.material_id = mom.material_id
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         LEFT JOIN smt_product_model spm ON spm.product_model_id = bt.product_model_id
-        left join smt_package_specification sps on  mom.package_specification_id = sps.package_specification_id
+        left join smt_packing_unit spu on  mom.packing_unit_id = spu.packing_unit_id
         <where>
             <if test="orderId != null and orderId !=''">
                 and mom.order_id = #{orderId}
