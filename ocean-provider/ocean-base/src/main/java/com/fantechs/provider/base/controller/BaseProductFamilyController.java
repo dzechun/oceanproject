@@ -3,6 +3,7 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProductFamilyImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductFamily;
@@ -112,8 +113,8 @@ public class BaseProductFamilyController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseProductFamilyDto> baseProductFamilyDtos = EasyPoiUtils.importExcel(file, BaseProductFamilyDto.class);
-            Map<String, Object> resultMap = baseProductFamilyService.importExcel(baseProductFamilyDtos);
+            List<BaseProductFamilyImport> baseProductFamilyImports = EasyPoiUtils.importExcel(file,2,1, BaseProductFamilyImport.class);
+            Map<String, Object> resultMap = baseProductFamilyService.importExcel(baseProductFamilyImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProductFamilyImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -143,62 +144,66 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<BaseProductFamilyDto> baseProductFamilyDtos) {
+    public Map<String, Object> importExcel(List<BaseProductFamilyImport> baseProductFamilyImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseProductFamily> list = new LinkedList<>();
         LinkedList<BaseHtProductFamily> htList = new LinkedList<>();
-        for (int i = 0; i < baseProductFamilyDtos.size(); i++) {
-            BaseProductFamilyDto baseProductFamilyDto = baseProductFamilyDtos.get(i);
-            String productFamilyCode = baseProductFamilyDto.getProductFamilyCode();
-            String productFamilyName = baseProductFamilyDto.getProductFamilyName();
+        LinkedList<BaseProductFamilyImport> productFamilyImports = new LinkedList<>();
+
+        for (int i = 0; i < baseProductFamilyImports.size(); i++) {
+            BaseProductFamilyImport baseProductFamilyImport = baseProductFamilyImports.get(i);
+            String productFamilyCode = baseProductFamilyImport.getProductFamilyCode();
+            String productFamilyName = baseProductFamilyImport.getProductFamilyName();
             if (StringUtils.isEmpty(
                     productFamilyCode,productFamilyName
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
             //判断编码是否重复
             Example example = new Example(BaseProductFamily.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productFamilyCode",baseProductFamilyDto.getProductFamilyCode());
+            criteria.andEqualTo("productFamilyCode",productFamilyCode);
             if (StringUtils.isNotEmpty(baseProductFamilyMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
-            BaseProductFamily baseProductFamily = new BaseProductFamily();
-            BeanUtils.copyProperties(baseProductFamilyDto,baseProductFamily);
-            baseProductFamily.setCreateTime(new Date());
-            baseProductFamily.setCreateUserId(currentUser.getUserId());
-            baseProductFamily.setModifiedTime(new Date());
-            baseProductFamily.setModifiedUserId(currentUser.getUserId());
-            baseProductFamily.setStatus((byte) 1);
-            list.add(baseProductFamily);
+            productFamilyImports.add(baseProductFamilyImport);
         }
 
-        if (StringUtils.isNotEmpty(list)){
+        if (StringUtils.isNotEmpty(productFamilyImports)){
+            for (BaseProductFamilyImport productFamilyImport : productFamilyImports) {
+                BaseProductFamily baseProductFamily = new BaseProductFamily();
+                BeanUtils.copyProperties(baseProductFamily,productFamilyImport);
+                baseProductFamily.setCreateTime(new Date());
+                baseProductFamily.setCreateUserId(currentUser.getUserId());
+                baseProductFamily.setModifiedTime(new Date());
+                baseProductFamily.setModifiedUserId(currentUser.getUserId());
+                list.add(baseProductFamily);
+            }
+
             success = baseProductFamilyMapper.insertList(list);
+
+            for (BaseProductFamily baseProductFamily : list) {
+                BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
+                BeanUtils.copyProperties(baseProductFamily,baseHtProductFamily);
+                htList.add(baseHtProductFamily);
+            }
+            if (StringUtils.isNotEmpty(htList)){
+                baseHtProductFamilyMapper.insertList(htList);
+            }
         }
 
-        for (BaseProductFamily baseProductFamily : list) {
-            BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
-            BeanUtils.copyProperties(baseProductFamily,baseHtProductFamily);
-            htList.add(baseHtProductFamily);
-        }
-
-
-        if (StringUtils.isNotEmpty(htList)){
-            baseHtProductFamilyMapper.insertList(htList);
-        }
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

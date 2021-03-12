@@ -10,6 +10,7 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="box_number" jdbcType="DECIMAL" property="boxNumber"/>
         <result column="total" jdbcType="DECIMAL" property="total"/>
+        <result column="material_total" jdbcType="DECIMAL" property="materialTotal"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
@@ -53,11 +54,11 @@
     smei.is_delete
   </sql>
 
-    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    <select id="findMonthEndList" resultMap="BaseResultMapDto" parameterType="map">
         select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS
         modified_user_name,bo.organization_name
         ,sw.warehouse_name,swa.warehouse_area_name,ss.storage_name,sm.material_code,sm.material_desc,
-        ssi.quantity,spm.product_model_name,sss.supplier_name,so.contract_code
+        ssi.quantity,spm.product_model_name,sss.supplier_name,so.contract_code,smei.material_total
         FROM storage_month_end_inventory smei
         LEFT JOIN mes_package_manager mpm ON mpm.bar_code = smei.material_barcode_code
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
@@ -98,6 +99,66 @@
                 and smei.create_time like CONCAT(#{month}, '%')
             </if>
         </where>
+    </select>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT
+        ssi.material_id,
+        ssi.storage_id,
+        sss.supplier_name,
+        so.contract_code,
+        sw.warehouse_name,
+        swa.warehouse_area_name,
+        ss.storage_name,
+        sm.material_code,
+        sm.material_desc,
+        ssid.material_quantity as total,
+        ssi.quantity as material_total,
+        spm.product_model_name,
+        ifnull(
+        CEILING( sum(ssid.material_quantity) / ( SELECT sps.package_specification_quantity FROM
+        smt_package_specification sps
+        WHERE sps.package_specification_id = bt.package_specification_id ) ),
+        sum(ssid.material_quantity)
+        ) AS box_number
+        FROM
+        smt_storage_inventory_det ssid
+        LEFT JOIN smt_storage_inventory ssi ON ssi.storage_inventory_id = ssid.storage_inventory_id
+        LEFT JOIN mes_package_manager mpm ON mpm.bar_code = ssid.material_barcode_code
+        LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+        LEFT JOIN smt_order so ON so.order_id = swo.order_id
+        left join smt_storage ss on ssi.storage_id = ss.storage_id
+        left join smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
+        left join smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
+        left join smt_material sm on sm.material_id = ssi.material_id
+        left join base_tab bt on bt.material_id = ssi.material_id
+        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
+        left join smt_supplier sss ON sss.supplier_id = so.supplier_id
+        <where>
+            ssid.material_quantity > 0
+            <if test="warehouseName != null and warehouseName != ''">
+                and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="warehouseAreaName != null and warehouseAreaName != ''">
+                and saw.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+            </if>
+            <if test="storageName != null and storageName != ''">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialDesc != null and materialDesc != ''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="productModelName != null and productModelName != ''">
+                and spm.productModelName like CONCAT('%', #{productModelName}, '%')
+            </if>
+            <if test="month != null and month != ''">
+                and smei.create_time like CONCAT(#{month}, '%')
+            </if>
+        </where>
+        group by mpm.work_order_id
     </select>
 
 </mapper>
