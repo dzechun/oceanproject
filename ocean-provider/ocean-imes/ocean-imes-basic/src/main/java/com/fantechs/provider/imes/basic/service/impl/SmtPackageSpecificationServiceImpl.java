@@ -73,16 +73,16 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
         if (StringUtils.isNotEmpty(smtMaterialPackages)){
             for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
-
-            Example example1 = new Example(SmtMaterialPackage.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
-                    .andEqualTo("processId",smtMaterialPackage.getProcessId());
-            List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example1);
-            if (StringUtils.isNotEmpty(smtMaterialPackages1)){
-                throw new BizErrorException("物料在工序下的包装规格已存在");
-            }
-
+                if (StringUtils.isNotEmpty(smtMaterialPackage.getProcessId())){
+                    Example example1 = new Example(SmtMaterialPackage.class);
+                    Example.Criteria criteria1 = example1.createCriteria();
+                    criteria1.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
+                            .andEqualTo("processId",smtMaterialPackage.getProcessId());
+                    List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example1);
+                    if (StringUtils.isNotEmpty(smtMaterialPackages1)){
+                        throw new BizErrorException("物料在工序下的包装规格已存在");
+                    }
+                }
                 smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
             }
         }
@@ -129,18 +129,18 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         List<SmtMaterialPackageDto> smtMaterialPackages = smtPackageSpecification.getSmtMaterialPackages();
         if (StringUtils.isNotEmpty(smtMaterialPackages)){
             for (SmtMaterialPackage smtMaterialPackage : smtMaterialPackages) {
-
-            Example example2 = new Example(SmtMaterialPackage.class);
-            Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
-                    .andEqualTo("processId",smtMaterialPackage.getProcessId())
-                    .andNotEqualTo("packageSpecificationId",smtPackageSpecification.getPackageSpecificationId());
-            List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example2);
-            if (StringUtils.isNotEmpty(smtMaterialPackages1)){
-                throw new BizErrorException("物料在工序下的包装规格已存在");
+            if (StringUtils.isNotEmpty(smtMaterialPackage.getProcessId())){
+                Example example2 = new Example(SmtMaterialPackage.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("materialId",smtMaterialPackage.getMaterialId())
+                        .andEqualTo("processId",smtMaterialPackage.getProcessId())
+                        .andNotEqualTo("packageSpecificationId",smtPackageSpecification.getPackageSpecificationId());
+                List<SmtMaterialPackage> smtMaterialPackages1 = smtMaterialPackageMapper.selectByExample(example2);
+                if (StringUtils.isNotEmpty(smtMaterialPackages1)){
+                    throw new BizErrorException("物料在工序下的包装规格已存在");
+                }
             }
-
-                smtMaterialPackage.setPackageSpecificationId(smtHtPackageSpecification.getPackageSpecificationId());
+            smtMaterialPackage.setPackageSpecificationId(smtPackageSpecification.getPackageSpecificationId());
             }
         }
         if (StringUtils.isNotEmpty(smtMaterialPackages)){
