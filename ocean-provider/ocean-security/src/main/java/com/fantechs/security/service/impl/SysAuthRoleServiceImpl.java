@@ -2,7 +2,9 @@ package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysAuthRoleMapper;
+import com.fantechs.security.mapper.SysMenuInfoMapper;
 import com.fantechs.security.service.SysAuthRoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +21,23 @@ public class SysAuthRoleServiceImpl extends BaseService<SysAuthRole> implements 
 
     @Resource
     private SysAuthRoleMapper smtAuthRoleMapper;
+    @Resource
+    private SysMenuInfoMapper sysMenuInfoMapper;
 
     @Override
     @Transactional
-    public int updateBatch(List<SysAuthRole> list) {
+    public int updateBatch(List<SysAuthRole> list, Byte menuType) {
+        List<Long> menuIds = sysMenuInfoMapper.selectMenuId(menuType);
+
         //清除现有角色菜单权限
         Example example = new Example(SysAuthRole.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("roleId",list.get(0).getRoleId());
+        criteria.andEqualTo("roleId", list.get(0).getRoleId());
+        if (StringUtils.isNotEmpty(menuIds)) {
+            criteria.andIn("menuId", menuIds);
+        }
         smtAuthRoleMapper.deleteByExample(example);
+
         return smtAuthRoleMapper.updateBatch(list);
     }
 }
