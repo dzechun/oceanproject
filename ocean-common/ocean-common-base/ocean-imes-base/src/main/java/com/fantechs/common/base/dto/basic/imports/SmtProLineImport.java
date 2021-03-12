@@ -31,19 +31,6 @@ public class SmtProLineImport implements Serializable {
     private String proDesc;
 
     /**
-     * 厂别ID
-     */
-    @ApiModelProperty(name="factoryId" ,value="厂别ID")
-    private Long factoryId;
-
-    /**
-     * 厂别编码
-     */
-    @ApiModelProperty(name="factoryCode" ,value="厂别编码")
-    @Excel(name = "厂别编码", height = 20, width = 30)
-    private String factoryCode;
-
-    /**
      * 车间ID
      */
     @ApiModelProperty(name="workShopId" ,value="车间ID")
@@ -57,19 +44,6 @@ public class SmtProLineImport implements Serializable {
     private String workShopCode;
 
     /**
-     * 组织id
-     */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @ApiModelProperty(name="workShopCode" ,value="组织编码")
-    @Excel(name = "组织编码", height = 20, width = 30)
-    private String organizationCode;
-
-    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
@@ -80,6 +54,6 @@ public class SmtProLineImport implements Serializable {
      * 产线状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status" ,value="产线状态")
-    @Excel(name = "状态", height = 20, width = 30)
+    @Excel(name = "产线状态（0、无效 1、有效）", height = 20, width = 30)
     private Integer status;
 }

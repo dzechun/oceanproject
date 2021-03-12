@@ -43,6 +43,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     /**
      * 字段名
      */
+    @Column(name = "itemKey")
     @ApiModelProperty(name="item_key",value = "字段名")
     @Excel(name = "字段名", height = 20, width = 30)
     private String itemKey;
@@ -50,6 +51,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     /**
      * 字段中文名
      */
+    @Column(name = "itemName")
     @ApiModelProperty(name="item_name",value = "字段中文名")
     @Excel(name = "字段中文名", height = 20, width = 30)
     private String itemName;
@@ -67,6 +69,7 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="item_value",value = "搜索用默认值")
     @Excel(name = "搜索用默认值", height = 20, width = 30)
+    @Column(name = "item_value")
     private String itemValue;
 
     /**
