@@ -66,7 +66,6 @@ public class SysCustomFormDetController {
     public ResponseEntity<List<SysCustomFormDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysCustomFormDet searchSysCustomFormDet) {
         Page<Object> page = PageHelper.startPage(searchSysCustomFormDet.getStartPage(),searchSysCustomFormDet.getPageSize());
         List<SysCustomFormDetDto> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
-        System.out.println(list.get(0).getDateType());
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
