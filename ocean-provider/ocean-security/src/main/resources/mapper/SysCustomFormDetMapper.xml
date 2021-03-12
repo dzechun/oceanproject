@@ -3,7 +3,7 @@
 <mapper namespace="com.fantechs.security.mapper.SysCustomFormDetMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.security.SysCustomFormDet">
         <id column="custom_form_det_id" jdbcType="BIGINT" property="customFormDetId"/>
-        <id column="custom_form_id" jdbcType="BIGINT" property="customFormId"/>
+        <result column="custom_form_id" jdbcType="BIGINT" property="customFormId"/>
         <result column="item_key" jdbcType="VARCHAR" property="itemKey"/>
         <result column="item_name" jdbcType="VARCHAR" property="itemName"/>
         <result column="show_type" jdbcType="TINYINT" property="showType"/>
