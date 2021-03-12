@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dongpeng
   application:
     name: @pom.artifactId@
   servlet:
@@ -24,5 +24,5 @@ spring:
     protocol: smtp
     default-encoding: UTF-8
 print:
-  ip: 192.168.150.233
+  ip: 192.168.150.223
   port: 8098

@@ -12,13 +12,13 @@
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
-        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -40,7 +40,7 @@
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-        SELECT <include refid="Base_Column_List"/>,
+        SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         bo.organization_name,ss.storage_code,ss.storage_name,sm.material_desc,sm.material_name
         FROM smt_storage_inventory_det ssid
@@ -75,6 +75,14 @@
             </if>
         </where>
         order by ssid.create_time desc
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap"
+            parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM smt_storage_inventory_det ssid
+        where ssid.storage_inventory_id = #{storageInventoryId}
     </select>
 
 

@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.imes.storage.mapper.StorageMonthEndInventoryMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.StorageMonthEndInventory">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="month_end_inventory_id" jdbcType="BIGINT" property="monthEndInventoryId" />
-    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="box_number" jdbcType="DECIMAL" property="boxNumber" />
-    <result column="total" jdbcType="DECIMAL" property="total" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.storage.StorageMonthEndInventory">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="month_end_inventory_id" jdbcType="BIGINT" property="monthEndInventoryId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="box_number" jdbcType="DECIMAL" property="boxNumber"/>
+        <result column="total" jdbcType="DECIMAL" property="total"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto" extends="BaseResultMap">
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
-    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
-    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto"
+               extends="BaseResultMap">
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="contract_no" jdbcType="VARCHAR" property="contractNo"/>
 
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-  </resultMap>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
 
-  <sql id="Base_Column_List">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
     smei.month_end_inventory_id,
     smei.storage_id,
     smei.material_id,
@@ -49,44 +53,51 @@
     smei.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
-    ,sw.warehouse_name,swa.warehouse_area_name,ss.storage_name,sm.material_code,sm.material_desc,
-    ssi.quantity,spm.product_model_name
-    FROM storage_month_end_inventory smei
-    LEFT JOIN ocean.sys_user su ON smei.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON smei.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON smei.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_id = smei.storage_id and ssi.material_id = smei.material_id
-    LEFT JOIN fantech_imes.smt_storage ss on smei.storage_id = ss.storage_id
-    LEFT JOIN fantech_imes.smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
-    LEFT JOIN fantech_imes.smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
-    LEFT JOIN fantech_imes.smt_material sm on sm.material_id = smei.material_id
-    LEFT JOIN fantech_imes.base_tab bt on bt.material_id = ssi.material_id
-    LEFT JOIN fantech_imes.smt_product_model spm on spm.product_model_id = bt.product_model_id
-    <where>
-      <if test="warehouseName != null and warehouseName != ''">
-        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
-      </if>
-      <if test="warehouseAreaName != null and warehouseAreaName != ''">
-        and saw.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
-      </if>
-      <if test="storageName != null and storageName != ''">
-        and ss.storage_name like CONCAT('%', #{storageName}, '%')
-      </if>
-      <if test="materialCode != null and materialCode != ''">
-        and sm.material_code like CONCAT('%', #{materialCode}, '%')
-      </if>
-      <if test="materialDesc != null and materialDesc != ''">
-        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
-      </if>
-      <if test="productModelName != null and productModelName != ''">
-        and spm.productModelName like CONCAT('%', #{productModelName}, '%')
-      </if>
-      <if test="month != null and month != ''">
-        and smei.create_time like CONCAT(#{month}, '%')
-      </if>
-    </where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS
+        modified_user_name,bo.organization_name
+        ,sw.warehouse_name,swa.warehouse_area_name,ss.storage_name,sm.material_code,sm.material_desc,
+        ssi.quantity,spm.product_model_name,sss.supplier_name,so.contract_code
+        FROM storage_month_end_inventory smei
+        LEFT JOIN mes_package_manager mpm ON mpm.bar_code = smei.material_barcode_code
+        LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+        LEFT JOIN smt_order so ON so.order_id = swo.order_id
+        left join smt_supplier sss ON sss.supplier_id = so.supplier_id
+
+        LEFT JOIN ocean.sys_user su ON smei.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON smei.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON smei.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_id = smei.storage_id and ssi.material_id =
+        smei.material_id
+        LEFT JOIN fantech_imes.smt_storage ss on smei.storage_id = ss.storage_id
+        LEFT JOIN fantech_imes.smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
+        LEFT JOIN fantech_imes.smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
+        LEFT JOIN fantech_imes.smt_material sm on sm.material_id = smei.material_id
+        LEFT JOIN fantech_imes.base_tab bt on bt.material_id = ssi.material_id
+        LEFT JOIN fantech_imes.smt_product_model spm on spm.product_model_id = bt.product_model_id
+        <where>
+            <if test="warehouseName != null and warehouseName != ''">
+                and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="warehouseAreaName != null and warehouseAreaName != ''">
+                and saw.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+            </if>
+            <if test="storageName != null and storageName != ''">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialDesc != null and materialDesc != ''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="productModelName != null and productModelName != ''">
+                and spm.productModelName like CONCAT('%', #{productModelName}, '%')
+            </if>
+            <if test="month != null and month != ''">
+                and smei.create_time like CONCAT(#{month}, '%')
+            </if>
+        </where>
+    </select>
 
 </mapper>

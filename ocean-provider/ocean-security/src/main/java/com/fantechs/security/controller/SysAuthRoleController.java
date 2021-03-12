@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -29,9 +26,9 @@ public class SysAuthRoleController {
     @Autowired
     private SysAuthRoleService smtAuthRoleService;
 
-    @ApiOperation(value = "更新权限列表",notes = "更新权限列表")
+    @ApiOperation(value = "更新权限列表", notes = "更新权限列表")
     @PostMapping("/updateBatch")
-    public ResponseEntity update(@ApiParam(value = "必传：roleId、menuId",required = true)@RequestBody @Validated @NotNull(message = "sysAuthRoles不能为空") List<SysAuthRole> sysAuthRoles){
-        return ControllerUtil.returnCRUD(smtAuthRoleService.updateBatch(sysAuthRoles));
+    public ResponseEntity update(@ApiParam(value = "必传：roleId、menuId", required = true) @RequestBody @Validated @NotNull(message = "sysAuthRoles不能为空") List<SysAuthRole> sysAuthRoles, @ApiParam(value = "必传：menuType", required = true) @RequestParam @Validated @NotNull(message = "menuType不能为空") Byte menuType) {
+        return ControllerUtil.returnCRUD(smtAuthRoleService.updateBatch(sysAuthRoles, menuType));
     }
 }

@@ -33,19 +33,6 @@ public class BaseWorkShiftImport implements Serializable {
     private String workShiftDesc;
 
     /**
-     * 组织id
-     */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    private Long organizationId;
-
-    /**
-     * 组织编码
-     */
-    @Excel(name = "组织编码", height = 20, width = 30)
-    @ApiModelProperty(name = "organizationCode",value = "组织编码")
-    private String organizationCode;
-
-    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
@@ -63,7 +50,7 @@ public class BaseWorkShiftImport implements Serializable {
      * 开始时间
      */
     @ApiModelProperty(name="startTime",value = "开始时间")
-    @Excel(name = "开始时间", height = 20, width = 30)
+    @Excel(name = "开始时间(必填)", height = 20, width = 30)
     @JsonFormat(pattern = "HH:mm")
     private Date startTime;
 
@@ -71,7 +58,7 @@ public class BaseWorkShiftImport implements Serializable {
      * 结束时间
      */
     @ApiModelProperty(name="workShiftDesc",value = "结束时间")
-    @Excel(name = "结束时间", height = 20, width = 30)
+    @Excel(name = "结束时间(必填)", height = 20, width = 30)
     @JsonFormat(pattern = "HH:mm")
     private Date endTime;
 }

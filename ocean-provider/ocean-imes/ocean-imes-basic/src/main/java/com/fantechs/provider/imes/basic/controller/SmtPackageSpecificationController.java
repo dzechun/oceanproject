@@ -49,7 +49,7 @@ public class SmtPackageSpecificationController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：packageSpecificationCoded、packageSpecificationName、materialId、barcodeRuleId、packingUnitId",required = true)@RequestBody @Validated SmtPackageSpecification smtPackageSpecification) {
+    public ResponseEntity add(@ApiParam(value = "必传：packageSpecificationCoded、packageSpecificationName",required = true)@RequestBody @Validated SmtPackageSpecification smtPackageSpecification) {
         return ControllerUtil.returnCRUD(smtPackageSpecificationService.save(smtPackageSpecification));
     }
 

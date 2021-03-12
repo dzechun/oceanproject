@@ -10,8 +10,11 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto;
+import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShiftImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
+import com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShift;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -20,6 +23,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtWorkShiftMapper;
 import com.fantechs.provider.base.mapper.BaseWorkShiftMapper;
+import com.fantechs.provider.base.mapper.BaseWorkShiftTimeMapper;
 import com.fantechs.provider.base.service.BaseWorkShiftService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2020/12/21.
@@ -40,6 +45,8 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
     private BaseWorkShiftMapper baseWorkShiftMapper;
     @Resource
     private BaseHtWorkShiftMapper baseHtWorkShiftMapper;
+    @Resource
+    private BaseWorkShiftTimeMapper baseWorkShiftTimeMapper;
 
     @Override
     public int save(BaseWorkShift baseWorkShift) {
@@ -132,61 +139,99 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<BaseWorkShiftDto> baseWorkShiftDtos) {
+    public Map<String, Object> importExcel(List<BaseWorkShiftImport> baseWorkShiftImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseWorkShift> list = new LinkedList<>();
         LinkedList<BaseHtWorkShift> htList = new LinkedList<>();
-        for (int i = 0; i < baseWorkShiftDtos.size(); i++) {
-            BaseWorkShiftDto baseWorkShiftDto = baseWorkShiftDtos.get(i);
-            String workShiftCode = baseWorkShiftDto.getWorkShiftCode();
-            String workShiftName = baseWorkShiftDto.getWorkShiftName();
+        LinkedList<BaseWorkShiftTime> baseWorkShiftTimes = new LinkedList<>();
+
+        //排除不合法的数据
+        Iterator<BaseWorkShiftImport> iterator = baseWorkShiftImports.iterator();
+        int i = 0;
+        while (iterator.hasNext()){
+            BaseWorkShiftImport baseWorkShiftImport = iterator.next();
+            String workShiftCode = baseWorkShiftImport.getWorkShiftCode();
+            String workShiftName = baseWorkShiftImport.getWorkShiftName();
+            Date startTime = baseWorkShiftImport.getStartTime();
+            Date endTime = baseWorkShiftImport.getEndTime();
+
+            //产品编码必传
             if (StringUtils.isEmpty(
-                    workShiftCode,workShiftName
-            )){
-                fail.add(i+3);
+                    workShiftCode, workShiftName, startTime, endTime
+            )) {
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
                 continue;
             }
 
             //判断编码是否重复
             Example example = new Example(BaseWorkShift.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workShiftCode",baseWorkShiftDto.getWorkShiftCode());
-            if (StringUtils.isNotEmpty(baseWorkShiftMapper.selectOneByExample(example))){
-                fail.add(i+3);
+            criteria.andEqualTo("workShiftCode",workShiftCode);
+            BaseWorkShift baseWorkShift = baseWorkShiftMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseWorkShift)){
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
                 continue;
             }
 
-            BaseWorkShift baseWorkShift = new BaseWorkShift();
-            BeanUtils.copyProperties(baseWorkShiftDto,baseWorkShift);
-            baseWorkShift.setCreateTime(new Date());
-            baseWorkShift.setCreateUserId(currentUser.getUserId());
-            baseWorkShift.setModifiedTime(new Date());
-            baseWorkShift.setModifiedUserId(currentUser.getUserId());
-            baseWorkShift.setStatus((byte) 1);
-            list.add(baseWorkShift);
+            Map<String, List<BaseWorkShiftImport>> map = baseWorkShiftImports.stream().collect(Collectors.groupingBy(BaseWorkShiftImport::getWorkShiftCode, HashMap::new, Collectors.toList()));
+
+            Set<String> keySet = map.keySet();
+            for (String code : keySet) {
+                List<BaseWorkShiftImport> workShiftImports = map.get(code);
+                if (StringUtils.isNotEmpty(workShiftImports)){
+                    //新增班次信息
+                    BaseWorkShiftImport baseWorkShiftImport1 = workShiftImports.get(0);
+                    BaseWorkShift workShift = new BaseWorkShift();
+                    BeanUtils.copyProperties(baseWorkShiftImport1,workShift);
+                    workShift.setModifiedTime(new Date());
+                    workShift.setModifiedUserId(currentUser.getUserId());
+                    workShift.setCreateTime(new Date());
+                    workShift.setCreateUserId(currentUser.getUserId());
+                    workShift.setOrganizationId(currentUser.getOrganizationId());
+                    workShift.setStatus((byte) 1);
+                    baseWorkShiftMapper.insertUseGeneratedKeys(workShift);
+
+                    //新增履历
+                    BaseHtWorkShift baseHtWorkShift = new BaseHtWorkShift();
+                    BeanUtils.copyProperties(workShift,baseHtWorkShift);
+                    htList.add(baseHtWorkShift);
+
+                    //新增班次时间关系
+                    for (BaseWorkShiftImport workShiftImport : workShiftImports) {
+                        BaseWorkShiftTime baseWorkShiftTime = new BaseWorkShiftTime();
+                        BeanUtils.copyProperties(workShiftImport,baseWorkShiftTime);
+                        baseWorkShiftTime.setCreateTime(new Date());
+                        baseWorkShiftTime.setCreateUserId(currentUser.getUserId());
+                        baseWorkShiftTime.setModifiedTime(new Date());
+                        baseWorkShiftTime.setModifiedUserId(currentUser.getUserId());
+                        baseWorkShiftTime.setStatus((byte) 1);
+                        baseWorkShiftTime.setOrganizationId(currentUser.getOrganizationId());
+                        baseWorkShiftTime.setWorkShiftId(workShift.getWorkShiftId());
+                        baseWorkShiftTimes.add(baseWorkShiftTime);
+                    }
+                    if (StringUtils.isNotEmpty(baseWorkShiftTimes)){
+                        success += baseWorkShiftTimeMapper.insertList(baseWorkShiftTimes);
+                    }
+                }
+            }
+
+            if (StringUtils.isNotEmpty(htList)){
+                baseHtWorkShiftMapper.insertList(htList);
+            }
         }
 
-        if (StringUtils.isNotEmpty(list)){
-            success = baseWorkShiftMapper.insertList(list);
-        }
-
-        for (BaseWorkShift baseWorkShift : list) {
-            BaseHtWorkShift baseHtWorkShift = new BaseHtWorkShift();
-            BeanUtils.copyProperties(baseWorkShift,baseHtWorkShift);
-            htList.add(baseHtWorkShift);
-        }
-
-        if (StringUtils.isNotEmpty(htList)){
-            baseHtWorkShiftMapper.insertList(htList);
-        }
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

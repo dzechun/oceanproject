@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryScrapDetMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryScrapDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="inventory_scrap_det_id" jdbcType="BIGINT" property="inventoryScrapDetId"/>
+        <result column="inventory_scrap_id" jdbcType="BIGINT" property="inventoryScrapId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="plan_carton_qty" jdbcType="DECIMAL" property="planCartonQty"/>
+        <result column="plan_total_qty" jdbcType="DECIMAL" property="planTotalQty"/>
+        <result column="reality_carton_qty" jdbcType="DECIMAL" property="realityCartonQty"/>
+        <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty"/>
+        <result column="inventory_scrap_status" jdbcType="TINYINT" property="inventoryScrapStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryScrapDetDto">
+        <!--
+          WARNING - @mbg.generated
+        -->
+
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      isd.inventory_scrap_det_id,
+      isd.inventory_scrap_id,
+      isd.material_id,
+      isd.storage_id,
+      isd.plan_carton_qty,
+      isd.plan_total_qty,
+      isd.reality_carton_qty,
+      isd.reality_total_qty,
+      isd.inventory_scrap_status,
+      isd.`status`,
+      isd.remark,
+      isd.organization_id,
+      isd.create_user_id,
+      isd.create_time,
+      isd.modified_user_id,
+      isd.modified_time,
+      isd.is_delete
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+
+        SELECT
+        <include refid="Base_Column_List"/>,
+        m.material_code,
+        m.material_desc,
+        m.version,
+        s.storage_name,
+        wa.warehouse_area_name,
+        w.warehouse_name
+        FROM
+        wms_inner_inventory_scrap_det AS isd
+        LEFT JOIN smt_material m ON m.material_id = isd.material_id
+        LEFT JOIN smt_storage s ON s.storage_id = isd.storage_id
+        LEFT JOIN smt_warehouse_area wa ON wa.warehouse_area_id = s.warehouse_area_id
+        LEFT JOIN smt_warehouse w ON w.warehouse_id = s.warehouse_id
+        <where>
+          <if test="inventoryScrapId != null">
+            and isd.inventory_scrap_id = #{inventoryScrapId}
+          </if>
+        </where>
+        order by isd.create_time desc
+
+    </select>
+</mapper>

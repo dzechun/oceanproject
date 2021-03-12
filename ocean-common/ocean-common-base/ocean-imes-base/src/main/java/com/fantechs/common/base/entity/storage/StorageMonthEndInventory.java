@@ -14,6 +14,7 @@ import java.util.Date;
 
 /**
  * 月末库存表
+ *
  * @date 2021-03-02 11:31:51
  */
 @Data
@@ -22,7 +23,7 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
     /**
      * 月末库存ID
      */
-    @ApiModelProperty(name="monthEndInventoryId",value = "月末库存ID")
+    @ApiModelProperty(name = "monthEndInventoryId", value = "月末库存ID")
     @Id
     @Column(name = "month_end_inventory_id")
     private Long monthEndInventoryId;
@@ -30,87 +31,95 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
     /**
      * 储位ID
      */
-    @ApiModelProperty(name="storageId",value = "储位ID")
+    @ApiModelProperty(name = "storageId", value = "储位ID")
     @Column(name = "storage_id")
     private Long storageId;
 
     /**
      * 物料ID
      */
-    @ApiModelProperty(name="materialId",value = "物料ID")
+    @ApiModelProperty(name = "materialId", value = "物料ID")
     @Column(name = "material_id")
     private Long materialId;
 
     /**
+     * 物料条码编码
+     */
+    @ApiModelProperty(name = "materialBarcodeCode", value = "物料条码编码")
+    @Excel(name = "物料条码编码", height = 20, width = 30)
+    @Column(name = "material_barcode_code")
+    private String materialBarcodeCode;
+
+    /**
      * 箱数
      */
-    @ApiModelProperty(name="boxNumber",value = "箱数")
-    @Excel(name = "箱数", height = 20, width = 30,orderNum="7")
+    @ApiModelProperty(name = "boxNumber", value = "箱数")
+    @Excel(name = "箱数", height = 20, width = 30, orderNum = "7")
     @Column(name = "box_number")
     private Integer boxNumber;
 
     /**
      * 总数
      */
-    @ApiModelProperty(name="total",value = "总数")
-    @Excel(name = "总数", height = 20, width = 30,orderNum="8")
+    @ApiModelProperty(name = "total", value = "总数")
+    @Excel(name = "总数", height = 20, width = 30, orderNum = "8")
     private Integer total;
 
     /**
      * 备注
      */
-    @ApiModelProperty(name="remark",value = "备注")
+    @ApiModelProperty(name = "remark", value = "备注")
     private String remark;
 
     /**
      * 状态（0、无效 1、有效）
      */
-    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @ApiModelProperty(name = "status", value = "状态（0、无效 1、有效）")
     private Byte status;
 
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
+    @ApiModelProperty(name = "organizationId", value = "组织id")
     @Column(name = "organization_id")
     private Long organizationId;
 
     /**
      * 创建人ID
      */
-    @ApiModelProperty(name="createUserId",value = "创建人ID")
+    @ApiModelProperty(name = "createUserId", value = "创建人ID")
     @Column(name = "create_user_id")
     private Long createUserId;
 
     /**
      * 创建时间
      */
-    @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(name = "createTime", value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30, orderNum = "10", exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
 
     /**
      * 修改人ID
      */
-    @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
+    @ApiModelProperty(name = "modifiedUserId", value = "修改人ID")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
     /**
      * 修改时间
      */
-    @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(name = "modifiedTime", value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30, orderNum = "12", exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
     /**
      * 逻辑删除（0、删除 1、正常）
      */
-    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @ApiModelProperty(name = "isDelete", value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
 

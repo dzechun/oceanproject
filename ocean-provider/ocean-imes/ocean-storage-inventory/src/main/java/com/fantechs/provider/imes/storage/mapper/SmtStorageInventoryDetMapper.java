@@ -13,4 +13,6 @@ public interface SmtStorageInventoryDetMapper extends MyMapper<SmtStorageInvento
 
     List<SmtStorageInventoryDetDto> findList(Map<String, Object> map);
 
+    List<SmtStorageInventoryDetDto> findById(Long storageInventoryId);
+
 }

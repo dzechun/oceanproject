@@ -2,32 +2,24 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
-import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
 import com.fantechs.common.base.dto.basic.imports.SmtProLineImport;
 import com.fantechs.common.base.entity.basic.*;
-import com.fantechs.common.base.entity.basic.history.SmtHtDept;
 import com.fantechs.common.base.entity.basic.history.SmtHtProLine;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProLine;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.imes.basic.mapper.*;
-import com.fantechs.provider.imes.basic.service.SmtFactoryService;
 import com.fantechs.provider.imes.basic.service.SmtProLineService;
-import com.fantechs.provider.imes.basic.service.SmtWorkShopService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 @Service
@@ -44,12 +36,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
     @Resource
     private SmtWorkShopMapper smtWorkShopMapper;
-
-    @Resource
-    private SmtFactoryMapper smtFactoryMapper;
-
-    @Resource
-    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<SmtProLine> findList(SearchSmtProLine searchSmtProLine) {
@@ -159,7 +145,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtProLine> list = new LinkedList<>();
@@ -170,9 +156,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
             SmtProLineImport smtProLineImport = smtProLineImports.get(i);
             String proCode = smtProLineImport.getProCode();
             String proName = smtProLineImport.getProName();
-            String factoryCode = smtProLineImport.getFactoryCode();
             String workShopCode = smtProLineImport.getWorkShopCode();
-            String organizationCode = smtProLineImport.getOrganizationCode();
             if (StringUtils.isEmpty(
                     proCode,proName
             )){
@@ -189,20 +173,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
                 continue;
             }
 
-            //判断工厂是否存在
-            if (StringUtils.isNotEmpty(factoryCode)){
-                Example example1 = new Example(SmtFactory.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("factoryCode",factoryCode);
-                SmtFactory smtFactory = smtFactoryMapper.selectOneByExample(example1);
-                if (StringUtils.isEmpty(smtFactory)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtProLineImport.setFactoryId(smtFactory.getFactoryId());
-            }
-
-
             //判断车间是否存在
             if (StringUtils.isNotEmpty(workShopCode)){
                 Example example2 = new Example(SmtWorkShop.class);
@@ -214,19 +184,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
                     continue;
                 }
                 smtProLineImport.setWorkShopId(smtWorkShop.getFactoryId());
-            }
-
-            //如果组织编码不为空则判断组织是否存在
-            if (StringUtils.isNotEmpty(organizationCode)){
-                SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-                searchBaseOrganization.setCodeQueryMark(1);
-                searchBaseOrganization.setOrganizationCode(organizationCode);
-                List<BaseOrganizationDto> baseOrganizationDtos = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
-                if (StringUtils.isEmpty(baseOrganizationDtos)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtProLineImport.setOrganizationId(baseOrganizationDtos.get(0).getOrganizationId());
             }
 
             //判断集合中是否存在该条数据
@@ -255,6 +212,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
                 smtProLine.setCreateUserId(currentUser.getUserId());
                 smtProLine.setModifiedTime(new Date());
                 smtProLine.setModifiedUserId(currentUser.getUserId());
+                smtProLine.setOrganizationId(currentUser.getOrganizationId());
                 list.add(smtProLine);
             }
 
@@ -270,8 +228,8 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
 
         }
 
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

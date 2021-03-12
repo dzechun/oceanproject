@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProLine;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShiftImport;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShift;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShift;
@@ -112,8 +113,8 @@ public class BaseWorkShiftController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseWorkShiftDto> baseWorkShiftDtos = EasyPoiUtils.importExcel(file,2,1, BaseWorkShiftDto.class);
-            Map<String, Object> resultMap = baseWorkShiftService.importExcel(baseWorkShiftDtos);
+            List<BaseWorkShiftImport> baseWorkShiftImports = EasyPoiUtils.importExcel(file, 2, 1, BaseWorkShiftImport.class);
+            Map<String, Object> resultMap = baseWorkShiftService.importExcel(baseWorkShiftImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

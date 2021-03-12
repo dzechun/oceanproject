@@ -11,10 +11,10 @@ import java.io.IOException;
  * @author Mr.Lei
  * @create 2021/2/24
  */
-//@Component
+@Component
 public class RabbitProducer {
-    //@Autowired
-    //private AmqpTemplate rabbitTemplate;
+    @Autowired
+    private AmqpTemplate rabbitTemplate;
 
     public void sendDemoQueue(byte[] bytes) throws IOException {
 //        Date date = new Date();
@@ -22,6 +22,6 @@ public class RabbitProducer {
 //        System.out.println("[demoQueue] send msg: " + dateString);
         //byte[] imgBytes = multipartFile.getBytes();
         // 第一个参数为刚刚定义的队列名称
-        //this.rabbitTemplate.convertAndSend("demoQueue", bytes);
+        this.rabbitTemplate.convertAndSend("demoQueue", bytes);
     }
 }

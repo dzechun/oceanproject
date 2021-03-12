@@ -45,7 +45,7 @@ public class SwaggerConfig
                 .apiInfo(apiInfo())
                 .select()
                 // 指定当前包路径，这里就添加了两个包，注意方法变成了basePackage，中间加上成员变量splitor
-                .apis(basePackage("com.fantechs.security.controlle"))
+                .apis(basePackage("com.fantechs.security.controller"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
