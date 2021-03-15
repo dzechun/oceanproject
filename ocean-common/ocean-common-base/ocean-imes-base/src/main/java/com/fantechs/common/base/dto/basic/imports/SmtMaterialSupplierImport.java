@@ -19,7 +19,7 @@ public class SmtMaterialSupplierImport implements Serializable {
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 3)
+    @Excel(name = "物料编码(必填)", height = 20, width = 3)
     private String materialCode;
 
     /**
@@ -29,10 +29,16 @@ public class SmtMaterialSupplierImport implements Serializable {
     private Long supplierId;
 
     /**
+     * 客户编码
+     */
+    @ApiModelProperty(name="supplierCode",value = "客户编码")
+    private String supplierCode;
+
+    /**
      * 客户料号
      */
     @ApiModelProperty(name="materialSupplierCode",value = "客户料号")
-    @Excel(name = "客户料号", height = 20, width = 30)
+    @Excel(name = "客户料号(必填)", height = 20, width = 30)
     private String materialSupplierCode;
 
     /**
