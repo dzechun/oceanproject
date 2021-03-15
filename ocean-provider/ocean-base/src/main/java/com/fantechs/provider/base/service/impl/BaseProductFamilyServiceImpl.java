@@ -176,6 +176,19 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
                 continue;
             }
 
+            //判断结合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(productFamilyImports)){
+                for (BaseProductFamilyImport productFamilyImport : productFamilyImports) {
+                    if (productFamilyImport.getProductFamilyCode().equals(productFamilyCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
             productFamilyImports.add(baseProductFamilyImport);
         }
 

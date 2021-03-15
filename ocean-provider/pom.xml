@@ -35,5 +35,6 @@
         <module>ocean-tem</module>
         <module>ocean-agv</module>
         <module>ocean-exhibition-client</module>     <!--展厅客户端-->
+        <module>ocean-log</module>
     </modules>
 </project>

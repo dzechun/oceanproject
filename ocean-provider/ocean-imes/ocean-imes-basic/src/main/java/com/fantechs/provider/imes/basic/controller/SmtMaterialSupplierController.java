@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto;
+import com.fantechs.common.base.dto.basic.imports.SmtMaterialSupplierImport;
 import com.fantechs.common.base.entity.basic.SmtMaterialSupplier;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialSupplier;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -33,7 +34,7 @@ import java.util.Map;
  * Created by wcz on 2020/11/03.
  */
 @RestController
-@Api(tags = "物料关联客户料号")
+@Api(tags = "物料编码关联客户料号")
 @RequestMapping("/smtMaterialSupplier")
 @Validated
 @Slf4j
@@ -99,8 +100,8 @@ public class SmtMaterialSupplierController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtMaterialSupplierDto> smtMaterialSupplierDtos = EasyPoiUtils.importExcel(file, SmtMaterialSupplierDto.class);
-            Map<String, Object> resultMap = smtMaterialSupplierService.importExcel(smtMaterialSupplierDtos);
+            List<SmtMaterialSupplierImport> smtMaterialSupplierImports = EasyPoiUtils.importExcel(file,2,1, SmtMaterialSupplierImport.class);
+            Map<String, Object> resultMap = smtMaterialSupplierService.importExcel(smtMaterialSupplierImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
