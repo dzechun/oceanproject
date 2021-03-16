@@ -92,14 +92,14 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
                 wmsOutOtheroutDet.setOtheroutId(wmsOutOtherout.getOtheroutId());
                 wmsOutOtheroutDetService.save(wmsOutOtheroutDet);
 
-                for (String s : wmsOutOtheroutDet.getOutPalletList()) {
-                    /*SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
+                /*for (String s : wmsOutOtheroutDet.getOutPalletList()) {
+                    *//*SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
                     searchSmtStoragePallet.setPalletCode(s);
 
                     List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
                     if (smtStoragePallets.size() <= 0) {
                         throw new BizErrorException(ErrorCodeEnum.GL99990100);
-                    }*/
+                    }*//*
                     //删除栈板与储位关系
                     //storageInventoryFeignApi.deleteSmtStoragePallet(String.valueOf(smtStoragePallets.get(0).getStoragePalletId()));
 
@@ -122,7 +122,7 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
                     smtStorageInventoryDet.setStorageInventoryDetId(smtStorageInventoryDetDtos.get(0).getStorageInventoryDetId());
                     smtStorageInventoryDet.setMaterialQuantity(BigDecimal.valueOf(0));
                     storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
-                }
+                }*/
 
                 //修改库存表
                 SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
@@ -130,8 +130,6 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
                 searchSmtStorageInventory.setMaterialId(wmsOutOtheroutDet.getMaterialId());
                 List<SmtStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
                 SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
-                System.out.println(wmsOutOtheroutDet.getRealityOutquantity());
-                System.out.println(smtStorageInventoryDto.getQuantity());
                 smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutOtheroutDet.getRealityOutquantity()));
                 storageInventoryFeignApi.update(smtStorageInventoryDto);
 

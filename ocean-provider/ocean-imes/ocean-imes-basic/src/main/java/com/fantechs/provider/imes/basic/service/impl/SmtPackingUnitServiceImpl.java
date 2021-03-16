@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtPackingUnitDto;
+import com.fantechs.common.base.dto.basic.imports.SmtPackingUnitImport;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtPackingUnit;
 import com.fantechs.common.base.entity.basic.SmtSignature;
@@ -123,60 +124,66 @@ public class SmtPackingUnitServiceImpl extends BaseService<SmtPackingUnit> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtPackingUnitDto> smtPackingUnitDtos) {
+    public Map<String, Object> importExcel(List<SmtPackingUnitImport> smtPackingUnitImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtPackingUnit> list = new LinkedList<>();
         LinkedList<SmtHtPackingUnit> htList = new LinkedList<>();
-        for (int i = 0; i < smtPackingUnitDtos.size(); i++) {
-            SmtPackingUnitDto smtPackingUnitDto = smtPackingUnitDtos.get(i);
-            String packingUnitName = smtPackingUnitDto.getPackingUnitName();
+        LinkedList<SmtPackingUnitImport> packingUnitImports = new LinkedList<>();
+        for (int i = 0; i < smtPackingUnitImports.size(); i++) {
+            SmtPackingUnitImport smtPackingUnitImport = smtPackingUnitImports.get(i);
+            String packingUnitName = smtPackingUnitImport.getPackingUnitName();
             if (StringUtils.isEmpty(
                     packingUnitName
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
-            //判断物料和物料的特征码是否已经存在
-            Example example = new Example(SmtSignature.class);
+            //判断包装单位是否存在
+            Example example = new Example(SmtPackingUnit.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("packingUnitName",smtPackingUnitDto.getPackingUnitName());
-            if (StringUtils.isNotEmpty(smtPackingUnitMapper.selectOneByExample(example))){
-                fail.add(i+3);
+            criteria.andEqualTo("packingUnitName",packingUnitName);
+            SmtPackingUnit smtPackingUnit1 = smtPackingUnitMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(smtPackingUnit1)){
+                fail.add(i+4);
                 continue;
             }
 
-            SmtPackingUnit smtPackingUnit = new SmtPackingUnit();
-            BeanUtils.copyProperties(smtPackingUnitDto,smtPackingUnit);
-            smtPackingUnit.setCreateTime(new Date());
-            smtPackingUnit.setCreateUserId(currentUser.getUserId());
-            smtPackingUnit.setModifiedTime(new Date());
-            smtPackingUnit.setModifiedUserId(currentUser.getUserId());
-            smtPackingUnit.setStatus((byte) 1);
-            list.add(smtPackingUnit);
+            packingUnitImports.add(smtPackingUnitImport);
         }
 
-        if (StringUtils.isNotEmpty(list)){
-            success = smtPackingUnitMapper.insertList(list);
-        }
+        if (StringUtils.isNotEmpty(packingUnitImports)){
 
-        for (SmtPackingUnit smtPackingUnit : list) {
-            SmtHtPackingUnit smtHtPackingUnit = new SmtHtPackingUnit();
-            BeanUtils.copyProperties(smtPackingUnit,smtHtPackingUnit);
-            htList.add(smtHtPackingUnit);
-        }
+            for (SmtPackingUnitImport packingUnitImport : packingUnitImports) {
+                SmtPackingUnit smtPackingUnit = new SmtPackingUnit();
+                BeanUtils.copyProperties(packingUnitImport,smtPackingUnit);
+                smtPackingUnit.setCreateTime(new Date());
+                smtPackingUnit.setCreateUserId(currentUser.getUserId());
+                smtPackingUnit.setModifiedTime(new Date());
+                smtPackingUnit.setModifiedUserId(currentUser.getUserId());
+                if (StringUtils.isEmpty(smtPackingUnit.getStatus())){
+                    smtPackingUnit.setStatus((byte) 1);
+                }
+                list.add(smtPackingUnit);
+            }
+            success += smtPackingUnitMapper.insertList(list);
 
-        if (StringUtils.isNotEmpty(htList)){
+            for (SmtPackingUnit smtPackingUnit : list) {
+                SmtHtPackingUnit smtHtPackingUnit = new SmtHtPackingUnit();
+                BeanUtils.copyProperties(smtPackingUnit,smtHtPackingUnit);
+                htList.add(smtHtPackingUnit);
+            }
             smtHtPackingUnitMapper.insertList(htList);
         }
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

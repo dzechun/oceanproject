@@ -63,10 +63,11 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
 
           Example example = new Example(SmtRoute.class);
           Example.Criteria criteria = example.createCriteria();
-          criteria.andEqualTo("routeName",smtRoute.getRouteName());
+          criteria.andEqualTo("routeName",smtRoute.getRouteName())
+                  .orEqualTo("routeCode",smtRoute.getRouteCode());
           List<SmtRoute> smtRoutes = smtRouteMapper.selectByExample(example);
           if(StringUtils.isNotEmpty(smtRoutes)){
-              throw new BizErrorException("工艺路线名称已存在");
+              throw new BizErrorException("工艺路线名称或编码已存在");
           }
 
           smtRoute.setCreateUserId(currentUser.getUserId());

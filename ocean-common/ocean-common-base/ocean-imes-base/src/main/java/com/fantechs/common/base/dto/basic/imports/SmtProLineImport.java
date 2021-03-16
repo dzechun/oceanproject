@@ -31,6 +31,12 @@ public class SmtProLineImport implements Serializable {
     private String proDesc;
 
     /**
+     * 厂别ID
+     */
+    @ApiModelProperty(name="factoryId" ,value="厂别ID")
+    private Long factoryId;
+
+    /**
      * 车间ID
      */
     @ApiModelProperty(name="workShopId" ,value="车间ID")
@@ -40,7 +46,7 @@ public class SmtProLineImport implements Serializable {
      * 车间编码
      */
     @ApiModelProperty(name="workShopCode" ,value="车间编码")
-    @Excel(name = "车间编码", height = 20, width = 30)
+    @Excel(name = "车间编码(必填)", height = 20, width = 30)
     private String workShopCode;
 
     /**

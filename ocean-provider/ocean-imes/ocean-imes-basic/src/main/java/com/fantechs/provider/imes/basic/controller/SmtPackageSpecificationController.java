@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtPackageSpecificationDto;
+import com.fantechs.common.base.dto.basic.imports.SmtPackageSpecificationImport;
 import com.fantechs.common.base.entity.basic.SmtPackageSpecification;
 import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.history.SmtHtPackageSpecification;
@@ -112,8 +113,8 @@ public class SmtPackageSpecificationController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtPackageSpecificationDto> smtPackageSpecificationDtos = EasyPoiUtils.importExcel(file, SmtPackageSpecificationDto.class);
-            Map<String, Object> resultMap = smtPackageSpecificationService.importExcel(smtPackageSpecificationDtos);
+            List<SmtPackageSpecificationImport> smtPackageSpecificationImports = EasyPoiUtils.importExcel(file, SmtPackageSpecificationImport.class);
+            Map<String, Object> resultMap = smtPackageSpecificationService.importExcel(smtPackageSpecificationImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

@@ -24,7 +24,7 @@
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto"
                extends="BaseResultMap">
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-        <result column="contract_no" jdbcType="VARCHAR" property="contractNo"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
 
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>

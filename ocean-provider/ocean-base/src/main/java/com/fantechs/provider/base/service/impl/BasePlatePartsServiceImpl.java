@@ -170,11 +170,11 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             BasePlatePartsImport basePlatePartsImport = iterator.next();
             String materialCode = basePlatePartsImport.getMaterialCode();//产品编码
             String partsInformationCode = basePlatePartsImport.getPartsInformationCode();//部件编码
-            String routeCode = basePlatePartsImport.getRouteCode();//工艺路线编码
+            String routeName = basePlatePartsImport.getRouteName();//工艺路线名称
 
             //产品编码必传
             if (StringUtils.isEmpty(
-                    materialCode, partsInformationCode, routeCode
+                    materialCode, partsInformationCode, routeName
             )) {
                 fail.add(i + 4);
                 iterator.remove();
@@ -194,10 +194,11 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             BasePartsInformation basePartsInformation = basePartsInformationMapper.selectOneByExample(example1);
 
             SearchSmtRoute searchSmtRoute = new SearchSmtRoute();
-            searchSmtRoute.setRouteCode(routeCode);
-            searchSmtRoute.setCodeQueryMark(1);
+            searchSmtRoute.setRouteName(routeName);
+            searchSmtRoute.setNameQueryMark(1);
             List<SmtRoute> smtRoutes = basicFeignApi.findRouteList(searchSmtRoute).getData();
-            if (StringUtils.isEmpty(basePartsInformation, smtRoutes,smtMaterials)) {
+            //编码对应的信息不存在或工艺路线的类型不是部件工艺路线
+            if (StringUtils.isEmpty(basePartsInformation, smtRoutes,smtMaterials) || smtRoutes.get(0).getRouteType() != 3) {
                 fail.add(i + 4);
                 iterator.remove();
                 i++;

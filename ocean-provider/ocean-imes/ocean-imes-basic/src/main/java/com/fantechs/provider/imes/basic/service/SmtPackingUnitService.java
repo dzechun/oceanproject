@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service;
 
 import com.fantechs.common.base.dto.basic.SmtPackingUnitDto;
 import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtPackingUnitImport;
 import com.fantechs.common.base.entity.basic.SmtPackingUnit;
 import com.fantechs.common.base.support.IService;
 
@@ -16,5 +17,5 @@ import java.util.Map;
 public interface SmtPackingUnitService extends IService<SmtPackingUnit> {
 
     List<SmtPackingUnitDto> findList(Map<String,Object> map);
-    Map<String, Object> importExcel(List<SmtPackingUnitDto> smtPackingUnitDtos);
+    Map<String, Object> importExcel(List<SmtPackingUnitImport> smtPackingUnitImports);
 }

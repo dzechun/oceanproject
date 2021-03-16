@@ -75,6 +75,10 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
         }
         wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
+        if (wmsInnerTransferSlip.getOrderType() == 0){
+            //库内调拨的操作人和处理人相同
+            wmsInnerTransferSlip.setProcessorUserId(user.getUserId());
+        }
 
         //新增调拨单
         int i = wmsInnerTransferSlipMapper.insertUseGeneratedKeys(wmsInnerTransferSlip);
@@ -87,6 +91,9 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
             ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
+                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getPlanCartonQty())){
+                    throw new BizErrorException("计划调拨箱数必须大于0");
+                }
                 wmsInnerTransferSlipDet.setCreateTime(new Date());
                 wmsInnerTransferSlipDet.setCreateUserId(user.getUserId());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
@@ -114,6 +121,10 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
 
         wmsInnerTransferSlip.setTransferSlipTime(new Date());
         wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
+        if (wmsInnerTransferSlip.getOrderType() == 0){
+            //库内调拨的操作人和处理人相同
+            wmsInnerTransferSlip.setProcessorUserId(user.getUserId());
+        }
 
         //更新调拨单
         int i = wmsInnerTransferSlipMapper.updateByPrimaryKeySelective(wmsInnerTransferSlip);
@@ -132,6 +143,9 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
             ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
+                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getPlanCartonQty())){
+                    throw new BizErrorException("计划调拨箱数必须大于0");
+                }
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
