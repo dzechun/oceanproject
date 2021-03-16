@@ -57,6 +57,9 @@
         LEFT JOIN smt_order so ON so.order_id = swo.order_id
 
         <where>
+            <if test="materialBarcodeCode!= null and materialBarcodeCode !='' ">
+                and ssid.material_barcode_code like CONCAT('%', #{materialBarcodeCode}, '%')
+            </if>
             <if test="materialDesc!= null and materialDesc !='' ">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
