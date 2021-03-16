@@ -5,13 +5,13 @@
     <select id="findHistogram" resultType="java.util.Map" parameterType="com.fantechs.entity.search.SearchEmpWorkload">
         select
             su.user_name AS userName,(
-                (select count(*) from fantech_imes.smt_order where schedule_status = 3 and create_user_id = su.user_id and delivery_date like (select curdate() +'%'))+
-                (select count(*) from fantech_imes.mes_schedule where status = 3 and create_user_id = su.user_id and modified_time like (select curdate() +'%'))+
-                (select count(*) from fantech_imes.smt_work_order where work_order_status = 4 and create_user_id = su.user_id and actual_end_time like (select curdate() +'%'))+
-                (select count(*) from fantech_imes.wms_in_finished_product where in_status = 2 and create_user_id = su.user_id and modified_time like (select curdate() +'%'))+
-                (select count(*) from fantech_imes.wms_out_shipping_note where out_status = 2 and create_user_id = su.user_id and modified_time like (select curdate() +'%'))+
-                (select count(*) from fantech_imes.wms_out_delivery_order where out_status = 2 and create_user_id = su.user_id and modified_time like (select curdate() +'%'))+
-                (select count(*) from fantech_imes.wms_out_otherout where otherout_status = 2 and create_user_id = su.user_id and modified_time like (select curdate() +'%'))
+                (select count(*) from fantech_imes.smt_order where schedule_status = 3 and create_user_id = su.user_id and delivery_date like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes.mes_schedule where status = 3 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes.smt_work_order where work_order_status = 4 and create_user_id = su.user_id and actual_end_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes.wms_in_finished_product where in_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes.wms_out_shipping_note where out_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes.wms_out_delivery_order where out_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes.wms_out_otherout where otherout_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))
             ) workload
         from ocean.sys_user su
     </select>
