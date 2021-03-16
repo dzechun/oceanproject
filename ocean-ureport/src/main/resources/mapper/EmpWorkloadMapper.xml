@@ -43,7 +43,7 @@
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',so.order_code AS 'documentCode','销售订单' AS
-        'documentType',so.modified_time AS 'businessDate',so.remark
+        'documentType',so.delivery_date AS 'businessDate',so.remark
         from fantech_imes.smt_order so
         left join ocean.sys_user su ON su.user_id = so.create_user_id
         where so.schedule_status = 3
