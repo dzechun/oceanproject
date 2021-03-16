@@ -158,7 +158,7 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
             String proName = smtProLineImport.getProName();
             String workShopCode = smtProLineImport.getWorkShopCode();
             if (StringUtils.isEmpty(
-                    proCode,proName
+                    proCode,proName,workShopCode
             )){
                 fail.add(i+4);
                 continue;
@@ -174,17 +174,16 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
             }
 
             //判断车间是否存在
-            if (StringUtils.isNotEmpty(workShopCode)){
-                Example example2 = new Example(SmtWorkShop.class);
-                Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("workShopCode",workShopCode);
-                SmtWorkShop smtWorkShop = smtWorkShopMapper.selectOneByExample(example2);
-                if (StringUtils.isEmpty(smtWorkShop)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtProLineImport.setWorkShopId(smtWorkShop.getFactoryId());
+            Example example2 = new Example(SmtWorkShop.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("workShopCode",workShopCode);
+            SmtWorkShop smtWorkShop = smtWorkShopMapper.selectOneByExample(example2);
+            if (StringUtils.isEmpty(smtWorkShop)){
+                fail.add(i+4);
+                continue;
             }
+            smtProLineImport.setWorkShopId(smtWorkShop.getWorkShopId());
+            smtProLineImport.setFactoryId(smtWorkShop.getFactoryId());
 
             //判断集合中是否存在该条数据
             boolean tag = false;
@@ -223,7 +222,6 @@ public class SmtProLineServiceImpl  extends BaseService<SmtProLine> implements S
                 BeanUtils.copyProperties(smtProLine,smtHtProLine);
                 htList.add(smtHtProLine);
             }
-
              smtHtProLineMapper.insertList(htList);
 
         }

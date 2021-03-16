@@ -54,4 +54,10 @@ public class SearchSmtBarcodeRule extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="searchType" ,value="绑定状态 0-未绑定 1-绑定")
     private Integer searchType;
+
+    /**
+     * 根据编码查询方式标记（传1则为等值查询）
+     */
+    @ApiModelProperty(name = "queryMark",value = "查询方式标记")
+    private Byte codeQueryMark;
 }

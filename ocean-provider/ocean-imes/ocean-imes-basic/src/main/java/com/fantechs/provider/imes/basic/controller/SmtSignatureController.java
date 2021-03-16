@@ -3,6 +3,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtMaterialSupplierDto;
+import com.fantechs.common.base.dto.basic.imports.SmtSignatureImport;
 import com.fantechs.common.base.entity.basic.SmtSignature;
 import com.fantechs.common.base.entity.basic.history.SmtHtSignature;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSignature;
@@ -119,8 +120,8 @@ public class SmtSignatureController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtSignature> smtSignatures = EasyPoiUtils.importExcel(file, SmtSignature.class);
-            Map<String, Object> resultMap = smtSignatureService.importExcel(smtSignatures);
+            List<SmtSignatureImport> smtSignatureImports = EasyPoiUtils.importExcel(file, 2, 1, SmtSignatureImport.class);
+            Map<String, Object> resultMap = smtSignatureService.importExcel(smtSignatureImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

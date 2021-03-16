@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.service;
 
 import com.fantechs.common.base.dto.basic.SmtPackageSpecificationDto;
+import com.fantechs.common.base.dto.basic.imports.SmtPackageSpecificationImport;
 import com.fantechs.common.base.entity.basic.SmtPackageSpecification;
 import com.fantechs.common.base.support.IService;
 
@@ -16,5 +17,5 @@ public interface SmtPackageSpecificationService extends IService<SmtPackageSpeci
 
     List<SmtPackageSpecificationDto> findList(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<SmtPackageSpecificationDto> smtPackageSpecificationDtos);
+    Map<String, Object> importExcel(List<SmtPackageSpecificationImport> smtPackageSpecificationImports);
 }

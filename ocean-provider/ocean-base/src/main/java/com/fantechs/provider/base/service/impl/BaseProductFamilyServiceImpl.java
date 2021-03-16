@@ -37,6 +37,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     private BaseHtProductFamilyMapper baseHtProductFamilyMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductFamily baseProductFamily) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -75,6 +76,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductFamily baseProductFamily) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -112,6 +114,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
