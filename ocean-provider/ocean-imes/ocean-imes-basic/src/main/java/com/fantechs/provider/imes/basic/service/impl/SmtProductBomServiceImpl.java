@@ -6,11 +6,13 @@ import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtProductBom;
 import com.fantechs.common.base.dto.basic.imports.SmtProductBomImport;
+import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -186,16 +188,30 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         return smtProductBomMapper.deleteByIds(ids);
     }
 
+    public void find(Map<String,Object> map,SmtProductBomDto productBomDto){
+        //查询指定层级的产品BOM
+        List<SmtProductBomDto> smtProductBomDtos = smtProductBomMapper.findList(map);
+        productBomDto.setSmtProductBomDtos(smtProductBomDtos);
+        for (SmtProductBomDto smtProductBomDto : smtProductBomDtos) {
+            SearchSmtProductBom searchSmtProductBom = new SearchSmtProductBom();
+            searchSmtProductBom.setProductBomId(smtProductBomDto.getProductBomId());
+            find(ControllerUtil.dynamicConditionByEntity(searchSmtProductBom),smtProductBomDto);
+        }
+
+    }
+
     @Override
     public List<SmtProductBomDto> findList(Map<String,Object> map) {
 
         //查询指定层级的产品BOM
         List<SmtProductBomDto> smtProductBomDtos = smtProductBomMapper.findList(map);
 
-        for (SmtProductBomDto smtProductBomDto : smtProductBomDtos) {
-            map.put("productBomId",smtProductBomDto.getProductBomId());
-            List<SmtProductBomDto> list = findList(map);
-            smtProductBomDto.setSmtProductBomDtos(list);
+        if (StringUtils.isNotEmpty(smtProductBomDtos)){
+            for (SmtProductBomDto smtProductBomDto : smtProductBomDtos) {
+                SearchSmtProductBom searchSmtProductBom = new SearchSmtProductBom();
+                searchSmtProductBom.setProductBomId(smtProductBomDto.getProductBomId());
+                find(ControllerUtil.dynamicConditionByEntity(searchSmtProductBom),smtProductBomDto);
+            }
         }
         /*if (StringUtils.isNotEmpty(smtProductBoms)){
             Example example = new Example(SmtProductBomDet.class);
