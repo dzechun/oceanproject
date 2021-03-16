@@ -3,8 +3,6 @@ package com.fantechs.provider.imes.storage.service.impl;
 import com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto;
 import com.fantechs.common.base.entity.storage.StorageMonthEndInventory;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
-import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper;
 import com.fantechs.provider.imes.storage.mapper.StorageMonthEndInventoryMapper;
 import com.fantechs.provider.imes.storage.service.StorageMonthEndInventoryService;
 import org.springframework.stereotype.Service;
@@ -20,10 +18,6 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
 
     @Resource
     private StorageMonthEndInventoryMapper storageMonthEndInventoryMapper;
-    @Resource
-    private SmtStorageInventoryMapper smtStorageInventoryMapper;
-    @Resource
-    private BasicFeignApi basicFeignApi;
 
     @Override
     public List<StorageMonthEndInventoryDto> findList(Map<String, Object> map) {
