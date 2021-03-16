@@ -55,4 +55,10 @@ public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializa
     @ApiModelProperty(name="materialBarcodeCode",value = "物料条码编码")
     private String materialBarcodeCode;
 
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name = "contractNo", value = "合同号")
+    private String contractNo;
+
 }
