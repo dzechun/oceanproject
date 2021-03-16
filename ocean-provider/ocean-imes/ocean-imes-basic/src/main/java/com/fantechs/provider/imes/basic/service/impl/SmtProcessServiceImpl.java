@@ -57,10 +57,11 @@ public class SmtProcessServiceImpl extends BaseService<SmtProcess> implements Sm
 
         Example example = new Example(SmtProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("processCode", smtProcess.getProcessCode());
+        criteria.andEqualTo("processCode", smtProcess.getProcessCode())
+                .orEqualTo("processName",smtProcess.getProcessName());
         List<SmtProcess> smtProcesses = smtProcessMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtProcesses)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            throw new BizErrorException("工序名称或编码重复");
         }
 
         smtProcess.setCreateUserId(currentUser.getUserId());
@@ -134,12 +135,13 @@ public class SmtProcessServiceImpl extends BaseService<SmtProcess> implements Sm
 
         Example example = new Example(SmtProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("processCode", smtProcess.getProcessCode());
+        criteria.andEqualTo("processCode", smtProcess.getProcessCode())
+                .orEqualTo("processName",smtProcess.getProcessName());
 
         SmtProcess process = smtProcessMapper.selectOneByExample(example);
 
         if (StringUtils.isNotEmpty(process) && !process.getProcessId().equals(smtProcess.getProcessId())) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            throw new BizErrorException("工序名称或编码重复");
         }
 
         smtProcess.setModifiedUserId(currentUser.getUserId());
@@ -198,10 +200,11 @@ public class SmtProcessServiceImpl extends BaseService<SmtProcess> implements Sm
             //判断编码是否重复
             Example example = new Example(SmtProcess.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("processCode", processCode);
-            if (StringUtils.isNotEmpty(smtProcessMapper.selectOneByExample(example))) {
-                fail.add(i + 3);
-                continue;
+            criteria.andEqualTo("processCode", processCode)
+                    .orEqualTo("processName",processName);
+            List<SmtProcess> processes = smtProcessMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(processes)) {
+                throw new BizErrorException("工序名称或编码重复");
             }
 
             //判断工序类别是否存在

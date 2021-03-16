@@ -48,18 +48,25 @@ public class SmtRouteImport implements Serializable {
     @ApiModelProperty(name="processId" ,value="工序ID")
     private Long processId;
 
+//    /**
+//     * 工序编码
+//     */
+//    @ApiModelProperty(name="processCode" ,value="工序编码")
+//    @Excel(name = "工序编码(必填)", height = 20, width = 30)
+//    private String processCode;
+
+    /**
+     * 工序名称
+     */
+    @ApiModelProperty(name="processName" ,value="工序名称")
+    @Excel(name = "工序名称(必填)", height = 20, width = 30)
+    private String processName;
+
     /**
      * 工段ID
      */
     @ApiModelProperty(name="sectionId" ,value="工段ID")
     private Long sectionId;
-
-    /**
-     * 工序编码
-     */
-    @ApiModelProperty(name="processCode" ,value="工序编码")
-    @Excel(name = "工序编码(必填)", height = 20, width = 30)
-    private String processCode;
 
     /**
      * 工序顺序

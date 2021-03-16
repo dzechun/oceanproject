@@ -237,12 +237,12 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             SmtRouteImport smtRouteImport = iterator.next();
             String routeCode = smtRouteImport.getRouteCode();
             String routeName = smtRouteImport.getRouteName();
-            String processCode = smtRouteImport.getProcessCode();
+            String processName = smtRouteImport.getProcessName();
             Integer orderNum = smtRouteImport.getOrderNum();
 
             //判断必传字段
             if (StringUtils.isEmpty(
-                    routeCode,routeName,processCode,orderNum
+                    routeCode,routeName,processName,orderNum
             )) {
                 fail.add(i + 4);
                 iterator.remove();
@@ -265,7 +265,7 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             //判断工序信息是否存在
             Example example1 = new Example(SmtProcess.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("processCode",processCode);
+            criteria1.andEqualTo("processName",processName);
             SmtProcess smtProcess = smtProcessMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(smtProcess)){
                 fail.add(i + 4);

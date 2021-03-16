@@ -25,7 +25,7 @@ public class QmsPdaInspectionDto extends QmsPdaInspection implements Serializabl
      * 栈板码
      */
     @Transient
-    @ApiModelProperty(name = "workOrderCode",value = "栈板码")
+    @ApiModelProperty(name = "palletCode",value = "栈板码")
     @Excel(name = "栈板码", height = 20, width = 30)
     private String palletCode;
 
