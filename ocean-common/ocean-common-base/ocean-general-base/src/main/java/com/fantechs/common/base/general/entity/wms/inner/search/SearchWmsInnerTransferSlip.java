@@ -34,4 +34,10 @@ public class SearchWmsInnerTransferSlip extends BaseQuery {
      */
     @ApiModelProperty(name="transferSlipStatus",value = "单据状态（0-待调拨 1-调拨中 2-调拨完成）")
     private Byte transferSlipStatus;
+
+    /**
+     * 状态查询标记(传0则查询出待调拨和调拨中的单据)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "状态查询标记(传0则查询出待调拨和调拨中的单据)")
+    private Integer QueryMark;
 }

@@ -192,12 +192,13 @@ public class SmtProductBomServiceImpl extends BaseService<SmtProductBom> impleme
         //查询指定层级的产品BOM
         List<SmtProductBomDto> smtProductBomDtos = smtProductBomMapper.findList(map);
         productBomDto.setSmtProductBomDtos(smtProductBomDtos);
-        for (SmtProductBomDto smtProductBomDto : smtProductBomDtos) {
-            SearchSmtProductBom searchSmtProductBom = new SearchSmtProductBom();
-            searchSmtProductBom.setProductBomId(smtProductBomDto.getProductBomId());
-            find(ControllerUtil.dynamicConditionByEntity(searchSmtProductBom),smtProductBomDto);
+        if (StringUtils.isNotEmpty(smtProductBomDtos)){
+            for (SmtProductBomDto smtProductBomDto : smtProductBomDtos) {
+                SearchSmtProductBom searchSmtProductBom = new SearchSmtProductBom();
+                searchSmtProductBom.setProductBomId(smtProductBomDto.getProductBomId());
+                find(ControllerUtil.dynamicConditionByEntity(searchSmtProductBom),smtProductBomDto);
+            }
         }
-
     }
 
     @Override

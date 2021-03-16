@@ -98,6 +98,9 @@
       <if test="transferSlipId != null">
         and witsd.transfer_slip_id = #{transferSlipId}
       </if>
+      <if test="QueryMark == 0">
+        and witsd.transfer_slip_status = 0 or witsd.transfer_slip_status = 1
+      </if>
     </where>
     order by witsd.create_time desc
   </select>
