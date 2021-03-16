@@ -119,7 +119,7 @@
 
     <insert id="batchAddOrderMaterial" parameterType="java.util.List">
         insert into
-        fantech_imes.mes_order_material(order_id,material_id,total,box_code,packing_unit_name,size,rough_weight,net_weight,spec_file)
+        fantech_imes.mes_order_material(order_id,material_id,total,box_code,packing_unit_id,size,rough_weight,net_weight,spec_file)
         values
         <foreach collection="list" item="item" separator="," index="index">
             (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packingUnitId},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile})

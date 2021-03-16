@@ -51,9 +51,17 @@
         LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.storage_id = ssi.storage_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssm.material_id
         LEFT JOIN fantech_imes.base_organization bo ON ssid.organization_id = bo.organization_id
+
+        LEFT JOIN mes_package_manager mpm ON mpm.bar_code = ssid.material_barcode_code
+        LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+        LEFT JOIN smt_order so ON so.order_id = swo.order_id
+
         <where>
             <if test="materialDesc!= null and materialDesc !='' ">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="contractNo!= null and contractNo !='' ">
+                and so.contract_code like CONCAT('%', #{contractNo}, '%')
             </if>
             <if test="storageCode!= null and storageCode !='' ">
                 and ss.storage_code like CONCAT('%', #{storageCode}, '%')
