@@ -9,6 +9,7 @@
     <result column="transfer_slip_code" jdbcType="VARCHAR" property="transferSlipCode" />
     <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
     <result column="transfer_slip_time" jdbcType="TIMESTAMP" property="transferSlipTime" />
+    <result column="order_type" jdbcType="TINYINT" property="orderType" />
     <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -33,6 +34,7 @@
 	wits.transfer_slip_code,
 	wits.processor_user_id,
 	wits.transfer_slip_time,
+    wits.order_type,
 	wits.transfer_slip_status,
 	wits.`status`,
 	wits.remark,

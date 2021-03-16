@@ -14,6 +14,7 @@
     <result column="plan_total_qty" jdbcType="DECIMAL" property="planTotalQty" />
     <result column="reality_carton_qty" jdbcType="DECIMAL" property="realityCartonQty" />
     <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -53,6 +54,7 @@
 	witsd.plan_total_qty,
 	witsd.reality_carton_qty,
 	witsd.reality_total_qty,
+    witsd.contract_code,
 	witsd.transfer_slip_status,
 	witsd.`status`,
 	witsd.remark,
