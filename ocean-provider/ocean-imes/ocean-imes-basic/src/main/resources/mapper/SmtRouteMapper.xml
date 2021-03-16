@@ -70,8 +70,11 @@
             <if test="routeCode!=null and routeCode!='' and codeQueryMark == 1">
                 and sr.route_code = #{routeCode}
             </if>
-            <if test="routeName!=null and routeName!=''">
+            <if test="routeName!=null and routeName!='' and nameQueryMark != 1">
                 and sr.route_name like CONCAT('%', #{routeName}, '%')
+            </if>
+            <if test="routeName!=null and routeName!='' and nameQueryMark == 1">
+                and sr.route_name = #{routeName}
             </if>
             <if test="routeDesc!=null and routeDesc!=''">
                 and sr.route_desc like CONCAT('%', #{routeDesc}, '%')

@@ -77,12 +77,19 @@ public class BasePlatePartsImport implements Serializable {
     @ApiModelProperty(name="routeId",value = "工艺路线ID")
     private Long routeId;
 
+//    /**
+//     * 工艺路线编码
+//     */
+//    @ApiModelProperty(name="routeCode",value = "工艺路线编码")
+//    @Excel(name = "工艺路线编码(必填)", height = 20, width = 30)
+//    private String routeCode;
+
     /**
-     * 工艺路线编码
+     * 工艺路线名称
      */
-    @ApiModelProperty(name="routeCode",value = "工艺路线编码")
-    @Excel(name = "工艺路线编码(必填)", height = 20, width = 30)
-    private String routeCode;
+    @ApiModelProperty(name="routeName",value = "工艺路线名称")
+    @Excel(name = "工艺路线名称(必填)", height = 20, width = 30)
+    private String routeName;
 
     /**
      * 是否是定制产品（0、否 1、是）

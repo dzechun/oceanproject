@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -55,6 +56,15 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
     @Excel(name = "单据日期", height = 20, width = 30,orderNum="3",exportFormat = "yyyy-MM-dd")
     @Column(name = "transfer_slip_time")
     private Date transferSlipTime;
+
+    /**
+     * 单据类型（0、库内调拨 1、库外调拨）
+     */
+    @ApiModelProperty(name="orderType",value = "单据类型（0、库内调拨 1、库外调拨）")
+    @Excel(name = "单据类型（0、库内调拨 1、库外调拨）", height = 20, width = 30,replace = {"库内调拨_0","库外调拨_1"},orderNum="4")
+    @Column(name = "order_type")
+    @NotNull(message = "单据类型不能为空")
+    private Byte orderType;
 
     /**
      * 单据状态（0-待调拨 1-调拨中 2-调拨完成）

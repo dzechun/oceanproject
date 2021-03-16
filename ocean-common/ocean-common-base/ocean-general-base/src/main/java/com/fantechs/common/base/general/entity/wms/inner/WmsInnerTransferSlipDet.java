@@ -93,6 +93,14 @@ public class WmsInnerTransferSlipDet extends ValidGroup implements Serializable 
     private BigDecimal realityTotalQty;
 
     /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractCode" ,value="合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="")
+    @Column(name = "contract_code")
+    private String contractCode;
+
+    /**
      * 单据状态（0-待调拨 1-调拨中 2-调拨完成）
      */
     @ApiModelProperty(name="transferSlipStatus",value = "单据状态（0-待调拨 1-调拨中 2-调拨完成）")
