@@ -11,6 +11,7 @@
         <result column="box_number" jdbcType="DECIMAL" property="boxNumber"/>
         <result column="total" jdbcType="DECIMAL" property="total"/>
         <result column="material_total" jdbcType="DECIMAL" property="materialTotal"/>
+        <result column="material_barcode_code" jdbcType="VARCHAR" property="materialBarcodeCode"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
@@ -98,6 +99,9 @@
             <if test="month != null and month != ''">
                 and smei.create_time like CONCAT(#{month}, '%')
             </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(smei.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
         </where>
     </select>
 
@@ -109,6 +113,7 @@
         so.contract_code,
         sw.warehouse_name,
         swa.warehouse_area_name,
+        ssid.material_barcode_code,
         ss.storage_name,
         sm.material_code,
         sm.material_desc,
@@ -156,6 +161,9 @@
             </if>
             <if test="month != null and month != ''">
                 and smei.create_time like CONCAT(#{month}, '%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(ssid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
         group by mpm.work_order_id
