@@ -22,8 +22,8 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
     /**
      * 合同号
      */
-    @ApiModelProperty(name = "contractNo", value = "合同号")
-    private String contractNo;
+    @ApiModelProperty(name = "contractCode", value = "合同号")
+    private String contractCode;
 
     /**
      * 仓库名称
