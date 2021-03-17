@@ -37,6 +37,30 @@ public class WmsInnerTransferSlipDet extends ValidGroup implements Serializable 
     private Long transferSlipId;
 
     /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractCode" ,value="合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="")
+    @Column(name = "contract_code")
+    private String contractCode;
+
+    /**
+     * 栈板编码
+     */
+    @ApiModelProperty(name="pallet_code",value = "栈板编码")
+    @Excel(name = "栈板编码", height = 20, width = 30,orderNum="")
+    @Column(name = "pallet_code")
+    private String palletCode;
+
+    /**
+     * 箱数
+     */
+    @ApiModelProperty(name = "cartons",value = "箱数")
+    @Excel(name = "箱数", height = 20, width = 30)
+    @Column(name = "carton_quantity")
+    private BigDecimal cartonQuantity;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
@@ -91,14 +115,6 @@ public class WmsInnerTransferSlipDet extends ValidGroup implements Serializable 
     @Excel(name = "实际调拨总数", height = 20, width = 30,orderNum="") 
     @Column(name = "reality_total_qty")
     private BigDecimal realityTotalQty;
-
-    /**
-     * 合同号
-     */
-    @ApiModelProperty(name="contractCode" ,value="合同号")
-    @Excel(name = "合同号", height = 20, width = 30,orderNum="")
-    @Column(name = "contract_code")
-    private String contractCode;
 
     /**
      * 单据状态（0-待调拨 1-调拨中 2-调拨完成）

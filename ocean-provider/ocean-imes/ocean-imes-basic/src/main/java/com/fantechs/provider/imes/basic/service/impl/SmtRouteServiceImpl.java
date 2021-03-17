@@ -277,10 +277,8 @@ public class SmtRouteServiceImpl extends BaseService<SmtRoute> implements SmtRou
             }
             smtRouteImport.setProcessId(smtProcess.getProcessId());
             smtRouteImport.setSectionId(smtProcess.getSectionId());
-
             i++;
         }
-
 
         //对合格数据进行分组
         Map<String, List<SmtRouteImport>> map = smtRouteImports.stream().collect(Collectors.groupingBy(SmtRouteImport::getRouteCode, HashMap::new, Collectors.toList()));

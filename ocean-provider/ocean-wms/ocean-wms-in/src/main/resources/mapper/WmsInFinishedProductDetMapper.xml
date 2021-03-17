@@ -100,7 +100,12 @@
       <if test="finishedProductId != null">
         and fpd.finished_product_id = #{finishedProductId}
       </if>
-
+      <if test="materialId != null">
+        and fpd.material_id = #{materialId}
+      </if>
+      <if test="storageId != null">
+        and fpd.storage_id = #{storageId}
+      </if>
     </where>
 
   </select>
