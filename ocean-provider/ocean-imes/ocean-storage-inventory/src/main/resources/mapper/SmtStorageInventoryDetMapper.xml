@@ -63,8 +63,8 @@
             <if test="materialDesc!= null and materialDesc !='' ">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-            <if test="contractNo!= null and contractNo !='' ">
-                and so.contract_code like CONCAT('%', #{contractNo}, '%')
+            <if test="contractCode!= null and contractCode !='' ">
+                and so.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
             <if test="storageCode!= null and storageCode !='' ">
                 and ss.storage_code like CONCAT('%', #{storageCode}, '%')

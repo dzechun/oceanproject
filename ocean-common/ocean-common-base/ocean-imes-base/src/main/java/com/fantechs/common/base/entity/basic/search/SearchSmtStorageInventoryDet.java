@@ -59,6 +59,6 @@ public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializa
      * 合同号
      */
     @ApiModelProperty(name = "contractNo", value = "合同号")
-    private String contractNo;
+    private String contractCode;
 
 }

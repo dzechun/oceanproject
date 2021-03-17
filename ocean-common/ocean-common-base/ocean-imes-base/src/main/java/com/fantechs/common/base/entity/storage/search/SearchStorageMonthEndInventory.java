@@ -4,8 +4,8 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class SearchStorageMonthEndInventory extends BaseQuery implements Serializable {
@@ -51,5 +51,17 @@ public class SearchStorageMonthEndInventory extends BaseQuery implements Seriali
      */
     @ApiModelProperty(name="month",value = "月份")
     private String month;
+
+    /**
+     * 客户名称
+     */
+    @ApiModelProperty(name = "supplierName", value = "客户名称")
+    private String supplierName;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name = "contractCode", value = "合同号")
+    private String contractCode;
 
 }
