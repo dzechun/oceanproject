@@ -74,6 +74,22 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     @ApiModelProperty(value = "储位名称",example = "储位名称")
     @Excel(name = "储位名称")
     private String storageName;
+
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库区域名称",example = "仓库区域名称")
+    @Excel(name = "仓库区域名称")
+    private String warehouseAreaName;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库名称",example = "仓库名称")
+    @Excel(name = "仓库名称")
+    private String warehouseName;
     /**
      * 产线名称
      */
