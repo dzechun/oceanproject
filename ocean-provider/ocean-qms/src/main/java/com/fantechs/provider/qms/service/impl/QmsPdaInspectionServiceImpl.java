@@ -138,6 +138,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                qmsPdaInspection.setCreateTime(new Date());
                qmsPdaInspection.setDocumentsTime(new Date());
                qmsPdaInspection.setCreateUserId(user.getUserId());
+               qmsPdaInspection.setOrganizationId(user.getOrganizationId());
                qmsPdaInspection.setModifiedTime(new Date());
                qmsPdaInspection.setModifiedUserId(user.getUserId());
                qmsPdaInspection.setStatus(StringUtils.isEmpty(qmsPdaInspection.getStatus())?1:qmsPdaInspection.getStatus());
