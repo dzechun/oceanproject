@@ -78,11 +78,17 @@
         LEFT JOIN fantech_imes.base_tab bt on bt.material_id = ssi.material_id
         LEFT JOIN fantech_imes.smt_product_model spm on spm.product_model_id = bt.product_model_id
         <where>
+            <if test="supplierName != null and supplierName != ''">
+                and sss.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="contractCode != null and contractCode != ''">
+                and so.contract_code like CONCAT('%', #{contractCode}, '%')
+            </if>
             <if test="warehouseName != null and warehouseName != ''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
             <if test="warehouseAreaName != null and warehouseAreaName != ''">
-                and saw.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+                and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
             </if>
             <if test="storageName != null and storageName != ''">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
@@ -94,7 +100,7 @@
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
             <if test="productModelName != null and productModelName != ''">
-                and spm.productModelName like CONCAT('%', #{productModelName}, '%')
+                and spm.product_model_name like CONCAT('%', #{productModelName}, '%')
             </if>
             <if test="month != null and month != ''">
                 and smei.create_time like CONCAT(#{month}, '%')
@@ -125,7 +131,8 @@
         smt_package_specification sps
         WHERE sps.package_specification_id = bt.package_specification_id ) ),
         sum(ssid.material_quantity)
-        ) AS box_number
+        ) AS box_number,
+        ssid.create_time
         FROM
         smt_storage_inventory_det ssid
         LEFT JOIN smt_storage_inventory ssi ON ssi.storage_inventory_id = ssid.storage_inventory_id
@@ -139,13 +146,20 @@
         left join base_tab bt on bt.material_id = ssi.material_id
         left join smt_product_model spm on spm.product_model_id = bt.product_model_id
         left join smt_supplier sss ON sss.supplier_id = so.supplier_id
-        <where>
-            ssid.material_quantity > 0
+        group by mpm.work_order_id
+        HAVING
+            sum( ssid.material_quantity ) > 0
+            <if test="supplierName != null and supplierName != ''">
+                and sss.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="contractCode != null and contractCode != ''">
+                and so.contract_code like CONCAT('%', #{contractCode}, '%')
+            </if>
             <if test="warehouseName != null and warehouseName != ''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
             <if test="warehouseAreaName != null and warehouseAreaName != ''">
-                and saw.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+                and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
             </if>
             <if test="storageName != null and storageName != ''">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
@@ -157,7 +171,7 @@
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
             <if test="productModelName != null and productModelName != ''">
-                and spm.productModelName like CONCAT('%', #{productModelName}, '%')
+                and spm.product_model_name like CONCAT('%', #{productModelName}, '%')
             </if>
             <if test="month != null and month != ''">
                 and smei.create_time like CONCAT(#{month}, '%')
@@ -165,8 +179,6 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-        </where>
-        group by mpm.work_order_id
     </select>
 
 </mapper>
