@@ -117,7 +117,7 @@
         ss.storage_name,
         sm.material_code,
         sm.material_desc,
-        ssid.material_quantity as total,
+        sum(ssid.material_quantity) as total,
         ssi.quantity as material_total,
         spm.product_model_name,
         ifnull(
