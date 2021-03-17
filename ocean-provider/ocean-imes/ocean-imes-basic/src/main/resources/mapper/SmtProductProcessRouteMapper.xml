@@ -88,6 +88,9 @@
       <if test="materialId!=null and materialId!=''">
         and sppr.material_id=#{materialId}
       </if>
+      <if test="materialCode != null and materialCode != ''">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
       <if test="routeId!=null and routeId!=''">
         and sppr.route_id=#{routeId}
       </if>
