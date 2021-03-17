@@ -61,6 +61,14 @@ public class WmsInnerTransferSlipDet extends ValidGroup implements Serializable 
     private BigDecimal cartonQuantity;
 
     /**
+     * 总数
+     */
+    @ApiModelProperty(name = "total",value = "总数")
+    @Excel(name = "总数", height = 20, width = 30)
+    @Column(name = "total")
+    private BigDecimal total;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")

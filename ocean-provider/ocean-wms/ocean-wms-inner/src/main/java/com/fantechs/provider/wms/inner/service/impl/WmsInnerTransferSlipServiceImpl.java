@@ -1,6 +1,8 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
+import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerTransferSlipDetDto;
@@ -14,15 +16,18 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtTransferSlipMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerTransferSlipService;
+import io.micrometer.core.instrument.search.Search;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +46,8 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
     private WmsInnerTransferSlipDetMapper wmsInnerTransferSlipDetMapper;
     @Resource
     private WmsInnerHtTransferSlipMapper wmsInnerHtTransferSlipMapper;
+    @Resource
+    private InFeignApi inFeignApi;
 
     @Override
     public List<WmsInnerTransferSlipDto> findList(Map<String, Object> map) {
@@ -94,6 +101,26 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getPlanCartonQty())){
                     throw new BizErrorException("计划调拨箱数必须大于0");
                 }
+
+                if (wmsInnerTransferSlipDet.getPlanCartonQty().compareTo(wmsInnerTransferSlipDet.getCartonQuantity()) == 1){
+                    throw new BizErrorException("计划调拨箱数不能大于箱数");
+                }
+
+                //通过栈板码获取计划包箱规格
+                String palletCode = wmsInnerTransferSlipDet.getPalletCode();
+                SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
+                searchMesPackageManagerListDTO.setIsFindChildren(true);
+                searchMesPackageManagerListDTO.setBarcode(palletCode);
+                List<MesPackageManagerDTO> mesPackageManagerDTOS = inFeignApi.list(searchMesPackageManagerListDTO).getData();
+                if (StringUtils.isEmpty(mesPackageManagerDTOS)){
+                    throw new BizErrorException("获取包箱信息失败");
+                }
+                //设置计划调拨总数
+                wmsInnerTransferSlipDet.setPlanTotalQty(wmsInnerTransferSlipDet.getPlanCartonQty().multiply(mesPackageManagerDTOS.get(0).getPackageSpecificationQuantity()));
+                //计划调拨总数不能大于总数
+                if (wmsInnerTransferSlipDet.getPlanTotalQty().compareTo(wmsInnerTransferSlipDet.getTotal()) == 1){
+                    throw new BizErrorException("计划调拨总数不能大于总数");
+                }
                 wmsInnerTransferSlipDet.setCreateTime(new Date());
                 wmsInnerTransferSlipDet.setCreateUserId(user.getUserId());
                 wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
@@ -145,6 +172,26 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
                 if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getPlanCartonQty())){
                     throw new BizErrorException("计划调拨箱数必须大于0");
+                }
+
+                if (wmsInnerTransferSlipDet.getPlanCartonQty().compareTo(wmsInnerTransferSlipDet.getCartonQuantity()) == 1){
+                    throw new BizErrorException("计划调拨箱数不能大于箱数");
+                }
+
+                //通过栈板码获取计划包箱规格
+                String palletCode = wmsInnerTransferSlipDet.getPalletCode();
+                SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
+                searchMesPackageManagerListDTO.setIsFindChildren(true);
+                searchMesPackageManagerListDTO.setBarcode(palletCode);
+                List<MesPackageManagerDTO> mesPackageManagerDTOS = inFeignApi.list(searchMesPackageManagerListDTO).getData();
+                if (StringUtils.isEmpty(mesPackageManagerDTOS)){
+                    throw new BizErrorException("获取包箱信息失败");
+                }
+                //设置计划调拨总数
+                wmsInnerTransferSlipDet.setPlanTotalQty(wmsInnerTransferSlipDet.getPlanCartonQty().multiply(mesPackageManagerDTOS.get(0).getPackageSpecificationQuantity()));
+                //计划调拨总数不能大于总数
+                if (wmsInnerTransferSlipDet.getPlanTotalQty().compareTo(wmsInnerTransferSlipDet.getTotal()) == 1){
+                    throw new BizErrorException("计划调拨总数不能大于总数");
                 }
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());

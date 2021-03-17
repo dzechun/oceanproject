@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
 @Data
@@ -84,5 +86,5 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "packageSpecificationQuantity",value = "包装规格-数量")
-    private String packageSpecificationQuantity;
+    private BigDecimal packageSpecificationQuantity;
 }

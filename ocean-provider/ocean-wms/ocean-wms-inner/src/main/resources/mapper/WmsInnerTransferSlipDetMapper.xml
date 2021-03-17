@@ -16,6 +16,7 @@
     <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
     <result column="carton_quantity" jdbcType="DECIMAL" property="cartonQuantity" />
     <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -59,6 +60,7 @@
     witsd.pallet_code,
     witsd.contract_code,
     witsd.carton_quantity,
+    witsd.total,
 	witsd.transfer_slip_status,
 	witsd.`status`,
 	witsd.remark,
