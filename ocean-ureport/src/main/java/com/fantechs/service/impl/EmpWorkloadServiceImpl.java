@@ -20,14 +20,14 @@ public class EmpWorkloadServiceImpl extends BaseService<EmpWorkload> implements 
     private EmpWorkloadMapper empWorkloadMapper;
 
     @Override
-    public List<Map<String, Object>> findHistogram(SearchEmpWorkload searchEmpWorkload) {
-        return empWorkloadMapper.findHistogram(searchEmpWorkload);
+    public List<Map<String, Object>> findHistogram(Map<String, Object> map) {
+        return empWorkloadMapper.findHistogram(map);
     }
 
     @Override
-    public List<EmpWorkload> findHistogramList(SearchEmpWorkload searchEmpWorkload) {
+    public List<EmpWorkload> findHistogramList(Map<String, Object> map) {
 
-        return empWorkloadMapper.findHistogramList(searchEmpWorkload);
+        return empWorkloadMapper.findHistogramList(map);
     }
 
 }

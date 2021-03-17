@@ -74,10 +74,11 @@ public class SwaggerConfig {
 
     /**
      * 重写basePackage方法，使能够实现多包访问，复制贴上去
-     * @author teavamc
-     * @date 2019/1/26
+     *
      * @param
      * @return com.google.common.base.Predicate<springfox.documentation.RequestHandler>
+     * @author teavamc
+     * @date 2019/1/26
      */
     public static Predicate<RequestHandler> basePackage(final String basePackage) {
         return input -> declaringClass(input).transform(handlerPackage(basePackage)).or(true);
