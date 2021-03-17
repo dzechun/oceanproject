@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchWmsInnerInventoryScrap extends BaseQuery implements Serializable {
@@ -32,5 +33,9 @@ public class SearchWmsInnerInventoryScrap extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="inventoryScrapStatus",value = "单据状态（0-待报废 1-报废中 2-报废完成）")
     private Byte inventoryScrapStatus;
+
+
+    @ApiModelProperty(name="inventoryScrapStatusIn",value = "单据状态（0-待报废 1-报废中 2-报废完成）（数组）")
+    private List<Integer> inventoryScrapStatusIn;
 
 }

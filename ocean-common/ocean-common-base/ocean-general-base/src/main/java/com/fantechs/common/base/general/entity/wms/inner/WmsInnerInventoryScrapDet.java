@@ -60,6 +60,14 @@ public class WmsInnerInventoryScrapDet extends ValidGroup implements Serializabl
     private Long storageId;
 
     /**
+     * 栈板条码
+     */
+    @ApiModelProperty(name="barCode",value = "栈板条码")
+    @Excel(name = "栈板条码", height = 20, width = 30,orderNum="")
+    @Column(name = "bar_code")
+    private String barCode;
+
+    /**
      * 计划报废箱数
      */
     @ApiModelProperty(name="planCartonQty",value = "计划报废箱数")
@@ -98,6 +106,14 @@ public class WmsInnerInventoryScrapDet extends ValidGroup implements Serializabl
     @Excel(name = "单据状态（0-待报废 1-报废中 2-报废完成）", height = 20, width = 30,orderNum="") 
     @Column(name = "inventory_scrap_status")
     private Byte inventoryScrapStatus;
+
+    /**
+     * 栈板状态（0-未扫描，1-已扫描）
+     */
+    @ApiModelProperty(name="barCodeStatus",value = "栈板状态（0-未扫描，1-已扫描）")
+    @Excel(name = "栈板状态（0-未扫描，1-已扫描）", height = 20, width = 30,orderNum="")
+    @Column(name = "bar_code_status")
+    private Byte barCodeStatus;
 
     /**
      * 是否有效（0、无效 1、有效）

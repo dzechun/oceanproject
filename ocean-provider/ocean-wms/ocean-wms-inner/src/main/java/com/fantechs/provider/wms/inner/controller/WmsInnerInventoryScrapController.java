@@ -90,4 +90,11 @@ public class WmsInnerInventoryScrapController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation(value = "pda提交",notes = "pda提交")
+    @PostMapping("/PDASubmit")
+    public ResponseEntity PDASubmit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerInventoryScrap wmsInnerInventoryScrap) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryScrapService.PDASubmit(wmsInnerInventoryScrap));
+    }
+
 }

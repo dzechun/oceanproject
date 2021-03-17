@@ -15,4 +15,6 @@ public class SearchWmsInnerInventoryScrapDet extends BaseQuery implements Serial
      */
     @ApiModelProperty(name="inventoryScrapId",value = "盘存转报废单ID")
     private Long inventoryScrapId;
+
+
 }

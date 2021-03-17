@@ -30,6 +30,7 @@
 
 
     <sql id="Base_Column_List">
+    iis.inventory_scrap_id,
     iis.inventory_scrap_code,
     iis.processor_user_id,
     iis.inventory_scrap_time,
@@ -73,6 +74,12 @@
             </if>
             <if test="inventoryScrapStatus != null">
                 and iis.inventory_scrap_status = #{inventoryScrapStatus}
+            </if>
+            <if test="inventoryScrapStatusIn != null">
+                and iis.inventory_scrap_status in
+                <foreach collection="inventoryScrapStatusIn" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
             </if>
         </where>
         order by iis.create_time desc

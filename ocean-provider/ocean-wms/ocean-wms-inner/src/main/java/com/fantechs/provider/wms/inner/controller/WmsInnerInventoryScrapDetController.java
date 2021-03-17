@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/03/10.
  */
 @RestController
-@Api(tags = "wmsInnerInventoryScrapDet控制器")
+@Api(tags = "盘存转报废明细控制器")
 @RequestMapping("/wmsInnerInventoryScrapDet")
 @Validated
 public class WmsInnerInventoryScrapDetController {

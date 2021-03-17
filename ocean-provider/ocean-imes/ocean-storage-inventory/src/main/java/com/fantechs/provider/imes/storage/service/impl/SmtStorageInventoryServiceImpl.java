@@ -58,16 +58,22 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
         //主表扣库存
         smtStorageInventories.get(0).setQuantity(smtStorageInventories.get(0).getQuantity().subtract(smtStorageInventory.getQuantity()));
         smtStorageInventoryMapper.updateByPrimaryKeySelective(smtStorageInventories.get(0));
-        //子表扣库存
+        //子表扣库存 根据入库单号
         for (SmtStorageInventoryDet smtStorageInventoryDet : smtStorageInventory.getSmtStorageInventoryDets()) {
             Example example1 = new Example(SmtStorageInventoryDet.class);
-            example1.createCriteria().andEqualTo("storageInventoryId",smtStorageInventory.getStorageInventoryId()).andEqualTo("godownEntry",smtStorageInventoryDet.getGodownEntry());
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("storageInventoryId",smtStorageInventory.getStorageInventoryId());
+            if(StringUtils.isNotEmpty(smtStorageInventoryDet.getGodownEntry())){
+                criteria.andEqualTo("godownEntry",smtStorageInventoryDet.getGodownEntry());
+            }
+            if(StringUtils.isNotEmpty(smtStorageInventoryDet.getMaterialBarcodeCode())){
+                criteria.andEqualTo("materialBarcodeCode",smtStorageInventoryDet.getMaterialBarcodeCode());
+            }
             List<SmtStorageInventoryDet> smtStorageInventoryDets = smtStorageInventoryDetMapper.selectByExample(example1);
 
             smtStorageInventoryDets.get(0).setMaterialQuantity(smtStorageInventoryDets.get(0).getMaterialQuantity().subtract(smtStorageInventoryDet.getMaterialQuantity()));
             smtStorageInventoryDetMapper.updateByPrimaryKeySelective(smtStorageInventoryDets.get(0));
         }
-
 
         return 0;
     }

@@ -18,4 +18,6 @@ public interface WmsInnerInventoryScrapService extends IService<WmsInnerInventor
     List<WmsInnerInventoryScrapDto> findList(Map<String, Object> map);
 
     List<WmsInnerHtInventoryScrap> findHtList(Map<String, Object> dynamicConditionByEntity);
+
+    int PDASubmit(WmsInnerInventoryScrap wmsInnerInventoryScrap);
 }

@@ -55,8 +55,8 @@ public class WmsInnerInventoryScrap extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="inventoryScrapTime",value = "单据日期")
     @Excel(name = "单据日期", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "transfer_slip_time")
-    private Date inventoryScrapTime;
+    @Column(name = "inventory_scrap_time")
+    private String inventoryScrapTime;
 
     /**
      * 单据状态（0-待报废 1-报废中 2-报废完成）

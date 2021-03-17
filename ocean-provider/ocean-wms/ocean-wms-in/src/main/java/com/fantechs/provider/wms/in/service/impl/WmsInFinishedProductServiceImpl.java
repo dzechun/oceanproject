@@ -151,7 +151,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 //存储位与栈板关系表smt
                 storageInventoryFeignApi.add(smtStoragePallet);
 
-                //新增库存
+                /*//新增库存
                 SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
                 smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
                 smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
@@ -165,7 +165,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
                 smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                 smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
-                storageInventoryFeignApi.add(smtStorageInventoryDet);
+                storageInventoryFeignApi.add(smtStorageInventoryDet);*/
             }
 
         }

@@ -49,6 +49,15 @@ public class WmsInnerInventoryScrapDetDto extends WmsInnerInventoryScrapDet impl
     @ApiModelProperty(name="storageName",value = "储位名称")
     private String storageName;
 
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractCode",value = "合同号")
+    private String contractCode;
+
+
+
+
 
 
 
