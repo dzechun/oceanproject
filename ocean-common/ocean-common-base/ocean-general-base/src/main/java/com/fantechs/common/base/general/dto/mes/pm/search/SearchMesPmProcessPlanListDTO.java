@@ -22,4 +22,7 @@ public class SearchMesPmProcessPlanListDTO extends BaseQuery implements Serializ
     @ApiModelProperty(value = "总计划ID",example = "总计划ID")
     @Excel(name = "总计划ID")
     private Long masterPlanId;
+
+    @ApiModelProperty(value = "工艺路线ID",example = "工艺路线ID")
+    private Long routeId;
 }
