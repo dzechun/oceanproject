@@ -92,6 +92,7 @@
         LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = mpm.work_order_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = mpm.material_id
         LEFT JOIN fantech_imes.smt_storage_material ssm ON sm.material_id = ssm.material_id
+        LEFT JOIN fantech_imes.smt_storage ss on ssm.storage_id = ss.storage_id
         LEFT JOIN fantech_imes.smt_warehouse_area swa ON ssm.warehouse_area_id = swa.warehouse_area_id
         LEFT JOIN fantech_imes.smt_warehouse sw ON ssm.warehouse_id = sw.warehouse_id
         LEFT JOIN fantech_imes.smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
