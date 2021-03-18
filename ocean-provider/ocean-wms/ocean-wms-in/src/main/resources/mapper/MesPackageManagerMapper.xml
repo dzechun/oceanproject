@@ -81,7 +81,7 @@
         ss.storage_name as 'storageName',
         spm.product_model_name as 'productModelName',
         spl.pro_name AS 'proName',
-        sps.package_specification_quantity AS 'packageSpecificationQuantity'
+        sps.package_specification_quantity AS 'packageSpecificationQuantity',
         swa.warehouse_area_name,
         sw.warehouse_name
         FROM
