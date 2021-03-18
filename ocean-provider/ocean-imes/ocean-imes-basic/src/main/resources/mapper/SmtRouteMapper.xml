@@ -64,6 +64,9 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="routeId !=null ">
+                and sr.route_id = #{routeId}
+            </if>
             <if test="routeCode!=null and routeCode!='' and codeQueryMark != 1">
                 and sr.route_code like CONCAT('%', #{routeCode}, '%')
             </if>
