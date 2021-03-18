@@ -53,22 +53,6 @@ public class WmsInnerTransferSlipDet extends ValidGroup implements Serializable 
     private String palletCode;
 
     /**
-     * 箱数
-     */
-    @ApiModelProperty(name = "cartons",value = "箱数")
-    @Excel(name = "箱数", height = 20, width = 30)
-    @Column(name = "carton_quantity")
-    private BigDecimal cartonQuantity;
-
-    /**
-     * 总数
-     */
-    @ApiModelProperty(name = "total",value = "总数")
-    @Excel(name = "总数", height = 20, width = 30)
-    @Column(name = "total")
-    private BigDecimal total;
-
-    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
