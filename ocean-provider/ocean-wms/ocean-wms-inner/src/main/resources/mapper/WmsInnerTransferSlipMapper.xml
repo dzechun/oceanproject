@@ -75,6 +75,9 @@
       <if test="transferSlipStatus !=null">
         and wits.transfer_slip_status=#{transferSlipStatus}
       </if>
+      <if test="QueryMark == 0">
+        and wits.transfer_slip_status = 0 or wits.transfer_slip_status = 1
+      </if>
     </where>
     order by wits.create_time desc
   </select>
