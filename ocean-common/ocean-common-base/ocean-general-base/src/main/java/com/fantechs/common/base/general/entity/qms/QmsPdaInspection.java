@@ -65,7 +65,7 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      * 单据时间
      */
     @ApiModelProperty(name="documentsTime",value = "单据时间")
-    @Excel(name = "单据时间", height = 20, width = 30,orderNum="5",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "单据时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "documents_time")
     private Date documentsTime;
@@ -74,7 +74,7 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      * 反馈事项
      */
     @ApiModelProperty(name="feedbackMatters",value = "反馈事项")
-    @Excel(name = "单据时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "反馈事项", height = 20, width = 30,orderNum="8")
     @Column(name = "feedback_matters")
     private String feedbackMatters;
 
@@ -83,6 +83,7 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="documentsType",value = "单据类型（0、首检单 1、成品检验单）")
     @Column(name = "documents_type")
+    @Excel(name = "单据类型", height = 20, width = 30,orderNum="5",replace = {"首检单_0","成品检验单_1"})
     private Byte documentsType;
 
     /**
@@ -115,7 +116,7 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -131,7 +132,7 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
