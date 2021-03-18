@@ -24,9 +24,11 @@
 
     <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.MesPackageManagerDTO"
                extends="BaseResultMap">
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     </resultMap>
+
     <resultMap id="SmtBarcodeRuleSpecResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec">
         <id column="barcode_rule_spec_id" jdbcType="BIGINT" property="barcodeRuleSpecId"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
@@ -78,7 +80,7 @@
         sm.material_code AS 'materialCode',
         sm.material_desc AS 'materialDesc',
         bt.main_unit AS 'unit',
-        ss.storage_name as 'storageName',
+        ss.storage_name,
         spm.product_model_name as 'productModelName',
         spl.pro_name AS 'proName',
         sps.package_specification_quantity AS 'packageSpecificationQuantity',

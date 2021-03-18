@@ -61,6 +61,21 @@ public class MesPackageManagerInDTO {
     @ApiModelProperty(value = "物料描述",example = "物料描述")
     private String materialDesc;
     /**
+     * 储位名称
+     */
+    @ApiModelProperty(value = "储位名称",example = "储位名称")
+    private String storageName;
+    /**
+     * 仓库名称
+     */
+    @ApiModelProperty(value = "仓库名称",example = "仓库名称")
+    private String warehouseName;
+    /**
+     * 仓库区域名称
+     */
+    @ApiModelProperty(value = "仓库区域名称",example = "仓库区域名称")
+    private String warehouseAreaName;
+    /**
      * 箱数
      */
     @ApiModelProperty(value = "箱数",example = "箱数")
