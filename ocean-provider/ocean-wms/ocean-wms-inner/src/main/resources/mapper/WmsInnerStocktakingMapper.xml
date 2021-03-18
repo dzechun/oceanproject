@@ -7,12 +7,15 @@
     -->
     <id column="stocktaking_id" jdbcType="BIGINT" property="stocktakingId" />
     <result column="stocktaking_code" jdbcType="VARCHAR" property="stocktakingCode" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="book_inventory" jdbcType="DECIMAL" property="bookInventory" />
     <result column="counted_quantity" jdbcType="DECIMAL" property="countedQuantity" />
     <result column="profit_loss_quantity" jdbcType="DECIMAL" property="profitLossQuantity" />
-    <result column="delivery_rate" jdbcType="VARCHAR" property="deliveryRate" />
+    <result column="profit_loss_rate" jdbcType="DECIMAL" property="profitLossRate" />
+    <result column="delivery_rate" jdbcType="DECIMAL" property="deliveryRate" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="profit_loss_amount" jdbcType="DECIMAL" property="profitLossAmount" />
     <result column="stockist_id" jdbcType="BIGINT" property="stockistId" />
@@ -91,6 +94,12 @@
       </if>
       <if test="proName != null and proName!=''">
         and spl.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="workShopCode != null and workShopCode!=''">
+        and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')
+      </if>
+      <if test="workShopCode != null and workShopCode!=''">
+        and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')
       </if>
       <if test="workShopCode != null and workShopCode!=''">
         and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')

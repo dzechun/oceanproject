@@ -31,6 +31,22 @@ public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements
     private String storageName;
 
     /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
+    @Excel(name = "仓库区域名称", height = 20, width = 30)
+    private String warehouseAreaName;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
+    private String warehouseName;
+
+    /**
      * 物料描述
      */
     @Transient
