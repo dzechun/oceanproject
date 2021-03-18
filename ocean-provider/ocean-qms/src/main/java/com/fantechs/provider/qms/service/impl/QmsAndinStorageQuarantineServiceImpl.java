@@ -103,7 +103,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
             managerDTO.setMaterialDesc(list.getData().get(0).getMaterialDesc());
             managerDTO.setBarCode(list.getData().get(0).getBarCode());
 
-            managerDTO.setPackageSpecificationQuantity(list.getData().get(0).getTotal().toString());
+            managerDTO.setPackageSpecificationQuantity(list.getData().get(0).getTotal());
         }
 
         managerDTO.setPackageManagerId(parentId);
