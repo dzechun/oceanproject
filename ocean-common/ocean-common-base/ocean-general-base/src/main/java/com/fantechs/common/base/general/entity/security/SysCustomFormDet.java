@@ -73,6 +73,14 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private String itemValue;
 
     /**
+     * 是否编辑禁用
+     */
+    @ApiModelProperty(name="disabled",value = "是否编辑禁用")
+    @Excel(name = "是否编辑禁用", height = 20, width = 30)
+    @Column(name = "disabled")
+    private Byte disabled;
+
+    /**
      * 表单列宽
      */
     @ApiModelProperty(name="itemWidth",value = "表单列宽")
