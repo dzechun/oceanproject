@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtWorkshopSectionImport;
 import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkshopSection;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection;
@@ -110,8 +111,8 @@ public class SmtWorkshopSectionController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtWorkshopSection> smtWorkshopSections = EasyPoiUtils.importExcel(file, SmtWorkshopSection.class);
-            Map<String, Object> resultMap = smtWorkshopSectionService.importExcel(smtWorkshopSections);
+            List<SmtWorkshopSectionImport> smtWorkshopSectionImports = EasyPoiUtils.importExcel(file, 2, 1, SmtWorkshopSectionImport.class);
+            Map<String, Object> resultMap = smtWorkshopSectionService.importExcel(smtWorkshopSectionImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

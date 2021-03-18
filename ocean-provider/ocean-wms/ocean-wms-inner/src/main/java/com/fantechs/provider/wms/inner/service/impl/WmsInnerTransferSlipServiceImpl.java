@@ -158,58 +158,60 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 waitForTransfer = true;
                 continue;
             }
+            //调拨单明细为调拨完成，则修改库存信息
             if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 2){
                 transferFinish++;
-            }
+                searchSmtStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
+                if (StringUtils.isNotEmpty(smtStorageMaterials)){
+                    if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
+                        throw new BizErrorException("调入储位已存在其他物料");
+                    }
+                }
 
+                //移除调出储位的库存明细信息
+                SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
+                searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
+                List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
+                SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
+                storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(smtStorageInventoryDetDto.getStorageInventoryDetId()));
 
-            searchSmtStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-            List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-            if (StringUtils.isNotEmpty(smtStorageMaterials)){
-                if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
-                    throw new BizErrorException("调入储位已存在其他物料");
+                //修改储位库存数据
+                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
+                searchSmtStorageInventory.setStorageInventoryId(smtStorageInventoryDetDto.getStorageInventoryId());
+                List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+                if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+                    throw new BizErrorException("获取储位库存数失败");
+                }
+                SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
+                smtStorageInventoryDto.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
+
+                //删除储位栈板关系
+                SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
+                searchSmtStoragePallet.setPalletCode(wmsInnerTransferSlipDetDto.getPalletCode());
+                List<SmtStoragePalletDto> smtStoragePalletDtos = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+                if (StringUtils.isEmpty(smtStoragePalletDtos)){
+                    throw new BizErrorException("无法获取到储位栈板关系");
+                }
+                storageInventoryFeignApi.deleteSmtStoragePallet(String.valueOf(smtStoragePalletDtos.get(0).getStoragePalletId()));
+
+                if (wmsInnerTransferSlip.getOrderType() == 0){
+                    //新增储位栈板关系
+                    SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
+                    smtStoragePallet.setPalletCode(wmsInnerTransferSlipDetDto.getPalletCode());
+                    smtStoragePallet.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                    smtStoragePallet.setPalletType((byte) 0);
+                    smtStoragePallet.setIsBinding((byte) 1);
+                    smtStoragePallet.setStatus((byte) 1);
+                    smtStoragePallet.setOrganizationId(user.getOrganizationId());
+                    smtStoragePallet.setCreateTime(new Date());
+                    smtStoragePallet.setCreateUserId(user.getUserId());
+                    smtStoragePallet.setModifiedTime(new Date());
+                    smtStoragePallet.setModifiedUserId(user.getUserId());
+                    storageInventoryFeignApi.add(smtStoragePallet);
                 }
             }
 
-            //移除调出储位的库存明细信息
-            SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-            searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-            List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
-            SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
-            storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(smtStorageInventoryDetDto.getStorageInventoryDetId()));
-
-            //修改储位库存数据
-            SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageInventoryId(smtStorageInventoryDetDto.getStorageInventoryId());
-            List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
-            if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
-                throw new BizErrorException("获取储位库存数失败");
-            }
-            SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
-            smtStorageInventoryDto.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
-
-            //删除储位栈板关系
-            SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
-            searchSmtStoragePallet.setPalletCode(wmsInnerTransferSlipDetDto.getPalletCode());
-            List<SmtStoragePalletDto> smtStoragePalletDtos = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
-            if (StringUtils.isEmpty(smtStoragePalletDtos)){
-                throw new BizErrorException("无法获取到储位栈板关系");
-            }
-            storageInventoryFeignApi.deleteSmtStoragePallet(String.valueOf(smtStoragePalletDtos.get(0).getStoragePalletId()));
-
-            //新增储位栈板关系
-            SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
-            smtStoragePallet.setPalletCode(wmsInnerTransferSlipDetDto.getPalletCode());
-            smtStoragePallet.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-            smtStoragePallet.setPalletType((byte) 0);
-            smtStoragePallet.setIsBinding((byte) 1);
-            smtStoragePallet.setStatus((byte) 1);
-            smtStoragePallet.setOrganizationId(user.getOrganizationId());
-            smtStoragePallet.setCreateTime(new Date());
-            smtStoragePallet.setCreateUserId(user.getUserId());
-            smtStoragePallet.setModifiedTime(new Date());
-            smtStoragePallet.setModifiedUserId(user.getUserId());
-            storageInventoryFeignApi.add(smtStoragePallet);
         }
         //存在调拨中的单据
         if (waitForTransfer){
@@ -222,11 +224,6 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
 
         //更新调拨单
         int i = wmsInnerTransferSlipMapper.updateByPrimaryKeySelective(wmsInnerTransferSlip);
-
-        //对调拨完成的调拨单进行操作
-        if (wmsInnerTransferSlip.getTransferSlipStatus() == 2){
-
-        }
 
         WmsInnerHtTransferSlip wmsInnerHtTransferSlip = new WmsInnerHtTransferSlip();
         BeanUtils.copyProperties(wmsInnerTransferSlip,wmsInnerHtTransferSlip);

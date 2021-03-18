@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.basic.service;
 
+import com.fantechs.common.base.dto.basic.imports.SmtWorkshopSectionImport;
 import com.fantechs.common.base.entity.basic.SmtWorkshopSection;
 import com.fantechs.common.base.entity.basic.search.SearchSmtWorkshopSection;
 import com.fantechs.common.base.support.IService;
@@ -14,5 +15,5 @@ import java.util.Map;
 
 public interface SmtWorkshopSectionService extends IService<SmtWorkshopSection> {
     List<SmtWorkshopSection> findList(SearchSmtWorkshopSection searchSmtWorkshopSection);
-    Map<String, Object> importExcel(List<SmtWorkshopSection> smtWorkshopSections);
+    Map<String, Object> importExcel(List<SmtWorkshopSectionImport> smtWorkshopSectionImports);
 }

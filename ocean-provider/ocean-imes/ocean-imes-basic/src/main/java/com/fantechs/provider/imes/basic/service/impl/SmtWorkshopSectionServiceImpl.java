@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.dto.basic.imports.SmtWorkshopSectionImport;
 import com.fantechs.common.base.entity.basic.SmtFactory;
 import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.entity.basic.SmtWorkShop;
@@ -19,6 +20,7 @@ import com.fantechs.provider.imes.basic.mapper.SmtProcessMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtWorkshopSectionMapper;
 import com.fantechs.provider.imes.basic.service.SmtWorkshopSectionService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -135,7 +137,7 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtWorkshopSection> smtWorkshopSections) {
+    public Map<String, Object> importExcel(List<SmtWorkshopSectionImport> smtWorkshopSectionImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -145,14 +147,15 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtWorkshopSection> list = new LinkedList<>();
         LinkedList<SmtHtWorkshopSection> htList = new LinkedList<>();
-        for (int i = 0; i < smtWorkshopSections.size(); i++) {
-            SmtWorkshopSection smtWorkshopSection = smtWorkshopSections.get(i);
-            String sectionCode = smtWorkshopSection.getSectionCode();
-            String sectionName = smtWorkshopSection.getSectionName();
+        LinkedList<SmtWorkshopSectionImport> workshopSectionImports = new LinkedList<>();
+        for (int i = 0; i < smtWorkshopSectionImports.size(); i++) {
+            SmtWorkshopSectionImport smtWorkshopSectionImport = smtWorkshopSectionImports.get(i);
+            String sectionCode = smtWorkshopSectionImport.getSectionCode();
+            String sectionName = smtWorkshopSectionImport.getSectionName();
             if (StringUtils.isEmpty(
                     sectionCode,sectionName
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
@@ -161,31 +164,47 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("sectionCode",sectionCode);
             if (StringUtils.isNotEmpty(workshopSectionMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
-            smtWorkshopSection.setCreateTime(new Date());
-            smtWorkshopSection.setCreateUserId(currentUser.getUserId());
-            smtWorkshopSection.setModifiedTime(new Date());
-            smtWorkshopSection.setModifiedUserId(currentUser.getUserId());
-            smtWorkshopSection.setStatus((byte) 1);
-            list.add(smtWorkshopSection);
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(workshopSectionImports)){
+                for (SmtWorkshopSectionImport workshopSectionImport : workshopSectionImports) {
+                    if (workshopSectionImport.getSectionCode().equals(sectionCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+            workshopSectionImports.add(smtWorkshopSectionImport);
         }
 
-        if (StringUtils.isNotEmpty(list)){
+        if (StringUtils.isNotEmpty(workshopSectionImports)){
+            for (SmtWorkshopSectionImport workshopSectionImport : workshopSectionImports) {
+                SmtWorkshopSection smtWorkshopSection = new SmtWorkshopSection();
+                BeanUtils.copyProperties(workshopSectionImport,smtWorkshopSection);
+                smtWorkshopSection.setCreateTime(new Date());
+                smtWorkshopSection.setCreateUserId(currentUser.getUserId());
+                smtWorkshopSection.setModifiedTime(new Date());
+                smtWorkshopSection.setModifiedUserId(currentUser.getUserId());
+                list.add(smtWorkshopSection);
+            }
+
             success = workshopSectionMapper.insertList(list);
-        }
-
-        for (SmtWorkshopSection smtWorkshopSection : list) {
-            SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
-            BeanUtils.copyProperties(smtWorkshopSection,smtHtWorkshopSection);
-            htList.add(smtHtWorkshopSection);
-        }
-
-        if (StringUtils.isNotEmpty(htList)){
+            for (SmtWorkshopSection smtWorkshopSection : list) {
+                SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
+                BeanUtils.copyProperties(smtWorkshopSection,smtHtWorkshopSection);
+                htList.add(smtHtWorkshopSection);
+            }
             smtHtWorkshopSectionMapper.insertList(htList);
         }
+
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
