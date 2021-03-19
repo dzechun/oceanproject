@@ -80,10 +80,10 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
     private BigDecimal bookInventory;
 
     /**
-     * 已盘点数量
+     * 实盘数量
      */
-    @ApiModelProperty(name="countedQuantity",value = "已盘点数量")
-    @Excel(name = "已盘点数量", height = 20, width = 30)
+    @ApiModelProperty(name="countedQuantity",value = "实盘数量")
+    @Excel(name = "实盘数量", height = 20, width = 30)
     @Column(name = "counted_quantity")
     private BigDecimal countedQuantity;
 

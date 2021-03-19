@@ -89,9 +89,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         wmsInnerTransferSlip.setModifiedTime(new Date());
         wmsInnerTransferSlip.setModifiedUserId(user.getUserId());
         wmsInnerTransferSlip.setTransferSlipTime(new Date());
-        if (StringUtils.isEmpty(wmsInnerTransferSlip.getTransferSlipStatus())){
-            wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
-        }
+        wmsInnerTransferSlip.setTransferSlipStatus((byte) 0);
         wmsInnerTransferSlip.setOrganizationId(user.getOrganizationId());
         if (wmsInnerTransferSlip.getOrderType() == 0){
             //库内调拨的操作人和处理人相同
