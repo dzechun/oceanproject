@@ -131,16 +131,25 @@ public class MesPmProcessPlanServiceImpl extends BaseService<MesPmProcessPlan> i
 
         //取出配置的工序排序记录
         if (StringUtils.isNotEmpty(map.get("routeId"))) {
+            Boolean flag = false;
             List<SmtRouteProcess> smtRouteProcesses = basicFeignApi.findConfigureRout(Long.valueOf(map.get("routeId").toString())).getData();
             if (smtRouteProcesses.size() > 0) {
                 for (MesPmProcessPlanDTO mesPmProcessPlanDTO : mesPmMasterPlanDTOS) {
                     for (SmtRouteProcess smtRouteProcess : smtRouteProcesses) {
                         if (mesPmProcessPlanDTO.getProcessId().equals(smtRouteProcess.getProcessId())) {
                             mesPmProcessPlanDTO.setOrderNum(smtRouteProcess.getOrderNum());
+                            flag = true;
+                            break;
+                        } else {
+                            flag = false;
                         }
                     }
                 }
-                mesPmMasterPlanDTOS = mesPmMasterPlanDTOS.stream().sorted(Comparator.comparing(MesPmProcessPlanDTO::getOrderNum)).collect(Collectors.toList());
+                //只有全部工序都有排序值才去排序
+                if(flag){
+                    //排序
+                    mesPmMasterPlanDTOS = mesPmMasterPlanDTOS.stream().sorted(Comparator.comparing(MesPmProcessPlanDTO::getOrderNum)).collect(Collectors.toList());
+                }
             }
         }
 
