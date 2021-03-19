@@ -100,7 +100,13 @@
         and date_format(wis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="stocktakingCode != null and stocktakingCode!=''">
-        and wis.stocktaking_code like CONCAT('%', #{stocktakingCode}, '%')
+        and wis.contract_code like CONCAT('%', #{stocktakingCode}, '%')
+      </if>
+      <if test="palletCode != null and palletCode!=''">
+        and wis.pallet_code like CONCAT('%', #{palletCode}, '%')
+      </if>
+      <if test="stockistName != null and stockistName!=''">
+        and suss.user_name like CONCAT('%', #{stockistName}, '%')
       </if>
       <if test="proCode != null and proCode!=''">
         and spl.pro_code like CONCAT('%', #{proCode}, '%')
@@ -125,6 +131,15 @@
       </if>
       <if test="status!=null">
         and wis.status=#{status}
+      </if>
+      <if test="inventoryResults == 0">
+        and wis.delivery_rate = 0
+      </if>
+      <if test="inventoryResults == 1">
+        and wis.delivery_rate &gt; 0
+      </if>
+      <if test="inventoryResults == 0">
+        and wis.delivery_rate &lt; 0
       </if>
     </where>
     order by wis.create_time desc

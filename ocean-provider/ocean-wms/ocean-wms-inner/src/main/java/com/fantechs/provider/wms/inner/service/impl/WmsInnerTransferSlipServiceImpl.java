@@ -263,9 +263,6 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
             ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
             for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
-                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getPlanCartonQty())){
-                    throw new BizErrorException("计划调拨箱数必须大于0");
-                }
 
                 wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
                 wmsInnerTransferSlipDet.setModifiedTime(new Date());
