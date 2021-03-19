@@ -69,10 +69,10 @@ public class SmtLoadingDet extends ValidGroup implements Serializable {
     private BigDecimal actualQty;
 
     /**
-     * 状态（0-未开始 1-上料中 2-已完成）
+     * 状态（0-未开始 1-上料中 2-部分完成 3-已完成）
      */
     @ApiModelProperty(name="status",value = "状态（0-未开始 1-上料中 2-部分完成 3-已完成）")
-    @Excel(name = "状态（0-未开始 1-上料中 2-已完成）", height = 20, width = 30,orderNum="7")
+    @Excel(name = "状态（0-未开始 1-上料中 2-部分完成 3-已完成）", height = 20, width = 30,orderNum="7")
     private Byte status;
 
     /**

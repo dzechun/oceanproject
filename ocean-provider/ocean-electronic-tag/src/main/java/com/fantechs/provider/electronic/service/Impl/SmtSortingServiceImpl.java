@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,8 @@ public class SmtSortingServiceImpl extends BaseService<SmtSorting> implements Sm
             if(StringUtils.isEmpty(user)){
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
+            SmtSorting.setModifiedUserId(user.getUserId());
+            SmtSorting.setModifiedTime(new Date());
         }
         Example example = new Example(SmtSorting.class);
         Example.Criteria criteria = example.createCriteria();
