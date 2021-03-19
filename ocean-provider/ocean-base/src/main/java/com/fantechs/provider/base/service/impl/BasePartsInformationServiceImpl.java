@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePartsInformationDto;
+import com.fantechs.common.base.general.dto.basic.imports.BasePartsInformationImport;
 import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPartsInformation;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
@@ -112,7 +113,7 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<BasePartsInformationDto> basePartsInformationDtos) {
+    public Map<String, Object> importExcel(List<BasePartsInformationImport> basePartsInformationImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -122,15 +123,16 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BasePartsInformation> list = new LinkedList<>();
         LinkedList<BaseHtPartsInformation> htList = new LinkedList<>();
-        for (int i = 0; i < basePartsInformationDtos.size(); i++) {
-            BasePartsInformation basePartsInformationDto = basePartsInformationDtos.get(i);
-            String partsInformationCode = basePartsInformationDto.getPartsInformationCode();
-            String partsInformationName = basePartsInformationDto.getPartsInformationName();
+        LinkedList<BasePartsInformationImport> partsInformationImports = new LinkedList<>();
+        for (int i = 0; i < basePartsInformationImports.size(); i++) {
+            BasePartsInformationImport basePartsInformationImport = basePartsInformationImports.get(i);
+            String partsInformationCode = basePartsInformationImport.getPartsInformationCode();
+            String partsInformationName = basePartsInformationImport.getPartsInformationName();
 
             if (StringUtils.isEmpty(
                     partsInformationCode,partsInformationName
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
@@ -139,33 +141,45 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partsInformationCode",partsInformationCode);
             if (StringUtils.isNotEmpty(basePartsInformationMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
+                continue;
+            }
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(partsInformationImports)){
+                for (BasePartsInformationImport partsInformationImport : partsInformationImports) {
+                    if (partsInformationImport.getPartsInformationCode().equals(partsInformationCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
                 continue;
             }
 
-            BasePartsInformation basePartsInformation = new BasePartsInformation();
-            BeanUtils.copyProperties(basePartsInformationDto,basePartsInformation);
-            basePartsInformation.setCreateTime(new Date());
-            basePartsInformation.setCreateUserId(currentUser.getUserId());
-            basePartsInformation.setModifiedTime(new Date());
-            basePartsInformation.setModifiedUserId(currentUser.getUserId());
-            basePartsInformation.setStatus((byte) 1);
-            list.add(basePartsInformation);
+            partsInformationImports.add(basePartsInformationImport);
         }
-
-        if (StringUtils.isNotEmpty(list)){
+        if (StringUtils.isNotEmpty(partsInformationImports)){
+            for (BasePartsInformationImport partsInformationImport : partsInformationImports) {
+                BasePartsInformation basePartsInformation = new BasePartsInformation();
+                BeanUtils.copyProperties(partsInformationImport,basePartsInformation);
+                basePartsInformation.setCreateTime(new Date());
+                basePartsInformation.setCreateUserId(currentUser.getUserId());
+                basePartsInformation.setModifiedTime(new Date());
+                basePartsInformation.setModifiedUserId(currentUser.getUserId());
+                list.add(basePartsInformation);
+            }
             success = basePartsInformationMapper.insertList(list);
-        }
-        for (BasePartsInformation basePartsInformation : list) {
-            BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
-            BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
-            htList.add(baseHtPartsInformation);
-        }
 
-
-        if (StringUtils.isNotEmpty(htList)){
+            for (BasePartsInformation basePartsInformation : list) {
+                BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
+                BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
+                htList.add(baseHtPartsInformation);
+            }
             baseHtPartsInformationMapper.insertList(htList);
         }
+
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;

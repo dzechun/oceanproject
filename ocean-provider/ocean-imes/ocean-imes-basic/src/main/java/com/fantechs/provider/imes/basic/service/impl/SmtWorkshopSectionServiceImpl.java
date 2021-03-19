@@ -68,7 +68,6 @@ public class SmtWorkshopSectionServiceImpl extends BaseService<SmtWorkshopSectio
         workshopSectionMapper.insertUseGeneratedKeys(smtWorkshopSection);
 
         //添加工段历史信息
-
         SmtHtWorkshopSection smtHtWorkshopSection = new SmtHtWorkshopSection();
         BeanUtils.copyProperties(smtWorkshopSection, smtHtWorkshopSection);
         int i=  smtHtWorkshopSectionMapper.insertSelective(smtHtWorkshopSection);

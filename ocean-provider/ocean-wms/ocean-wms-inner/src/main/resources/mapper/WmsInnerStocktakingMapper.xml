@@ -55,6 +55,8 @@
   <sql id="Base_Column_List">
     wis.stocktaking_id,
 	wis.stocktaking_code,
+    wis.contract_code,
+    wis.pallet_code,
 	wis.pro_line_id,
 	wis.material_id,
 	wis.book_inventory,
