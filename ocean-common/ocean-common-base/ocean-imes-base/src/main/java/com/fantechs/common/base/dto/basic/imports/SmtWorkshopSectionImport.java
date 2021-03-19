@@ -13,14 +13,14 @@ public class SmtWorkshopSectionImport implements Serializable {
      * 工段代码
      */
     @ApiModelProperty("工段代码")
-    @Excel(name = "工段代码", height = 20, width = 30)
+    @Excel(name = "工段代码(必填)", height = 20, width = 30)
     private String sectionCode;
 
     /**
      * 工段名称
      */
     @ApiModelProperty("工段名称")
-    @Excel(name = "工段名称", height = 20, width = 30)
+    @Excel(name = "工段名称(必填)", height = 20, width = 30)
     private String sectionName;
 
     /**
@@ -41,6 +41,6 @@ public class SmtWorkshopSectionImport implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty("状态(0无效，1有效)")
-    @Excel(name = "状态", height = 20, width = 30)
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
     private Byte status;
 }

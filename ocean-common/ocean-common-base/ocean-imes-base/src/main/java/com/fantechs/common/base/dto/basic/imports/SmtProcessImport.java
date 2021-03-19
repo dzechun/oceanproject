@@ -14,14 +14,14 @@ public class SmtProcessImport implements Serializable {
      * 工序代码
      */
     @ApiModelProperty(name="processCode" ,value="工序代码")
-    @Excel(name = "工序代码", height = 20, width = 30)
+    @Excel(name = "工序代码(必填)", height = 20, width = 30)
     private String processCode;
 
     /**
      * 工序名称
      */
     @ApiModelProperty(name="processName" ,value="工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30)
+    @Excel(name = "工序名称(必填)", height = 20, width = 30)
     private String processName;
 
     /**
@@ -61,21 +61,21 @@ public class SmtProcessImport implements Serializable {
      * 是否报工扫描（0、否 1、是）
      */
     @ApiModelProperty(name="isJobScan" ,value="是否报工扫描")
-    @Excel(name = "是否报工扫描", height = 20, width = 30)
+    @Excel(name = "是否报工扫描（0、否 1、是）", height = 20, width = 30)
     private Byte isJobScan;
 
     /**
      * 是否开工扫描（0、否 1、是）
      */
     @ApiModelProperty(name= "isStartScan" ,value="是否开工扫描")
-    @Excel(name = "是否开工扫描", height = 20, width = 30)
+    @Excel(name = "是否开工扫描（0、否 1、是）", height = 20, width = 30)
     private Byte isStartScan;
 
     /**
      * 是否品质确认（0、否 1、是）
      */
     @ApiModelProperty(name="isQuality" ,value="是否品质确认")
-    @Excel(name = "是否品质确认", height = 20, width = 30)
+    @Excel(name = "是否品质确认（0、否 1、是）", height = 20, width = 30)
     private Byte isQuality;
 
     /**

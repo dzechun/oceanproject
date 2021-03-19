@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePartsInformationDto;
+import com.fantechs.common.base.general.dto.basic.imports.BasePartsInformationImport;
 import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPartsInformation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePartsInformation;
@@ -112,8 +113,8 @@ public class BasePartsInformationController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BasePartsInformationDto> basePartsInformationDtos = EasyPoiUtils.importExcel(file, BasePartsInformationDto.class);
-            Map<String, Object> resultMap = basePartsInformationService.importExcel(basePartsInformationDtos);
+            List<BasePartsInformationImport> basePartsInformationImports = EasyPoiUtils.importExcel(file, BasePartsInformationImport.class);
+            Map<String, Object> resultMap = basePartsInformationService.importExcel(basePartsInformationImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
