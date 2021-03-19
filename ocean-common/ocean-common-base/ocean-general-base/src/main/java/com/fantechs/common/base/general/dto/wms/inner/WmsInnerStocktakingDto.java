@@ -79,6 +79,57 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
     private String workShopDesc;
 
     /**
+     * 储位编码
+     */
+    @Transient
+    @Excel(name = "储位编码", height = 20, width = 30)
+    @ApiModelProperty(name = "StorageCode",value = "储位编码")
+    private String storageCode;
+
+    /**
+     * 储位名称
+     */
+    @Transient
+    @Excel(name = "储位名称", height = 20, width = 30)
+    @ApiModelProperty(name = "StorageName",value = "储位名称")
+    private String storageName;
+
+
+    /**
+     * 仓库编码
+     */
+    @Transient
+    @Excel(name = "仓库编码", height = 20, width = 30)
+    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
+    private String warehouseCode;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @Excel(name = "仓库名称", height = 20, width = 30)
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+
+    /**
+     * 仓库区域编码
+     */
+    @Transient
+    @Excel(name = "仓库区域编码", height = 20, width = 30)
+    @ApiModelProperty(name = "warehouseAreaCode",value = "仓库区域编码")
+    private String warehouseAreaCode;
+
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @Excel(name = "仓库区域名称", height = 20, width = 30)
+    @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
+    private String warehouseAreaName;
+
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")

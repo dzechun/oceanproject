@@ -31,6 +31,7 @@ import com.fantechs.provider.wms.inner.service.WmsInnerTransferSlipService;
 import io.micrometer.core.instrument.search.Search;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -75,6 +76,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(WmsInnerTransferSlip wmsInnerTransferSlip) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -106,20 +108,32 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
             ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
-            for (WmsInnerTransferSlipDet wmsInnerTransferSlipDet : wmsInnerTransferSlipDetDtos) {
-                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getPlanCartonQty())){
+            for (WmsInnerTransferSlipDetDto wmsInnerTransferSlipDetDto : wmsInnerTransferSlipDetDtos) {
+                if (StringUtils.isEmpty(wmsInnerTransferSlipDetDto.getPlanCartonQty())){
                     throw new BizErrorException("计划调拨箱数必须大于0");
                 }
 
-                wmsInnerTransferSlipDet.setCreateTime(new Date());
-                wmsInnerTransferSlipDet.setCreateUserId(user.getUserId());
-                wmsInnerTransferSlipDet.setModifiedUserId(user.getUserId());
-                wmsInnerTransferSlipDet.setModifiedTime(new Date());
-                if (StringUtils.isEmpty(wmsInnerTransferSlipDet.getTransferSlipStatus())){
-                    wmsInnerTransferSlipDet.setTransferSlipStatus((byte) 0);
+                //判断是否已经存在这个栈板的调拨计划
+                Example example = new Example(WmsInnerTransferSlipDet.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("palletCode",wmsInnerTransferSlipDetDto.getPalletCode());
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("transferSlipStatus",0)
+                        .orEqualTo("transferSlipStatus",1);
+                WmsInnerTransferSlipDet wmsInnerTransferSlipDet1 = wmsInnerTransferSlipDetMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(wmsInnerTransferSlipDet1)){
+                    throw new BizErrorException("该栈板的调拨计划已经存在");
                 }
-                wmsInnerTransferSlipDet.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
-                wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDet);
+
+                wmsInnerTransferSlipDetDto.setCreateTime(new Date());
+                wmsInnerTransferSlipDetDto.setCreateUserId(user.getUserId());
+                wmsInnerTransferSlipDetDto.setModifiedUserId(user.getUserId());
+                wmsInnerTransferSlipDetDto.setModifiedTime(new Date());
+                if (StringUtils.isEmpty(wmsInnerTransferSlipDetDto.getTransferSlipStatus())){
+                    wmsInnerTransferSlipDetDto.setTransferSlipStatus((byte) 0);
+                }
+                wmsInnerTransferSlipDetDto.setTransferSlipId(wmsInnerTransferSlip.getTransferSlipId());
+                wmsInnerTransferSlipDets.add(wmsInnerTransferSlipDetDto);
             }
             if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets)){
                 wmsInnerTransferSlipDetMapper.insertList(wmsInnerTransferSlipDets);
@@ -130,6 +144,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(WmsInnerTransferSlip wmsInnerTransferSlip) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -167,6 +182,18 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                     if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
                         throw new BizErrorException("调入储位已存在其他物料");
                     }
+                }
+
+                //判断是否已经存在这个栈板的调拨计划
+                Example example = new Example(WmsInnerTransferSlipDet.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("palletCode",wmsInnerTransferSlipDetDto.getPalletCode());
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("transferSlipStatus",0)
+                        .orEqualTo("transferSlipStatus",1);
+                WmsInnerTransferSlipDet wmsInnerTransferSlipDet1 = wmsInnerTransferSlipDetMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(wmsInnerTransferSlipDet1)){
+                    throw new BizErrorException("该栈板的调拨计划已经存在");
                 }
 
                 //移除调出储位的库存明细信息
@@ -256,6 +283,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
