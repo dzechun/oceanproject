@@ -48,6 +48,12 @@ public class SearchWmsInnerStocktaking extends BaseQuery implements Serializable
     private String materialCode;
 
     /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    /**
      * 合同号
      */
     @ApiModelProperty(name="contractCode",value = "合同号")

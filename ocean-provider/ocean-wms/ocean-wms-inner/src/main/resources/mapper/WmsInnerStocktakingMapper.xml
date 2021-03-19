@@ -100,10 +100,13 @@
         and date_format(wis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="stocktakingCode != null and stocktakingCode!=''">
-        and wis.contract_code like CONCAT('%', #{stocktakingCode}, '%')
+        and wis.stocktaking_code like CONCAT('%', #{stocktakingCode}, '%')
       </if>
       <if test="palletCode != null and palletCode!=''">
         and wis.pallet_code like CONCAT('%', #{palletCode}, '%')
+      </if>
+      <if test="contractCode != null and contractCode!=''">
+        and wis.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
       <if test="stockistName != null and stockistName!=''">
         and suss.user_name like CONCAT('%', #{stockistName}, '%')
@@ -117,17 +120,14 @@
       <if test="workShopCode != null and workShopCode!=''">
         and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')
       </if>
-      <if test="workShopCode != null and workShopCode!=''">
-        and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')
-      </if>
-      <if test="workShopCode != null and workShopCode!=''">
-        and swh.work_shop_code like CONCAT('%', #{workShopCode}, '%')
-      </if>
       <if test="workShopName != null and workShopName!=''">
         and swh.work_shop_name like CONCAT('%', #{workShopName}, '%')
       </if>
       <if test="materialCode != null and materialCode!=''">
         and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName != null and materialName!=''">
+        and sm.material_name like CONCAT('%', #{materialName}, '%')
       </if>
       <if test="status!=null">
         and wis.status=#{status}
