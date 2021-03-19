@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -42,6 +43,15 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(WmsInnerStocktaking.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("palletCode",wmsInnerStocktaking.getPalletCode());
+        WmsInnerStocktaking wmsInnerStocktaking1 = wmsInnerStocktakingMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(wmsInnerStocktaking1)){
+            throw new BizErrorException("该栈板的盘点信息已经存在");
+        }
+        wmsInnerStocktaking.setProfitLossQuantity(wmsInnerStocktaking.getBookInventory().subtract(wmsInnerStocktaking.getCountedQuantity()));//计算盈亏数量
+        wmsInnerStocktaking.setProfitLossRate(wmsInnerStocktaking.getProfitLossQuantity().subtract(wmsInnerStocktaking.getBookInventory()));//计算盈亏率
         wmsInnerStocktaking.setStocktakingCode(CodeUtils.getId("ST-"));
         wmsInnerStocktaking.setCreateTime(new Date());
         wmsInnerStocktaking.setCreateUserId(user.getUserId());
@@ -59,6 +69,16 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(WmsInnerStocktaking.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("palletCode",wmsInnerStocktaking.getPalletCode())
+                .andNotEqualTo("stocktakingId",wmsInnerStocktaking.getStocktakingId());
+        WmsInnerStocktaking wmsInnerStocktaking1 = wmsInnerStocktakingMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(wmsInnerStocktaking1)){
+            throw new BizErrorException("该栈板的盘点信息已经存在");
+        }
+        wmsInnerStocktaking.setProfitLossQuantity(wmsInnerStocktaking.getBookInventory().subtract(wmsInnerStocktaking.getCountedQuantity()));//计算盈亏数量
+        wmsInnerStocktaking.setProfitLossRate(wmsInnerStocktaking.getProfitLossQuantity().subtract(wmsInnerStocktaking.getBookInventory()));//计算盈亏率
         wmsInnerStocktaking.setModifiedUserId(user.getUserId());
         wmsInnerStocktaking.setModifiedTime(new Date());
 

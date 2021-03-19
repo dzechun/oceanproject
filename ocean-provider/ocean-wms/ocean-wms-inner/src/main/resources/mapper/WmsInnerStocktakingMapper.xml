@@ -41,6 +41,12 @@
     <result column="work_shop_code" jdbcType="VARCHAR" property="workShopCode" />
     <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
     <result column="work_shop_desc" jdbcType="VARCHAR" property="workShopDesc" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
     <result column="stockist_name" jdbcType="VARCHAR" property="stockistName"/>
     <result column="stockist_code" jdbcType="VARCHAR" property="stockistCode"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -73,7 +79,8 @@
     <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     spl.pro_code, spl.pro_name, spl.pro_desc, spl.work_shop_id, swh.work_shop_code, swh.work_shop_name, swh.work_shop_desc,
     suss.user_name AS stockist_name, suss.user_code AS stockist_code,
-    sm.material_code, sm.material_name, sm.material_desc, bo.organization_name
+    sm.material_code, sm.material_name, sm.material_desc, bo.organization_name,
+    ss.storage_name,ss.storage_code,sw.warehouse_code,sw.warehouse_name,swa.warehouse_area_name,swa.warehouse_area_code
     from fantech_imes.wms_inner_stocktaking wis
     LEFT JOIN ocean.sys_user su  ON wis.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wis.modified_user_id = sus.user_id
@@ -81,6 +88,10 @@
     LEFT JOIN fantech_imes.smt_pro_line spl ON wis.pro_line_id = spl.pro_line_id
     LEFT JOIN fantech_imes.smt_work_shop swh ON spl.work_shop_id = swh.work_shop_id
     LEFT JOIN fantech_imes.smt_material sm ON wis.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_storage_material ssm ON sm.material_id = ssm.material_id
+    LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssm.storage_id
+    LEFT JOIN fantech_imes.smt_warehouse sw ON sw.warehouse_id = ssm.warehouse_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swa ON swa.warehouse_area_id = ssm.warehouse_area_id
     LEFT JOIN fantech_imes.base_organization bo ON wis.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

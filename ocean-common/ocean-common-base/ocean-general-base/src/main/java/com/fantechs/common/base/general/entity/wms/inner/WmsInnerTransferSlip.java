@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerTransferSlipDetDto;
 import com.fantechs.common.base.support.ValidGroup;;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.rmi.MarshalException;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 调拨单
@@ -55,6 +57,8 @@ public class WmsInnerTransferSlip extends ValidGroup implements Serializable {
     @ApiModelProperty(name="transferSlipTime",value = "单据日期")
     @Excel(name = "单据日期", height = 20, width = 30,orderNum="3",exportFormat = "yyyy-MM-dd")
     @Column(name = "transfer_slip_time")
+    @DateTimeFormat(pattern ="yyyy-MM-dd")
+    @JsonFormat(pattern ="yyyy-MM-dd")
     private Date transferSlipTime;
 
     /**
