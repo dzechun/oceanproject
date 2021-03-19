@@ -96,5 +96,6 @@
                 and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
             </if>
         </where>
+        order by bcm.create_time desc
     </select>
 </mapper>

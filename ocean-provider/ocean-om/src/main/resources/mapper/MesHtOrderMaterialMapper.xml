@@ -9,7 +9,7 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
         <result column="total" jdbcType="DECIMAL" property="total" />
         <result column="box_code" jdbcType="VARCHAR" property="boxCode" />
-        <result column="packing_unit_id" jdbcType="BIGINT" property="packingUnitId" />
+        <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
         <result column="size" jdbcType="DECIMAL" property="size" />
         <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight" />
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
@@ -36,7 +36,7 @@
      mhom.material_id,
      mhom.total,
      mhom.box_code,
-     mhom.packing_unit_id,
+     mhom.package_specification_id,
      mhom.size,
      mhom.rough_weight,
      mhom.net_weight,
@@ -62,7 +62,8 @@
        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = mhom.material_id
        LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
        LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-       left join smt_packing_unit spu on  mhom.packing_unit_id = spu.packing_unit_id
+       left join smt_package_specification sps on  mom.package_specification_id = sps.package_specification_id
+        left join smt_package_unit spu on spu.packing_unit_id=sps.packing_unit_id
    WHERE
      mhom.order_id = #{orderId}
      AND mhom.is_delete = 1

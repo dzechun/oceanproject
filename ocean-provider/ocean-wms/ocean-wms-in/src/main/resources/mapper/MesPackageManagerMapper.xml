@@ -47,6 +47,9 @@
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
+    <resultMap id="PrintModelMap" type="com.fantechs.common.base.general.dto.bcm.PrintModel">
+
+</resultMap>
 
     <select id="selectUserName" resultType="string">
         select su.user_name
@@ -165,4 +168,11 @@
             mpm.work_order_id = #{workOrderId}
             AND mpm.type = #{type}
     </select>
+
+    <select id="findPrintModel" resultMap="PrintModelMap">
+        select * FROM view_hf_packageManager
+           <where>
+                id = #{packageManageId}
+           </where>
+        </select>
 </mapper>
