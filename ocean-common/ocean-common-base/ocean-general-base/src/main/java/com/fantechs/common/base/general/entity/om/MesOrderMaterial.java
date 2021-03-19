@@ -63,9 +63,9 @@ public class MesOrderMaterial implements Serializable {
      * 包装规格id
      */
     @ApiModelProperty(value = "包装规格id",example = "包装规格id")
-    @Column(name = "packing_unit_id")
+    @Column(name = "package_specification_id")
     @Excel(name = "包装规格id")
-    private Long packingUnitId;
+    private Long packageSpecificationId;
 
     /**
     * 尺码(CM)

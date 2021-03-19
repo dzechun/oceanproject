@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -53,5 +54,8 @@ public interface BcmFeignApi {
     @ApiOperation("获取标签类别信息列表")
     @PostMapping("/bcmLabelCategory/findList")
     ResponseEntity<List<BcmLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory);
+
+    @PostMapping("/print")
+    ResponseEntity print(byte[] bytes) throws IOException;
 
 }

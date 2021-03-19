@@ -1,10 +1,13 @@
 package com.fantechs.provider.wms.in.mapper;
 
+import com.fantechs.common.base.general.dto.bcm.PrintModel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +23,7 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
     int findPrintBarcodeCount();
     //查询还剩余可打印数量
     int remainQty(Long workOrderId,int type);
+
+    //查询打印需要的数据
+    PrintModel findPrintModel(@Param("packageManageId")Long packageManageId);
 }
