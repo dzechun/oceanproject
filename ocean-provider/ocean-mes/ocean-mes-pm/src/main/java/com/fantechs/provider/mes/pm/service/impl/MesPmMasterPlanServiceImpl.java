@@ -181,6 +181,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }
+        //新工序计划
         List<MesPmProcessPlan> mesPmProcessPlanList = saveMesPmMasterPlanDTO.getMesPmProcessPlanList();
         //找出原有工序计划
         List<MesPmProcessPlan> mesPmProcessPlans = mesPmProcessPlanService.selectAll(ControllerUtil.dynamicCondition(

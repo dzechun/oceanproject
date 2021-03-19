@@ -60,6 +60,10 @@ public interface StorageInventoryFeignApi {
     @PostMapping("/smtStorageInventoryDet/update")
     ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = SmtStorageInventoryDet.update.class) SmtStorageInventoryDet smtStorageInventoryDet);
 
+    @ApiOperation("储位库存明细删除")
+    @PostMapping("/smtStorageInventoryDet/delete")
+    ResponseEntity deleteStorageInventoryDet(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
+
     @ApiOperation("储位栈板关系表新增")
     @PostMapping("/smtStoragePallet/add")
     ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);

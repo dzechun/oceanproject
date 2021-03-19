@@ -148,6 +148,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
         }
 
         wmsInnerInventoryScrap.setModifiedUserId(user.getUserId());
+        wmsInnerInventoryScrap.setProcessorUserId(user.getUserId());
         wmsInnerInventoryScrap.setModifiedTime(new Date());
 
         //履历

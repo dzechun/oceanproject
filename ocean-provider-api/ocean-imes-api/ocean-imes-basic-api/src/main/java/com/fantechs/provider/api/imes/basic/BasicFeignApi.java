@@ -3,6 +3,7 @@ package com.fantechs.provider.api.imes.basic;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;

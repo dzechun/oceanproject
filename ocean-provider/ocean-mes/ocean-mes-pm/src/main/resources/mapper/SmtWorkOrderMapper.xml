@@ -198,7 +198,7 @@
             and swo.order_id = 0
         </if>
         LEFT JOIN mes_order_material mom ON swo.order_id = mom.order_id and swo.material_id = mom.material_id
-        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mom.packing_unit_id
+        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mom.package_specification_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

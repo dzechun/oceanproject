@@ -2,6 +2,7 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.imports.SmtProcessImport;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.history.SmtHtProcess;
 import com.fantechs.common.base.entity.basic.history.SmtHtWorkshopSection;
@@ -175,25 +176,27 @@ public class SmtProcessServiceImpl extends BaseService<SmtProcess> implements Sm
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtProcess> smtProcesses) {
+    public Map<String, Object> importExcel(List<SmtProcessImport> smtProcessImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtProcess> list = new LinkedList<>();
         LinkedList<SmtHtProcess> htList = new LinkedList<>();
-        for (int i = 0; i < smtProcesses.size(); i++) {
-            SmtProcess smtProcess = smtProcesses.get(i);
-            String processCode = smtProcess.getProcessCode();
-            String processName = smtProcess.getProcessName();
-            String processCategoryCode = smtProcess.getProcessCategoryCode();
+        LinkedList<SmtProcessImport> processImports = new LinkedList<>();
+        for (int i = 0; i < smtProcessImports.size(); i++) {
+            SmtProcessImport smtProcessImport = smtProcessImports.get(i);
+            String processCode = smtProcessImport.getProcessCode();
+            String processName = smtProcessImport.getProcessName();
+            String processCategoryCode = smtProcessImport.getProcessCategoryCode();
+            String sectionCode = smtProcessImport.getSectionCode();
             if (StringUtils.isEmpty(
-                    processCode, processName, processCategoryCode
+                    processCode, processName, processCategoryCode, sectionCode
             )) {
-                fail.add(i + 3);
+                fail.add(i + 4);
                 continue;
             }
 
@@ -213,48 +216,63 @@ public class SmtProcessServiceImpl extends BaseService<SmtProcess> implements Sm
             criteria1.andEqualTo("processCategoryCode", processCategoryCode);
             SmtProcessCategory smtProcessCategory = smtProcessCategoryMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(smtProcessCategory)) {
-                fail.add(i + 3);
+                fail.add(i + 4);
                 continue;
             }
 
             //判断工段是否存在
-            if (StringUtils.isNotEmpty(smtProcess.getSectionCode())) {
+            if (StringUtils.isNotEmpty(sectionCode)) {
                 Example example2 = new Example(SmtWorkshopSection.class);
                 Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("sectionCode", smtProcess.getSectionCode());
+                criteria2.andEqualTo("sectionCode", sectionCode);
                 SmtWorkshopSection smtWorkshopSection = smtWorkshopSectionMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(smtWorkshopSection)) {
-                    fail.add(i + 3);
+                    fail.add(i + 4);
                     continue;
                 }
-                smtProcess.setProcessId(smtWorkshopSection.getSectionId());
+                smtProcessImport.setSectionId(smtWorkshopSection.getSectionId());
             }
 
-            smtProcess.setCreateTime(new Date());
-            smtProcess.setCreateUserId(currentUser.getUserId());
-            smtProcess.setModifiedTime(new Date());
-            smtProcess.setModifiedUserId(currentUser.getUserId());
-            smtProcess.setStatus(1);
-            smtProcess.setProcessCategoryId(smtProcessCategory.getProcessCategoryId());
-            list.add(smtProcess);
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(processImports)){
+                for (SmtProcessImport processImport : processImports) {
+                    if (processImport.getProcessCode().equals(processCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i + 4);
+                continue;
+            }
+
+            processImports.add(smtProcessImport);
         }
 
-        if (StringUtils.isNotEmpty(list)) {
+        if (StringUtils.isNotEmpty(processImports)){
+            for (SmtProcessImport processImport : processImports) {
+                SmtProcess smtProcess = new SmtProcess();
+                BeanUtils.copyProperties(processImport,smtProcess);
+                smtProcess.setCreateTime(new Date());
+                smtProcess.setCreateUserId(currentUser.getUserId());
+                smtProcess.setModifiedTime(new Date());
+                smtProcess.setModifiedUserId(currentUser.getUserId());
+                list.add(smtProcess);
+            }
+
             success = smtProcessMapper.insertList(list);
-        }
 
-        for (SmtProcess smtProcess : list) {
-            SmtHtProcess smtHtProcess = new SmtHtProcess();
-            BeanUtils.copyProperties(smtProcess, smtHtProcess);
-            htList.add(smtHtProcess);
-        }
+            for (SmtProcess smtProcess : list) {
+                SmtHtProcess smtHtProcess = new SmtHtProcess();
+                BeanUtils.copyProperties(smtProcess, smtHtProcess);
+                htList.add(smtHtProcess);
+            }
 
-
-        if (StringUtils.isNotEmpty(htList)) {
             smtHtProcessMapper.insertList(htList);
         }
-        resutlMap.put("操作成功总数", success);
-        resutlMap.put("操作失败行数", fail);
-        return resutlMap;
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行数", fail);
+        return resultMap;
     }
 }

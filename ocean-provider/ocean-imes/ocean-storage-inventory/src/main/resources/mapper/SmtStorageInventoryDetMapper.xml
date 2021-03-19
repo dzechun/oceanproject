@@ -24,6 +24,8 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto">
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
@@ -42,12 +44,15 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        bo.organization_name,ss.storage_code,ss.storage_name,sm.material_desc,sm.material_name
+        bo.organization_name,ss.storage_code,ss.storage_name,sm.material_desc,sm.material_name,
+        swa.warehouse_area_name,sw.warehouse_name
         FROM smt_storage_inventory_det ssid
         LEFT JOIN ocean.sys_user su ON ssid.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON ssid.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_inventory_id = ssid.storage_inventory_id
         LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssi.storage_id
+        LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+        LEFT JOIN fantech_imes.smt_warehouse sw ON sw.warehouse_id = swa.warehouse_id
         LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.storage_id = ssi.storage_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssm.material_id
         LEFT JOIN fantech_imes.base_organization bo ON ssid.organization_id = bo.organization_id

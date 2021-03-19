@@ -2,6 +2,7 @@ package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDetDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtPdaInspection;
@@ -101,6 +102,18 @@ public class QmsPdaInspectionController {
     @RequestBody(required = false) SearchQmsPdaInspection searchQmsPdaInspection) {
         List<QmsPdaInspectionDto> list = qmsPdaInspectionService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsPdaInspection));
         try {
+            for (QmsPdaInspectionDto qmsPdaInspectionDto : list) {
+                boolean ifQualified = true;
+                for (QmsPdaInspectionDetDto qmsPdaInspectionDetDto : qmsPdaInspectionDto.getList()) {
+                    if (qmsPdaInspectionDetDto.getInspectionResult() != 1){
+                        qmsPdaInspectionDto.setQualifiedState("不合格");
+                        ifQualified= false;
+                    }
+                }
+                if (ifQualified){
+                    qmsPdaInspectionDto.setQualifiedState("合格");
+                }
+            }
             // 导出操作
             EasyPoiUtils.exportExcel(list, "PDA质检导出信息", "PDA质检信息", QmsPdaInspectionDto.class, "PDA质检.xls", response);
         } catch (Exception e) {

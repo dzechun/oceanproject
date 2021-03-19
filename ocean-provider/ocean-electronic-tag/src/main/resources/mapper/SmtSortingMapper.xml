@@ -28,6 +28,7 @@
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="electronic_tag_id" jdbcType="VARCHAR" property="electronicTagId"/>
         <result column="equipment_area_id" jdbcType="VARCHAR" property="equipmentAreaId"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
@@ -49,7 +50,11 @@
 	`ssl`.quantity,
 	`ssl`.organization_id,
 	`ssl`.remark,
-	`ssl`.status
+	`ssl`.status,
+	`ssl`.create_user_id,
+	`ssl`.create_time,
+	`ssl`.modified_user_id,
+	`ssl`.modified_time
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -64,6 +69,7 @@
         sm.material_desc,
         sm.material_name,
         sm.version,
+        sets.electronic_tag_id,
         sets.equipment_area_id,
         swa.warehouse_area_name,
         bo.organization_name
@@ -115,6 +121,7 @@
         <if test="orderBySortingCode != null and orderBySortingCode!=''">
             group by `ssl`.sorting_code
         </if>
+        order by field(ssl.status,2,0,1),ssl.create_time desc
     </select>
 
     <update id="batchUpdate" parameterType="java.util.List">

@@ -18,7 +18,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="20")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -26,7 +26,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="22")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 
     /**
@@ -34,7 +34,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name="proCode" ,value="线别代码")
-    @Excel(name = "线别代码", height = 20, width = 30,orderNum="2")
+    @Excel(name = "线别代码", height = 20, width = 30)
     private String proCode;
 
     /**
@@ -42,7 +42,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30,orderNum="3")
+    @Excel(name = "线别名称", height = 20, width = 30)
     private String proName;
 
     /**
@@ -50,7 +50,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name="proDesc" ,value="线别描述")
-    @Excel(name = "线别描述", height = 20, width = 30,orderNum="4")
+    @Excel(name = "线别描述", height = 20, width = 30)
     private String proDesc;
 
 
@@ -58,7 +58,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 车间编码
      */
     @Transient
-    @Excel(name = "车间编码", height = 20, width = 30,orderNum="5")
+    @Excel(name = "车间编码", height = 20, width = 30)
     @ApiModelProperty(name = "workShopCode",value = "车间编码")
     private String workShopCode;
 
@@ -66,7 +66,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 车间名称
      */
     @Transient
-    @Excel(name = "车间名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "车间名称", height = 20, width = 30)
     @ApiModelProperty(name = "workShopName",value = "车间名称")
     private String workShopName;
 
@@ -75,21 +75,21 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "workShopDesc",value = "车间描述")
-    @Excel(name = "车间描述", height = 20, width = 30,orderNum="7")
+    @Excel(name = "车间描述", height = 20, width = 30)
     private String workShopDesc;
 
     /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="8")
+    @Excel(name = "物料编码", height = 20, width = 30)
     private String materialCode;
 
     /**
      * 物料名称
      */
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "物料名称", height = 20, width = 30)
     private String materialName;
 
     /**
@@ -97,7 +97,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Column(name = "material_desc")
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30,orderNum="10")
+    @Excel(name = "物料描述", height = 20, width = 30)
     private String materialDesc;
 
     /**
@@ -105,7 +105,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "stockistName",value = "盘点员名称")
-    @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="17")
+    @Excel(name = "盘点员名称", height = 20, width = 30)
     private String stockistName;
 
     /**
@@ -113,7 +113,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "stockistCode",value = "stockistCode")
-    @Excel(name = "盘点员编码", height = 20, width = 30,orderNum="18")
+    @Excel(name = "盘点员编码", height = 20, width = 30)
     private String stockistCode;
 
     /**

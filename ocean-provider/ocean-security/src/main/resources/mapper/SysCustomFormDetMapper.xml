@@ -8,6 +8,7 @@
         <result column="item_name" jdbcType="VARCHAR" property="itemName"/>
         <result column="show_type" jdbcType="TINYINT" property="showType"/>
         <result column="item_value" jdbcType="VARCHAR" property="itemValue"/>
+        <result column="disabled" jdbcType="TINYINT" property="disabled"/>
         <result column="item_width" jdbcType="VARCHAR" property="itemWidth"/>
         <result column="item_list_type" jdbcType="TINYINT" property="itemListType"/>
         <result column="item_search_type" jdbcType="TINYINT" property="itemSearchType"/>
@@ -48,6 +49,7 @@
     cfd.item_name,
     cfd.show_type,
     cfd.item_value,
+    cfd.disabled,
     cfd.item_width,
     cfd.item_list_type,
     cfd.item_search_type,

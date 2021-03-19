@@ -10,12 +10,10 @@ import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -27,6 +25,8 @@ import com.fantechs.provider.client.dto.PtlSortingDetailDTO;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import com.google.gson.reflect.TypeToken;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Delivery;
+import com.rabbitmq.client.GetResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -37,8 +37,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -153,7 +151,7 @@ public class ElectronicTagReceiver {
                             JSONObject.toJSONString(mQResponseEntity));
                     //当区域内没有分拣中物料时，发送给客户端控制灭区域灯
                     if (findSortingList.size() == 1 && StringUtils.isNotEmpty(smtSortingDto.getEquipmentAreaId())) {
-                        mQResponseEntity.setCode(1003);
+                        mQResponseEntity.setCode(1004);
                         smtElectronicTagStorageDtoList.get(0).setEquipmentAreaId(smtSortingDto.getEquipmentAreaId());
                         fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
                                 JSONObject.toJSONString(mQResponseEntity));
@@ -201,6 +199,8 @@ public class ElectronicTagReceiver {
 //                   mqResponseEntity.setCode(1003);
 //            fanoutSender.send(RabbitConfig.FANOUT_QUEUE1, JSONObject.toJSONString(mqResponseEntity));
                     }
+                    channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                    log.warn("===========手动确认消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
                 }
             } else if (mqResponseEntity.getCode() == 102) {
 
@@ -219,8 +219,13 @@ public class ElectronicTagReceiver {
             log.info("===========队列名称:" + RabbitConfig.TOPIC_QUEUE_PDA);
             log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
             log.info("===========发送消息给客户端完成===============");
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-            log.warn("===========删除消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息===============> " + JSONObject.toJSONString(mqResponseEntity));
+            //第二个参数设为true为自动应答，false为手动ack
+//            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            //重新放入队列
+//            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+            //抛弃此条消息
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+            log.warn("===========删除消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
 
             throw new Exception(e);
         }

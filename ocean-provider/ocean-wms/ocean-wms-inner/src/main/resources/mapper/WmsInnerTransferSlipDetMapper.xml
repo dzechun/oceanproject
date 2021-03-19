@@ -16,8 +16,6 @@
     <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
-    <result column="total" jdbcType="DECIMAL" property="total" />
-    <result column="carton_quantity" jdbcType="DECIMAL" property="cartonQuantity" />
     <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -59,8 +57,6 @@
 	witsd.reality_total_qty,
     witsd.pallet_code,
     witsd.contract_code,
-    witsd.carton_quantity,
-    witsd.total,
 	witsd.transfer_slip_status,
 	witsd.`status`,
 	witsd.remark,
@@ -103,9 +99,6 @@
       </if>
       <if test="transferSlipId != null">
         and witsd.transfer_slip_id = #{transferSlipId}
-      </if>
-      <if test="QueryMark == 0">
-        and witsd.transfer_slip_status = 0 or witsd.transfer_slip_status = 1
       </if>
     </where>
     order by witsd.create_time desc

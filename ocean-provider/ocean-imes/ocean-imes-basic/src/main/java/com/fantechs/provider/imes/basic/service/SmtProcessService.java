@@ -1,5 +1,6 @@
 package com.fantechs.provider.imes.basic.service;
 
+import com.fantechs.common.base.dto.basic.imports.SmtProcessImport;
 import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.entity.basic.search.SearchSmtProcess;
 import com.fantechs.common.base.support.IService;
@@ -15,5 +16,5 @@ import java.util.Map;
 public interface SmtProcessService extends IService<SmtProcess> {
 
     List<SmtProcess> findList(SearchSmtProcess searchSmtProcess);
-    Map<String, Object> importExcel(List<SmtProcess> smtProcesses);
+    Map<String, Object> importExcel(List<SmtProcessImport> smtProcessImports);
 }

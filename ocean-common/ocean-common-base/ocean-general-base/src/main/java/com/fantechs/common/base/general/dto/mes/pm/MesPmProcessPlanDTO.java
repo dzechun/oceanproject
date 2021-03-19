@@ -44,4 +44,11 @@ public class MesPmProcessPlanDTO extends MesPmProcessPlan implements Serializabl
     @ApiModelProperty(value = "工序名称",example = "工序名称")
     @Excel(name = "工序名称")
     private String processName;
+
+    /**
+     * 工序排序依据
+     */
+    @Transient
+    @ApiModelProperty(value = "工序排序依据",example = "工序排序依据")
+    private Integer orderNum;
 }
