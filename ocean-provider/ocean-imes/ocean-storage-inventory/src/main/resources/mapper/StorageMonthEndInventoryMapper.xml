@@ -126,12 +126,7 @@
         sum(ssid.material_quantity) as total,
         ssi.quantity as material_total,
         spm.product_model_name,
-        ifnull(
-        CEILING( sum(ssid.material_quantity) / ( SELECT sps.package_specification_quantity FROM
-        smt_package_specification sps
-        WHERE sps.package_specification_id = bt.package_specification_id ) ),
-        sum(ssid.material_quantity)
-        ) AS box_number,
+        sum((if(mpm.type=1,1,mpm.total))) AS box_number,
         ssid.create_time
         FROM
         smt_storage_inventory_det ssid
