@@ -90,6 +90,6 @@
         and sld.status != #{notEqualstatus}
       </if>
     </where>
-    order by sld.create_time desc
+    order by field(sld.status,3,0,2,1),sld.create_time desc
   </select>
 </mapper>

@@ -19,8 +19,10 @@ import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.exhibition.config.RabbitConfig;
 import com.google.gson.reflect.TypeToken;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -89,7 +91,7 @@ public class ExhibitionReceiver {
 
     // 监听客户端队列
     @RabbitListener(queues = RabbitConfig.TOPIC_PROCESS_WORK_QUEUE)
-    public void receiveTopicProcessWorkQueue(byte[]  bytes ) throws Exception {
+    public void receiveTopicProcessWorkQueue(byte[]  bytes, Message message, Channel channel) throws Exception {
         String encoded= new String(bytes,"UTF-8");
         MQResponseEntity mqResponseEntity= JsonUtils.jsonToPojo(encoded,MQResponseEntity.class);
         log.info("监听客户端队列 : TOPIC_PROCESS_WORK_QUEUE 信息 : " + JSONObject.toJSONString(mqResponseEntity));
@@ -184,6 +186,9 @@ public class ExhibitionReceiver {
             RcsResponseDTO rcsResponseDTO = BeanUtils.convertJson(result, new TypeToken<RcsResponseDTO>(){}.getType());
             log.info("启动AGV配送任务：请求参数：" + JSONObject.toJSONString(map) + "， 返回结果：" + JSONObject.toJSONString(rcsResponseDTO));
         }
+
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        log.warn("===========手动确认消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
     }
 
 }

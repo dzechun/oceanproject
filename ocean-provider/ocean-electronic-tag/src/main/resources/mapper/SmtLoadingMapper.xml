@@ -43,6 +43,6 @@
         and status = #{status}
       </if>
     </where>
-    order by create_time desc
+    order by field(status,3,0,2,1),create_time desc
   </select>
 </mapper>

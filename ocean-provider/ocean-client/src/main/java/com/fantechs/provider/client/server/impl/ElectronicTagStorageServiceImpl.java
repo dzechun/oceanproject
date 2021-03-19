@@ -159,6 +159,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             //不同的标签可能对应的队列不一样，最终一条一条发给客户端
             fanoutSender(1001, smtElectronicTagStorageDto);
+            if (StringUtils.isNotEmpty(smtElectronicTagStorageDto.getEquipmentAreaId())) {
+                fanoutSender(1002, smtElectronicTagStorageDto);
+            }
         }
 
         if (StringUtils.isNotEmpty(smtSortingList)) {
@@ -264,19 +267,31 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             if (StringUtils.isNotEmpty(smtLoadings) && smtLoading.getOrderType() != 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复入库单");
             }
-            if (StringUtils.isNotEmpty(smtLoadings) && smtLoadings.get(0).getStatus() != 0) {
+            if (StringUtils.isNotEmpty(smtLoadings) && smtLoadings.get(0).getStatus() == 1) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该上料单正在进行上料操作，请稍后再进行同步！");
+            }
+            if (StringUtils.isNotEmpty(smtLoadings) && smtLoadings.get(0).getStatus() != 0 && smtLoading.getOrderType() != 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该上料单已进行上料操作");
             }
             if (smtLoading.getOrderType() == 1 && StringUtils.isNotEmpty(smtLoadings)) {
-                // 查询本次传入采购订单相物料明细比较上次是否有删减
+                // 查询本次传入采购订单物料明细比较上次是否有删减
                 SearchSmtLoadingDet searchSmtLoadingDet = new SearchSmtLoadingDet();
                 searchSmtLoadingDet.setLoadingCode(smtLoading.getLoadingCode());
                 List<SmtLoadingDetDto> smtLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchSmtLoadingDet).getData();
                 for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
-                    SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
-                    smtLoadingDet.setLoadingDetId(smtLoadingDetDto.getLoadingDetId());
-                    smtLoadingDet.setIsDetele((byte) 0);
-                    electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+                    Boolean deleteBoolean = true;
+                    for (SmtLoadingDetDto smtLoadingDetDto2 : smtLoading.getSmtLoadingDetDtoList()) {
+                        if (smtLoadingDetDto.getMaterialCode().equals(smtLoadingDetDto2.getMaterialCode())) {
+                            deleteBoolean = false;
+                            break;
+                        }
+                    }
+                    if (deleteBoolean) {
+                        SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
+                        smtLoadingDet.setLoadingDetId(smtLoadingDetDto.getLoadingDetId());
+                        smtLoadingDet.setIsDetele((byte) 0);
+                        electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+                    }
                 }
             }
             if (StringUtils.isEmpty(smtLoadings)) {
@@ -320,6 +335,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     electronicTagFeignApi.addSmtLoadingDet(smtLoadingDet);
                 } else {
                     smtLoadingDet.setLoadingDetId(smtLoadingDetDtoList.get(0).getLoadingDetId());
+                    if (smtLoadingDetDtoList.get(0).getStatus() == 3 && smtLoadingDetDto.getPlanQty().compareTo(smtLoadingDetDtoList.get(0).getActualQty()) == 1) {
+                        smtLoadingDet.setStatus((byte) 2);
+                    }
                     electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
                 }
             }
@@ -392,8 +410,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             smtLoadingDet.setModifiedUserId(currentUser.getUserId());
             electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
 
-            // 不同的标签可能对应的队列不一样，最终一条一条发给客户端，控制亮灯
+            // 不同的标签可能对应的队列不一样，最终一条一条发给客户端，控制biao亮灯
             fanoutSender(1001, smtElectronicTagStorageDtoList.get(0));
+            // 控制区域灯亮灯
+            if (StringUtils.isNotEmpty(smtElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
+                fanoutSender(1002, smtElectronicTagStorageDtoList.get(0));
+            }
         }
 
         return smtLoadingDetDtoList;
@@ -507,6 +529,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             // 发给客户端，控制灭灯
             fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
+            // 控制区域灯亮灯
+            if (StringUtils.isNotEmpty(smtElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
+                fanoutSender(1004, smtElectronicTagStorageDtoList.get(0));
+            }
 
             if (BigDecimal.ZERO.compareTo(smtLoadingDetDto.getActualQty()) != 0) {
                 PtlLoadingDetDTO ptlLoadingDetDTO = new PtlLoadingDetDTO();
@@ -580,6 +606,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             // 不同的标签可能对应的队列不一样，最终一条一条发给客户端，控制灭灯
             fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
+            // 控制区域灯亮灯
+            if (StringUtils.isNotEmpty(smtElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
+                fanoutSender(1004, smtElectronicTagStorageDtoList.get(0));
+            }
         }
 
         return 1;
