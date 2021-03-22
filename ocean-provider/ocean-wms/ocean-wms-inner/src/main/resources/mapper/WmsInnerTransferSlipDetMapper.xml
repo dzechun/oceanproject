@@ -34,8 +34,8 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="productModel_code" jdbcType="VARCHAR" property="productModelCode"/>
-    <result column="productModel_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="productModel_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
     <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>

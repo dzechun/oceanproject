@@ -138,7 +138,7 @@
       <if test="inventoryResults == 1">
         and wis.delivery_rate &gt; 0
       </if>
-      <if test="inventoryResults == 0">
+      <if test="inventoryResults == 2">
         and wis.delivery_rate &lt; 0
       </if>
     </where>
