@@ -29,7 +29,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
 </resultMap>
 <sql id="SqlColumn">
-os.olt_ht_safe_stock_id
+os.safe_ht_stock_id,
 os.safe_stock_id,
 os.safe_stock_type,
 os.warehouse_id,
@@ -50,7 +50,7 @@ SELECT <include refid="SqlColumn"/>,sw.warehouse_name as 'warehouseName',smc.mat
 sm.material_name as 'materialName',sm.material_desc as 'materialDesc',sm.version,
 su.user_name
 create_user_name,sus.user_name as modified_user_name, bo.organization_name
-FROM olt_safe_stock os
+FROM olt_ht_safe_stock os
 LEFT JOIN smt_warehouse sw ON os.warehouse_id=sw.warehouse_id
 LEFT JOIN smt_material_category smc ON os.material_category_id = smc.material_category_id
 LEFT JOIN smt_material sm ON os.material_id = sm.material_id
