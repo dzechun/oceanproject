@@ -271,16 +271,16 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
         mesPackageManager.setBarCode(responseEntity.getData());
         //调用打印程序进行条码打印
-        try {
-            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
-            printModel.setOption9(mesPackageManager.getBarCode());
-            printModel.setQrCode(mesPackageManager.getBarCode());
-            String json = JSON.toJSONString(printModel);
-            byte[] bytes = json.getBytes();
-            ResponseEntity res = bcmFeignApi.print(bytes);
-        }catch (Exception e){
-            throw new BizErrorException(e.getMessage());
-        }
+//        try {
+//            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+//            printModel.setOption9(mesPackageManager.getBarCode());
+//            printModel.setQrCode(mesPackageManager.getBarCode());
+//            String json = JSON.toJSONString(printModel);
+//            byte[] bytes = json.getBytes();
+//            ResponseEntity res = bcmFeignApi.print(bytes);
+//        }catch (Exception e){
+//            throw new BizErrorException(e.getMessage());
+//        }
     }
 
     /**
