@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 
 
 @Data
@@ -40,4 +41,11 @@ public class SearchWmsInnerTransferSlip extends BaseQuery {
      */
     @ApiModelProperty(name = "codeQueryMark",value = "状态查询标记(传0则查询出待调拨和调拨中的单据)")
     private Integer QueryMark;
+
+    /**
+     * 单据类型（0、库内调拨 1、库外调拨）
+     */
+    @ApiModelProperty(name="orderType",value = "单据类型（0、库内调拨 1、库外调拨）")
+    private Byte orderType;
+
 }
