@@ -42,8 +42,8 @@ sps.modified_time,
 sps.execute_status,
 sps.read_path,
 sps.write_path,
-remark,
-process_scheduling_desc
+sps.remark,
+sps.process_scheduling_desc
 </sql>
 <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="BaseColumnList"/>,su.user_name as create_user_name, bo.organization_name,
