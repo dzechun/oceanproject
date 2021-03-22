@@ -176,18 +176,13 @@
         spl.pro_name AS 'proName',
         bt.main_unit AS 'packingUnitName',
         <if test="processId!=null and processId!=''">
-            IF(swo.order_id = 0 or swo.order_id is null,ssps.package_specification_id,sps.package_specification_id) AS
-            'packageSpecificationId',
-            IF(swo.order_id = 0 or swo.order_id is
-            null,ssps.package_specification_quantity,sps.package_specification_quantity)AS
-            'packageSpecificationQuantity'
+            ssps.package_specification_id AS 'packageSpecificationId',
+            ssps.package_specification_quantity AS 'packageSpecificationQuantity'
         </if>
         <if test="processId == null or processId ==''">
-            IF(swo.order_id = 0 or swo.order_id is null,0,sps.package_specification_id) AS 'packageSpecificationId',
-            IF(swo.order_id = 0 or swo.order_id is null,0,sps.package_specification_quantity)AS
-            'packageSpecificationQuantity'
+            sps.package_specification_id AS 'packageSpecificationId',
+            sps.package_specification_quantity AS 'packageSpecificationQuantity'
         </if>
-
         FROM smt_work_order swo
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
         LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
