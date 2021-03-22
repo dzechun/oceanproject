@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.log.mapper.SmtEmpOperationLogMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.log.SmtEmpOperationLog">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="emp_operation_log_id" jdbcType="BIGINT" property="empOperationLogId"/>
+        <result column="document_code" jdbcType="VARCHAR" property="documentCode"/>
+        <result column="function_menu" jdbcType="VARCHAR" property="functionMenu"/>
+        <result column="host" jdbcType="VARCHAR" property="host"/>
+        <result column="operation_type" jdbcType="VARCHAR" property="operationType"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.log.SmtEmpOperationLogDto"
+               extends="BaseResultMap">
+        <result column="create_user_name" jdbcType="VARCHAR" property="operationPerson"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        seol.emp_operation_log_id,
+        seol.document_code,
+        seol.function_menu,
+        seol.host,
+        seol.operation_type,
+        seol.remark,
+        seol.status,
+        seol.organization_id,
+        seol.create_user_id,
+        seol.create_time,
+        seol.modified_user_id,
+        seol.modified_time,
+        seol.is_delete
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select <include refid="Base_Column_List"></include>
+        from fantech_imes.smt_emp_operation_log seol
+        left join ocean.sys_user su ON su.user_id = seol.create_user_id
+        left join fantech_imes.smt_dept sd ON sd.dept_id = su.dept_id
+        <where>
+            <if test="documentCode != null and documentCode != ''">
+                and seol.document_code like CONCAT('%', #{documentCode}, '%')
+            </if>
+            <if test="functionMenu != null and functionMenu != ''">
+                and seol.function_menu like CONCAT('%', #{functionMenu}, '%')
+            </if>
+            <if test="operationType != null and operationType != ''">
+                and seol.operation_type  like CONCAT('%', #{operationType}, '%')
+            </if>
+            <if test="operationPerson != null and operationPerson != ''">
+                and su.user_name  like CONCAT('%', #{operationPerson}, '%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(seol.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+</mapper>

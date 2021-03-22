@@ -87,6 +87,7 @@
                 and date_format(ew.businessDate, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
+        order by ew.businessDate desc
     </select>
 
 </mapper>

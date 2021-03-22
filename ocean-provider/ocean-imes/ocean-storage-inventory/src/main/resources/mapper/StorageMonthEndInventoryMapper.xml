@@ -107,6 +107,7 @@
                 and date_format(smei.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
+        order by smei.create_time desc
     </select>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -170,6 +171,7 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+        order by  ssid.create_time desc
     </select>
 
 </mapper>
