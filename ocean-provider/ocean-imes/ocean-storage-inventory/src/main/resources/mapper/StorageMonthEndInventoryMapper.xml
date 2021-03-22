@@ -97,8 +97,8 @@
             <if test="materialDesc != null and materialDesc != ''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-            <if test="productModelName != null and productModelName != ''">
-                and sm.material_name like CONCAT('%', #{productModelName}, '%')
+            <if test="materialName != null and materialName != ''">
+                and sm.material_name like CONCAT('%', #{materialName}, '%')
             </if>
             <if test="month != null and month != ''">
                 and smei.create_time like CONCAT(#{month}, '%')
@@ -161,8 +161,8 @@
             <if test="materialDesc != null and materialDesc != ''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-            <if test="productModelName != null and productModelName != ''">
-                and sm.material_name like CONCAT('%', #{productModelName}, '%')
+            <if test="materialName != null and materialName != ''">
+                and sm.material_name like CONCAT('%', #{materialName}, '%')
             </if>
             <if test="month != null and month != ''">
                 and smei.create_time like CONCAT(#{month}, '%')
