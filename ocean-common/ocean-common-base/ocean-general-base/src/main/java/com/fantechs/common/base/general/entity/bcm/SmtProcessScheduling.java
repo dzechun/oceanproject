@@ -118,9 +118,9 @@ public class SmtProcessScheduling extends ValidGroup implements Serializable {
     private Byte executeStatus;
 
     /**
-     * 写路径
+     * 读路径
      */
-    @ApiModelProperty(name="readPath",value = "写路径")
+    @ApiModelProperty(name="readPath",value = "读路径")
     @Excel(name = "读路径", height = 20, width = 30,orderNum="")
     @Column(name = "read_path")
     private String readPath;
@@ -128,10 +128,27 @@ public class SmtProcessScheduling extends ValidGroup implements Serializable {
     /**
      * 写路径
      */
-    @ApiModelProperty(name="readPath",value = "写路径")
+    @ApiModelProperty(name="writePath",value = "写路径")
     @Excel(name = "写路径", height = 20, width = 30,orderNum="")
     @Column(name = "write_path")
     private String writePath;
+
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="")
+    @Column(name = "remark")
+    private String remark;
+
+    /**
+     * 描述
+     */
+    @ApiModelProperty(name="processSchedulingDesc",value = "描述")
+    @Excel(name = "描述", height = 20, width = 30,orderNum="")
+    @Column(name = "process_scheduling_desc")
+    private String processSchedulingDesc;
 
     private QuartzSearch quartzSearch;
 
