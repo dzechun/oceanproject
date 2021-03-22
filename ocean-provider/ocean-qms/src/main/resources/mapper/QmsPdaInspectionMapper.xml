@@ -48,7 +48,7 @@
     qpi.documents_time,
     qpi.documents_type,
     qpi.status,qpi.create_user_id, bo.organization_name,qpi.create_time,bo.organization_code,
-    qpi.modified_user_id,qpi.modified_time,qpi.is_delete, qpi.organization_id,qpi.remark
+    qpi.modified_user_id,qpi.feedback_time as modified_time,qpi.is_delete, qpi.organization_id,qpi.remark
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
@@ -56,7 +56,7 @@
     swo.work_order_code,spl.pro_name AS production_line,sys.user_name AS handler_name,mpm.bar_code AS pallet_code
     from qms_pda_inspection qpi
     LEFT JOIN ocean.sys_user su ON qpi.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qpi.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user sus ON qpi.feedback_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON qpi.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.smt_work_order swo ON qpi.work_order_id = swo.work_order_id
     LEFT JOIN fantech_imes.smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id

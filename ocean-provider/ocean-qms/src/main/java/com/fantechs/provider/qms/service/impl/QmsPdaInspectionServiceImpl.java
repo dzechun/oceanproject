@@ -272,6 +272,9 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           }
           qmsPdaInspection.setModifiedTime(new Date());
           qmsPdaInspection.setModifiedUserId(user.getUserId());
+          qmsPdaInspection.setFeedbackUserId(user.getUserId());
+          qmsPdaInspection.setFeedbackTime(new Date());
+
           return qmsPdaInspectionMapper.updateByPrimaryKeySelective(qmsPdaInspection);
      }
 }

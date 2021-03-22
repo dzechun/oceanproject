@@ -69,9 +69,9 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      * 产品型号
      */
     @Transient
-    @ApiModelProperty(name = "productModelName", value = "产品型号")
+    @ApiModelProperty(name = "materialName", value = "产品型号")
     @Excel(name = "产品型号", height = 20, width = 30, orderNum = "6")
-    private String productModelName;
+    private String materialName;
 
     /**
      * 创建用户名称

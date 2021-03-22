@@ -71,6 +71,22 @@ public class QmsPdaInspection extends ValidGroup implements Serializable {
     private Date documentsTime;
 
     /**
+     * 反馈人ID
+     */
+    @ApiModelProperty(name="feedbackUserId",value = "反馈人ID")
+    @Excel(name = "反馈人ID", height = 20, width = 30)
+    @Column(name = "feedback_user_id")
+    private Long feedbackUserId;
+
+    /**
+     * 反馈时间
+     */
+    @ApiModelProperty(name="feedbackTime",value = "反馈时间")
+    @Excel(name = "反馈时间", height = 20, width = 30)
+    @Column(name = "feedback_time")
+    private Date feedbackTime;
+
+    /**
      * 反馈事项
      */
     @ApiModelProperty(name="feedbackMatters",value = "反馈事项")
