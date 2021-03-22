@@ -18,7 +18,9 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="execute_status" jdbcType="TINYINT" property="executeStatus" />
     <result column="read_path" jdbcType="VARCHAR" property="readPath"/>
-    <result column="writePath" jdbcType="VARCHAR" property="writePath"/>
+    <result column="write_path" jdbcType="VARCHAR" property="writePath"/>
+    <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    <result column="process_scheduling_desc" jdbcType="VARCHAR" property="processSchedulingDesc"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto" extends="BaseResultMap">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -39,7 +41,9 @@ sps.modified_user_id,
 sps.modified_time,
 sps.execute_status,
 sps.read_path,
-sps.write_path
+sps.write_path,
+remark,
+process_scheduling_desc
 </sql>
 <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="BaseColumnList"/>,su.user_name as create_user_name, bo.organization_name,
