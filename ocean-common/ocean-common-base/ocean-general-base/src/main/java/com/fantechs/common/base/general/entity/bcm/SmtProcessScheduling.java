@@ -117,6 +117,22 @@ public class SmtProcessScheduling extends ValidGroup implements Serializable {
     @Column(name = "execute_status")
     private Byte executeStatus;
 
+    /**
+     * 写路径
+     */
+    @ApiModelProperty(name="readPath",value = "写路径")
+    @Excel(name = "读路径", height = 20, width = 30,orderNum="")
+    @Column(name = "read_path")
+    private String readPath;
+
+    /**
+     * 写路径
+     */
+    @ApiModelProperty(name="readPath",value = "写路径")
+    @Excel(name = "写路径", height = 20, width = 30,orderNum="")
+    @Column(name = "write_path")
+    private String writePath;
+
     private QuartzSearch quartzSearch;
 
     private static final long serialVersionUID = 1L;

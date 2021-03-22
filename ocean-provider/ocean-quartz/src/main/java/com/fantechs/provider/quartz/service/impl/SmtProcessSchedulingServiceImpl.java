@@ -125,9 +125,9 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(SmtProcessScheduling entity) {
-       SysUser sysUser = currentUser();
-       entity.setModifiedUserId(sysUser.getUserId());
-       entity.setModifiedTime(new Date());
+        SysUser sysUser = currentUser();
+        entity.setModifiedUserId(sysUser.getUserId());
+        entity.setModifiedTime(new Date());
         int num;
         //更新Job
         try {

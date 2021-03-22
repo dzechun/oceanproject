@@ -7,7 +7,7 @@
     -->
     <id column="process_scheduling_id" jdbcType="BIGINT" property="processSchedulingId" />
     <result column="process_scheduling_name" jdbcType="VARCHAR" property="processSchedulingName" />
-    <result column="data_ interaction_type" jdbcType="TINYINT" property="dataInteractionType" />
+    <result column="data_interaction_type" jdbcType="TINYINT" property="dataInteractionType" />
     <result column="execute_object" jdbcType="VARCHAR" property="executeObject" />
     <result column="execute_object_type" jdbcType="TINYINT" property="executeObjectType" />
     <result column="cron" jdbcType="VARCHAR" property="cron" />
@@ -17,6 +17,8 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="execute_status" jdbcType="TINYINT" property="executeStatus" />
+    <result column="read_path" jdbcType="VARCHAR" property="readPath"/>
+    <result column="writePath" jdbcType="VARCHAR" property="writePath"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto" extends="BaseResultMap">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -35,7 +37,9 @@ sps.create_user_id,
 sps.create_time,
 sps.modified_user_id,
 sps.modified_time,
-sps.execute_status
+sps.execute_status,
+sps.read_path,
+sps.write_path
 </sql>
 <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="BaseColumnList"/>,su.user_name as create_user_name, bo.organization_name,
