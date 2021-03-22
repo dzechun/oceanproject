@@ -35,7 +35,8 @@ public class QaInspectionConditionController {
     @PostMapping("/findQaInspectionCondition")
     public ResponseEntity<List<QaInspectionCondition>> findQaInspectionCondition(@ApiParam(value = "查询对象") @RequestBody SearchQaInspectionCondition searchQaInspectionCondition) {
         Page<Object> page = PageHelper.startPage(searchQaInspectionCondition.getStartPage(), searchQaInspectionCondition.getPageSize());
-        return ControllerUtil.returnDataSuccess(qaInspectionConditionService.findQaInspectionCondition(ControllerUtil.dynamicConditionByEntity(searchQaInspectionCondition)), (int) page.getTotal());
+        List<QaInspectionCondition> list = qaInspectionConditionService.findQaInspectionCondition(ControllerUtil.dynamicConditionByEntity(searchQaInspectionCondition));
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
 }

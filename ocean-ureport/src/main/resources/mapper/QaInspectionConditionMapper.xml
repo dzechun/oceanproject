@@ -2,10 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.mapper.QaInspectionConditionMapper">
 
-    <select id="findQaInspectionCondition" resultType="java.util.Map" parameterType="map">
+    <resultMap id="BaseResultMapDto" type="com.fantechs.dto.QaInspectionCondition">
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+        <result column="pda_inspection_code" jdbcType="VARCHAR" property="pdaInspectionCode" />
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+        <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+        <result column="pallet_total" jdbcType="BIGINT" property="palletTotal" />
+        <result column="inspection_quantity" jdbcType="BIGINT" property="inspectionQuantity" />
+        <result column="qualified_quantity" jdbcType="BIGINT" property="qualifiedQuantity" />
+        <result column="inspection_time" jdbcType="TIMESTAMP" property="inspectionTime" />
+        <result column="surveyor" jdbcType="VARCHAR" property="surveyor" />
+        <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult" />
+        <result column="feedback_time" jdbcType="TIMESTAMP" property="feedbackTime" />
+        <result column="feedback_user_name" jdbcType="VARCHAR" property="feedbackUserName" />
+        <result column="feedback_matters" jdbcType="VARCHAR" property="feedbackMatters" />
+    </resultMap>
+
+    <select id="findQaInspectionCondition" resultMap="BaseResultMapDto" parameterType="map">
         select * from (
             select so.contract_code,ss.supplier_name,qpi.pda_inspection_code,swo.work_order_code,sm.material_code,spm.product_model_name,sm.material_desc,
-                mpm.package_manager_code AS palletCode,mpm.total AS palletTotal,(
+                mpm.package_manager_code AS pallet_code,mpm.total AS pallet_total,(
                     select sum(qpid.inspection_quantity) from fantech_imes.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
                 ) AS 'inspection_quantity',(
                     select sum(qpid.qualified_quantity) from fantech_imes.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
@@ -30,22 +50,22 @@
         ) qa
         <where>
             <if test="contractCode != null and contractCode != ''">
-                qa.contract_code like CONCAT('%', #{contractCode}, '%')
+                and qa.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
             <if test="supplierName != null and supplierName != ''">
-                qa.supplier_name like CONCAT('%', #{supplierName}, '%')
+                and qa.supplier_name like CONCAT('%', #{supplierName}, '%')
             </if>
             <if test="workOrderCode != null and workOrderCode != ''">
-                qa.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+                and qa.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
             <if test="materialCode != null and materialCode != ''">
-                qa.material_code like CONCAT('%', #{materialCode}, '%')
+                and qa.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
             <if test="inspectionResult != null and inspectionResult != ''">
-                qa.inspection_result like CONCAT('%', #{inspectionResult}, '%')
+                and qa.inspection_result like CONCAT('%', #{inspectionResult}, '%')
             </if>
             <if test="surveyor != null and surveyor != ''">
-                qa.user_name like CONCAT('%', #{surveyor}, '%')
+                and qa.surveyor like CONCAT('%', #{surveyor}, '%')
             </if>
             <if test="inspectionTime != null and inspectionTime != ''">
                 and date_format(qa.inspection_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
