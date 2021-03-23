@@ -103,6 +103,12 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         BeanUtils.copyProperties(wmsInnerTransferSlip,wmsInnerHtTransferSlip);
         wmsInnerHtTransferSlipMapper.insertSelective(wmsInnerHtTransferSlip);
 
+        //删除原有调拨单明细
+        Example example2 = new Example(WmsInnerTransferSlipDetDto.class);
+        Example.Criteria criteria4 = example2.createCriteria();
+        criteria4.andEqualTo("transferSlipId",wmsInnerTransferSlip.getTransferSlipId());
+        wmsInnerTransferSlipDetMapper.deleteByExample(example2);
+
         List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
         if (StringUtils.isNotEmpty(wmsInnerTransferSlipDetDtos)){
             ArrayList<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets = new ArrayList<>();
@@ -129,18 +135,6 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                         if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
                             throw new BizErrorException("调入储位已存在其他物料");
                         }
-                    }
-
-                    //判断是否已经存在这个栈板的调拨计划
-                    Example example1 = new Example(WmsInnerTransferSlipDet.class);
-                    Example.Criteria criteria2 = example1.createCriteria();
-                    criteria2.andEqualTo("palletCode",wmsInnerTransferSlipDetDto.getPalletCode());
-                    Example.Criteria criteria3 = example1.createCriteria();
-                    criteria3.andEqualTo("transferSlipStatus",0)
-                            .orEqualTo("transferSlipStatus",1);
-                    WmsInnerTransferSlipDet wmsInnerTransferSlipDet1 = wmsInnerTransferSlipDetMapper.selectOneByExample(example1);
-                    if (StringUtils.isNotEmpty(wmsInnerTransferSlipDet1)){
-                        throw new BizErrorException("该栈板的调拨计划已经存在");
                     }
 
                     //移除调出储位的库存明细信息
@@ -226,6 +220,13 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         if (StringUtils.isEmpty(wmsInnerTransferSlipDetDtos)){
             throw new BizErrorException("调拨内容不能为空");
         }
+
+        //删除原有调拨单明细
+        Example example2 = new Example(WmsInnerTransferSlipDetDto.class);
+        Example.Criteria criteria4 = example2.createCriteria();
+        criteria4.andEqualTo("transferSlipId",wmsInnerTransferSlip.getTransferSlipId());
+        wmsInnerTransferSlipDetMapper.deleteByExample(example2);
+
         boolean waitForTransfer = false;
         int transferFinish = 0;
         //判断调入的储位是否存在其他物料
@@ -239,13 +240,6 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             //调拨单明细为调拨完成，则修改库存信息
             if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 2){
                 transferFinish++;
-                searchSmtStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-                if (StringUtils.isNotEmpty(smtStorageMaterials)){
-                    if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
-                        throw new BizErrorException("调入储位已存在其他物料");
-                    }
-                }
 
                 //判断是否已经存在这个栈板的调拨计划
                 Example example = new Example(WmsInnerTransferSlipDet.class);
