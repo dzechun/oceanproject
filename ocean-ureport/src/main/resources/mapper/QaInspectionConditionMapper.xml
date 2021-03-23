@@ -25,7 +25,7 @@
     <select id="findQaInspectionCondition" resultMap="BaseResultMapDto" parameterType="map">
         select * from (
             select so.contract_code,ss.supplier_name,qpi.pda_inspection_code,swo.work_order_code,sm.material_code,spm.product_model_name,sm.material_desc,
-                mpm.package_manager_code AS pallet_code,mpm.total AS pallet_total,(
+                mpm.bar_code AS pallet_code,mpm.total AS pallet_total,(
                     select sum(qpid.inspection_quantity) from fantech_imes.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
                 ) AS 'inspection_quantity',(
                     select sum(qpid.qualified_quantity) from fantech_imes.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
@@ -67,11 +67,11 @@
             <if test="surveyor != null and surveyor != ''">
                 and qa.surveyor like CONCAT('%', #{surveyor}, '%')
             </if>
-            <if test="inspectionTime != null and inspectionTime != ''">
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(qa.inspection_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-
         </where>
+        order by qa.inspection_time desc
     </select>
 
 </mapper>

@@ -122,4 +122,10 @@
       where sur.user_id = #{userId}
   </select>
 
+    <select id="findOrganizationList" parameterType="long" resultType="long">
+      select sou.organization_id
+      from ocean.sys_organization_user sou
+      where sou.user_id = #{userId}
+  </select>
+
 </mapper>
