@@ -7,165 +7,42 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
 public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Serializable {
 
     /**
-     * 创建用户名称
+     * 仓库名称
      */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30)
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30)
-    private String modifiedUserName;
-
-    /**
-     * 线别代码
-     */
-    @Transient
-    @ApiModelProperty(name="proCode" ,value="线别代码")
-    @Excel(name = "线别代码", height = 20, width = 30)
-    private String proCode;
-
-    /**
-     * 线别名称
-     */
-    @Transient
-    @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30)
-    private String proName;
-
-    /**
-     * 线别描述
-     */
-    @Transient
-    @ApiModelProperty(name="proDesc" ,value="线别描述")
-    @Excel(name = "线别描述", height = 20, width = 30)
-    private String proDesc;
-
-
-    /**
-     * 车间编码
-     */
-    @Transient
-    @Excel(name = "车间编码", height = 20, width = 30)
-    @ApiModelProperty(name = "workShopCode",value = "车间编码")
-    private String workShopCode;
-
-    /**
-     * 车间名称
-     */
-    @Transient
-    @Excel(name = "车间名称", height = 20, width = 30)
-    @ApiModelProperty(name = "workShopName",value = "车间名称")
-    private String workShopName;
-
-    /**
-     * 车间描述
-     */
-    @Transient
-    @ApiModelProperty(name = "workShopDesc",value = "车间描述")
-    @Excel(name = "车间描述", height = 20, width = 30)
-    private String workShopDesc;
-
-    /**
-     * 储位编码
-     */
-    @Transient
-    @Excel(name = "储位编码", height = 20, width = 30)
-    @ApiModelProperty(name = "StorageCode",value = "储位编码")
-    private String storageCode;
-
-    /**
-     * 储位名称
-     */
-    @Transient
-    @Excel(name = "储位名称", height = 20, width = 30)
-    @ApiModelProperty(name = "StorageName",value = "储位名称")
-    private String storageName;
-
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouse_name")
+    private String warehouseName;
 
     /**
      * 仓库编码
      */
-    @Transient
-    @Excel(name = "仓库编码", height = 20, width = 30)
-    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
+    @ApiModelProperty(name="warehouseCode",value = "仓库编码")
+    @Excel(name = "仓库编码", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouse_code")
     private String warehouseCode;
 
     /**
-     * 仓库名称
+     * 仓库描述
      */
-    @Transient
-    @Excel(name = "仓库名称", height = 20, width = 30)
-    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    private String warehouseName;
-
-
-    /**
-     * 仓库区域编码
-     */
-    @Transient
-    @Excel(name = "仓库区域编码", height = 20, width = 30)
-    @ApiModelProperty(name = "warehouseAreaCode",value = "仓库区域编码")
-    private String warehouseAreaCode;
-
-    /**
-     * 仓库区域名称
-     */
-    @Transient
-    @Excel(name = "仓库区域名称", height = 20, width = 30)
-    @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
-    private String warehouseAreaName;
-
-
-    /**
-     * 物料编码
-     */
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
-    private String materialCode;
-
-    /**
-     * 物料名称
-     */
-    @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30)
-    private String materialName;
-
-    /**
-     * 物料描述
-     */
-    @Column(name = "material_desc")
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30)
-    private String materialDesc;
+    @ApiModelProperty(name="warehouseDesc",value = "仓库描述")
+    @Excel(name = "仓库描述", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouse_desc")
+    private String warehouseDesc;
 
     /**
      * 盘点员名称
      */
-    @Transient
-    @ApiModelProperty(name = "stockistName",value = "盘点员名称")
-    @Excel(name = "盘点员名称", height = 20, width = 30)
+    @ApiModelProperty(name="stockistName",value = "盘点员名称")
+    @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="")
+    @Column(name = "stockist_name")
     private String stockistName;
-
-    /**
-     * 盘点员编码
-     */
-    @Transient
-    @ApiModelProperty(name = "stockistCode",value = "stockistCode")
-    @Excel(name = "盘点员编码", height = 20, width = 30)
-    private String stockistCode;
 
     /**
      * 组织名称
@@ -173,4 +50,27 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 组织代码
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织代码")
+    private String organizationCode;
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
+    private String modifiedUserName;
 }

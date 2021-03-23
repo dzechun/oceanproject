@@ -28,7 +28,7 @@ import java.util.List;
  * Created by Mr.Lei on 2020/09/27.
  */
 @RestController
-@Api(tags = "供应商信息")
+@Api(tags = "供应商信息管理")
 @RequestMapping("/smtSupplier")
 @Validated
 public class SmtSupplierController {

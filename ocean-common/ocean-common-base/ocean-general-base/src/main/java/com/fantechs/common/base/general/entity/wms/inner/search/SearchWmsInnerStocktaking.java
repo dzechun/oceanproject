@@ -15,65 +15,27 @@ public class SearchWmsInnerStocktaking extends BaseQuery implements Serializable
      * 盘点单号
      */
     @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
+    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="")
     private String stocktakingCode;
 
     /**
-     * 线别代码
+     * 盘点员Id
      */
-    @ApiModelProperty(name="proCode" ,value="线别代码")
-    private String proCode;
+    @ApiModelProperty(name="stockistId",value = "盘点员Id")
+    @Excel(name = "盘点员Id", height = 20, width = 30,orderNum="")
+    private Long stockistId;
 
     /**
-     * 线别名称
+     * 盘点状态(0、待盘点 1、盘点中 2、盘点完成)
      */
-    @ApiModelProperty(name="proName" ,value="线别名称")
-    private String proName;
+    @ApiModelProperty(name="status",value = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)")
+    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="")
+    private Byte status;
 
     /**
-     * 车间编码
+     * 盘点方式(0、月盘 1、抽盘)
      */
-    @Excel(name = "车间编码", height = 20, width = 30,orderNum="1")
-    private String workShopCode;
-
-    /**
-     * 车间名称
-     */
-    @Excel(name = "车间名称", height = 20, width = 30,orderNum="2")
-    private String workShopName;
-
-    /**
-     * 物料编码
-     */
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
-    private String materialCode;
-
-    /**
-     * 物料名称
-     */
-    @ApiModelProperty(name="materialName" ,value="物料名称")
-    private String materialName;
-
-    /**
-     * 合同号
-     */
-    @ApiModelProperty(name="contractCode",value = "合同号")
-    private String contractCode;
-
-    /**
-     * 栈板码
-     */
-    @ApiModelProperty(name="palletCode",value = "栈板码")
-    private String palletCode;
-
-    /**
-     * 盘点员名称
-     */
-    @ApiModelProperty(name="stockistName",value = "盘点员名称")
-    private Long stockistName;
-
-    /**
-     * 盘点结果
-     */
-    @ApiModelProperty(name="inventoryResults",value = "盘点结果(0、正常 1、盘盈 2、盘亏)")
-    private Long inventoryResults;
+    @ApiModelProperty(name="stocktakingMode",value = "盘点方式(0、月盘 1、抽盘)")
+    @Excel(name = "盘点方式(0、月盘 1、抽盘)", height = 20, width = 30,orderNum="")
+    private Byte stocktakingMode;
 }

@@ -83,11 +83,14 @@
         sm.material_code AS 'materialCode',
         sm.material_desc AS 'materialDesc',
         bt.main_unit AS 'unit',
-        ss.storage_name,
         spm.product_model_name as 'productModelName',
         spl.pro_name AS 'proName',
         sps.package_specification_quantity AS 'packageSpecificationQuantity',
+        ss.storage_id,
+        ss.storage_name,
+        swa.warehouse_area_id,
         swa.warehouse_area_name,
+        sw.warehouse_id,
         sw.warehouse_name
         FROM
         fantech_imes.mes_package_manager AS mpm
@@ -96,10 +99,11 @@
         LEFT JOIN fantech_imes.base_organization bo ON mpm.organization_id = bo.organization_id
         LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = mpm.work_order_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = mpm.material_id
-        LEFT JOIN fantech_imes.smt_storage_material ssm ON sm.material_id = ssm.material_id
-        LEFT JOIN fantech_imes.smt_storage ss on ssm.storage_id = ss.storage_id
-        LEFT JOIN fantech_imes.smt_warehouse_area swa ON ssm.warehouse_area_id = swa.warehouse_area_id
-        LEFT JOIN fantech_imes.smt_warehouse sw ON ssm.warehouse_id = sw.warehouse_id
+        LEFT JOIN fantech_imes.smt_storage_inventory_det ssid ON ssid.material_barcode_code = mpm.bar_code
+        LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_inventory_id = ssid.storage_inventory_id
+        LEFT JOIN fantech_imes.smt_storage ss on ssi.storage_id = ss.storage_id
+        LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+        LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
         LEFT JOIN fantech_imes.smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
         LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id = mpm.package_specification_id
         LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id

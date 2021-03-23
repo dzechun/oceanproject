@@ -67,6 +67,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         record.setCreateUserId(currentUser.getUserId());
         record.setModifiedUserId(currentUser.getUserId());
         record.setModifiedTime(new Date());
+        record.setIsDelete((byte) 1);
         int i = smtSupplierMapper.insertUseGeneratedKeys(record);
 
         List<SmtAddressDto> address = record.getList();

@@ -1,49 +1,48 @@
 package com.fantechs.provider.wms.inner.controller;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStocktaking;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.inner.service.WmsInnerHtStocktakingService;
 import com.fantechs.provider.wms.inner.service.WmsInnerStocktakingService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2020/12/16.
+ * Created by leifengzhi on 2021/03/22.
  */
 @RestController
-@Api(tags = "盘点单信息管理")
+@Api(tags = "wmsInnerStocktaking控制器")
 @RequestMapping("/wmsInnerStocktaking")
 @Validated
-@Slf4j
 public class WmsInnerStocktakingController {
 
-    @Autowired
+    @Resource
     private WmsInnerStocktakingService wmsInnerStocktakingService;
+    @Resource
+    private WmsInnerHtStocktakingService wmsInnerHtStocktakingService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：materialId",required = true)@RequestBody @Validated WmsInnerStocktaking wmsInnerStocktaking) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerStocktaking wmsInnerStocktaking) {
         return ControllerUtil.returnCRUD(wmsInnerStocktakingService.save(wmsInnerStocktaking));
     }
 
@@ -74,6 +73,13 @@ public class WmsInnerStocktakingController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsInnerHtStocktaking>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerStocktaking searchWmsInnerStocktaking) {
+        Page<Object> page = PageHelper.startPage(searchWmsInnerStocktaking.getStartPage(),searchWmsInnerStocktaking.getPageSize());
+        List<WmsInnerHtStocktaking> list = wmsInnerHtStocktakingService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerStocktaking));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
@@ -85,27 +91,6 @@ public class WmsInnerStocktakingController {
         EasyPoiUtils.exportExcel(list, "导出信息", "WmsInnerStocktaking信息", WmsInnerStocktakingDto.class, "WmsInnerStocktaking.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
-        }
-    }
-
-    /**
-     * 从excel导入数据
-     * @return
-     * @throws
-     */
-    @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入盘点作业信息",notes = "从excel导入盘点作业信息")
-    public ResponseEntity importStocktaking(@ApiParam(value ="输入excel文件",required = true)
-                                      @RequestPart(value="file") MultipartFile file){
-        try {
-            // 导入操作
-            List<WmsInnerStocktakingDto> wmsInnerStocktakingDtos = EasyPoiUtils.importExcel(file,WmsInnerStocktakingDto.class);
-            Map<String, Object> resultMap = wmsInnerStocktakingService.importStocktaking(wmsInnerStocktakingDtos);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
