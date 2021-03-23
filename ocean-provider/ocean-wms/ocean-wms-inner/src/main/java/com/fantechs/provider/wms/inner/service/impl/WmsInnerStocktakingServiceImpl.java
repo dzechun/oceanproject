@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStocktakingDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingDetMapper;
@@ -21,6 +22,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerStocktakingMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerStocktakingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -52,12 +54,15 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             SearchWmsInnerStocktakingDet searchWmsInnerStocktakingDet = new SearchWmsInnerStocktakingDet();
             searchWmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktakingDto.getStocktakingId());
             List<WmsInnerStocktakingDetDto> list1 = wmsInnerStocktakingDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerStocktakingDet));
-            wmsInnerStocktakingDto.setWmsInnerStocktakingDetDtos(list1);
+            if (StringUtils.isNotEmpty(list1)){
+                wmsInnerStocktakingDto.setWmsInnerStocktakingDetDtos(list1);
+            }
         }
         return list;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(WmsInnerStocktaking wmsInnerStocktaking) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -92,6 +97,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }else {
             wmsInnerStocktaking.setStatus((byte) 1);
         }
+        wmsInnerStocktaking.setStocktakingCode(CodeUtils.getId("SEORD"));
         wmsInnerStocktaking.setCreateTime(new Date());
         wmsInnerStocktaking.setCreateUserId(user.getUserId());
         wmsInnerStocktaking.setModifiedTime(new Date());
@@ -115,7 +121,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             wmsInnerStocktakingDet.setCreateTime(new Date());
             wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
             wmsInnerStocktakingDet.setModifiedTime(new Date());
-            wmsInnerStocktakingDet.setMaterialId(user.getUserId());
+            wmsInnerStocktakingDet.setModifiedUserId(user.getUserId());
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
@@ -123,7 +129,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             }
 
             WmsInnerHtStocktakingDet wmsInnerHtStocktakingDet = new WmsInnerHtStocktakingDet();
-            BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktaking);
+            BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktakingDet);
             wmsInnerHtStocktakingDet.setHtStocktakingId(wmsInnerHtStocktaking.getStocktakingId());
             wmsInnerHtStocktakingDets.add(wmsInnerHtStocktakingDet);
         }
@@ -138,6 +144,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(WmsInnerStocktaking wmsInnerStocktaking) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -206,7 +213,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             wmsInnerStocktakingDet.setMaterialId(user.getUserId());
 
             WmsInnerHtStocktakingDet wmsInnerHtStocktakingDet = new WmsInnerHtStocktakingDet();
-            BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktaking);
+            BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktakingDet);
             wmsInnerHtStocktakingDet.setHtStocktakingId(wmsInnerHtStocktaking.getStocktakingId());
             wmsInnerHtStocktakingDets.add(wmsInnerHtStocktakingDet);
         }

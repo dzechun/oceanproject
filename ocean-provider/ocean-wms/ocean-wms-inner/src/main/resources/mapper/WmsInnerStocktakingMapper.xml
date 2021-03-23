@@ -20,7 +20,7 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto" extends="BaseResultMap">
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="warehouse_desc" jdbcType="VARCHAR" property="warehouseDesc" />
@@ -54,9 +54,9 @@
     from fantech_imes.wms_inner_stocktaking wis
     LEFT JOIN ocean.sys_user su  ON wis.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wis.modified_user_id = sus.user_id
-    LEFT JOIN ocean.sys_user suss ON wis.modified_user_id = sus.user_id
+    LEFT JOIN ocean.sys_user suss ON wis.stockist_id = suss.user_id
     LEFT JOIN fantech_imes.smt_warehouse sw ON wis.warehouse_id= sw.warehouse_id
-    LEFT JOIN fantech_imes.base_organization bo ON wisd.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.base_organization bo ON wis.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

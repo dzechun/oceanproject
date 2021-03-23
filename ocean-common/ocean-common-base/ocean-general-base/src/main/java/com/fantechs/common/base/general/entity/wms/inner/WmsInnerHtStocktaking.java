@@ -136,7 +136,7 @@ public class WmsInnerHtStocktaking extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="")
-    @Column(name = "warehouse_name")
+    @Transient
     private String warehouseName;
 
     /**
@@ -144,7 +144,7 @@ public class WmsInnerHtStocktaking extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="warehouseCode",value = "仓库编码")
     @Excel(name = "仓库编码", height = 20, width = 30,orderNum="")
-    @Column(name = "warehouse_code")
+    @Transient
     private String warehouseCode;
 
     /**
@@ -152,7 +152,7 @@ public class WmsInnerHtStocktaking extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="warehouseDesc",value = "仓库描述")
     @Excel(name = "仓库描述", height = 20, width = 30,orderNum="")
-    @Column(name = "warehouse_desc")
+    @Transient
     private String warehouseDesc;
 
     /**
@@ -160,7 +160,7 @@ public class WmsInnerHtStocktaking extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="stockistName",value = "盘点员名称")
     @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="")
-    @Column(name = "stockist_name")
+    @Transient
     private String stockistName;
 
     /**
