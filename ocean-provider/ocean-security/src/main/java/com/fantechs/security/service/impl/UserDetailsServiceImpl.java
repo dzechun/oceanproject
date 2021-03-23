@@ -48,6 +48,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         criteria.andEqualTo("status",1).andEqualTo("userName"
                 , s).orEqualTo("userCode",s);
         SysUser user = sysUserMapper.selectOneByExample(example);
+        List<Long> organizationList = sysUserMapper.findOrganizationList(user.getUserId());
+        if (StringUtils.isNotEmpty(organizationList)){
+            user.setOrganizationId(organizationList.get(0));
+        }
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);
         }

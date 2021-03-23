@@ -15,4 +15,6 @@ public interface SysUserMapper extends MyMapper<SysUser> {
     SmtDept selectDept(String factoryName,String deptName);
 
     List<String> findAllRoleId(Long userId);
+
+    List<Long> findOrganizationList(Long userId);
 }
