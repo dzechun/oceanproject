@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/03/22.
  */
 @RestController
-@Api(tags = "wmsInnerStocktaking控制器")
+@Api(tags = "盘点单信息管理")
 @RequestMapping("/wmsInnerStocktaking")
 @Validated
 public class WmsInnerStocktakingController {

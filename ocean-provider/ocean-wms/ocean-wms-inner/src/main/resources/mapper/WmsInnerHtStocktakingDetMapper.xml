@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktakingDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_stocktaking_det_id" jdbcType="BIGINT" property="htStocktakingDetId" />
+    <result column="ht_stocktaking_id" jdbcType="BIGINT" property="htStocktakingId" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="book_inventory" jdbcType="DECIMAL" property="bookInventory" />
+    <result column="counted_quantity" jdbcType="DECIMAL" property="countedQuantity" />
+    <result column="profit_loss_quantity" jdbcType="DECIMAL" property="profitLossQuantity" />
+    <result column="profit_loss_rate" jdbcType="DECIMAL" property="profitLossRate" />
+    <result column="delivery_rate" jdbcType="DECIMAL" property="deliveryRate" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="profit_loss_amount" jdbcType="DECIMAL" property="profitLossAmount" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wihsd.ht_stocktaking_det_id,
+	wihsd.ht_stocktaking_id,
+	wihsd.contract_code,
+	wihsd.pallet_code,
+	wihsd.material_id,
+	wihsd.book_inventory,
+	wihsd.counted_quantity,
+	wihsd.profit_loss_quantity,
+	wihsd.profit_loss_rate,
+	wihsd.delivery_rate,
+	wihsd.price,
+	wihsd.profit_loss_amount,
+	wihsd.`status`,
+	wihsd.remark,
+	wihsd.organization_id,
+	wihsd.create_user_id,
+	wihsd.create_time,
+	wihsd.modified_user_id,
+	wihsd.modified_time,
+	wihsd.is_delete
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    sm.material_code,sm.material_name,sm.material_desc,
+    bo.organization_name,bo.organization_code,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from fantech_imes.wms_inner_ht_stocktaking_det wihsd
+    LEFT JOIN ocean.sys_user su  ON wihsd.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON wihsd.modified_user_id = sus.user_id
+    LEFT JOIN ocean.smt_material sm ON wihsd.material_id = sm.material_id
+    LEFT JOIN fantech_imes.base_organization bo ON wihsd.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(wihsd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialCode!=null and materialCode != ''">
+        and sm.material_code like CONCAT("%",#{materialCode},"%")
+      </if>
+      <if test="materialName!=null and materialName != ''">
+        and sm.material_name like CONCAT("%",#{materialName},"%")
+      </if>
+      <if test="contractCode!=null and contractCode != ''">
+        and wihsd.contract_code like CONCAT("%",#{contractCode},"%")
+      </if>
+      <if test="palletCode!=null and palletCode != ''">
+        and wihsd.pallet_code like CONCAT("%",#{palletCode},"%")
+      </if>
+      <if test="transferSlipStatus != null">
+        <choose>
+          <when test="transferSlipStatus == 0">
+            and wihsd.delivery_rate = 0
+          </when>
+          <when test="transferSlipStatus == 1">
+            and wihsd.delivery_rate &gt; 0
+          </when>
+          <when test="transferSlipStatus == 2">
+            and wihsd.delivery_rate &lt; 0
+          </when>
+        </choose>
+      </if>
+      <if test="stockistId !=null">
+        and wihsd.stockist_id=#{stockistId}
+      </if>
+      <if test="status!=null">
+        and wihsd.status=#{status}
+      </if>
+    </where>
+    order by wihsd.modified_time desc
+  </select>
+</mapper>
