@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -129,7 +130,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点单明细集合
      */
     @ApiModelProperty(name = "")
-    private List<WmsInnerStocktakingDet> wmsInnerStocktakingDets = new ArrayList<>();
+    private List<WmsInnerStocktakingDetDto> wmsInnerStocktakingDetDtos = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

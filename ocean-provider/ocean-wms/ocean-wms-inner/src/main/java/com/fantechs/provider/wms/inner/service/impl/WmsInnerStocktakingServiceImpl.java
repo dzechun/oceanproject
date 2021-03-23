@@ -3,11 +3,14 @@ package com.fantechs.provider.wms.inner.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktakingDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStocktakingDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -44,7 +47,14 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
 
     @Override
     public List<WmsInnerStocktakingDto> findList(Map<String, Object> map) {
-        return wmsInnerStocktakingMapper.findList(map);
+        List<WmsInnerStocktakingDto> list = wmsInnerStocktakingMapper.findList(map);
+        for (WmsInnerStocktakingDto wmsInnerStocktakingDto : list) {
+            SearchWmsInnerStocktakingDet searchWmsInnerStocktakingDet = new SearchWmsInnerStocktakingDet();
+            searchWmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktakingDto.getStocktakingId());
+            List<WmsInnerStocktakingDetDto> list1 = wmsInnerStocktakingDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerStocktakingDet));
+            wmsInnerStocktakingDto.setWmsInnerStocktakingDetDtos(list1);
+        }
+        return list;
     }
 
     @Override
@@ -54,8 +64,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        List<WmsInnerStocktakingDet> wmsInnerStocktakingDets = wmsInnerStocktaking.getWmsInnerStocktakingDets();
-        if (StringUtils.isEmpty(wmsInnerStocktakingDets)){
+        List<WmsInnerStocktakingDetDto> wmsInnerStocktakingDetDtos = wmsInnerStocktaking.getWmsInnerStocktakingDetDtos();
+        if (StringUtils.isEmpty(wmsInnerStocktakingDetDtos)){
             throw new BizErrorException("盘点单明细不能为空");
         }
 
@@ -68,14 +78,14 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }
 
         int stocktakingStatus = 0;
-        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDets) {
+        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
             //盘点明细的盘点状态
             if (wmsInnerStocktakingDet.getStatus() == 1){
                 stocktakingStatus++;
             }
         }
 
-        if (stocktakingStatus == wmsInnerStocktakingDets.size()){
+        if (stocktakingStatus == wmsInnerStocktakingDetDtos.size()){
             wmsInnerStocktaking.setStatus((byte) 2);
         }else if (stocktakingStatus == 0){
             wmsInnerStocktaking.setStatus((byte) 0);
@@ -100,7 +110,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
 
         //新增盘点单明细
         LinkedList<WmsInnerHtStocktakingDet> wmsInnerHtStocktakingDets = new LinkedList<>();
-        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDets) {
+        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
             wmsInnerStocktakingDet.setCreateTime(new Date());
             wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
@@ -119,7 +129,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }
 
         //新增盘点单明细
-        wmsInnerStocktakingDetMapper.insertList(wmsInnerStocktakingDets);
+        wmsInnerStocktakingDetMapper.insertList(wmsInnerStocktakingDetDtos);
         //新增盘点单明细履历
         wmsInnerHtStocktakingDetMapper.insertList(wmsInnerHtStocktakingDets);
 
@@ -134,8 +144,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        List<WmsInnerStocktakingDet> wmsInnerStocktakingDets = wmsInnerStocktaking.getWmsInnerStocktakingDets();
-        if (StringUtils.isEmpty(wmsInnerStocktakingDets)){
+        List<WmsInnerStocktakingDetDto> wmsInnerStocktakingDetDtos = wmsInnerStocktaking.getWmsInnerStocktakingDetDtos();
+        if (StringUtils.isEmpty(wmsInnerStocktakingDetDtos)){
             throw new BizErrorException("盘点单明细不能为空");
         }
 
@@ -149,14 +159,14 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }
 
         int stocktakingStatus = 0;
-        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDets) {
+        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
             //盘点明细的盘点状态
             if (wmsInnerStocktakingDet.getStatus() == 1){
                 stocktakingStatus++;
             }
         }
 
-        if (stocktakingStatus == wmsInnerStocktakingDets.size()){
+        if (stocktakingStatus == wmsInnerStocktakingDetDtos.size()){
             wmsInnerStocktaking.setStatus((byte) 2);
         }else if (stocktakingStatus == 0){
             wmsInnerStocktaking.setStatus((byte) 0);
@@ -185,7 +195,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
 
         //新增盘点单明细
         LinkedList<WmsInnerHtStocktakingDet> wmsInnerHtStocktakingDets = new LinkedList<>();
-        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDets) {
+        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
@@ -202,7 +212,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }
 
         //新增盘点单明细
-        wmsInnerStocktakingDetMapper.insertList(wmsInnerStocktakingDets);
+        wmsInnerStocktakingDetMapper.insertList(wmsInnerStocktakingDetDtos);
         //新增盘点单明细履历
         wmsInnerHtStocktakingDetMapper.insertList(wmsInnerHtStocktakingDets);
 
