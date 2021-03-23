@@ -49,7 +49,7 @@ public class MesScheduleController {
             @ApiParam(value = "当前页",required = false,defaultValue = "1")@RequestParam(defaultValue = "1",required = false) int startPage,
             @ApiParam(value = "显示数量",required = false,defaultValue = "10")@RequestParam(defaultValue = "10",required = false) int pageSize
     ){
-        Page<Object> page = PageHelper.startPage(startPage, pageSize);
+        Page<Object> page = PageHelper.startPage(searchMesScheduleListDTO.getStartPage(),searchMesScheduleListDTO.getPageSize());
         List<MesScheduleDTO> mesScheduleDTOList = mesScheduleService.selectFilterAll(ControllerUtil.dynamicConditionByEntity(searchMesScheduleListDTO));
         return ControllerUtil.returnDataSuccess(mesScheduleDTOList,(int)page.getTotal());
     }
