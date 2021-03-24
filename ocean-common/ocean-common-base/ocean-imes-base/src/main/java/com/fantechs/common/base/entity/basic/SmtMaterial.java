@@ -2,7 +2,6 @@ package com.fantechs.common.base.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
-import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

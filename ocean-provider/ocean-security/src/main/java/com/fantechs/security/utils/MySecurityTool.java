@@ -3,6 +3,7 @@ package com.fantechs.security.utils;
 
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysUser;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +21,7 @@ public class MySecurityTool {
         if(!(authentication instanceof AnonymousAuthenticationToken)){
             SysUserDto tSysUserDTO = (SysUserDto) authentication.getPrincipal();
             SysUser mbUser = new SysUser();
-            mbUser.setUserId(tSysUserDTO.getUserId());
-            mbUser.setUserCode(tSysUserDTO.getUserCode());
-            mbUser.setUserName(tSysUserDTO.getUsername());
-            mbUser.setStatus(tSysUserDTO.getStatus());
-            mbUser.setDeptId(tSysUserDTO.getDeptId());
+            BeanUtils.copyProperties(tSysUserDTO, mbUser);
             return mbUser;
         }
         return null;

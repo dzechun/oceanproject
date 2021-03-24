@@ -76,7 +76,7 @@
         and wits.transfer_slip_status=#{transferSlipStatus}
       </if>
       <if test="QueryMark == 0">
-        and wits.transfer_slip_status = 0 or wits.transfer_slip_status = 1
+        and (wits.transfer_slip_status = 0 or wits.transfer_slip_status = 1)
       </if>
       <if test="orderType !=null">
         and wits.order_type=#{orderType}

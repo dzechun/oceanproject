@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_stocktaking_id" jdbcType="BIGINT" property="htStocktakingId" />
+    <result column="stocktaking_id" jdbcType="BIGINT" property="stocktakingId" />
+    <result column="stocktaking_code" jdbcType="VARCHAR" property="stocktakingCode" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="stocktaking_mode" jdbcType="TINYINT" property="stocktakingMode" />
+    <result column="stockist_id" jdbcType="BIGINT" property="stockistId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouse_desc" jdbcType="VARCHAR" property="warehouseDesc" />
+    <result column="stockist_name" jdbcType="VARCHAR" property="stockistName" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wihs.ht_stocktaking_id,
+	wihs.stocktaking_id,
+	wihs.warehouse_id,
+	wihs.stocktaking_code,
+    wihs.stocktaking_mode,
+	wihs.stockist_id,
+	wihs.`status`,
+	wihs.remark,
+	wihs.organization_id,
+	wihs.create_user_id,
+	wihs.create_time,
+	wihs.modified_user_id,
+	wihs.modified_time,
+	wihs.is_delete
+  </sql>
+
+    <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        sw.warehouse_code,sw.warehouse_name,sw.warehouse_desc,
+        bo.organization_name,bo.organization_code,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,suss.user_name AS stockist_name
+        from fantech_imes.wms_inner_ht_stocktaking wihs
+        LEFT JOIN ocean.sys_user su  ON wihs.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON wihs.modified_user_id = sus.user_id
+        LEFT JOIN ocean.sys_user suss ON wihs.stockist_id = suss.user_id
+        LEFT JOIN fantech_imes.smt_warehouse sw ON wihs.warehouse_id= sw.warehouse_id
+        LEFT JOIN fantech_imes.base_organization bo ON wihs.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(wihs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="stocktakingCode!=null and stocktakingCode != ''">
+                and wihs.stocktaking_code like CONCAT("%",#{stocktakingCode},"%")
+            </if>
+            <if test="stockistId!=null">
+                and wihs.stockist_id = #{stockistId}
+            </if>
+            <if test="stocktakingMode!=null">
+                and wihs.stocktaking_mode = #{stocktakingMode}
+            </if>
+            <if test="stockistId !=null">
+                and wihs.stockist_id=#{stockistId}
+            </if>
+            <if test="status!=null">
+                and wihs.status=#{status}
+            </if>
+        </where>
+        order by wihs.modified_time desc
+    </select>
+</mapper>
