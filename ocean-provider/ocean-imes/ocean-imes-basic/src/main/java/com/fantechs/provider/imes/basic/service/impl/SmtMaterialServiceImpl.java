@@ -182,13 +182,13 @@ public class SmtMaterialServiceImpl extends BaseService<SmtMaterial> implements 
         int i = smtMaterialMapper.updateByPrimaryKeySelective(smtMaterial);
 
         BaseTab baseTab = smtMaterial.getBaseTabDto();
-        if (StringUtils.isEmpty(baseTab.getTransferQuantity())){
-            throw new BizErrorException("转移批量不能为空");
-        }
-        if (0 >= baseTab.getTransferQuantity()){
-            throw new BizErrorException("转移批量必须大于0");
-        }
         if (StringUtils.isNotEmpty(baseTab)){
+            if (StringUtils.isEmpty(baseTab.getTransferQuantity())){
+                throw new BizErrorException("转移批量不能为空");
+            }
+            if (0 >= baseTab.getTransferQuantity()){
+                throw new BizErrorException("转移批量必须大于0");
+            }
             //判断该物料的页签是否存在
             SearchBaseTab searchBaseTab = new SearchBaseTab();
             searchBaseTab.setMaterialId(smtMaterial.getMaterialId());

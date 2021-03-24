@@ -16,5 +16,5 @@ import java.util.Map;
 public interface SmtSupplierService extends IService<SmtSupplier> {
 
     List<SmtSupplier> findList(SearchSmtSupplier searchSmtSupplier);
-    Map<String, Object> importExcel(List<SmtSupplierImport> smtSupplierImports);
+    Map<String, Object> importExcel(List<SmtSupplierImport> smtSupplierImports,Byte supplierType);
 }

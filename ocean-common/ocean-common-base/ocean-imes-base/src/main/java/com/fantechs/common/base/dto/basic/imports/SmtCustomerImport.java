@@ -7,27 +7,27 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SmtSupplierImport implements Serializable {
+public class SmtCustomerImport implements Serializable {
 
     /**
-     * 供应商代码
+     * 客户代码
      */
-    @ApiModelProperty("供应商代码")
-    @Excel(name = "供应商代码(必填)", height = 20, width = 30)
+    @ApiModelProperty("客户代码")
+    @Excel(name = "客户代码(必填)", height = 20, width = 30)
     private String supplierCode;
 
     /**
-     * 供应商名称
+     * 客户名称
      */
-    @ApiModelProperty("供应商名称")
-    @Excel(name = "供应商名称(必填)", height = 20, width = 30)
+    @ApiModelProperty("客户名称")
+    @Excel(name = "客户名称(必填)", height = 20, width = 30)
     private String supplierName;
 
     /**
-     * 供应商描述
+     * 客户描述
      */
-    @ApiModelProperty("供应商描述")
-    @Excel(name = "供应商描述", height = 20, width = 30)
+    @ApiModelProperty("客户描述")
+    @Excel(name = "客户描述", height = 20, width = 30)
     private String supplierDesc;
 
     /**

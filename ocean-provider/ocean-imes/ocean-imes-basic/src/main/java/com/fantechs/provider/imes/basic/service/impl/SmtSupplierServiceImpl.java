@@ -151,7 +151,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SmtSupplierImport> smtSupplierImports) {
+    public Map<String, Object> importExcel(List<SmtSupplierImport> smtSupplierImports,Byte supplierType) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -203,11 +203,14 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
             for (SmtSupplierImport smtSupplierImport : smtSupplierImports) {
                 SmtSupplier smtSupplier = new SmtSupplier();
                 BeanUtils.copyProperties(smtSupplierImport,smtSupplier);
+                smtSupplier.setCreateTime(new Date());
+                smtSupplier.setCreateUserId(currentUser.getUserId());
+                smtSupplier.setModifiedTime(new Date());
+                smtSupplier.setModifiedUserId(currentUser.getUserId());
+                smtSupplier.setSupplierType(supplierType);
                 list.add(smtSupplier);
             }
-
             success = smtSupplierMapper.insertList(list);
-
         }
 
         resultMap.put("操作成功总数",success);

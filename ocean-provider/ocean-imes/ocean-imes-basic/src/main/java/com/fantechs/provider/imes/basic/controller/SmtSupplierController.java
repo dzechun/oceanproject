@@ -1,6 +1,7 @@
 package com.fantechs.provider.imes.basic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.imports.SmtCustomerImport;
 import com.fantechs.common.base.dto.basic.imports.SmtStationImport;
 import com.fantechs.common.base.dto.basic.imports.SmtSupplierImport;
 import com.fantechs.common.base.entity.basic.SmtStation;
@@ -16,6 +17,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,18 +93,47 @@ public class SmtSupplierController {
     }
 
     /**
-     * 从excel导入数据
+     * 从excel导入供应商数据
      * @return
      * @throws
      */
-    @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
-                                      @RequestPart(value="file") MultipartFile file){
+    @PostMapping(value = "/importSupplier")
+    @ApiOperation(value = "从excel导入供应商信息",notes = "从excel导入供应商信息")
+    public ResponseEntity importSupplierExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file,@ApiParam(value = "身份标识（1、供应商 2、客户）") @RequestParam Byte supplierType){
         try {
             // 导入操作
             List<SmtSupplierImport> smtSupplierImports = EasyPoiUtils.importExcel(file,2,1, SmtSupplierImport.class);
-            Map<String, Object> resultMap = smtSupplierService.importExcel(smtSupplierImports);
+            Map<String, Object> resultMap = smtSupplierService.importExcel(smtSupplierImports,supplierType);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
+
+    /**
+     * 从excel导入客户数据数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/importCustomer")
+    @ApiOperation(value = "从excel导入客户信息",notes = "从excel导入客户信息")
+    public ResponseEntity importCustomerExcel(@ApiParam(value ="输入excel文件",required = true)
+                                              @RequestPart(value="file") MultipartFile file,@ApiParam(value = "身份标识（1、供应商 2、客户）") @RequestParam Byte supplierType){
+        try {
+            // 导入操作
+            List<SmtCustomerImport> smtCustomerImports = EasyPoiUtils.importExcel(file, 2, 1, SmtCustomerImport.class);
+            List<SmtSupplierImport> smtSupplierImports = new ArrayList<>();
+            if (StringUtils.isNotEmpty(smtCustomerImports)){
+                for (SmtCustomerImport smtCustomerImport : smtCustomerImports) {
+                    SmtSupplierImport smtSupplierImport = new SmtSupplierImport();
+                    BeanUtils.copyProperties(smtCustomerImport,smtSupplierImport);
+                    smtSupplierImports.add(smtSupplierImport);
+                }
+            }
+            Map<String, Object> resultMap = smtSupplierService.importExcel(smtSupplierImports,supplierType);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
