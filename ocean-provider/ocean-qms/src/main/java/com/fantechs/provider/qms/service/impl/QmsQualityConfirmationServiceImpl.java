@@ -150,6 +150,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         //获取当前报工工序信息
         ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
         SmtProcess smtProcess = processResponse.getData();
+        if (StringUtils.isEmpty(smtProcess)){
+            throw new BizErrorException("当前报工工序不存在");
+        }
 
         if (qmsQualityConfirmation.getQualityType() == 1) {
 
@@ -407,7 +410,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 //获取当前报工工序信息
                 processResponse = basicFeignApi.processDetail(smtWorkOrderBomDto.getProcessId());
                 SmtProcess process = processResponse.getData();
-                if (smtProcess.getSectionId().equals(process.getSectionId())) {
+                if (StringUtils.isEmpty(process)){
+                    throw new BizErrorException("当前报工工序不存在");
+                }
+                if (StringUtils.isNotEmpty(smtProcess) && smtProcess.getSectionId().equals(process.getSectionId())) {
                     workOrderBomDto = smtWorkOrderBomDto;
                     break;
                 }
