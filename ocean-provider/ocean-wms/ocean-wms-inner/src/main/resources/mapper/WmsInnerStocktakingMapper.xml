@@ -76,6 +76,9 @@
       <if test="status!=null">
         and wis.status=#{status}
       </if>
+      <if test="queryMark == 0">
+        and (wis.status = 0 or wis.status = 1)
+      </if>
     </where>
     order by wis.create_time desc
   </select>

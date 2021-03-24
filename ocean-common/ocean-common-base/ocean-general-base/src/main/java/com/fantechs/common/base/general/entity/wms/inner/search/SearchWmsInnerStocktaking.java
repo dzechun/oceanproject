@@ -38,4 +38,10 @@ public class SearchWmsInnerStocktaking extends BaseQuery implements Serializable
     @ApiModelProperty(name="stocktakingMode",value = "盘点方式(0、月盘 1、抽盘)")
     @Excel(name = "盘点方式(0、月盘 1、抽盘)", height = 20, width = 30,orderNum="")
     private Byte stocktakingMode;
+
+    /**
+     * 状态查询标记(传0则查询出待盘点和盘点中的单据)
+     */
+    @ApiModelProperty(name = "queryMark",value = "状态查询标记(传0则查询出待盘点和盘点中的单据)")
+    private Integer queryMark;
 }
