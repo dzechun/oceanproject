@@ -147,6 +147,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //获取当前报工工序信息
+        ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
+        SmtProcess smtProcess = processResponse.getData();
+
         if (qmsQualityConfirmation.getQualityType() == 1) {
 
             SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
@@ -159,9 +163,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
             List<SmtRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(basePlatePartsDet.getRouteId()).getData();
 
-            //获取当前报工工序信息
-            ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
-            SmtProcess smtProcess = processResponse.getData();
+
             List<SmtRouteProcess> routeProcessList = new ArrayList<>();
             //筛选出当前报工工序的工段对应工艺路线里面的所有工序
             for (SmtRouteProcess smtRouteProcess : routeProcesses) {
@@ -402,7 +404,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
             SmtWorkOrderBomDto workOrderBomDto = null;
             for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
-                if (smtWorkOrderBomDto.getProcessId() == qmsQualityConfirmation.getProcessId()) {
+                //获取当前报工工序信息
+                processResponse = basicFeignApi.processDetail(smtWorkOrderBomDto.getProcessId());
+                SmtProcess process = processResponse.getData();
+                if (smtProcess.getSectionId().equals(process.getSectionId())) {
                     workOrderBomDto = smtWorkOrderBomDto;
                     break;
                 }
