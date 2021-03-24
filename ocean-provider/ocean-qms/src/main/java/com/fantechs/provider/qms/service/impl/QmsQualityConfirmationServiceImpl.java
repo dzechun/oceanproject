@@ -477,14 +477,22 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 searchSmtWorkOrderCardPool.setParentId(smtWorkOrderCardPool.getParentId());
                 List<SmtWorkOrderCardPoolDto> workOrderCardPoolDtoList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
                 if (StringUtils.isNotEmpty(workOrderCardPoolDtoList)) {
+                    Map<String,Object> qualityConditions = new HashMap<>();
+                    qualityConditions.put("sectionId",smtProcess.getSectionId());
                     for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : workOrderCardPoolDtoList) {
+                        boolean ifProcess = qmsQualityConfirmation.getWorkOrderCardPoolId().equals(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                        qualityConditions.put("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                        List<QmsQualityConfirmationDto> qmsQualityConfirmationList = qmsQualityConfirmationMapper.findList(qualityConditions);
+                        if (StringUtils.isEmpty(qmsQualityConfirmationList)){
+                            continue;
+                        }
                         SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
                         searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderCardPoolDto.getMaterialId());
                         List<BasePlatePartsDetDto> basePlatePartsDetDtos = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
                         WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = new WmsOutProductionMaterialdDet();
                         wmsOutProductionMaterialdDet.setQuantity(basePlatePartsDetDtos.size() != 0 ? basePlatePartsDetDtos.get(0).getQuantity() : new BigDecimal(1));
                         wmsOutProductionMaterialdDet.setProductionMaterialId(wmsOutProductionMaterial.getProductionMaterialId());
-                        wmsOutProductionMaterialdDet.setProcessId(qmsQualityConfirmation.getProcessId());
+                        wmsOutProductionMaterialdDet.setProcessId(ifProcess ?qmsQualityConfirmation.getProcessId():qmsQualityConfirmationList.get(0).getProcessId());
                         wmsOutProductionMaterialdDet.setMaterialId(smtWorkOrderCardPoolDto.getMaterialId());
                         wmsOutProductionMaterialdDet.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
                         wmsOutProductionMaterialdDet.setRealityQty(quantity);
