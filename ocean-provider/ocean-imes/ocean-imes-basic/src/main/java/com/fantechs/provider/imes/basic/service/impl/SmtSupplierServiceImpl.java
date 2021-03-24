@@ -2,10 +2,10 @@ package com.fantechs.provider.imes.basic.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtAddressDto;
-import com.fantechs.common.base.entity.basic.SmtAddress;
-import com.fantechs.common.base.entity.basic.SmtSignature;
-import com.fantechs.common.base.entity.basic.SmtSupplier;
-import com.fantechs.common.base.entity.basic.SmtSupplierAddress;
+import com.fantechs.common.base.dto.basic.imports.SmtStationImport;
+import com.fantechs.common.base.dto.basic.imports.SmtSupplierImport;
+import com.fantechs.common.base.entity.basic.*;
+import com.fantechs.common.base.entity.basic.history.SmtHtStation;
 import com.fantechs.common.base.entity.basic.search.SearchSmtSupplier;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -181,5 +179,71 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         }
         i = smtSupplierMapper.deleteByIds(ids);
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<SmtSupplierImport> smtSupplierImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<SmtSupplier> list = new LinkedList<>();
+
+        for (int i = 0; i < smtSupplierImports.size(); i++) {
+            SmtSupplierImport smtSupplierImport = smtSupplierImports.get(i);
+            String supplierCode = smtSupplierImport.getSupplierCode();
+            String supplierName = smtSupplierImport.getSupplierName();
+
+            if (StringUtils.isEmpty(
+                    supplierCode,supplierName
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtSupplier.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("supplierCode",supplierCode);
+            if (StringUtils.isNotEmpty(smtSupplierMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(smtSupplierImports)){
+                for (SmtSupplierImport supplierImport : smtSupplierImports) {
+                    if (supplierImport.getSupplierCode().equals(supplierCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+            smtSupplierImports.add(smtSupplierImport);
+        }
+
+        if (StringUtils.isNotEmpty(smtSupplierImports)){
+
+            for (SmtSupplierImport smtSupplierImport : smtSupplierImports) {
+                SmtSupplier smtSupplier = new SmtSupplier();
+                BeanUtils.copyProperties(smtSupplierImport,smtSupplier);
+                list.add(smtSupplier);
+            }
+
+            success = smtSupplierMapper.insertList(list);
+
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }
