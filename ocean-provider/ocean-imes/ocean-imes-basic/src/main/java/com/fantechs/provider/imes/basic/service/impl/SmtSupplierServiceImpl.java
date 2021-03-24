@@ -19,6 +19,7 @@ import com.fantechs.provider.imes.basic.mapper.SmtSignatureMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtSupplierAddressMapper;
 import com.fantechs.provider.imes.basic.mapper.SmtSupplierMapper;
 import com.fantechs.provider.imes.basic.service.SmtSupplierService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
