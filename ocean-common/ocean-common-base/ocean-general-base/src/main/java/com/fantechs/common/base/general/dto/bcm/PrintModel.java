@@ -53,6 +53,16 @@ public class PrintModel implements Serializable {
     @Column(name = "option12")
     @ApiModelProperty(name = "option12",value = "打印字段12")
     private String option12;
+    @Column(name = "option13")
+    @ApiModelProperty(name = "option13",value = "打印字段13")
+    private String option13;
+    @Column(name = "option14")
+    @ApiModelProperty(name = "option14",value = "打印字段14")
+    private String option14;
+    @Column(name = "option15")
+    @ApiModelProperty(name = "option15",value = "打印字段15")
+    private String option15;
 
+    //二维码内容
     private String qrCode;
 }

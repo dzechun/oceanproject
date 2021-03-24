@@ -5,6 +5,7 @@ import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.general.dto.bcm.PrintDto;
 import com.fantechs.common.base.general.dto.bcm.PrintModel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
@@ -32,6 +33,7 @@ import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -271,16 +273,23 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
         mesPackageManager.setBarCode(responseEntity.getData());
         //调用打印程序进行条码打印
-//        try {
-//            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
-//            printModel.setOption9(mesPackageManager.getBarCode());
-//            printModel.setQrCode(mesPackageManager.getBarCode());
-//            String json = JSON.toJSONString(printModel);
-//            byte[] bytes = json.getBytes();
-//            ResponseEntity res = bcmFeignApi.print(bytes);
-//        }catch (Exception e){
-//            throw new BizErrorException(e.getMessage());
-//        }
+        try {
+            PrintDto printDto = new PrintDto();
+            if(mesPackageManager.getType()==(byte)1){
+                printDto.setLabelName("包箱.btw");
+            }else if(mesPackageManager.getType()==(byte)2){
+                printDto.setLabelName("栈板.btw");
+            }
+            printDto.setPrintName(mesPackageManager.getPrintName());
+            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+            printModel.setQrCode(mesPackageManager.getBarCode());
+            List<PrintModel> printModelList = new ArrayList<>();
+            printModelList.add(printModel);
+            printDto.setPrintModelList(printModelList);
+            ResponseEntity res = bcmFeignApi.print(printDto);
+        }catch (Exception e){
+            throw new BizErrorException(e.getMessage());
+        }
     }
 
     /**

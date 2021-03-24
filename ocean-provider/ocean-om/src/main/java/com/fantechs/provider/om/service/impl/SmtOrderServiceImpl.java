@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2020/10/13.
@@ -146,7 +147,6 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         }
         //删除原有的关联产品信息
         smtOrderMapper.deleteMaterialByOrderId(smtOrder.getOrderId());
-
         if(StringUtils.isNotEmpty(mesOrderMaterialList)){
             for (MesOrderMaterial mesOrderMaterial : mesOrderMaterialList) {
                 mesOrderMaterial.setOrderId(smtOrder.getOrderId());

@@ -21,6 +21,7 @@ import com.fantechs.provider.bcm.mapper.BcmLabelCategoryMapper;
 import com.fantechs.provider.bcm.mapper.BcmLabelMapper;
 import com.fantechs.provider.bcm.service.BcmLabelService;
 import com.fantechs.provider.bcm.util.FTPUtil;
+import com.fantechs.provider.bcm.util.RabbitProducer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,8 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
     private BcmLabelCategoryMapper bcmLabelCategoryMapper;
     @Autowired
     private FTPUtil ftpUtil;
+    @Autowired
+    private RabbitProducer rabbitProducer;
 
     @Override
     public List<BcmLabelDto> findList(SearchBcmLabel searchBcmLabel) {
@@ -75,19 +78,9 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         }
 
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
-//        //存放路径：标签类别+名称
-        record.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getOriginalFilename());
-//        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-//        searchSysSpecItem.setSpecCode("FTP");
-//        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
-//        List<SysSpecItem> sysSpecItemList = itemList.getData();
-//        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-//        map.put("savePath","/"+bcmLabelCategory.getLabelCategoryName());
-//        boolean success = uploadFile(map,file);
-//        if(!success){
-//            throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
-//        }
-
+        record.setSavePath("bartender服务器");
+        //文件上传
+        rabbitProducer.sendFiles(record.getLabelVersion(),record.getLabelName(),file);
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
@@ -120,18 +113,7 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
 
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
         if(file!=null){
-            //存放路径：标签类别+名称
-            entity.setSavePath(bcmLabelCategory.getLabelCategoryName()+"/"+file.getName());
-//            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-//            searchSysSpecItem.setSpecCode("FTP");
-//            ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
-//            List<SysSpecItem> sysSpecItemList = itemList.getData();
-//            Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-//            map.put("savePath",entity.getSavePath());
-//            boolean success = uploadFile(map,file);
-//            if(!success){
-//                throw new BizErrorException(ErrorCodeEnum.valueOf("上传FTP服务器失败"));
-//            }
+            rabbitProducer.sendFiles(entity.getLabelVersion(),entity.getLabelName(),file);
         }
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
