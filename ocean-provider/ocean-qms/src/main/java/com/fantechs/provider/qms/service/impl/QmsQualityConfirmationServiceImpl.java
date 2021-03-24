@@ -165,7 +165,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             List<SmtRouteProcess> routeProcessList = new ArrayList<>();
             //筛选出当前报工工序的工段对应工艺路线里面的所有工序
             for (SmtRouteProcess smtRouteProcess : routeProcesses) {
-                if (smtRouteProcess.getSectionId() == smtProcess.getSectionId()) {
+                if (smtRouteProcess.getSectionId().equals(smtProcess.getSectionId())) {
                     routeProcessList.add(smtRouteProcess);
                 }
             }
@@ -178,7 +178,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (qmsQualityConfirmation.getQualityType() == 1 && (isQuality == null || isQuality == 0)) {
                 throw new BizErrorException("当前工序不是品质确认工序");
             }
-            if (smtRouteProcess.getProcessId() != qmsQualityConfirmation.getProcessId() && qmsQualityConfirmation.getQualityType() == 1) {
+            if (!(smtRouteProcess.getProcessId().equals(qmsQualityConfirmation.getProcessId())) && qmsQualityConfirmation.getQualityType() == 1) {
                 throw new BizErrorException("当前工序不是最后一道工序");
             }
         }
@@ -300,20 +300,21 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 list.get(j).setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
                 boolean b = true;
                 for (int k = j + 1; k < list.size(); k++) {
-                    if (list.get(j).getSectionId() == list.get(k).getSectionId() && list.get(j).getBadItemDetId() == list.get(k).getBadItemDetId()) {
+                    if (list.get(j).getSectionId().equals(list.get(k).getSectionId())  && list.get(j).getBadItemDetId() == list.get(k).getBadItemDetId()) {
                         list.get(j).setBadQuantity(list.get(j).getBadQuantity().add(list.get(k).getBadQuantity()));
                     }
                 }
                 if (b) {
                     for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
-                        if (list.get(j).getBadItemDetId() == qmsPoorQualityDto.getBadItemDetId() && list.get(j).getSectionId() == qmsPoorQualityDto.getSectionId()) {
+                        if (list.get(j).getBadItemDetId().equals(qmsPoorQualityDto.getBadItemDetId()) && list.get(j).getSectionId() == qmsPoorQualityDto.getSectionId()) {
                             b = false;
                             break;
                         }
                     }
                 }
-                if (b)
+                if (b) {
                     qualityDtoList.add(list.get(j));
+                }
             }
             qmsPoorQualityMapper.insertList(qualityDtoList);
         }
