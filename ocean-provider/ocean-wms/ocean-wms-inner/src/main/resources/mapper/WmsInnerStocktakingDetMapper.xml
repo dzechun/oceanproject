@@ -10,6 +10,7 @@
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="book_inventory" jdbcType="DECIMAL" property="bookInventory" />
     <result column="counted_quantity" jdbcType="DECIMAL" property="countedQuantity" />
     <result column="profit_loss_quantity" jdbcType="DECIMAL" property="profitLossQuantity" />
@@ -31,6 +32,16 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
@@ -43,6 +54,7 @@
 	wisd.contract_code,
 	wisd.pallet_code,
 	wisd.material_id,
+    wisd.storage_id,
 	wisd.book_inventory,
 	wisd.counted_quantity,
 	wisd.profit_loss_quantity,
@@ -64,11 +76,20 @@
     select <include refid="Base_Column_List"></include>,
     sm.material_code,sm.material_name,sm.material_desc,
     bo.organization_name,bo.organization_code,
-    su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    ss.storage_name,ss.storage_code,
+    swa.warehouse_area_id,swa.warehouse_area_code,swa.warehouse_area_name,
+    sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,
+    spm.product_model_code,spm.product_model_name
     from fantech_imes.wms_inner_stocktaking_det wisd
     LEFT JOIN ocean.sys_user su  ON wisd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wisd.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.smt_material sm ON wisd.material_id = sm.material_id
+    LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes.smt_storage ss ON wisd.storage_id = ss.storage_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+    LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
     LEFT JOIN fantech_imes.base_organization bo ON wisd.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

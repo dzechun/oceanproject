@@ -61,6 +61,14 @@ public class WmsInnerStocktakingDet extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 储位id
+     */
+    @ApiModelProperty(name="storageId",value = "储位id")
+    @Excel(name = "储位id", height = 20, width = 30,orderNum="")
+    @Column(name = "storage_id")
+    private Long storageId;
+
+    /**
      * 账面数量
      */
     @ApiModelProperty(name="bookInventory",value = "账面数量")
