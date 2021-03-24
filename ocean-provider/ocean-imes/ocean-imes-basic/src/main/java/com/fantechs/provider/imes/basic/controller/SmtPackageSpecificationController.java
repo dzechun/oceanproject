@@ -113,7 +113,7 @@ public class SmtPackageSpecificationController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SmtPackageSpecificationImport> smtPackageSpecificationImports = EasyPoiUtils.importExcel(file, SmtPackageSpecificationImport.class);
+            List<SmtPackageSpecificationImport> smtPackageSpecificationImports = EasyPoiUtils.importExcel(file,2,1, SmtPackageSpecificationImport.class);
             Map<String, Object> resultMap = smtPackageSpecificationService.importExcel(smtPackageSpecificationImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

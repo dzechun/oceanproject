@@ -104,7 +104,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
         wmsInnerHtTransferSlipMapper.insertSelective(wmsInnerHtTransferSlip);
 
         //删除原有调拨单明细
-        Example example2 = new Example(WmsInnerTransferSlipDetDto.class);
+        Example example2 = new Example(WmsInnerTransferSlipDet.class);
         Example.Criteria criteria4 = example2.createCriteria();
         criteria4.andEqualTo("transferSlipId",wmsInnerTransferSlip.getTransferSlipId());
         wmsInnerTransferSlipDetMapper.deleteByExample(example2);
