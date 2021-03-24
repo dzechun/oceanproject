@@ -4,6 +4,7 @@ package com.fantechs.provider.api.fileserver.service;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
 import com.fantechs.common.base.general.dto.bcm.BcmLabelDto;
+import com.fantechs.common.base.general.dto.bcm.PrintDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
@@ -56,6 +57,6 @@ public interface BcmFeignApi {
     ResponseEntity<List<BcmLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory);
 
     @PostMapping("/print")
-    ResponseEntity print(byte[] bytes) throws IOException;
+    ResponseEntity print(PrintDto printDto) throws IOException;
 
 }

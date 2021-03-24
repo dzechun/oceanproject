@@ -157,4 +157,10 @@ public class MesPackageManager implements Serializable {
     @Excel(name = "修改时间")
     private java.util.Date modifiedTime;
 
+    /**
+     * 打印机名称
+     */
+    @ApiModelProperty(value = "打印机名称",example = "打印机名称")
+    private String printName;
+
 }

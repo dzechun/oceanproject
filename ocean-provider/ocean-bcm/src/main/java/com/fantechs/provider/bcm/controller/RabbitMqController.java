@@ -1,12 +1,14 @@
 package com.fantechs.provider.bcm.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fantechs.common.base.general.dto.bcm.PrintDto;
+import com.fantechs.common.base.general.dto.bcm.PrintModel;
+import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.bcm.util.RabbitProducer;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,5 +35,11 @@ public class RabbitMqController {
         System.arraycopy(file,0,ibytes,28,file.length);
         rabbitProducer.sendDemoQueue(ibytes);
         return "success";
+    }
+
+    @PostMapping("/print")
+    public ResponseEntity print(@RequestBody PrintDto printDto) throws IOException {
+        rabbitProducer.sendPrint(printDto);
+        return ControllerUtil.returnSuccess();
     }
 }

@@ -147,6 +147,13 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //获取当前报工工序信息
+        ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
+        SmtProcess smtProcess = processResponse.getData();
+        if (StringUtils.isEmpty(smtProcess)){
+            throw new BizErrorException("当前报工工序不存在");
+        }
+
         if (qmsQualityConfirmation.getQualityType() == 1) {
 
             SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
@@ -159,13 +166,11 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
             List<SmtRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(basePlatePartsDet.getRouteId()).getData();
 
-            //获取当前报工工序信息
-            ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
-            SmtProcess smtProcess = processResponse.getData();
+
             List<SmtRouteProcess> routeProcessList = new ArrayList<>();
             //筛选出当前报工工序的工段对应工艺路线里面的所有工序
             for (SmtRouteProcess smtRouteProcess : routeProcesses) {
-                if (smtRouteProcess.getSectionId() == smtProcess.getSectionId()) {
+                if (smtRouteProcess.getSectionId().equals(smtProcess.getSectionId())) {
                     routeProcessList.add(smtRouteProcess);
                 }
             }
@@ -178,7 +183,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (qmsQualityConfirmation.getQualityType() == 1 && (isQuality == null || isQuality == 0)) {
                 throw new BizErrorException("当前工序不是品质确认工序");
             }
-            if (smtRouteProcess.getProcessId() != qmsQualityConfirmation.getProcessId() && qmsQualityConfirmation.getQualityType() == 1) {
+            if (!(smtRouteProcess.getProcessId().equals(qmsQualityConfirmation.getProcessId())) && qmsQualityConfirmation.getQualityType() == 1) {
                 throw new BizErrorException("当前工序不是最后一道工序");
             }
         }
@@ -300,20 +305,21 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 list.get(j).setQualityId(qmsQualityConfirmation.getQualityConfirmationId());
                 boolean b = true;
                 for (int k = j + 1; k < list.size(); k++) {
-                    if (list.get(j).getSectionId() == list.get(k).getSectionId() && list.get(j).getBadItemDetId() == list.get(k).getBadItemDetId()) {
+                    if (list.get(j).getSectionId().equals(list.get(k).getSectionId())  && list.get(j).getBadItemDetId() == list.get(k).getBadItemDetId()) {
                         list.get(j).setBadQuantity(list.get(j).getBadQuantity().add(list.get(k).getBadQuantity()));
                     }
                 }
                 if (b) {
                     for (QmsPoorQualityDto qmsPoorQualityDto : qualityDtoList) {
-                        if (list.get(j).getBadItemDetId() == qmsPoorQualityDto.getBadItemDetId() && list.get(j).getSectionId() == qmsPoorQualityDto.getSectionId()) {
+                        if (list.get(j).getBadItemDetId().equals(qmsPoorQualityDto.getBadItemDetId()) && list.get(j).getSectionId() == qmsPoorQualityDto.getSectionId()) {
                             b = false;
                             break;
                         }
                     }
                 }
-                if (b)
+                if (b) {
                     qualityDtoList.add(list.get(j));
+                }
             }
             qmsPoorQualityMapper.insertList(qualityDtoList);
         }
@@ -401,7 +407,13 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
             SmtWorkOrderBomDto workOrderBomDto = null;
             for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
-                if (smtWorkOrderBomDto.getProcessId() == qmsQualityConfirmation.getProcessId()) {
+                //获取当前报工工序信息
+                processResponse = basicFeignApi.processDetail(smtWorkOrderBomDto.getProcessId());
+                SmtProcess process = processResponse.getData();
+                if (StringUtils.isEmpty(process)){
+                    throw new BizErrorException("当前报工工序不存在");
+                }
+                if (StringUtils.isNotEmpty(smtProcess) && smtProcess.getSectionId().equals(process.getSectionId())) {
                     workOrderBomDto = smtWorkOrderBomDto;
                     break;
                 }
