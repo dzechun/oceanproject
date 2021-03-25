@@ -184,6 +184,6 @@
         </select>
 
      <update id="updWorkOrderStatus" parameterType="java.lang.Long">
-        update from smt_work_order set if_print=1 where work_order_id =#{workOrderId}
+        update smt_work_order set if_print=1 where work_order_id =#{workOrderId}
     </update>
 </mapper>

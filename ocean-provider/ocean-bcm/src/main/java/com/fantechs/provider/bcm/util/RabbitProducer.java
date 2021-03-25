@@ -39,10 +39,10 @@ public class RabbitProducer {
             byte[] file = multipartFile.getBytes();
             byte[] ibytes = new byte[28+file.length];
             ibytes[0]=(byte)2;
-            System.arraycopy(fileName,0,ibytes,1,filebyte.length);
+            System.arraycopy(filebyte,0,ibytes,1,filebyte.length);
             System.arraycopy(vs,0,ibytes,17,vs.length);
             System.arraycopy(file,0,ibytes,28,file.length);
-            this.rabbitTemplate.convertAndSend(this.QUEUE_NAME_FILE,ibytes);
+            this.rabbitTemplate.convertAndSend(this.QUEUE_NAME_PRINT,ibytes);
         }catch (Exception e){
             throw new BizErrorException(e.getMessage());
         }
