@@ -242,7 +242,6 @@ public class SmtBarcodeRuleServiceImpl extends BaseService<SmtBarcodeRule> imple
                     throw new BizErrorException("十六进制长度不能超过16");
                 }
             }
-
             if(specification.contains("S")||specification.contains("F")){
                 if(StringUtils.isEmpty(initialValue)||initialValue<1){
                     throw new BizErrorException("初始值不能为空必须大于0");

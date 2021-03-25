@@ -21,6 +21,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.om.mapper.MesScheduleDetailMapper;
 import com.fantechs.provider.om.mapper.MesScheduleMapper;
 import com.fantechs.provider.om.service.MesScheduleService;
 import com.fantechs.provider.om.service.SmtOrderService;
@@ -187,7 +188,12 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
 
    @Override
    public List<MesScheduleDTO> selectFilterAll(Map<String, Object> map) {
-       return mesScheduleMapper.selectFilterAll(map);
+       List<MesScheduleDTO> list = mesScheduleMapper.selectFilterAll(map);
+       for (MesScheduleDTO mesScheduleDTO : list) {
+           BigDecimal qty = mesScheduleMapper.sumOutputQty(mesScheduleDTO.getScheduleId());
+           mesScheduleDTO.setFinished(qty);
+       }
+       return list;
    }
 
     @Override

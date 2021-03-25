@@ -89,8 +89,8 @@ public class PDAMesPackageManagerController {
 
     @ApiOperation("补打条码")
     @GetMapping("printCode")
-    public ResponseEntity printCode(@ApiParam(value = "包装管理对象ID",required = true)@RequestParam Long id){
-        return ControllerUtil.returnCRUD(mesPackageManagerService.printCode(id));
+    public ResponseEntity printCode(@ApiParam(value = "包装管理对象ID",required = true)@RequestParam Long id,@RequestParam String printName){
+        return ControllerUtil.returnCRUD(mesPackageManagerService.printCode(id,printName));
     }
 
     @ApiOperation("批量删除包装管理数据")
