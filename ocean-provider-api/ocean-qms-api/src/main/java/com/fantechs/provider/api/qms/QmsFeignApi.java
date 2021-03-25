@@ -2,10 +2,12 @@ package com.fantechs.provider.api.qms;
 
 import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
+import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityConfirmation;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -35,5 +37,10 @@ public interface QmsFeignApi {
     @ApiOperation("获取检验类型列表")
     @PostMapping("/qmsInspectionType/findList")
     ResponseEntity<List<QmsInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
+
+    @ApiOperation("获取pda质检列表")
+    @PostMapping("/qmsPdaInspection/findList")
+    ResponseEntity<List<QmsPdaInspectionDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchQmsPdaInspection searchQmsPdaInspection);
+
 }
 

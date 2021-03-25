@@ -124,7 +124,7 @@
             <if test="productBomId!=null and productBomId!=''">
                 and spb.parent_bom_id=#{productBomId}
             </if>
-            <if test="(productBomId == null or productBomId =='') and (isBomDet==null or isBomDet=='')">
+            <if test="(productBomId == null or productBomId =='') and (isBomDet==null or isBomDet=='') and (productBomCode == null or productBomCode == '')">
                 and spb.parent_bom_id is null
             </if>
             <if test="status!=null">

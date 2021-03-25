@@ -17,12 +17,14 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name = "supplierName", value = "客户名称")
+    @Excel(name = "客户名称", height = 20, width = 30, orderNum = "1")
     private String supplierName;
 
     /**
      * 合同号
      */
     @ApiModelProperty(name = "contractCode", value = "合同号")
+    @Excel(name = "合同号", height = 20, width = 30, orderNum = "2")
     private String contractCode;
 
     /**
@@ -30,7 +32,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name = "warehouseName", value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30, orderNum = "1")
+    @Excel(name = "仓库名称", height = 20, width = 30, orderNum = "3")
     private String warehouseName;
 
     /**
@@ -38,7 +40,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name = "warehouseAreaName", value = "仓库区域名称")
-    @Excel(name = "仓库区域名称", height = 20, width = 30, orderNum = "2")
+    @Excel(name = "仓库区域名称", height = 20, width = 30, orderNum = "4")
     private String warehouseAreaName;
 
     /**
@@ -46,7 +48,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name = "storageName", value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30, orderNum = "3")
+    @Excel(name = "储位名称", height = 20, width = 30, orderNum = "5")
     private String storageName;
 
     /**
@@ -54,15 +56,15 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name = "materialCode", value = "产品料号")
-    @Excel(name = "产品料号", height = 20, width = 30, orderNum = "4")
+    @Excel(name = "产品料号", height = 20, width = 30, orderNum = "6")
     private String materialCode;
 
     /**
-     * 产品料号编码
+     * 产品料号描述
      */
     @Transient
-    @ApiModelProperty(name = "materialDesc", value = "产品料号编码")
-    @Excel(name = "产品料号编码", height = 20, width = 30, orderNum = "5")
+    @ApiModelProperty(name = "materialDesc", value = "产品料号描述")
+    @Excel(name = "产品料号描述", height = 20, width = 30, orderNum = "7")
     private String materialDesc;
 
     /**
@@ -70,7 +72,7 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(name = "materialName", value = "产品型号")
-    @Excel(name = "产品型号", height = 20, width = 30, orderNum = "6")
+    @Excel(name = "产品型号", height = 20, width = 30, orderNum = "8")
     private String materialName;
 
     /**
@@ -78,14 +80,12 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
      */
     @Transient
     @ApiModelProperty(value = "创建用户名称", example = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30, orderNum = "10")
     private String createUserName;
     /**
      * 修改用户名称
      */
     @Transient
     @ApiModelProperty(value = "修改用户名称", example = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30, orderNum = "12")
     private String modifiedUserName;
 
     /**

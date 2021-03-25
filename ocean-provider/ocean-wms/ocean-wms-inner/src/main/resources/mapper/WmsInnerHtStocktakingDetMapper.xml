@@ -10,6 +10,7 @@
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="book_inventory" jdbcType="DECIMAL" property="bookInventory" />
     <result column="counted_quantity" jdbcType="DECIMAL" property="countedQuantity" />
     <result column="profit_loss_quantity" jdbcType="DECIMAL" property="profitLossQuantity" />
@@ -32,6 +33,16 @@
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -40,6 +51,7 @@
 	wihsd.contract_code,
 	wihsd.pallet_code,
 	wihsd.material_id,
+    wihsd.storage_id,
 	wihsd.book_inventory,
 	wihsd.counted_quantity,
 	wihsd.profit_loss_quantity,
@@ -61,11 +73,20 @@
     select <include refid="Base_Column_List"></include>,
     sm.material_code,sm.material_name,sm.material_desc,
     bo.organization_name,bo.organization_code,
-    su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    ss.storage_name,ss.storage_code,
+    swa.warehouse_area_id,swa.warehouse_area_code,swa.warehouse_area_name,
+    sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,
+    spm.product_model_code,spm.product_model_name
     from fantech_imes.wms_inner_ht_stocktaking_det wihsd
     LEFT JOIN ocean.sys_user su  ON wihsd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wihsd.modified_user_id = sus.user_id
     LEFT JOIN ocean.smt_material sm ON wihsd.material_id = sm.material_id
+    LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes.smt_storage ss ON wihsd.storage_id = ss.storage_id
+    LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+    LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
     LEFT JOIN fantech_imes.base_organization bo ON wihsd.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

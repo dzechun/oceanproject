@@ -147,6 +147,13 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //获取当前报工工序信息
+        ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
+        SmtProcess smtProcess = processResponse.getData();
+        if (StringUtils.isEmpty(smtProcess)){
+            throw new BizErrorException("当前报工工序不存在");
+        }
+
         if (qmsQualityConfirmation.getQualityType() == 1) {
 
             SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
@@ -159,9 +166,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
 
             List<SmtRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(basePlatePartsDet.getRouteId()).getData();
 
-            //获取当前报工工序信息
-            ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
-            SmtProcess smtProcess = processResponse.getData();
+
             List<SmtRouteProcess> routeProcessList = new ArrayList<>();
             //筛选出当前报工工序的工段对应工艺路线里面的所有工序
             for (SmtRouteProcess smtRouteProcess : routeProcesses) {
@@ -402,7 +407,13 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             List<SmtWorkOrderBomDto> workOrderBomList = pmFeignApi.findWordOrderBomList(searchSmtWorkOrderBom).getData();
             SmtWorkOrderBomDto workOrderBomDto = null;
             for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
-                if (smtWorkOrderBomDto.getProcessId() == qmsQualityConfirmation.getProcessId()) {
+                //获取当前报工工序信息
+                processResponse = basicFeignApi.processDetail(smtWorkOrderBomDto.getProcessId());
+                SmtProcess process = processResponse.getData();
+                if (StringUtils.isEmpty(process)){
+                    throw new BizErrorException("当前报工工序不存在");
+                }
+                if (StringUtils.isNotEmpty(smtProcess) && smtProcess.getSectionId().equals(process.getSectionId())) {
                     workOrderBomDto = smtWorkOrderBomDto;
                     break;
                 }
@@ -466,14 +477,22 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 searchSmtWorkOrderCardPool.setParentId(smtWorkOrderCardPool.getParentId());
                 List<SmtWorkOrderCardPoolDto> workOrderCardPoolDtoList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
                 if (StringUtils.isNotEmpty(workOrderCardPoolDtoList)) {
+                    Map<String,Object> qualityConditions = new HashMap<>();
+                    qualityConditions.put("sectionId",smtProcess.getSectionId());
                     for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : workOrderCardPoolDtoList) {
+                        boolean ifProcess = qmsQualityConfirmation.getWorkOrderCardPoolId().equals(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                        qualityConditions.put("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
+                        List<QmsQualityConfirmationDto> qmsQualityConfirmationList = qmsQualityConfirmationMapper.findList(qualityConditions);
+                        if (StringUtils.isEmpty(qmsQualityConfirmationList)){
+                            continue;
+                        }
                         SearchBasePlatePartsDet searchBasePlatePartsDet = new SearchBasePlatePartsDet();
                         searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderCardPoolDto.getMaterialId());
                         List<BasePlatePartsDetDto> basePlatePartsDetDtos = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
                         WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = new WmsOutProductionMaterialdDet();
                         wmsOutProductionMaterialdDet.setQuantity(basePlatePartsDetDtos.size() != 0 ? basePlatePartsDetDtos.get(0).getQuantity() : new BigDecimal(1));
                         wmsOutProductionMaterialdDet.setProductionMaterialId(wmsOutProductionMaterial.getProductionMaterialId());
-                        wmsOutProductionMaterialdDet.setProcessId(qmsQualityConfirmation.getProcessId());
+                        wmsOutProductionMaterialdDet.setProcessId(ifProcess ?qmsQualityConfirmation.getProcessId():qmsQualityConfirmationList.get(0).getProcessId());
                         wmsOutProductionMaterialdDet.setMaterialId(smtWorkOrderCardPoolDto.getMaterialId());
                         wmsOutProductionMaterialdDet.setWorkOrderId(smtWorkOrderCardPoolDto.getWorkOrderId());
                         wmsOutProductionMaterialdDet.setRealityQty(quantity);

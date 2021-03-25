@@ -213,7 +213,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtPackageSpecification> list = new LinkedList<>();
@@ -322,8 +322,8 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
             smtHtPackageSpecificationMapper.insertList(htList);
         }
 
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

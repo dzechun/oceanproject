@@ -61,6 +61,14 @@ public class WmsInnerHtStocktakingDet extends ValidGroup implements Serializable
     private Long materialId;
 
     /**
+     * 储位id
+     */
+    @ApiModelProperty(name="storageId",value = "储位id")
+    @Excel(name = "储位id", height = 20, width = 30,orderNum="")
+    @Column(name = "storage_id")
+    private Long storageId;
+
+    /**
      * 账面数量
      */
     @ApiModelProperty(name="bookInventory",value = "账面数量")
@@ -226,6 +234,86 @@ public class WmsInnerHtStocktakingDet extends ValidGroup implements Serializable
     @Excel(name = "盘存转报废单号", height = 20, width = 30)
     @Transient
     private String modifiedUserName;
+
+    /**
+     * 储位编码
+     */
+    @ApiModelProperty(name="storageCode",value = "储位编码")
+    @Excel(name = "储位编码", height = 20, width = 30)
+    @Transient
+    private String storageCode;
+
+    /**
+     * 储位名称
+     */
+    @ApiModelProperty(name="storageName",value = "储位名称")
+    @Excel(name = "储位名称", height = 20, width = 30)
+    @Transient
+    private String storageName;
+
+    /**
+     * 仓库区域Id
+     */
+    @ApiModelProperty(name="warehouseAreaId",value = "仓库区域Id")
+    @Excel(name = "仓库区域Id", height = 20, width = 30,orderNum="")
+    @Transient
+    private Long warehouseAreaId;
+
+    /**
+     * 仓库区域编码
+     */
+    @ApiModelProperty(name="warehouseAreaCode",value = "仓库区域编码")
+    @Excel(name = "仓库区域编码", height = 20, width = 30)
+    @Transient
+    private String warehouseAreaCode;
+
+    /**
+     * 仓库区域名称
+     */
+    @ApiModelProperty(name="warehouseAreaName",value = "仓库区域名称")
+    @Excel(name = "仓库区域名称", height = 20, width = 30)
+    @Transient
+    private String warehouseAreaName;
+
+    /**
+     * 仓库Id
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库Id")
+    @Excel(name = "仓库Id", height = 20, width = 30,orderNum="")
+    @Transient
+    private Long warehouseId;
+
+    /**
+     * 仓库编码
+     */
+    @ApiModelProperty(name="warehouseCode",value = "仓库编码")
+    @Excel(name = "仓库编码", height = 20, width = 30)
+    @Transient
+    private String warehouseCode;
+
+    /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
+    @Transient
+    private String warehouseName;
+
+    /**
+     * 产品型号编码
+     */
+    @ApiModelProperty(name="productModelCode",value = "产品型号编码")
+    @Excel(name = "产品型号编码", height = 20, width = 30)
+    @Transient
+    private String productModelCode;
+
+    /**
+     * 产品型号名称
+     */
+    @ApiModelProperty(name="productModelName",value = "产品型号名称")
+    @Excel(name = "产品型号名称", height = 20, width = 30)
+    @Transient
+    private String productModelName;
 
     private static final long serialVersionUID = 1L;
 }

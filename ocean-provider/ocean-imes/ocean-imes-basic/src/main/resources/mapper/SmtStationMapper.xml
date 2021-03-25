@@ -21,6 +21,8 @@
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
+        <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
@@ -49,6 +51,7 @@
             resultMap="BaseResultMap">
         select  <include refid="Base_Column_List"></include>,
         sws.section_name as sectionName,u.user_name as createUserName,
+        sp.process_code,sp.process_name,
         s.user_name as modifiedUserName,
         bo.organization_name
         from fantech_imes.smt_station ss

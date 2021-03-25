@@ -14,14 +14,14 @@ public class SmtPackageSpecificationImport implements Serializable {
      * 包装规格编码
      */
     @ApiModelProperty(name="packageSpecificationCode",value = "包装规格编码")
-    @Excel(name = "包装规格编码", height = 20, width = 30)
+    @Excel(name = "包装规格编码(必传)", height = 20, width = 30)
     private String packageSpecificationCode;
 
     /**
      * 包装规格名称
      */
     @ApiModelProperty(name="packageSpecificationName",value = "包装规格名称")
-    @Excel(name = "包装规格名称", height = 20, width = 30)
+    @Excel(name = "包装规格名称(必传)", height = 20, width = 30)
     private String packageSpecificationName;
 
     /**
@@ -48,7 +48,7 @@ public class SmtPackageSpecificationImport implements Serializable {
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
+    @Excel(name = "物料编码(必传)", height = 20, width = 30)
     private String materialCode;
 
     /**
@@ -61,7 +61,7 @@ public class SmtPackageSpecificationImport implements Serializable {
      * 工序编码
      */
     @ApiModelProperty(name="processCode",value = "工序编码")
-    @Excel(name = "工序编码", height = 20, width = 30)
+    @Excel(name = "工序编码(必传)", height = 20, width = 30)
     private String processCode;
 
     /**
@@ -90,4 +90,18 @@ public class SmtPackageSpecificationImport implements Serializable {
     @ApiModelProperty(name="packingUnitCode",value = "包装单位编码")
     @Excel(name = "包装单位编码", height = 20, width = 30)
     private String packingUnitCode;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30)
+    private String remark;
+
+    /**
+     * 状态(0无效，1有效)
+     */
+    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
+    private Integer status;
 }

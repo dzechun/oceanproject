@@ -1,8 +1,10 @@
 package com.fantechs.provider.imes.storage.service.impl;
 
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto;
 import com.fantechs.common.base.entity.storage.StorageMonthEndInventory;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper;
 import com.fantechs.provider.imes.storage.mapper.StorageMonthEndInventoryMapper;
 import com.fantechs.provider.imes.storage.service.StorageMonthEndInventoryService;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,19 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
 
     @Resource
     private StorageMonthEndInventoryMapper storageMonthEndInventoryMapper;
+    @Resource
+    private SmtStorageInventoryDetMapper smtStorageInventoryDetMapper;
 
     @Override
     public List<StorageMonthEndInventoryDto> findList(Map<String, Object> map) {
-        return storageMonthEndInventoryMapper.findList(map);
+        List<StorageMonthEndInventoryDto> list = storageMonthEndInventoryMapper.findList(map);
+        map.clear();
+        for (StorageMonthEndInventoryDto storageMonthEndInventoryDto : list) {
+            map.put("contractCode",storageMonthEndInventoryDto.getContractCode());
+            List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = smtStorageInventoryDetMapper.findList(map);
+            storageMonthEndInventoryDto.setList(smtStorageInventoryDetDtos);
+        }
+        return list;
     }
 
     @Override
