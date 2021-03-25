@@ -96,7 +96,8 @@
         LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
         LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
         LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-        LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id = bt.package_specification_id
+        LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id =
+        bt.package_specification_id
         LEFT JOIN fantech_imes.smt_route sr ON swo.route_id = sr.route_id
         LEFT JOIN fantech_imes.smt_barcode_rule sbr ON swocp.barcode_rule_id = sbr.barcode_rule_id
         LEFT JOIN fantech_imes.smt_order so ON swo.order_id = so.order_id
@@ -126,7 +127,7 @@
         </where>
         order by swocp.modified_time desc
     </select>
-    
+
     <update id="batchUpdateStatus" parameterType="list">
         <foreach collection="list" item="item" separator=";">
             UPDATE `smt_work_order_card_pool`
@@ -153,6 +154,29 @@
                 LEFT JOIN base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
         WHERE
             swocp.parent_id = #{parentId}
-          AND swocp.card_status = 3
+    </select>
+
+    <select id="getAppointIntoCard" resultType="com.fantechs.common.base.general.dto.mes.pm.NoPutIntoCardDTO" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool">
+        SELECT
+        swocp.work_order_card_id AS 'workOrderCardId',
+        sm.material_name AS 'materialName',
+        bpi.parts_information_name AS 'partsInformationName',
+        swocp.out_put_qty AS 'outPutQty',
+        bppd.specification AS 'packageSpecificationQuantity',
+        bppd.color AS 'color',
+        swo.route_id AS 'routeId'
+        FROM
+        smt_work_order_card_pool swocp
+        LEFT JOIN smt_work_order_card_pool swocp1 ON swocp1.work_order_card_pool_id = swocp.parent_id
+        LEFT JOIN smt_work_order swo ON swo.work_order_id = swocp1.work_order_id
+        LEFT JOIN smt_material sm ON sm.material_id = swo.material_id
+        LEFT JOIN smt_work_order swo1 ON swo1.work_order_id = swocp.work_order_id
+        LEFT JOIN base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo1.material_id
+        LEFT JOIN base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
+        WHERE
+        swocp.work_order_card_pool_id in
+        <foreach collection="cardPoolIds" item="item" open="(" separator="," close=")">
+        #{item}
+        </foreach>
     </select>
 </mapper>

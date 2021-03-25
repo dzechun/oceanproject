@@ -9,11 +9,14 @@ import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
+import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
+import com.fantechs.common.base.general.entity.qms.QmsAndinStorageQuarantine;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsPdaInspection;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPalletCarton;
@@ -27,6 +30,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.wms.in.controller.pda.PDAMesPackageManagerController;
 import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInFinishedProductMapper;
@@ -62,6 +66,8 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
     private PDAMesPackageManagerController pdaMesPackageManagerController;
     @Resource
     private BcmFeignApi bcmFeignApi;
+    @Resource
+    private QmsFeignApi qmsFeignApi;
 
 
     @Override
@@ -79,7 +85,8 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
         if (wmsInFinishedProduct.getProjectType().equals("dp")) {
             wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("R-"));
             wmsInFinishedProduct.setInStatus(StringUtils.isEmpty(wmsInFinishedProduct.getInStatus()) ? 0 : wmsInFinishedProduct.getInStatus());
-        } else {
+        }
+        if (wmsInFinishedProduct.getProjectType().equals("hf")) {
             wmsInFinishedProduct.setFinishedProductCode(CodeUtils.getId("CPRK-"));
             wmsInFinishedProduct.setInStatus((byte) 2);
         }
@@ -97,6 +104,8 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
         wmsInHtFinishedProductMapper.insertSelective(wmsInHtFinishedProduct);
 
         for (WmsInFinishedProductDet wmsInFinishedProductDet : wmsInFinishedProduct.getWmsInFinishedProductDetList()) {
+
+
 
             wmsInFinishedProductDet.setFinishedProductId(String.valueOf(wmsInFinishedProduct.getFinishedProductId()));
             wmsInFinishedProductDet.setOrganizationId(user.getOrganizationId());
@@ -118,12 +127,23 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                     //增加库位库存明细
                     SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
                     smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
-//                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
                     smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                     smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
                     storageInventoryFeignApi.add(smtStorageInventoryDet);
                 }
-            } else {//华峰内容
+            }
+            if (wmsInFinishedProduct.getProjectType().equals("hf")) {
+                //华峰内容
+
+                //判断该栈板是否质检合格
+                SearchQmsPdaInspection searchQmsPdaInspection = new SearchQmsPdaInspection();
+                searchQmsPdaInspection.setPalletCode(wmsInFinishedProductDet.getPalletCode());
+                List<QmsPdaInspectionDto> qmsPdaInspectionDtos = qmsFeignApi.findList(searchQmsPdaInspection).getData();
+                if(qmsPdaInspectionDtos.get(0).getQualifiedState().equals(1)){
+                    throw new BizErrorException(wmsInFinishedProductDet.getPalletCode() + "有不合格箱码");
+                }
+
+                // PDA直接提交 增加库存
                 //存入库时栈板与包箱关系
                 SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();
                 searchMesPackageManagerListDTO.setIsFindChildren(true);
@@ -151,7 +171,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 //存储位与栈板关系表smt
                 storageInventoryFeignApi.add(smtStoragePallet);
 
-                /*//新增库存
+                //新增库存
                 SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
                 smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
                 smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
@@ -165,7 +185,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
                 smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                 smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
-                storageInventoryFeignApi.add(smtStorageInventoryDet);*/
+                storageInventoryFeignApi.add(smtStorageInventoryDet);
             }
 
         }

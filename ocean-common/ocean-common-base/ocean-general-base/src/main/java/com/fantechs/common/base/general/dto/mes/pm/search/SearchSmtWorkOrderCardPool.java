@@ -8,7 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Max;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchSmtWorkOrderCardPool extends BaseQuery implements Serializable {
@@ -45,4 +47,7 @@ public class SearchSmtWorkOrderCardPool extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="type",value = "流程卡类型（1、工单流转卡 2、部件流转卡 3、拆批流程卡）")
     private Byte type;
+
+    @ApiModelProperty(name="cardPoolIds" ,value="部件流转卡ID集合")
+    private List<Integer> cardPoolIds;
 }
