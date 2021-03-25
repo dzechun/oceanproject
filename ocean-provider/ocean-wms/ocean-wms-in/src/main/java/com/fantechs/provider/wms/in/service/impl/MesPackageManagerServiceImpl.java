@@ -288,13 +288,16 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }else if(mesPackageManager.getType()==(byte)2){
                 printDto.setLabelName("栈板.btw");
             }
-            printDto.setPrintName(mesPackageManager.getPrintName());
+            printDto.setPrintName("测试");
             PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
             printModel.setQrCode(mesPackageManager.getBarCode());
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);
             printDto.setPrintModelList(printModelList);
             ResponseEntity res = bcmFeignApi.print(printDto);
+            if(res.getCode()!=0){
+                throw new BizErrorException("打印失败");
+            }
         }catch (Exception e){
             throw new BizErrorException(e.getMessage());
         }
