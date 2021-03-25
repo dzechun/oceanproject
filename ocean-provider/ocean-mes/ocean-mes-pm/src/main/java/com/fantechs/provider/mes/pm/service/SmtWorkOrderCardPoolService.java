@@ -24,4 +24,8 @@ public interface SmtWorkOrderCardPoolService extends IService<SmtWorkOrderCardPo
     int batchUpdateStatus(List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList);
     //获取未开工的部件流程卡
     List<NoPutIntoCardDTO> getNoPutIntoCard(Long parentId);
+    //通过工单流转卡任务池ID和工序ID获取报工数量
+    ProcessListWorkOrderDTO selectWorkOrderDtoByWorkOrderCardPoolIdAndProcessId(String workOrderCardPoolId,String processId);
+
+    List<NoPutIntoCardDTO> getAppointIntoCard(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
 }

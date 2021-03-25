@@ -91,12 +91,6 @@
       <if test="stockStatus != null">
         and sn.stock_status = #{stockStatus}
       </if>
-<!--      <if test="stockStatusIn !=null">-->
-<!--        AND sn.stock_status  IN-->
-<!--        <foreach collection="stockStatusIn" item="ulist"  open="(" separator="," close=")">-->
-<!--          #{ulist}-->
-<!--        </foreach>-->
-<!--      </if>-->
       <if test="outStatus != null">
         and sn.out_status = #{outStatus}
       </if>
