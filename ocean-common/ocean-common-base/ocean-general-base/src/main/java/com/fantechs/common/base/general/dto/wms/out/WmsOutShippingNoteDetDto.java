@@ -50,4 +50,7 @@ public class WmsOutShippingNoteDetDto extends WmsOutShippingNoteDet implements S
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     @Excel(name = "物料描述", height = 20, width = 30)
     private String materialDesc;
+
+    @ApiModelProperty(name="palletCode" ,value="栈板编码")
+    private String palletCode;
 }

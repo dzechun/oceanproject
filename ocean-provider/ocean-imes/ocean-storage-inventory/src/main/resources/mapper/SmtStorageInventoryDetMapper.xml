@@ -23,10 +23,13 @@
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto">
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-        <result column="materialId" jdbcType="BIGINT" property="materialId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -47,9 +50,9 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        bo.organization_name,ss.storage_code,ss.storage_name,
+        bo.organization_name,ss.storage_code,ss.storage_name,ss.storage_id,
         sm.material_desc,sm.material_name,sm.material_id,sm.version,sm.material_code,
-        swa.warehouse_area_name,sw.warehouse_name
+        swa.warehouse_area_name,sw.warehouse_name,swa.warehouse_area_id,sw.warehouse_id
         FROM smt_storage_inventory_det ssid
         LEFT JOIN ocean.sys_user su ON ssid.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON ssid.modified_user_id = sus.user_id

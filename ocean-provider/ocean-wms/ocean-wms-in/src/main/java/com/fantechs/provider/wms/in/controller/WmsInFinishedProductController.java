@@ -40,6 +40,12 @@ public class WmsInFinishedProductController {
     @Resource
     private WmsInFinishedProductService wmsInFinishedProductService;
 
+    /**
+     * 华峰pda提交，东鹏web端添加
+     *
+     * @param wmsInFinishedProduct
+     * @return
+     */
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity<WmsInFinishedProduct> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {
@@ -59,6 +65,12 @@ public class WmsInFinishedProductController {
         return ControllerUtil.returnCRUD(wmsInFinishedProductService.update(wmsInFinishedProduct));
     }
 
+    /**
+     * 东鹏提交
+     *
+     * @param wmsInFinishedProduct
+     * @return
+     */
     @ApiOperation("PDA-提交")
     @PostMapping("/PDASubmit")
     public ResponseEntity<WmsInFinishedProduct> PDASubmit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInFinishedProduct wmsInFinishedProduct) {

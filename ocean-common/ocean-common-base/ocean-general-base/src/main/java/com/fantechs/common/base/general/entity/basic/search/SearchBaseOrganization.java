@@ -12,6 +12,12 @@ import java.io.Serializable;
 public class SearchBaseOrganization extends BaseQuery implements Serializable {
 
     /**
+     * 用户ID
+     */
+    @ApiModelProperty(name="userId",value = "用户ID")
+    private Long userId;
+
+    /**
      * 组织编码
      */
     @ApiModelProperty(name="organizationCode",value = "组织编码")

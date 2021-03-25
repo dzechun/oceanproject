@@ -21,6 +21,7 @@ import com.fantechs.provider.base.service.BaseOrganizationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.rmi.runtime.Log;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -120,6 +121,10 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
 
     @Override
     public List<BaseOrganizationDto> findList(Map<String, Object> map) {
+        Object userId = map.get("userId");
+        if (StringUtils.isNotEmpty(userId)){
+            return baseOrganizationMapper.findOrganizationByUserId(new Long(userId.toString()));
+        }
         return baseOrganizationMapper.findList(map);
     }
 
