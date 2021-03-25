@@ -74,7 +74,7 @@ public class MesPackageManagerInDTO {
      * 仓库ID
      */
     @ApiModelProperty(value = "仓库ID",example = "仓库ID")
-    private String warehouseId;
+    private Long warehouseId;
     /**
      * 仓库名称
      */
@@ -84,7 +84,7 @@ public class MesPackageManagerInDTO {
      * 仓库区域ID
      */
     @ApiModelProperty(value = "仓库区域ID",example = "仓库区域ID")
-    private String warehouseAreaId;
+    private Long warehouseAreaId;
     /**
      * 仓库区域名称
      */

@@ -17,4 +17,6 @@ public interface BaseOrganizationMapper extends MyMapper<BaseOrganization> {
     int deleteUserByOrganization(Long organizationId);
 
     int insertUser(List<SysOrganizationUser> sysOrganizationUsers);
+
+    List<BaseOrganizationDto> findOrganizationByUserId(Long userId);
 }
