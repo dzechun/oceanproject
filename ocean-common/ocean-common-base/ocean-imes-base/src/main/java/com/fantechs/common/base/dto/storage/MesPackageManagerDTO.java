@@ -67,6 +67,15 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     @ApiModelProperty(value = "物料型号",example = "物料型号")
     @Excel(name = "物料型号")
     private String productModelName;
+
+    /**
+     * 储位Id
+     */
+    @Transient
+    @ApiModelProperty(value = "储位Id",example = "储位Id")
+    @Excel(name = "储位Id")
+    private Long storageId;
+
     /**
      * 储位名称
      */
@@ -74,6 +83,14 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     @ApiModelProperty(value = "储位名称",example = "储位名称")
     @Excel(name = "储位名称")
     private String storageName;
+
+    /**
+     * 仓库区域Id
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库区域Id",example = "仓库区域Id")
+    @Excel(name = "仓库区域Id")
+    private Long warehouseAreaId;
 
     /**
      * 仓库区域名称
@@ -84,12 +101,21 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     private String warehouseAreaName;
 
     /**
+     * 仓库Id
+     */
+    @Transient
+    @ApiModelProperty(value = "仓库Id",example = "仓库Id")
+    @Excel(name = "仓库Id")
+    private Long warehouseId;
+
+    /**
      * 仓库名称
      */
     @Transient
     @ApiModelProperty(value = "仓库名称",example = "仓库名称")
     @Excel(name = "仓库名称")
     private String warehouseName;
+
     /**
      * 产线名称
      */

@@ -24,8 +24,11 @@
 
     <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.MesPackageManagerDTO"
                extends="BaseResultMap">
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     </resultMap>
 
