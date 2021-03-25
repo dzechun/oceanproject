@@ -26,7 +26,7 @@
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-        <result column="materialId" jdbcType="BIGINT" property="materialId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
