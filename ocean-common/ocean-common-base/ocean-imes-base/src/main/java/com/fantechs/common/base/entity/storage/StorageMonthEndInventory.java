@@ -2,6 +2,7 @@ package com.fantechs.common.base.entity.storage;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 月末库存表
@@ -46,7 +48,6 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 物料条码编码
      */
     @ApiModelProperty(name = "materialBarcodeCode", value = "物料条码编码")
-    @Excel(name = "物料条码编码", height = 20, width = 30)
     @Column(name = "material_barcode_code")
     private String materialBarcodeCode;
 
@@ -54,7 +55,7 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 箱数
      */
     @ApiModelProperty(name = "boxNumber", value = "箱数")
-    @Excel(name = "箱数", height = 20, width = 30, orderNum = "7")
+    @Excel(name = "箱数", height = 20, width = 30, orderNum = "9")
     @Column(name = "box_number")
     private Integer boxNumber;
 
@@ -62,14 +63,13 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 总数
      */
     @ApiModelProperty(name = "total", value = "总数")
-    @Excel(name = "总数", height = 20, width = 30, orderNum = "8")
+    @Excel(name = "总数", height = 20, width = 30, orderNum = "10")
     private Integer total;
 
     /**
      * 物料总数
      */
     @ApiModelProperty(name = "materialTotal", value = "物料总数")
-    @Excel(name = "总数", height = 20, width = 30, orderNum = "9")
     private Integer materialTotal;
 
     /**
@@ -102,7 +102,6 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 创建时间
      */
     @ApiModelProperty(name = "createTime", value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30, orderNum = "11", exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -118,7 +117,6 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 修改时间
      */
     @ApiModelProperty(name = "modifiedTime", value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30, orderNum = "13", exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -129,6 +127,12 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
     @ApiModelProperty(name = "isDelete", value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 库存明细
+     */
+    @ApiModelProperty(name = "list", value = "库存明细")
+    private List<SmtStorageInventoryDetDto> list;
 
     private static final long serialVersionUID = 1L;
 }

@@ -35,5 +35,11 @@ public class SearchQmsPdaInspection extends BaseQuery implements Serializable {
     @ApiModelProperty(name="handler",value = "处理人")
     private String handler;
 
+    /**
+     * 栈板码
+     */
+    @ApiModelProperty(name="palletCode",value = "栈板码")
+    private String palletCode;
+
     private static final long serialVersionUID = 1L;
 }
