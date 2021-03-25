@@ -82,4 +82,11 @@
       (#{item.organizationId},#{item.userId})
     </foreach>
   </insert>
+
+  <select id="findOrganizationByUserId" parameterType="long" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>
+    from fantech_imes.base_organization bo
+    left join ocean.sys_organization_user sou on bo.organization_id = sou.organization_id
+    where sou.user_id = #{userId}
+  </select>
 </mapper>

@@ -26,8 +26,11 @@
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -44,7 +47,8 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        bo.organization_name,ss.storage_code,ss.storage_name,sm.material_desc,sm.material_name,
+        bo.organization_name,ss.storage_code,ss.storage_name,
+        sm.material_desc,sm.material_name,sm.material_id,sm.version,sm.material_code,
         swa.warehouse_area_name,sw.warehouse_name
         FROM smt_storage_inventory_det ssid
         LEFT JOIN ocean.sys_user su ON ssid.create_user_id = su.user_id

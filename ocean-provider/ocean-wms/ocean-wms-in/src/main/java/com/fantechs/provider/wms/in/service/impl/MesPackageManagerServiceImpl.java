@@ -203,6 +203,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                 throw new BizErrorException(responseEntity.getMessage());
             }
         }
+
+
+
+
         return mesPackageManager;
     }
 
@@ -255,7 +259,15 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
-        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId());
+        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = new ArrayList<>();
+        if(mesPackageManager.getType()==(byte)1){
+            //包箱条码
+             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)4);
+        }else if(mesPackageManager.getType()==(byte)2){
+            //栈板
+            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)5);
+        }
+
         if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
             throw new BizErrorException("请设置包箱条码规则");
         }
@@ -273,23 +285,26 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
         mesPackageManager.setBarCode(responseEntity.getData());
         //调用打印程序进行条码打印
-        try {
-            PrintDto printDto = new PrintDto();
-            if(mesPackageManager.getType()==(byte)1){
-                printDto.setLabelName("包箱.btw");
-            }else if(mesPackageManager.getType()==(byte)2){
-                printDto.setLabelName("栈板.btw");
-            }
-            printDto.setPrintName(mesPackageManager.getPrintName());
-            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
-            printModel.setQrCode(mesPackageManager.getBarCode());
-            List<PrintModel> printModelList = new ArrayList<>();
-            printModelList.add(printModel);
-            printDto.setPrintModelList(printModelList);
-            ResponseEntity res = bcmFeignApi.print(printDto);
-        }catch (Exception e){
-            throw new BizErrorException(e.getMessage());
-        }
+//        try {
+//            PrintDto printDto = new PrintDto();
+//            if(mesPackageManager.getType()==(byte)1){
+//                printDto.setLabelName("包箱.btw");
+//            }else if(mesPackageManager.getType()==(byte)2){
+//                printDto.setLabelName("栈板.btw");
+//            }
+//            printDto.setPrintName("测试");
+//            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+//            printModel.setQrCode(mesPackageManager.getBarCode());
+//            List<PrintModel> printModelList = new ArrayList<>();
+//            printModelList.add(printModel);
+//            printDto.setPrintModelList(printModelList);
+//            ResponseEntity res = bcmFeignApi.print(printDto);
+//            if(res.getCode()!=0){
+//                throw new BizErrorException("打印失败");
+//            }
+//        }catch (Exception e){
+//            throw new BizErrorException(e.getMessage());
+//        }
     }
 
     /**

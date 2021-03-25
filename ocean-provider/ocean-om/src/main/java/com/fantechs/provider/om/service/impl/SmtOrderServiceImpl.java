@@ -2,10 +2,8 @@ package com.fantechs.provider.om.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
-import com.fantechs.common.base.general.dto.om.SaveOrderMaterialDTO;
+import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
-import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesHtOrderMaterial;
@@ -161,6 +159,16 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     @Override
     public List<MesOrderMaterialDTO> findOrderMaterial(SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO) {
         return smtOrderMapper.findOrderMaterial(searchMesOrderMaterialListDTO);
+    }
+
+    /**
+     * 销售情况报表
+     * @param searchSmtOrderReportDto
+     * @return
+     */
+    @Override
+    public List<SmtOrderReportDto> orderReport(SearchSmtOrderReportDto searchSmtOrderReportDto) {
+        return smtOrderMapper.orderReport(searchSmtOrderReportDto);
     }
 
     /**

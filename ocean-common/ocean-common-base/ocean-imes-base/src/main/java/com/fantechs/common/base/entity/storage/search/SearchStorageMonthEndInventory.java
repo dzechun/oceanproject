@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchStorageMonthEndInventory extends BaseQuery implements Serializable {
 
     /**
+     * 仓库Id
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库Id")
+    private Long warehouseId;
+
+    /**
      * 仓库名称
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")

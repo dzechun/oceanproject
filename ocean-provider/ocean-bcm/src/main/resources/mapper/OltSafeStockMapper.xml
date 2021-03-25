@@ -80,7 +80,7 @@ order by os.create_time desc
     LEFT JOIN smt_warehouse_area wa ON ss.warehouse_area_id =wa.warehouse_area_id
     LEFT JOIN smt_warehouse sw ON wa.warehouse_id=sw.warehouse_id
     WHERE sw.warehouse_id = #{warehouseId}
- </select>
+</select>
 <select id="selectCountByCate" resultType="java.math.BigDecimal">
 SELECT sum(ssi.quantity) FROM smt_storage_inventory ssi
 LEFT JOIN base_tab bt ON ssi.material_id = bt.material_id

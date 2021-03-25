@@ -14,6 +14,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterialPackage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRule;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
@@ -33,6 +34,7 @@ import javax.annotation.Resource;
 import javax.naming.NamingEnumeration;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2020/11/04.
@@ -219,6 +221,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         LinkedList<SmtPackageSpecification> list = new LinkedList<>();
         LinkedList<SmtHtPackageSpecification> htList = new LinkedList<>();
         LinkedList<SmtPackageSpecificationImport> packageSpecificationImports = new LinkedList<>();
+        LinkedList<SmtMaterialPackage> smtMaterialPackages = new LinkedList<>();
         for (int i = 0; i < smtPackageSpecificationImports.size(); i++) {
             SmtPackageSpecificationImport smtPackageSpecificationImport = smtPackageSpecificationImports.get(i);
             String packageSpecificationCode = smtPackageSpecificationImport.getPackageSpecificationCode();
@@ -228,7 +231,7 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
             String barcodeRuleCode = smtPackageSpecificationImport.getBarcodeRuleCode();
             String packingUnitCode = smtPackageSpecificationImport.getPackingUnitCode();
             if (StringUtils.isEmpty(
-                    packageSpecificationCode,packageSpecificationName
+                    packageSpecificationCode,packageSpecificationName,materialCode,processCode
             )){
                 fail.add(i+4);
                 continue;
@@ -244,30 +247,26 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
             }
 
             //物料编码不为空则判断物料信息是否存在
-            if (StringUtils.isNotEmpty(materialCode)){
-                Example example1 = new Example(SmtMaterial.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("materialCode",materialCode);
-                SmtMaterial smtMaterial = smtMaterialMapper.selectOneByExample(example1);
-                if (StringUtils.isEmpty(smtMaterial)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtPackageSpecificationImport.setMaterialId(smtMaterial.getMaterialId());
+            Example example1 = new Example(SmtMaterial.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("materialCode",materialCode);
+            SmtMaterial smtMaterial = smtMaterialMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(smtMaterial)){
+                fail.add(i+4);
+                continue;
             }
+            smtPackageSpecificationImport.setMaterialId(smtMaterial.getMaterialId());
 
             //如果工序编码不为空，则判断工序信息是否存在
-            if (StringUtils.isNotEmpty(processCode)){
-                Example example1 = new Example(SmtProcess.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("processCode",processCode);
-                SmtProcess smtProcess = smtProcessMapper.selectOneByExample(example1);
-                if (StringUtils.isEmpty(smtProcess)){
-                    fail.add(i+4);
-                    continue;
-                }
-                smtPackageSpecificationImport.setProcessId(smtProcess.getProcessId());
+            Example example2 = new Example(SmtProcess.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("processCode",processCode);
+            SmtProcess smtProcess = smtProcessMapper.selectOneByExample(example2);
+            if (StringUtils.isEmpty(smtProcess)){
+                fail.add(i+4);
+                continue;
             }
+            smtPackageSpecificationImport.setProcessId(smtProcess.getProcessId());
 
             //如果条码规则编码不为空，则判断条码规则信息是否存在
             if (StringUtils.isNotEmpty(barcodeRuleCode)){
@@ -284,10 +283,10 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
 
             //如果包装单位编码不为空，则判断包装单位信息是否存在
             if (StringUtils.isNotEmpty(packingUnitCode)){
-                Example example1 = new Example(SmtPackingUnit.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("packingUnitCode",packingUnitCode);
-                SmtPackingUnit smtPackingUnit = smtPackingUnitMapper.selectOneByExample(example1);
+                Example example3 = new Example(SmtPackingUnit.class);
+                Example.Criteria criteria3 = example1.createCriteria();
+                criteria3.andEqualTo("packingUnitCode",packingUnitCode);
+                SmtPackingUnit smtPackingUnit = smtPackingUnitMapper.selectOneByExample(example3);
                 if (StringUtils.isEmpty(smtPackingUnit)){
                     fail.add(i+4);
                     continue;
@@ -299,25 +298,36 @@ public class SmtPackageSpecificationServiceImpl extends BaseService<SmtPackageSp
         }
 
         if (StringUtils.isNotEmpty(smtPackageSpecificationImports)){
-            for (SmtPackageSpecificationImport smtPackageSpecificationImport : smtPackageSpecificationImports) {
+            //对合格数据进行分组
+            Map<String, List<SmtPackageSpecificationImport>> map = smtPackageSpecificationImports.stream().collect(Collectors.groupingBy(SmtPackageSpecificationImport::getPackageSpecificationCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<SmtPackageSpecificationImport> PackageSpecificationImports1 = map.get(code);
+                //新增包装规格父级数据
                 SmtPackageSpecification smtPackageSpecification = new SmtPackageSpecification();
-                BeanUtils.copyProperties(smtPackageSpecificationImport,smtPackageSpecification);
+                BeanUtils.copyProperties(PackageSpecificationImports1.get(0),smtPackageSpecification);
                 smtPackageSpecification.setCreateTime(new Date());
                 smtPackageSpecification.setCreateUserId(currentUser.getUserId());
-                smtPackageSpecification.setModifiedTime(new Date());
                 smtPackageSpecification.setModifiedUserId(currentUser.getUserId());
-                if (StringUtils.isEmpty(smtPackageSpecification.getStatus())){
-                    smtPackageSpecification.setStatus((byte) 1);
-                }
-                list.add(smtPackageSpecification);
-            }
+                smtPackageSpecification.setModifiedTime(new Date());
+                smtPackageSpecification.setOrganizationId(currentUser.getOrganizationId());
+                smtPackageSpecification.setStatus((byte) 1);
+                success += smtPackageSpecificationMapper.insertUseGeneratedKeys(smtPackageSpecification);
 
-            success = smtPackageSpecificationMapper.insertList(list);
-
-            for (SmtPackageSpecification smtPackageSpecification : list) {
                 SmtHtPackageSpecification smtHtPackageSpecification = new SmtHtPackageSpecification();
                 BeanUtils.copyProperties(smtPackageSpecification,smtHtPackageSpecification);
+                smtHtPackageSpecification.setModifiedTime(new Date());
+                smtHtPackageSpecification.setModifiedUserId(currentUser.getUserId());
                 htList.add(smtHtPackageSpecification);
+
+                //新增包装规格物料数据
+                for (SmtPackageSpecificationImport smtPackageSpecificationImport : PackageSpecificationImports1) {
+                    SmtMaterialPackage smtMaterialPackage = new SmtMaterialPackage();
+                    BeanUtils.copyProperties(smtPackageSpecificationImport,smtMaterialPackage);
+                    smtMaterialPackage.setStatus((byte) 1);
+                    smtMaterialPackages.add(smtMaterialPackage);
+                }
+                smtMaterialPackageMapper.insertList(smtMaterialPackages);
             }
             smtHtPackageSpecificationMapper.insertList(htList);
         }

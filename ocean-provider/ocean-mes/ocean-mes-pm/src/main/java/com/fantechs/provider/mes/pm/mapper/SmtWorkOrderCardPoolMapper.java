@@ -17,4 +17,6 @@ public interface SmtWorkOrderCardPoolMapper extends MyMapper<SmtWorkOrderCardPoo
     int batchUpdateStatus(List<SmtWorkOrderCardPool> smtWorkOrderCardPoolList);
     //获取未打印的流程卡
     List<NoPutIntoCardDTO> getNoPutIntoCard(Long parentId);
+
+    List<NoPutIntoCardDTO> getAppointIntoCard(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool);
 }

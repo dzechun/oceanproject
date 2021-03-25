@@ -24,8 +24,11 @@
 
     <resultMap id="BaseResultMapDTO" type="com.fantechs.common.base.dto.storage.MesPackageManagerDTO"
                extends="BaseResultMap">
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     </resultMap>
 
@@ -152,7 +155,7 @@
         FROM fantech_imes.smt_barcode_rule_spec AS sbrs
                  LEFT JOIN fantech_imes.smt_barcode_rule sbr ON sbr.barcode_rule_id = sbrs.barcode_rule_id
                  LEFT JOIN fantech_imes.smt_material_package smp ON smp.package_specification_id=#{packageSpecificationId}
-        WHERE sbr.barcode_rule_id = smp.barcode_rule_id
+        WHERE sbr.barcode_rule_id = smp.barcode_rule_id and sbr.barcode_rule_category_id = #{barcodeRuleCategoryId}
     </select>
 
     <select id="findPrintBarcodeCount" resultType="int">
@@ -174,7 +177,7 @@
     </select>
 
     <select id="findPrintModel" resultMap="PrintModelMap">
-        select * FROM view_hf_packageManager
+        select id,option1,option2,option3,option4,option5,option6,option7,option8,option9 FROM view_hf_packageManager
            <where>
                 id = #{packageManageId}
            </where>

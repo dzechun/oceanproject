@@ -96,6 +96,30 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             wmsInnerTransferSlip.setProcessorUserId(user.getUserId());
         }
 
+        boolean waitForTransfer = false;
+        int transferFinish = 0;
+        //判断调拨单明细的调拨状态
+        List<WmsInnerTransferSlipDetDto> wmsInnerTransferSlipDetDtos1 = wmsInnerTransferSlip.getWmsInnerTransferSlipDetDtos();
+        for (WmsInnerTransferSlipDetDto wmsInnerTransferSlipDetDto : wmsInnerTransferSlipDetDtos1) {
+            //如果调拨明细中存在调拨中的单据，则修改调拨单状态为调拨中
+            if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 1){
+                waitForTransfer = true;
+                continue;
+            }
+
+            //调拨单明细为调拨完成，则修改库存信息
+            if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 2){
+                transferFinish++;
+            }
+        }
+        //存在调拨中的单据
+        if (waitForTransfer){
+            wmsInnerTransferSlip.setTransferSlipStatus((byte) 1);
+        }
+        if (transferFinish == wmsInnerTransferSlipDetDtos1.size()){
+            //若所有调拨单都属于调拨完成状态，则修改调拨单状态为调拨完成
+            wmsInnerTransferSlip.setTransferSlipStatus((byte) 2);
+        }
         //新增调拨单
         int i = wmsInnerTransferSlipMapper.insertUseGeneratedKeys(wmsInnerTransferSlip);
 
@@ -141,6 +165,9 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                     SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
                     searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
                     List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
+                    if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+                        throw new BizErrorException("无法获取到储位的库存信息");
+                    }
                     SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
                     storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(smtStorageInventoryDetDto.getStorageInventoryDetId()));
 

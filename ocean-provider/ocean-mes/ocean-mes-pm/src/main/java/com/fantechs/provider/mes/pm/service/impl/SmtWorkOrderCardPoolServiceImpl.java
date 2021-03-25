@@ -131,4 +131,66 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         }
         return noPutIntoCardDTOList;
     }
+
+
+    @Override
+    public List<NoPutIntoCardDTO> getAppointIntoCard(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool) {
+
+        List<NoPutIntoCardDTO> noPutIntoCardDTOList = smtWorkOrderCardPoolMapper.getAppointIntoCard(searchSmtWorkOrderCardPool);
+        Date date = new Date();
+        if(StringUtils.isNotEmpty(noPutIntoCardDTOList)){
+            for (NoPutIntoCardDTO noPutIntoCardDTO : noPutIntoCardDTOList) {
+                ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
+                if(result.getCode()!=0){
+                    throw new BizErrorException(result.getMessage());
+                }
+                List<SmtRouteProcess> routeProcessList = result.getData();
+                StringBuffer sb=new StringBuffer();
+                if(StringUtils.isNotEmpty(routeProcessList)){
+                    for (int i = 0; i < routeProcessList.size(); i++) {
+                        sb.append(routeProcessList.get(i).getProcessName());
+                        if(i<routeProcessList.size()-1){
+                            sb.append("-");
+                        }
+                    }
+                    noPutIntoCardDTO.setRouteProcess(sb.toString());
+                }
+                noPutIntoCardDTO.setPrintDate(date);
+            }
+
+        }
+        return noPutIntoCardDTOList;
+    }
+
+    @Override
+    public ProcessListWorkOrderDTO selectWorkOrderDtoByWorkOrderCardPoolIdAndProcessId(String workOrderCardPoolId, String processId) {
+        ProcessListWorkOrderDTO processListWorkOrderDTO = new ProcessListWorkOrderDTO();
+        processListWorkOrderDTO.setWorkOrderCardPoolId(Long.valueOf(workOrderCardPoolId));
+
+        //=====查找当前流程单是否已经有过站信息，有则统计已报工总数
+        SearchSmtProcessListProcess searchSmtProcessListProcess = new SearchSmtProcessListProcess();
+        searchSmtProcessListProcess.setWorkOrderCardPoolId(Long.valueOf(workOrderCardPoolId));
+        searchSmtProcessListProcess.setStatus((byte) 2);
+        searchSmtProcessListProcess.setProcessType((byte) 2);
+        List<SmtProcessListProcessDto> smtProcessListProcessDtoList = smtProcessListProcessService.findList(searchSmtProcessListProcess);
+
+        double preQty = 0.0;
+        if (StringUtils.isNotEmpty(smtProcessListProcessDtoList)) {
+            smtProcessListProcessDtoList.sort(Comparator.comparing(SmtProcessListProcess::getProcessListProcessId));
+
+            //找到当前工序报工情况
+            for (SmtProcessListProcessDto smtProcessListProcessDto : smtProcessListProcessDtoList) {
+                if (smtProcessListProcessDto.getProcessId().equals(Long.valueOf(processId))) {
+                    preQty = smtProcessListProcessDto.getOutputQuantity().doubleValue();
+                    break;
+                }
+            }
+            processListWorkOrderDTO.setPreQty(new BigDecimal(preQty));
+            //=====
+            return processListWorkOrderDTO;
+        }
+
+        return null;
+    }
+
 }

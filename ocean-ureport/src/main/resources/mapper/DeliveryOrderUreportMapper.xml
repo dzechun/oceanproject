@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.DeliveryOrderUreportMapper">
+
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="delivery_order_det_id" jdbcType="BIGINT" property="deliveryOrderDetId" />
+        <result column="delivery_order_id" jdbcType="BIGINT" property="deliveryOrderId" />
+        <result column="shipping_note_det_id" jdbcType="BIGINT" property="shippingNoteDetId" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
+        <result column="out_total_qty" jdbcType="DECIMAL" property="outTotalQty" />
+        <result column="out_status" jdbcType="TINYINT" property="outStatus" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapDTO" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    </resultMap>
+
+    <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+        select dod.*,
+        su.user_name AS create_user_name,
+        sus.user_name AS modified_user_name,
+        sm.material_code, sm.material_name, sm.material_desc
+        from
+        wms_out_delivery_order_det AS dod
+        LEFT JOIN ocean.sys_user su ON dod.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON dod.modified_user_id = sus.user_id
+        LEFT JOIN smt_material sm ON sm.material_id = dod.material_id
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(doo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="deliveryOrderId != null">
+                and dod.delivery_order_id = #{deliveryOrderId}
+            </if>
+        </where>
+    </select>
+</mapper>

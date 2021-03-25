@@ -68,13 +68,31 @@ public class SmtWorkOrderCardPoolController {
         return ControllerUtil.returnDataSuccess(processListWorkOrderDTO,StringUtils.isEmpty(processListWorkOrderDTO)?0:1);
     }
 
-    @ApiOperation("获取未开工的部件流程卡")
+    @ApiOperation("获取当前工单流转卡的所有部件流程卡")
     @GetMapping("/getNoPutIntoCard")
     public ResponseEntity<List<NoPutIntoCardDTO>> getNoPutIntoCard(
             @ApiParam(value = "父级流程卡id")@RequestParam Long parentId
     ){
         List<NoPutIntoCardDTO> noPutIntoCardDTOList = smtWorkOrderCardPoolService.getNoPutIntoCard(parentId);
         return ControllerUtil.returnDataSuccess(noPutIntoCardDTOList,StringUtils.isEmpty(noPutIntoCardDTOList)?0:noPutIntoCardDTOList.size());
+    }
+
+    @ApiOperation("获取指定的部件流程卡")
+    @PostMapping("/getAppointIntoCard")
+    public ResponseEntity<List<NoPutIntoCardDTO>> getAppointIntoCard(
+            @ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool
+    ){
+        List<NoPutIntoCardDTO> noPutIntoCardDTOList = smtWorkOrderCardPoolService.getAppointIntoCard(searchSmtWorkOrderCardPool);
+        return ControllerUtil.returnDataSuccess(noPutIntoCardDTOList,StringUtils.isEmpty(noPutIntoCardDTOList)?0:noPutIntoCardDTOList.size());
+    }
+
+    @ApiOperation("通过工单流转卡任务池ID和退回工序ID获取退回工序报工数")
+    @PostMapping("/findPreQty")
+    public ResponseEntity<ProcessListWorkOrderDTO> selectWorkOrderDtoByWorkOrderCardPoolIdAndProcessId(
+            @ApiParam(value = "工单流转卡任务池ID")@RequestParam String workOrderCardPoolId,@ApiParam(value = "退回工序ID")@RequestParam String processId
+    ){
+        ProcessListWorkOrderDTO processListWorkOrderDTO = smtWorkOrderCardPoolService.selectWorkOrderDtoByWorkOrderCardPoolIdAndProcessId(workOrderCardPoolId,processId);
+        return ControllerUtil.returnDataSuccess(processListWorkOrderDTO,StringUtils.isEmpty(processListWorkOrderDTO)?0:1);
     }
 
     @PostMapping(value = "/export")
