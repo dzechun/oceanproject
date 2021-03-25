@@ -26,4 +26,6 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
 
     //查询打印需要的数据
     PrintModel findPrintModel(@Param("packageManageId")Long packageManageId);
+
+    int updWorkOrderStatus(@Param("workOrderId") Long workOrderId);
 }

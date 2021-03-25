@@ -204,9 +204,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }
         }
 
-
-
-
+        //包箱修改工单打印状态
+        if(mesPackageManager.getType()==(byte)1){
+            mesPackageManagerMapper.updWorkOrderStatus(mesPackageManager.getWorkOrderId());
+        }
         return mesPackageManager;
     }
 
