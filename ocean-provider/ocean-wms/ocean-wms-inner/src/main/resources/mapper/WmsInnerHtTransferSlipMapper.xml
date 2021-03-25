@@ -11,6 +11,7 @@
     <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
     <result column="transfer_slip_time" jdbcType="TIMESTAMP" property="transferSlipTime" />
     <result column="transfer_slip_status" jdbcType="TINYINT" property="transferSlipStatus" />
+    <result column="order_type" jdbcType="TINYINT" property="orderType" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -32,6 +33,7 @@
 	wihts.transfer_slip_code,
 	wihts.processor_user_id,
 	wihts.transfer_slip_time,
+    wihts.order_type,
 	wihts.transfer_slip_status,
 	wihts.remark,
 	wihts.organization_id,

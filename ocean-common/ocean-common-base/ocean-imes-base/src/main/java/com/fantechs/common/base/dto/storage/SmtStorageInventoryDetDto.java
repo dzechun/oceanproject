@@ -14,6 +14,15 @@ import java.io.Serializable;
  */
 @Data
 public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements Serializable {
+
+    /**
+     * 储位Id
+     */
+    @Transient
+    @ApiModelProperty(name = "storageId",value = "储位Id")
+    @Excel(name = "储位Id", height = 20, width = 30)
+    private String storageId;
+
     /**
      * 储位编码
      */
@@ -31,12 +40,28 @@ public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements
     private String storageName;
 
     /**
+     * 仓库区域Id
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域Id")
+    @Excel(name = "仓库区域Id", height = 20, width = 30)
+    private String warehouseAreaId;
+
+    /**
      * 仓库区域名称
      */
     @Transient
     @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
     @Excel(name = "仓库区域名称", height = 20, width = 30)
     private String warehouseAreaName;
+
+    /**
+     * 仓库Id
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseId",value = "仓库Id")
+    @Excel(name = "仓库Id", height = 20, width = 30)
+    private String warehouseId;
 
     /**
      * 仓库名称

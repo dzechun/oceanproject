@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
 import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +21,6 @@ public interface MesScheduleMapper extends MyMapper<MesSchedule> {
     int batchScheduleDetail(List<MesScheduleDetail> mesScheduleDetailList);
     //查询订单信息
     SmtOrder selectSmtOrderById(Long orderId);
+
+    BigDecimal sumOutputQty(Long scheduleId);
 }

@@ -211,8 +211,9 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     }
 
     @Override
-    public int printCode(Long packageManagerId) {
+    public int printCode(Long packageManagerId,String printName) {
         MesPackageManager mesPackageManager = this.selectByKey(packageManagerId);
+        mesPackageManager.setPrintName(printName);
         this.printCode(mesPackageManager);
         if(this.update(mesPackageManager)<=0){
             return 0;
