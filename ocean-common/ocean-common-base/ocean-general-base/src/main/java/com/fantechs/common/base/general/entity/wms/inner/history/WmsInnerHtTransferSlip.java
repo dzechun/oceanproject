@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -66,6 +68,15 @@ public class WmsInnerHtTransferSlip extends ValidGroup implements Serializable {
     @Excel(name = "单据状态（0-待调拨 1-调拨中 2-调拨完成）", height = 20, width = 30,orderNum="") 
     @Column(name = "transfer_slip_status")
     private Byte transferSlipStatus;
+
+    /**
+     * 单据类型（0、库内调拨 1、库外调拨）
+     */
+    @ApiModelProperty(name="orderType",value = "单据类型（0、库内调拨 1、库外调拨）")
+    @Excel(name = "单据类型（0、库内调拨 1、库外调拨）", height = 20, width = 30,replace = {"库内调拨_0","库外调拨_1"})
+    @Column(name = "order_type")
+    @NotNull(message = "单据类型不能为空")
+    private Byte orderType;
 
     /**
      * 备注

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.WorkOrderFinishedMapper">
+
+    <resultMap id="BaseResultMap" type="com.fantechs.dto.WorkOrderFinished">
+
+    </resultMap>
+    <select id="findList" resultMap="BaseResultMap" parameterType="com.fantechs.entity.search.SearchWorkOrderFinished">
+        select swo.work_order_code as 'workOrderCode',
+        so.order_code as 'orderCode',
+        ss.supplier_name as 'supplierName',
+        sm.material_code as 'materialCode',
+        spo.product_model_name as 'productModelName',
+        sm.material_desc as 'materialDesc',
+        spl.pro_code as 'proCode',
+        swo.work_order_status as 'workOrderStatus',
+        so.order_quantity/spsc.package_specification_quantity as 'orderBoxQuantity',
+        so.order_quantity as 'orderQuantity',
+        ms.total/spsc.package_specification_quantity as 'schBoxQuantity',
+        ms.total as 'schTotal',
+        count(mpm.package_manager_id) as 'proBoxQuantity',
+        sum(mpm.total) as 'proQuantity',
+        (count(mpm.package_manager_id) - IFNULL(mpmp.outBoxQuantity,0)) as 'outSurplusBoxQuantity',
+        (sum(mpm.total) - IFNULL(mpmp.outQuantity,0)) as 'outSurplusQuantity',
+        osu.user_name as 'userName',
+        mpm.create_time as 'createTime'
+        from smt_work_order swo
+        LEFT JOIN smt_order so ON swo.order_id = so.order_id
+        LEFT JOIN smt_supplier ss ON so.supplier_id = ss.supplier_id
+        LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
+        LEFT JOIN base_tab bt ON sm.material_id = bt.material_id
+        LEFT JOIN smt_product_model spo ON bt.product_model_id = spo.product_model_id
+        LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+        LEFT JOIN mes_schedule_detail msd ON swo.work_order_id = msd.work_order_id
+        LEFT JOIN mes_schedule ms ON msd.schedule_id = ms.schedule_id
+        INNER JOIN mes_package_manager mpm ON swo.work_order_id = mpm.work_order_id and mpm.type = 1 and mpm.parent_id != 0
+        LEFT JOIN smt_material_package smpp ON swo.material_id = smpp.material_id and smpp.process_id = 108
+        LEFT JOIN smt_package_specification spsp ON smpp.package_specification_id = spsp.package_specification_id
+        LEFT JOIN smt_material_package smpc ON swo.material_id = smpc.material_id and smpc.process_id = 109
+        LEFT JOIN smt_package_specification spsc ON smpc.package_specification_id = spsc.package_specification_id
+        LEFT JOIN
+            (select mpm.work_order_id,count(1) as outBoxQuantity,sum(mpm.total) as outQuantity from mes_package_manager mpm
+            INNER JOIN
+                (select mpmp.package_manager_id from mes_package_manager mpmp
+	            INNER JOIN wms_out_delivery_order_pallet wodop ON mpmp.bar_code = wodop.pallet_code and wodop.status = 1) as mpmp ON mpm.parent_id = mpmp.package_manager_id) mpmp ON swo.work_order_id = mpmp.work_order_id
+        LEFT JOIN ocean.sys_user osu ON mpm.create_user_id = osu.user_id
+        <where>
+            <if test="supplierName != null and supplierName != ''">
+                ss.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="workOrderCode != null and workOrderCode != ''">
+                swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="contractNo != null and contractNo != ''">
+                swo.contract_no like CONCAT('%', #{contractNo}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="proCode != null and proCode != ''">
+                spl.pro_code like CONCAT('%', #{proCode}, '%')
+            </if>
+            <if test="workOrderStatus != null">
+                swo.work_order_status = #{workOrderStatus}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                and SUBSTRING(mpm.create_time,1,10) = #{createTime}
+            </if>
+        </where>
+        group by swo.work_order_code
+    </select>
+</mapper>
