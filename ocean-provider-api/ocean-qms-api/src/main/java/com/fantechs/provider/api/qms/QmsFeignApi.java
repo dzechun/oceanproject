@@ -9,10 +9,7 @@ import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionIte
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityConfirmation;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
