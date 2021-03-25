@@ -147,6 +147,9 @@
             <if test="contractCode != null and contractCode != ''">
                 and so.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
+            <if test="warehouseId != null">
+                and sw.warehouse_id = #{warehouseId}
+            </if>
             <if test="warehouseName != null and warehouseName != ''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
