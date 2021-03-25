@@ -60,4 +60,10 @@ public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="processId" ,value="产线ID")
     private Long proLineId;
+
+    /**
+     * 是否打印（0、打印 1、不打印）
+     */
+    @ApiModelProperty(name="ifPrint",value = "是否打印（0、打印 1、不打印）")
+    private Byte ifPrint;
 }

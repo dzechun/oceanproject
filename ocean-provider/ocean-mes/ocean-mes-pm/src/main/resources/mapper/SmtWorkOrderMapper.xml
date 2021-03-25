@@ -23,6 +23,7 @@
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="contract_no" jdbcType="BIGINT" property="contractNo"/>
+        <result column="if_print" jdbcType="TINYINT" property="ifPrint"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -222,7 +223,7 @@
                 and swo.work_order_id = #{workOrderId}
             </if>
             <if test="processId!=null and processId!=''">
-                and ssmp.process_id = #{processId}
+                and ssmp.process_id = #{processId} and swo.if_print = 0
             </if>
             and swo.is_delete = 1
         </where>

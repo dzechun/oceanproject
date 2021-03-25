@@ -1,7 +1,6 @@
 package com.fantechs.security.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.imports.SmtFactoryImport;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
@@ -80,6 +79,11 @@ public class SysUserController {
         return ControllerUtil.returnCRUD(sysUserService.update(sysUser));
     }
 
+    @PostMapping("/switchOrganization")
+    @ApiOperation(value = "切换用户组织",notes = "切换用户组织")
+    public ResponseEntity switchOrganization(@ApiParam(value = "组织ID",required = true) @RequestParam Long organizationId,@ApiParam(value = "token",required = true) @RequestParam String token) {
+        return ControllerUtil.returnCRUD(sysUserService.switchOrganization(organizationId,token));
+    }
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除用户信息",notes = "删除用户信息")

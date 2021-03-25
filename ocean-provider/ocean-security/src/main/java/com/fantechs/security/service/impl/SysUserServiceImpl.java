@@ -1,5 +1,6 @@
 package com.fantechs.security.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.security.mapper.SysHtUserMapper;
@@ -36,6 +38,9 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Resource
     private BasicFeignApi basicFeignApi;
+
+    @Resource
+    private RedisUtil redisUtil;
 
 
     @Override
@@ -279,6 +284,18 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
         return resultMap;
+    }
+
+    @Override
+    public int switchOrganization(Long organizationId,String token) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        SysUser sysUser = JSON.parseObject(JSON.toJSONString(redisUtil.get(token)), SysUser.class);
+        sysUser.setOrganizationId(organizationId);
+        redisUtil.set(token,sysUser);
+        return 1;
     }
 
     @Override
