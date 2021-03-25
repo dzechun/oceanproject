@@ -199,9 +199,9 @@ public class ElectronicTagReceiver {
 //                   mqResponseEntity.setCode(1003);
 //            fanoutSender.send(RabbitConfig.FANOUT_QUEUE1, JSONObject.toJSONString(mqResponseEntity));
                     }
-                    channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-                    log.warn("===========手动确认消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
                 }
+                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                log.warn("===========手动确认消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
             } else if (mqResponseEntity.getCode() == 102) {
 
             } else if (mqResponseEntity.getCode() == 103) {
