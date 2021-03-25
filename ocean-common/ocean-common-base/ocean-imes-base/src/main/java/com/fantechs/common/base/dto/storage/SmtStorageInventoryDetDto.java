@@ -47,6 +47,14 @@ public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements
     private String warehouseName;
 
     /**
+     * 物料Id
+     */
+    @Transient
+    @ApiModelProperty(name="materialId" ,value="物料Id")
+    @Excel(name = "物料Id", height = 20, width = 30)
+    private Long materialId;
+
+    /**
      * 物料描述
      */
     @Transient
@@ -61,6 +69,22 @@ public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements
     @ApiModelProperty(name="materialName" ,value="物料名称")
     @Excel(name = "物料名称", height = 20, width = 30)
     private String materialName;
+
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30)
+    private String materialCode;
+
+    /**
+     * 版本
+     */
+    @Transient
+    @ApiModelProperty(name="version" ,value="版本")
+    @Excel(name = "版本", height = 20, width = 30)
+    private String version;
 
     /**
      * 创建用户名称
