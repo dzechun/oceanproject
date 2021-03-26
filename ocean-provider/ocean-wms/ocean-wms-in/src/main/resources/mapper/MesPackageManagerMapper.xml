@@ -186,4 +186,7 @@
      <update id="updWorkOrderStatus" parameterType="java.lang.Long">
         update smt_work_order set if_print=1 where work_order_id =#{workOrderId}
     </update>
+    <select id="findWorkOrderQty" resultType="java.math.BigDecimal">
+    select work_order_quantity from smt_work_order where work_order_id = #{workOrderId};
+</select>
 </mapper>

@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -30,4 +31,6 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
     PrintModel findPrintModel(@Param("packageManageId")Long packageManageId);
 
     int updWorkOrderStatus(@Param("workOrderId") Long workOrderId);
+
+    BigDecimal findWorkOrderQty(@Param("workOrderId") long workOrderId);
 }
