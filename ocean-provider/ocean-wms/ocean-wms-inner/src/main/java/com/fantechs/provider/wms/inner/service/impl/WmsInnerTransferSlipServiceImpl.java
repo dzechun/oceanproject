@@ -147,6 +147,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 Example.Criteria criteria1 = example.createCriteria();
                 criteria1.andEqualTo("transferSlipStatus",0)
                         .orEqualTo("transferSlipStatus",1);
+                example.and(criteria1);
                 List<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets1 = wmsInnerTransferSlipDetMapper.selectByExample(example);
                 if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets1)){
                     throw new BizErrorException("该栈板的调拨计划已经存在");
@@ -336,6 +337,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 Example.Criteria criteria1 = example.createCriteria();
                 criteria1.andEqualTo("transferSlipStatus",0)
                         .orEqualTo("transferSlipStatus",1);
+                example.and(criteria1);
                 WmsInnerTransferSlipDet wmsInnerTransferSlipDet1 = wmsInnerTransferSlipDetMapper.selectOneByExample(example);
                 if (StringUtils.isNotEmpty(wmsInnerTransferSlipDet1)){
                     throw new BizErrorException("该栈板的调拨计划已经存在");
