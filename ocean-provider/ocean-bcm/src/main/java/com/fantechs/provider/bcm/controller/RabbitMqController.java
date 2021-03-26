@@ -8,6 +8,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.bcm.util.RabbitProducer;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,8 @@ import java.io.IOException;
  * @create 2021/2/24
  */
 @RestController
+@RequestMapping("/rabbit")
+@Validated
 public class RabbitMqController {
     @Autowired
     private RabbitProducer rabbitProducer;

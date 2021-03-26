@@ -184,7 +184,6 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }
         }
         this.printCode(mesPackageManager);
-
         if(this.save(mesPackageManager)<=0){
             return null;
         }
@@ -203,16 +202,17 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                 throw new BizErrorException(responseEntity.getMessage());
             }
         }
-
-
-
-
+        //包箱修改工单打印状态
+        if(mesPackageManager.getType()==(byte)1){
+            mesPackageManagerMapper.updWorkOrderStatus(mesPackageManager.getWorkOrderId());
+        }
         return mesPackageManager;
     }
 
     @Override
-    public int printCode(Long packageManagerId) {
+    public int printCode(Long packageManagerId,String printName) {
         MesPackageManager mesPackageManager = this.selectByKey(packageManagerId);
+        mesPackageManager.setPrintName(printName);
         this.printCode(mesPackageManager);
         if(this.update(mesPackageManager)<=0){
             return 0;
@@ -284,7 +284,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
 
         mesPackageManager.setBarCode(responseEntity.getData());
-        //调用打印程序进行条码打印
+//        //调用打印程序进行条码打印
 //        try {
 //            PrintDto printDto = new PrintDto();
 //            if(mesPackageManager.getType()==(byte)1){
@@ -293,7 +293,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 //                printDto.setLabelName("栈板.btw");
 //            }
 //            printDto.setPrintName("测试");
-//            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+//            PrintModel printModel = mesPackageManagerMapper.findPrintModel((long)313);
 //            printModel.setQrCode(mesPackageManager.getBarCode());
 //            List<PrintModel> printModelList = new ArrayList<>();
 //            printModelList.add(printModel);

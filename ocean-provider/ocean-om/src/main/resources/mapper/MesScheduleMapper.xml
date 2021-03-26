@@ -70,4 +70,10 @@
             (#{item.scheduleId},#{item.workOrderId},#{item.orderId})
         </foreach>
     </insert>
+
+    <select id="sumOutputQty" resultType="java.math.BigDecimal">
+    SELECT sum(swo.output_quantity) FROM mes_schedule_detail msd
+    LEFT JOIN smt_work_order swo ON msd.work_order_id = swo.work_order_id
+    WHERE msd.schedule_id=#{scheduleId}
+</select>
 </mapper>

@@ -191,6 +191,13 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     private String contractNo;
 
     /**
+     * 是否打印（0、打印 1、不打印）
+     */
+    @ApiModelProperty(name="ifPrint",value = "是否打印（0、打印 1、不打印）")
+    @Column(name = "if_print")
+    private Byte ifPrint;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

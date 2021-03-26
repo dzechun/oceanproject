@@ -22,4 +22,5 @@ public interface SysUserService extends IService<SysUser> {
 
     List<String> findAllRoleId(Long userId);
 
+    int switchOrganization(Long organizationId,String token);
 }

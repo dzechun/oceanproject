@@ -32,7 +32,7 @@ public interface MesPackageManagerService extends IService<MesPackageManager>  {
     //保存父级及子级
     MesPackageManager saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO);
     //补打条码
-    int printCode(Long packageManagerId);
+    int printCode(Long packageManagerId,String printName);
     //根据条码查询信息，返回父级信息及子级数量
     MesPackageManagerInDTO findParentByBarcode(String barcode);
 }
