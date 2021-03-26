@@ -56,7 +56,8 @@ public interface BcmFeignApi {
     @PostMapping("/bcmLabelCategory/findList")
     ResponseEntity<List<BcmLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory);
 
+    @ApiOperation("打印")
     @PostMapping("/rabbit/print")
-    ResponseEntity print(@RequestBody PrintDto printDto) throws IOException;
+    ResponseEntity print(@RequestBody PrintDto printDto);
 
 }

@@ -188,8 +188,8 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             return null;
         }
         List<MesPackageManager> mesPackageManagerList = saveMesPackageManagerDTO.getMesPackageManagerList();
+        double total=0.0;//包装箱打包的产品数量
         if(StringUtils.isNotEmpty(mesPackageManagerList)){
-            double total=0.0;//包装箱打包的产品数量
             for (MesPackageManager packageManager : mesPackageManagerList) {
                 packageManager.setParentId(mesPackageManager.getPackageManagerId());
                 total+=packageManager.getTotal().doubleValue();
@@ -204,7 +204,11 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
         //包箱修改工单打印状态
         if(mesPackageManager.getType()==(byte)1){
-            mesPackageManagerMapper.updWorkOrderStatus(mesPackageManager.getWorkOrderId());
+            BigDecimal qty = mesPackageManagerMapper.findWorkOrderQty(mesPackageManager.getWorkOrderId());
+            if(total>=qty.doubleValue()){
+                mesPackageManagerMapper.updWorkOrderStatus(mesPackageManager.getWorkOrderId());
+            }
+
         }
 
         //调用打印程序进行条码打印
@@ -285,10 +289,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = new ArrayList<>();
         if(mesPackageManager.getType()==(byte)1){
             //包箱条码
-             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)4);
+             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)4,(long)109);
         }else if(mesPackageManager.getType()==(byte)2){
             //栈板
-            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)5);
+            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)5,(long)108);
         }
 
         if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){

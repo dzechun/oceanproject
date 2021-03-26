@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,9 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
    //以特定过滤条件查询
    List<MesPackageManagerDTO> selectFilterAll(Map<String,Object> map);
    //通过包装规格ID找到条码规则
-    List<SmtBarcodeRuleSpec> findBarcodeRule(@Param("packageSpecificationId") Long packageSpecificationId,@Param("barcodeRuleCategoryId") Byte barcodeRuleCategoryId);
+    List<SmtBarcodeRuleSpec> findBarcodeRule(@Param("packageSpecificationId") Long packageSpecificationId,
+                                             @Param("barcodeRuleCategoryId") Byte barcodeRuleCategoryId,
+                                             @Param("processId") Long processId);
     //查找条码打印总次数
     int findPrintBarcodeCount();
     //查询还剩余可打印数量
@@ -28,4 +31,6 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
     PrintModel findPrintModel(@Param("packageManageId")Long packageManageId);
 
     int updWorkOrderStatus(@Param("workOrderId") Long workOrderId);
+
+    BigDecimal findWorkOrderQty(@Param("workOrderId") long workOrderId);
 }
