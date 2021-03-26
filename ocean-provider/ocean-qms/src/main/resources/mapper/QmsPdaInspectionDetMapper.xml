@@ -35,7 +35,6 @@
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="box_code" jdbcType="VARCHAR" property="boxCode"/>
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
     <result column="total_quantity" jdbcType="DECIMAL" property="totalQuantity"/>
     <result column="unqualified_quantity" jdbcType="DECIMAL" property="unqualifiedQuantity"/>
   </resultMap>
@@ -49,7 +48,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    sm.material_code,sm.material_desc,ss.storage_name,spm.product_model_name,mpm.bar_code AS pallet_code,
+    sm.material_code,sm.material_desc,spm.product_model_name,mpm.bar_code AS pallet_code,
     bmpm.bar_code AS box_code,bmpm.total AS total_quantity,bt.main_unit AS unit,1 AS checkout_type,
     swa.warehouse_area_name,qpid.inspection_quantity - qpid.qualified_quantity AS unqualified_quantity
     from fantech_imes.qms_pda_inspection_det qpid
@@ -63,9 +62,10 @@
     LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo.material_id
     LEFT JOIN fantech_imes.base_tab bt ON sm.material_id = bt.material_id
     LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-    LEFT JOIN fantech_imes.smt_storage_material ssm ON ssm.material_id = sm.material_id
-    LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssm.storage_id
-    left join smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
+
+    LEFT JOIN fantech_imes.qms_andin_storage_quarantine qasq ON qasq.pallet_id = qpi.package_manager_id
+
+    LEFT JOIN smt_warehouse_area swa on swa.warehouse_area_id = qasq.inspection_waiting_area_id
     <where>
       <if test="pdaInspectionId != null and pdaInspectionId != ''">
         and qpid.pda_inspection_id = #{pdaInspectionId}
