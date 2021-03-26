@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Date 2020/12/4 14:43
@@ -110,6 +111,14 @@ public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements
     @ApiModelProperty(name="version" ,value="版本")
     @Excel(name = "版本", height = 20, width = 30)
     private String version;
+
+    /**
+     * 箱数
+     */
+    @Transient
+    @ApiModelProperty(name="total" ,value="箱数")
+    @Excel(name = "箱数", height = 20, width = 30)
+    private BigDecimal total;
 
     /**
      * 创建用户名称

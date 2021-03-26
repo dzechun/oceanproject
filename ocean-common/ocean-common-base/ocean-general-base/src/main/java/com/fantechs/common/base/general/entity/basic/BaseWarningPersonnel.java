@@ -47,7 +47,8 @@ public class BaseWarningPersonnel extends ValidGroup implements Serializable {
      * 微信号
      */
     @ApiModelProperty(name="wechat",value = "微信号")
-    @Excel(name = "微信号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "微信号", height = 20, width = 30,orderNum="")
+    @Column(name = "wechat")
     private String wechat;
 
     /**
