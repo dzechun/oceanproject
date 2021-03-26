@@ -25,7 +25,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 工序报工ID
      */
     @ApiModelProperty(name="processReportWorkId",value = "工序报工ID")
-    @Excel(name = "工序报工ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "process_report_work_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
@@ -35,7 +34,7 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 工序报工单号
      */
     @ApiModelProperty(name="processReportWorkCode",value = "工序报工单号")
-    @Excel(name = "工序报工单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工序报工单号", height = 20, width = 30,orderNum="3")
     @Column(name = "process_report_work_code")
     private String processReportWorkCode;
 
@@ -43,7 +42,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "work_order_id")
     private Long workOrderId;
 
@@ -51,7 +49,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")
-    @Excel(name = "工序ID", height = 20, width = 30,orderNum="") 
     @Column(name = "process_id")
     private Long processId;
 
@@ -59,7 +56,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 班组id
      */
     @ApiModelProperty(name="teamId",value = "班组id")
-    @Excel(name = "班组id", height = 20, width = 30,orderNum="")
     @Column(name = "team_id")
     private Long teamId;
 
@@ -67,22 +63,28 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 报工员工id
      */
     @ApiModelProperty(name="staffId",value = "报工员工id")
-    @Excel(name = "报工员工id", height = 20, width = 30,orderNum="")
     @Column(name = "staff_id")
     private Long staffId;
+
+    /**
+     * 报工类型（1-手动报工类型）
+     */
+    @ApiModelProperty(name="status",value = "报工类型（1-手动报工类型）")
+    @Excel(name = "报工类型（1-手动报工类型）", height = 20, width = 30,orderNum="2")
+    private Byte type;
 
     /**
      * 报工状态(0-已报工 1-已完工)
      */
     @ApiModelProperty(name="status",value = "报工状态(0-已报工 1-已完工)")
-    @Excel(name = "报工状态(0-已报工 1-已完工)", height = 20, width = 30,orderNum="")
+    @Excel(name = "报工状态(0-已报工 1-已完工)", height = 20, width = 30,orderNum="13")
     private Byte status;
 
     /**
      * 本次报工数量
      */
     @ApiModelProperty(name="quantity",value = "本次报工数量")
-    @Excel(name = "本次报工数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "本次报工数量", height = 20, width = 30,orderNum="11")
     private BigDecimal quantity;
 
     /**
@@ -90,7 +92,7 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      */
     @Column(name = "start_time")
     @ApiModelProperty(name="startTime" ,value="报工开始时间")
-    @Excel(name = "报工开始时间", height = 20, width = 30,orderNum="",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "报工开始时间", height = 20, width = 30,orderNum="14",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
@@ -100,7 +102,7 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      */
     @Column(name = "end_time")
     @ApiModelProperty(name="plannedEndTime" ,value="报工结束时间")
-    @Excel(name = "报工结束时间", height = 20, width = 30,orderNum="",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "报工结束时间", height = 20, width = 30,orderNum="15",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
@@ -109,14 +111,13 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30,orderNum="12")
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -124,7 +125,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -132,7 +132,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -141,7 +140,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -149,7 +147,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -158,7 +155,6 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
