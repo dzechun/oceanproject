@@ -155,7 +155,7 @@
         FROM fantech_imes.smt_barcode_rule_spec AS sbrs
                  LEFT JOIN fantech_imes.smt_barcode_rule sbr ON sbr.barcode_rule_id = sbrs.barcode_rule_id
                  LEFT JOIN fantech_imes.smt_material_package smp ON smp.package_specification_id=#{packageSpecificationId}
-        WHERE sbr.barcode_rule_id = smp.barcode_rule_id and sbr.barcode_rule_category_id = #{barcodeRuleCategoryId}
+        WHERE sbr.barcode_rule_id = smp.barcode_rule_id and sbr.barcode_rule_category_id = #{barcodeRuleCategoryId} and smp.process_id = #{processId}
     </select>
 
     <select id="findPrintBarcodeCount" resultType="int">

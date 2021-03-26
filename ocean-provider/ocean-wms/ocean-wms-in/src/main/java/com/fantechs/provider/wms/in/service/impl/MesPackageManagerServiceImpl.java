@@ -285,10 +285,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = new ArrayList<>();
         if(mesPackageManager.getType()==(byte)1){
             //包箱条码
-             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)4);
+             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)4,(long)109);
         }else if(mesPackageManager.getType()==(byte)2){
             //栈板
-            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)5);
+            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)5,(long)108);
         }
 
         if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){

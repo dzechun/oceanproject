@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.PrintDto;
 import com.fantechs.common.base.general.dto.bcm.PrintModel;
+import com.fantechs.provider.bcm.config.RabbitConfig;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,9 +20,6 @@ import java.io.IOException;
 public class RabbitProducer {
     @Autowired
     private AmqpTemplate rabbitTemplate;
-
-    private String QUEUE_NAME_FILE="fileQueue";
-    private String QUEUE_NAME_PRINT="printQueue";
 
     public void sendDemoQueue(byte[] bytes) throws IOException {
         this.rabbitTemplate.convertAndSend("demoQueue", bytes);
@@ -42,7 +40,7 @@ public class RabbitProducer {
             System.arraycopy(filebyte,0,ibytes,1,filebyte.length);
             System.arraycopy(vs,0,ibytes,17,vs.length);
             System.arraycopy(file,0,ibytes,28,file.length);
-            this.rabbitTemplate.convertAndSend(this.QUEUE_NAME_PRINT,ibytes);
+            this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE,ibytes);
         }catch (Exception e){
             throw new BizErrorException(e.getMessage());
         }
@@ -58,6 +56,6 @@ public class RabbitProducer {
         byte[] ibytes = new byte[1+bytes.length];
         ibytes[0]=(byte)1;
         System.arraycopy(bytes,0,ibytes,1,bytes.length);
-        this.rabbitTemplate.convertAndSend(this.QUEUE_NAME_PRINT,ibytes);
+        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE,ibytes);
     }
 }
