@@ -48,29 +48,38 @@ public class SmtOrderReportDto implements Serializable {
     private String salesManName;
 
     /**
-     * 交货日期
+     * 合同交期
      */
-    @ApiModelProperty(name="deliveryDate" ,value="交货日期")
+    @ApiModelProperty(name="contractDate" ,value="合同交期")
     @Excel(name = "交货日期", height = 20, width = 30,orderNum="5")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date deliveryDate;
+    private String contractDate;
+
+    /**
+     * 排产日期
+     */
+    @ApiModelProperty(name="schedule_date" ,value="排产日期")
+    @Excel(name = "排产日期", height = 20, width = 30,orderNum="6")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date scheduleDate;
 
     /**
      * 排产交期
      */
-    @ApiModelProperty(name="schedule_date" ,value="排产交期")
-    @Excel(name = "排产交期", height = 20, width = 30,orderNum="6")
+    @ApiModelProperty(name="deliveryDate" ,value="排产交期")
+    @Excel(name = "排产交期", height = 20, width = 30,orderNum="7")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date scheduleDate;
+    private Date deliveryDate;
 
     /**
      * 物料编码
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "产品料号", height = 20, width = 30,orderNum="7")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="8")
     private String materialCode;
 
 
@@ -79,7 +88,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="productModelName" ,value="物料型号")
-    @Excel(name = "物料型号", height = 20, width = 30,orderNum="8")
+    @Excel(name = "物料型号", height = 20, width = 30,orderNum="9")
     private String productModelName;
 
     /**
@@ -87,7 +96,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum="9")
+    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum="10")
     private String materialDesc;
 
     /**
@@ -95,7 +104,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="workOrderBox" ,value="订单箱数")
-    @Excel(name = "订单箱数", height = 20, width = 30,orderNum="10")
+    @Excel(name = "订单箱数", height = 20, width = 30,orderNum="11")
     private BigDecimal workOrderBox;
 
     /**
@@ -103,7 +112,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="work_order_quantity" ,value="订单把数")
-    @Excel(name = "订单把数", height = 20, width = 30,orderNum="11")
+    @Excel(name = "订单把数", height = 20, width = 30,orderNum="12")
     private BigDecimal workOrderQuantity;
 
     /**
@@ -111,7 +120,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="work_order_status" ,value="订单状态")
-    @Excel(name = "订单状态", height = 20, width = 30,orderNum="12")
+    @Excel(name = "订单状态", height = 20, width = 30,orderNum="13")
     private String workOrderStatus;
 
 
@@ -120,7 +129,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="outBox" ,value="出货箱数")
-    @Excel(name = "出货箱数", height = 20, width = 30,orderNum="13")
+    @Excel(name = "出货箱数", height = 20, width = 30,orderNum="14")
     private BigDecimal outBox;
 
     /**
@@ -128,7 +137,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="output_quantity" ,value="出货把数")
-    @Excel(name = "出货把数", height = 20, width = 30,orderNum="14")
+    @Excel(name = "出货把数", height = 20, width = 30,orderNum="15")
     private BigDecimal outputQuantity;
 
 
@@ -137,7 +146,7 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="surplusBox" ,value="剩余箱数")
-    @Excel(name = "剩余箱数", height = 20, width = 30,orderNum="15")
+    @Excel(name = "剩余箱数", height = 20, width = 30,orderNum="16")
     private BigDecimal surplusBox;
 
     /**
@@ -145,6 +154,6 @@ public class SmtOrderReportDto implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="surplusQty" ,value="剩余把数")
-    @Excel(name = "剩余把数", height = 20, width = 30,orderNum="16")
+    @Excel(name = "剩余把数", height = 20, width = 30,orderNum="17")
     private BigDecimal surplusQty;
 }
