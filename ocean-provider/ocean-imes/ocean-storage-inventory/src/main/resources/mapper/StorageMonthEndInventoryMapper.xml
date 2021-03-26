@@ -116,7 +116,7 @@
         ssi.material_id,
         ssi.storage_id,
         sss.supplier_name,
-        swo.contract_no as contract_code,
+        so.contract_code,
         sw.warehouse_name,
         sw.warehouse_id,
         swa.warehouse_area_name,
