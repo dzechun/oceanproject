@@ -387,7 +387,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                         SearchSmtStorageInventory searchSmtStorageInventory1 = new SearchSmtStorageInventory();
                         searchSmtStorageInventory1.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
                         List<SmtStorageInventoryDto> smtStorageInventoryDtos1 = storageInventoryFeignApi.findList(searchSmtStorageInventory1).getData();
-                        if (StringUtils.isNotEmpty(searchSmtStorageInventory1)){
+                        if (StringUtils.isNotEmpty(smtStorageInventoryDtos1)){
                             //不为空则更新库存数量
                             SmtStorageInventoryDto smtStorageInventoryDto1 = smtStorageInventoryDtos1.get(0);
                             smtStorageInventoryDto1.setQuantity(smtStorageInventoryDto1.getQuantity().subtract(wmsInnerTransferSlipDetDto.getRealityTotalQty()));

@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.entity.basic.BaseWarning;
 import com.fantechs.common.base.general.entity.basic.BaseWarningPersonnel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarning;
@@ -44,8 +45,8 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         List<BaseWarningDto> baseWarningDtos = baseWarningMapper.findList(map);
 
         for (BaseWarningDto baseWarningDto : baseWarningDtos) {
-            List<BaseWarningPersonnel> baseWarningPersonnels = baseWarningPersonnelMapper.findList(map);
-            baseWarningDto.setBaseWarningPersonnelList(baseWarningPersonnels);
+            List<BaseWarningPersonnelDto> baseWarningPersonnels = baseWarningPersonnelMapper.findList(map);
+            baseWarningDto.setBaseWarningPersonnelDtoList(baseWarningPersonnels);
         }
 
         return baseWarningDtos;
@@ -81,14 +82,14 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         baseHtWarningMapper.insertSelective(baseHtWarning);
 
         //新增预警人员信息
-        List<BaseWarningPersonnel> baseWarningPersonnelList = baseWarning.getBaseWarningPersonnelList();
-        if (StringUtils.isNotEmpty(baseWarningPersonnelList)){
-            for (BaseWarningPersonnel baseWarningPersonnel : baseWarningPersonnelList) {
-                baseWarningPersonnel.setWarningId(baseWarning.getWarningId());
+        List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = baseWarning.getBaseWarningPersonnelDtoList();
+        if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)){
+            for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
+                baseWarningPersonnelDto.setWarningId(baseWarning.getWarningId());
             }
         }
-        if (StringUtils.isNotEmpty(baseWarningPersonnelList)){
-            baseWarningPersonnelMapper.insertList(baseWarningPersonnelList);
+        if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)){
+            baseWarningPersonnelMapper.insertList(baseWarningPersonnelDtoList);
         }
 
         return i;
@@ -129,14 +130,14 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         criteria1.andEqualTo("warningId",baseWarning.getWarningId());
         baseWarningPersonnelMapper.deleteByExample(example1);
         //新增绑定关系
-        List<BaseWarningPersonnel> baseWarningPersonnelList = baseWarning.getBaseWarningPersonnelList();
-        if (StringUtils.isNotEmpty(baseWarningPersonnelList)){
-            for (BaseWarningPersonnel baseWarningPersonnel : baseWarningPersonnelList) {
-                baseWarningPersonnel.setWarningId(baseWarning.getWarningId());
+        List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = baseWarning.getBaseWarningPersonnelDtoList();
+        if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)){
+            for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
+                baseWarningPersonnelDto.setWarningId(baseWarning.getWarningId());
             }
         }
-        if (StringUtils.isNotEmpty(baseWarningPersonnelList)){
-            baseWarningPersonnelMapper.insertList(baseWarningPersonnelList);
+        if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)){
+            baseWarningPersonnelMapper.insertList(baseWarningPersonnelDtoList);
         }
 
         return i;
