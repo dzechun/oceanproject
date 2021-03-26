@@ -101,6 +101,11 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
             smtStorageInventory.setQuantity(quantity);
             super.update(smtStorageInventory);
         } else {
+            example.createCriteria().andEqualTo("storageId",storageInventory.getStorageId());
+            smtStorageInventories = smtStorageInventoryMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(smtStorageInventories)){
+                throw new BizErrorException("该储位已存在物料，新增失败");
+            }
             //新增库存
             storageInventory.setCreateTime(new Date());
             storageInventory.setModifiedTime(new Date());

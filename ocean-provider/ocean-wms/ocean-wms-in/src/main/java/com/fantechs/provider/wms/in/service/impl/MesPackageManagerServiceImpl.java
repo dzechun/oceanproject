@@ -174,9 +174,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
     @Transactional(rollbackFor = Exception.class)
     public MesPackageManager saveChildren(SaveMesPackageManagerDTO saveMesPackageManagerDTO) {
         MesPackageManager mesPackageManager = saveMesPackageManagerDTO.getMesPackageManager();
+        int result = 0;
         if(mesPackageManager.getType()==1){
             //查询剩余可打印数量
-            int result = mesPackageManagerMapper.remainQty(mesPackageManager.getWorkOrderId(), mesPackageManager.getType());
+            result = mesPackageManagerMapper.remainQty(mesPackageManager.getWorkOrderId(), mesPackageManager.getType());
             if(result==0){
                 throw new BizErrorException("已全部包装完毕，不允许再打印");
             }else if(mesPackageManager.getTotal().intValue()>result){
@@ -188,8 +189,8 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             return null;
         }
         List<MesPackageManager> mesPackageManagerList = saveMesPackageManagerDTO.getMesPackageManagerList();
-        double total=0.0;//包装箱打包的产品数量
         if(StringUtils.isNotEmpty(mesPackageManagerList)){
+            double total=0.0;//包装箱打包的产品数量
             for (MesPackageManager packageManager : mesPackageManagerList) {
                 packageManager.setParentId(mesPackageManager.getPackageManagerId());
                 total+=packageManager.getTotal().doubleValue();
@@ -204,11 +205,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
         //包箱修改工单打印状态
         if(mesPackageManager.getType()==(byte)1){
-            BigDecimal qty = mesPackageManagerMapper.findWorkOrderQty(mesPackageManager.getWorkOrderId());
-            if(total>=qty.doubleValue()){
+            //BigDecimal qty = mesPackageManagerMapper.findWorkOrderQty(mesPackageManager.getWorkOrderId());
+            if(result==mesPackageManager.getTotal().doubleValue()){
                 mesPackageManagerMapper.updWorkOrderStatus(mesPackageManager.getWorkOrderId());
             }
-
         }
 
         //调用打印程序进行条码打印

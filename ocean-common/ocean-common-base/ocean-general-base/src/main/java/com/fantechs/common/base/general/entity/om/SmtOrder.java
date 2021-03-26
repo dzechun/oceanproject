@@ -223,4 +223,13 @@ public class  SmtOrder extends ValidGroup implements Serializable {
     @Column(name = "freight_num")
     @ApiModelProperty(name="freightNum" ,value="客货号")
     private String freightNum;
+
+    /**
+     * 合同交期
+     */
+    @Column(name = "contract_date")
+    @ApiModelProperty(name="contractDate" ,value="合同交期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date contractDate;
 }

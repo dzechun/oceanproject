@@ -11,6 +11,7 @@
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="team_id" jdbcType="BIGINT" property="teamId"/>
         <result column="staff_id" jdbcType="BIGINT" property="staffId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
         <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
@@ -39,7 +40,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        mprw.process_report_work_id, mprw.process_report_work_code, mprw.work_order_id, mprw.process_id, mprw.team_id, mprw.staff_id, mprw.status,
+        mprw.process_report_work_id, mprw.process_report_work_code, mprw.work_order_id, mprw.process_id, mprw.team_id, mprw.staff_id, mprw.type, mprw.status,
         mprw.quantity, mprw.start_time, mprw.end_time, mprw.remark, mprw.organization_id, mprw.create_user_id, mprw.create_time, mprw.modified_user_id,
         mprw.modified_time, mprw.is_delete
     </sql>
@@ -70,12 +71,13 @@
             <if test="workOrderCode != null and workOrderCode != ''">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
-            <if test="process_id != null">
-                and sp.process_id = #{process_id}
+            <if test="processId != null">
+                and sp.process_id = #{processId}
             </if>
-            <if test="process_code != null and process_code != ''">
-                and sp.process_code like CONCAT('%', #{process_code}, '%')
+            <if test="processCode != null and processCode != ''">
+                and sp.process_code like CONCAT('%', #{processCode}, '%')
             </if>
         </where>
+        group by mprw.work_order_id, mprw.process_id
     </select>
 </mapper>

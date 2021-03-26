@@ -115,6 +115,10 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
 
     @Override
     public List<MesProcessReportWorkDto> findList(SearchMesProcessReportWork searchMesProcessReportWork) {
-        return mesProcessReportWorkMapper.findList(searchMesProcessReportWork);
+        List<MesProcessReportWorkDto> list = mesProcessReportWorkMapper.findList(searchMesProcessReportWork);
+        if (list.size() == 1) {
+            list.remove(null);
+        }
+        return list;
     }
 }

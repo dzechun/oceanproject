@@ -17,7 +17,7 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="workOrderCode" ,value="工单号")
-    @Excel(name = "工单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单号", height = 20, width = 30,orderNum="1")
     private String workOrderCode;
 
     /**
@@ -25,7 +25,7 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="产品料号")
-    @Excel(name = "产品料号", height = 20, width = 30,orderNum="")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="4")
     private String materialCode;
 
     /**
@@ -33,15 +33,15 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name = "productModelName",value = "产品型号")
-    @Excel(name = "产品型号", height = 20, width = 30,orderNum="")
+    @Excel(name = "产品型号", height = 20, width = 30,orderNum="5")
     private String productModelName;
 
     /**
-     * 主单位
+     * 单位
      */
     @Transient
-    @ApiModelProperty(name="mainUnit",value = "主单位")
-    @Excel(name = "主单位", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="mainUnit",value = "单位")
+    @Excel(name = "单位", height = 20, width = 30,orderNum="6")
     private String mainUnit;
 
     /**
@@ -49,7 +49,7 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="processCode" ,value="工序代码")
-    @Excel(name = "工序代码", height = 20, width = 30)
+    @Excel(name = "工序代码", height = 20, width = 30,orderNum="7")
     private String processCode;
 
     /**
@@ -57,7 +57,6 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="processName" ,value="工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30)
     private String processName;
 
     /**
@@ -65,7 +64,7 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="teamCode",value = "班组代码")
-    @Excel(name = "班组代码", height = 20, width = 30)
+    @Excel(name = "班组代码", height = 20, width = 30,orderNum="8")
     private String teamCode;
 
     /**
@@ -73,7 +72,6 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="teamName",value = "班组名称")
-    @Excel(name = "班组名称", height = 20, width = 30)
     private String teamName;
 
     /**
@@ -81,7 +79,7 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="staffCode",value = "员工编码")
-    @Excel(name = "员工编码", height = 20, width = 30)
+    @Excel(name = "员工编码", height = 20, width = 30,orderNum="9")
     private String staffCode;
 
     /**
@@ -89,7 +87,6 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="staffName",value = "员工名称")
-    @Excel(name = "员工名称", height = 20, width = 30)
     private String staffName;
 
     /**
@@ -97,7 +94,7 @@ public class MesProcessReportWorkDto extends MesProcessReportWork implements Ser
      */
     @Transient
     @ApiModelProperty(name="totalQuantity",value = "报工总数")
-    @Excel(name = "报工总数", height = 20, width = 30,orderNum="")
+    @Excel(name = "报工总数", height = 20, width = 30,orderNum="10")
     private BigDecimal totalQuantity;
 
 }
