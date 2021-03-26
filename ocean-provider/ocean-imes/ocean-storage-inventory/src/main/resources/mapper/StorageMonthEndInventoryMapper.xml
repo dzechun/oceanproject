@@ -33,6 +33,7 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
 
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -117,6 +118,7 @@
         sss.supplier_name,
         so.contract_code,
         sw.warehouse_name,
+        sw.warehouse_id,
         swa.warehouse_area_name,
         ssid.material_barcode_code,
         ss.storage_name,
@@ -126,7 +128,8 @@
         ssi.quantity as material_total,
         sm.material_name,
         sum((if(mpm.type=1,1,mpm.total))) AS box_number,
-        ssid.create_time
+        ssid.create_time,
+        sm.version
         FROM
         smt_storage_inventory_det ssid
         LEFT JOIN smt_storage_inventory ssi ON ssi.storage_inventory_id = ssid.storage_inventory_id

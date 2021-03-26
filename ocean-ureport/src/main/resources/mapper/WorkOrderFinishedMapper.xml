@@ -63,8 +63,8 @@
             <if test="workOrderStatus != null">
                 swo.work_order_status = #{workOrderStatus}
             </if>
-            <if test="createTime != null and createTime != ''">
-                and SUBSTRING(mpm.create_time,1,10) = #{createTime}
+            <if test="createTime != null">
+                and SUBSTRING(mpm.create_time,1,10) = SUBSTRING(#{createTime},1,10)
             </if>
         </where>
         group by swo.work_order_code
