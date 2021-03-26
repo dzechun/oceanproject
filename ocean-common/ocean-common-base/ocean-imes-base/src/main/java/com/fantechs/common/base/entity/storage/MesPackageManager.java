@@ -160,6 +160,7 @@ public class MesPackageManager implements Serializable {
     /**
      * 打印机名称
      */
+    @Transient
     @ApiModelProperty(value = "打印机名称",example = "打印机名称")
     private String printName;
 
