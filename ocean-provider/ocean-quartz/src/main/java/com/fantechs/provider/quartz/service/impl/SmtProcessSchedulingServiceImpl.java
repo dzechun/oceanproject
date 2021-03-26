@@ -109,6 +109,7 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        int num = smtProcessSchedulingMapper.insertUseGeneratedKeys(record);
         try {
             if(record.getExecuteObjectType()==(byte)0){
                 record.setExecuteStatus((byte)1);
@@ -118,7 +119,6 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
         }catch (Exception e){
             throw new BizErrorException("排程任务添加失败");
         }
-        int num = smtProcessSchedulingMapper.insertUseGeneratedKeys(record);
         return num;
     }
 
