@@ -141,7 +141,7 @@
         left join smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
         left join smt_material sm on sm.material_id = ssi.material_id
         left join smt_supplier sss ON sss.supplier_id = so.supplier_id
-        group by mpm.work_order_id
+        group by ssi.storage_id,mpm.work_order_id
         HAVING
             sum( ssid.material_quantity ) > 0
             <if test="supplierName != null and supplierName != ''">

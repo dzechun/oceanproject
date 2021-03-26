@@ -1,11 +1,18 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
 import com.fantechs.common.base.general.dto.qms.QmsFirstInspectionDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.qms.QmsDisqualification;
 import com.fantechs.common.base.general.entity.qms.QmsFirstInspection;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtFirstInspection;
@@ -14,6 +21,8 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsDisqualificationMapper;
@@ -48,6 +57,12 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
     private PMFeignApi applyFeignApi;
     @Resource
     private QmsHtFirstInspectionMapper qmsHtFirstInspectionMapper;
+    @Resource
+    private BcmFeignApi bcmFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
 
     @Override
@@ -124,6 +139,56 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
             }
         }
         applyFeignApi.updateStatus(qmsFirstInspection.getWorkOrderId(),status);
+        if (qmsFirstInspection.getInspectionResult() == 2){
+
+            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
+            searchSmtWorkOrder.setWorkOrderId(qmsFirstInspection.getWorkOrderId());
+            List<SmtWorkOrderDto> workOrderDtoList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            SmtWorkOrderDto workOrderDto = workOrderDtoList.get(0);
+            String msg  = workOrderDto.getWorkOrderCode()+";";
+            msg += workOrderDto.getProName()+";";
+            msg += workOrderDto.getMaterialCode()+";";
+
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("badItem");
+            List<SysSpecItem> badItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            List<QmsDisqualification> disqualificationList = qmsFirstInspection.getList();
+            JSONArray badItem = JSONArray.parseArray(badItems.get(0).getParaValue());
+            for (QmsDisqualification qmsDisqualification : disqualificationList) {
+                for (int j = 0 ; j < badItem.size();j++){
+                    if (qmsDisqualification.getDisqualificationId().equals(JSONObject.parseObject(badItem.get(j).toString()).get("id"))){
+                        msg += JSONObject.parseObject(badItem.get(j).toString()).get("name")+",";
+                    }
+                }
+            }
+            msg.substring(0,msg.length()-1);
+            msg += ";"+qmsFirstInspection.getRemark();
+
+            SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+
+            searchSysSpecItem.setSpecCode("warningType");
+            List<SysSpecItem> warningTypes = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (StringUtils.isNotEmpty(warningTypes)){
+                for (int j = 0; j < JSONArray.parseArray(warningTypes.get(0).getParaValue()).size(); j++) {
+                    Object label = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("label");
+                    if ("质检预警".equals(label)){
+                        Object value = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("value");
+                        searchBaseWarning.setWarningType(Long.decode(value.toString()));
+                        break;
+                    }
+
+                }
+            }
+            List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+            if (StringUtils.isNotEmpty(baseWarningDtos)){
+                BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
+                List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
+                for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
+                    bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"首检不通过",msg);
+                }
+            }
+
+        }
         return i;
     }
 

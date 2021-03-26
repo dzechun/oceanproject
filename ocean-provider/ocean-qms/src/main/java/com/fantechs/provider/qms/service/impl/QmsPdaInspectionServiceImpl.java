@@ -1,5 +1,7 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
@@ -7,9 +9,12 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDetDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.qms.QmsDisqualification;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspection;
 import com.fantechs.common.base.general.entity.qms.QmsPdaInspectionDet;
@@ -19,6 +24,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -59,6 +65,8 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      private QmsHtPdaInspectionMapper qmsHtPdaInspectionMapper;
      @Resource
      private BcmFeignApi bcmFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
      @Override
      public List<QmsPdaInspectionDto> findList(Map<String, Object> map) {
@@ -206,10 +214,62 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
 
                }
           }
-          qmsPdaInspection.getPdaInspectionCode();
-          qmsAndinStorageQuarantines.get(0).getPalletCode();
-          bcmFeignApi.sendSimpleMail("","","");
-          return i;
+
+         List<QmsPdaInspectionDetDto> qmsPdaInspectionDetDtoList = qmsPdaInspection.getList();
+         QmsPdaInspectionDetDto qmsPdaInspectionDetDto = qmsPdaInspectionDetDtoList.get(0);
+
+         String msg = qmsPdaInspection.getPdaInspectionCode()+";";
+         msg += qmsAndinStorageQuarantines.get(0).getPalletCode()+";";
+         msg += qmsPdaInspectionDetDto.getMaterialCode()+";";
+         msg += qmsAndinStorageQuarantines.get(0).getWarehouseAreaCode()+";";
+
+         if (qmsPdaInspectionDetDto.getInspectionResult() == 2){
+             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+             searchSysSpecItem.setSpecCode("badItem");
+             List<SysSpecItem> badItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+
+             if (StringUtils.isEmpty(badItems)){
+                 msg += "未找到不合格项目";
+             }else {
+                 List<QmsDisqualification> disqualificationList = qmsPdaInspectionDetDto.getList();
+                 JSONArray badItem = JSONArray.parseArray(badItems.get(0).getParaValue());
+                 for (QmsDisqualification qmsDisqualification : disqualificationList) {
+                     for (int j = 0 ; j < badItem.size();j++){
+                         if (qmsDisqualification.getDisqualificationId().equals(JSONObject.parseObject(badItem.get(j).toString()).get("id"))){
+                             msg += JSONObject.parseObject(badItem.get(j).toString()).get("name")+",";
+                         }
+                     }
+                 }
+                 msg.substring(0,msg.length()-1);
+             }
+             msg += ";"+qmsPdaInspection.getRemark();
+
+         }
+         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+         SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+         searchSysSpecItem.setSpecCode("warningType");
+         List<SysSpecItem> warningTypes = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+         if (StringUtils.isNotEmpty(warningTypes)){
+             for (int j = 0; j < JSONArray.parseArray(warningTypes.get(0).getParaValue()).size(); j++) {
+                 Object label = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("label");
+                 if ("质检预警".equals(label)){
+                     Object value = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("value");
+                     searchBaseWarning.setWarningType(Long.decode(value.toString()));
+                     break;
+                 }
+
+             }
+         }
+         List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+         if (StringUtils.isNotEmpty(baseWarningDtos)){
+             BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
+             List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
+             for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
+                 bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"质检不合格",msg);
+             }
+         }
+
+         return i;
      }
 
      @Override
