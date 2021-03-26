@@ -29,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/03/19.
  */
 @RestController
-@Api(tags = "mesProcessReportWork控制器")
+@Api(tags = "工序手动报工控制器")
 @RequestMapping("/mesProcessReportWork")
 @Validated
 public class MesProcessReportWorkController {
@@ -67,7 +67,7 @@ public class MesProcessReportWorkController {
     public ResponseEntity<List<MesProcessReportWorkDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesProcessReportWork searchMesProcessReportWork) {
         Page<Object> page = PageHelper.startPage(searchMesProcessReportWork.getStartPage(),searchMesProcessReportWork.getPageSize());
         List<MesProcessReportWorkDto> list = mesProcessReportWorkService.findList(searchMesProcessReportWork);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list) ? 0 : (int)page.getTotal());
     }
 
     @PostMapping(value = "/export")

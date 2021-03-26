@@ -19,6 +19,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -56,6 +57,8 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
      private PMFeignApi applyFeignApi;
      @Resource
      private QmsHtPdaInspectionMapper qmsHtPdaInspectionMapper;
+     @Resource
+     private BcmFeignApi bcmFeignApi;
 
      @Override
      public List<QmsPdaInspectionDto> findList(Map<String, Object> map) {
@@ -73,6 +76,17 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
 
           //判断是否是箱码
           if (StringUtils.isNotEmpty(list.getData()) && (list.getData().get(0).getParentId() > 0 || list.getData().get(0).getType() == 1)){
+               if (list.getData().get(0).getParentId() == 0){
+                    throw new BizErrorException("该箱码未绑定栈板");
+               }
+
+               Map<String, Object> inspectionCondition = new HashMap();
+               inspectionCondition.put("palletId",list.getData().get(0).getParentId());
+               List<QmsAndinStorageQuarantineDto> qmsAndinStorageQuarantines = qmsAndinStorageQuarantineMapper.findList(inspectionCondition);
+               if (StringUtils.isEmpty(qmsAndinStorageQuarantines) || (StringUtils.isNotEmpty(qmsAndinStorageQuarantines) && qmsAndinStorageQuarantines.size()==0)){
+                    throw new BizErrorException("该栈板未进入待检区域");
+               }
+
                Example example = new Example(QmsPdaInspectionDet.class);
                Example.Criteria criteria = example.createCriteria();
                criteria.andEqualTo("packageManagerId", list.getData().get(0).getPackageManagerId());
@@ -124,9 +138,6 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           Map<String, Object> map = new HashMap();
           map.put("palletId",qmsPdaInspection.getPackageManagerId());
           List<QmsAndinStorageQuarantineDto> qmsAndinStorageQuarantines = qmsAndinStorageQuarantineMapper.findList(map);
-          if (StringUtils.isEmpty(qmsAndinStorageQuarantines) || (StringUtils.isNotEmpty(qmsAndinStorageQuarantines) && qmsAndinStorageQuarantines.size()==0)){
-               throw new BizErrorException("该栈板未进入待检区域");
-          }
 
           Example example = new Example(QmsPdaInspection.class);
           Example.Criteria criteria = example.createCriteria();
@@ -195,6 +206,9 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
 
                }
           }
+          qmsPdaInspection.getPdaInspectionCode();
+          qmsAndinStorageQuarantines.get(0).getPalletCode();
+          bcmFeignApi.sendSimpleMail("","","");
           return i;
      }
 
