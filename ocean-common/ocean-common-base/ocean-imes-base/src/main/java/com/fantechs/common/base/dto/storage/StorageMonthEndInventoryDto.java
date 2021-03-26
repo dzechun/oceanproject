@@ -76,6 +76,13 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
     private String materialName;
 
     /**
+     * 版本
+     */
+    @Transient
+    @ApiModelProperty(name = "version", value = "版本")
+    private String version;
+
+    /**
      * 创建用户名称
      */
     @Transient

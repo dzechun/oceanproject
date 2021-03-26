@@ -42,15 +42,6 @@ public class QmsPdaInspectionDetDto extends QmsPdaInspectionDet implements Seria
     private String warehouseAreaName;
 
     /**
-     * 储位名称
-     */
-    @Transient
-    @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30,orderNum="8")
-    private String storageName;
-
-
-    /**
      * 产品型号
      */
     @Transient

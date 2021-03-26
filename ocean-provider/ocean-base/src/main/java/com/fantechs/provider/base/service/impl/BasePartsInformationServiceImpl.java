@@ -137,7 +137,7 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
             }
 
             //判断编码是否重复
-            Example example = new Example(SmtProcessCategory.class);
+            Example example = new Example(BasePartsInformation.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partsInformationCode",partsInformationCode);
             if (StringUtils.isNotEmpty(basePartsInformationMapper.selectOneByExample(example))){

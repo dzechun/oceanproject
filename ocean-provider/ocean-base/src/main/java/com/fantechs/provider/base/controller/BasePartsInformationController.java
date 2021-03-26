@@ -113,7 +113,7 @@ public class BasePartsInformationController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BasePartsInformationImport> basePartsInformationImports = EasyPoiUtils.importExcel(file, BasePartsInformationImport.class);
+            List<BasePartsInformationImport> basePartsInformationImports = EasyPoiUtils.importExcel(file,2,1, BasePartsInformationImport.class);
             Map<String, Object> resultMap = basePartsInformationService.importExcel(basePartsInformationImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
