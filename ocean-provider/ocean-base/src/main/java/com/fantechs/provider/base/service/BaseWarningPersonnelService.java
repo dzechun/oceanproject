@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service;
 
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.entity.basic.BaseWarningPersonnel;
 import com.fantechs.common.base.support.IService;
 
@@ -11,5 +12,5 @@ import java.util.Map;
  */
 
 public interface BaseWarningPersonnelService extends IService<BaseWarningPersonnel> {
-    List<BaseWarningPersonnel> findList(Map<String, Object> map);
+    List<BaseWarningPersonnelDto> findList(Map<String, Object> map);
 }

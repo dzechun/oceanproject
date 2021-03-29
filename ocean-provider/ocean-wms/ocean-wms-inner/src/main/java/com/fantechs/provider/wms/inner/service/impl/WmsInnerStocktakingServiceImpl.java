@@ -15,6 +15,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStocktakingDetMapper;
@@ -46,6 +47,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
     private WmsInnerHtStocktakingMapper wmsInnerHtStocktakingMapper;
     @Resource
     private WmsInnerHtStocktakingDetMapper wmsInnerHtStocktakingDetMapper;
+    @Resource
+    private BcmFeignApi bcmFeignApi;
 
     @Override
     public List<WmsInnerStocktakingDto> findList(Map<String, Object> map) {
@@ -72,14 +75,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         List<WmsInnerStocktakingDetDto> wmsInnerStocktakingDetDtos = wmsInnerStocktaking.getWmsInnerStocktakingDetDtos();
         if (StringUtils.isEmpty(wmsInnerStocktakingDetDtos)){
             throw new BizErrorException("盘点单明细不能为空");
-        }
-
-        Example example = new Example(WmsInnerStocktaking.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("stocktakingCode",wmsInnerStocktaking.getStocktakingCode());
-        WmsInnerStocktaking wmsInnerStocktaking1 = wmsInnerStocktakingMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(wmsInnerStocktaking1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
         int stocktakingStatus = 0;
@@ -156,15 +151,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException("盘点单明细不能为空");
         }
 
-        Example example = new Example(WmsInnerStocktaking.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("stocktakingCode",wmsInnerStocktaking.getStocktakingCode())
-                .andNotEqualTo("stocktakingId",wmsInnerStocktaking.getStocktakingId());
-        WmsInnerStocktaking wmsInnerStocktaking1 = wmsInnerStocktakingMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(wmsInnerStocktaking1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
-
         int stocktakingStatus = 0;
         for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
             //盘点明细的盘点状态
@@ -210,7 +196,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             }
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
             wmsInnerStocktakingDet.setModifiedTime(new Date());
-            wmsInnerStocktakingDet.setMaterialId(user.getUserId());
+            wmsInnerStocktakingDet.setModifiedUserId(user.getUserId());
 
             WmsInnerHtStocktakingDet wmsInnerHtStocktakingDet = new WmsInnerHtStocktakingDet();
             BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktakingDet);
@@ -227,6 +213,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -261,7 +248,9 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             wmsInnerStocktakingDetMapper.deleteByExample(example);
         }
 
-        wmsInnerHtStocktakingDetMapper.insertList(wmsInnerHtStocktakingDets);
+        if (StringUtils.isNotEmpty(wmsInnerHtStocktakingDets)){
+            wmsInnerHtStocktakingDetMapper.insertList(wmsInnerHtStocktakingDets);
+        }
         return wmsInnerStocktakingMapper.deleteByIds(ids);
 
     }

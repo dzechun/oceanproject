@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.entity.basic.BaseWarningPersonnel;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.base.mapper.BaseWarningPersonnelMapper;
@@ -21,7 +22,7 @@ public class BaseWarningPersonnelServiceImpl extends BaseService<BaseWarningPers
     private BaseWarningPersonnelMapper baseWarningPersonnelMapper;
 
     @Override
-    public List<BaseWarningPersonnel> findList(Map<String, Object> map) {
+    public List<BaseWarningPersonnelDto> findList(Map<String, Object> map) {
         return baseWarningPersonnelMapper.findList(map);
     }
 }

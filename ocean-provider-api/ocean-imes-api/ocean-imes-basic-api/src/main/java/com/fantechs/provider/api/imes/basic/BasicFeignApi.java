@@ -3,15 +3,9 @@ package com.fantechs.provider.api.imes.basic;
 import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.dto.basic.SmtProductBomDto;
 import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
 import com.fantechs.common.base.entity.basic.*;
 import com.fantechs.common.base.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -132,4 +126,8 @@ public interface BasicFeignApi {
     @ApiOperation("查询部门信息列表")
     @PostMapping("/smtDept/findList")
     ResponseEntity<List<SmtDept>> selectDepts(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSmtDept searchSmtDept);
+
+    @ApiOperation("获取区域详情")
+    @PostMapping("/smtWarehouseArea/detail")
+    ResponseEntity<SmtWarehouseArea> warehouseAreaDetail(@ApiParam(value = "区域ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 }

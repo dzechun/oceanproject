@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -128,7 +129,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="baseWarningPersonnelList",value = "预警人员关系集合")
     @Transient
-    private List<BaseWarningPersonnel> baseWarningPersonnelList = new ArrayList<>();
+    private List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

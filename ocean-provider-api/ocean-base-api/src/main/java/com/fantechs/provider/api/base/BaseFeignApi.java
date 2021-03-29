@@ -69,4 +69,8 @@ public interface BaseFeignApi {
     @ApiOperation("查询组织信息列表")
     @PostMapping("/baseOrganization/findList")
     ResponseEntity<List<BaseOrganizationDto>> findOrganizationList(@ApiParam(value = "查询对象") @RequestBody SearchBaseOrganization searchBaseOrganization);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseWarning/findList")
+    ResponseEntity<List<BaseWarningDto>> findBaseWarningList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWarning searchBaseWarning);
 }

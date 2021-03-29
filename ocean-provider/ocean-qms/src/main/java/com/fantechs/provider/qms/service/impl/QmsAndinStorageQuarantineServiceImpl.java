@@ -1,17 +1,29 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
+import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.qms.QmsAndinStorageQuarantineDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.qms.QmsAndinStorageQuarantine;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtAndinStorageQuarantine;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.qms.mapper.QmsAndinStorageQuarantineMapper;
 import com.fantechs.provider.qms.mapper.QmsHtAndinStorageQuarantineMapper;
@@ -41,6 +53,15 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
     private InFeignApi inFeignApi;
     @Resource
     private QmsHtAndinStorageQuarantineMapper qmsHtAndinStorageQuarantineMapper;
+    @Resource
+    private BasicFeignApi basicFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private BcmFeignApi bcmFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+
 
     @Override
     public List<QmsAndinStorageQuarantineDto> findList(Map<String, Object> map) {
@@ -118,7 +139,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
+        MesPackageManagerDTO mesPackageManagerDTO = null;
         qmsAndinStorageQuarantine.setCreateTime(new Date());
         qmsAndinStorageQuarantine.setCreateUserId(user.getUserId());
         qmsAndinStorageQuarantine.setModifiedTime(new Date());
@@ -132,7 +153,18 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
 
         if (StringUtils.isNotEmpty(list) && list.getData().size()!=0 && list.getData().get(0).getParentId() > 0){
             qmsAndinStorageQuarantine.setPalletId(list.getData().get(0).getPackageManagerId());
+            if (list.getData().get(0).getType() == 1){
+                searchMesPackageManagerListDTO.setPackageManagerId(list.getData().get(0).getPackageManagerId());
+                List<MesPackageManagerDTO> mesPackageManagerDTOS = inFeignApi.list(searchMesPackageManagerListDTO).getData();
+                if (StringUtils.isNotEmpty(mesPackageManagerDTOS)){
+                    mesPackageManagerDTO = mesPackageManagerDTOS.get(0);
+                }
+            }else {
+                mesPackageManagerDTO = list.getData().get(0);
+            }
         }
+
+
 
         int i = qmsAndinStorageQuarantineMapper.insertUseGeneratedKeys(qmsAndinStorageQuarantine);
 
@@ -140,6 +172,41 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         BeanUtils.copyProperties(qmsAndinStorageQuarantine,qmsHtAndinStorageQuarantine);
         qmsHtAndinStorageQuarantine.setOperation("新增");
         qmsHtAndinStorageQuarantineMapper.insert(qmsHtAndinStorageQuarantine);
+
+        String msg = list.getData().get(0).getWorkOrderCode()+";";
+        msg += mesPackageManagerDTO.getBarCode()+";";
+
+        SmtWarehouseArea smtWarehouseArea = basicFeignApi.warehouseAreaDetail(qmsAndinStorageQuarantine.getInspectionWaitingAreaId()).getData();
+        if (StringUtils.isEmpty(smtWarehouseArea)){
+            msg += "区域信息不存在";
+        }else {
+            msg += smtWarehouseArea.getWarehouseAreaCode();
+        }
+        SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("warningType");
+        List<SysSpecItem> warningTypes = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if (StringUtils.isNotEmpty(warningTypes)){
+            for (int j = 0; j < JSONArray.parseArray(warningTypes.get(0).getParaValue()).size(); j++) {
+                Object label = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("label");
+                if ("质检预警".equals(label)){
+                    Object value = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("value");
+                    searchBaseWarning.setWarningType(Long.decode(value.toString()));
+                    break;
+                }
+
+            }
+
+        }
+        List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+        if (StringUtils.isNotEmpty(baseWarningDtos)){
+            BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
+            List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
+            for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
+                bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"入库待检",msg);
+            }
+        }
 
         return i;
     }

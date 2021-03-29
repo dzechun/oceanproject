@@ -25,6 +25,7 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
     <result column="product_code" jdbcType="VARCHAR" property="productCode"/>
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
     <result column="inventory_quantity" jdbcType="DECIMAL" property="inventoryQuantity" />
@@ -39,7 +40,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    swo.work_order_code,wp.total AS cartons,sm.material_code AS product_code,sm.material_desc AS product_desc,swa.warehouse_area_name
+    swo.work_order_code,wp.total AS cartons,sm.material_code AS product_code,sm.material_desc AS product_desc,swa.warehouse_area_name,swa.warehouse_area_code
     from fantech_imes.qms_andin_storage_quarantine qasq
     LEFT JOIN ocean.sys_user su ON qasq.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qasq.modified_user_id = sus.user_id

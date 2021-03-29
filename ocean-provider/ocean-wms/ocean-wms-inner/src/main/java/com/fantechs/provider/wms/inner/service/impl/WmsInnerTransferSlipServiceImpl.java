@@ -147,6 +147,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 Example.Criteria criteria1 = example.createCriteria();
                 criteria1.andEqualTo("transferSlipStatus",0)
                         .orEqualTo("transferSlipStatus",1);
+                example.and(criteria1);
                 List<WmsInnerTransferSlipDet> wmsInnerTransferSlipDets1 = wmsInnerTransferSlipDetMapper.selectByExample(example);
                 if (StringUtils.isNotEmpty(wmsInnerTransferSlipDets1)){
                     throw new BizErrorException("该栈板的调拨计划已经存在");
@@ -336,6 +337,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 Example.Criteria criteria1 = example.createCriteria();
                 criteria1.andEqualTo("transferSlipStatus",0)
                         .orEqualTo("transferSlipStatus",1);
+                example.and(criteria1);
                 WmsInnerTransferSlipDet wmsInnerTransferSlipDet1 = wmsInnerTransferSlipDetMapper.selectOneByExample(example);
                 if (StringUtils.isNotEmpty(wmsInnerTransferSlipDet1)){
                     throw new BizErrorException("该栈板的调拨计划已经存在");
@@ -387,7 +389,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                         SearchSmtStorageInventory searchSmtStorageInventory1 = new SearchSmtStorageInventory();
                         searchSmtStorageInventory1.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
                         List<SmtStorageInventoryDto> smtStorageInventoryDtos1 = storageInventoryFeignApi.findList(searchSmtStorageInventory1).getData();
-                        if (StringUtils.isNotEmpty(searchSmtStorageInventory1)){
+                        if (StringUtils.isNotEmpty(smtStorageInventoryDtos1)){
                             //不为空则更新库存数量
                             SmtStorageInventoryDto smtStorageInventoryDto1 = smtStorageInventoryDtos1.get(0);
                             smtStorageInventoryDto1.setQuantity(smtStorageInventoryDto1.getQuantity().subtract(wmsInnerTransferSlipDetDto.getRealityTotalQty()));
