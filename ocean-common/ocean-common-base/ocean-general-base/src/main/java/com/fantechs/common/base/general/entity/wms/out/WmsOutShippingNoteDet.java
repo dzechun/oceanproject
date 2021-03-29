@@ -177,6 +177,9 @@ public class WmsOutShippingNoteDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="stockPalletList",value = "已调拨栈板集合")
     private List<String> stockPalletList;
 
+    @ApiModelProperty(name="palletCode",value = "出库栈板条码")
+    private String palletCode;
+
 //    @ApiModelProperty(name="outPalletList",value = "已出库栈板集合")
 //    private List<String> outPalletList;
 

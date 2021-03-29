@@ -53,10 +53,13 @@
         and sp.pallet_code like CONCAT('%', #{palletCode}, '%')
       </if>
       <if test="isBinding != null and isBinding != ''">
-        and sp.is_binding = #{isBinding}
+        and (sp.is_binding = #{isBinding} or sp.is_binding = 2)
       </if>
       <if test="isDelete != null and isDelete != ''">
         and sp.is_delete = #{isDelete}
+      </if>
+      <if test="storageId != null">
+        and sp.storage_id = #{storageId}
       </if>
     </where>
 

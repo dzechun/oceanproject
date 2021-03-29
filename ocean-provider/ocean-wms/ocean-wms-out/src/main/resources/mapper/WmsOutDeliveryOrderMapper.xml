@@ -61,6 +61,12 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(doo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="startTime != null and startTime != ''">
+        and date_format(doo.create_time, '%Y-%m-%d') &gt; #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        and date_format(doo.create_time, '%Y-%m-%d') &lt; #{endTime}
+      </if>
       <if test="deliveryOrderCode != null and deliveryOrderCode != ''">
         and doo.delivery_order_code like CONCAT('%', #{deliveryOrderCode}, '%')
       </if>

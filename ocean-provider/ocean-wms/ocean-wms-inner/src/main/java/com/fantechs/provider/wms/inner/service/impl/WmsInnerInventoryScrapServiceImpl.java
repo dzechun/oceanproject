@@ -9,6 +9,7 @@ import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryScrapDetDto;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -71,16 +73,22 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
 
         for (WmsInnerInventoryScrapDet wmsInnerInventoryScrapDet : wmsInnerInventoryScrap.getWmsInnerInventoryScrapDets()) {
 
-            //判断栈板是否在该储位上
+            if(wmsInnerInventoryScrapDet.getRealityTotalQty() == BigDecimal.valueOf(0) || wmsInnerInventoryScrapDet.getRealityTotalQty() == null){
+                continue;
+            }
+
+            //判断栈板是否绑定储位或者是否已报废
             SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
             searchSmtStoragePallet.setPalletCode(wmsInnerInventoryScrapDet.getBarCode());
             searchSmtStoragePallet.setStorageId(wmsInnerInventoryScrapDet.getStorageId());
-            searchSmtStoragePallet.setIsBinding((byte) 1);
+            searchSmtStoragePallet.setIsBinding((byte) 2);
             searchSmtStoragePallet.setIsDelete((byte) 1);
             //判断栈板是否绑定区域
             List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
-            if (smtStoragePallets.size() <= 0) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            if(!StringUtils.isEmpty(smtStoragePallets)){
+                if (smtStoragePallets.size() > 0) {
+                    throw new BizErrorException(wmsInnerInventoryScrapDet.getBarCode() + "已报废，不允许重复报废");
+                }
             }
 
             //判断库存数量
@@ -106,6 +114,9 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             }
 
             //修改库存
+
+            //这里库存明细是否要删除 -> 如果库存为0，则删除。
+            //包箱管理表的栈板数据是否要保留 -> 目前不删，
             SmtStorageInventory smtStorageInventory = smtStorageInventoryDtos.get(0);
             smtStorageInventory.setQuantity(wmsInnerInventoryScrapDet.getRealityTotalQty());
 
@@ -124,6 +135,22 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             wmsInnerInventoryScrapDet.setModifiedUserId(user.getUserId());
             wmsInnerInventoryScrapDet.setModifiedTime(new Date());
             wmsInnerInventoryScrapDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryScrapDet);
+
+            //修改栈板状态为报废
+            searchSmtStoragePallet = new SearchSmtStoragePallet();
+            searchSmtStoragePallet.setPalletCode(wmsInnerInventoryScrapDet.getBarCode());
+            searchSmtStoragePallet.setStorageId(wmsInnerInventoryScrapDet.getStorageId());
+            smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+            if (smtStoragePallets.size() <= 0) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            }
+
+            SmtStoragePallet smtStoragePallet = new SmtStoragePallet();
+            smtStoragePallet.setStoragePalletId(smtStoragePallets.get(0).getStoragePalletId());
+            smtStoragePallet.setIsBinding((byte)2);
+            smtStoragePallet.setModifiedUserId(user.getUserId());
+            smtStoragePallet.setModifiedTime(new Date());
+            storageInventoryFeignApi.update(smtStoragePallet);
         }
 
         //改变主表状态

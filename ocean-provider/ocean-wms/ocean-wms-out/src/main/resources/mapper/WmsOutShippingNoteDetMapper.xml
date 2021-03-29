@@ -74,10 +74,9 @@
     ww.warehouse_name AS move_warehouse_name,
     waw.warehouse_area_name AS move_warehouse_area_name,
     st.storage_name AS move_storage_name,
-    snp.pallet_code AS pallet_code
+    snd.pallet_code AS pallet_code
     from
     wms_out_shipping_note_det AS snd
-    LEFT JOIN wms_out_shipping_note_pallet snp ON snp.shipping_note_det_id = snd.shipping_note_det_id
     LEFT JOIN ocean.sys_user su ON snd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON snd.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes.base_organization bo ON snd.organization_id = bo.organization_id

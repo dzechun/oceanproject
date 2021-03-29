@@ -34,4 +34,5 @@ public class SearchSmtStoragePallet extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
+
 }
