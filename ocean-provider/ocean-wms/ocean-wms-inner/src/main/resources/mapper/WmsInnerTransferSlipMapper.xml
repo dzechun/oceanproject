@@ -57,6 +57,12 @@
     LEFT JOIN ocean.sys_user suss ON wits.processor_user_id = suss.user_id
     LEFT JOIN fantech_imes.base_organization bo ON wits.organization_id = bo.organization_id
     <where>
+      <if test="startTime!= null and startTime!= '' and (endTime== null or endTime== '')">
+        and date_format(wits.create_time, '%Y-%m-%d') &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' and (startTime== null or startTime== '')">
+        and date_format(wits.create_time, '%Y-%m-%d') &lt;= #{endTime}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wits.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

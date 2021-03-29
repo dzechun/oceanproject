@@ -8,6 +8,8 @@ import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.entity.basic.BaseWarning;
 import com.fantechs.common.base.general.entity.basic.BaseWarningPersonnel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarning;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarningPersonnel;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -15,6 +17,7 @@ import com.fantechs.provider.base.mapper.BaseHtWarningMapper;
 import com.fantechs.provider.base.mapper.BaseWarningMapper;
 import com.fantechs.provider.base.mapper.BaseWarningPersonnelMapper;
 import com.fantechs.provider.base.service.BaseWarningService;
+import io.micrometer.core.instrument.search.Search;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +48,9 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         List<BaseWarningDto> baseWarningDtos = baseWarningMapper.findList(map);
 
         for (BaseWarningDto baseWarningDto : baseWarningDtos) {
-            List<BaseWarningPersonnelDto> baseWarningPersonnels = baseWarningPersonnelMapper.findList(map);
+            SearchBaseWarningPersonnel searchBaseWarningPersonnel = new SearchBaseWarningPersonnel();
+            searchBaseWarningPersonnel.setWarningId(baseWarningDto.getWarningId());
+            List<BaseWarningPersonnelDto> baseWarningPersonnels = baseWarningPersonnelMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWarningPersonnel));
             baseWarningDto.setBaseWarningPersonnelDtoList(baseWarningPersonnels);
         }
 
