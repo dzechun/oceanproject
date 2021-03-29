@@ -97,6 +97,9 @@
     LEFT JOIN fantech_imes.wms_inner_stocktaking wis ON wis.stocktaking_id = wisd.stocktaking_id
     LEFT JOIN ocean.sys_user suss ON wis.stockist_id = suss.user_id
     <where>
+      <if test="stocktakingId !=null">
+        and wisd.stocktaking_id=#{stocktakingId}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wisd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

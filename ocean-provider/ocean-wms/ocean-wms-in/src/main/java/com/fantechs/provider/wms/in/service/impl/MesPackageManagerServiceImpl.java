@@ -35,6 +35,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -120,8 +121,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     @Override
     public int save(MesPackageManager mesPackageManager) {
+        SysUser sysUser = currentUser();
         mesPackageManager.setPackageManagerCode(CodeUtils.getId("PACKAGE"));
-        mesPackageManager.setCreateUserId(null);
+        mesPackageManager.setCreateUserId(sysUser.getUserId());
+        mesPackageManager.setCreateTime(new Date());
         mesPackageManager.setIsDelete((byte)1);
         if(mesPackageManagerMapper.insertSelective(mesPackageManager)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
@@ -153,7 +156,9 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     @Override
     public int update(MesPackageManager mesPackageManager) {
-        mesPackageManager.setModifiedUserId(null);
+        SysUser sysUser = currentUser();
+        mesPackageManager.setModifiedUserId(sysUser.getUserId());
+        mesPackageManager.setModifiedTime(new Date());
         if(mesPackageManagerMapper.updateByPrimaryKeySelective(mesPackageManager)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
@@ -224,7 +229,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }else if(mesPackageManager.getType()==(byte)2){
                 printDto.setLabelName("栈板.btw");
                 for (ManagerList managerList : saveMesPackageManagerDTO.getManagerLists()) {
-                    PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+                    PrintModel printModel = mesPackageManagerMapper.findPrintModel(managerList.getPackageManagerId());
                     printModel.setQrCode(mesPackageManager.getBarCode());
                     //件数
                     printModel.setOption8(managerList.getQty().toString());

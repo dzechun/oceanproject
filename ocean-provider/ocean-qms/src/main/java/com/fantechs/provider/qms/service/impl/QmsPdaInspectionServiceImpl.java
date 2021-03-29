@@ -245,7 +245,7 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                  }
                  msg.substring(0,msg.length()-1);
              }
-             msg += ";"+qmsPdaInspectionDetDto.getRemark();
+             msg += ";"+(StringUtils.isNotEmpty(qmsPdaInspectionDetDto.getRemark())?qmsPdaInspectionDetDto.getRemark():"");
 
          }
          SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();

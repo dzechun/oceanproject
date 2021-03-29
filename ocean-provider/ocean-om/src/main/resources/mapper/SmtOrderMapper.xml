@@ -236,5 +236,6 @@
                 and date_format(so.delivery_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
+        order by so.order_code desc
     </select>
 </mapper>

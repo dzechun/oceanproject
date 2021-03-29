@@ -13,13 +13,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Mr.Lei
@@ -44,6 +45,14 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendSimpleMail(String to, String subject, String content){
         try {
+            String regEx1 = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+            Pattern p;
+            Matcher m;
+            p = Pattern.compile(regEx1);
+            m = p.matcher(to);
+            if(!m.matches()){
+                throw new BizErrorException("邮箱账号错误");
+            }
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
             message.setSubject(subject);
@@ -53,7 +62,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
         }catch (Exception e){
             logger.error("邮件发送异常:"+e.getMessage());
-            throw new BizErrorException("邮件推送失败");
+            throw new BizErrorException(e.getMessage());
         }
     }
 
@@ -67,6 +76,14 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendHtmlMail(String to, String subject, String content){
         try {
+            String regEx1 = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+            Pattern p;
+            Matcher m;
+            p = Pattern.compile(regEx1);
+            m = p.matcher(to);
+            if(!m.matches()){
+                throw new BizErrorException("邮箱账号错误");
+            }
             MimeMessage message = mailSender.createMimeMessage();
 
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
