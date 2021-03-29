@@ -18,4 +18,7 @@ public class SaveMesPackageManagerDTO {
     private MesPackageManager mesPackageManager;
     @ApiModelProperty(value = "子级",example = "子级")
     private List<MesPackageManager> mesPackageManagerList;
+
+    @ApiModelProperty("同工单数量叠加")
+    private List<ManagerList> managerLists;
 }

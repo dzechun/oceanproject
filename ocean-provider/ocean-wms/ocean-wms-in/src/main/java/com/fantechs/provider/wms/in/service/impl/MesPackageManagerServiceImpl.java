@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.dto.storage.ManagerList;
 import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -214,16 +215,25 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         //调用打印程序进行条码打印
         try {
             PrintDto printDto = new PrintDto();
+            List<PrintModel> printModelList = new ArrayList<>();
             if(mesPackageManager.getType()==(byte)1){
                 printDto.setLabelName("包箱.btw");
+                PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+                printModel.setQrCode(mesPackageManager.getBarCode());
+                printModelList.add(printModel);
             }else if(mesPackageManager.getType()==(byte)2){
                 printDto.setLabelName("栈板.btw");
+                for (ManagerList managerList : saveMesPackageManagerDTO.getManagerLists()) {
+                    PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
+                    printModel.setQrCode(mesPackageManager.getBarCode());
+                    //件数
+                    printModel.setOption8(managerList.getQty().toString());
+                    //把数
+                    printModel.setOption9(managerList.getTotal().toString());
+                    printModelList.add(printModel);
+                }
             }
             printDto.setPrintName("测试");
-            PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
-            printModel.setQrCode(mesPackageManager.getBarCode());
-            List<PrintModel> printModelList = new ArrayList<>();
-            printModelList.add(printModel);
             printDto.setPrintModelList(printModelList);
             ResponseEntity res = bcmFeignApi.print(printDto);
             if(res.getCode()!=0){
