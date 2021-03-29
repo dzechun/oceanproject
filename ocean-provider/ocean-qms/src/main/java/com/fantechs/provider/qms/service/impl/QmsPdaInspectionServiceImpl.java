@@ -215,34 +215,37 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                }
           }
 
-         List<QmsPdaInspectionDetDto> qmsPdaInspectionDetDtoList = qmsPdaInspection.getList();
-         QmsPdaInspectionDetDto qmsPdaInspectionDetDto = qmsPdaInspectionDetDtoList.get(0);
-
+         QmsPdaInspectionDetDto qmsPdaInspectionDetDto = qmsPdaInspection.getQmsPdaInspectionDet();
          String msg = qmsPdaInspection.getPdaInspectionCode()+";";
-         msg += qmsAndinStorageQuarantines.get(0).getPalletCode()+";";
-         msg += qmsPdaInspectionDetDto.getMaterialCode()+";";
-         msg += qmsAndinStorageQuarantines.get(0).getWarehouseAreaCode()+";";
-
          if (qmsPdaInspectionDetDto.getInspectionResult() == 2){
+
+             msg += qmsAndinStorageQuarantines.get(0).getPalletCode()+";";
+             msg += qmsAndinStorageQuarantines.get(0).getProductCode()+";";
+             msg += qmsAndinStorageQuarantines.get(0).getWarehouseAreaCode()+";";
+
              SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
              searchSysSpecItem.setSpecCode("badItem");
              List<SysSpecItem> badItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
              if (StringUtils.isEmpty(badItems)){
-                 msg += "未找到不合格项目";
+                 msg += "未找到不合格项目配置";
              }else {
                  List<QmsDisqualification> disqualificationList = qmsPdaInspectionDetDto.getList();
-                 JSONArray badItem = JSONArray.parseArray(badItems.get(0).getParaValue());
-                 for (QmsDisqualification qmsDisqualification : disqualificationList) {
-                     for (int j = 0 ; j < badItem.size();j++){
-                         if (qmsDisqualification.getDisqualificationId().equals(JSONObject.parseObject(badItem.get(j).toString()).get("id"))){
-                             msg += JSONObject.parseObject(badItem.get(j).toString()).get("name")+",";
+                 if (StringUtils.isNotEmpty(disqualificationList)){
+                     JSONArray badItem = JSONArray.parseArray(badItems.get(0).getParaValue());
+                     for (QmsDisqualification qmsDisqualification : disqualificationList) {
+                         for (int j = 0 ; j < badItem.size();j++){
+                             if (qmsDisqualification.getDisqualificationId().equals(JSONObject.parseObject(badItem.get(j).toString()).get("id"))){
+                                 msg += JSONObject.parseObject(badItem.get(j).toString()).get("name")+",";
+                             }
                          }
                      }
+                 }else {
+                     msg += "未找到不合格项目";
                  }
                  msg.substring(0,msg.length()-1);
              }
-             msg += ";"+qmsPdaInspection.getRemark();
+             msg += ";"+qmsPdaInspectionDetDto.getRemark();
 
          }
          SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();

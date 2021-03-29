@@ -40,7 +40,8 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    swo.work_order_code,wp.total AS cartons,sm.material_code AS product_code,sm.material_desc AS product_desc,swa.warehouse_area_name,swa.warehouse_area_code
+    swo.work_order_code,wp.total AS cartons,sm.material_code AS product_code,sm.material_desc AS product_desc,swa.warehouse_area_name,swa.warehouse_area_code,
+    wp.bar_code AS pallet_code
     from fantech_imes.qms_andin_storage_quarantine qasq
     LEFT JOIN ocean.sys_user su ON qasq.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qasq.modified_user_id = sus.user_id
