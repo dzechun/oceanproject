@@ -46,6 +46,8 @@
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="stockist_name" jdbcType="VARCHAR" property="stockistName" />
+    <result column="stocktaking_code" jdbcType="VARCHAR" property="stocktakingCode" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -80,7 +82,8 @@
     ss.storage_name,ss.storage_code,
     swa.warehouse_area_id,swa.warehouse_area_code,swa.warehouse_area_name,
     sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,
-    spm.product_model_code,spm.product_model_name
+    spm.product_model_code,spm.product_model_name,
+    wis.stocktaking_code,suss.user_name AS stockist_name
     from fantech_imes.wms_inner_stocktaking_det wisd
     LEFT JOIN ocean.sys_user su  ON wisd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wisd.modified_user_id = sus.user_id
@@ -91,7 +94,12 @@
     LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
     LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
     LEFT JOIN fantech_imes.base_organization bo ON wisd.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.wms_inner_stocktaking wis ON wis.stocktaking_id = wisd.stocktaking_id
+    LEFT JOIN ocean.sys_user suss ON wis.stockist_id = suss.user_id
     <where>
+      <if test="stocktakingId !=null">
+        and wisd.stocktaking_id=#{stocktakingId}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wisd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

@@ -85,7 +85,7 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        wmsInnerTransferSlip.setTransferSlipCode(CodeUtils.getId("DB—"));
+        wmsInnerTransferSlip.setTransferSlipCode(CodeUtils.getId("DB"));
         wmsInnerTransferSlip.setCreateTime(new Date());
         wmsInnerTransferSlip.setCreateUserId(user.getUserId());
         wmsInnerTransferSlip.setModifiedTime(new Date());

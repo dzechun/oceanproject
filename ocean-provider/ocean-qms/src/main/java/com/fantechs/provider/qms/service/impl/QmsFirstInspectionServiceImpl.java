@@ -162,7 +162,7 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
                 }
             }
             msg.substring(0,msg.length()-1);
-            msg += ";"+qmsFirstInspection.getRemark();
+            msg += ";"+(StringUtils.isNotEmpty(qmsFirstInspection.getRemark())?qmsFirstInspection.getRemark():"");
 
             SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
 
