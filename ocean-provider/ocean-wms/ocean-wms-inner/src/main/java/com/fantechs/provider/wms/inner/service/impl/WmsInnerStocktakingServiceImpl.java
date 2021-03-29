@@ -129,7 +129,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             }
         }
 
-
         //新增盘点单履历
         WmsInnerHtStocktaking wmsInnerHtStocktaking = new WmsInnerHtStocktaking();
         BeanUtils.copyProperties(wmsInnerStocktaking,wmsInnerHtStocktaking);
