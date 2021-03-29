@@ -19,6 +19,12 @@ public class SearchWmsInnerStocktakingDet extends BaseQuery implements Serializa
     private Long stocktakingId;
 
     /**
+     * 盘点单号
+     */
+    @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
+    private String stocktakingCode;
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
@@ -53,4 +59,10 @@ public class SearchWmsInnerStocktakingDet extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="stockistId",value = "盘点员Id")
     private Long stockistId;
+
+    /**
+     * 盘点员名称
+     */
+    @ApiModelProperty(name="stockistName",value = "盘点员名称")
+    private String stockistName;
 }
