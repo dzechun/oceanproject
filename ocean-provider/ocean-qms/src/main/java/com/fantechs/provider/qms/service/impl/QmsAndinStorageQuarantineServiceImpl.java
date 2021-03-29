@@ -162,6 +162,8 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
             }else {
                 mesPackageManagerDTO = list.getData().get(0);
             }
+        }else {
+            mesPackageManagerDTO = list.getData().get(0);
         }
 
 
