@@ -17,7 +17,7 @@ public class BaseWarningPersonnelDto extends BaseWarningPersonnel implements Ser
      */
     @Column(name = "user_code")
     @ApiModelProperty(name="userCode" ,value="用户编码")
-    @Excel(name="用户编码", height = 20, width = 30)
+    @Excel(name="用户工号", height = 20, width = 30)
     @NotBlank(message = "用户编码不能为空")
     private String userCode;
 
