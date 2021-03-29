@@ -55,7 +55,7 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="factoryCode != null and factoryCode !=''and codeQueryMark == null">
+            <if test="factoryCode != null and factoryCode !='' and codeQueryMark == null">
                 and sf.factory_code like CONCAT('%', #{factoryCode}, '%')
             </if>
             <if test="factoryCode != null and factoryCode !='' and codeQueryMark != null">

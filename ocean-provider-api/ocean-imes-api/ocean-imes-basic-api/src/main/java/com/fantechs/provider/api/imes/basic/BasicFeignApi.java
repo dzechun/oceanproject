@@ -108,7 +108,7 @@ public interface BasicFeignApi {
     ResponseEntity<List<SmtRouteProcess>> findConfigureRout(@ApiParam(value = "routeId", required = true) @RequestParam Long routeId);
 
     @ApiOperation("厂别信息列表")
-    @PostMapping("/smtWorkShop/findList")
+    @PostMapping("/smtFactory/findList")
     ResponseEntity<List<SmtFactoryDto>> findFactoryList(@ApiParam(value = "查询对象")@RequestBody SearchSmtFactory searchSmtFactory);
 
     @ApiOperation("查询工艺路线信息列表")

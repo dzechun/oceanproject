@@ -54,7 +54,7 @@
         and date_format(bw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="warningType != null and warningType != ''">
-        and bw.warning_type = #{materialCode}
+        and bw.warning_type = #{warningType}
       </if>
       <if test="personnelLevel != null and personnelLevel != ''">
         and bw.personnel_level = #{personnelLevel}
