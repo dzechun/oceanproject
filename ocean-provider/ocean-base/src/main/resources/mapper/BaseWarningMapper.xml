@@ -56,7 +56,7 @@
       <if test="(warningType != null and warningType != '') or warningType == 0">
         and bw.warning_type = #{warningType}
       </if>
-      <if test="personnelLevel != null and personnelLevel != ''">
+      <if test="(personnelLevel != null and personnelLevel != '') or personnelLevel == 0">
         and bw.personnel_level = #{personnelLevel}
       </if>
       <if test="notificationMethod != null and notificationMethod != ''">

@@ -37,7 +37,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 预警类型
      */
     @ApiModelProperty(name="warningType",value = "预警类型")
-    @Excel(name = "预警类型", height = 20, width = 30)
+    @Excel(name = "预警类型", height = 20, width = 30,replace = {"质检预警_0","生产线_1","缺料预警_2"})
     @Column(name = "warning_type")
     @NotNull(message = "预警类型不能为空")
     private Long warningType;
@@ -46,7 +46,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 人员等级（0、一级人员 1、二级人员 2、三级人员）
      */
     @ApiModelProperty(name="personnelLevel",value = "人员等级（0、一级人员 1、二级人员 2、三级人员）")
-    @Excel(name = "人员等级（0、一级人员 1、二级人员 2、三级人员）", height = 20, width = 30,replace = {"一级人员_0","二级人员_1","三级人员_2"})
+    @Excel(name = "人员等级（0、一级人员 1、二级人员 2、三级人员）", height = 20, width = 30,replace = {"一级人员_0","二级人员_1","三级人员_2","四级人员_3"})
     @Column(name = "personnel_level")
     @NotNull(message = "人员等级不能为空")
     private Byte personnelLevel;
@@ -78,7 +78,6 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30)
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -86,7 +85,6 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30)
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -103,7 +101,6 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30)
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 

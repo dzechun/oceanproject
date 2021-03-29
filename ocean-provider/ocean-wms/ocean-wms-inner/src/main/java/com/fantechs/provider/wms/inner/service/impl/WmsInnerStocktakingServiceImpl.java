@@ -3,19 +3,26 @@ package com.fantechs.provider.wms.inner.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
+import com.fantechs.common.base.general.entity.basic.BaseWarning;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStocktakingDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStocktakingDetMapper;
@@ -49,6 +56,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
     private WmsInnerHtStocktakingDetMapper wmsInnerHtStocktakingDetMapper;
     @Resource
     private BcmFeignApi bcmFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<WmsInnerStocktakingDto> findList(Map<String, Object> map) {
@@ -92,7 +101,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }else {
             wmsInnerStocktaking.setStatus((byte) 1);
         }
-        wmsInnerStocktaking.setStocktakingCode(CodeUtils.getId("SEORD"));
+        wmsInnerStocktaking.setStocktakingCode(CodeUtils.getId("PD"));
         wmsInnerStocktaking.setCreateTime(new Date());
         wmsInnerStocktaking.setCreateUserId(user.getUserId());
         wmsInnerStocktaking.setModifiedTime(new Date());
@@ -101,6 +110,25 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         wmsInnerStocktaking.setOrganizationId(user.getOrganizationId());
         //新增盘点单
         int i = wmsInnerStocktakingMapper.insertUseGeneratedKeys(wmsInnerStocktaking);
+
+        //发送邮件
+        //获取预警人员
+        SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+        searchBaseWarning.setWarningType((long) 0);
+        List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+        if (StringUtils.isNotEmpty(baseWarningDtos)){
+            for (BaseWarningDto baseWarningDto : baseWarningDtos) {
+                List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = baseWarningDto.getBaseWarningPersonnelDtoList();
+                if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)){
+                    for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
+                        String email = baseWarningPersonnelDto.getEmail();//获取邮箱
+                        String stocktakingCode = wmsInnerStocktaking.getStocktakingCode();//获取盘点单号
+                        bcmFeignApi.sendSimpleMail(email,"盘点作业","有一份新的盘点单：" + stocktakingCode);
+                    }
+                }
+            }
+        }
+
 
         //新增盘点单履历
         WmsInnerHtStocktaking wmsInnerHtStocktaking = new WmsInnerHtStocktaking();
@@ -221,7 +249,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }
 
         String[] idsArr = ids.split(",");
-        LinkedList<WmsInnerHtStocktaking> wmsInnerHtStocktakings = new LinkedList<>();
         LinkedList<WmsInnerHtStocktakingDet> wmsInnerHtStocktakingDets = new LinkedList<>();
         for (String id : idsArr) {
             WmsInnerStocktaking wmsInnerStocktaking = wmsInnerStocktakingMapper.selectByPrimaryKey(id);
@@ -230,8 +257,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             }
 
             WmsInnerHtStocktaking wmsInnerHtStocktaking = new WmsInnerHtStocktaking();
-            BeanUtils.copyProperties(wmsInnerHtStocktaking,wmsInnerHtStocktaking);
-            wmsInnerHtStocktakings.add(wmsInnerHtStocktaking);
+            BeanUtils.copyProperties(wmsInnerStocktaking,wmsInnerHtStocktaking);
+            wmsInnerHtStocktakingMapper.insertUseGeneratedKeys(wmsInnerHtStocktaking);
 
             //删除盘点单明细
             Example example = new Example(WmsInnerStocktakingDet.class);
@@ -242,6 +269,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDets) {
                 WmsInnerHtStocktakingDet wmsInnerHtStocktakingDet = new WmsInnerHtStocktakingDet();
                 BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktakingDet);
+                wmsInnerHtStocktakingDet.setHtStocktakingId(wmsInnerHtStocktaking.getHtStocktakingId());
                 wmsInnerHtStocktakingDets.add(wmsInnerHtStocktakingDet);
             }
 
