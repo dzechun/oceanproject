@@ -147,4 +147,20 @@ public class WmsInnerStocktakingDetDto extends WmsInnerStocktakingDet implements
     @Excel(name = "盘存转报废单号", height = 20, width = 30)
     @Transient
     private String modifiedUserName;
+
+    /**
+     * 盘点单号
+     */
+    @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
+    @Excel(name = "盘点单号", height = 20, width = 30)
+    @Transient
+    private String stocktakingCode;
+
+    /**
+     * 盘点员
+     */
+    @ApiModelProperty(name="stockistName",value = "盘点员")
+    @Excel(name = "盘点员", height = 20, width = 30)
+    @Transient
+    private String stockistName;
 }

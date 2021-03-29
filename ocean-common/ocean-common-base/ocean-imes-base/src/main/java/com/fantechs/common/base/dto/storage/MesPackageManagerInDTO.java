@@ -105,4 +105,10 @@ public class MesPackageManagerInDTO {
      */
     @ApiModelProperty(value = "包装单位id",example = "包装单位id")
     private Long packingUnitId;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(value = "合同号",example = "合同号")
+    private String contractCode;
 }

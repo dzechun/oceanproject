@@ -117,6 +117,14 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     private String warehouseName;
 
     /**
+     * 合同号
+     */
+    @Transient
+    @ApiModelProperty(value = "合同号",example = "合同号")
+    @Excel(name = "合同号")
+    private String contractCode;
+
+    /**
      * 产线名称
      */
     @Transient

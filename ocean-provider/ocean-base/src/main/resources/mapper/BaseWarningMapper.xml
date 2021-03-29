@@ -53,10 +53,10 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="warningType != null and warningType != ''">
-        and bw.warning_type = #{materialCode}
+      <if test="(warningType != null and warningType != '') or warningType == 0">
+        and bw.warning_type = #{warningType}
       </if>
-      <if test="personnelLevel != null and personnelLevel != ''">
+      <if test="(personnelLevel != null and personnelLevel != '') or personnelLevel == 0">
         and bw.personnel_level = #{personnelLevel}
       </if>
       <if test="notificationMethod != null and notificationMethod != ''">
