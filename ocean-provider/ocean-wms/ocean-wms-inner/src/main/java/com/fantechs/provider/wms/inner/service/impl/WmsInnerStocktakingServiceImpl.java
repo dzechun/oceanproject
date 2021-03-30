@@ -243,6 +243,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDetDto);
             }
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
+            wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
+            wmsInnerStocktakingDet.setCreateTime(new Date());
             wmsInnerStocktakingDet.setModifiedTime(new Date());
             wmsInnerStocktakingDet.setModifiedUserId(user.getUserId());
 
