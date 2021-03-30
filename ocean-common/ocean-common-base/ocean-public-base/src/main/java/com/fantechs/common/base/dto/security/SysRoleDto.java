@@ -26,4 +26,10 @@ public class SysRoleDto extends SysRole implements Serializable {
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum = "6")
     private String modifiedUserName;
+
+    /**
+     * 菜单ID
+     */
+    @Transient
+    private Long menuId;
 }
