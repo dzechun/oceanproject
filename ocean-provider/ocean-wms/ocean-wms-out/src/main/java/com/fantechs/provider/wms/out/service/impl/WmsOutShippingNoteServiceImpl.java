@@ -180,6 +180,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
 
         wmsOutShippingNote.setModifiedUserId(user.getUserId());
         wmsOutShippingNote.setModifiedTime(new Date());
+        wmsOutShippingNote.setProcessorUserId(user.getUserId());
         //履历
 //        WmsOutHtShippingNote wmsOutHtShippingNote = new WmsOutHtShippingNote();
 //        BeanUtils.copyProperties(wmsOutShippingNote,wmsOutHtShippingNote);
