@@ -84,4 +84,26 @@
         select menu_id from sys_menuinfo where menu_type = #{menuType}
     </select>
 
+    <select id="findByUsreId" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+        from sys_menuinfo sm
+        LEFT JOIN sys_user su ON sm.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON sm.modified_user_id = sus.user_id
+        where sm.parent_id != 0
+        <if test="roleIds != null">
+            and sm.menu_id in (
+            select menu_id from sys_auth_role
+            <where>
+                <foreach collection="roleIds" open="role_id in (" separator="," close=")" item="value">
+                    #{value}
+                </foreach>
+            </where>
+            )
+        </if>
+        <if test="menuType != null and menuType != ''">
+            and sm.menu_type = #{menuType}
+        </if>
+        order by sm.order_num asc
+    </select>
+
 </mapper>

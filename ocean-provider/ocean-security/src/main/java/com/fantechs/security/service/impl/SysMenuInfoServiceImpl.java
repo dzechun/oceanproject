@@ -3,18 +3,17 @@ package com.fantechs.security.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysMenuInfoDto;
+import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysMenuInfo;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtMenuInfo;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.security.mapper.SysAuthRoleMapper;
 import com.fantechs.security.mapper.SysHtMenuInfoMapper;
 import com.fantechs.security.mapper.SysMenuInfoMapper;
@@ -30,6 +29,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by lfz on 2020/8/15.
@@ -259,20 +259,56 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
     @Override
     public List<SysMenuInListDTO> findMenuList(Map<String, Object> map, List<String> roleIds) {
+
         //获取所有的父级目录
         List<SysMenuInfoDto> menuinfos = findAll(map,roleIds);
         List<SysMenuInListDTO> sysMenuInListDTO = null;
+        //获取当前登录所属角色所有的子菜单
+        List<SysMenuInfoDto> list = sysMenuInfoMapper.findByUsreId(roleIds,map.get("menuType"));
+
+        List<SysRoleDto> menuRoles = sysRoleMapper.findMenuRoles();
+        Map<Long, List<SysRoleDto>> roleMap = menuRoles.stream().collect(Collectors.groupingBy(SysRoleDto::getMenuId));
+
         if(StringUtils.isNotEmpty(menuinfos)){
             sysMenuInListDTO =new LinkedList<>();
             for (SysMenuInfoDto menuinfo : menuinfos) {
                 SysMenuInListDTO tSysMenuinfoListDTO = new SysMenuInListDTO();
                 tSysMenuinfoListDTO.setSysMenuInfoDto(menuinfo);
                 sysMenuInListDTO.add(tSysMenuinfoListDTO);
-                traverseFolder(tSysMenuinfoListDTO,sysMenuInListDTO,roleIds);
-
+//                traverseFolder(tSysMenuinfoListDTO,sysMenuInListDTO,roleIds);
+                buildMenu(tSysMenuinfoListDTO,list,roleMap);
             }
         }
         return sysMenuInListDTO;
+    }
+    private int buildMenu (SysMenuInListDTO tSysMenuinfoListDTO,List<SysMenuInfoDto> menuList,Map<Long, List<SysRoleDto>> roleMap) {
+        List<SysMenuInListDTO> tSysMenuinfoListDTOList =new LinkedList<>();
+        int count = 0;
+        for(int i=0;i<menuList.size();) {
+            if (tSysMenuinfoListDTO.getSysMenuInfoDto().getMenuId().equals(menuList.get(i).getParentId())){
+                count++;
+                SysMenuInListDTO tSysMenuinfoListDTO1 = new SysMenuInListDTO();
+                SysMenuInfoDto remove = menuList.remove(i);
+
+                remove.getRoles().addAll(roleMap.remove(remove.getMenuId()));
+
+                tSysMenuinfoListDTO1.setSysMenuInfoDto(remove);
+                tSysMenuinfoListDTOList.add(tSysMenuinfoListDTO1);
+                tSysMenuinfoListDTO.setSysMenuinList(tSysMenuinfoListDTOList);
+                if (remove.getIsMenu() != null && remove.getIsMenu() != 2){
+                    int totalCount = buildMenu(tSysMenuinfoListDTO1, menuList,roleMap);
+                    count += totalCount;
+                    if (totalCount > i){
+                        i=0;
+                        continue;
+                    }
+                    i -= totalCount;
+                }
+            }else {
+                i++;
+            }
+        }
+        return count;
     }
 
     @Override
