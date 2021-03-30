@@ -25,7 +25,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点单id
      */
     @ApiModelProperty(name="stocktakingId",value = "盘点单id")
-    @Excel(name = "盘点单id", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "stocktaking_id")
     private Long stocktakingId;
@@ -34,7 +33,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点单号
      */
     @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
-    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "盘点单号", height = 20, width = 30)
     @Column(name = "stocktaking_code")
     private String stocktakingCode;
 
@@ -42,7 +41,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 仓库Id
      */
     @ApiModelProperty(name="warehouseId",value = "仓库Id")
-    @Excel(name = "仓库Id", height = 20, width = 30,orderNum="")
     @Column(name = "warehouse_id")
     private Long warehouseId;
 
@@ -50,7 +48,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点员Id
      */
     @ApiModelProperty(name="stockistId",value = "盘点员Id")
-    @Excel(name = "盘点员Id", height = 20, width = 30,orderNum="") 
     @Column(name = "stockist_id")
     private Long stockistId;
 
@@ -58,7 +55,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点方式(0、月盘 1、抽盘)
      */
     @ApiModelProperty(name="stocktakingMode",value = "盘点方式(0、月盘 1、抽盘)")
-    @Excel(name = "盘点方式(0、月盘 1、抽盘)", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点方式(0、月盘 1、抽盘)", height = 20, width = 30,replace = {"月盘_0", "抽盘_1"})
     @Column(name = "stocktaking_mode")
     private Byte stocktakingMode;
 
@@ -66,21 +63,20 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点状态(0、待盘点 1、盘点中 2、盘点完成)
      */
     @ApiModelProperty(name="status",value = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)")
-    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,replace = {"待盘点_0", "盘点中_1","盘点完成_2"})
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30)
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "organization_id")
     private Long organizationId;
 
@@ -88,7 +84,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -96,7 +91,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -105,7 +100,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -113,7 +107,7 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -122,7 +116,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 

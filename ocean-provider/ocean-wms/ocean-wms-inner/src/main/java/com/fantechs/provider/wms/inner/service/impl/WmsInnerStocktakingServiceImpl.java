@@ -186,7 +186,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
 
         //PDA执行得提交操作则修改单据为盘点完成
         if (Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
-            wmsInnerStocktaking.setStatus((byte) 1);
+            wmsInnerStocktaking.setStatus((byte) 2);
         }
         wmsInnerStocktaking.setModifiedTime(new Date());
         wmsInnerStocktaking.setModifiedUserId(user.getUserId());
@@ -218,7 +218,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             }
 
             //对盘点完成的单据计算其盈亏数量和盈亏率
-            if (wmsInnerStocktakingDet.getStatus() == 1 && wmsInnerStocktakingDet.getProfitLossRate() == null){
+            if (wmsInnerStocktakingDet.getStatus() == 1 && Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
                 wmsInnerStocktakingDet.setProfitLossRate(wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory()));
 
