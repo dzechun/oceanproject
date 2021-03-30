@@ -186,7 +186,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                        mesPackageManagerDTO.setStorageName(mesPackageManagerDTO1.getStorageName());
                        mesPackageManagerDTO.setWarehouseAreaName(mesPackageManagerDTO1.getWarehouseAreaName());
                        mesPackageManagerDTO.setWarehouseAreaId(mesPackageManagerDTO1.getWarehouseAreaId());
-                       mesPackageManagerDTO.setParentBarCode(mesPackageManagerDTO1.getParentBarCode());
+                       mesPackageManagerDTO.setParentBarCode(mesPackageManagerDTO1.getBarCode());
                    }
                }
            }
