@@ -16,7 +16,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 仓库名称
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "仓库名称", height = 20, width = 30)
     @Transient
     private String warehouseName;
 
@@ -24,7 +24,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 仓库编码
      */
     @ApiModelProperty(name="warehouseCode",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "仓库编码", height = 20, width = 30)
     @Transient
     private String warehouseCode;
 
@@ -32,7 +32,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 仓库描述
      */
     @ApiModelProperty(name="warehouseDesc",value = "仓库描述")
-    @Excel(name = "仓库描述", height = 20, width = 30,orderNum="")
+    @Excel(name = "仓库描述", height = 20, width = 30)
     @Transient
     private String warehouseDesc;
 
@@ -40,7 +40,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 盘点员名称
      */
     @ApiModelProperty(name="stockistName",value = "盘点员名称")
-    @Excel(name = "盘点员名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点员名称", height = 20, width = 30)
     @Transient
     private String stockistName;
 
@@ -48,6 +48,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 组织名称
      */
     @Transient
+    @Excel(name = "组织名称", height = 20, width = 30)
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
@@ -55,6 +56,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      * 组织代码
      */
     @Transient
+    @Excel(name = "组织代码", height = 20, width = 30)
     @ApiModelProperty(name = "organizationName",value = "组织代码")
     private String organizationCode;
 
@@ -63,7 +65,7 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -71,6 +73,6 @@ public class WmsInnerStocktakingDto extends WmsInnerStocktaking implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 }

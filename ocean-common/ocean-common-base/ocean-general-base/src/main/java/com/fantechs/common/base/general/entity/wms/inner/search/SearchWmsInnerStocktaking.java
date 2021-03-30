@@ -15,28 +15,35 @@ public class SearchWmsInnerStocktaking extends BaseQuery implements Serializable
      * 盘点单号
      */
     @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
-    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点单号", height = 20, width = 30)
     private String stocktakingCode;
 
     /**
      * 盘点员Id
      */
     @ApiModelProperty(name="stockistId",value = "盘点员Id")
-    @Excel(name = "盘点员Id", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点员Id", height = 20, width = 30)
     private Long stockistId;
+
+    /**
+     * 盘点员名称
+     */
+    @ApiModelProperty(name="stockistName",value = "盘点员名称")
+    @Excel(name = "盘点员名称", height = 20, width = 30)
+    private String stockistName;
 
     /**
      * 盘点状态(0、待盘点 1、盘点中 2、盘点完成)
      */
     @ApiModelProperty(name="status",value = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)")
-    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点状态(0、待盘点 1、盘点中 2、盘点完成)", height = 20, width = 30)
     private Byte status;
 
     /**
      * 盘点方式(0、月盘 1、抽盘)
      */
     @ApiModelProperty(name="stocktakingMode",value = "盘点方式(0、月盘 1、抽盘)")
-    @Excel(name = "盘点方式(0、月盘 1、抽盘)", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点方式(0、月盘 1、抽盘)", height = 20, width = 30)
     private Byte stocktakingMode;
 
     /**

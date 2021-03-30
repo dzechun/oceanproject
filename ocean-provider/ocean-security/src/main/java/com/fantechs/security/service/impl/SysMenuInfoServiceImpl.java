@@ -289,9 +289,10 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
                 count++;
                 SysMenuInListDTO tSysMenuinfoListDTO1 = new SysMenuInListDTO();
                 SysMenuInfoDto remove = menuList.remove(i);
-
-                remove.getRoles().addAll(roleMap.remove(remove.getMenuId()));
-
+                List<SysRoleDto> roleDtos = roleMap.remove(remove.getMenuId());
+                if (StringUtils.isNotEmpty(roleDtos)){
+                    remove.getRoles().addAll(roleDtos);
+                }
                 tSysMenuinfoListDTO1.setSysMenuInfoDto(remove);
                 tSysMenuinfoListDTOList.add(tSysMenuinfoListDTO1);
                 tSysMenuinfoListDTO.setSysMenuinList(tSysMenuinfoListDTOList);

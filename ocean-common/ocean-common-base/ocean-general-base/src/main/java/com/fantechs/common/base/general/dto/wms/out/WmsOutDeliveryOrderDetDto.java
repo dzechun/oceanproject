@@ -18,7 +18,7 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     private String createUserName;
 
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 
@@ -35,5 +35,28 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     @Excel(name = "物料描述", height = 20, width = 30)
     private String materialDesc;
+
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
+
+    @ApiModelProperty(name="orderCode" ,value="订单号")
+    private String orderCode;
+
+    @ApiModelProperty(name="contractCode" ,value="合同号")
+    private String contractCode;
+
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    private String warehouseName;
+
+    @ApiModelProperty(name="productModelName" ,value="产品型号")
+    private String productModelName;
+
+    @ApiModelProperty(name="realityCartonQty" ,value="出货箱数")
+    private String realityCartonQty;
+
+
+
+
+
 
 }

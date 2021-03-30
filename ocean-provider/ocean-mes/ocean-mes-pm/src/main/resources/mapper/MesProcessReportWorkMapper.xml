@@ -54,7 +54,7 @@
         sp.process_code,sp.process_name,
         btm.team_code, btm.team_name,
         bs.staff_code, bs.staff_name,
-        sum(mprw.quantity) as total_quantity
+        mprws.total_quantity
         from mes_process_report_work mprw
         LEFT JOIN smt_work_order swo ON mprw.work_order_id = swo.work_order_id
         LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
@@ -63,6 +63,7 @@
         LEFT JOIN smt_process sp ON mprw.process_id = sp.process_id
         LEFT JOIN base_team btm ON mprw.team_id = btm.team_id
         LEFT JOIN base_staff bs ON mprw.staff_id = bs.staff_id
+        LEFT JOIN (select mprws.work_order_id,sum(mprws.quantity) as total_quantity from mes_process_report_work mprws group by mprws.work_order_id) mprws ON mprw.work_order_id = mprws.work_order_id
         <where>
             mprw.is_delete = 1
             <if test="workOrderId != null">

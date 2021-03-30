@@ -32,9 +32,9 @@ public class SearchBaseWarning extends BaseQuery {
     private Byte personnelLevel;
 
     /**
-     * 通知方式（0、微信 1、短信 2、钉钉）
+     * 通知方式（0、微信 1、短信 2、钉钉 3、邮件）
      */
-    @ApiModelProperty(name="notificationMethod",value = "通知方式（0、微信 1、短信 2、钉钉）")
+    @ApiModelProperty(name="notificationMethod",value = "通知方式（0、微信 1、短信 2、钉钉 3、邮件）")
     private Byte notificationMethod;
 
 }

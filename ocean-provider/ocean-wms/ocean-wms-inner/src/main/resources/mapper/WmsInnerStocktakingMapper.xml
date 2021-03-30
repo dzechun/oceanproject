@@ -28,6 +28,7 @@
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="stockist_name" jdbcType="VARCHAR" property="stockistName" />
   </resultMap>
   
   <sql id="Base_Column_List">
@@ -66,6 +67,9 @@
       </if>
       <if test="stockistId!=null">
         and wis.stockist_id = #{stockistId}
+      </if>
+      <if test="stockistName!=null and stockistName != ''">
+        and suss.user_name like CONCAT("%",#{stockistName},"%")
       </if>
       <if test="stocktakingMode!=null">
         and wis.stocktaking_mode = #{stocktakingMode}
