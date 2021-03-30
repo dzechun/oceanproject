@@ -94,6 +94,7 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
         qmsFirstInspection.setModifiedUserId(user.getUserId());
         qmsFirstInspection.setStatus(StringUtils.isEmpty(qmsFirstInspection.getStatus())?1:qmsFirstInspection.getStatus());
         qmsFirstInspection.setFirstInspectionCode(CodeUtils.getId("PDASJ"));
+        qmsFirstInspection.setOrganizationId(user.getOrganizationId());
 
         int i = qmsFirstInspectionMapper.insertUseGeneratedKeys(qmsFirstInspection);
 
