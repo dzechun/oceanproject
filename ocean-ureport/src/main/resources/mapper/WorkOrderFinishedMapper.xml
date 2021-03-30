@@ -7,6 +7,7 @@
     </resultMap>
     <select id="findList" resultMap="BaseResultMap" parameterType="com.fantechs.entity.search.SearchWorkOrderFinished">
         select swo.work_order_code as 'workOrderCode',
+        swo.contract_no as 'contractNo',
         so.order_code as 'orderCode',
         ss.supplier_name as 'supplierName',
         sm.material_code as 'materialCode',
@@ -46,22 +47,22 @@
         LEFT JOIN ocean.sys_user osu ON mpm.create_user_id = osu.user_id
         <where>
             <if test="supplierName != null and supplierName != ''">
-                ss.supplier_name like CONCAT('%', #{supplierName}, '%')
+                and ss.supplier_name like CONCAT('%', #{supplierName}, '%')
             </if>
             <if test="workOrderCode != null and workOrderCode != ''">
-                swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+                and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
             <if test="contractNo != null and contractNo != ''">
-                swo.contract_no like CONCAT('%', #{contractNo}, '%')
+                and swo.contract_no like CONCAT('%', #{contractNo}, '%')
             </if>
             <if test="materialCode != null and materialCode != ''">
-                sm.material_code like CONCAT('%', #{materialCode}, '%')
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
             <if test="proCode != null and proCode != ''">
-                spl.pro_code like CONCAT('%', #{proCode}, '%')
+                and spl.pro_code like CONCAT('%', #{proCode}, '%')
             </if>
             <if test="workOrderStatus != null">
-                swo.work_order_status = #{workOrderStatus}
+                and swo.work_order_status = #{workOrderStatus}
             </if>
             <if test="createTime != null">
                 and SUBSTRING(mpm.create_time,1,10) = SUBSTRING(#{createTime},1,10)
