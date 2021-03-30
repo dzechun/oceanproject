@@ -63,12 +63,15 @@
         LEFT JOIN fantech_imes.smt_warehouse sw ON sw.warehouse_id = swa.warehouse_id
         LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = ssi.material_id
         LEFT JOIN fantech_imes.base_organization bo ON ssid.organization_id = bo.organization_id
-
+        LEFT JOIN fantech_imes.smt_storage_pallet ssp ON ssp.pallet_code = ssid.material_barcode_code
         LEFT JOIN mes_package_manager mpm ON mpm.bar_code = ssid.material_barcode_code
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
         LEFT JOIN smt_order so ON so.order_id = swo.order_id
 
         <where>
+            <if test="isBinding!= null and isBinding !='' ">
+                and (ssp.is_binding != #{isBinding} or ssp.is_binding is null)
+            </if>
             <if test="materialBarcodeCode!= null and materialBarcodeCode !='' ">
                 and ssid.material_barcode_code like CONCAT('%', #{materialBarcodeCode}, '%')
             </if>
@@ -83,6 +86,12 @@
             </if>
             <if test="storageName!= null and storageName !='' ">
                 and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="storageId!= null and storageId !='' ">
+                and ssi.storage_id = #{storageId}
+            </if>
+            <if test="workOrderId!= null and workOrderId !='' ">
+                and mpm.work_order_id = #{workOrderId}
             </if>
             <if test="materialCode!= null and materialCode !='' ">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
