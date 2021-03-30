@@ -81,7 +81,7 @@
     from fantech_imes.wms_inner_ht_stocktaking_det wihsd
     LEFT JOIN ocean.sys_user su  ON wihsd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wihsd.modified_user_id = sus.user_id
-    LEFT JOIN ocean.smt_material sm ON wihsd.material_id = sm.material_id
+    LEFT JOIN fantech_imes.smt_material sm ON wihsd.material_id = sm.material_id
     LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
     LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
     LEFT JOIN fantech_imes.smt_storage ss ON wihsd.storage_id = ss.storage_id
