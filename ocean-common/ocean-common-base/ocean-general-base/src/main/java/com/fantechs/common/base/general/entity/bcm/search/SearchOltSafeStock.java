@@ -15,11 +15,6 @@ import java.io.Serializable;
  */
 @Data
 public class SearchOltSafeStock extends BaseQuery implements Serializable {
-    /**
-     * 安全库存类型1：仓库、2:物料类型、3:产品料号
-     */
-    @ApiModelProperty(name="safeStockType",value = "安全库存类型1：仓库、2:物料类型、3:产品料号")
-    private Byte safeStockType;
 
     /**
      * 仓库名称

@@ -58,6 +58,10 @@ sps.process_scheduling_desc
         <if test="processSchedulingName != null and processSchedulingName != ''">
             and sps.process_scheduling_name like concat('%',#{processSchedulingName},'%')
         </if>
-</where>
+        <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by sps.create_time desc
 </select>
 </mapper>

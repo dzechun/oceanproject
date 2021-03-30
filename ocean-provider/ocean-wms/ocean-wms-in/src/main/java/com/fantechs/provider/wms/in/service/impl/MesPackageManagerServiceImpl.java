@@ -230,6 +230,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                 printDto.setLabelName("栈板.btw");
                 for (ManagerList managerList : saveMesPackageManagerDTO.getManagerLists()) {
                     PrintModel printModel = mesPackageManagerMapper.findPrintModel(managerList.getPackageManagerId());
+                    printModel.setOption2(mesPackageManager.getBarCode());
                     printModel.setQrCode(mesPackageManager.getBarCode());
                     //件数
                     printModel.setOption8(managerList.getQty().toString());

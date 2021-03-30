@@ -7,11 +7,11 @@
     -->
     <id column="olt_ht_safe_stock_id" jdbcType="BIGINT" property="oltHtSafeStockId" />
     <result column="safe_stock_id" jdbcType="BIGINT" property="safeStockId" />
-    <result column="safe_stock_type" jdbcType="TINYINT" property="safeStockType" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="material_category_id" jdbcType="BIGINT" property="materialCategoryId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="safe_stock_quantity" jdbcType="DECIMAL" property="safeStockQuantity" />
+    <result column="min_quantity" jdbcType="DECIMAL" property="minQuantity" />
+    <result column="max_quantity" jdbcType="DECIMAL" property="maxQuantity"/>
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -31,11 +31,11 @@
 <sql id="SqlColumn">
 os.safe_ht_stock_id,
 os.safe_stock_id,
-os.safe_stock_type,
 os.warehouse_id,
 os.material_category_id,
 os.material_id,
-os.safe_stock_quantity,
+os.min_quantity,
+os.max_quantity,
 os.status,
 os.organization_id,
 os.create_user_id,
@@ -58,9 +58,6 @@ LEFT JOIN ocean.sys_user su ON os.create_user_id = su.user_id
 LEFT JOIN ocean.sys_user sus ON os.modified_user_id = sus.user_id
 LEFT JOIN fantech_imes.base_organization bo ON os.organization_id = bo.organization_id
 <where>
-<if test="safeStockType != null">
-and os.safe_stock_type = #{safeStockType}
-</if>
 <if test="warehouseName != null and warehouseName != ''">
 and sw.warehouse_name Like CONCAT('%',#{warehouseName},'%',)
 </if>

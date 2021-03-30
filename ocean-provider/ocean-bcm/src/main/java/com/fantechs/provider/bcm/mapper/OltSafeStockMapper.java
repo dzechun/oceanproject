@@ -18,7 +18,7 @@ public interface OltSafeStockMapper extends MyMapper<OltSafeStock> {
      * 根据仓库查询总数
      * @return
      */
-    BigDecimal selectCountByWare(@Param("warehouseId")Long warehouseId);
+    BigDecimal selectCountByWare(@Param("warehouseId")Long warehouseId,@Param("materialCategoryId") Long materialCategoryId,@Param("materialId") Long materialId);
 
     /**
      * 根据物料类别查询总数
