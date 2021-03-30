@@ -26,7 +26,7 @@
                extends="BaseResultMap">
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
@@ -113,6 +113,7 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT
+        mpm.work_order_id,
         ssi.material_id,
         ssi.storage_id,
         sss.supplier_name,
@@ -127,7 +128,7 @@
         sum(ssid.material_quantity) as total,
         ssi.quantity as material_total,
         sm.material_name,
-        sum((if(mpm.type=1,1,mpm.total))) AS box_number,
+        sum(if((select is_binding from smt_storage_pallet ssp where ssp.pallet_code = ssid.material_barcode_code)=2,0,if(mpm.type=1,1,mpm.total))) AS box_number,
         ssid.create_time,
         sm.version
         FROM
@@ -141,7 +142,7 @@
         left join smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
         left join smt_material sm on sm.material_id = ssi.material_id
         left join smt_supplier sss ON sss.supplier_id = so.supplier_id
-        group by ssi.storage_id,mpm.work_order_id
+        group by ssi.storage_id,so.contract_code
         HAVING
             sum( ssid.material_quantity ) > 0
             <if test="supplierName != null and supplierName != ''">

@@ -29,6 +29,8 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
         map.clear();
         for (StorageMonthEndInventoryDto storageMonthEndInventoryDto : list) {
             map.put("contractCode",storageMonthEndInventoryDto.getContractCode());
+            map.put("storageId",storageMonthEndInventoryDto.getStorageId());
+            map.put("isBinding",2);
             List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = smtStorageInventoryDetMapper.findList(map);
             storageMonthEndInventoryDto.setList(smtStorageInventoryDetDtos);
         }

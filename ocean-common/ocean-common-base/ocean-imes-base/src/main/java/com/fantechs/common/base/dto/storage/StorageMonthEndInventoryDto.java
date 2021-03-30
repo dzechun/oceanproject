@@ -28,6 +28,12 @@ public class StorageMonthEndInventoryDto extends StorageMonthEndInventory implem
     private String contractCode;
 
     /**
+     * 工单ID
+     */
+    @ApiModelProperty(name = "workOrderId", value = "工单ID")
+    private Long workOrderId;
+
+    /**
      * 仓库名称
      */
     @Transient
