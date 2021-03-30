@@ -152,7 +152,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             wmsInnerStocktakingDet.setModifiedUserId(user.getUserId());
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1 && wmsInnerStocktakingDet.getProfitLossRate() == null){
-                wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
+                wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getCountedQuantity().subtract(wmsInnerStocktakingDet.getBookInventory()));
                 wmsInnerStocktakingDet.setProfitLossRate(wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory()));
             }
             WmsInnerHtStocktakingDet wmsInnerHtStocktakingDet = new WmsInnerHtStocktakingDet();
@@ -184,7 +184,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         }
 
         //PDA执行得提交操作则修改单据为盘点完成
-        if (wmsInnerStocktaking.getPdaOperation() == 1){
+        if (Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
             wmsInnerStocktaking.setStatus((byte) 1);
         }
         wmsInnerStocktaking.setModifiedTime(new Date());
@@ -233,7 +233,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             }
 
             //PDA执行得提交操作则修改明细为盘点完成
-            if (wmsInnerStocktaking.getPdaOperation() == 1){
+            if (Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
                 wmsInnerStocktakingDet.setStatus((byte) 1);
             }
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());

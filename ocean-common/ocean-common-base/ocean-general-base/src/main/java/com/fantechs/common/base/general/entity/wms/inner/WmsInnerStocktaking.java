@@ -130,7 +130,6 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
      * 盘点单明细集合
      */
     @ApiModelProperty(name = "盘点单明细集合")
-    @Transient
     private List<WmsInnerStocktakingDetDto> wmsInnerStocktakingDetDtos = new ArrayList<>();
 
     /**

@@ -152,7 +152,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
                 mesOrderMaterial.setCreateTime(new Date());
                 mesOrderMaterial.setCreateUserId(sysUser.getUserId());
                 mesOrderMaterial.setModifiedTime(new Date());
-                mesOrderMaterial.setMaterialId(currentUser().getUserId());
+                mesOrderMaterial.setModifiedUserId(sysUser.getUserId());
             }
             if(smtOrderMapper.batchAddOrderMaterial(mesOrderMaterialList)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
