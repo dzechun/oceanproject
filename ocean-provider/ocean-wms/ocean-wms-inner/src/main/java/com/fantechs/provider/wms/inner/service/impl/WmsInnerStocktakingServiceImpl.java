@@ -210,6 +210,12 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         //新增盘点单明细
         LinkedList<WmsInnerHtStocktakingDet> wmsInnerHtStocktakingDets = new LinkedList<>();
         for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
+
+            //PDA执行的提交操作则修改明细为盘点完成
+            if (Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
+                wmsInnerStocktakingDet.setStatus((byte) 1);
+            }
+
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1 && wmsInnerStocktakingDet.getProfitLossRate() == null){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
@@ -232,10 +238,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDetDto);
             }
 
-            //PDA执行得提交操作则修改明细为盘点完成
-            if (Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
-                wmsInnerStocktakingDet.setStatus((byte) 1);
-            }
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
             wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
             wmsInnerStocktakingDet.setCreateTime(new Date());
