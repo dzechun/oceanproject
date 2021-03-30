@@ -29,14 +29,6 @@ public class OltSafeStock extends ValidGroup implements Serializable {
     private Long safeStockId;
 
     /**
-     * 安全库存类型1：仓库、2:物料类型、3:产品料号
-     */
-    @ApiModelProperty(name="safeStockType",value = "安全库存类型1：仓库、2:物料类型、3:产品料号")
-    @Excel(name = "安全库存类型1：仓库、2:物料类型、3:产品料号", height = 20, width = 30,orderNum="") 
-    @Column(name = "safe_stock_type")
-    private Byte safeStockType;
-
-    /**
      * 仓库id
      */
     @ApiModelProperty(name="warehouseId",value = "仓库id")
@@ -61,12 +53,20 @@ public class OltSafeStock extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 安全库存数
+     * 最小数
      */
-    @ApiModelProperty(name="safeStockQuantity",value = "安全库存数")
-    @Excel(name = "安全库存数", height = 20, width = 30,orderNum="") 
-    @Column(name = "safe_stock_quantity")
-    private BigDecimal safeStockQuantity;
+    @ApiModelProperty(name="minQuantity",value = "最小数")
+    @Excel(name = "最小数", height = 20, width = 30,orderNum="")
+    @Column(name = "min_quantity")
+    private BigDecimal minQuantity;
+
+    /**
+     * 最大数
+     */
+    @ApiModelProperty(name="maxQuantity",value = "最小数")
+    @Excel(name = "最大数", height = 20, width = 30,orderNum="")
+    @Column(name = "max_quantity")
+    private BigDecimal maxQuantity;
 
     /**
      * 是否有效（0、无效 1、有效）

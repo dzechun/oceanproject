@@ -134,10 +134,10 @@
 
     <insert id="batchAddOrderMaterial" parameterType="java.util.List">
         insert into
-        fantech_imes.mes_order_material(order_id,material_id,total,box_code,package_specification_id,size,rough_weight,net_weight,spec_file,schedule_status)
+        fantech_imes.mes_order_material(order_id,material_id,total,box_code,package_specification_id,size,rough_weight,net_weight,spec_file,schedule_status,create_user_id,create_time,modified_user_id,modified_time)
         values
         <foreach collection="list" item="item" separator="," index="index">
-            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packageSpecificationId},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile},#{item.scheduleStatus})
+            (#{item.orderId},#{item.materialId},#{item.total},#{item.boxCode},#{item.packageSpecificationId},#{item.size},#{item.roughWeight},#{item.netWeight},#{item.specFile},#{item.scheduleStatus},#{item.createUserId},#{item.createTime},#{item.modifiedUserId},#{item.modifiedTime})
         </foreach>
     </insert>
     <delete id="deleteMaterialByOrderId" parameterType="long">

@@ -123,6 +123,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
 
     @Override
     public int saveOrderMaterial(SaveOrderMaterialDTO saveOrderMaterialDTO) {
+        SysUser sysUser = currentUser();
         SmtOrder smtOrder = saveOrderMaterialDTO.getSmtOrder();
         List<MesOrderMaterial> mesOrderMaterialList = saveOrderMaterialDTO.getMesOrderMaterialList();
         //=====遍历累加物料的总数量
@@ -148,6 +149,10 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         if(StringUtils.isNotEmpty(mesOrderMaterialList)){
             for (MesOrderMaterial mesOrderMaterial : mesOrderMaterialList) {
                 mesOrderMaterial.setOrderId(smtOrder.getOrderId());
+                mesOrderMaterial.setCreateTime(new Date());
+                mesOrderMaterial.setCreateUserId(sysUser.getUserId());
+                mesOrderMaterial.setModifiedTime(new Date());
+                mesOrderMaterial.setMaterialId(currentUser().getUserId());
             }
             if(smtOrderMapper.batchAddOrderMaterial(mesOrderMaterialList)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
@@ -201,5 +206,17 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         }
         BeanUtils.autoFillEqFields(orderMaterialDTOList.get(0),mesHtOrderMaterial);
         mesHtOrderMaterialService.save(mesHtOrderMaterial);
+    }
+
+    /**
+     * 获取当前登录用户
+     * @return
+     */
+    private SysUser currentUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
     }
 }

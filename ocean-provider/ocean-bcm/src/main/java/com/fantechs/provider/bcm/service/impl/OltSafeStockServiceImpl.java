@@ -22,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,44 +41,12 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
 
     @Override
     public List<OltSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock) {
-        List<OltSafeStockDto> list = oltSafeStockMapper.findList(searchOltSafeStock);
-        for (OltSafeStockDto oltSafeStockDto : list) {
-            //按仓库查询总数
-            if(oltSafeStockDto.getSafeStockType()==1){
-                BigDecimal countQty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId());
-                oltSafeStockDto.setCountQty(countQty);
-            }else if(oltSafeStockDto.getSafeStockType()==2){
-                //按物料类别查询总数
-                BigDecimal countQty = oltSafeStockMapper.selectCountByCate(oltSafeStockDto.getMaterialCategoryId());
-                oltSafeStockDto.setCountQty(countQty);
-            }else if(oltSafeStockDto.getSafeStockType()==3){
-                //按物料查询总数
-                BigDecimal countQty = oltSafeStockMapper.selectCountByCode(oltSafeStockDto.getMaterialId());
-                oltSafeStockDto.setCountQty(countQty);
-            }
-        }
-        return list;
+        return oltSafeStockMapper.findList(searchOltSafeStock);
     }
 
     @Override
     public List<OltSafeStockDto> findHtList(SearchOltSafeStock searchOltSafeStock) {
-        List<OltSafeStockDto> list = oltHtSafeStockMapper.findHtList(searchOltSafeStock);
-        for (OltSafeStockDto oltSafeStockDto : list) {
-            //按仓库查询总数
-            if(oltSafeStockDto.getSafeStockType()==1){
-                BigDecimal countQty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId());
-                oltSafeStockDto.setCountQty(countQty);
-            }else if(oltSafeStockDto.getSafeStockType()==2){
-                //按物料类别查询总数
-                BigDecimal countQty = oltSafeStockMapper.selectCountByCate(oltSafeStockDto.getMaterialCategoryId());
-                oltSafeStockDto.setCountQty(countQty);
-            }else if(oltSafeStockDto.getSafeStockType()==3){
-                //按物料查询总数
-                BigDecimal countQty = oltSafeStockMapper.selectCountByCode(oltSafeStockDto.getMaterialId());
-                oltSafeStockDto.setCountQty(countQty);
-            }
-        }
-        return list;
+        return oltHtSafeStockMapper.findHtList(searchOltSafeStock);
     }
 
     /**
@@ -91,20 +56,28 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
     @Override
     public int inventeryWarning() {
         List<OltSafeStockDto> list = findList(new SearchOltSafeStock());
-        list.stream().filter(li->li.getCountQty().compareTo(li.getSafeStockQuantity())==1).collect(Collectors.toList());
-        if(list.size()>0){
+        List<OltSafeStockDto> oltList = new ArrayList<>();
+        for (OltSafeStockDto oltSafeStockDto : list) {
+            BigDecimal qty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialCategoryId(),oltSafeStockDto.getMaterialId());
+            if(qty.compareTo(oltSafeStockDto.getMaxQuantity())==1){
+                oltSafeStockDto.setIsMax(true);
+                oltList.add(oltSafeStockDto);
+            }else if(qty.compareTo(oltSafeStockDto.getMinQuantity())==-1){
+                oltSafeStockDto.setIsMax(false);
+                oltList.add(oltSafeStockDto);
+
+            }
+        }
+        if(oltList.size()>0){
             StringBuffer sb = new StringBuffer();
             sb.append("安全库存预警：\n");
-            for (OltSafeStockDto oltSafeStockDto : list) {
-                if(oltSafeStockDto.getSafeStockType()==1){
-                    sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"   现有数量："+oltSafeStockDto.getCountQty());
-                }else if(oltSafeStockDto.getSafeStockType()==2){
-                    sb.append("物料类型："+oltSafeStockDto.getWarehouseName()+"   现有数量："+oltSafeStockDto.getCountQty());
-                }else if(oltSafeStockDto.getSafeStockType()==3){
-                    sb.append("物料："+oltSafeStockDto.getMaterialName()+"\n");
+            for (OltSafeStockDto oltSafeStockDto : oltList) {
+                if(oltSafeStockDto.getIsMax()){
+                    sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"超出设定安全库存");
+                }else{
+                    sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"低于设定安全库存");
                 }
             }
-            sb.append("总数低于安全库存数量！！");
             mailService.sendSimpleMail("lql@fantechs.com.cn","安全库存预警",sb.toString());
         }
         return 1;
@@ -114,8 +87,8 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(OltSafeStock record) {
         SysUser sysUser = currentUser();
-        if(StringUtils.isEmpty(record.getSafeStockType())){
-            throw new BizErrorException("类型不能为空");
+        if(StringUtils.isEmpty(record.getWarehouseId())){
+            throw new BizErrorException("仓库不能为空");
         }
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());

@@ -64,13 +64,6 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
     private String version;
 
     /**
-     * 总数
-     */
-    @ApiModelProperty(name = "countQty",value = "总数")
-    @Excel(name = "总数",height = 20,width = 30)
-    private BigDecimal countQty;
-
-    /**
      * 创建用户名称
      */
     @Transient
@@ -90,4 +83,6 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    private Boolean isMax;
 }
