@@ -120,6 +120,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
         //获取预警人员
         SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
         searchBaseWarning.setWarningType((long) 0);
+        searchBaseWarning.setNotificationMethod((byte) 3);
         List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
         if (StringUtils.isNotEmpty(baseWarningDtos)){
             for (BaseWarningDto baseWarningDto : baseWarningDtos) {

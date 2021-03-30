@@ -37,7 +37,7 @@ public class BaseWarning extends ValidGroup implements Serializable {
      * 预警类型
      */
     @ApiModelProperty(name="warningType",value = "预警类型")
-    @Excel(name = "预警类型", height = 20, width = 30,replace = {"质检预警_0","生产线_1","缺料预警_2"})
+    @Excel(name = "预警类型", height = 20, width = 30,replace = {"质检预警_0","生产线_1","缺料预警_2","安全库存预警_3"})
     @Column(name = "warning_type")
     @NotNull(message = "预警类型不能为空")
     private Long warningType;
@@ -52,10 +52,10 @@ public class BaseWarning extends ValidGroup implements Serializable {
     private Byte personnelLevel;
 
     /**
-     * 通知方式（0、微信 1、短信 2、钉钉）
+     * 通知方式（0、微信 1、短信 2、钉钉 3、邮件）
      */
-    @ApiModelProperty(name="notificationMethod",value = "通知方式（0、微信 1、短信 2、钉钉）")
-    @Excel(name = "通知方式（0、微信 1、短信 2、钉钉）", height = 20, width = 30,replace = {"微信_0","短信_1","钉钉_2"})
+    @ApiModelProperty(name="notificationMethod",value = "通知方式（0、微信 1、短信 2、钉钉 3、邮件）")
+    @Excel(name = "通知方式（0、微信 1、短信 2、钉钉 3、邮件）", height = 20, width = 30,replace = {"微信_0","短信_1","钉钉_2","邮件_3"})
     @Column(name = "notification_method")
     @NotNull(message = "通知方式不能为空")
     private Byte notificationMethod;
