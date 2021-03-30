@@ -36,4 +36,6 @@ public interface MesPackageManagerService extends IService<MesPackageManager>  {
     //根据条码查询信息，返回父级信息及子级数量
     MesPackageManagerInDTO findParentByBarcode(String barcode);
 
+    List<MesPackageManager> addPackage(List<MesPackageManager> mesPackageManagers);
+
 }

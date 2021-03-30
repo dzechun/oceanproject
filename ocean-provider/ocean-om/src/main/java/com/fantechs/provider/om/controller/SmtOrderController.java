@@ -4,11 +4,8 @@ import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.general.dto.mes.pm.history.SearchSmtHtOrderListDTO;
 import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
-import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
-import com.fantechs.common.base.general.dto.om.SaveOrderMaterialDTO;
+import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
-import com.fantechs.common.base.general.dto.om.SmtOrderAndMaterialDTO;
-import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -97,23 +94,24 @@ public class SmtOrderController {
 
     @ApiOperation("列表及子列表")
     @PostMapping("/findListAndChildren")
-    public ResponseEntity<List<SmtOrderAndMaterialDTO>> findListAndChildren(@ApiParam(value = "查询对象")@RequestBody SearchSmtOrder searchSmtOrder) {
+    public ResponseEntity<List<FindOrderMaterialDto>> findListAndChildren(@ApiParam(value = "查询对象")@RequestBody SearchSmtOrder searchSmtOrder) {
         List<SmtOrderAndMaterialDTO> smtOrderAndMaterialDTOList=new LinkedList<>();
         Page<Object> page = PageHelper.startPage(searchSmtOrder.getStartPage(),searchSmtOrder.getPageSize());
-        List<SmtOrderDto> list = smtOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtOrder));
-        if(StringUtils.isNotEmpty(list)){
-            for (SmtOrderDto smtOrderDto : list) {
-                SmtOrderAndMaterialDTO smtOrderAndMaterialDTO = new SmtOrderAndMaterialDTO();
-                smtOrderAndMaterialDTO.setSmtOrderDto(smtOrderDto);
-                SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
-                searchMesOrderMaterialListDTO.setOrderId(smtOrderDto.getOrderId());
-                searchMesOrderMaterialListDTO.setScheduleStatus((byte)0);
-                List<MesOrderMaterialDTO> orderMaterial = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
-                smtOrderAndMaterialDTO.setMesOrderMaterialDTOList(orderMaterial);
-                smtOrderAndMaterialDTOList.add(smtOrderAndMaterialDTO);
-            }
-        }
-        return ControllerUtil.returnDataSuccess(smtOrderAndMaterialDTOList,(int)page.getTotal());
+        List<FindOrderMaterialDto> list = smtOrderService.findOrder();
+        //List<SmtOrderDto> list = smtOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtOrder));
+//        if(StringUtils.isNotEmpty(list)){
+//            for (SmtOrderDto smtOrderDto : list) {
+//                SmtOrderAndMaterialDTO smtOrderAndMaterialDTO = new SmtOrderAndMaterialDTO();
+//                smtOrderAndMaterialDTO.setSmtOrderDto(smtOrderDto);
+//                SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO = new SearchMesOrderMaterialListDTO();
+//                searchMesOrderMaterialListDTO.setOrderId(smtOrderDto.getOrderId());
+//                searchMesOrderMaterialListDTO.setScheduleStatus((byte)0);
+//                List<MesOrderMaterialDTO> orderMaterial = smtOrderService.findOrderMaterial(searchMesOrderMaterialListDTO);
+//                smtOrderAndMaterialDTO.setMesOrderMaterialDTOList(orderMaterial);
+//                smtOrderAndMaterialDTOList.add(smtOrderAndMaterialDTO);
+//            }
+//        }
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("获取订单产品详情")

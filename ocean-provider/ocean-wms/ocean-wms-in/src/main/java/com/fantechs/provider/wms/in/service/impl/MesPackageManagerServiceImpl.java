@@ -246,7 +246,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                 printModelList.add(printModel);
             }else if(mesPackageManager.getType()==(byte)2){
                 printDto.setLabelName("栈板.btw");
-                for (ManagerList managerList : saveMesPackageManagerDTO.getManagerLists()) {
+                ManagerList managerList = saveMesPackageManagerDTO.getManagerList();
                     PrintModel printModel = mesPackageManagerMapper.findPrintModel(managerList.getPackageManagerId());
                     printModel.setOption2(mesPackageManager.getBarCode());
                     printModel.setQrCode(mesPackageManager.getBarCode());
@@ -255,7 +255,6 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                     //把数
                     printModel.setOption9(managerList.getTotal().toString());
                     printModelList.add(printModel);
-                }
             }
             printDto.setPrintName("测试");
             printDto.setPrintModelList(printModelList);
@@ -316,6 +315,19 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         mesPackageManagerInDTO.setTotal(new BigDecimal(total));
         //=====
         return mesPackageManagerInDTO;
+    }
+
+    @Override
+    public List<MesPackageManager> addPackage(List<MesPackageManager> mesPackageManagers) {
+        List<MesPackageManager> list = mesPackageManagers;
+        for (MesPackageManager mesPackageManager : list) {
+            SaveMesPackageManagerDTO saveMesPackageManagerDTO = new SaveMesPackageManagerDTO();
+            saveMesPackageManagerDTO.setMesPackageManager(mesPackageManager);
+            saveMesPackageManagerDTO.setMesPackageManagerList(mesPackageManager.getMesPackageManagerList());
+            saveMesPackageManagerDTO.setManagerList(mesPackageManager.getManagerList());
+            this.saveChildren(saveMesPackageManagerDTO);
+        }
+        return list;
     }
 
     private void printCode(MesPackageManager mesPackageManager){

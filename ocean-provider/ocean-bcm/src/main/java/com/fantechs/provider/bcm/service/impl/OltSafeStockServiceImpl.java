@@ -3,7 +3,9 @@ package com.fantechs.provider.bcm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.bcm.OltSafeStockDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.bcm.OltSafeStock;
 import com.fantechs.common.base.general.entity.bcm.history.OltHtSafeStock;
 import com.fantechs.common.base.general.entity.bcm.search.SearchOltSafeStock;
@@ -11,6 +13,7 @@ import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.bcm.mapper.OltHtSafeStockMapper;
 import com.fantechs.provider.bcm.mapper.OltSafeStockMapper;
 import com.fantechs.provider.bcm.service.Mail.MailService;
@@ -38,6 +41,8 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
     private OltHtSafeStockMapper oltHtSafeStockMapper;
     @Resource
     private MailService mailService;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<OltSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock) {
@@ -78,6 +83,9 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
                     sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"低于设定安全库存");
                 }
             }
+//            SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+//            searchBaseWarning
+//            List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
             mailService.sendSimpleMail("lql@fantechs.com.cn","安全库存预警",sb.toString());
         }
         return 1;

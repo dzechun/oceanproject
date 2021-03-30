@@ -25,4 +25,7 @@ public interface SmtOrderService extends IService<SmtOrder> {
     List<MesOrderMaterialDTO> findOrderMaterial(SearchMesOrderMaterialListDTO searchMesOrderMaterialListDTO);
 
     List<SmtOrderReportDto> orderReport(SearchSmtOrderReportDto searchSmtOrderReportDto);
+
+    //销售资源池
+    List<FindOrderMaterialDto> findOrder();
 }
