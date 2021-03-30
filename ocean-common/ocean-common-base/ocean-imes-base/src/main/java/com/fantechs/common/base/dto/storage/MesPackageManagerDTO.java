@@ -137,4 +137,12 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
     @Transient
     @ApiModelProperty(name = "packageSpecificationQuantity",value = "包装规格-数量")
     private BigDecimal packageSpecificationQuantity;
+
+    /**
+     * 父栈板码
+     */
+    @Transient
+    @ApiModelProperty(value = "父栈板码",example = "产线名称")
+    @Excel(name = "父栈板码")
+    private String parentBarCode;
 }

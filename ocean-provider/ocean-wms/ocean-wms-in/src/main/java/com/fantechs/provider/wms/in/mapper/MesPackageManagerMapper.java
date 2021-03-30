@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.in.mapper;
 
+import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.general.dto.bcm.PrintModel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.storage.MesPackageManager;

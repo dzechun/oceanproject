@@ -129,8 +129,16 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
     /**
      * 盘点单明细集合
      */
-    @ApiModelProperty(name = "")
+    @ApiModelProperty(name = "盘点单明细集合")
+    @Transient
     private List<WmsInnerStocktakingDetDto> wmsInnerStocktakingDetDtos = new ArrayList<>();
+
+    /**
+     * PDA操作
+     */
+    @Transient
+    @ApiModelProperty(name="pdaOperation",value = "PDA操作")
+    private Byte pdaOperation;
 
     private static final long serialVersionUID = 1L;
 }

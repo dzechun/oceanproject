@@ -34,10 +34,7 @@ import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: bingo.ren
@@ -173,7 +170,28 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
    @Override
    public List<MesPackageManagerDTO> selectFilterAll(Map<String, Object> map) {
-       return mesPackageManagerMapper.selectFilterAll(map);
+       List<MesPackageManagerDTO> mesPackageManagerDTOS = mesPackageManagerMapper.selectFilterAll(map);
+       if (StringUtils.isNotEmpty(mesPackageManagerDTOS)){
+           //类型为1表示是箱,返回该箱对应得储位仓库已经父栈板码
+           if (mesPackageManagerDTOS.get(0).getType() == 1){
+               for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
+                   Map<String, Object> map1 = new HashMap<>();
+                   map1.put("packageManagerId",mesPackageManagerDTO.getParentId());
+                   List<MesPackageManagerDTO> mesPackageManagerDTOS1 = mesPackageManagerMapper.selectFilterAll(map1);
+                   if (StringUtils.isNotEmpty(mesPackageManagerDTOS1)){
+                       MesPackageManagerDTO mesPackageManagerDTO1 = mesPackageManagerDTOS1.get(0);
+                       mesPackageManagerDTO.setWarehouseId(mesPackageManagerDTO1.getWarehouseId());
+                       mesPackageManagerDTO.setWarehouseName(mesPackageManagerDTO1.getWarehouseName());
+                       mesPackageManagerDTO.setStorageId(mesPackageManagerDTO1.getStorageId());
+                       mesPackageManagerDTO.setStorageName(mesPackageManagerDTO1.getStorageName());
+                       mesPackageManagerDTO.setWarehouseAreaName(mesPackageManagerDTO1.getWarehouseAreaName());
+                       mesPackageManagerDTO.setWarehouseAreaId(mesPackageManagerDTO1.getWarehouseAreaId());
+                       mesPackageManagerDTO.setParentBarCode(mesPackageManagerDTO1.getParentBarCode());
+                   }
+               }
+           }
+       }
+       return mesPackageManagerDTOS;
    }
 
     @Override

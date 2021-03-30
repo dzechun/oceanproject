@@ -183,19 +183,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             throw new BizErrorException("盘点单明细不能为空");
         }
 
-        int stocktakingStatus = 0;
-        for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
-            //盘点明细的盘点状态
-            if (wmsInnerStocktakingDet.getStatus() == 1){
-                stocktakingStatus++;
-            }
-        }
-
-        if (stocktakingStatus == wmsInnerStocktakingDetDtos.size()){
-            wmsInnerStocktaking.setStatus((byte) 2);
-        }else if (stocktakingStatus == 0){
-            wmsInnerStocktaking.setStatus((byte) 0);
-        }else {
+        //PDA执行得提交操作则修改单据为盘点完成
+        if (wmsInnerStocktaking.getPdaOperation() == 1){
             wmsInnerStocktaking.setStatus((byte) 1);
         }
         wmsInnerStocktaking.setModifiedTime(new Date());
@@ -241,6 +230,11 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                     smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getProfitLossQuantity()));
                 }
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDetDto);
+            }
+
+            //PDA执行得提交操作则修改明细为盘点完成
+            if (wmsInnerStocktaking.getPdaOperation() == 1){
+                wmsInnerStocktakingDet.setStatus((byte) 1);
             }
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
             wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
