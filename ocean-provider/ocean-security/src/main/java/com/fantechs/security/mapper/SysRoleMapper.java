@@ -6,7 +6,6 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
@@ -17,4 +16,6 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
     List<SysRoleDto> selectRoles(SearchSysRole searchSysRole);
 
     List<SysUser> findBindUser(Map<String,Object> map);
+
+    List<SysRoleDto> findMenuRoles();
 }

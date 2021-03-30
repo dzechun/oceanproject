@@ -1,10 +1,7 @@
 package com.fantechs.security.securityIntercepter;
 
 
-import com.fantechs.common.base.dto.security.SysMenuInfoDto;
-import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
 import com.fantechs.security.service.SysMenuInfoService;
@@ -60,22 +57,6 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
             return SecurityConfig.createList("ROLE_guest");
         }
 
-        String requestUrl =filterInvocation.getRequestUrl();
-        //获取所有菜单，遍历判断当前菜单需要的权限
-        SysMenuInfoDto sysMenuinfo = SysMenuinfoService.findByMap(ControllerUtil.dynamicCondition(
-                "url", requestUrl
-        ));
-
-        if(sysMenuinfo != null){
-            if(antPathMatcher.match(sysMenuinfo.getUrl(), requestUrl) && sysMenuinfo.getRoles().size()>0 && sysMenuinfo.getIsMenu()==1){
-                List<SysRole> tSysRoles = sysMenuinfo.getRoles();
-                String[] roleArray = new String[tSysRoles.size()];
-                for (int i = 0; i < roleArray.length; i++) {
-                    roleArray[i]=tSysRoles.get(i).getRoleId().toString();
-                }
-                return SecurityConfig.createList(roleArray);
-            }
-        }
         //如果当前链接并没有匹配到任何权限，那就赋予一个最基本的权限，游客
         return SecurityConfig.createList("ROLE_guest");
     }

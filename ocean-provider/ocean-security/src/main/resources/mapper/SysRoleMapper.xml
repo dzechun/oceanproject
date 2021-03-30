@@ -17,10 +17,11 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.dto.security.SysRoleDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="menu_id" jdbcType="BIGINT" property="menuId" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    role_id, role_code, role_name, role_desc, create_user_id, create_time, modified_user_id, 
+    role_id, role_code, role_name, role_desc, create_user_id, create_time, modified_user_id,
     modified_time, status, is_delete
   </sql>
 
@@ -48,6 +49,13 @@
         and sr.status=#{status}
       </if>
     </where>
+  </select>
+
+  <select id="findMenuRoles" resultMap="BaseResultMapDto" >
+    select sr.role_id,sr.role_code, sr.role_name, sr.role_desc, sr.create_user_id, sr.create_time, sr.modified_user_id,
+    sr.modified_time,sr.status, sr.is_delete,sar.menu_id
+    from ocean.sys_auth_role sar
+    left join ocean.sys_role sr on sar.role_id = sr.role_id
   </select>
 
 </mapper>
