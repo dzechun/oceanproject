@@ -216,9 +216,8 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
           }
 
          QmsPdaInspectionDetDto qmsPdaInspectionDetDto = qmsPdaInspection.getQmsPdaInspectionDet();
-         String msg = qmsPdaInspection.getPdaInspectionCode()+";";
          if (qmsPdaInspectionDetDto.getInspectionResult() == 2){
-
+             String msg = qmsPdaInspection.getPdaInspectionCode()+";";
              msg += qmsAndinStorageQuarantines.get(0).getPalletCode()+";";
              msg += qmsAndinStorageQuarantines.get(0).getProductCode()+";";
              msg += qmsAndinStorageQuarantines.get(0).getWarehouseAreaCode()+";";
@@ -246,31 +245,30 @@ public class QmsPdaInspectionServiceImpl  extends BaseService<QmsPdaInspection> 
                  msg.substring(0,msg.length()-1);
              }
              msg += ";"+(StringUtils.isNotEmpty(qmsPdaInspectionDetDto.getRemark())?qmsPdaInspectionDetDto.getRemark():"");
+             SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+             searchSysSpecItem.setSpecCode("warningType");
+             List<SysSpecItem> warningTypes = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+             if (StringUtils.isNotEmpty(warningTypes)){
+                 for (int j = 0; j < JSONArray.parseArray(warningTypes.get(0).getParaValue()).size(); j++) {
+                     Object label = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("label");
+                     if ("质检预警".equals(label)){
+                         Object value = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("value");
+                         searchBaseWarning.setWarningType(Long.decode(value.toString()));
+                         break;
+                     }
 
-         }
-         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-         SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
-         searchSysSpecItem.setSpecCode("warningType");
-         List<SysSpecItem> warningTypes = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-         if (StringUtils.isNotEmpty(warningTypes)){
-             for (int j = 0; j < JSONArray.parseArray(warningTypes.get(0).getParaValue()).size(); j++) {
-                 Object label = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("label");
-                 if ("质检预警".equals(label)){
-                     Object value = JSONObject.parseObject(JSONArray.parseArray(warningTypes.get(0).getParaValue()).get(j).toString()).get("value");
-                     searchBaseWarning.setWarningType(Long.decode(value.toString()));
-                     break;
                  }
+             }
+             List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+             if (StringUtils.isNotEmpty(baseWarningDtos)){
+                 BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
+                 List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
+                 for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
+                     bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"质检不合格",msg);
+                 }
+             }
+         }
 
-             }
-         }
-         List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
-         if (StringUtils.isNotEmpty(baseWarningDtos)){
-             BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
-             List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
-             for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
-                 bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"质检不合格",msg);
-             }
-         }
 
          return i;
      }
