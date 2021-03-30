@@ -95,6 +95,7 @@
         and sn.out_status = #{outStatus}
       </if>
     </where>
+    order by sn.shipping_note_code desc
   </select>
 
 </mapper>

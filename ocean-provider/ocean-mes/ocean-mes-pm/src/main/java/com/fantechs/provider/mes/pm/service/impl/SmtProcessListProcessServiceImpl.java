@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.basic.SmtProcess;
+import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmMatchingOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
@@ -271,11 +272,11 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                         throw new BizErrorException("上工序未找到工序信息：" + processFinishedProductDTO.getProcessId());
                     }
                     //开工类型找到上工序后直接结束循环
-                    if(processFinishedProductDTO.getProcessType() == 1){
+                    if (processFinishedProductDTO.getProcessType() == 1) {
                         break;
                     }
                     //报工类型找到上工序后，如果上工序有报工权限，则跳出循环，如果没有，则继续向上找工序
-                    if (processFinishedProductDTO.getProcessType() == 2 && smtProcess.getIsJobScan() != 0){
+                    if (processFinishedProductDTO.getProcessType() == 2 && smtProcess.getIsJobScan() != 0) {
                         break;
                     }
                 }
@@ -283,8 +284,6 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                 break;
             }
         }
-
-
 
 
         MesPmExplainProcessPlan mesPmExplainProcessPlan = new MesPmExplainProcessPlan();
@@ -516,7 +515,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         //=====
 
         if (processFinishedProductDTO.getProcessType() == 1 && processFinishedProductDTO.getOperation() == 2) {
-            if (processFinishedProductDTO.getProcessId().equals(firstProcessIdWS) && !processFinishedProductDTO.getProcessId().equals(firstProcessIdR)){
+            if (processFinishedProductDTO.getProcessId().equals(firstProcessIdWS) && !processFinishedProductDTO.getProcessId().equals(firstProcessIdR)) {
                 sendMaterial(preProcessId, smtWorkOrder.getWorkOrderId(), smtWorkOrder.getMaterialId(), curStartWorkQty.doubleValue());
             }
         }
@@ -576,7 +575,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
             if (StringUtils.isEmpty(tempProcessListProcesseList)) {
                 if (finishRemain) {
                     //如果是工单流程卡报工，需要过滤掉没有开工确认的流程卡，有可能该流程卡还尚未开始做
-                    return 1;
+                    return 3;
                 }
                 throw new BizErrorException("该流程卡尚未开工确认");
             }
@@ -614,7 +613,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
             if (StringUtils.isEmpty(preProcessId)) {
                 if (finishRemain) {
                     //如果是工单流程卡报工，需要过滤掉没有开工确认的流程卡，有可能该流程卡还尚未开始做
-                    return 1;
+                    return 3;
                 }
                 throw new BizErrorException("上工序未进行报工：" + processFinishedProductDTO.getWorkOrderCardPoolId());
             }
@@ -642,10 +641,37 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                     }
                 } else {
                     if (finishRemain) {
-                        //如果是工单流程卡报工，需要过滤掉没有开工确认的流程卡，有可能该流程卡还尚未开始做
-                        return 1;
+                        //上工序没有报工数据，有可能是当前部件没有上工序所在的工段或者没有上工序，
+                        //则找当前部件的最后一道工段的最后一道工序，如果还没有报工数据，则表示还没报工
+//                        processFinishedProductDTO.getProcessId();当前工序
+                        //processFinishedProductDTO.getWorkOrderCardPoolId();部件流转卡ID
+                        //先判断部件对应的工艺路线是否有当前工序
+                        SmtWorkOrderCardPool smtWorkOrderCardPool1 = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
+                        SmtWorkOrder smtWorkOrder1 = smtWorkOrderService.selectByKey(smtWorkOrderCardPool1.getWorkOrderId());
+                        //部件的工艺路线
+                        List<SmtRouteProcess> smtRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrder1.getRouteId()).getData();
+                        for (SmtRouteProcess smtRouteProcess : smtRouteProcesses) {
+                            if (smtRouteProcess.getProcessId().equals(preProcessId)) {
+                                //当前部件拥有当前工序的上工序流程
+                                return 3;
+                            }
+                        }
+                        //
+                        List<SmtProcessListProcess> preS = this.selectAll(ControllerUtil.dynamicCondition(
+                                "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
+                                "processId", smtRouteProcesses.get(smtRouteProcesses.size() - 1).getProcessId(),
+                                "processType", 2,
+                                "status", 2));
+
+                        if (StringUtils.isEmpty(preS)) {
+                            return 3;
+                        } else {
+                            preProcessListProcesse = preS.get(preS.size() -1 );
+                        }
                     }
-                    throw new BizErrorException("上工序未进行报工：" + processFinishedProductDTO.getWorkOrderCardPoolId());
+                    if(!finishRemain){
+                        throw new BizErrorException("上工序未进行报工：" + processFinishedProductDTO.getWorkOrderCardPoolId());
+                    }
                 }
             } else {
                 preProcessListProcesse = preProcessListProcesseList.get(preProcessListProcesseList.size() - 1);
@@ -784,8 +810,8 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                 BeanUtils.autoFillEqFields(processFinishedProductDTO, tempProcessFinishedProductDTO);
                 tempProcessFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                 tempProcessFinishedProductDTO.setCurOutputQty(remainQty);
-                int i = this.startWork(smtRouteProcesses.get(smtRouteProcesses.size()-1).getProcessId(), smtWorkOrder, tempProcessFinishedProductDTO, true);
-                if(i == 3){
+                int i = this.startWork(smtRouteProcesses.get(smtRouteProcesses.size() - 1).getProcessId(), smtWorkOrder, tempProcessFinishedProductDTO, true);
+                if (i == 3) {
                     //找不到品质确认数，不处理该部件
                     continue;
                 }
@@ -851,7 +877,11 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                 BeanUtils.autoFillEqFields(processFinishedProductDTO, tempProcessFinishedProductDTO);
                 tempProcessFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                 tempProcessFinishedProductDTO.setCurOutputQty(remainQty);
-                this.finishWork(routeId, preProcessId, tempProcessFinishedProductDTO, true);
+                int i = this.finishWork(routeId, preProcessId, tempProcessFinishedProductDTO, true);
+                if (i == 3) {
+                    //找不到报工数，不处理该部件
+                    continue;
+                }
                 remainQty = tempProcessFinishedProductDTO.getCurOutputQty();
                 if (remainQty.doubleValue() == 0) {
                     result++;

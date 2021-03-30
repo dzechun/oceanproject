@@ -28,24 +28,62 @@
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+        <result column="order_code" jdbcType="VARCHAR" property="orderCode" />
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="reality_carton_qty" jdbcType="VARCHAR" property="realityCartonQty"/>
+
     </resultMap>
 
     <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
-        select dod.*,
-        su.user_name AS create_user_name,
-        sus.user_name AS modified_user_name,
-        sm.material_code, sm.material_name, sm.material_desc
-        from
-        wms_out_delivery_order_det AS dod
-        LEFT JOIN ocean.sys_user su ON dod.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON dod.modified_user_id = sus.user_id
-        LEFT JOIN smt_material sm ON sm.material_id = dod.material_id
+        SELECT
+            s.supplier_name,
+            o.order_code,
+            o.contract_code,
+            w.warehouse_name,
+            m.material_code,
+            pmo.product_model_name,
+            m.material_desc,
+            snd.reality_carton_qty,
+            dod.out_total_qty,
+            dod.modified_time,
+            s.user_name as modified_user_name
+        FROM
+            wms_out_delivery_order_det dod
+        LEFT JOIN wms_out_shipping_note_det snd ON snd.shipping_note_det_id = dod.shipping_note_det_id
+        LEFT JOIN mes_package_manager pm ON pm.bar_code = snd.pallet_code
+        LEFT JOIN smt_work_order wo ON wo.work_order_id = pm.work_order_id
+        LEFT JOIN smt_order o ON o.order_id = wo.order_id
+        LEFT JOIN smt_supplier s ON s.supplier_id = o.supplier_id
+        LEFT JOIN smt_storage st ON st.storage_id = snd.move_storage_id
+        LEFT JOIN smt_warehouse w ON w.warehouse_id = st.warehouse_id
+        LEFT JOIN smt_material m ON m.material_id = dod.material_id
+        LEFT JOIN base_tab t ON t.material_id = dod.material_id
+        LEFT JOIN smt_product_model pmo ON pmo.product_model_id = t.product_model_id
+        LEFT JOIN ocean.sys_user s ON s.user_id = dod.modified_user_id
         <where>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(doo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="warehouseName != null and warehouseName != ''">
+                and w.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
-            <if test="deliveryOrderId != null">
-                and dod.delivery_order_id = #{deliveryOrderId}
+            <if test="contractCode != null and contractCode != ''">
+                and o.contract_code like CONCAT('%', #{contractCode}, '%')
+            </if>
+            <if test="supplierName != null and supplierName != ''">
+                and s.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and m.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="productModelName != null and productModelName != ''">
+                and pmo.product_model_name like CONCAT('%', #{productModelName}, '%')
+            </if>
+            <if test="modifiedUserId != null">
+                and s.user_name = #{modifiedUserId}
+            </if>
+            <if test="modifiedStartTime != null and modifiedStartTime != '' and modifiedEndTime != null and modifiedEndTime != ''">
+                and date_format(dod.modified_time, '%Y-%m-%d') BETWEEN #{modifiedStartTime} AND #{modifiedEndTime}
             </if>
         </where>
     </select>
