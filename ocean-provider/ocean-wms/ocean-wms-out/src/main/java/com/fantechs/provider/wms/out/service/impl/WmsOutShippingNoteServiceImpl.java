@@ -6,21 +6,20 @@ import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDto;
-import com.fantechs.common.base.general.entity.wms.out.*;
-import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProduct;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNote;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNotePallet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtShippingNote;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutShippingNote;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtShippingNoteMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteDetMapper;
@@ -31,11 +30,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.util.StringUtil;
-
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by leifengzhi on 2021/01/09.

@@ -80,7 +80,7 @@
                 and pmo.product_model_name like CONCAT('%', #{productModelName}, '%')
             </if>
             <if test="modifiedUserId != null">
-                and s.user_name = #{modifiedUserId}
+                and s.user_id = #{modifiedUserId}
             </if>
             <if test="modifiedStartTime != null and modifiedStartTime != '' and modifiedEndTime != null and modifiedEndTime != ''">
                 and date_format(dod.modified_time, '%Y-%m-%d') BETWEEN #{modifiedStartTime} AND #{modifiedEndTime}
