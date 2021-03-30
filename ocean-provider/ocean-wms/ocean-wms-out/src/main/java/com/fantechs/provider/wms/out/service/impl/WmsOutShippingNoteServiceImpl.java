@@ -20,6 +20,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtShippingNoteMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteDetMapper;
@@ -224,6 +225,8 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
             wmsOutShippingNoteDet.setCreateUserId(user.getUserId());
             wmsOutShippingNoteDetMapper.insertSelective(wmsOutShippingNoteDet);
         }
+
+
         return result;
     }
 
@@ -280,6 +283,12 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
             WmsOutHtShippingNote wmsOutHtShippingNote = new WmsOutHtShippingNote();
             BeanUtils.copyProperties(wmsOutShippingNote, wmsOutHtShippingNote);
             wmsOutHtShippingNoteMapper.insertSelective(wmsOutHtShippingNote);
+
+            //删除子表
+            Example example = new Example(WmsOutShippingNoteDet.class);
+            example.createCriteria().andEqualTo("shippingNoteId",id);
+            wmsOutShippingNoteDetMapper.deleteByExample(example);
+
         }
         return wmsOutShippingNoteMapper.deleteByIds(ids);
     }

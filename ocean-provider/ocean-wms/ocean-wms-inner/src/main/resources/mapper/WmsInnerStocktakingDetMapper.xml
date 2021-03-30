@@ -100,6 +100,9 @@
       <if test="stocktakingId !=null">
         and wisd.stocktaking_id=#{stocktakingId}
       </if>
+      <if test="stocktakingCode != null and stocktakingCode != ''">
+        and wis.stocktaking_code like CONCAT("%",#{stocktakingCode},"%")
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wisd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
@@ -129,10 +132,13 @@
         </choose>
       </if>
       <if test="stockistId !=null">
-        and wits.stockist_id=#{stockistId}
+        and wis.stockist_id=#{stockistId}
       </if>
       <if test="status!=null">
         and wits.status=#{status}
+      </if>
+      <if test="stockistName!=null and stockistName != ''">
+        and suss.user_name like CONCAT("%",#{stockistName},"%")
       </if>
     </where>
     order by wisd.create_time desc

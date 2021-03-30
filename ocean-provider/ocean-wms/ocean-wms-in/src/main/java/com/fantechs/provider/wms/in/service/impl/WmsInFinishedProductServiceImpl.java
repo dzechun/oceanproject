@@ -95,6 +95,7 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
         wmsInFinishedProduct.setIsDelete((byte) 1);
         wmsInFinishedProduct.setCreateTime(new Date());
         wmsInFinishedProduct.setCreateUserId(user.getUserId());
+        wmsInFinishedProduct.setOrganizationId(user.getOrganizationId());
 
         int result = wmsInFinishedProductMapper.insertUseGeneratedKeys(wmsInFinishedProduct);
 
@@ -139,10 +140,14 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 SearchQmsPdaInspection searchQmsPdaInspection = new SearchQmsPdaInspection();
                 searchQmsPdaInspection.setPalletCode(wmsInFinishedProductDet.getPalletCode());
                 List<QmsPdaInspectionDto> qmsPdaInspectionDtos = qmsFeignApi.findList(searchQmsPdaInspection).getData();
-                if(qmsPdaInspectionDtos.get(0).getQualifiedState().equals(1)){
-                    throw new BizErrorException(wmsInFinishedProductDet.getPalletCode() + "有不合格箱码");
+                if(StringUtils.isEmpty(qmsPdaInspectionDtos)){
+                    throw new BizErrorException(wmsInFinishedProductDet.getPalletCode() + "未质检,不允许入库");
                 }
-
+                if(qmsPdaInspectionDtos.size() > 0){
+                    if(qmsPdaInspectionDtos.get(0).getQualifiedState().equals("1")){
+                        throw new BizErrorException(wmsInFinishedProductDet.getPalletCode() + "有不合格箱码");
+                    }
+                }
                 // PDA直接提交 增加库存
                 //存入库时栈板与包箱关系
                 SearchMesPackageManagerListDTO searchMesPackageManagerListDTO = new SearchMesPackageManagerListDTO();

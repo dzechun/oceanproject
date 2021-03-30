@@ -58,7 +58,7 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
         //主表扣库存
         smtStorageInventories.get(0).setQuantity(smtStorageInventories.get(0).getQuantity().subtract(smtStorageInventory.getQuantity()));
         smtStorageInventoryMapper.updateByPrimaryKeySelective(smtStorageInventories.get(0));
-        //子表扣库存 根据入库单号
+        //子表扣库存 根据入库单号或栈板
         for (SmtStorageInventoryDet smtStorageInventoryDet : smtStorageInventory.getSmtStorageInventoryDets()) {
             Example example1 = new Example(SmtStorageInventoryDet.class);
             Example.Criteria criteria = example1.createCriteria();
@@ -73,6 +73,10 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
 
             smtStorageInventoryDets.get(0).setMaterialQuantity(smtStorageInventoryDets.get(0).getMaterialQuantity().subtract(smtStorageInventoryDet.getMaterialQuantity()));
             smtStorageInventoryDetMapper.updateByPrimaryKeySelective(smtStorageInventoryDets.get(0));
+
+            if(smtStorageInventoryDets.get(0).getMaterialQuantity().doubleValue() == 0){
+                smtStorageInventoryDetMapper.deleteByPrimaryKey(smtStorageInventoryDets.get(0).getStorageInventoryDetId());
+            }
         }
 
         return 0;

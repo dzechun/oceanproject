@@ -144,6 +144,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         qmsAndinStorageQuarantine.setCreateUserId(user.getUserId());
         qmsAndinStorageQuarantine.setModifiedTime(new Date());
         qmsAndinStorageQuarantine.setModifiedUserId(user.getUserId());
+        qmsAndinStorageQuarantine.setOrganizationId(user.getOrganizationId());
         qmsAndinStorageQuarantine.setStatus(StringUtils.isEmpty(qmsAndinStorageQuarantine.getStatus())?1:qmsAndinStorageQuarantine.getStatus());
 
         //判断是否是栈板码逻辑

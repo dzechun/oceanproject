@@ -98,12 +98,16 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
 
         List<BigDecimal> list = new ArrayList<>();
         for (WmsOutProductionMaterialdDet outProductionMaterialdDet : wmsOutProductionMaterialdDets) {
+            //如果部件扫描数量是0，则需要判断当前部件是否有当前工段工艺。有则跳过，没有则赋值当前开工数
+
+
             list.add(outProductionMaterialdDet.getScanQty().divide(outProductionMaterialdDet.getQuantity()).setScale(0, BigDecimal.ROUND_DOWN));//扫描数量除于用量 向下取整
         }
 
 //        //按最小数量排序
 //        List<WmsOutProductionMaterialdDet> temp = wmsOutProductionMaterialdDets.stream().sorted(Comparator.comparing(WmsOutProductionMaterialdDet::getScanQty)).collect(Collectors.toList());
         Collections.sort(list);
+        //这是最小齐套数
         BigDecimal lastQty = list.get(0).subtract(wmsOutProductionMaterialdDets.get(0).getUseQty());
         //最小齐套数大于0
         if (lastQty.compareTo(new BigDecimal(0)) > 0) {
