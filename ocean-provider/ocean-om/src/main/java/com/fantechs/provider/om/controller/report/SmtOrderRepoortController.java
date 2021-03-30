@@ -52,7 +52,7 @@ public class SmtOrderRepoortController {
         List<SmtOrderReportDto> list = smtOrderService.orderReport(searchSmtOrderReportDto);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出信息", "销售情况报表", SmtOrderDto.class, "销售情况报表.xls", response);
+            EasyPoiUtils.exportExcel(list, "导出信息", "销售情况报表", SmtOrderReportDto.class, "销售情况报表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
