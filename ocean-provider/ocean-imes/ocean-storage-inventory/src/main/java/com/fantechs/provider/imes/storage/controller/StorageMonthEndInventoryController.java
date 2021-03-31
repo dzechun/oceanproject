@@ -48,7 +48,7 @@ public class StorageMonthEndInventoryController {
     }
 
     @ApiOperation(value = "记录月末库存数据", notes = "记录月末库存数据")
-    @PostMapping("/record")
+    @GetMapping("/record")
     public ResponseEntity record() {
         return ControllerUtil.returnCRUD(storageMonthEndInventoryService.record());
     }
