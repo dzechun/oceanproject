@@ -44,6 +44,7 @@
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="stockist_name" jdbcType="VARCHAR" property="stockistName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -79,7 +80,7 @@
     swa.warehouse_area_id,swa.warehouse_area_code,swa.warehouse_area_name,
     sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,
     spm.product_model_code,spm.product_model_name,
-    wihs.stocktaking_code
+    wihs.stocktaking_code,suss.user_name AS stockist_name
     from fantech_imes.wms_inner_ht_stocktaking_det wihsd
     LEFT JOIN ocean.sys_user su  ON wihsd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wihsd.modified_user_id = sus.user_id
@@ -91,9 +92,13 @@
     LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
     LEFT JOIN fantech_imes.base_organization bo ON wihsd.organization_id = bo.organization_id
     LEFT JOIN fantech_imes.wms_inner_ht_stocktaking wihs ON wihs.ht_stocktaking_id = wihsd.ht_stocktaking_id
+    LEFT JOIN ocean.sys_user suss ON wihs.stockist_id = suss.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wihsd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="stocktakingCode != null and stocktakingCode != ''">
+        and wihs.stocktaking_code like CONCAT("%",#{stocktakingCode},"%")
       </if>
       <if test="materialCode!=null and materialCode != ''">
         and sm.material_code like CONCAT("%",#{materialCode},"%")
@@ -107,8 +112,8 @@
       <if test="palletCode!=null and palletCode != ''">
         and wihsd.pallet_code like CONCAT("%",#{palletCode},"%")
       </if>
-      <if test="stockistId !=null">
-        and wihsd.stockist_id=#{stockistId}
+      <if test="stockistName!=null and stockistName != ''">
+        and suss.user_name like CONCAT("%",#{stockistName},"%")
       </if>
       <if test="status!=null or status == 0">
         and wihsd.status=#{status}

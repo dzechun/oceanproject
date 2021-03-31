@@ -323,5 +323,13 @@ public class WmsInnerHtStocktakingDet extends ValidGroup implements Serializable
     @Transient
     private String productModelName;
 
+    /**
+     * 盘点员
+     */
+    @ApiModelProperty(name="stockistName",value = "盘点员")
+    @Excel(name = "盘点员", height = 20, width = 30)
+    @Transient
+    private String stockistName;
+
     private static final long serialVersionUID = 1L;
 }
