@@ -51,6 +51,11 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        if (StringUtils.isNotEmpty(mesProcessReportWork.getStartTime(),mesProcessReportWork.getEndTime())) {
+            if (mesProcessReportWork.getEndTime().before(mesProcessReportWork.getStartTime())) {
+                throw new BizErrorException("报工结束时间不能小于报工开始时间！");
+            }
+        }
         if (mesProcessReportWork.getProcessAndStaff() == 0) {
             SearchBaseStaffProcess searchBaseStaffProcess = new SearchBaseStaffProcess();
             searchBaseStaffProcess.setProcessId(mesProcessReportWork.getProcessId());
