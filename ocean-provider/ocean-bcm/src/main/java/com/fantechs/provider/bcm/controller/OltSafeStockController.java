@@ -84,7 +84,7 @@ public class OltSafeStockController {
     List<OltSafeStockDto> list = oltSafeStockService.findList(searchOltSafeStock);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "OltSafeStock信息", OltSafeStockDto.class, "OltSafeStock.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "安全库存信息", OltSafeStockDto.class, "安全库存信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

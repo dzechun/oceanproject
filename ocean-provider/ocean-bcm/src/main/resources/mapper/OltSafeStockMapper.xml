@@ -56,8 +56,8 @@ LEFT JOIN ocean.sys_user su ON os.create_user_id = su.user_id
 LEFT JOIN ocean.sys_user sus ON os.modified_user_id = sus.user_id
 LEFT JOIN fantech_imes.base_organization bo ON os.organization_id = bo.organization_id
 <where>
-<if test="warehouseName != null and warehouseName != ''">
-and sw.warehouse_name Like CONCAT('%',#{warehouseName},'%',)
+<if test="warehouseId != null">
+and sw.warehouse_id = #{warehouseId}
 </if>
 <if test="materialCategoryName != null and materialCategoryName != ''">
 and smc.material_category_name like CONCAT('%',#{materialCategoryName},'%')

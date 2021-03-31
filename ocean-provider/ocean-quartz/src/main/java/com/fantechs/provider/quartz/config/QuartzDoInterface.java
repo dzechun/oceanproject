@@ -40,8 +40,8 @@ public class QuartzDoInterface extends QuartzJobBean {
         this.map = map;
     }
 
-    public void setUri(String uri) {
-        this.url = uri;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setMethod(String method) {

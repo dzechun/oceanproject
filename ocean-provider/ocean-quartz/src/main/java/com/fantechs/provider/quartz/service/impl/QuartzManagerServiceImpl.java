@@ -239,7 +239,7 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
                     job.put("cronExpression", cronExpression);
                 }
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-                job.put("uri",jobDetail.getJobDataMap().get("uri"));
+                job.put("url",jobDetail.getJobDataMap().get("url"));
                 job.put("method",jobDetail.getJobDataMap().get("method")=="1"?"GET":"POST");
                 job.put("map",jobDetail.getJobDataMap().get("map")!=null?jobDetail.getJobDataMap().get("map"):"");
                 jobList.add(job);

@@ -192,4 +192,25 @@
     <select id="findWorkOrderQty" resultType="java.math.BigDecimal">
     select work_order_quantity from smt_work_order where work_order_id = #{workOrderId};
 </select>
+<select id="findNoCode" resultMap="SmtBarcodeRuleSpecResultMap">
+    SELECT sbrs.barcode_rule_spec_id,
+               sbrs.barcode_rule_id,
+               sbrs.spec_id,
+               sbrs.specification,
+               sbrs.barcode_length,
+               sbrs.initial_value,
+               sbrs.step,
+               sbrs.fill_operator,
+               sbrs.fill_direction,
+               sbrs.customize_name,
+               sbrs.customize_value,
+               sbrs.intercept_length,
+               sbrs.intercept_position,
+               sbrs.intercept_direction,
+               sbrs.organization_id,
+               sbrs.remark
+        FROM fantech_imes.smt_barcode_rule_spec AS sbrs
+                 LEFT JOIN fantech_imes.smt_barcode_rule sbr ON sbr.barcode_rule_id = sbrs.barcode_rule_id
+        WHERE sbr.barcode_rule_category_id = #{barcodeRuleCategoryId}
+</select>
 </mapper>

@@ -19,8 +19,8 @@ public class SearchOltSafeStock extends BaseQuery implements Serializable {
     /**
      * 仓库名称
      */
-    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    private String warehouseName;
+    @ApiModelProperty(name = "warehouseId",value = "仓库名称")
+    private Long warehouseId;
 
     /**
      * 物料类别名称

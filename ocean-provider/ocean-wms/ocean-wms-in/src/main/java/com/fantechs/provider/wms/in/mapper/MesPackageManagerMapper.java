@@ -34,4 +34,6 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
     int updWorkOrderStatus(@Param("workOrderId") Long workOrderId);
 
     BigDecimal findWorkOrderQty(@Param("workOrderId") long workOrderId);
+
+    List<SmtBarcodeRuleSpec> findNoCode(@Param("barcodeRuleCategoryId") Byte barcodeRuleCategoryId);
 }
