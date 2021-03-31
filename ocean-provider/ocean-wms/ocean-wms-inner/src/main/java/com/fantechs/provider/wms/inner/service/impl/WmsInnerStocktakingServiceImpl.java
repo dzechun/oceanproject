@@ -149,7 +149,18 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
 
         //新增盘点单明细
         LinkedList<WmsInnerHtStocktakingDet> wmsInnerHtStocktakingDets = new LinkedList<>();
+        Example example = new Example(WmsInnerStocktakingDet.class);
         for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
+            //盘点栈板的盘点计划是否存在
+            example.clear();
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("palletCode",wmsInnerStocktakingDet.getPalletCode())
+                    .andEqualTo("status",0);
+            WmsInnerStocktakingDet wmsInnerStocktakingDet1 = wmsInnerStocktakingDetMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(wmsInnerStocktakingDet1)){
+                throw new BizErrorException("栈板的盘点计划已存在");
+            }
+
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
             wmsInnerStocktakingDet.setCreateTime(new Date());
             wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
@@ -247,11 +258,11 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                 SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
                 SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                 if (wmsInnerStocktakingDet.getProfitLossQuantity().compareTo(BigDecimal.valueOf(0)) == 1){
-                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().add(wmsInnerStocktaking.getMaterialTotal()));
-                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInnerStocktaking.getMaterialTotal()));
+                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
+                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
                 }else {
-                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktaking.getMaterialTotal()));
-                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsInnerStocktaking.getMaterialTotal()));
+                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
+                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
                 }
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDetDto);
                 storageInventoryFeignApi.update(smtStorageInventoryDto);
