@@ -176,6 +176,11 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
         return smtOrderMapper.orderReport(searchSmtOrderReportDto);
     }
 
+    @Override
+    public List<FindOrderMaterialDto> findOrder() {
+        return smtOrderMapper.findOrder();
+    }
+
     /**
      * 记录操作历史
      * @param smtOrder

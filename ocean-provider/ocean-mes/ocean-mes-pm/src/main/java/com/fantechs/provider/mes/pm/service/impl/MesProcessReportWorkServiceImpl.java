@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStaffProce
 import com.fantechs.common.base.general.entity.mes.pm.MesProcessReportWork;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -23,6 +24,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -48,6 +51,11 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        if (StringUtils.isNotEmpty(mesProcessReportWork.getStartTime(),mesProcessReportWork.getEndTime())) {
+            if (mesProcessReportWork.getEndTime().before(mesProcessReportWork.getStartTime())) {
+                throw new BizErrorException("报工结束时间不能小于报工开始时间！");
+            }
+        }
         if (mesProcessReportWork.getProcessAndStaff() == 0) {
             SearchBaseStaffProcess searchBaseStaffProcess = new SearchBaseStaffProcess();
             searchBaseStaffProcess.setProcessId(mesProcessReportWork.getProcessId());
@@ -61,7 +69,7 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
         SearchMesProcessReportWork searchMesProcessReportWork = new SearchMesProcessReportWork();
         searchMesProcessReportWork.setWorkOrderId(mesProcessReportWork.getWorkOrderId());
         searchMesProcessReportWork.setProcessId(mesProcessReportWork.getProcessId());
-        List<MesProcessReportWorkDto> mesProcessReportWorkDtoList = new ArrayList<>();
+        List<MesProcessReportWorkDto> mesProcessReportWorkDtoList = mesProcessReportWorkMapper.findList(searchMesProcessReportWork);
         BigDecimal totalQuantity = mesProcessReportWork.getQuantity();
         if (StringUtils.isNotEmpty(mesProcessReportWorkDtoList)) {
             totalQuantity = mesProcessReportWorkDtoList.get(0).getTotalQuantity().add(mesProcessReportWork.getQuantity());
@@ -80,10 +88,11 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
             mesProcessReportWork.setStatus((byte) 1);
         }
 
+        mesProcessReportWork.setProcessReportWorkCode(CodeUtils.getId("PRWC"));
         mesProcessReportWork.setCreateUserId(user.getUserId());
         mesProcessReportWork.setModifiedUserId(user.getUserId());
         mesProcessReportWork.setOrganizationId(user.getOrganizationId());
-        mesProcessReportWorkMapper.insertUseGeneratedKeys(mesProcessReportWork);
+        mesProcessReportWorkMapper.insertSelective(mesProcessReportWork);
 
         return 1;
     }
@@ -108,6 +117,7 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
             }
             mesProcessReportWork.setIsDelete((byte) 0);
             mesProcessReportWork.setModifiedUserId(user.getUserId());
+            mesProcessReportWork.setModifiedTime(new Date());
             mesProcessReportWorkMapper.updateByPrimaryKeySelective(mesProcessReportWork);
         }
         return processReportWorkIds.length;
@@ -116,9 +126,6 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
     @Override
     public List<MesProcessReportWorkDto> findList(SearchMesProcessReportWork searchMesProcessReportWork) {
         List<MesProcessReportWorkDto> list = mesProcessReportWorkMapper.findList(searchMesProcessReportWork);
-        if (list.size() == 1) {
-            list.remove(null);
-        }
         return list;
     }
 }

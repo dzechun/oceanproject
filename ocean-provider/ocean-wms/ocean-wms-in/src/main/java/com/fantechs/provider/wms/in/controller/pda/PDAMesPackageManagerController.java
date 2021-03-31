@@ -81,6 +81,13 @@ public class PDAMesPackageManagerController {
         return ControllerUtil.returnDataSuccess(mesPackageManager,1);
     }
 
+    @ApiOperation("打印栈板")
+    @PostMapping("addPackage")
+    public ResponseEntity<List<MesPackageManager>> addPackage(@ApiParam(value = "包装管理对象",required = true)@RequestBody List<MesPackageManager> mesPackageManagers){
+        List<MesPackageManager> mes = mesPackageManagerService.addPackage(mesPackageManagers);
+        return ControllerUtil.returnDataSuccess(mes,1);
+    }
+
     @ApiOperation("删除包装管理数据")
     @GetMapping("delete")
     public ResponseEntity delete(@ApiParam(value = "包装管理对象ID",required = true)@RequestParam Long id){

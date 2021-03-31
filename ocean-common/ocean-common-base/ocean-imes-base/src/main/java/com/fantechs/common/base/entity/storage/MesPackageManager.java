@@ -1,5 +1,6 @@
 package com.fantechs.common.base.entity.storage;
 
+import com.fantechs.common.base.dto.storage.ManagerList;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
+import java.util.List;
 
 @Table(name = "mes_package_manager")
 @Data
@@ -163,5 +165,11 @@ public class MesPackageManager implements Serializable {
     @Transient
     @ApiModelProperty(value = "打印机名称",example = "打印机名称")
     private String printName;
+
+    @ApiModelProperty(value = "子级",example = "子级")
+    private List<MesPackageManager> mesPackageManagerList;
+
+    @ApiModelProperty("同工单数量叠加")
+    private ManagerList managerList;
 
 }

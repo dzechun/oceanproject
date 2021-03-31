@@ -237,4 +237,23 @@
         </where>
         order by so.order_code desc
     </select>
+
+    <select id="findOrder" resultType="com.fantechs.common.base.general.dto.om.FindOrderMaterialDto">
+        select so.order_id as 'orderId', so.order_code as 'orderCode',
+    so.contract_code as 'contractCode',so.order_quantity as 'orderQuantity',
+        mom.order_material_id as 'orderMaterialId',
+        mom.material_id as 'materialId',
+        mom.total 'total',
+        spm.product_model_name AS 'productModelName',
+        sm.material_code AS 'materialCode',
+        sm.version AS 'version',
+        sm.material_desc AS 'materialDesc'
+        FROM
+        fantech_imes.mes_order_material AS mom
+        left join smt_order so on mom.order_id = so.order_id
+        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = mom.material_id
+        LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        where mom.schedule_status = 0
+    </select>
 </mapper>

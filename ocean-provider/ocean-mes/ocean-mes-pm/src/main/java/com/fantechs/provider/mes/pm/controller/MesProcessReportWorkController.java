@@ -67,7 +67,7 @@ public class MesProcessReportWorkController {
     public ResponseEntity<List<MesProcessReportWorkDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesProcessReportWork searchMesProcessReportWork) {
         Page<Object> page = PageHelper.startPage(searchMesProcessReportWork.getStartPage(),searchMesProcessReportWork.getPageSize());
         List<MesProcessReportWorkDto> list = mesProcessReportWorkService.findList(searchMesProcessReportWork);
-        return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list) ? 0 : (int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @PostMapping(value = "/export")
