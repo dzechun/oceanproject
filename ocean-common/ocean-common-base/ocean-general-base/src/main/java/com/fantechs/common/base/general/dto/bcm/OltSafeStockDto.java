@@ -22,7 +22,7 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Column(name = "warehouse_name")
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30)
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum = "1")
     private String warehouseName;
 
     /**
@@ -38,7 +38,7 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Column(name = "material_code")
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="3")
     private String materialCode;
 
     /**
@@ -46,6 +46,7 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Column(name = "material_name")
     @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="4")
     private String materialName;
 
     /**
@@ -53,14 +54,14 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Column(name = "material_desc")
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30)
+    @Excel(name = "物料描述", height = 20, width = 30,orderNum = "5")
     private String materialDesc;
 
     /**
      * 版本
      */
     @ApiModelProperty(name="version" ,value="版本")
-    @Excel(name = "版本", height = 20, width = 30)
+    @Excel(name = "版本", height = 20, width = 30,orderNum = "6")
     private String version;
 
     /**
@@ -68,6 +69,7 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
     private String createUserName;
 
     /**
@@ -75,6 +77,7 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
     private String modifiedUserName;
 
     /**
@@ -82,6 +85,7 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
     private String organizationName;
 
     private Boolean isMax;

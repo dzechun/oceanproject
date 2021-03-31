@@ -3,6 +3,7 @@ package com.fantechs.provider.quartz.entity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -23,5 +24,6 @@ public class QuartzSearch implements Serializable {
     @ApiModelProperty(value = "调度规则CRON",example = "0/1 * * * * ?")
     private String cron;
     @ApiModelProperty(value = "传递参数",example = "Map<String,Object>")
+    @DefaultValue(value = "{}")
     private Map<String,Object> map;
 }

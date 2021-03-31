@@ -237,12 +237,14 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
         //调用打印程序进行条码打印
         try {
+            String noCode = getBoxNoCode(mesPackageManager);
             PrintDto printDto = new PrintDto();
             List<PrintModel> printModelList = new ArrayList<>();
             if(mesPackageManager.getType()==(byte)1){
                 printDto.setLabelName("包箱.btw");
                 PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
                 printModel.setQrCode(mesPackageManager.getBarCode());
+                printModel.setOption10(noCode);
                 printModelList.add(printModel);
             }else if(mesPackageManager.getType()==(byte)2){
                 printDto.setLabelName("栈板.btw");
@@ -254,9 +256,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                     printModel.setOption8(managerList.getQty().toString());
                     //把数
                     printModel.setOption9(managerList.getTotal().toString());
+                    printModel.setOption10(noCode);
                     printModelList.add(printModel);
             }
-            printDto.setPrintName("测试");
+            printDto.setPrintName(mesPackageManager.getPrintName());
             printDto.setPrintModelList(printModelList);
             ResponseEntity res = bcmFeignApi.print(printDto);
             if(res.getCode()!=0){
@@ -357,6 +360,24 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
 
         mesPackageManager.setBarCode(responseEntity.getData());
+    }
+
+    /**
+     * 包箱栈板生成No序号
+     * @param mesPackageManager
+     * @return
+     */
+    private String getBoxNoCode(MesPackageManager mesPackageManager){
+        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findNoCode((byte)7);
+        if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
+            throw new BizErrorException("未匹配到标签No序号规则");
+        }
+        int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
+        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
+        }
+        return responseEntity.getData();
     }
 
     /**
