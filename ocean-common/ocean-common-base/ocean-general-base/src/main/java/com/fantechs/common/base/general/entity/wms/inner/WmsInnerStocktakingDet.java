@@ -187,5 +187,12 @@ public class WmsInnerStocktakingDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    /**
+     * 则该字段用于接收该栈板上对应的产品总数
+     */
+    @Transient
+    @ApiModelProperty(value = "栈板上的产品总数",example = "栈板上的产品总数")
+    private BigDecimal materialTotal;
+
     private static final long serialVersionUID = 1L;
 }

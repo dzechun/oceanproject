@@ -207,7 +207,15 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
             BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
             List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
             for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
-                bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"入库待检",msg);
+                if (baseWarningDto.getNotificationMethod() == 0){
+                    bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getWechat(),"入库待检",msg);
+                }else if (baseWarningDto.getNotificationMethod() == 1){
+                    bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getMobile(),"入库待检",msg);
+                }else if (baseWarningDto.getNotificationMethod() == 2){
+                    bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getDingTalk(),"入库待检",msg);
+                }else if (baseWarningDto.getNotificationMethod() == 3){
+                    bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"入库待检",msg);
+                }
             }
         }
 

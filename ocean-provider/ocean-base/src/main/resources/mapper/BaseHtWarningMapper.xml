@@ -52,14 +52,14 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="warningType != null and warningType != ''">
-        and bhw.warning_type = #{materialCode}
+      <if test="(warningType != null and warningType != '') or warningType == 0">
+        and bhw.warning_type = #{warningType}
       </if>
-      <if test="personnelLevel != null and personnelLevel != ''">
+      <if test="(personnelLevel != null and personnelLevel != '') or personnelLevel == 0">
         and bhw.personnel_level = #{personnelLevel}
       </if>
       <if test="notificationMethod != null and notificationMethod != ''">
-        and bhw.notification_method = #{materialId}
+        and bhw.notification_method = #{notificationMethod}
       </if>
     </where>
   </select>

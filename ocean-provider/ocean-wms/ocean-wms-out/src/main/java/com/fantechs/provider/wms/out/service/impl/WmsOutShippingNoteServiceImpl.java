@@ -9,17 +9,23 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNote;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNotePallet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtShippingNote;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutShippingNote;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtShippingNoteMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteDetMapper;
@@ -54,6 +60,11 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
     @Resource
     private WmsOutShippingNotePalletMapper wmsOutShippingNotePalletMapper;
 
+    @Resource
+    private BcmFeignApi bcmFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+
     @Override
     public List<WmsOutShippingNoteDto> findList(Map<String, Object> map) {
         return wmsOutShippingNoteMapper.findList(map);
@@ -62,14 +73,45 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
     @Override
     public List<WmsOutShippingNote> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote) {
         Example example = new Example(WmsOutShippingNote.class);
-        if(searchWmsOutShippingNote.getStockStatusIn() != null){
-            example.createCriteria().andIn("stockStatus",searchWmsOutShippingNote.getStockStatusIn());
+        if (searchWmsOutShippingNote.getStockStatusIn() != null) {
+            example.createCriteria().andIn("stockStatus", searchWmsOutShippingNote.getStockStatusIn());
         }
-        if(searchWmsOutShippingNote.getOutStatusIn() != null){
-            example.createCriteria().andIn("outStatus",searchWmsOutShippingNote.getOutStatusIn()).andEqualTo("stockStatus",2);
+        if (searchWmsOutShippingNote.getOutStatusIn() != null) {
+            example.createCriteria().andIn("outStatus", searchWmsOutShippingNote.getOutStatusIn()).andEqualTo("stockStatus", 2);
         }
 
         return wmsOutShippingNoteMapper.selectByExample(example);
+    }
+
+    @Override
+    public int sendMessageTest() throws Exception{
+        int i = 0;
+        //发送邮件
+        //获取预警人员
+        try {
+            SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+            searchBaseWarning.setWarningType((long) 4);
+            List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+            if (StringUtils.isNotEmpty(baseWarningDtos)) {
+                for (BaseWarningDto baseWarningDto : baseWarningDtos) {
+                    List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = baseWarningDto.getBaseWarningPersonnelDtoList();
+                    if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)) {
+                        for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
+                            String email = baseWarningPersonnelDto.getEmail();//获取邮箱
+                            String shippingNoteCode = "CPRK20210331001";//单号
+                            bcmFeignApi.sendSimpleMail(email, "有新的出货通知单", "出货通知单单号：" + shippingNoteCode
+                                    + "，调出储位名称：测试储位1"
+                                    + "，调入储位名称: 测试储位2");
+                        }
+                    }
+                    i = 1;
+                }
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+        return i;
     }
 
     @Override
@@ -93,26 +135,26 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
 
             //判断库存
             Example example = new Example(WmsOutShippingNotePallet.class);
-            example.createCriteria().andEqualTo("shippingNoteDetId",wmsOutShippingNoteDet.getShippingNoteDetId());
+            example.createCriteria().andEqualTo("shippingNoteDetId", wmsOutShippingNoteDet.getShippingNoteDetId());
             List<WmsOutShippingNoteDet> wmsOutShippingNoteDets = wmsOutShippingNoteDetMapper.selectByExample(example);
 
             SearchSmtStorageInventory searchSmtStorageInventor = new SearchSmtStorageInventory();
             searchSmtStorageInventor.setStorageId(wmsOutShippingNoteDets.get(0).getStorageId());
             List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
-            if(StringUtils.isEmpty(smtStorageInventoryDtos)){
+            if (StringUtils.isEmpty(smtStorageInventoryDtos)) {
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
             Boolean flag = false;
             for (SmtStorageInventoryDto smtStorageInventoryDto : smtStorageInventoryDtos) {
-                if(smtStorageInventoryDto.getMaterialId().equals(wmsOutShippingNoteDets.get(0).getMaterialId())){
-                    if(smtStorageInventoryDto.getQuantity().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) >= 0){
+                if (smtStorageInventoryDto.getMaterialId().equals(wmsOutShippingNoteDets.get(0).getMaterialId())) {
+                    if (smtStorageInventoryDto.getQuantity().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) >= 0) {
                         flag = true;
                         break;
                     }
                 }
             }
 
-            if(!flag){
+            if (!flag) {
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
 
@@ -173,9 +215,9 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
         }
 
         if (flag) {
-            wmsOutShippingNote.setStockStatus((byte)2);//备料完成
+            wmsOutShippingNote.setStockStatus((byte) 2);//备料完成
         } else {
-            wmsOutShippingNote.setStockStatus((byte)1);//备料中
+            wmsOutShippingNote.setStockStatus((byte) 1);//备料中
         }
 
         wmsOutShippingNote.setModifiedUserId(user.getUserId());
@@ -205,7 +247,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
         wmsOutShippingNote.setTrafficType(StringUtils.isEmpty(wmsOutShippingNote.getTrafficType()) ? 0 : wmsOutShippingNote.getTrafficType());
         wmsOutShippingNote.setCurrencyType(StringUtils.isEmpty(wmsOutShippingNote.getCurrencyType()) ? 0 : wmsOutShippingNote.getCurrencyType());
         wmsOutShippingNote.setOutStatus((byte) 0);
-        wmsOutShippingNote.setStockStatus((byte)0);
+        wmsOutShippingNote.setStockStatus((byte) 0);
         wmsOutShippingNote.setStatus((byte) 1);
         wmsOutShippingNote.setIsDelete((byte) 1);
         wmsOutShippingNote.setCreateTime(new Date());
@@ -219,14 +261,40 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
         BeanUtils.copyProperties(wmsOutShippingNote, wmsOutHtShippingNote);
         wmsOutHtShippingNoteMapper.insertSelective(wmsOutHtShippingNote);
 
+        String storageName = "", moveStorageName = "";
+        
         for (WmsOutShippingNoteDet wmsOutShippingNoteDet : wmsOutShippingNote.getWmsOutShippingNoteDetList()) {
 
             wmsOutShippingNoteDet.setShippingNoteId(wmsOutShippingNote.getShippingNoteId());
             wmsOutShippingNoteDet.setCreateTime(new Date());
             wmsOutShippingNoteDet.setCreateUserId(user.getUserId());
             wmsOutShippingNoteDetMapper.insertSelective(wmsOutShippingNoteDet);
+
+
+            List<WmsOutShippingNoteDetDto> temp = wmsOutShippingNoteDetMapper.findList(ControllerUtil.dynamicCondition("shippingNoteId", wmsOutShippingNote.getShippingNoteId()));
+            storageName = temp.get(0).getStorageName();
+            moveStorageName = temp.get(0).getMoveStorageName();
         }
 
+        //发送邮件
+        //获取预警人员
+        SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+        searchBaseWarning.setWarningType((long) 4);
+        List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+        if (StringUtils.isNotEmpty(baseWarningDtos)) {
+            for (BaseWarningDto baseWarningDto : baseWarningDtos) {
+                List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = baseWarningDto.getBaseWarningPersonnelDtoList();
+                if (StringUtils.isNotEmpty(baseWarningPersonnelDtoList)) {
+                    for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
+                        String email = baseWarningPersonnelDto.getEmail();//获取邮箱
+                        String shippingNoteCode = wmsOutHtShippingNote.getShippingNoteCode();//单号
+                        bcmFeignApi.sendSimpleMail(email, "有新的出货通知单", "出货通知单单号：" + shippingNoteCode
+                                + "，调出储位名称：" + storageName
+                                + "，调入储位名称: " + moveStorageName);
+                    }
+                }
+            }
+        }
 
         return result;
     }
@@ -287,7 +355,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
 
             //删除子表
             Example example = new Example(WmsOutShippingNoteDet.class);
-            example.createCriteria().andEqualTo("shippingNoteId",id);
+            example.createCriteria().andEqualTo("shippingNoteId", id);
             wmsOutShippingNoteDetMapper.deleteByExample(example);
 
         }

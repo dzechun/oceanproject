@@ -2,14 +2,18 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
+import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
 import com.fantechs.common.base.general.entity.basic.BaseWarning;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktakingDet;
@@ -145,7 +149,18 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
 
         //新增盘点单明细
         LinkedList<WmsInnerHtStocktakingDet> wmsInnerHtStocktakingDets = new LinkedList<>();
+        Example example = new Example(WmsInnerStocktakingDet.class);
         for (WmsInnerStocktakingDet wmsInnerStocktakingDet : wmsInnerStocktakingDetDtos) {
+            //盘点栈板的盘点计划是否存在
+            example.clear();
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("palletCode",wmsInnerStocktakingDet.getPalletCode())
+                    .andEqualTo("status",0);
+            WmsInnerStocktakingDet wmsInnerStocktakingDet1 = wmsInnerStocktakingDetMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(wmsInnerStocktakingDet1)){
+                throw new BizErrorException("栈板的盘点计划已存在");
+            }
+
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());
             wmsInnerStocktakingDet.setCreateTime(new Date());
             wmsInnerStocktakingDet.setCreateUserId(user.getUserId());
@@ -154,7 +169,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1 && wmsInnerStocktakingDet.getProfitLossRate() == null){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getCountedQuantity().subtract(wmsInnerStocktakingDet.getBookInventory()));
-                wmsInnerStocktakingDet.setProfitLossRate(wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory()));
+                BigDecimal divide = wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory());
+                wmsInnerStocktakingDet.setProfitLossRate(divide);
             }
             WmsInnerHtStocktakingDet wmsInnerHtStocktakingDet = new WmsInnerHtStocktakingDet();
             BeanUtils.copyProperties(wmsInnerStocktakingDet,wmsInnerHtStocktakingDet);
@@ -220,23 +236,36 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1 && Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
-                wmsInnerStocktakingDet.setProfitLossRate(wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory()));
+                BigDecimal divide = wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory());
+                wmsInnerStocktakingDet.setProfitLossRate(divide);
 
-                //更新储位库存明细数据
-                //根据栈板码获取库存信息
+                //更新储位库存明细数据、根据栈板码获取库存明细信息
                 SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
                 searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerStocktakingDet.getPalletCode());
                 List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
                 if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
                     throw new BizErrorException("无法获取到栈板码对应的库存信息");
                 }
+                //更新储位库存数据、获取库存信息
+                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
+                searchSmtStorageInventory.setStorageInventoryId(smtStorageInventoryDetDtos.get(0).getStorageInventoryId());
+                List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+                if (StringUtils.isEmpty(smtStorageInventoryDtos)){
+                    throw new BizErrorException("无法获取到栈板码对应的库存信息");
+                }
+
+
                 SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
+                SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                 if (wmsInnerStocktakingDet.getProfitLossQuantity().compareTo(BigDecimal.valueOf(0)) == 1){
-                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().add(wmsInnerStocktakingDet.getProfitLossQuantity()));
+                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
+                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
                 }else {
-                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getProfitLossQuantity()));
+                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
+                    smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
                 }
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDetDto);
+                storageInventoryFeignApi.update(smtStorageInventoryDto);
             }
 
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());

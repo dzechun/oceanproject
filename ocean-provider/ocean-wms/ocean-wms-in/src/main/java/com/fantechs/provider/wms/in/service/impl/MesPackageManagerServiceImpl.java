@@ -171,8 +171,11 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
    @Override
    public List<MesPackageManagerDTO> selectFilterAll(Map<String, Object> map) {
        List<MesPackageManagerDTO> mesPackageManagerDTOS = mesPackageManagerMapper.selectFilterAll(map);
-       if (StringUtils.isNotEmpty(mesPackageManagerDTOS)){
-           //类型为1表示是箱,返回该箱对应得储位仓库已经父栈板码
+
+       //pda操作执行以下代码
+       Byte pdaOperation = (Byte) map.get("pdaOperation");
+       if (StringUtils.isNotEmpty(mesPackageManagerDTOS) && pdaOperation == 1){
+           //类型为1表示是箱,返回该箱对应得储位仓库以及父栈板码
            if (mesPackageManagerDTOS.get(0).getType() == 1){
                for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
                    Map<String, Object> map1 = new HashMap<>();
@@ -188,6 +191,20 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                        mesPackageManagerDTO.setWarehouseAreaId(mesPackageManagerDTO1.getWarehouseAreaId());
                        mesPackageManagerDTO.setParentBarCode(mesPackageManagerDTO1.getBarCode());
                    }
+               }
+           }else {
+               BigDecimal materialTotal = BigDecimal.ZERO;
+               Example example = new Example(MesPackageManager.class);
+               for (MesPackageManagerDTO mesPackageManagerDTO : mesPackageManagerDTOS) {
+                   example.clear();
+                   Example.Criteria criteria = example.createCriteria();
+                   criteria.andEqualTo("parentId",mesPackageManagerDTO.getPackageManagerId());
+                   List<MesPackageManager> mesPackageManagers = mesPackageManagerMapper.selectByExample(example);
+                   if (StringUtils.isNotEmpty(mesPackageManagers)){
+                       for (MesPackageManager mesPackageManager : mesPackageManagers) {
+                           materialTotal = materialTotal.add(mesPackageManager.getTotal());
+                       }
+                       mesPackageManagerDTO.setMaterialTotal(materialTotal);                   }
                }
            }
        }

@@ -104,23 +104,10 @@
       <if test="palletCode!=null and palletCode != ''">
         and wihsd.pallet_code like CONCAT("%",#{palletCode},"%")
       </if>
-      <if test="transferSlipStatus != null">
-        <choose>
-          <when test="transferSlipStatus == 0">
-            and wihsd.delivery_rate = 0
-          </when>
-          <when test="transferSlipStatus == 1">
-            and wihsd.delivery_rate &gt; 0
-          </when>
-          <when test="transferSlipStatus == 2">
-            and wihsd.delivery_rate &lt; 0
-          </when>
-        </choose>
-      </if>
       <if test="stockistId !=null">
         and wihsd.stockist_id=#{stockistId}
       </if>
-      <if test="status!=null">
+      <if test="status!=null or status == 0">
         and wihsd.status=#{status}
       </if>
     </where>

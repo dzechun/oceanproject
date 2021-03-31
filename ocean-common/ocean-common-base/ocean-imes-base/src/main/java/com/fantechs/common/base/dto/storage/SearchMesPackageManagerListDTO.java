@@ -3,6 +3,8 @@ package com.fantechs.common.base.dto.storage;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -27,4 +29,9 @@ public class SearchMesPackageManagerListDTO extends BaseQuery implements Seriali
     private Boolean isFindChildren=false;
     @ApiModelProperty(value = "包装管理类型",example = "包装管理类型")
     private Byte type;
+    /**
+     * PDA操作
+     */
+    @ApiModelProperty(name="pdaOperation",value = "PDA操作")
+    private Byte pdaOperation;
 }
