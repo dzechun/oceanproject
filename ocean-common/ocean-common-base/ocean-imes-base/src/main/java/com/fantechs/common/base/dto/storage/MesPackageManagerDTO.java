@@ -143,6 +143,12 @@ public class MesPackageManagerDTO extends MesPackageManager implements Serializa
      */
     @Transient
     @ApiModelProperty(value = "父栈板码",example = "产线名称")
-    @Excel(name = "父栈板码")
     private String parentBarCode;
+
+    /**
+     * 如果扫描的是栈板码，则该字段用于返回该栈板上对应的产品总数
+     */
+    @Transient
+    @ApiModelProperty(value = "栈板上的产品总数",example = "栈板上的产品总数")
+    private BigDecimal materialTotal;
 }

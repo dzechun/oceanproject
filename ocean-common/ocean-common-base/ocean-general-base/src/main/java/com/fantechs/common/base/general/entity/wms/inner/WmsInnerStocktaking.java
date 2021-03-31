@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,6 +132,13 @@ public class WmsInnerStocktaking extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="pdaOperation",value = "PDA操作")
     private Byte pdaOperation;
+
+    /**
+     * 则该字段用于接收该栈板上对应的产品总数
+     */
+    @Transient
+    @ApiModelProperty(value = "栈板上的产品总数",example = "栈板上的产品总数")
+    private BigDecimal materialTotal;
 
     private static final long serialVersionUID = 1L;
 }
