@@ -21,4 +21,6 @@ public interface WmsOutShippingNoteService extends IService<WmsOutShippingNote> 
     int submit(WmsOutShippingNote wmsOutShippingNote);
 
     List<WmsOutShippingNote> PDAfindList(SearchWmsOutShippingNote searchWmsOutShippingNote);
+
+    int sendMessageTest() throws Exception;
 }
