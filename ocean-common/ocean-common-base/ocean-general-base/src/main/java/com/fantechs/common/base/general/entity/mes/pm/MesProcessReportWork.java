@@ -92,9 +92,9 @@ public class MesProcessReportWork extends ValidGroup implements Serializable {
      */
     @Column(name = "start_time")
     @ApiModelProperty(name="startTime" ,value="报工开始时间")
-    @Excel(name = "报工开始时间", height = 20, width = 30,orderNum="14",exportFormat = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "报工开始时间", height = 20, width = 30,orderNum="14",exportFormat = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date startTime;
 
     /**
