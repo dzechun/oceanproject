@@ -27,6 +27,7 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
 
+    <result column="stocktaking_code" jdbcType="VARCHAR" property="stocktakingCode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
@@ -77,7 +78,8 @@
     ss.storage_name,ss.storage_code,
     swa.warehouse_area_id,swa.warehouse_area_code,swa.warehouse_area_name,
     sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,
-    spm.product_model_code,spm.product_model_name
+    spm.product_model_code,spm.product_model_name,
+    wihs.stocktaking_code
     from fantech_imes.wms_inner_ht_stocktaking_det wihsd
     LEFT JOIN ocean.sys_user su  ON wihsd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wihsd.modified_user_id = sus.user_id
@@ -88,6 +90,7 @@
     LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
     LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
     LEFT JOIN fantech_imes.base_organization bo ON wihsd.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes.wms_inner_ht_stocktaking wihs ON wihs.ht_stocktaking_id = wihsd.ht_stocktaking_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wihsd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
