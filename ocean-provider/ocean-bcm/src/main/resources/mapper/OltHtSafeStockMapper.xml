@@ -61,9 +61,6 @@ LEFT JOIN fantech_imes.base_organization bo ON os.organization_id = bo.organizat
 <if test="warehouseId != null">
 and sw.warehouse_id = #{warehouseId}
 </if>
-<if test="materialCategoryName != null and materialCategoryName != ''">
-and smc.material_category_name like CONCAT('%',#{materialCategoryName},'%')
-</if>
 <if test="materialId != null">
 and sm.material_id = #{materialId}
 </if>

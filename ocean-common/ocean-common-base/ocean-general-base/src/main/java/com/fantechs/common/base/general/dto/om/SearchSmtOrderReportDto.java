@@ -1,11 +1,14 @@
 package com.fantechs.common.base.general.dto.om;
 
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Mr.Lei
@@ -42,4 +45,10 @@ public class SearchSmtOrderReportDto extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     private String materialCode;
+
+    @ApiModelProperty(name = "contractDateT",value = "合同交期开始")
+    private String contractDateT;
+
+    @ApiModelProperty(name = "contractDateF",value = "合同交期结束")
+    private String contractDateF;
 }

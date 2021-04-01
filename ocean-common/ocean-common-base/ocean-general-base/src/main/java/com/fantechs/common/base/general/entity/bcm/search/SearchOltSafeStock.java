@@ -17,16 +17,16 @@ import java.io.Serializable;
 public class SearchOltSafeStock extends BaseQuery implements Serializable {
 
     /**
-     * 仓库名称
+     * 仓库Id
      */
     @ApiModelProperty(name = "warehouseId",value = "仓库名称")
     private Long warehouseId;
 
     /**
-     * 物料类别名称
+     * 物料类别Id
      */
-    @ApiModelProperty(name="materialCategoryName",value = "物料类别名称")
-    private String materialCategoryName;
+    @ApiModelProperty(name="materialCategoryId",value = "物料类别Id")
+    private Long materialCategoryId;
 
     /**
      * 物料id

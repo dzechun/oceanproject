@@ -54,7 +54,7 @@ public class SmtOrderReportDto implements Serializable {
     @Excel(name = "交货日期", height = 20, width = 30,orderNum="5")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private String contractDate;
+    private Date contractDate;
 
     /**
      * 排产日期
