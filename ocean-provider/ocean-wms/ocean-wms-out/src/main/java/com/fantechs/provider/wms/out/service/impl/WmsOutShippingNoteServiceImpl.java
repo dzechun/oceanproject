@@ -256,7 +256,6 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
 
         int result = wmsOutShippingNoteMapper.insertUseGeneratedKeys(wmsOutShippingNote);
 
-        System.out.println("456");
         //履历
         WmsOutHtShippingNote wmsOutHtShippingNote = new WmsOutHtShippingNote();
         BeanUtils.copyProperties(wmsOutShippingNote, wmsOutHtShippingNote);
