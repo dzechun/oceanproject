@@ -47,6 +47,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static java.math.BigDecimal.ROUND_CEILING;
+
 /**
  *
  * Created by leifengzhi on 2021/03/22.
@@ -236,7 +238,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
             //对盘点完成的单据计算其盈亏数量和盈亏率
             if (wmsInnerStocktakingDet.getStatus() == 1 && Byte.valueOf((byte) 1).equals(wmsInnerStocktaking.getPdaOperation())){
                 wmsInnerStocktakingDet.setProfitLossQuantity(wmsInnerStocktakingDet.getBookInventory().subtract(wmsInnerStocktakingDet.getCountedQuantity()));
-                BigDecimal divide = wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory());
+                BigDecimal divide = wmsInnerStocktakingDet.getProfitLossQuantity().divide(wmsInnerStocktakingDet.getBookInventory(),2,ROUND_CEILING);
                 wmsInnerStocktakingDet.setProfitLossRate(divide);
 
                 //更新储位库存明细数据、根据栈板码获取库存明细信息

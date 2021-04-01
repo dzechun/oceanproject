@@ -188,6 +188,14 @@ public class WmsInnerHtStocktakingDet extends ValidGroup implements Serializable
     private Byte isDelete;
 
     /**
+     * 盘点单号
+     */
+    @ApiModelProperty(name="stocktakingCode",value = "盘点单号")
+    @Excel(name = "盘点单号", height = 20, width = 30)
+    @Transient
+    private String stocktakingCode;
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
@@ -314,6 +322,14 @@ public class WmsInnerHtStocktakingDet extends ValidGroup implements Serializable
     @Excel(name = "产品型号名称", height = 20, width = 30)
     @Transient
     private String productModelName;
+
+    /**
+     * 盘点员
+     */
+    @ApiModelProperty(name="stockistName",value = "盘点员")
+    @Excel(name = "盘点员", height = 20, width = 30)
+    @Transient
+    private String stockistName;
 
     private static final long serialVersionUID = 1L;
 }
