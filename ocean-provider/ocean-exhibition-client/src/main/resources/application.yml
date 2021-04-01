@@ -8,9 +8,17 @@ spring:
   application:
     name: @pom.artifactId@
   rabbitmq:
-    host: 10.182.163.191
+    host: 192.168.204.164
     port: 5672
     username: admin
     password: StrongPassword
+    # 消息发送至exchange callback
+    publisher-confirms: true
+    # 消息发送至queue 失败才callback
+    publisher-returns: true
+    # 消费消息手动删除
+    listener:
+      simple:
+        acknowledge-mode: manual
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
