@@ -59,9 +59,6 @@ LEFT JOIN fantech_imes.base_organization bo ON os.organization_id = bo.organizat
 <if test="warehouseId != null">
 and sw.warehouse_id = #{warehouseId}
 </if>
-<if test="materialCategoryName != null and materialCategoryName != ''">
-and smc.material_category_name like CONCAT('%',#{materialCategoryName},'%')
-</if>
 <if test="materialId != null">
 and sm.material_id = #{materialId}
 </if>
@@ -76,14 +73,9 @@ order by os.create_time desc
     LEFT JOIN smt_storage ss ON ssi.storage_id=ss.storage_id
     LEFT JOIN smt_warehouse_area wa ON ss.warehouse_area_id =wa.warehouse_area_id
     LEFT JOIN smt_warehouse sw ON wa.warehouse_id=sw.warehouse_id
-    LEFT JOIN base_tab bt ON ssi.material_id = bt.material_id
-    LEFT JOIN smt_material_category smc ON bt.material_type = smc.material_category_id
     <where>
     <if test="warehouseId != null">
         and sw.warehouse_id = #{warehouseId}
-    </if>
-    <if test="materialCategoryId!=null">
-        and smc.material_category_id= #{materialCategoryId}
     </if>
     <if test="materialId">
         and ssi.material_id =#{materialId}

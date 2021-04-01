@@ -63,7 +63,7 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         List<OltSafeStockDto> list = findList(new SearchOltSafeStock());
         List<OltSafeStockDto> oltList = new ArrayList<>();
         for (OltSafeStockDto oltSafeStockDto : list) {
-            BigDecimal qty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialCategoryId(),oltSafeStockDto.getMaterialId());
+            BigDecimal qty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());
             if(qty.compareTo(oltSafeStockDto.getMaxQuantity())==1){
                 oltSafeStockDto.setIsMax(true);
                 oltList.add(oltSafeStockDto);

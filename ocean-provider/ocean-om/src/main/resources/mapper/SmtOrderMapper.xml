@@ -234,6 +234,9 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(so.delivery_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="contractDateT != null and contractDateT != '' and contractDateF != null and contractDateF != ''">
+                and date_format(so.contract_date,'%Y-%m-%d') BETWEEN #{contractDateT} and #{contractDateF}
+            </if>
         </where>
         order by so.order_code desc
     </select>
