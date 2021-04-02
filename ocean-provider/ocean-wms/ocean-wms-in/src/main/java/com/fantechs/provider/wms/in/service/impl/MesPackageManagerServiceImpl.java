@@ -173,7 +173,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
        List<MesPackageManagerDTO> mesPackageManagerDTOS = mesPackageManagerMapper.selectFilterAll(map);
 
        //pda操作执行以下代码
-       Byte pdaOperation = (Byte) map.get("pdaOperation");
+       Byte pdaOperation = map.get("pdaOperation")!=null?(Byte) map.get("pdaOperation"):0;
        if (StringUtils.isNotEmpty(mesPackageManagerDTOS) && pdaOperation == 1){
            //类型为1表示是箱,返回该箱对应得储位仓库以及父栈板码
            if (mesPackageManagerDTOS.get(0).getType() == 1){
