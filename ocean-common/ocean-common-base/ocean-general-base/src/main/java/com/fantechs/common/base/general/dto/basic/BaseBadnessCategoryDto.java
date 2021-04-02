@@ -23,7 +23,7 @@ public class BaseBadnessCategoryDto extends BaseBadnessCategory implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="5")
     private String createUserName;
 
     /**
@@ -31,7 +31,7 @@ public class BaseBadnessCategoryDto extends BaseBadnessCategory implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="7")
     private String modifiedUserName;
 
     /**
@@ -39,6 +39,7 @@ public class BaseBadnessCategoryDto extends BaseBadnessCategory implements Seria
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="4")
     private String organizationName;
 
 }

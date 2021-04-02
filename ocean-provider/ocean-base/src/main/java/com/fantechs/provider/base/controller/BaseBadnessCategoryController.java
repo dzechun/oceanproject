@@ -89,7 +89,7 @@ public class BaseBadnessCategoryController {
     List<BaseBadnessCategoryDto> list = baseBadnessCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBadnessCategory));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseBadnessCategory信息", BaseBadnessCategoryDto.class, "BaseBadnessCategory.xls", response);
+        EasyPoiUtils.exportExcel(list, "不良类别代码导出信息", "不良类别代码信息", BaseBadnessCategoryDto.class, "不良类别代码.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
