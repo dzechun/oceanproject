@@ -21,8 +21,7 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
    List<MesPackageManagerDTO> selectFilterAll(Map<String,Object> map);
    //通过包装规格ID找到条码规则
     List<SmtBarcodeRuleSpec> findBarcodeRule(@Param("packageSpecificationId") Long packageSpecificationId,
-                                             @Param("barcodeRuleCategoryId") Byte barcodeRuleCategoryId,
-                                             @Param("processId") Long processId);
+                                             @Param("materialId") Long materialId);
     //查找条码打印总次数
     int findPrintBarcodeCount();
     //查询还剩余可打印数量

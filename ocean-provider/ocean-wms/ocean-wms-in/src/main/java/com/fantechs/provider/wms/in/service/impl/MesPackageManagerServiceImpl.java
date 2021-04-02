@@ -261,6 +261,9 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                 printDto.setLabelName("包箱.btw");
                 PrintModel printModel = mesPackageManagerMapper.findPrintModel(mesPackageManager.getPackageManagerId());
                 printModel.setQrCode(mesPackageManager.getBarCode());
+                if(StringUtils.isEmpty(printModel.getOption8())||Integer.parseInt(printModel.getOption8())==0){
+                    printModel.setOption8("1");
+                }
                 printModel.setOption10(noCode);
                 printModelList.add(printModel);
             }else if(mesPackageManager.getType()==(byte)2){
@@ -355,10 +358,10 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = new ArrayList<>();
         if(mesPackageManager.getType()==(byte)1){
             //包箱条码
-             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)4,(long)109);
+             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
         }else if(mesPackageManager.getType()==(byte)2){
             //栈板
-            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),(byte)5,(long)108);
+            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
         }
 
         if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
