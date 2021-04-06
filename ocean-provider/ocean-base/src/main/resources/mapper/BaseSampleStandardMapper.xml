@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseSampleStandardMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSampleStandard">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="sample_standard_id" jdbcType="BIGINT" property="sampleStandardId" />
+    <result column="sample_standard_name" jdbcType="VARCHAR" property="sampleStandardName" />
+    <result column="sample_standard_desc" jdbcType="VARCHAR" property="sampleStandardDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseSampleStandardDto" extends="BaseResultMap">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bss.sample_standard_id,
+	bss.sample_standard_name,
+	bss.sample_standard_desc,
+	bss.`status`,
+	bss.remark,
+	bss.org_id,
+	bss.create_user_id,
+	bss.create_time,
+	bss.modified_user_id,
+	bss.modified_time,
+	bss.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM fantech_imes_v2.base_sample_standard AS bss
+    LEFT JOIN ocean_v2.sys_user su ON bss.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bss.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bss.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="sampleStandardName != null and sampleStandardName!=''">
+        and bss.sample_standard_name like CONCAT('%', #{sampleStandardName}, '%')
+      </if>
+      <if test="sampleStandardDesc != null and sampleStandardDesc!=''">
+        and bss.sample_standard_desc like CONCAT('%', #{sampleStandardDesc}, '%')
+      </if>
+      <if test="status!=null">
+        and bss.status=#{status}
+      </if>
+    </where>
+    order by bss.create_time desc
+  </select>
+</mapper>
