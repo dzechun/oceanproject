@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtBadnessCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_badness_category_id" jdbcType="BIGINT" property="htBadnessCategoryId" />
+    <result column="badness_category_id" jdbcType="BIGINT" property="badnessCategoryId" />
+    <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode" />
+    <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+        bhbc.ht_badness_category_id,
+        bhbc.badness_category_id,
+        bhbc.badness_category_code,
+        bhbc.badness_category_desc,
+        bhbc.organization_id,
+        bhbc.remark,
+        bhbc.`status`,
+        bhbc.create_user_id,
+        bhbc.create_time,
+        bhbc.modified_user_id,
+        bhbc.modified_time,
+        bhbc.is_delete
+    </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select<include refid="Base_Column_List"/>
+    from fantech_imes_v2.base_ht_badness_category bhbc
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
+        and bhbc.badness_category_code like CONCAT('%',#{badnessCategoryCode},'%')
+      </if>
+      <if test="badnessCategoryDesc != null and badnessCategoryDesc != ''">
+        and bhbc.badness_category_desc like CONCAT('%',#{badnessCategoryDesc},'%')
+      </if>
+    </where>
+  </select>
+
+</mapper>
