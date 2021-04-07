@@ -1,6 +1,10 @@
 package com.fantechs.provider.bcm.service.Mail.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.bcm.service.Mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,16 +13,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +43,27 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+
+    public MailServiceImpl(){
+        try {
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("Mail");
+            List<SysSpecItem> list= securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+            Map map = (Map) JSON.parse(list.get(0).getParaValue());
+            mailSender.setHost(map.get("host").toString());
+            mailSender.setUsername(map.get("username").toString());
+            mailSender.setPassword(map.get("password").toString());
+            mailSender.setPort(Integer.parseInt(map.get("port").toString()));
+            mailSender.setProtocol(map.get("protocol").toString());
+            mailSender.setDefaultEncoding("UTF-8");
+        }catch (Exception e){
+            throw new BizErrorException("邮箱配置错误！");
+        }
+    }
 
     /**
      * 简单文本邮件

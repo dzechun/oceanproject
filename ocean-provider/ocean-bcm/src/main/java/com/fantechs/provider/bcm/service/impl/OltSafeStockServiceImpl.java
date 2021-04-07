@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.bcm.OltSafeStockDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.bcm.OltSafeStock;
@@ -83,10 +84,15 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
                     sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"低于设定安全库存");
                 }
             }
-//            SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
-//            searchBaseWarning
-//            List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
-            mailService.sendSimpleMail("lql@fantechs.com.cn","安全库存预警",sb.toString());
+            SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
+            searchBaseWarning.setWarningType((long)3);
+            searchBaseWarning.setNotificationMethod((byte)3);
+            List<BaseWarningDto> baseWarningDtos = baseFeignApi.findBaseWarningList(searchBaseWarning).getData();
+            for (BaseWarningDto baseWarningDto : baseWarningDtos) {
+                for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningDto.getBaseWarningPersonnelDtoList()) {
+                    mailService.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"安全库存预警",sb.toString());
+                }
+            }
         }
         return 1;
     }
