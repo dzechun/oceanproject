@@ -143,4 +143,11 @@ public class ProcessListWorkOrderDTO {
     @Transient
     @ApiModelProperty(name = "processLink",value = "工序链")
     private String processLink;
+
+    /**
+     * 父工单编码
+     */
+    @Transient
+    @ApiModelProperty(value = "父工单编码",example = "父工单编码")
+    private String parentWorkOrderCode;
 }
