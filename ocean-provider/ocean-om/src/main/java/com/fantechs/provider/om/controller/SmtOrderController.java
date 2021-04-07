@@ -1,11 +1,14 @@
 package com.fantechs.provider.om.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.basic.imports.SmtFactoryImport;
 import com.fantechs.common.base.entity.basic.history.SmtHtMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.general.dto.mes.pm.history.SearchSmtHtOrderListDTO;
 import com.fantechs.common.base.general.dto.mes.pm.history.SmtHtOrderDTO;
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.om.imports.SmtOrderImport;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -20,15 +23,18 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +44,7 @@ import java.util.List;
 @Api(tags = "订单管理")
 @RequestMapping("/smtOrder")
 @Validated
+@Slf4j
 public class SmtOrderController {
 
     @Autowired
@@ -133,6 +140,28 @@ public class SmtOrderController {
         EasyPoiUtils.exportExcel(list, "导出信息", "SmtOrder信息", SmtOrderDto.class, "SmtOrderDto.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+
+    /**
+     * 从excel导入销售订单数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入销售订单信息",notes = "从excel导入销售订单信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<SmtOrderImport> smtOrderImports = EasyPoiUtils.importExcel(file, 2, 1, SmtOrderImport.class);
+            Map<String, Object> resultMap = smtOrderService.importExcel(smtOrderImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
