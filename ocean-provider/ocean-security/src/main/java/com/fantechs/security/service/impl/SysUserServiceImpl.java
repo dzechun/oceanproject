@@ -302,4 +302,21 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     public List<String> findAllRoleId(Long userId) {
         return sysUserMapper.findAllRoleId(userId);
     }
+
+    @Override
+    public int updatePassword(String oldPassword, String newPassword) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if (!new BCryptPasswordEncoder().matches(oldPassword, user.getPassword())){
+            throw new BizErrorException("旧密码不正确");
+        }
+        Example example = new Example(SysUser.class);
+        example.createCriteria().andEqualTo("userId",user.getUserId());
+        user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+
+        return sysUserMapper.updateByExampleSelective(user,example);
+    }
+
 }
