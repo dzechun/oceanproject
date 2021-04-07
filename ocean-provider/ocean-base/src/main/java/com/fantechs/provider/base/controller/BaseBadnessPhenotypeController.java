@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/07.
  */
 @RestController
-@Api(tags = "baseBadnessPhenotype控制器")
+@Api(tags = "不良现象代码控制器")
 @RequestMapping("/baseBadnessPhenotype")
 @Validated
 public class BaseBadnessPhenotypeController {
@@ -89,7 +89,7 @@ public class BaseBadnessPhenotypeController {
     List<BaseBadnessPhenotypeDto> list = baseBadnessPhenotypeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBadnessPhenotype));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseBadnessPhenotype信息", BaseBadnessPhenotypeDto.class, "BaseBadnessPhenotype.xls", response);
+        EasyPoiUtils.exportExcel(list, "不良现象代码导出信息", "不良现象代码信息", BaseBadnessPhenotypeDto.class, "不良现象代码.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
