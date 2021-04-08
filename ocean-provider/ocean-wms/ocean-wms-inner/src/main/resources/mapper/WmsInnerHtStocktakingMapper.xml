@@ -70,8 +70,8 @@
             <if test="stocktakingMode!=null">
                 and wihs.stocktaking_mode = #{stocktakingMode}
             </if>
-            <if test="stockistId !=null">
-                and wihs.stockist_id=#{stockistId}
+            <if test="stockistName!=null and stockistName != ''">
+                and suss.user_name like CONCAT("%",#{stockistName},"%")
             </if>
             <if test="status!=null">
                 and wihs.status=#{status}

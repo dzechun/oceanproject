@@ -73,6 +73,9 @@
       <if test="transferSlipStatus !=null">
         and wihts.transfer_slip_status=#{transferSlipStatus}
       </if>
+      <if test="orderType !=null">
+        and wihts.order_type=#{orderType}
+      </if>
     </where>
     order by wihts.create_time desc
   </select>
