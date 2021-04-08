@@ -64,6 +64,38 @@
 
   </select>
 
+  <select id="findByMenuIdList" parameterType="com.fantechs.common.base.entity.security.search.SearchSysSpecItem" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from sys_spec_item ssi
+    where ssi.menu_id in (
+      with recursive t as
+      (
+      select * from sys_menuinfo where menu_id = #{menuId}
+      union all
+      select a.* from sys_menuinfo a join t on a.parent_id = t.menu_id where a.is_menu != 2
+      )
+      select t.menu_id from t
+    )
+    <if test="specCode!=null and specCode!=''">
+      and ssi.spec_code like CONCAT('%', #{specCode}, '%')
+    </if>
+    <if test="specName!=null and specName!=''">
+      and ssi.spec_name like CONCAT('%', #{specName}, '%')
+    </if>
+    <if test="para!=null and para!=''">
+      and ssi.para like CONCAT('%', #{para}, '%')
+    </if>
+    <if test="paraValue!=null and paraValue!=''">
+      and ssi.para_value like CONCAT('%', #{paraValue}, '%')
+    </if>
+    <if test="orderNum != null and orderNum != '' and orderNum == 1">
+      order by order_num desc
+    </if>
+    <if test="orderNum != null and orderNum and orderNum == 0">
+      order by order_num
+    </if>
+  </select>
+
 </mapper>
 
 
