@@ -205,7 +205,7 @@
 
     <select id="orderReport" resultMap="OrderReportDtoMap" parameterType="com.fantechs.common.base.general.dto.om.SearchSmtOrderReportDto">
         SELECT so.order_code,so.contract_code,ss.supplier_name,so.sales_man_name,so.contract_date,so.delivery_date,so.schedule_date,
-        sm.material_code,spm.product_model_name,sm.material_desc,CONVERT((swo.work_order_quantity/sps.package_specification_quantity),DECIMAL(9,0)) as box,swo.work_order_quantity,swo.work_order_status,
+        sm.material_code,spm.product_model_name,sm.material_desc,CONVERT((swo.work_order_quantity/sps.package_specification_quantity),DECIMAL(9,0)) as workOrderBox,swo.work_order_quantity,swo.work_order_status,
         CONVERT((swo.output_quantity/sps.package_specification_quantity),DECIMAL(9,0)) AS outBox,swo.output_quantity,(swo.work_order_quantity-swo.output_quantity) as surplusQty,CONVERT(((swo.work_order_quantity-swo.output_quantity)/sps.package_specification_quantity),DECIMAL(9,0)) as surplusBox
         From smt_work_order swo
         LEFT JOIN smt_order so ON so.order_id=swo.order_id
