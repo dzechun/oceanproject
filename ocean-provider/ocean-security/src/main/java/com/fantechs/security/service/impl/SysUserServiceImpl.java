@@ -287,14 +287,14 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     }
 
     @Override
-    public int switchOrganization(Long organizationId,String token) {
+    public int switchOrganization(Long organizationId) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        SysUser sysUser = JSON.parseObject(JSON.toJSONString(redisUtil.get(token)), SysUser.class);
+        SysUser sysUser = JSON.parseObject(JSON.toJSONString(redisUtil.get(CurrentUserInfoUtils.getToken())), SysUser.class);
         sysUser.setOrganizationId(organizationId);
-        redisUtil.set(token,sysUser);
+        redisUtil.set(CurrentUserInfoUtils.getToken(),sysUser);
         return 1;
     }
 
@@ -302,4 +302,21 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     public List<String> findAllRoleId(Long userId) {
         return sysUserMapper.findAllRoleId(userId);
     }
+
+    @Override
+    public int updatePassword(String oldPassword, String newPassword) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if (!new BCryptPasswordEncoder().matches(oldPassword, user.getPassword())){
+            throw new BizErrorException("旧密码不正确");
+        }
+        Example example = new Example(SysUser.class);
+        example.createCriteria().andEqualTo("userId",user.getUserId());
+        user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+
+        return sysUserMapper.updateByExampleSelective(user,example);
+    }
+
 }

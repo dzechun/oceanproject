@@ -3,6 +3,7 @@ package com.fantechs.provider.om.service;
 
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.om.imports.SmtOrderImport;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -28,4 +29,5 @@ public interface SmtOrderService extends IService<SmtOrder> {
 
     //销售资源池
     List<FindOrderMaterialDto> findOrder();
+    Map<String,Object> importExcel(List<SmtOrderImport> smtOrderImports);
 }

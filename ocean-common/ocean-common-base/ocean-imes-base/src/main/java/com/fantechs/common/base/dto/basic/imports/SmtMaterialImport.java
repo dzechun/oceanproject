@@ -77,7 +77,7 @@ public class SmtMaterialImport implements Serializable {
      */
     @ApiModelProperty(name="status" ,value="状态")
     @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30)
-    private Byte status;
+    private Integer status;
 
     /**
      * 最小包装数
@@ -196,7 +196,7 @@ public class SmtMaterialImport implements Serializable {
      */
     @ApiModelProperty(name="materialProperty",value = "物料属性(0.半成品，1.成品)")
     @Excel(name = "物料属性(0.半成品，1.成品)", height = 20, width = 30)
-    private Byte materialProperty;
+    private Integer materialProperty;
 
     /**
      * 图片
@@ -210,49 +210,49 @@ public class SmtMaterialImport implements Serializable {
      */
     @ApiModelProperty(name="isBatch",value = "是否批次(0.否 1.是)")
     @Excel(name = "是否批次(0.否 1.是)", height = 20, width = 30)
-    private Byte isBatch;
+    private Integer isBatch;
 
     /**
      * 是否质量检查(0.否 1.是)
      */
     @ApiModelProperty(name="isQualityTest",value = "是否质量检查(0.否 1.是)")
     @Excel(name = "是否质量检查(0.否 1.是)", height = 20, width = 30)
-    private Byte isQualityTest;
+    private Integer isQualityTest;
 
     /**
      * 是否箱码(0.否 1.是)
      */
     @ApiModelProperty(name="isCaseCode",value = "是否箱码(0.否 1.是)")
     @Excel(name = "是否箱码(0.否 1.是)", height = 20, width = 30)
-    private Byte isCaseCode;
+    private Integer isCaseCode;
 
     /**
      * 是否序列码(0.否 1.是)
      */
     @ApiModelProperty(name="isSequenceCode",value = "是否序列码(0.否 1.是)")
     @Excel(name = "是否序列码(0.否 1.是)", height = 20, width = 30)
-    private Byte isSequenceCode;
+    private Integer isSequenceCode;
 
     /**
      * 发料方式(0.直领 1.倒冲)
      */
     @ApiModelProperty(name="issueMethod",value = "发料方式(0.直领 1.倒冲)")
     @Excel(name = "发料方式(0.直领 1.倒冲)", height = 20, width = 30)
-    private Byte issueMethod;
+    private Integer issueMethod;
 
     /**
      * 是否组合板(0.否 1.是)
      */
     @ApiModelProperty(name="ifCompoboard",value = "是否组合板(0.否 1.是)")
     @Excel(name = "是否组合板(0.否 1.是)", height = 20, width = 30)
-    private Byte ifCompoboard;
+    private Integer ifCompoboard;
 
     /**
      * 是否连板(0.否 1.是)
      */
     @ApiModelProperty(name="ifLinkingBoard",value = "是否连板(0.否 1.是)")
     @Excel(name = "是否连板(0.否 1.是)", height = 20, width = 30)
-    private Byte ifLinkingBoard;
+    private Integer ifLinkingBoard;
 
     /**
      * 连板数
@@ -385,7 +385,7 @@ public class SmtMaterialImport implements Serializable {
      */
     @ApiModelProperty(name="materialType",value = "物料类别")
     @Excel(name = "物料类别", height = 20, width = 30)
-    private Byte materialType;
+    private Integer materialType;
 
     /**
      * 采购批量
@@ -434,7 +434,7 @@ public class SmtMaterialImport implements Serializable {
      */
     @ApiModelProperty(name="isWetSensitive",value = "是否湿敏（0、否 1、是）")
     @Excel(name = "是否湿敏（0、否 1、是）", height = 20, width = 30)
-    private Byte isWetSensitive;
+    private Integer isWetSensitive;
 
     /**
      * 湿敏等级

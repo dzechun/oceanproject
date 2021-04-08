@@ -160,6 +160,7 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SmtSupplier> list = new LinkedList<>();
+        LinkedList<SmtSupplierImport> supplierImports = new LinkedList<>();
 
         for (int i = 0; i < smtSupplierImports.size(); i++) {
             SmtSupplierImport smtSupplierImport = smtSupplierImports.get(i);
@@ -184,8 +185,8 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
 
             //判断集合中是否存在重复数据
             boolean tag = false;
-            if (StringUtils.isNotEmpty(smtSupplierImports)){
-                for (SmtSupplierImport supplierImport : smtSupplierImports) {
+            if (StringUtils.isNotEmpty(supplierImports)){
+                for (SmtSupplierImport supplierImport : supplierImports) {
                     if (supplierImport.getSupplierCode().equals(supplierCode)){
                         tag = true;
                     }
@@ -195,12 +196,12 @@ public class SmtSupplierServiceImpl  extends BaseService<SmtSupplier> implements
                 fail.add(i+4);
                 continue;
             }
-            smtSupplierImports.add(smtSupplierImport);
+            supplierImports.add(smtSupplierImport);
         }
 
-        if (StringUtils.isNotEmpty(smtSupplierImports)){
+        if (StringUtils.isNotEmpty(supplierImports)){
 
-            for (SmtSupplierImport smtSupplierImport : smtSupplierImports) {
+            for (SmtSupplierImport smtSupplierImport : supplierImports) {
                 SmtSupplier smtSupplier = new SmtSupplier();
                 BeanUtils.copyProperties(smtSupplierImport,smtSupplier);
                 smtSupplier.setCreateTime(new Date());

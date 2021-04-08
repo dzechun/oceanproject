@@ -130,4 +130,8 @@ public interface BasicFeignApi {
     @ApiOperation("获取区域详情")
     @PostMapping("/smtWarehouseArea/detail")
     ResponseEntity<SmtWarehouseArea> warehouseAreaDetail(@ApiParam(value = "区域ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
+    @ApiOperation("列表")
+    @PostMapping("/smtSupplier/findList")
+    ResponseEntity<List<SmtSupplier>> findSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchSmtSupplier searchSmtSupplier);
 }

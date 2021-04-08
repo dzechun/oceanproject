@@ -198,11 +198,12 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         if (StringUtils.isNotEmpty(productFamilyImports)){
             for (BaseProductFamilyImport productFamilyImport : productFamilyImports) {
                 BaseProductFamily baseProductFamily = new BaseProductFamily();
-                BeanUtils.copyProperties(baseProductFamily,productFamilyImport);
+                BeanUtils.copyProperties(productFamilyImport,baseProductFamily);
                 baseProductFamily.setCreateTime(new Date());
                 baseProductFamily.setCreateUserId(currentUser.getUserId());
                 baseProductFamily.setModifiedTime(new Date());
                 baseProductFamily.setModifiedUserId(currentUser.getUserId());
+                baseProductFamily.setStatus((byte) 1);
                 list.add(baseProductFamily);
             }
 

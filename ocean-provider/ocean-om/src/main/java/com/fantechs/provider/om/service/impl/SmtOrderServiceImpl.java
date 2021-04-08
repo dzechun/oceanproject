@@ -2,8 +2,13 @@ package com.fantechs.provider.om.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.entity.basic.SmtSupplier;
+import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
+import com.fantechs.common.base.entity.basic.search.SearchSmtSupplier;
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.dto.om.imports.SmtOrderImport;
 import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesHtOrderMaterial;
@@ -15,16 +20,17 @@ import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.om.mapper.SmtHtOrderMapper;
 import com.fantechs.provider.om.mapper.SmtOrderMapper;
 import com.fantechs.provider.om.service.SmtOrderService;
 import com.fantechs.provider.om.service.ht.MesHtOrderMaterialService;
 import com.fantechs.provider.om.service.ht.SmtHtOrderService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +44,12 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     @Resource
     private SmtHtOrderService smtHtOrderService;
     @Resource
+    private SmtHtOrderMapper smtHtOrderMapper;
+    @Resource
     private MesHtOrderMaterialService mesHtOrderMaterialService;
+    @Resource
+    private BasicFeignApi basicFeignApi;
+
 
     @Override
     public int save(SmtOrder smtOrder) {
@@ -223,5 +234,115 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return user;
+    }
+
+    @Override
+    public Map<String, Object> importExcel(List<SmtOrderImport> smtOrderImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+
+        LinkedList<SmtHtOrder> htList = new LinkedList<>();
+        LinkedList<SmtOrderImport> orderImports = new LinkedList<>();
+        LinkedList<MesOrderMaterial> mesOrderMaterials = new LinkedList<>();
+        for (int i = 0; i < smtOrderImports.size(); i++) {
+            SmtOrderImport smtOrderImport = smtOrderImports.get(i);
+            String freightNum = smtOrderImport.getFreightNum();
+            String contractCode = smtOrderImport.getContractCode();
+            String materialCode = smtOrderImport.getMaterialCode();
+            String supplierCode = smtOrderImport.getSupplierCode();
+
+            if (StringUtils.isEmpty(
+                    freightNum,contractCode,materialCode,supplierCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SmtOrder.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("contractCode",contractCode).orEqualTo("freightNum",freightNum);
+            List<SmtOrder> smtOrders = smtOrderMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(smtOrders)){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断物料信息是否存在
+            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
+            searchSmtMaterial.setCodeQueryMark(1);
+            searchSmtMaterial.setMaterialCode(materialCode);
+            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
+            if (StringUtils.isEmpty(smtMaterials)){
+                fail.add(i+4);
+                continue;
+            }
+            smtOrderImport.setMaterialId(smtMaterials.get(0).getMaterialId());
+
+            //判断客户信息是否存在
+            SearchSmtSupplier searchSmtSupplier = new SearchSmtSupplier();
+            searchSmtSupplier.setSupplierCode(supplierCode);
+            searchSmtSupplier.setCodeQueryMark((byte) 1);
+            List<SmtSupplier> smtSuppliers = basicFeignApi.findSupplierList(searchSmtSupplier).getData();
+            if (StringUtils.isEmpty(smtSuppliers)){
+                fail.add(i+4);
+                continue;
+            }
+            smtOrderImport.setSupplierId(smtSuppliers.get(0).getSupplierId());
+
+            orderImports.add(smtOrderImport);
+        }
+
+        if (StringUtils.isNotEmpty(orderImports)) {
+            //对合格数据进行分组
+            Map<String, List<SmtOrderImport>> map = orderImports.stream().collect(Collectors.groupingBy(SmtOrderImport::getContractCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<SmtOrderImport> smtOrderImports1 = map.get(code);
+
+                //新增订单
+                if (StringUtils.isNotEmpty(smtOrderImports1)){
+                    SmtOrderImport smtOrderImport = smtOrderImports1.get(0);
+                    SmtOrder smtOrder = new SmtOrder();
+                    org.springframework.beans.BeanUtils.copyProperties(smtOrderImport,smtOrder);
+                    smtOrder.setCreateUserId(currentUser.getUserId());
+                    smtOrder.setCreateTime(new Date());
+                    smtOrder.setModifiedUserId(currentUser.getUserId());
+                    smtOrder.setModifiedTime(new Date());
+                    smtOrder.setSalesManName(currentUser.getNickName());
+                    smtOrder.setOrderCode(CodeUtils.getId("ORDER"));
+                    smtOrderMapper.insertUseGeneratedKeys(smtOrder);
+
+                    SmtHtOrder smtHtOrder = new SmtHtOrder();
+                    org.springframework.beans.BeanUtils.copyProperties(smtOrder,smtHtOrder);
+                    smtHtOrder.setModifiedTime(new Date());
+                    smtHtOrder.setModifiedUserId(currentUser.getUserId());
+                    htList.add(smtHtOrder);
+
+                    for (SmtOrderImport orderImport : smtOrderImports1) {
+                        MesOrderMaterial mesOrderMaterial = new MesOrderMaterial();
+                        org.springframework.beans.BeanUtils.copyProperties(orderImport,mesOrderMaterial);
+                        mesOrderMaterial.setCreateTime(new Date());
+                        mesOrderMaterial.setCreateUserId(currentUser.getUserId());
+                        mesOrderMaterial.setModifiedTime(new Date());
+                        mesOrderMaterial.setModifiedUserId(currentUser.getUserId());
+                        mesOrderMaterial.setOrderId(smtOrder.getOrderId());
+                        mesOrderMaterials.add(mesOrderMaterial);
+                    }
+
+                    smtHtOrderMapper.insertList(htList);
+                    success += smtOrderMapper.batchAddOrderMaterial(mesOrderMaterials);
+                }
+            }
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

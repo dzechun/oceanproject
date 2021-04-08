@@ -79,10 +79,16 @@ public class SysUserController {
         return ControllerUtil.returnCRUD(sysUserService.update(sysUser));
     }
 
+    @ApiOperation("修改用户密码")
+    @GetMapping("/updatePassword")
+    public ResponseEntity updatePassword(@ApiParam(value = "旧密码",required = true)@RequestParam String oldPassword,@ApiParam(value = "新密码",required = true)@RequestParam String newPassword){
+        return ControllerUtil.returnCRUD(sysUserService.updatePassword(oldPassword,newPassword));
+    }
+
     @PostMapping("/switchOrganization")
     @ApiOperation(value = "切换用户组织",notes = "切换用户组织")
-    public ResponseEntity switchOrganization(@ApiParam(value = "组织ID",required = true) @RequestParam Long organizationId,@ApiParam(value = "token",required = true) @RequestParam String token) {
-        return ControllerUtil.returnCRUD(sysUserService.switchOrganization(organizationId,token));
+    public ResponseEntity switchOrganization(@ApiParam(value = "组织ID",required = true) @RequestParam Long organizationId) {
+        return ControllerUtil.returnCRUD(sysUserService.switchOrganization(organizationId));
     }
 
     @PostMapping("/delete")
