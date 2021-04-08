@@ -23,4 +23,6 @@ public interface SysUserService extends IService<SysUser> {
     List<String> findAllRoleId(Long userId);
 
     int switchOrganization(Long organizationId);
+
+    int updatePassword(String oldPassword, String newPassword);
 }
