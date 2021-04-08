@@ -24,7 +24,7 @@
     bhbp.badness_category_id,
     bhbp.badness_phenotype_code,
     bhbp.badness_phenotype_desc,
-    bhbp.organization_id,
+    bhbp.org_id,
     bhbp.remark,
     bhbp.`status`,
     bhbp.create_user_id,

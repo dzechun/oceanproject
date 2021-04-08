@@ -18,17 +18,17 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    bbp.badness_category_id,
+    bbp.badness_phenotype_id,
     bbp.badness_phenotype_code,
     bbp.badness_phenotype_desc,
-    bbp.organization_id,
+    bbp.org_id,
     bbp.remark,
     bbp.`status`,
     bbp.create_user_id,

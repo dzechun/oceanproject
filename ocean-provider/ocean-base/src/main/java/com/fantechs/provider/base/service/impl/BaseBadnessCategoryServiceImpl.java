@@ -44,36 +44,38 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
     @Override
     public int save(BaseBadnessCategory record) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         this.codeIfRepeat(record);
 
         record.setCreateTime(new Date());
-        record.setCreateUserId(user.getUserId());
+//        record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
-        record.setModifiedUserId(user.getUserId());
-        record.setOrgId(user.getOrganizationId());
+//        record.setModifiedUserId(user.getUserId());
+//        record.setOrgId(user.getOrganizationId());
+
+        int i = baseBadnessCategoryMapper.insertUseGeneratedKeys(record);
 
         BaseHtBadnessCategory baseHtBadnessCategory = new BaseHtBadnessCategory();
         BeanUtils.copyProperties(record,baseHtBadnessCategory);
         baseHtBadnessCategoryMapper.insert(baseHtBadnessCategory);
 
-        return baseBadnessCategoryMapper.insert(record);
+        return i;
     }
 
     @Override
     public int update(BaseBadnessCategory entity) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         this.codeIfRepeat(entity);
 
-        entity.setModifiedUserId(user.getUserId());
+//        entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
 
         BaseHtBadnessCategory baseHtBadnessCategory = new BaseHtBadnessCategory();
@@ -85,10 +87,10 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
     @Override
     public int batchDelete(String ids) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+//        if(StringUtils.isEmpty(user)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 
         List<BaseHtBadnessCategory> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
