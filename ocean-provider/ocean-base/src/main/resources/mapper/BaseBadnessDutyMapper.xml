@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.base.mapper.BaseBadnessCategoryMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseBadnessCategory">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseBadnessDutyMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseBadnessDuty">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="badness_category_id" jdbcType="BIGINT" property="badnessCategoryId" />
-    <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode" />
-    <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc" />
+    <id column="badness_duty_id" jdbcType="BIGINT" property="badnessDutyId" />
+    <result column="badness_duty_code" jdbcType="VARCHAR" property="badnessDutyCode" />
+    <result column="badness_duty_desc" jdbcType="VARCHAR" property="badnessDutyDesc" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -18,42 +18,42 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseBadnessCategoryDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseBadnessDutyDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-        bbc.badness_category_id,
-        bbc.badness_category_code,
-        bbc.badness_category_desc,
-        bbc.org_id,
-        bbc.remark,
-        bbc.`status`,
-        bbc.create_user_id,
-        bbc.create_time,
-        bbc.modified_user_id,
-        bbc.modified_time,
-        bbc.is_delete
+        bbd.badness_duty_id,
+        bbd.badness_duty_code,
+        bbd.badness_duty_desc,
+        bbd.org_id,
+        bbd.remark,
+        bbd.`status`,
+        bbd.create_user_id,
+        bbd.create_time,
+        bbd.modified_user_id,
+        bbd.modified_time,
+        bbd.is_delete
     </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select<include refid="Base_Column_List"/>,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
-    from fantech_imes_v2.base_badness_category bbc
-    left join ocean.sys_user su on bbc.create_user_id = su.user_id
-    left join ocean.sys_user sus on bbc.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON bbc.org_id = bo.organization_id
+    from fantech_imes_v2.base_badness_duty bbd
+    left join ocean.sys_user su on bbd.create_user_id = su.user_id
+    left join ocean.sys_user sus on bbd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON bbd.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
-        and bbc.badness_category_code like CONCAT('%',#{badnessCategoryCode},'%')
+        and bbd.badness_duty_code like CONCAT('%',#{badnessDutyCode},'%')
       </if>
       <if test="badnessCategoryDesc != null and badnessCategoryDesc != ''">
-        and bbc.badness_category_desc like CONCAT('%',#{badnessCategoryDesc},'%')
+        and bbd.badness_duty_desc like CONCAT('%',#{badnessDutyDesc},'%')
       </if>
     </where>
   </select>

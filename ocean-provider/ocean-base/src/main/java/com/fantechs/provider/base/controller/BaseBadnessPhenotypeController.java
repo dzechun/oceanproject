@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/07.
  */
 @RestController
-@Api(tags = "不良现象代码控制器")
+@Api(tags = "不良现象控制器")
 @RequestMapping("/baseBadnessPhenotype")
 @Validated
 public class BaseBadnessPhenotypeController {
