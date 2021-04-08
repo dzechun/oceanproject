@@ -47,11 +47,14 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        if(record.getIsProcess()==(byte)1){
+            throw new BizErrorException("请绑定工序");
+        }
         Example example = new Example(BcmLabelMaterial.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",record.getMaterialId());
-        criteria.andEqualTo("labelId",record.getLabelId());
         criteria.andEqualTo("processId",record.getProcessId());
+        criteria.andEqualTo("materialId",record.getMaterialId());
+        criteria.andNotEqualTo("labelMaterialId",record.getLabelMaterialId());
         BcmLabelMaterial bcmLabelMaterial = bcmLabelMaterialMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(bcmLabelMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -74,7 +77,6 @@ public class BcmLabelMaterialServiceImpl  extends BaseService<BcmLabelMaterial> 
         Example example = new Example(BcmLabelMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",entity.getMaterialId());
-        criteria.andEqualTo("labelId",entity.getLabelId());
         criteria.andEqualTo("processId",entity.getProcessId());
         criteria.andNotEqualTo("labelMaterialId",entity.getLabelMaterialId());
         BcmLabelMaterial bcmLabelMaterial = bcmLabelMaterialMapper.selectOneByExample(example);

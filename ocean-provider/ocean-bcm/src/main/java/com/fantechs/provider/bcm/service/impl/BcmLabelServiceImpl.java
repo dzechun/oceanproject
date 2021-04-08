@@ -68,24 +68,41 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
+        if(StringUtils.isEmpty(file)){
+            throw new BizErrorException("未监测到上传的标签文件");
+        }
+        if(StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals("")){
+            throw new BizErrorException("请规范标签文件名称");
+        }
+        if(record.getIsDefaultLabel()==(byte)1){
+            Example example = new Example(BcmLabel.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("labelCategoryId",record.getLabelCategoryId());
+            List<BcmLabel> bcmLabels = bcmLabelMapper.selectByExample(example);
+            if(bcmLabels.size()>0){
+                throw new BizErrorException("此类别已经有默认模版");
+            }
+        }
         Example example = new Example(BcmLabel.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCode",record.getLabelCode());
+        criteria.andNotEqualTo("labelId",record.getLabelId());
         BcmLabel bcmLabel = bcmLabelMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(bcmLabel)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-
+        record.setLabelName(file.getOriginalFilename());
+        record.setLabelVersion("V0.0.1");
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
         record.setSavePath("bartender服务器");
         //文件上传
-        rabbitProducer.sendFiles(record.getLabelVersion(),record.getLabelName(),file);
+        //rabbitProducer.sendFiles(record.getLabelVersion(),record.getLabelName(),file);
+
+
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
-
         int num = bcmLabelMapper.insertUseGeneratedKeys(record);
 
         BcmHtLabel bcmHtLabel = new BcmHtLabel();
@@ -102,6 +119,12 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        if(StringUtils.isEmpty(file) && StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals("")){
+            throw new BizErrorException("请规范标签文件名称");
+        }else{
+            entity.setLabelName(file.getOriginalFilename());
+        }
+
         Example example = new Example(BcmLabel.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCode",entity.getLabelCode());
@@ -112,9 +135,9 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         }
 
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
-        if(file!=null){
-            rabbitProducer.sendFiles(entity.getLabelVersion(),entity.getLabelName(),file);
-        }
+//        if(file!=null){
+//            rabbitProducer.sendFiles(entity.getLabelVersion(),entity.getLabelName(),file);
+//        }
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
@@ -147,30 +170,5 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         bcmHtLabelMapper.insertList(list);
 
         return bcmLabelMapper.deleteByIds(ids);
-    }
-
-    @Transactional(rollbackFor = RuntimeException.class)
-    public boolean uploadFile(Map map, MultipartFile file){
-        boolean isLogin = false;
-        boolean success = false;
-
-        //上传FTP服务器
-        try {
-            String ip = map.get("ip").toString();
-            Integer port = Integer.parseInt(map.get("port").toString());
-            String username = map.get("username").toString();
-            String password = map.get("password").toString();
-            isLogin = this.ftpUtil.connectFTP(ip,port,username,password);
-            if(isLogin){
-                File MFile = FTPUtil.multipartFileToFile(file);
-                success = this.ftpUtil.uploadFile(MFile,map.get("savePath").toString());
-                FTPUtil.deleteTempFile(MFile);
-            }
-        }catch (Exception e){
-            throw new BizErrorException(ErrorCodeEnum.valueOf("上传失败"));
-        }finally {
-            this.ftpUtil.loginOut();
-        }
-        return success;
     }
 }

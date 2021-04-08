@@ -13,7 +13,7 @@
         <result column="print_mode" jdbcType="VARCHAR" property="printMode"/>
         <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId"/>
         <result column="save_path" jdbcType="VARCHAR" property="savePath"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -24,6 +24,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="is_default_label" jdbcType="TINYINT" property="isDefaultLabel"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -50,16 +51,16 @@
     bl.create_time,
     sus.user_name,
     bl.modified_time,
-    bl.is_delete
+    bl.is_delete,
+    bl.is_default_label
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name, bo.organization_name
-        as modified_user_name FROM bcm_label bl
-        LEFT JOIN bcm_label_category blc ON blc.`label_category_id`= bl.label_category_id
+        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM base_label bl
+        LEFT JOIN base_label_category blc ON blc.`label_category_id`= bl.label_category_id
         LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes.base_organization bo ON bl.organization_id = bo.organization_id
+        LEFT JOIN base_organization bo ON bl.org_id = bo.organization_id
         <where>
             <if test="labelCode!=null and labelCode!='' and codeQueryMark == null">
                 and bl.label_code LIKE CONCAT('%',#{labelCode},'%')
