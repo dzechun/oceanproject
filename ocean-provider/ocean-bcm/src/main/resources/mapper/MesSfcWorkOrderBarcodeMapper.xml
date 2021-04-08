@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.bcm.mapper.MesSfcWorkOrderBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.MesSfcWorkOrderBarcode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
+    <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.MesSfcWorkOrderBarcodeDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+</resultMap>
+<resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.bcm.LabelRuteDto">
+</resultMap>
+  <sql id="BaseColumnList">
+  mswob.work_order_barcode_id,
+  mswob.parent_id,
+  mswob.barcode,
+  mswob.work_order_id,
+  mswob.work_order_code,
+  mswob.barcode_status,
+  mswob.barcode_type,
+  mswob.remark,
+  mswob.org_id,
+  mswob.create_user_id,
+  mswob.create_time,
+  mswob.modified_user_id,
+  mswob.modified_time,
+  mswob.is_delete
+</sql>
+ <select id="findList" resultMap="BaseResultDtoMap">
+  select <include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+  FROM mes_sfc_work_order_barcode mswob
+   LEFT JOIN ocean.sys_user su ON mswob.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON mswob.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON mswob.org_id = bo.organization_id
+        <where>
+        <if test="workOrderId != null">
+            and mswob.work_order_id = #{workOrderId}
+        </if>
+        <if test="barcodeType != null">
+            and mswob.barcode_type = #{barcodeType}
+        </if>
+</where>
+ </select>
+ <select id="findMaxCode" resultType="java.lang.String">
+ select barcode FROM mes_sfc_work_order_barcode where barcode_type = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id LIMIT 1
+</select>
+<!--查询条码解析码及标签模版-->
+<select id="findRule" resultMap="BaseRuleMap">
+    SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode',
+    bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode' FROM mes_pm_work_order mpwo
+left join base_barcode_rule_set_det brs on brs.barcode_rule_set_id = mpwo.barcode_rule_set_id
+LEFT JOIN base_barcode_rule br ON brs.barcode_rule_id = br.barcode_rule_id
+LEFT JOIN base_label_material lm ON mpwo.material_id=lm.material_id
+LEFT JOIN base_label_category lc ON lc.label_category_code=#{code}
+LEFT JOIN base_label bl ON lm.label_id = bl.label_id AND bl.label_category_id=lc.label_category_id
+where mpwo.work_order_id = #{workOrderId}
+</select>
+<!--查询默认模版-->
+<select id="DefaultLabel" resultMap="BaseRuleMap">
+
+</select>
+<select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.bcm.PrintModel">
+select * FROM #{viewName}
+</select>
+</mapper>
