@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2020-12-17 19:14:37
  */
 @Data
-@Table(name = "bcm_label_category")
+@Table(name = "base_label_category")
 public class BcmLabelCategory extends ValidGroup implements Serializable {
     /**
      * 标签类别id
@@ -51,11 +51,19 @@ public class BcmLabelCategory extends ValidGroup implements Serializable {
     private String labelCategoryDesc;
 
     /**
+     * 类型(0.SN,2.CSN)
+     */
+    @ApiModelProperty(name="barcodeType",value = "类型(0.SN,2.CSN)")
+    @Excel(name = "类型(0.SN,2.CSN)", height = 20, width = 30,orderNum="3")
+    @Column(name = "barcode_type")
+    private Byte barcodeType;
+
+    /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 备注

@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2020-12-17 19:34:45
  */
 @Data
-@Table(name = "bcm_label_material")
+@Table(name = "base_label_material")
 public class BcmLabelMaterial extends ValidGroup implements Serializable {
     /**
      * 产品关联标签id
@@ -52,7 +52,7 @@ public class BcmLabelMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Column(name = "organization_id")
-    private Long organizationId;
+    private Long orgId;
 
     /**
      * 备注
@@ -123,6 +123,13 @@ public class BcmLabelMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
+
+    /**
+     * 是否工序打印（Y/N）
+     */
+    @ApiModelProperty(name="isProcess",value = "是否工序打印（Y/N）")
+    @Column(name = "is_process")
+    private Byte isProcess;
 
     private static final long serialVersionUID = 1L;
 }

@@ -28,6 +28,12 @@ public class PrintDto implements Serializable {
     private String LabelName;
 
     /**
+     * 标签版本
+     */
+    @ApiModelProperty("版本")
+    private String labelVersion;
+
+    /**
      * 打印数据
      */
     private List<PrintModel> printModelList;

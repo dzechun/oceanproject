@@ -17,7 +17,7 @@ import lombok.Data;
  * @date 2020-12-17 13:47:28
  */
 @Data
-@Table(name = "bcm_label")
+@Table(name = "base_label")
 public class BcmLabel extends ValidGroup implements Serializable {
     /**
      * 标签信息id
@@ -36,9 +36,9 @@ public class BcmLabel extends ValidGroup implements Serializable {
     private String labelCode;
 
     /**
-     * 标签名称
+     * 标签名称(系统生成)
      */
-    @ApiModelProperty(name="labelName",value = "标签名称")
+    @ApiModelProperty(name="labelName",value = "标签名称(系统生产)")
     @Excel(name = "标签名称", height = 20, width = 30,orderNum="2")
     @Column(name = "label_name")
     private String labelName;
@@ -52,9 +52,9 @@ public class BcmLabel extends ValidGroup implements Serializable {
     private String labelDesc;
 
     /**
-     * 版本
+     * 版本(系统生成)
      */
-    @ApiModelProperty(name="labelVersion",value = "版本")
+    @ApiModelProperty(name="labelVersion",value = "版本(系统生成)")
     @Excel(name = "版本", height = 20, width = 30,orderNum="4")
     @Column(name = "label_version")
     private String labelVersion;
@@ -85,9 +85,9 @@ public class BcmLabel extends ValidGroup implements Serializable {
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 备注
@@ -159,6 +159,13 @@ public class BcmLabel extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
+
+    /**
+     * 是否默认模版（Y/N）
+     */
+    @ApiModelProperty(name="isDefaultLabel",value = "是否默认模版（Y/N）")
+    @Column(name = "is_default_label")
+    private Byte isDefaultLabel;
 
     private static final long serialVersionUID = 1L;
 }
