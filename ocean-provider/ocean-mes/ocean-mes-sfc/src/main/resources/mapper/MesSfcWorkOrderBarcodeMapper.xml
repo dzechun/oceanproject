@@ -59,6 +59,9 @@
         <if test="barcodeType != null">
             and mswob.barcode_type = #{barcodeType}
         </if>
+        <if test="barcode != null and barcode != ''">
+            and mswob.barcode like CONCAT('%',#{barcode},'%')
+        </if>
 </where>
  </select>
  <select id="findMaxCode" resultType="java.lang.String">
