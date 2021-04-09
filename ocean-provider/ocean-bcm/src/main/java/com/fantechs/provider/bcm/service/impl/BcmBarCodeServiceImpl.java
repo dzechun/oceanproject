@@ -8,14 +8,13 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
 import com.fantechs.common.base.general.dto.bcm.BcmBarCodeWorkDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCode;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -182,13 +181,13 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                 List<BcmBarCodeDet> bcmBarCodeDets = bcmBarCodeDetMapper.selectByExample(example1);
                 for (BcmBarCodeDet bcmBarCodeDet : bcmBarCodeDets) {
                     //打印
-                    SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-                    searchSmtWorkOrder.setWorkOrderId(workOrderId);
-                    List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+                    SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                    searchMesPmWorkOrder.setWorkOrderId(workOrderId);
+                    List<MesPmWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
                     if(StringUtils.isEmpty(smtWorkOrderDto)){
                         throw new BizErrorException("获取工单信息失败");
                     }
-                    SmtWorkOrderDto sdto = smtWorkOrderDto.get(0);
+                    MesPmWorkOrderDto sdto = smtWorkOrderDto.get(0);
                     Map<String, Object> map = JSON.parseObject(JSON.toJSONString(sdto),Map.class);
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
 
@@ -332,9 +331,9 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
         try {
             for (String s : barCodeId) {
                 BcmBarCode bcmBarCode = bcmBarCodeMapper.selectByPrimaryKey(Long.parseLong(s));
-                SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-                searchSmtWorkOrder.setWorkOrderId(bcmBarCode.getWorkOrderId());
-                List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder.setWorkOrderId(bcmBarCode.getWorkOrderId());
+                List<MesPmWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
                 if(StringUtils.isEmpty(smtWorkOrderDto)){
                     throw new BizErrorException("获取工单信息失败");
                 }
@@ -343,7 +342,7 @@ public class BcmBarCodeServiceImpl  extends BaseService<BcmBarCode> implements B
                 List<BcmBarCodeDet> bcmBarCodeDets = bcmBarCodeDetMapper.selectByExample(example1);
                 for (BcmBarCodeDet bcmBarCodeDet : bcmBarCodeDets) {
                     //打印
-                    SmtWorkOrderDto sdto = smtWorkOrderDto.get(0);
+                    MesPmWorkOrderDto sdto = smtWorkOrderDto.get(0);
                     Map<String, Object> map = JSON.parseObject(JSON.toJSONString(sdto),Map.class);
                     map.put("QrCode",bcmBarCodeDet.getBarCodeContent());
                     //获取抽检员信息

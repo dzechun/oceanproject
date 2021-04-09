@@ -2,23 +2,17 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.entity.basic.SmtRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkPrintDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulk;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet;
 import com.fantechs.common.base.general.entity.mes.pm.*;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.MesPmBreakBulkService;
 import org.springframework.stereotype.Service;
@@ -28,10 +22,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +38,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
     @Resource
     private MesPmBreakBulkDetMapper mesPmBreakBulkDetMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
     @Resource
@@ -243,7 +235,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 Long routeId = mesPmBreakBulkPrintDto.getRouteId();
                 //查询工艺路线配置
-                List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                List<SmtRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
                 if (StringUtils.isNotEmpty(routeProcesses)) {
                     StringBuffer sb =new StringBuffer();
                     for (SmtRouteProcess routeProcess : routeProcesses) {
@@ -270,7 +262,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 Long routeId = mesPmBreakBulkPrintDto.getRouteId();
                 //查询工艺路线配置
-                List<SmtRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                List<SmtRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
                 if (StringUtils.isNotEmpty(routeProcesses)) {
                     StringBuffer sb =new StringBuffer();
                     for (SmtRouteProcess routeProcess : routeProcesses) {

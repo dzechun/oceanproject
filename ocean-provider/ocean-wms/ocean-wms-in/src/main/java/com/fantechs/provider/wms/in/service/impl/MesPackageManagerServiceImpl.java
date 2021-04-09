@@ -1,25 +1,20 @@
 package com.fantechs.provider.wms.in.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.dto.storage.ManagerList;
 import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
-import com.fantechs.common.base.entity.security.SysSpecItem;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.bcm.PrintDto;
 import com.fantechs.common.base.general.dto.bcm.PrintModel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.in.service.MesPackageManagerService;
 import com.fantechs.provider.wms.in.mapper.MesPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;

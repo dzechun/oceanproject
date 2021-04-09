@@ -2,7 +2,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderReportDto;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderReport;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderReport;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -10,10 +10,10 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderReportMapper;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderReportService;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +32,9 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
     @Resource
     private SmtWorkOrderReportMapper smtWorkOrderReportMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
 
 
     @Override
@@ -49,16 +49,16 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByWorkOrderId(record.getWorkOrderId());
-        if(record.getCompletedQuantity().intValue()>(smtWorkOrder.getWorkOrderQuantity().intValue()-smtWorkOrder.getOutputQuantity().intValue())){
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByWorkOrderId(record.getWorkOrderId());
+        if(record.getCompletedQuantity().intValue()>(mesPmWorkOrder.getWorkOrderQuantity().intValue()- mesPmWorkOrder.getOutputQuantity().intValue())){
             throw new BizErrorException("报工数量大于剩余工单数量");
         }
-        BigDecimal outPutQty = new BigDecimal(smtWorkOrder.getOutputQuantity().intValue() + record.getCompletedQuantity().intValue());
-        if(outPutQty.compareTo(smtWorkOrder.getWorkOrderQuantity())==0){
-            smtWorkOrder.setWorkOrderStatus(4);
+        BigDecimal outPutQty = new BigDecimal(mesPmWorkOrder.getOutputQuantity().intValue() + record.getCompletedQuantity().intValue());
+        if(outPutQty.compareTo(mesPmWorkOrder.getWorkOrderQuantity())==0){
+            mesPmWorkOrder.setWorkOrderStatus(4);
         }
-        smtWorkOrder.setOutputQuantity(new BigDecimal(smtWorkOrder.getOutputQuantity().intValue()+record.getCompletedQuantity().intValue()));
-        if(smtWorkOrderService.update(smtWorkOrder)<=0){
+        mesPmWorkOrder.setOutputQuantity(new BigDecimal(mesPmWorkOrder.getOutputQuantity().intValue()+record.getCompletedQuantity().intValue()));
+        if(mesPmWorkOrderService.update(mesPmWorkOrder)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
         //保留此功能

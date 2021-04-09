@@ -3,10 +3,8 @@ package com.fantechs.provider.mes.pm.service;
 import com.fantechs.common.base.entity.basic.SmtProcess;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBarcodePool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

@@ -3,13 +3,10 @@ package com.fantechs.provider.bcm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.bcm.OltSafeStockDto;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.bcm.OltSafeStock;
 import com.fantechs.common.base.general.entity.bcm.history.OltHtSafeStock;
 import com.fantechs.common.base.general.entity.bcm.search.SearchOltSafeStock;
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -17,7 +14,6 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.bcm.mapper.OltHtSafeStockMapper;
 import com.fantechs.provider.bcm.mapper.OltSafeStockMapper;
 import com.fantechs.provider.bcm.service.Mail.MailService;
-import com.fantechs.provider.bcm.service.Mail.impl.MailServiceImpl;
 import com.fantechs.provider.bcm.service.OltSafeStockService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -26,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  *

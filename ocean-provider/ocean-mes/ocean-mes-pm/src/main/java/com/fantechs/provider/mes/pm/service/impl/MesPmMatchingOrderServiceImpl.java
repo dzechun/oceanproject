@@ -9,7 +9,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlatePartsDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatching;
@@ -29,7 +29,7 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingDetMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingOrderMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmMatchingOrderService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
 import org.springframework.stereotype.Service;
@@ -64,7 +64,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     @Resource
     private MesPmMatchingDetMapper mesPmMatchingDetMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
 
     @Override
     public List<MesPmMatchingOrderDto> findList(Map<String, Object> map) {
@@ -127,9 +127,9 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                             throw new BizErrorException("未找到流程单信息");
                         }
 
-                        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-                        searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
-                        List<SmtWorkOrderDto> workOrderList = smtWorkOrderMapper.findList(searchSmtWorkOrder);
+                        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                        searchMesPmWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
+                        List<MesPmWorkOrderDto> workOrderList = mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
                         if (StringUtils.isEmpty(workOrderList)) {
                             throw new BizErrorException("未找到流程单的工单信息");
                         }
