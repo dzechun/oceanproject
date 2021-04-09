@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/06.
  */
 @RestController
-@Api(tags = "baseSampleStandard控制器")
+@Api(tags = "抽样标准信息管理")
 @RequestMapping("/baseSampleStandard")
 @Validated
 public class BaseSampleStandardController {
