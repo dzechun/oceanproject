@@ -1,9 +1,9 @@
-package com.fantechs.provider.bcm.service;
+package com.fantechs.provider.mes.sfc.service;
 
-import com.fantechs.common.base.general.dto.bcm.LabelRuteDto;
-import com.fantechs.common.base.general.dto.bcm.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.entity.bcm.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.bcm.search.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.IService;
 import org.springframework.http.ResponseEntity;
 
@@ -21,7 +21,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
 
     int print(String ids);
 
-    LabelRuteDto findLabelRute(Long workOrderId,Byte barcodeType);
+    LabelRuteDto findLabelRute(Long workOrderId, Byte barcodeType);
 
     void checkOutLabel(String labelName, HttpServletRequest request, HttpServletResponse response);
 

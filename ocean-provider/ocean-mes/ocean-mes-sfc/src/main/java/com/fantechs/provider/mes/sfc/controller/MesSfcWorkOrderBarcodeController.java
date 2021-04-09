@@ -1,13 +1,13 @@
-package com.fantechs.provider.bcm.controller;
+package com.fantechs.provider.mes.sfc.controller;
 
-import com.fantechs.common.base.general.dto.bcm.LabelRuteDto;
-import com.fantechs.common.base.general.dto.bcm.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.entity.bcm.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.bcm.search.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.bcm.service.MesSfcWorkOrderBarcodeService;
+import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
@@ -57,7 +57,7 @@ public class MesSfcWorkOrderBarcodeController {
 
     @ApiOperation("规则解析及标签模版")
     @PostMapping("/findRule")
-    public ResponseEntity<LabelRuteDto> findRule(@ApiParam(value = "Id",required = true)@RequestParam Long Id,@ApiParam("条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")@RequestParam Byte barcodeType){
+    public ResponseEntity<LabelRuteDto> findRule(@ApiParam(value = "Id",required = true)@RequestParam Long Id, @ApiParam("条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")@RequestParam Byte barcodeType){
         LabelRuteDto labelRuteDto = mesSfcWorkOrderBarcodeService.findLabelRute(Id,barcodeType);
         return ControllerUtil.returnDataSuccess(labelRuteDto,StringUtils.isEmpty(labelRuteDto)?0:1);
     }

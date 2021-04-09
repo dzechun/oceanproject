@@ -1,27 +1,38 @@
 package com.fantechs.provider.bcm.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
 import com.fantechs.common.base.general.entity.bcm.BcmLabelCategory;
 import com.fantechs.common.base.general.entity.bcm.history.BcmHtLabelCategory;
 import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabelCategory;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.bcm.mapper.BcmHtLabelCategoryMapper;
 import com.fantechs.provider.bcm.mapper.BcmLabelCategoryMapper;
 import com.fantechs.provider.bcm.service.BcmLabelCategoryService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
@@ -34,6 +45,8 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
          private BcmLabelCategoryMapper bcmLabelCategoryMapper;
          @Resource
          private BcmHtLabelCategoryMapper bcmHtLabelCategoryMapper;
+         @Resource
+         private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<BcmLabelCategoryDto> findList(SearchBcmLabelCategory searchBcmLabelCategory) {
@@ -56,7 +69,9 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         if(!StringUtils.isEmpty(bcmLabelCategory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-
+        if(!this.MkdirDoc(null,record.getLabelCategoryName())){
+            throw new BizErrorException("请检查文件路径");
+        }
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
@@ -83,6 +98,12 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
         entity.setModifiedTime(new Date());
         int num = bcmLabelCategoryMapper.updateByPrimaryKeySelective(entity);
 
+        BcmLabelCategory bcm = bcmLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
+        if(!bcm.getLabelCategoryName().equals(entity.getLabelCategoryName())){
+            if(!this.MkdirDoc(bcm.getLabelCategoryName(),entity.getLabelCategoryName())){
+                throw new BizErrorException("请检查文件路径");
+            }
+        }
         //新增历史记录
         BcmHtLabelCategory bcmHtLabelCategory = new BcmHtLabelCategory();
         BeanUtils.copyProperties(entity,bcmHtLabelCategory);
@@ -110,9 +131,46 @@ public class BcmLabelCategoryServiceImpl  extends BaseService<BcmLabelCategory> 
             BcmHtLabelCategory bcmHtLabelCategory = new BcmHtLabelCategory();
             BeanUtils.copyProperties(bcmLabelCategory,bcmHtLabelCategory);
             list.add(bcmHtLabelCategory);
+
+            //删除文件
+            if(!this.MkdirDoc(bcmLabelCategory.getLabelCategoryName(),null)){
+                throw new BizErrorException("删除失败");
+            }
         }
         bcmHtLabelCategoryMapper.insertList(list);
 
         return bcmLabelCategoryMapper.deleteByIds(ids);
+    }
+
+    /**
+     * 按类别创建文件夹
+     * @param oldDocName
+     * @param docName
+     * @return
+     */
+    private boolean MkdirDoc(String oldDocName,String docName){
+        boolean isOk = false;
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("LabelFilePath");
+        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
+        List<SysSpecItem> sysSpecItemList = itemList.getData();
+        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+        if(!StringUtils.isEmpty(oldDocName)){
+            String path = map.get("path").toString();
+            File file = new File(path+oldDocName);
+            if(file.exists()){
+                isOk = file.delete();
+            }else {
+                isOk=true;
+            }
+        }
+        if(!StringUtils.isEmpty(docName)){
+            String path = map.get("path").toString();
+            File file = new File(path+docName);
+            if(!file.exists()){
+                isOk = file.mkdirs();
+            }
+        }
+        return isOk;
     }
 }

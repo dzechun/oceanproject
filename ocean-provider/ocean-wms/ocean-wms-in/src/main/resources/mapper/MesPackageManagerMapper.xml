@@ -51,7 +51,7 @@
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
-    <resultMap id="PrintModelMap" type="com.fantechs.common.base.general.dto.bcm.PrintModel">
+    <resultMap id="PrintModelMap" type="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
 
 </resultMap>
 

@@ -15,7 +15,7 @@ import lombok.Data;
  * @date 2020-12-17 11:08:22
  */
 @Data
-@Table(name = "bcm_ht_label_category")
+@Table(name = "base_ht_label_category")
 public class BcmHtLabelCategory implements Serializable {
     /**
      * 标签类别历史id
@@ -164,6 +164,14 @@ public class BcmHtLabelCategory implements Serializable {
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
+
+    /**
+     * 类型(0.SN,2.CSN)
+     */
+    @ApiModelProperty(name="barcodeType",value = "类型(0.SN,2.CSN)")
+    @Excel(name = "类型(0.SN,2.CSN)", height = 20, width = 30,orderNum="3")
+    @Column(name = "barcode_type")
+    private Byte barcodeType;
 
     private static final long serialVersionUID = 1L;
 }
