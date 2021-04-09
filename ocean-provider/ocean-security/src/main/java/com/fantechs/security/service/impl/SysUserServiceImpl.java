@@ -318,5 +318,4 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         return sysUserMapper.updateByExampleSelective(user,example);
     }
-
 }

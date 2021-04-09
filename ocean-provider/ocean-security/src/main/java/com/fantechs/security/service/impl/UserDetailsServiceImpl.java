@@ -3,10 +3,13 @@ package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserDto;
+import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.security.filter.CustomWebAuthenticationDetails;
+import com.fantechs.security.mapper.SysOrganizationUserMapper;
 import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
@@ -40,6 +44,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private SysUserMapper sysUserMapper;
     @Autowired
     private SysRoleMapper sysRoleMapper;
+    @Resource
+    private SysOrganizationUserMapper sysOrganizationUserMapper;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -52,10 +58,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);
         }
-        List<Long> organizationList = sysUserMapper.findOrganizationList(user.getUserId());
-        if (StringUtils.isNotEmpty(organizationList)){
-            user.setOrganizationId(organizationList.get(0));
-        }
+
+
         List<SysRole> rolesByUserId=new LinkedList<>();
         try{
             rolesByUserId = sysRoleMapper.findRolesByUserId(user.getUserId());
@@ -65,6 +69,30 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(StringUtils.isEmpty(rolesByUserId)){
             throw new BizErrorException(ErrorCodeEnum.GL99990401);
         }
+
+        if(StringUtils.isNotEmpty(CustomWebAuthenticationDetails.ORGANIZATIONID)){
+            Example example1 = new Example(SysOrganizationUser.class);
+            example1.createCriteria().andEqualTo("userId",user.getUserId());
+            List<SysOrganizationUser> sysOrganizationUsers = sysOrganizationUserMapper.selectByExample(example1);
+            boolean b = false;
+            for (SysOrganizationUser sysOrganizationUser : sysOrganizationUsers) {
+                if (sysOrganizationUser.getOrganizationId().equals(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID))){
+                    b = true;
+                }
+            }
+            if (b){
+                user.setOrganizationId(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID));
+            }else{
+                CustomWebAuthenticationDetails.pass =false;
+                throw new BizErrorException("组织错误");
+            }
+        }else{
+            List<Long> organizationList = sysUserMapper.findOrganizationList(user.getUserId());
+            if (StringUtils.isNotEmpty(organizationList)){
+                user.setOrganizationId(organizationList.get(0));
+            }
+        }
+
         SysUserDto userDto  = new SysUserDto();
         BeanUtils.copyProperties(user,userDto);
         userDto.setRoles(rolesByUserId);
