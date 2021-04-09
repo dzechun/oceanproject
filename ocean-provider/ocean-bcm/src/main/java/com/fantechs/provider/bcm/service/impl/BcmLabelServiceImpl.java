@@ -21,7 +21,6 @@ import com.fantechs.provider.bcm.mapper.BcmLabelCategoryMapper;
 import com.fantechs.provider.bcm.mapper.BcmLabelMapper;
 import com.fantechs.provider.bcm.service.BcmLabelService;
 import com.fantechs.provider.bcm.util.FTPUtil;
-import com.fantechs.provider.bcm.util.RabbitProducer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,8 +51,6 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
     private BcmLabelCategoryMapper bcmLabelCategoryMapper;
     @Autowired
     private FTPUtil ftpUtil;
-    @Autowired
-    private RabbitProducer rabbitProducer;
 
     @Override
     public List<BcmLabelDto> findList(SearchBcmLabel searchBcmLabel) {
@@ -91,12 +87,12 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         if(!StringUtils.isEmpty(bcmLabel)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-        record.setLabelName(file.getOriginalFilename());
-        record.setLabelVersion("V0.0.1");
+        //名称+编码
+        record.setLabelName(file.getOriginalFilename()+record.getLabelCode());
+        record.setLabelVersion("0.0.1");
         BcmLabelCategory bcmLabelCategory = bcmLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
         record.setSavePath("bartender服务器");
         //文件上传
-        //rabbitProducer.sendFiles(record.getLabelVersion(),record.getLabelName(),file);
 
 
         record.setCreateTime(new Date());
@@ -139,6 +135,9 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
 //            rabbitProducer.sendFiles(entity.getLabelVersion(),entity.getLabelName(),file);
 //        }
 
+        //update version number
+        entity.setLabelVersion(this.generationVersion(entity.getLabelVersion()));
+
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
 
@@ -170,5 +169,44 @@ public class BcmLabelServiceImpl  extends BaseService<BcmLabel> implements BcmLa
         bcmHtLabelMapper.insertList(list);
 
         return bcmLabelMapper.deleteByIds(ids);
+    }
+
+    /**
+     * Upload the tag template to the server
+     * @param file
+     */
+    private void UploadFile(MultipartFile file){
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("LabelFilePath");
+        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
+        List<SysSpecItem> sysSpecItemList = itemList.getData();
+        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+    }
+
+    /**
+     * Build version number
+     * @param version
+     * @return New version
+     */
+    private String generationVersion(String version){
+        if(StringUtils.isEmpty(version)){
+            throw new BizErrorException("版本号获取失败");
+        }
+        String[] vr = version.split("\\.");
+        StringBuilder sb = new StringBuilder();
+        for (String s : vr) {
+            sb.append(s);
+        }
+        version = sb.toString();
+        String ss = String.format("%03d", Integer.valueOf(version) + 1);
+        StringBuilder sbs = new StringBuilder();
+        for (int i = 0; i < ss.length(); i++) {
+            if (i!=ss.length()-1){
+                sbs.append(ss.substring(i,i+1)+".");
+            }else{
+                sbs.append(ss.substring(i,i+1));
+            }
+        }
+        return sbs.toString();
     }
 }

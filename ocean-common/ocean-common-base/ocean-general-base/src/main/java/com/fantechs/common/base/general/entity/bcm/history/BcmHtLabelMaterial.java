@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2020-12-17 19:34:46
  */
 @Data
-@Table(name = "bcm_ht_label_material")
+@Table(name = "base_ht_label_material")
 public class BcmHtLabelMaterial extends ValidGroup implements Serializable {
     /**
      * 产品关联标签历史id
@@ -207,6 +207,13 @@ public class BcmHtLabelMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
+
+    /**
+     * 是否工序打印（Y/N）
+     */
+    @ApiModelProperty(name="isProcess",value = "是否工序打印（Y/N）")
+    @Column(name = "is_process")
+    private Byte isProcess;
 
     private static final long serialVersionUID = 1L;
 }

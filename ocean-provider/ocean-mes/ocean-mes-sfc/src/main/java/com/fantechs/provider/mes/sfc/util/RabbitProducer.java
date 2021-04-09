@@ -1,10 +1,9 @@
-package com.fantechs.provider.bcm.util;
+package com.fantechs.provider.mes.sfc.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.bcm.PrintDto;
-import com.fantechs.common.base.general.dto.bcm.PrintModel;
-import com.fantechs.provider.bcm.config.RabbitConfig;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.provider.mes.sfc.config.RabbitConfig;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

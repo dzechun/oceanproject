@@ -1,12 +1,9 @@
-package com.fantechs.provider.bcm.controller;
+package com.fantechs.provider.mes.sfc.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fantechs.common.base.general.dto.bcm.PrintDto;
-import com.fantechs.common.base.general.dto.bcm.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.provider.bcm.util.RabbitProducer;
-import io.lettuce.core.dynamic.annotation.Param;
+import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

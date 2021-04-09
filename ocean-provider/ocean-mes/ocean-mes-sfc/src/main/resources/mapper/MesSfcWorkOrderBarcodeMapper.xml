@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.bcm.mapper.MesSfcWorkOrderBarcodeMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.MesSfcWorkOrderBarcode">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode">
     <!--
       WARNING - @mbg.generated
     -->
@@ -23,12 +23,12 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
-  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.bcm.MesSfcWorkOrderBarcodeDto">
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
 </resultMap>
-<resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.bcm.LabelRuteDto">
+<resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
 </resultMap>
   <sql id="BaseColumnList">
   mswob.work_order_barcode_id,
@@ -77,9 +77,11 @@ where mpwo.work_order_id = #{workOrderId}
 </select>
 <!--查询默认模版-->
 <select id="DefaultLabel" resultMap="BaseRuleMap">
-
+    SELECT bl.label_code,bl.label_name,bl.label_version FROM base_label bl
+    LEFT JOIN base_label_category blc ON bl.label_category_id = blc.label_category_id
+    WHERE blc.label_category_code = #{labelCategoryCode}
 </select>
-<select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.bcm.PrintModel">
+<select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
 select * FROM #{viewName}
 </select>
 </mapper>

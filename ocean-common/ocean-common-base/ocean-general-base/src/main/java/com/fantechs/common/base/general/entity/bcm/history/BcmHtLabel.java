@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2020-12-17 13:47:29
  */
 @Data
-@Table(name = "bcm_ht_label")
+@Table(name = "base_ht_label")
 public class BcmHtLabel extends ValidGroup implements Serializable {
     /**
      * 标签信息历史id
@@ -95,8 +95,8 @@ public class BcmHtLabel extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 组织名称
@@ -197,6 +197,13 @@ public class BcmHtLabel extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
+
+    /**
+     * 是否默认模版（Y/N）
+     */
+    @ApiModelProperty(name="isDefaultLabel",value = "是否默认模版（Y/N）")
+    @Column(name = "is_default_label")
+    private Byte isDefaultLabel;
 
     private static final long serialVersionUID = 1L;
 }

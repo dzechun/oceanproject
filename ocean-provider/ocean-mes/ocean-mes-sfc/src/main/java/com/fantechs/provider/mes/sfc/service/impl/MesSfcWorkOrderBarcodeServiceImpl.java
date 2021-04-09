@@ -1,33 +1,32 @@
-package com.fantechs.provider.bcm.service.impl;
+package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.bcm.LabelRuteDto;
-import com.fantechs.common.base.general.dto.bcm.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.bcm.PrintDto;
-import com.fantechs.common.base.general.dto.bcm.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.bcm.BcmLabel;
-import com.fantechs.common.base.general.entity.bcm.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.bcm.search.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.bcm.mapper.BcmLabelMapper;
-import com.fantechs.provider.bcm.mapper.MesSfcWorkOrderBarcodeMapper;
-import com.fantechs.provider.bcm.service.MesSfcWorkOrderBarcodeService;
-import com.fantechs.provider.bcm.util.RabbitProducer;
-import org.springframework.http.ResponseEntity;
+import com.fantechs.provider.mes.sfc.util.RabbitProducer;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
+import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -36,7 +35,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -60,6 +58,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int print(String ids) {
         String[] arrId = ids.split(",");
         for (String s : arrId) {
@@ -69,13 +68,21 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             PrintModel printModel = null;
             switch (mesSfcWorkOrderBarcode.getBarcodeType()){
                 case 2:
-                    //工单
+                    //获取工单类别模版
                     labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01",mesSfcWorkOrderBarcode.getWorkOrderId());
+                    if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getLabelName())){
+                        //获取默认模版
+                        labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
+                    }
                     printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_workOrder");
                     break;
                 case 4:
-                    //销售
+                    //获取销售类别模版
                     labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",mesSfcWorkOrderBarcode.getWorkOrderId());
+                    if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getLabelName())){
+                        //获取默认模版
+                        labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
+                    }
                     printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_order");
                     break;
             }
@@ -86,8 +93,19 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);
             rabbitProducer.sendPrint(printDto);
+
+            this.update(mesSfcWorkOrderBarcode);
         }
         return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int update(MesSfcWorkOrderBarcode entity) {
+        SysUser sysUser = currentUser();
+        entity.setModifiedUserId(sysUser.getUserId());
+        entity.setModifiedTime(new Date());
+        return mesSfcWorkOrderBarcodeMapper.updateByPrimaryKeySelective(entity);
     }
 
     @Override
@@ -101,10 +119,14 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",workOrderId);
                 break;
         }
+        if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
+            throw new BizErrorException(barcodeType==1?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
+        }
         return labelRuteDto;
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public void checkOutLabel(String labelName, HttpServletRequest request, HttpServletResponse response) {
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException("参数错误");
@@ -133,6 +155,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public MesSfcWorkOrderBarcode add(MesSfcWorkOrderBarcode record) {
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(record.getWorkOrderId())){
@@ -159,7 +182,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(record);
         return record;
     }
-
 
     /**
      * 获取当前登录用户

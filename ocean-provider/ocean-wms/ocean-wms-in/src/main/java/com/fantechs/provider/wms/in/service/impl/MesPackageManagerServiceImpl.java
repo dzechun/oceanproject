@@ -5,6 +5,8 @@ import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.general.dto.bcm.PrintDto;
 import com.fantechs.common.base.general.dto.bcm.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;

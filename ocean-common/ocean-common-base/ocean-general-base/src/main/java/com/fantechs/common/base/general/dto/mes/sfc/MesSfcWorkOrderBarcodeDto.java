@@ -1,7 +1,7 @@
-package com.fantechs.common.base.general.dto.bcm;
+package com.fantechs.common.base.general.dto.mes.sfc;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.bcm.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -1,8 +1,8 @@
-package com.fantechs.common.base.general.entity.bcm;
+package com.fantechs.common.base.general.entity.mes.sfc;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.general.dto.bcm.LabelRuteDto;
+import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;

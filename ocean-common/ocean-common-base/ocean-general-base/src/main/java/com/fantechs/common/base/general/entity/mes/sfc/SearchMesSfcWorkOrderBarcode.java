@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.bcm.search;
+package com.fantechs.common.base.general.entity.mes.sfc;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;

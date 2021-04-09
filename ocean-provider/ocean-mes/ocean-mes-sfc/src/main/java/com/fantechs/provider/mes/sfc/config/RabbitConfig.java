@@ -1,4 +1,4 @@
-package com.fantechs.provider.bcm.config;
+package com.fantechs.provider.mes.sfc.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
