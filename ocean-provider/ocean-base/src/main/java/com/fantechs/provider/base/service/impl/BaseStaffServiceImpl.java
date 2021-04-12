@@ -45,6 +45,8 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     private BaseOrganizationMapper baseOrganizationMapper;
     @Resource
     private BaseStaffProcessMapper baseStaffProcessMapper;
+    @Resource
+    private BaseProcessMapper baseProcessMapper;
 
     @Override
     public List<BaseStaffDto> findList(Map<String, Object> map) {
@@ -204,7 +206,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
             SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
             searchBaseProcess.setCodeQueryMark(1);
             searchBaseProcess.setProcessCode(baseStaffImport.getProcessCode());
-            List<BaseProcess> baseProcesses = basicFeignApi.findProcessList(searchBaseProcess).getData();
+            List<BaseProcess> baseProcesses = baseProcessMapper.findList(searchBaseProcess);
             if (StringUtils.isEmpty(baseProcesses)){
                 fail.add(i + 4);
                 continue;

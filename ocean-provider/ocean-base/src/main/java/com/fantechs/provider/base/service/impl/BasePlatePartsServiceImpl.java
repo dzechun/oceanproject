@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseRoute;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -14,6 +15,7 @@ import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.BasePlateParts;
 import com.fantechs.common.base.general.entity.basic.BasePlatePartsDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPlateParts;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -42,11 +44,11 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     @Resource
     private BasePlatePartsDetMapper basePlatePartsDetMapper;
     @Resource
-    private BasicFeignApi basicFeignApi;
-    @Resource
     private BasePartsInformationMapper basePartsInformationMapper;
     @Resource
-    private BaseOrganizationMapper baseOrganizationMapper;
+    private BaseMaterialMapper baseMaterialMapper;
+    @Resource
+    private BaseRouteMapper baseRouteMapper;
 
     @Override
     public List<BasePlatePartsDto> findList(Map<String, Object> map) {
@@ -180,7 +182,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
             searchBaseMaterial.setCodeQueryMark(1);
-            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            List<BaseMaterialDto> baseMaterials = baseMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
 
             Example example1 = new Example(BasePartsInformation.class);
             Example.Criteria criteria = example1.createCriteria();
@@ -190,7 +192,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             SearchBaseRoute searchBaseRoute = new SearchBaseRoute();
             searchBaseRoute.setRouteName(routeName);
             searchBaseRoute.setNameQueryMark(1);
-            List<BaseRoute> baseRoutes = basicFeignApi.findRouteList(searchBaseRoute).getData();
+            List<BaseRoute> baseRoutes = baseRouteMapper.findList(searchBaseRoute);
             //编码对应的信息不存在或工艺路线的类型不是部件工艺路线
             if (StringUtils.isEmpty(basePartsInformation, baseRoutes, baseMaterials) || baseRoutes.get(0).getRouteType() != 3) {
                 fail.add(i + 4);
