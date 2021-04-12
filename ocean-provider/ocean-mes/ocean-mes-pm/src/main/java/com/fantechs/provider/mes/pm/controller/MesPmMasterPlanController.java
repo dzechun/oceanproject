@@ -152,7 +152,7 @@ public class MesPmMasterPlanController {
             MesPmMasterPlan mesPmMasterPlan = new MesPmMasterPlan();
             mesPmMasterPlan.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
             mesPmMasterPlan.setProLineId(smtWorkOrderDto.getProLineId());
-            mesPmMasterPlan.setWorkOrderQuantity(smtWorkOrderDto.getWorkOrderQuantity());
+            mesPmMasterPlan.setWorkOrderQuantity(smtWorkOrderDto.getWorkOrderQty());
             mesPmMasterPlan.setProductQty(mesPmMasterPlanDTO.getProductQty());
             mesPmMasterPlan.setNoScheduleQty(mesPmMasterPlan.getProductQty());
             mesPmMasterPlan.setPlanedStartDate(mesPmMasterPlanDTO.getPlanedStartDate());

@@ -73,9 +73,9 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
             totalQuantity = mesProcessReportWorkDtoList.get(0).getTotalQuantity().add(mesProcessReportWork.getQuantity());
         }
 
-        if (totalQuantity.compareTo(mesPmWorkOrder.getWorkOrderQuantity()) > 0) {
+        if (totalQuantity.compareTo(mesPmWorkOrder.getWorkOrderQty()) > 0) {
             throw new BizErrorException("本次报工数量累计超过工单数量！");
-        } else if (totalQuantity.compareTo(mesPmWorkOrder.getWorkOrderQuantity()) == 0) {
+        } else if (totalQuantity.compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
             Example example = new Example(MesProcessReportWork.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("workOrderId", mesProcessReportWork.getWorkOrderId()).andEqualTo("processId", mesProcessReportWork.getProcessId()).andEqualTo("isDelete", 1);

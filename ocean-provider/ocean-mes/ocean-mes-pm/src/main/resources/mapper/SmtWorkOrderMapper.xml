@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder">
         <id column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
         <result column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="work_order_quantity" jdbcType="DECIMAL" property="workOrderQuantity"/>
-        <result column="production_quantity" jdbcType="DECIMAL" property="productionQuantity"/>
-        <result column="output_quantity" jdbcType="DECIMAL" property="outputQuantity"/>
-        <result column="scheduled_quantity" jdbcType="DECIMAL" property="scheduledQuantity"/>
+        <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty"/>
+        <result column="production_qty" jdbcType="DECIMAL" property="productionQty"/>
+        <result column="output_qty" jdbcType="DECIMAL" property="outputQty"/>
+        <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
         <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus"/>
         <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
         <result column="route_id" jdbcType="BIGINT" property="routeId"/>
         <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
         <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
         <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
-        <result column="planned_start_time" jdbcType="TIMESTAMP" property="plannedStartTime"/>
-        <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
+        <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
+        <result column="plan_end_time" jdbcType="TIMESTAMP" property="planEndTime"/>
         <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime"/>
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -86,18 +86,18 @@
         swo.parent_id,
         swo.order_id,
         swo.material_id,
-        swo.work_order_quantity,
-        swo.production_quantity,
-        swo.output_quantity,
-        swo.scheduled_quantity,
+        swo.work_order_qty,
+        swo.production_qty,
+        swo.output_qty,
+        swo.scheduled_qty,
         swo.work_order_status,
         swo.pro_line_id,
         swo.barcode_rule_set_id,
         swo.route_id,
         swo.work_order_type,
         swo.schedule_date,
-        swo.planned_start_time,
-        swo.planned_end_time,
+        swo.plan_start_time,
+        swo.plan_end_time,
         swo.actual_start_time,
         swo.actual_end_time,
         swo.create_user_id,
@@ -175,7 +175,7 @@
         swo.work_order_id,
         swo.work_order_code,
         swo.parent_id,
-        swo.work_order_quantity,
+        swo.work_order_qty,
         sm.material_id,
         sm.material_code AS 'materialCode',
         sm.material_desc AS 'materialDesc',
@@ -271,8 +271,8 @@
                swo.material_id,
                swo.barcode_rule_set_id,
                swo.work_order_type,
-               swo.planned_start_time,
-               swo.planned_end_time,
+               swo.plan_start_time,
+               swo.plan_end_time,
                swo.actual_start_time,
                swo.actual_end_time,
                swo.create_user_id,
@@ -280,10 +280,10 @@
                swo.modified_user_id,
                swo.modified_time,
                swo.is_delete,
-               swo.work_order_quantity,
-               swo.production_quantity,
-               swo.output_quantity,
-               swo.scheduled_quantity,
+               swo.work_order_qty,
+               swo.production_qty,
+               swo.output_qty,
+               swo.scheduled_qty,
                swo.put_into_process_id,
                swo.output_process_id,
                swo.scrap_qty,
