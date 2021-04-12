@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "smt_order")
+@Table(name = "base_order")
 @Data
 public class  SmtOrder extends ValidGroup implements Serializable {
     /**

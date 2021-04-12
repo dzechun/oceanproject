@@ -131,14 +131,14 @@
       blc.label_category_code,blc.label_category_name,
       bl.label_code,bl.label_name,
       ss.supplier_name,ss.supplier_code
-    FROM fantech_imes.base_tab bt
-    LEFT JOIN fantech_imes.qms_inspection_item qii ON bt.inspection_item_id = qii.inspection_item_id
-    LEFT JOIN fantech_imes.qms_inspection_type qit ON bt.inspection_type_id = qit.inspection_type_id
-    LEFT JOIN fantech_imes.smt_package_specification sps ON bt.package_specification_id = sps.package_specification_id
-    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-    LEFT JOIN fantech_imes.bcm_label_category blc ON bt.label_category_id = blc.label_category_id
-    LEFT JOIN fantech_imes.bcm_label bl ON bt.label_id = bl.label_id
-    LEFT JOIN fantech_imes.smt_supplier ss ON bt.supplier_id = ss.supplier_id
+    FROM fantech_imes_v2.base_tab bt
+    LEFT JOIN fantech_imes_v2.qms_inspection_item qii ON bt.inspection_item_id = qii.inspection_item_id
+    LEFT JOIN fantech_imes_v2.qms_inspection_type qit ON bt.inspection_type_id = qit.inspection_type_id
+    LEFT JOIN fantech_imes_v2.smt_package_specification sps ON bt.package_specification_id = sps.package_specification_id
+    LEFT JOIN fantech_imes_v2.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes_v2.bcm_label_category blc ON bt.label_category_id = blc.label_category_id
+    LEFT JOIN fantech_imes_v2.bcm_label bl ON bt.label_id = bl.label_id
+    LEFT JOIN fantech_imes_v2.smt_supplier ss ON bt.supplier_id = ss.supplier_id
     <where>
       <if test="materialId != null">
         and bt.material_id = #{materialId}

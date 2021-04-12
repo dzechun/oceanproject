@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "smt_ht_work_order_bom")
+@Table(name = "base_ht_work_order_bom")
 @Data
 public class SmtHtWorkOrderBom implements Serializable {
     /**

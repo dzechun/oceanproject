@@ -12,12 +12,12 @@ import lombok.Data;
 
 /**
  * 程序排程
- * smt_process_scheduling
+ * base_process_scheduling
  * @author mr.lei
  * @date 2021-03-08 17:27:49
  */
 @Data
-@Table(name = "smt_process_scheduling")
+@Table(name = "base_process_scheduling")
 public class SmtProcessScheduling extends ValidGroup implements Serializable {
     /**
      * 排程id

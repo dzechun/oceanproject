@@ -1,26 +1,20 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtProcessCategory;
-import com.fantechs.common.base.entity.basic.SmtRoute;
-import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseRoute;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
-import com.fantechs.common.base.general.entity.basic.BaseOrganization;
 import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.BasePlateParts;
 import com.fantechs.common.base.general.entity.basic.BasePlatePartsDet;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtPartsInformation;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPlateParts;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
@@ -183,22 +177,22 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             }
 
             //判断该物料、部件、工艺路线是否存在
-            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-            searchSmtMaterial.setMaterialCode(materialCode);
-            searchSmtMaterial.setCodeQueryMark(1);
-            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialCode(materialCode);
+            searchBaseMaterial.setCodeQueryMark(1);
+            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
 
             Example example1 = new Example(BasePartsInformation.class);
             Example.Criteria criteria = example1.createCriteria();
             criteria.andEqualTo("partsInformationCode", partsInformationCode);
             BasePartsInformation basePartsInformation = basePartsInformationMapper.selectOneByExample(example1);
 
-            SearchSmtRoute searchSmtRoute = new SearchSmtRoute();
-            searchSmtRoute.setRouteName(routeName);
-            searchSmtRoute.setNameQueryMark(1);
-            List<SmtRoute> smtRoutes = basicFeignApi.findRouteList(searchSmtRoute).getData();
+            SearchBaseRoute searchBaseRoute = new SearchBaseRoute();
+            searchBaseRoute.setRouteName(routeName);
+            searchBaseRoute.setNameQueryMark(1);
+            List<BaseRoute> baseRoutes = basicFeignApi.findRouteList(searchBaseRoute).getData();
             //编码对应的信息不存在或工艺路线的类型不是部件工艺路线
-            if (StringUtils.isEmpty(basePartsInformation, smtRoutes,smtMaterials) || smtRoutes.get(0).getRouteType() != 3) {
+            if (StringUtils.isEmpty(basePartsInformation, baseRoutes, baseMaterials) || baseRoutes.get(0).getRouteType() != 3) {
                 fail.add(i + 4);
                 iterator.remove();
                 i++;
@@ -206,12 +200,12 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             }
 
             basePlatePartsImport.setPartsInformationId(basePartsInformation.getPartsInformationId());
-            basePlatePartsImport.setMaterialId(smtMaterials.get(0).getMaterialId());
-            basePlatePartsImport.setRouteId(smtRoutes.get(0).getRouteId());
+            basePlatePartsImport.setMaterialId(baseMaterials.get(0).getMaterialId());
+            basePlatePartsImport.setRouteId(baseRoutes.get(0).getRouteId());
 
             //判断该产品是否已经配置组成部件
             Example example = new Example(BasePlateParts.class);
-            example.createCriteria().andEqualTo("materialId", smtMaterials.get(0).getMaterialId());
+            example.createCriteria().andEqualTo("materialId", baseMaterials.get(0).getMaterialId());
             List<BasePlateParts> basePlateParts1 = basePlatePartsMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(basePlateParts1)) {
                 fail.add(i + 4);

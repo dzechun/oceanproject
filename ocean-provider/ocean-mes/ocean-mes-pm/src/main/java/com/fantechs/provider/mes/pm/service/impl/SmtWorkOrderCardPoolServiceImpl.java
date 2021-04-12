@@ -1,6 +1,6 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
@@ -110,11 +110,11 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         Date date = new Date();
         if(StringUtils.isNotEmpty(noPutIntoCardDTOList)){
             for (NoPutIntoCardDTO noPutIntoCardDTO : noPutIntoCardDTOList) {
-                ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
+                ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
                 if(result.getCode()!=0){
                     throw new BizErrorException(result.getMessage());
                 }
-                List<SmtRouteProcess> routeProcessList = result.getData();
+                List<BaseRouteProcess> routeProcessList = result.getData();
                 StringBuffer sb=new StringBuffer();
                 if(StringUtils.isNotEmpty(routeProcessList)){
                     for (int i = 0; i < routeProcessList.size(); i++) {
@@ -140,11 +140,11 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         Date date = new Date();
         if(StringUtils.isNotEmpty(noPutIntoCardDTOList)){
             for (NoPutIntoCardDTO noPutIntoCardDTO : noPutIntoCardDTOList) {
-                ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
+                ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
                 if(result.getCode()!=0){
                     throw new BizErrorException(result.getMessage());
                 }
-                List<SmtRouteProcess> routeProcessList = result.getData();
+                List<BaseRouteProcess> routeProcessList = result.getData();
                 StringBuffer sb=new StringBuffer();
                 if(StringUtils.isNotEmpty(routeProcessList)){
                     for (int i = 0; i < routeProcessList.size(); i++) {

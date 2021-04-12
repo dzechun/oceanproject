@@ -2,10 +2,10 @@ package com.fantechs.provider.om.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtSupplier;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtSupplier;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.dto.om.imports.SmtOrderImport;
@@ -274,26 +274,26 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
             }
 
             //判断物料信息是否存在
-            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-            searchSmtMaterial.setCodeQueryMark(1);
-            searchSmtMaterial.setMaterialCode(materialCode);
-            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-            if (StringUtils.isEmpty(smtMaterials)){
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setCodeQueryMark(1);
+            searchBaseMaterial.setMaterialCode(materialCode);
+            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            if (StringUtils.isEmpty(baseMaterials)){
                 fail.add(i+4);
                 continue;
             }
-            smtOrderImport.setMaterialId(smtMaterials.get(0).getMaterialId());
+            smtOrderImport.setMaterialId(baseMaterials.get(0).getMaterialId());
 
             //判断客户信息是否存在
-            SearchSmtSupplier searchSmtSupplier = new SearchSmtSupplier();
-            searchSmtSupplier.setSupplierCode(supplierCode);
-            searchSmtSupplier.setCodeQueryMark((byte) 1);
-            List<SmtSupplier> smtSuppliers = basicFeignApi.findSupplierList(searchSmtSupplier).getData();
-            if (StringUtils.isEmpty(smtSuppliers)){
+            SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+            searchBaseSupplier.setSupplierCode(supplierCode);
+            searchBaseSupplier.setCodeQueryMark((byte) 1);
+            List<BaseSupplier> baseSuppliers = basicFeignApi.findSupplierList(searchBaseSupplier).getData();
+            if (StringUtils.isEmpty(baseSuppliers)){
                 fail.add(i+4);
                 continue;
             }
-            smtOrderImport.setSupplierId(smtSuppliers.get(0).getSupplierId());
+            smtOrderImport.setSupplierId(baseSuppliers.get(0).getSupplierId());
 
             orderImports.add(smtOrderImport);
         }

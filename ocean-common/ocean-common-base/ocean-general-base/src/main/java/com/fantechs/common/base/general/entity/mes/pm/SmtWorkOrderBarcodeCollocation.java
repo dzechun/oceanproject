@@ -11,12 +11,12 @@ import lombok.Data;
 
 /**
  * 工单条码配置表
- * smt_work_order_barcode_collocation
+ * base_work_order_barcode_collocation
  * @author mr.lei
  * @date 2020-11-21 10:28:43
  */
 @Data
-@Table(name = "smt_work_order_barcode_collocation")
+@Table(name = "base_work_order_barcode_collocation")
 public class SmtWorkOrderBarcodeCollocation extends ValidGroup implements Serializable {
     /**
      * 工单条码配置ID

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProductModelMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductModel">
+        <id column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
+        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="product_family_id" jdbcType="VARCHAR" property="productFamilyId"/>
+        <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode"/>
+        <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName"/>
+        <result column="product_family_desc" jdbcType="VARCHAR" property="productFamilyDesc"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        spm.product_model_id,
+        spm.product_model_code,
+        spm.product_model_name,
+        spm.product_model_desc,
+        spm.product_family_id,
+        spm.status,
+        spm.create_user_id,
+        spm.create_time,
+        spm.modified_user_id,
+        spm.modified_time,
+        spm.is_delete,
+        spm.option1,
+        spm.option2,
+        spm.option3,
+        spm.organization_id,
+        spm.remark
+    </sql>
+
+    <select id="selectProductModels" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes_v2.smt_product_model spm
+        left join ocean_v2.sys_user u on spm.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on spm.modified_user_id=s.user_id
+        left join fantech_imes_v2.base_product_family bpf on spm.product_family_id = bpf.product_family_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spm.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(spm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="productModelCode!=null and productModelCode!=''">
+                and spm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+            </if>
+            <if test="productModelDesc!=null and productModelDesc!=''">
+                and spm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
+            </if>
+            <if test="status!=null">
+                and spm.status=#{status}
+            </if>
+        </where>
+        order by spm.create_time desc
+    </select>
+</mapper>

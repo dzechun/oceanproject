@@ -1,20 +1,14 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
-import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
-import com.fantechs.common.base.entity.basic.SmtFactory;
-import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtWorkShop;
+import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTeamDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseTeamImport;
 import com.fantechs.common.base.general.entity.basic.BaseTeam;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtTeam;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -23,13 +17,11 @@ import com.fantechs.provider.base.mapper.BaseHtTeamMapper;
 import com.fantechs.provider.base.mapper.BaseTeamMapper;
 import com.fantechs.provider.base.service.BaseTeamService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -165,10 +157,10 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
             }
 
             //判断车间是否存在
-            SearchSmtWorkShop searchSmtWorkShop = new SearchSmtWorkShop();
-            searchSmtWorkShop.setWorkShopCode(workShopCode);
-            searchSmtWorkShop.setCodeQueryMark(1);
-            List<SmtWorkShopDto> smtWorkShopDtos = basicFeignApi.findWorkShopList(searchSmtWorkShop).getData();
+            SearchBaseWorkShop searchBaseWorkShop = new SearchBaseWorkShop();
+            searchBaseWorkShop.setWorkShopCode(workShopCode);
+            searchBaseWorkShop.setCodeQueryMark(1);
+            List<BaseWorkShopDto> smtWorkShopDtos = basicFeignApi.findWorkShopList(searchBaseWorkShop).getData();
             if (StringUtils.isEmpty(smtWorkShopDtos)){
                 fail.add(i+4);
                 continue;

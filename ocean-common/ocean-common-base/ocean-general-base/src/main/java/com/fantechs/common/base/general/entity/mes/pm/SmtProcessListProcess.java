@@ -13,12 +13,12 @@ import lombok.Data;
 
 /**
  * 流程单工序表
- * smt_process_list_process
+ * base_process_list_process
  * @author mr.lei
  * @date 2020-11-23 16:38:37
  */
 @Data
-@Table(name = "smt_process_list_process")
+@Table(name = "base_process_list_process")
 public class SmtProcessListProcess extends ValidGroup implements Serializable {
     /**
      * 流程单工序ID

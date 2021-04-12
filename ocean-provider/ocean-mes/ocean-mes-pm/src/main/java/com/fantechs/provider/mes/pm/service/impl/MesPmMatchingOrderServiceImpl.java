@@ -1,10 +1,10 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtProcess;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
@@ -134,12 +134,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                             throw new BizErrorException("未找到流程单的工单信息");
                         }
 
-                        List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+                        List<BaseRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
                         if (StringUtils.isEmpty(routeProcessList)) {
                             throw new BizErrorException("未找到工艺路线信息");
                         }
                         for (int i = routeProcessList.size() - 1; i >= 0; i--) {
-                            SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                            BaseProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
                             if (StringUtils.isNotEmpty(process) && process.getIsQuality() == 1) {
                                 processId = process.getProcessId();
                                 break;
@@ -149,7 +149,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
 
                     if (switch1) {
                         Long routeId = smtWorkOrderCardPoolDto.getRouteId();
-                        List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(routeId).getData();
+                        List<BaseRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(routeId).getData();
                         if (StringUtils.isEmpty(routeProcessList)) {
                             throw new BizErrorException("未找到工艺路线信息");
                         }
@@ -474,14 +474,14 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             wmsInFinishedProduct.setProjectType("dp");
             wmsInFinishedProductDet.setMaterialId(saveMesPmMatchingOrderDto.getMaterialId());
             //获取储位ID
-            SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-            searchSmtStorageMaterial.setMaterialId(saveMesPmMatchingOrderDto.getMaterialId());
-            List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-            if (StringUtils.isEmpty(smtStorageMaterials)) {
+            SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
+            searchBaseStorageMaterial.setMaterialId(saveMesPmMatchingOrderDto.getMaterialId());
+            List<BaseStorageMaterial> baseStorageMaterials = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
+            if (StringUtils.isEmpty(baseStorageMaterials)) {
                 throw new BizErrorException("该产品还未绑定储位");
             }
-            SmtStorageMaterial smtStorageMaterial = smtStorageMaterials.get(0);
-            wmsInFinishedProductDet.setStorageId(smtStorageMaterial.getStorageId());
+            BaseStorageMaterial baseStorageMaterial = baseStorageMaterials.get(0);
+            wmsInFinishedProductDet.setStorageId(baseStorageMaterial.getStorageId());
             wmsInFinishedProductDet.setPlanInQuantity(saveMesPmMatchingOrderDto.getMatchingQuantity());
             wmsInFinishedProductDet.setInQuantity(BigDecimal.valueOf(0));
             wmsInFinishedProductDet.setInTime(new Date());

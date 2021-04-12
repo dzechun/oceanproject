@@ -2,10 +2,10 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.*;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
 import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
@@ -25,19 +25,16 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
-import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtTransferSlipMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerTransferSlipService;
-import io.micrometer.core.instrument.search.Search;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -155,11 +152,11 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
 
                 //如果是调拨完成的单据则修改库存信息
                 if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 2){
-                    SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-                    searchSmtStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                    List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-                    if (StringUtils.isNotEmpty(smtStorageMaterials)){
-                        if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
+                    SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
+                    searchBaseStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                    List<BaseStorageMaterial> baseStorageMaterials = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
+                    if (StringUtils.isNotEmpty(baseStorageMaterials)){
+                        if (baseStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
                             throw new BizErrorException("调入储位已存在其他物料");
                         }
                     }

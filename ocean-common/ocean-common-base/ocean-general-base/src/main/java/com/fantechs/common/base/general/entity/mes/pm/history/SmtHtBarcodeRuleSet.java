@@ -16,12 +16,12 @@ import java.util.Date;
 
 /**
  * 条码规则集合表
- * smt_ht_barcode_rule_set
+ * base_ht_barcode_rule_set
  * @author 18358
  * @date 2020-11-09 18:17:20
  */
 @Data
-@Table(name = "smt_ht_barcode_rule_set")
+@Table(name = "base_ht_barcode_rule_set")
 public class SmtHtBarcodeRuleSet implements Serializable {
     private static final long serialVersionUID = -6782495515910874604L;
     /**

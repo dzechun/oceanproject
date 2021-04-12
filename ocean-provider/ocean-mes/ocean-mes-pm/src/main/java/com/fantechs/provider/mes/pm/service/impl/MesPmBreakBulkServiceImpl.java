@@ -2,7 +2,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDto;
@@ -235,10 +235,10 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 Long routeId = mesPmBreakBulkPrintDto.getRouteId();
                 //查询工艺路线配置
-                List<SmtRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
                 if (StringUtils.isNotEmpty(routeProcesses)) {
                     StringBuffer sb =new StringBuffer();
-                    for (SmtRouteProcess routeProcess : routeProcesses) {
+                    for (BaseRouteProcess routeProcess : routeProcesses) {
                         sb.append(routeProcess.getProcessName()+"-");
                     }
                     mesPmBreakBulkPrintDto.setProcessLink(sb.substring(0,sb.length()-1));
@@ -262,10 +262,10 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 Long routeId = mesPmBreakBulkPrintDto.getRouteId();
                 //查询工艺路线配置
-                List<SmtRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
                 if (StringUtils.isNotEmpty(routeProcesses)) {
                     StringBuffer sb =new StringBuffer();
-                    for (SmtRouteProcess routeProcess : routeProcesses) {
+                    for (BaseRouteProcess routeProcess : routeProcesses) {
                         sb.append(routeProcess.getProcessName()+"-");
                     }
                     mesPmBreakBulkPrintDto.setProcessLink(sb.substring(0,sb.length()-1));

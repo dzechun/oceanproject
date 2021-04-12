@@ -1,10 +1,10 @@
 package com.fantechs.provider.qms.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtProcess;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
@@ -93,8 +93,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             if (qmsQualityConfirmationDto.getRouteId() == null) {
                 continue;
             }
-            ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(qmsQualityConfirmationDto.getRouteId());
-            List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
+            ResponseEntity<List<BaseRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(qmsQualityConfirmationDto.getRouteId());
+            List<BaseRouteProcess> routeProcesses = routeProcessResponse.getData();
             qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
         }
         return list;
@@ -120,8 +120,8 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
 
         //获取工艺路线
-        ResponseEntity<List<SmtRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(data.getRouteId());
-        List<SmtRouteProcess> routeProcesses = routeProcessResponse.getData();
+        ResponseEntity<List<BaseRouteProcess>> routeProcessResponse = basicFeignApi.findConfigureRout(data.getRouteId());
+        List<BaseRouteProcess> routeProcesses = routeProcessResponse.getData();
 
         qmsQualityConfirmationDto.getSectionList().addAll(getBad(routeProcesses));
 
@@ -148,9 +148,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         }
 
         //获取当前报工工序信息
-        ResponseEntity<SmtProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
-        SmtProcess smtProcess = processResponse.getData();
-        if (StringUtils.isEmpty(smtProcess)){
+        ResponseEntity<BaseProcess> processResponse = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId());
+        BaseProcess baseProcess = processResponse.getData();
+        if (StringUtils.isEmpty(baseProcess)){
             throw new BizErrorException("当前报工工序不存在");
         }
 
@@ -164,26 +164,26 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             }
             BasePlatePartsDetDto basePlatePartsDet = platePartsDetList.get(0);
 
-            List<SmtRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(basePlatePartsDet.getRouteId()).getData();
+            List<BaseRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(basePlatePartsDet.getRouteId()).getData();
 
 
-            List<SmtRouteProcess> routeProcessList = new ArrayList<>();
+            List<BaseRouteProcess> routeProcessList = new ArrayList<>();
             //筛选出当前报工工序的工段对应工艺路线里面的所有工序
-            for (SmtRouteProcess smtRouteProcess : routeProcesses) {
-                if (smtRouteProcess.getSectionId().equals(smtProcess.getSectionId())) {
-                    routeProcessList.add(smtRouteProcess);
+            for (BaseRouteProcess baseRouteProcess : routeProcesses) {
+                if (baseRouteProcess.getSectionId().equals(baseProcess.getSectionId())) {
+                    routeProcessList.add(baseRouteProcess);
                 }
             }
             if (StringUtils.isEmpty(routeProcessList)) {
                 throw new BizErrorException("报工工序不属于当前工艺路线");
             }
             //获取当前报工工序所属工段的最后工序
-            SmtRouteProcess smtRouteProcess = routeProcessList.get(routeProcessList.size() - 1);
-            Byte isQuality = smtProcess.getIsQuality();
+            BaseRouteProcess baseRouteProcess = routeProcessList.get(routeProcessList.size() - 1);
+            Byte isQuality = baseProcess.getIsQuality();
             if (qmsQualityConfirmation.getQualityType() == 1 && (isQuality == null || isQuality == 0)) {
                 throw new BizErrorException("当前工序不是品质确认工序");
             }
-            if (!(smtRouteProcess.getProcessId().equals(qmsQualityConfirmation.getProcessId())) && qmsQualityConfirmation.getQualityType() == 1) {
+            if (!(baseRouteProcess.getProcessId().equals(qmsQualityConfirmation.getProcessId())) && qmsQualityConfirmation.getQualityType() == 1) {
                 throw new BizErrorException("当前工序不是最后一道工序");
             }
         }
@@ -211,7 +211,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
             if (StringUtils.isNotEmpty(workOrderList)) {
                 //获取成品工艺路线
-                List<SmtRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+                List<BaseRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
                 //判断成品抽检的工序是否是最后一道工序
                 if (StringUtils.isNotEmpty(routeProcesses) && routeProcesses.get(routeProcesses.size() - 1).getProcessId() == qmsQualityConfirmation.getProcessId()) {
                     //打印成品条码
@@ -363,7 +363,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         if (qmsQualityConfirmation.getQualityType() != null && qmsQualityConfirmation.getQualityType() == 1) {
 
             if (workOrderCardPoolDto.getParentId() == null || workOrderCardPoolDto.getParentId() == 0) {
-                SmtProcess process = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId()).getData();
+                BaseProcess process = basicFeignApi.processDetail(qmsQualityConfirmation.getProcessId()).getData();
                 if (StringUtils.isNotEmpty(process)) {
                     MesPmMatchingDto matchingDto = pmFeignApi.findMinMatchingQuantity(workOrderCardPoolDto.getWorkOrderCardId(), process.getSectionId(), qmsQualityConfirmation.getTotalQualified() == null ? new BigDecimal(0) : qmsQualityConfirmation.getTotalQualified(), qmsQualityConfirmation.getWorkOrderCardPoolId()).getData();
                     if (matchingDto != null) {
@@ -394,10 +394,10 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("未找到产品工单信息");
             }
 
-            SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-            searchSmtStorageMaterial.setMaterialId(workOrderList.get(0).getMaterialId());
-            ResponseEntity<List<SmtStorageMaterial>> storageMaterialList = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial);
-            List<SmtStorageMaterial> data = storageMaterialList.getData();
+            SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
+            searchBaseStorageMaterial.setMaterialId(workOrderList.get(0).getMaterialId());
+            ResponseEntity<List<BaseStorageMaterial>> storageMaterialList = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial);
+            List<BaseStorageMaterial> data = storageMaterialList.getData();
             if (StringUtils.isEmpty(data)) {
                 throw new BizErrorException("未找到该物料的储位");
             }
@@ -409,11 +409,11 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
             for (SmtWorkOrderBomDto smtWorkOrderBomDto : workOrderBomList) {
                 //获取当前报工工序信息
                 processResponse = basicFeignApi.processDetail(smtWorkOrderBomDto.getProcessId());
-                SmtProcess process = processResponse.getData();
+                BaseProcess process = processResponse.getData();
                 if (StringUtils.isEmpty(process)){
                     throw new BizErrorException("当前报工工序不存在");
                 }
-                if (StringUtils.isNotEmpty(smtProcess) && smtProcess.getSectionId().equals(process.getSectionId())) {
+                if (StringUtils.isNotEmpty(baseProcess) && baseProcess.getSectionId().equals(process.getSectionId())) {
                     workOrderBomDto = smtWorkOrderBomDto;
                     break;
                 }
@@ -478,7 +478,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 List<SmtWorkOrderCardPoolDto> workOrderCardPoolDtoList = pmFeignApi.findWorkOrderCardPoolList(searchSmtWorkOrderCardPool).getData();
                 if (StringUtils.isNotEmpty(workOrderCardPoolDtoList)) {
                     Map<String,Object> qualityConditions = new HashMap<>();
-                    qualityConditions.put("sectionId",smtProcess.getSectionId());
+                    qualityConditions.put("sectionId", baseProcess.getSectionId());
                     for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : workOrderCardPoolDtoList) {
                         boolean ifProcess = qmsQualityConfirmation.getWorkOrderCardPoolId().equals(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                         qualityConditions.put("workOrderCardPoolId",smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
@@ -563,14 +563,14 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         return qmsQualityConfirmationMapper.deleteByIds(ids);
     }
 
-    public List<QmsBadItemDto> getBad(List<SmtRouteProcess> routeProcesses) {
+    public List<QmsBadItemDto> getBad(List<BaseRouteProcess> routeProcesses) {
         Map<String, Object> search = new HashMap();
         List<Long> sections = new ArrayList<>();
         List<QmsBadItemDto> sectionList = new ArrayList<>();
         Map<Long, QmsBadItemDto> map = new HashMap<>();
 
         if (StringUtils.isNotEmpty(routeProcesses)) {
-            for (SmtRouteProcess routeProcess : routeProcesses) {
+            for (BaseRouteProcess routeProcess : routeProcesses) {
                 int is = 0;
                 for (Long section : sections) {
                     if (section.equals(routeProcess.getSectionId())) {
@@ -705,12 +705,12 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("未找到流程单的工单信息");
             }
 
-            List<SmtRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+            List<BaseRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
             if (StringUtils.isEmpty(routeProcessList)) {
                 throw new BizErrorException("未找到工艺路线信息");
             }
             for (int i = routeProcessList.size() - 1; i >= 0; i--) {
-                SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                BaseProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
                 if (StringUtils.isNotEmpty(process) && process.getIsQuality() == 1) {
                     map.put("processId", process.getProcessId());
                     break;

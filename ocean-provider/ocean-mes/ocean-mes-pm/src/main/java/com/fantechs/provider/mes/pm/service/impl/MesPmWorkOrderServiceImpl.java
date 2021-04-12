@@ -1,9 +1,9 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtProductBomDto;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
-import com.fantechs.common.base.entity.basic.search.SearchSmtProductBom;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
@@ -125,12 +125,12 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
         List<SmtStockDet> stockDetList = new ArrayList<>();
         //根据物料ID查询产品BOM信息
-        SearchSmtProductBom searchSmtProductBom  = new SearchSmtProductBom();
-        searchSmtProductBom.setMaterialId(mesPmWorkOrder.getMaterialId());
-        searchSmtProductBom.setIsBomDet(new Byte("1"));
-        List<SmtProductBomDto> smtProductBoms = basicFeignApi.findProductBomList(searchSmtProductBom).getData();
+        SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
+        searchBaseProductBom.setMaterialId(mesPmWorkOrder.getMaterialId());
+        searchBaseProductBom.setIsBomDet(new Byte("1"));
+        List<BaseProductBomDto> smtProductBoms = basicFeignApi.findProductBomList(searchBaseProductBom).getData();
         if (StringUtils.isNotEmpty(smtProductBoms)) {
-            for (SmtProductBomDto smtProductBomDet : smtProductBoms) {
+            for (BaseProductBomDto smtProductBomDet : smtProductBoms) {
                 SmtWorkOrderBom smtWorkOrderBom = new SmtWorkOrderBom();
                 BeanUtils.copyProperties(smtProductBomDet, smtWorkOrderBom, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
                 BigDecimal workOrderQuantity = mesPmWorkOrder.getWorkOrderQty();
@@ -371,10 +371,10 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             }
             Long routeId = smtWorkOrderDto.getRouteId();
             //查询工艺路线配置
-            List<SmtRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+            List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
             if (StringUtils.isNotEmpty(routeProcesses)) {
                 StringBuffer sb =new StringBuffer();
-                for (SmtRouteProcess routeProcess : routeProcesses) {
+                for (BaseRouteProcess routeProcess : routeProcesses) {
                     sb.append(routeProcess.getProcessName()+"-");
                 }
                 smtWorkOrderDto.setProcessLink(sb.substring(0,sb.length()-1));

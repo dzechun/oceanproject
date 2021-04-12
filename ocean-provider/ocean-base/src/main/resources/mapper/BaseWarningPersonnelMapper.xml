@@ -48,11 +48,11 @@
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         suss.user_code,suss.nick_name,suss.mobile,suss.email,
         bo.organization_name
-        FROM fantech_imes.base_warning_personnel bwp
-        left join ocean.sys_user su on bwp.create_user_id = su.user_id
-        left join ocean.sys_user sus on bwp.modified_user_id = sus.user_id
-        left join ocean.sys_user suss on bwp.personnel_id = suss.user_id
-        LEFT JOIN fantech_imes.base_organization bo ON bwp.organization_id = bo.organization_id
+        FROM fantech_imes_v2.base_warning_personnel bwp
+        left join ocean_v2.sys_user su on bwp.create_user_id = su.user_id
+        left join ocean_v2.sys_user sus on bwp.modified_user_id = sus.user_id
+        left join ocean_v2.sys_user suss on bwp.personnel_id = suss.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON bwp.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(bwp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

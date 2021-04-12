@@ -2,7 +2,6 @@ package com.fantechs.provider.electronic.service;
 
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
-import com.fantechs.common.base.entity.basic.SmtStorage;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

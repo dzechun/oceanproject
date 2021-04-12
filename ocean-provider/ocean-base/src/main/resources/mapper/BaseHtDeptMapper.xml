@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtDeptMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtDept">
+        <id column="ht_dept_id" jdbcType="BIGINT" property="htDeptId"/>
+        <result column="dept_id" jdbcType="BIGINT" property="deptId"/>
+        <result column="dept_code" jdbcType="VARCHAR" property="deptCode"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        shd.ht_dept_id,
+        shd.dept_id,
+        shd.dept_code,
+        shd.dept_name,
+        shd.dept_desc,
+        shd.factory_id,
+        shd.parent_id,
+        shd.status,
+        shd.create_user_id,
+        shd.create_time,
+        shd.modified_user_id,
+        shd.modified_time,
+        shd.option1,
+        shd.option2,
+        shd.option3,
+        shd.organization_id,
+        shd.remark
+    </sql>
+
+    <select id="selectHtDepts" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseDept"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes_v2.smt_ht_dept shd
+        left join ocean_v2.sys_user u on shd.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on shd.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON shd.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(shd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="deptCode!=null and deptCode!=''">
+                and shd.dept_code like CONCAT('%', #{deptCode}, '%')
+            </if>
+            <if test="deptName!=null and deptName!=''">
+                and shd.dept_name like CONCAT('%', #{deptName}, '%')
+            </if>
+            <if test="parentId!=null and parentId!=''">
+                and shd.parent_id=#{parentId}
+            </if>
+            <if test="deptDesc!=null and deptDesc!=''">
+                and shd.dept_desc like CONCAT('%', #{deptDesc}, '%')
+            </if>
+        </where>
+        order by shd.modified_time desc
+    </select>
+</mapper>

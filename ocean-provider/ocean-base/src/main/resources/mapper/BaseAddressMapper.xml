@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseAddressMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseAddress">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="address_id" jdbcType="BIGINT" property="addressId"/>
+        <result column="province_code" jdbcType="VARCHAR" property="provinceCode"/>
+        <result column="city_code" jdbcType="VARCHAR" property="cityCode"/>
+        <result column="classify_code" jdbcType="VARCHAR" property="classifyCode"/>
+        <result column="address_detail" jdbcType="VARCHAR" property="addressDetail"/>
+        <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
+        <result column="post_code" jdbcType="VARCHAR" property="postCode"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseAddressDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="if_default" jdbcType="TINYINT" property="ifDefault"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sa.address_id,
+        sa.province_code,
+        sa.city_code,
+        sa.classify_code,
+        sa.address_detail,
+        sa.complete_detail,
+        sa.post_code,
+        sa.status,
+        sa.create_user_id,
+        sa.create_time,
+        sa.modified_user_id,
+        sa.modified_time,
+        sa.is_delete,
+        sa.option1,
+        sa.option2,
+        sa.option3,
+        sa.organization_id,
+        sa.remark
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS
+        modified_user_name,
+        bo.organization_name
+        FROM smt_address sa
+        LEFT JOIN ocean_v2.sys_user su ON sa.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON sa.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sa.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                and sa.province_code like CONCAT('%', #{provinceCode}, '%')
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                and sa.city_code like CONCAT('%', #{cityCode}, '%')
+            </if>
+            <if test="classifyCode!=null and classifyCode != ''">
+                and sa.classify_code like CONCAT('%', #{classifyCode}, '%')
+            </if>
+            <if test="addressDetail != null and addressDetail != ''">
+                and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
+            </if>
+            <if test="completeDetail != null and completeDetail != ''">
+                and sa.complete_detail like CONCAT('%', #{completeDetail}, '%')
+            </if>
+            <if test="postCode != null and postCode != ''">
+                and sa.post_code like CONCAT('%', #{postCode}, '%')
+            </if>
+            <if test="status!=null">
+                and sa.status=#{status}
+            </if>
+        </where>
+        order by sa.create_time desc
+    </select>
+
+    <select id="findBySupplierId" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>,ssa.if_default
+        from fantech_imes_v2.smt_supplier_address ssa
+        LEFT JOIN fantech_imes_v2.smt_address sa ON sa.address_id = ssa.address_id
+        where ssa.supplier_id =#{supplierId}
+    </select>
+
+    <select id="findDelete" resultType="long">
+        select ssa.supplier_address_id
+        from fantech_imes_v2.smt_supplier_address ssa where ssa.supplier_id = #{supplierId}
+        <foreach collection="list" index="index" item="item" open="and ssa.address_id not in (" close=")" separator=",">
+            <if test="item.addressId != null and item.addressId != ''">
+                #{item.addressId}
+            </if>
+        </foreach>
+        or ssa.address_id is null
+    </select>
+
+    <select id="findAdd" resultMap="BaseResultMapDto">
+        select
+        <include refid="Base_Column_List"></include>
+        from fantech_imes_v2.smt_address sa
+        <where>
+            sa.address_id in (
+            select ssa.address_id
+            from fantech_imes_v2.smt_supplier_address ssa where ssa.supplier_id = #{supplierId}
+            )
+        </where>
+    </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update fantech_imes_v2.smt_address sa set
+            sa.province_code = #{item.provinceCode},
+            sa.city_code = #{item.cityCode},
+            sa.classify_code = #{item.classifyCode},
+            sa.address_detail = #{item.addressDetail},
+            sa.post_code = #{item.postCode},
+            sa.organization_id = #{item.organizationId},
+            sa.remark = #{item.remark},
+            sa.status = #{item.status},
+            sa.modified_user_id = #{item.modifiedUserId},
+            sa.modified_time = #{item.modifiedTime},
+            sa.is_delete = #{item.isDelete}
+            where sa.address_id = #{item.addressId}
+        </foreach>
+    </update>
+
+
+</mapper>

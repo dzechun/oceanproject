@@ -1,6 +1,6 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmBreakBulkDetDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulk;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmBreakBulkDet;
@@ -36,10 +36,10 @@ public class MesPmBreakBulkDetServiceImpl extends BaseService<MesPmBreakBulkDet>
         list.forEach(li->{
             Long routeId = li.getRouteId();
             //查询工艺路线配置
-            List<SmtRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+            List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
             if (StringUtils.isNotEmpty(routeProcesses)) {
                 StringBuffer sb =new StringBuffer();
-                for (SmtRouteProcess routeProcess : routeProcesses) {
+                for (BaseRouteProcess routeProcess : routeProcesses) {
                     sb.append(routeProcess.getProcessName()+"-");
                 }
                 li.setProcessLink(sb.substring(0,sb.length()-1));
