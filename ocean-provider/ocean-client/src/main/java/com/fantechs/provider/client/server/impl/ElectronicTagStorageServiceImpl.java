@@ -16,17 +16,11 @@ import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagS
 import com.fantechs.common.base.electronic.entity.search.SearchSmtLoading;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtLoadingDet;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
