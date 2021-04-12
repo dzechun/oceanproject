@@ -1,7 +1,6 @@
 package com.fantechs.provider.imes.storage.mapper;
 
 import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
-import com.fantechs.common.base.entity.basic.SmtAddress;
 import com.fantechs.common.base.entity.storage.SmtStorageInventory;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;

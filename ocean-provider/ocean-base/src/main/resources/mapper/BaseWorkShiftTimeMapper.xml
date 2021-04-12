@@ -36,7 +36,7 @@
 
   <select id="findList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>
-    from fantech_imes.base_work_shift_time bwst
+    from fantech_imes_v2.base_work_shift_time bwst
     <where>
       <if test="workShiftId != null and workShiftId != ''">
         and bwst.work_shift_id = #{workShiftId}

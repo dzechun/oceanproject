@@ -40,7 +40,7 @@
 
     </resultMap>
 
-    <resultMap id="BomResultMap" type="com.fantechs.common.base.entity.basic.SmtProductBomDet">
+    <resultMap id="BomResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductBomDet">
         <result column="product_bom_det_id" jdbcType="BIGINT" property="productBomDetId"/>
         <result column="product_bom_id" jdbcType="BIGINT" property="productBomId"/>
         <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId"/>
@@ -56,7 +56,7 @@
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
     </resultMap>
 
-    <resultMap id="RouteResultMapDto" type="com.fantechs.common.base.entity.basic.SmtRouteProcess">
+    <resultMap id="RouteResultMapDto" type="com.fantechs.common.base.general.entity.basic.BaseRouteProcess">
         <result column="route_process_id" jdbcType="BIGINT" property="routeProcessId"/>
         <result column="route_id" jdbcType="BIGINT" property="routeId"/>
         <result column="section_id" jdbcType="BIGINT" property="sectionId"/>

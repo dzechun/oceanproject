@@ -11,12 +11,12 @@ import lombok.Data;
 
 /**
  * 工单报工表
- * smt_work_order_report
+ * base_work_order_report
  * @author mr.lei
  * @date 2020-11-21 13:40:14
  */
 @Data
-@Table(name = "smt_work_order_report")
+@Table(name = "base_work_order_report")
 public class SmtWorkOrderReport extends ValidGroup implements Serializable {
     /**
      * 工单报工ID

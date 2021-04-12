@@ -38,7 +38,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>
-    from fantech_imes.base_staff_process bsp
+    from fantech_imes_v2.base_staff_process bsp
     <where>
       <if test="processId != null and processId != ''">
         and bsp.process_id = #{processId}
@@ -51,7 +51,7 @@
 
     <select id="findByStaffId" parameterType="long" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>
-        from fantech_imes.base_staff_process bsp where bsp.staff_id = #{staffId}
+        from fantech_imes_v2.base_staff_process bsp where bsp.staff_id = #{staffId}
 
     </select>
 </mapper>

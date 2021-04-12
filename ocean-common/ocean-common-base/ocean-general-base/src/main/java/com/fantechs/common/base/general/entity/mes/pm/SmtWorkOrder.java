@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "smt_work_order")
+@Table(name = "base_work_order")
 @Data
 public class SmtWorkOrder extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -6958409644458668492L;

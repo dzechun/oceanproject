@@ -1,8 +1,8 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtProcess;
-import com.fantechs.common.base.entity.basic.search.SearchSmtProcess;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStaffDto;
@@ -201,15 +201,15 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
             }
 
             //判断工序信息是否存在
-            SearchSmtProcess searchSmtProcess = new SearchSmtProcess();
-            searchSmtProcess.setCodeQueryMark(1);
-            searchSmtProcess.setProcessCode(baseStaffImport.getProcessCode());
-            List<SmtProcess> smtProcesses = basicFeignApi.findProcessList(searchSmtProcess).getData();
-            if (StringUtils.isEmpty(smtProcesses)){
+            SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
+            searchBaseProcess.setCodeQueryMark(1);
+            searchBaseProcess.setProcessCode(baseStaffImport.getProcessCode());
+            List<BaseProcess> baseProcesses = basicFeignApi.findProcessList(searchBaseProcess).getData();
+            if (StringUtils.isEmpty(baseProcesses)){
                 fail.add(i + 4);
                 continue;
             }
-            baseStaffImport.setProcessId(smtProcesses.get(0).getProcessId());
+            baseStaffImport.setProcessId(baseProcesses.get(0).getProcessId());
 
             if (StringUtils.isNotEmpty(teamCode)){
                 //判断班组信息是否存在

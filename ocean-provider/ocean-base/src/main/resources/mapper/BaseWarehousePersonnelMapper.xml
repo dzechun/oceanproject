@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseWarehousePersonnelMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseWarehousePersonnel">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="warehouse_personnel_id" jdbcType="BIGINT" property="warehousePersonnelId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="personnel_id" jdbcType="BIGINT" property="personnelId" />
+    <result column="duty" jdbcType="TINYINT" property="duty" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseWarehousePersonnelDto" extends="BaseResultMap">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+    <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+    <result column="email" jdbcType="VARCHAR" property="email"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    swp.warehouse_personnel_id,
+	swp.warehouse_id,
+	swp.personnel_id,
+	swp.duty,
+	swp.remark,
+	swp.organization_id,
+	swp.create_user_id,
+	swp.create_time,
+	swp.modified_user_id,
+	swp.modified_time,
+	swp.is_delete
+  </sql>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehousePersonnel"
+          resultMap="BaseResultMapDto">
+    select  <include refid="Base_Column_List"></include>,
+    u.user_name as createUserName, s.user_name as modifiedUserName,
+    suss.user_code,suss.nick_name,suss.mobile,suss.email,
+    bo.organization_name
+    from fantech_imes_v2.smt_warehouse_personnel swp
+    left join ocean_v2.sys_user u on swp.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on swp.modified_user_id=s.user_id
+    left join ocean_v2.sys_user suss on swp.personnel_id=suss.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON swp.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(swp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="warehouseId!=null">
+        and swp.warehouse_id = #{warehouseId}
+      </if>
+    </where>
+    order by swp.create_time desc
+  </select>
+</mapper>

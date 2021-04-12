@@ -8,7 +8,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 
-@Table(name = "smt_ht_order")
+@Table(name = "base_ht_order")
 @Data
 public class SmtHtOrder implements Serializable {
     /**

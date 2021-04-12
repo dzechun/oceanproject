@@ -17,12 +17,12 @@ import java.util.Date;
 
 /**
  * 工单任务池表
- * smt_work_order_barcode_pool
+ * base_work_order_barcode_pool
  * @author 18358
  * @date 2020-11-23 15:44:09
  */
 @Data
-@Table(name = "smt_work_order_barcode_pool")
+@Table(name = "base_work_order_barcode_pool")
 public class SmtWorkOrderBarcodePool extends ValidGroup implements Serializable {
     /**
      * 工单任务池ID

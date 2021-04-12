@@ -26,7 +26,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
-    <resultMap id="DeptResultMap" type="com.fantechs.common.base.entity.basic.SmtDept">
+    <resultMap id="DeptResultMap" type="com.fantechs.common.base.general.entity.basic.BaseDept">
         <result column="dept_id" jdbcType="BIGINT" property="deptId"/>
         <result column="dept_code" jdbcType="VARCHAR" property="deptCode"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>

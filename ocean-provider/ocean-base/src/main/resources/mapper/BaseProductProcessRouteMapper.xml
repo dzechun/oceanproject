@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProductProcessRouteMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute">
+    <id column="product_process_route_id" jdbcType="BIGINT" property="productProcessRouteId" />
+    <result column="product_type" jdbcType="TINYINT" property="productType" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="route_code" jdbcType="VARCHAR" property="routeCode" />
+    <result column="route_desc" jdbcType="VARCHAR" property="routeDesc" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    sppr.product_process_route_id,
+	sppr.product_type,
+	sppr.pro_line_id,
+	sppr.material_id,
+	sppr.product_model_id,
+	sppr.route_id,
+	sppr.`status`,
+	sppr.remark,
+	sppr.organization_id,
+	sppr.create_user_id,
+	sppr.create_time,
+	sppr.modified_user_id,
+	sppr.modified_time,
+	sppr.is_delete,
+	sppr.option1,
+	sppr.option2,
+	sppr.option3
+  </sql>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    spl.pro_name, spl.pro_code,
+    spm.product_model_code, spm.product_model_name,
+    sm.material_code,sm.material_desc,sm.version,
+    sppr.route_id,
+    bo.organization_name,
+    sr.route_name, sr.route_code, sr.route_desc,
+    u.user_name as create_user_name,s.user_name as modified_user_name
+    from fantech_imes_v2.smt_product_process_route sppr
+    left join fantech_imes_v2.smt_pro_line spl on sppr.pro_line_id=spl.pro_line_id
+    left join fantech_imes_v2.smt_product_model spm on sppr.product_model_id=spm.product_model_id
+    left join fantech_imes_v2.smt_material sm on sppr.material_id=sm.material_id
+    left join ocean_v2.sys_user u on sppr.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on sppr.modified_user_id=s.user_id
+    left join fantech_imes_v2.smt_route sr on sppr.route_id = sr.route_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON sppr.organization_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sppr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="productType!=null and productType!=''">
+        and sppr.product_type=#{productType}
+      </if>
+      <if test="proLineId!=null and proLineId!=''">
+        and sppr.pro_line_id=#{proLineId}
+      </if>
+      <if test="productModelId!=null and productModelId!=''">
+        and sppr.product_model_id=#{productModelId}
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and sppr.material_id=#{materialId}
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="routeId!=null and routeId!=''">
+        and sppr.route_id=#{routeId}
+      </if>
+      <if test="routeName != null and routeName != ''">
+        and sr.route_name like CONCAT('%', #{routeName}, '%')
+      </if>
+      <if test="routeCode != null and routeCode != ''">
+        and sr.route_code like CONCAT('%', #{routeCode}, '%')
+      </if>
+      <if test="status!=null">
+        and sppr.status=#{status}
+      </if>
+    </where>
+    order by sppr.create_time desc
+  </select>
+
+</mapper>

@@ -1,9 +1,7 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.basic.SmtProcess;
-import com.fantechs.common.base.entity.basic.search.SearchSmtRoute;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmMatchingOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
@@ -12,14 +10,12 @@ import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
-import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -38,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -229,15 +224,15 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         MesPmExplainProcessPlanDTO mesPmExplainProcessPlanDTO = mesPmExplainProcessPlanDTOS.get(0);
 
         //找到工序信息判断当前工序是否拥有相关权限
-        SmtProcess smtProcess = this.findSmtProcess(processFinishedProductDTO.getProcessId());
-        if (StringUtils.isEmpty(smtProcess)) {
+        BaseProcess baseProcess = this.findSmtProcess(processFinishedProductDTO.getProcessId());
+        if (StringUtils.isEmpty(baseProcess)) {
             throw new BizErrorException("未找到工序信息：" + processFinishedProductDTO.getProcessId());
         }
         //判断当前工序是否有相应的操作权限
-        if (processFinishedProductDTO.getProcessType() == 1 && smtProcess.getIsStartScan() == 0) {
+        if (processFinishedProductDTO.getProcessType() == 1 && baseProcess.getIsStartScan() == 0) {
             throw new BizErrorException("当前工序不允许开工");
         }
-        if (processFinishedProductDTO.getProcessType() == 2 && smtProcess.getIsJobScan() == 0) {
+        if (processFinishedProductDTO.getProcessType() == 2 && baseProcess.getIsJobScan() == 0) {
             throw new BizErrorException("当前工序不允许报工");
         }
         //判断当前工序是否在当前工单所属工艺下
@@ -247,14 +242,14 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         }
 
         //=====取出当前工序的上工序
-        ResponseEntity<List<SmtRouteProcess>> result = basicFeignApi.findConfigureRout(smtWorkOrder.getRouteId());
+        ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(smtWorkOrder.getRouteId());
         if (result.getCode() != 0) {
             throw new BizErrorException(result.getMessage());
         }
         Long preProcessId = null;
-        List<SmtRouteProcess> preProcessList = result.getData();
+        List<BaseRouteProcess> preProcessList = result.getData();
         for (int i = 0; i < preProcessList.size(); i++) {
-            SmtRouteProcess temp = preProcessList.get(i);
+            BaseRouteProcess temp = preProcessList.get(i);
             if (temp.getProcessId().equals(processFinishedProductDTO.getProcessId()) && i > 0) {
 
                 //====找到上一个必过的工序
@@ -267,8 +262,8 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                     preProcessId = preProcessList.get(tempI).getProcessId();
 
                     //判断当前工序的上工序是否有报工权限，如没有，继续向上找工序.   0：没有报工权限
-                    smtProcess = this.findSmtProcess(preProcessId);
-                    if (StringUtils.isEmpty(smtProcess)) {
+                    baseProcess = this.findSmtProcess(preProcessId);
+                    if (StringUtils.isEmpty(baseProcess)) {
                         throw new BizErrorException("上工序未找到工序信息：" + processFinishedProductDTO.getProcessId());
                     }
                     //开工类型找到上工序后直接结束循环
@@ -276,7 +271,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                         break;
                     }
                     //报工类型找到上工序后，如果上工序有报工权限，则跳出循环，如果没有，则继续向上找工序
-                    if (processFinishedProductDTO.getProcessType() == 2 && smtProcess.getIsJobScan() != 0) {
+                    if (processFinishedProductDTO.getProcessType() == 2 && baseProcess.getIsJobScan() != 0) {
                         break;
                     }
                 }
@@ -649,9 +644,9 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                         SmtWorkOrderCardPool smtWorkOrderCardPool1 = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
                         SmtWorkOrder smtWorkOrder1 = smtWorkOrderService.selectByKey(smtWorkOrderCardPool1.getWorkOrderId());
                         //部件的工艺路线
-                        List<SmtRouteProcess> smtRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrder1.getRouteId()).getData();
-                        for (SmtRouteProcess smtRouteProcess : smtRouteProcesses) {
-                            if (smtRouteProcess.getProcessId().equals(preProcessId)) {
+                        List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrder1.getRouteId()).getData();
+                        for (BaseRouteProcess baseRouteProcess : baseRouteProcesses) {
+                            if (baseRouteProcess.getProcessId().equals(preProcessId)) {
                                 //当前部件拥有当前工序的上工序流程
                                 return 3;
                             }
@@ -659,7 +654,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                         //
                         List<SmtProcessListProcess> preS = this.selectAll(ControllerUtil.dynamicCondition(
                                 "workOrderCardPoolId", processFinishedProductDTO.getWorkOrderCardPoolId(),
-                                "processId", smtRouteProcesses.get(smtRouteProcesses.size() - 1).getProcessId(),
+                                "processId", baseRouteProcesses.get(baseRouteProcesses.size() - 1).getProcessId(),
                                 "processType", 2,
                                 "status", 2));
 
@@ -800,7 +795,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
             BigDecimal remainQty = processFinishedProductDTO.getCurOutputQty().multiply(quantity);
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : temp) {
                 smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
-                List<SmtRouteProcess> smtRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId()).getData();
+                List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId()).getData();
                 if (resultCount > 0) {
                     //当前工序最后的工段
                     //用工单的工艺路线代替部件的工艺路线开工
@@ -810,7 +805,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                 BeanUtils.autoFillEqFields(processFinishedProductDTO, tempProcessFinishedProductDTO);
                 tempProcessFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                 tempProcessFinishedProductDTO.setCurOutputQty(remainQty);
-                int i = this.startWork(smtRouteProcesses.get(smtRouteProcesses.size() - 1).getProcessId(), smtWorkOrder, tempProcessFinishedProductDTO, true);
+                int i = this.startWork(baseRouteProcesses.get(baseRouteProcesses.size() - 1).getProcessId(), smtWorkOrder, tempProcessFinishedProductDTO, true);
                 if (i == 3) {
                     //找不到品质确认数，不处理该部件
                     continue;
@@ -902,7 +897,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     }
 
     @Override
-    public SmtProcess findSmtProcess(Long id) {
+    public BaseProcess findSmtProcess(Long id) {
         return smtProcessListProcessMapper.findSmtProcess(id);
     }
 
@@ -945,11 +940,11 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         if (StringUtils.isEmpty(smtWorkOrder)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        SmtRouteProcess smtRouteProcess = new SmtRouteProcess();
-        smtRouteProcess.setRouteId(smtWorkOrder.getRouteId());
-        List<SmtRouteProcess> smtRouteProcessList = smtProcessListProcessMapper.select_smt_route_process(smtRouteProcess);
+        BaseRouteProcess baseRouteProcess = new BaseRouteProcess();
+        baseRouteProcess.setRouteId(smtWorkOrder.getRouteId());
+        List<BaseRouteProcess> baseRouteProcessList = smtProcessListProcessMapper.select_smt_route_process(baseRouteProcess);
         List<SmtProcessListProcess> listProcesses = new ArrayList<>();
-        for (SmtRouteProcess routeProcess : smtRouteProcessList) {
+        for (BaseRouteProcess routeProcess : baseRouteProcessList) {
             record.setProcessId(routeProcess.getProcessId());
             record.setCreateTime(new Date());
             record.setCreateUserId(currentUser.getUserId());

@@ -6,7 +6,7 @@ import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
-import com.fantechs.common.base.entity.basic.SmtStorage;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -162,7 +162,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             }
 
             //判断该编码对应的储位是否存在
-            SmtStorage storage = basicFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
+            BaseStorage storage = basicFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
             //判断该编码对应的设备是否存在
             SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
             searchSmtEquipment.setEquipmentCode(equipmentCode);

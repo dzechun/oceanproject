@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
-import com.fantechs.common.base.entity.basic.SmtWarehouseArea;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
@@ -179,11 +179,11 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         String msg = list.getData().get(0).getWorkOrderCode()+";";
         msg += mesPackageManagerDTO.getBarCode()+";";
 
-        SmtWarehouseArea smtWarehouseArea = basicFeignApi.warehouseAreaDetail(qmsAndinStorageQuarantine.getInspectionWaitingAreaId()).getData();
-        if (StringUtils.isEmpty(smtWarehouseArea)){
+        BaseWarehouseArea baseWarehouseArea = basicFeignApi.warehouseAreaDetail(qmsAndinStorageQuarantine.getInspectionWaitingAreaId()).getData();
+        if (StringUtils.isEmpty(baseWarehouseArea)){
             msg += "区域信息不存在";
         }else {
-            msg += smtWarehouseArea.getWarehouseAreaCode();
+            msg += baseWarehouseArea.getWarehouseAreaCode();
         }
         SearchBaseWarning searchBaseWarning = new SearchBaseWarning();
 

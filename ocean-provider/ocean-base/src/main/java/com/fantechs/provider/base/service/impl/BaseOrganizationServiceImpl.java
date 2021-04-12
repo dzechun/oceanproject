@@ -2,12 +2,9 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
-import com.fantechs.common.base.entity.basic.SmtFactory;
-import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
+import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
@@ -21,11 +18,9 @@ import com.fantechs.provider.base.service.BaseOrganizationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.rmi.runtime.Log;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -156,7 +151,7 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseOrganization> list = new LinkedList<>();
@@ -173,7 +168,7 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
             }
 
             //判断编码是否重复
-            Example example = new Example(SmtFactory.class);
+            Example example = new Example(BaseFactory.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("organizationCode",baseOrganizationDto.getOrganizationCode());
             if (StringUtils.isNotEmpty(baseOrganizationMapper.selectOneByExample(example))){
@@ -203,8 +198,8 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
         if (StringUtils.isNotEmpty(htList)){
             baseHtOrganizationMapper.insertList(htList);
         }
-        resutlMap.put("操作成功总数",success);
-        resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }
