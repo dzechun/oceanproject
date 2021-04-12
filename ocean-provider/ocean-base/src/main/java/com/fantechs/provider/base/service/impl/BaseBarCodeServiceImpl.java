@@ -24,7 +24,6 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.BaseBarCodeDetMapper;
 import com.fantechs.provider.base.mapper.BaseBarCodeMapper;
 import com.fantechs.provider.base.service.BaseBarCodeService;
-import com.fantechs.provider.base.util.FTPUtil;
 import com.fantechs.provider.base.util.SocketClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -48,8 +47,6 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
 
     @Resource
     private BaseBarCodeMapper baseBarCodeMapper;
-    @Resource
-    private FTPUtil ftpUtil;
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
@@ -120,7 +117,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
             InputStream fis = null;
             BufferedInputStream bis = null;
             try {
-                fis = downloadFile(map,savePath).get(0);
+                //fis = downloadFile(map,savePath).get(0);
                 bis = new BufferedInputStream(fis);
                 OutputStream os = response.getOutputStream();
                 int i = bis.read(buffer);
@@ -362,29 +359,29 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
      * @param savePath
      * @return
      */
-    @Transactional(rollbackFor = RuntimeException.class)
-    public List<InputStream> downloadFile(Map map, List<String> savePath) {
-        boolean isLogin = false;
-        List<InputStream> ins = new ArrayList<>();
-        //上传FTP服务器
-        for (String s : savePath) {
-            try {
-                String ip = map.get("ip").toString();
-                Integer port = Integer.parseInt(map.get("port").toString());
-                String username = map.get("username").toString();
-                String password = map.get("password").toString();
-                isLogin = this.ftpUtil.connectFTP(ip, port, username, password);
-                if (isLogin) {
-                    String[] path = s.split("/");
-                    InputStream in = this.ftpUtil.downFile(path[0], path[1]);
-                    ins.add(in);
-                }
-            } catch (Exception e) {
-                throw new BizErrorException(ErrorCodeEnum.valueOf("下载失败"));
-            } finally {
-                this.ftpUtil.loginOut();
-            }
-        }
-        return ins;
-    }
+//    @Transactional(rollbackFor = RuntimeException.class)
+//    public List<InputStream> downloadFile(Map map, List<String> savePath) {
+//        boolean isLogin = false;
+//        List<InputStream> ins = new ArrayList<>();
+//        //上传FTP服务器
+//        for (String s : savePath) {
+//            try {
+//                String ip = map.get("ip").toString();
+//                Integer port = Integer.parseInt(map.get("port").toString());
+//                String username = map.get("username").toString();
+//                String password = map.get("password").toString();
+//                isLogin = this.ftpUtil.connectFTP(ip, port, username, password);
+//                if (isLogin) {
+//                    String[] path = s.split("/");
+//                    InputStream in = this.ftpUtil.downFile(path[0], path[1]);
+//                    ins.add(in);
+//                }
+//            } catch (Exception e) {
+//                throw new BizErrorException(ErrorCodeEnum.valueOf("下载失败"));
+//            } finally {
+//                this.ftpUtil.loginOut();
+//            }
+//        }
+//        return ins;
+//    }
 }

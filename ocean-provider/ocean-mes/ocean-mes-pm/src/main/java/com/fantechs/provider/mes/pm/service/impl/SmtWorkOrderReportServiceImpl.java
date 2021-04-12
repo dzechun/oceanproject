@@ -50,14 +50,14 @@ public class SmtWorkOrderReportServiceImpl  extends BaseService<SmtWorkOrderRepo
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByWorkOrderId(record.getWorkOrderId());
-        if(record.getCompletedQuantity().intValue()>(mesPmWorkOrder.getWorkOrderQuantity().intValue()- mesPmWorkOrder.getOutputQuantity().intValue())){
+        if(record.getCompletedQuantity().intValue()>(mesPmWorkOrder.getWorkOrderQty().intValue()- mesPmWorkOrder.getOutputQty().intValue())){
             throw new BizErrorException("报工数量大于剩余工单数量");
         }
-        BigDecimal outPutQty = new BigDecimal(mesPmWorkOrder.getOutputQuantity().intValue() + record.getCompletedQuantity().intValue());
-        if(outPutQty.compareTo(mesPmWorkOrder.getWorkOrderQuantity())==0){
-            mesPmWorkOrder.setWorkOrderStatus(4);
+        BigDecimal outPutQty = new BigDecimal(mesPmWorkOrder.getOutputQty().intValue() + record.getCompletedQuantity().intValue());
+        if(outPutQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==0){
+            mesPmWorkOrder.setWorkOrderStatus((byte) 4);
         }
-        mesPmWorkOrder.setOutputQuantity(new BigDecimal(mesPmWorkOrder.getOutputQuantity().intValue()+record.getCompletedQuantity().intValue()));
+        mesPmWorkOrder.setOutputQty(new BigDecimal(mesPmWorkOrder.getOutputQty().intValue()+record.getCompletedQuantity().intValue()));
         if(mesPmWorkOrderService.update(mesPmWorkOrder)<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }

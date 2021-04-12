@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
 import com.fantechs.common.base.general.dto.basic.*;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -187,4 +188,35 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/baseSupplier/findList")
     ResponseEntity<List<BaseSupplier>> findSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplier searchBaseSupplier);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseBarCode/findList")
+    ResponseEntity<List<BaseBarCodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarCode searchBaseBarCode);
+
+    @ApiOperation("根据工单ID和条码内容修改条码状态")
+    @PostMapping("/baseBarCode/updateByContent")
+    ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody List<BaseBarCodeDet> baseBarCodeDets);
+
+    @ApiOperation("简单文本邮件")
+    @GetMapping("/mail/sendSimpleMail")
+    ResponseEntity sendSimpleMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
+                                  @ApiParam(value = "标题",required = true)@RequestParam String subject,
+                                  @ApiParam(value = "内容",required = true)@RequestParam String content);
+    @ApiOperation("HTML 文本邮件")
+    @GetMapping("/mail/sendHtmlMail")
+    ResponseEntity sendHtmlMail(@ApiParam(value = "接收者邮箱",required = true)@RequestParam @NotNull(message = "接收邮件不能为空") String to,
+                                @ApiParam(value = "标题",required = true)@RequestParam String subject,
+                                @ApiParam(value = "内容",required = true)@RequestParam String content);
+
+    @ApiOperation("获取标签信息列表")
+    @PostMapping("/baseLabel/findList")
+    ResponseEntity<List<BaseLabelDto>> findLabelList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabel searchBaseLabel);
+
+    @ApiOperation("获取标签类别信息列表")
+    @PostMapping("/baseLabelCategory/findList")
+    ResponseEntity<List<BaseLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelCategory searchBaseLabelCategory);
+
+    @ApiOperation("打印")
+    @PostMapping("/rabbit/print")
+    ResponseEntity print(@RequestBody PrintDto printDto);
 }

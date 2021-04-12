@@ -32,7 +32,7 @@ import java.util.List;
 */
 @RestController
 @Api(tags = "标签类别")
-@RequestMapping("/bcmLabelCategory")
+@RequestMapping("/baseLabelCategory")
 @Validated
 public class BaseLabelCategoryController {
 

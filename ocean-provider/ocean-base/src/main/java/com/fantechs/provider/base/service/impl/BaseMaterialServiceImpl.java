@@ -61,8 +61,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Resource
     private BaseProductModelMapper baseProductModelMapper;
     @Resource
-    private BcmFeignApi bcmFeignApi;
-    @Resource
     private QmsFeignApi qmsFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
@@ -70,6 +68,10 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     private BaseTabMapper baseTabMapper;
     @Resource
     private BaseUnitPriceMapper baseUnitPriceMapper;
+    @Resource
+    private BaseLabelMapper baseLabelMapper;
+    @Resource
+    private BaseLabelCategoryMapper baseLabelCategoryMapper;
 
     @Override
     public List<BaseMaterialDto> findList(Map<String, Object> map){
@@ -414,7 +416,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchBaseLabel searchBaseLabel = new SearchBaseLabel();
                 searchBaseLabel.setCodeQueryMark(1);
                 searchBaseLabel.setLabelCode(labelCode);
-                List<BaseLabelDto> baseLabelDtos = bcmFeignApi.findLabelList(searchBaseLabel).getData();
+                List<BaseLabelDto> baseLabelDtos = baseLabelMapper.findList(searchBaseLabel);
                 if (StringUtils.isEmpty(baseLabelDtos)){
                     fail.add(i+4);
                     continue;
@@ -466,7 +468,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchBaseLabelCategory searchBaseLabelCategory = new SearchBaseLabelCategory();
                 searchBaseLabelCategory.setCodeQueryMark(1);
                 searchBaseLabelCategory.setLabelCategoryCode(labelCategoryCode);
-                List<BaseLabelCategoryDto> baseLabelCategoryDtos = bcmFeignApi.findLabelCategoryList(searchBaseLabelCategory).getData();
+                List<BaseLabelCategoryDto> baseLabelCategoryDtos = baseLabelCategoryMapper.findList(searchBaseLabelCategory);
                 if (StringUtils.isEmpty(baseLabelCategoryDtos)){
                     fail.add(i+4);
                     continue;
