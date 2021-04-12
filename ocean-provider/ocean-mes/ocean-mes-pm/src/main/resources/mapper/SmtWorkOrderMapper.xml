@@ -21,9 +21,14 @@
         <result column="planned_end_time" jdbcType="TIMESTAMP" property="plannedEndTime"/>
         <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime"/>
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
         <result column="contract_no" jdbcType="BIGINT" property="contractNo"/>
         <result column="if_print" jdbcType="TINYINT" property="ifPrint"/>
+
+        <result column="put_into_process_id" jdbcType="BIGINT" property="putIntoProcessId"/>
+        <result column="output_process_id" jdbcType="BIGINT" property="outputProcessId"/>
+        <result column="scrap_qty" jdbcType="DECIMAL" property="scrapQty"/>
+
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -100,7 +105,10 @@
         swo.modified_user_id,
         swo.modified_time,
         swo.is_delete,
-        swo.organization_id,
+        swo.org_id,
+        swo.put_into_process_id,
+        swo.output_process_id,
+        swo.scrap_qty,
         swo.remark,
         swo.contract_no,
         sm.material_code AS 'materialCode',
@@ -114,7 +122,7 @@
         sbrs.barcode_rule_set_name AS 'barcodeRuleSetName',
         u.user_name AS 'createUserName',
         s.user_name AS 'modifiedUserName',
-        so.order_code AS 'orderCode',
+        swo.order_code AS 'orderCode',
         bo.organization_name AS 'organizationName',
         bt.color AS 'color',
         spm.product_model_name AS 'productModelName',
@@ -122,19 +130,18 @@
         swo1.work_order_code AS 'parentWorkOrderCode',
         sps.package_specification_quantity AS 'packageSpecificationQuantity'
         FROM
-        smt_work_order swo
-        left join smt_work_order swo1 on swo1.work_order_id = swo.parent_id
-        left join smt_material sm on swo.material_id=sm.material_id
-        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
-        left join smt_package_specification sps on sps.package_specification_id = bt.package_specification_id
-        left join smt_product_model spm on spm.product_model_id = bt.product_model_id
-        left join smt_route sr on swo.route_id=sr.route_id
-        left join smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
-        left join smt_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
-        left join smt_order so on so.order_id = swo.order_id
+        mes_pm_work_order swo
+        left join mes_pm_work_order swo1 on swo1.work_order_id = swo.parent_id
+        left join base_material sm on swo.material_id=sm.material_id
+        LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
+        left join base_package_specification sps on sps.package_specification_id = bt.package_specification_id
+        left join base_product_model spm on spm.product_model_id = bt.product_model_id
+        left join base_route sr on swo.route_id=sr.route_id
+        left join base_pro_line spl on swo.pro_line_id=spl.pro_line_id
+        left join base_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
         left join ocean.sys_user u on swo.create_user_id=u.user_id
         left join ocean.sys_user s on swo.modified_user_id=s.user_id
-        LEFT JOIN base_organization bo ON swo.organization_id = bo.organization_id
+        LEFT JOIN base_organization bo ON swo.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -184,16 +191,16 @@
             sps.package_specification_id AS 'packageSpecificationId',
             sps.package_specification_quantity AS 'packageSpecificationQuantity'
         </if>
-        FROM smt_work_order swo
-        LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
-        LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
-        LEFT JOIN base_tab bt ON bt.material_id = swo.material_id
+        FROM mes_pm_work_order swo
+        LEFT JOIN base_material sm ON swo.material_id = sm.material_id
+        LEFT JOIN base_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+        LEFT JOIN base_material_tab bt ON bt.material_id = swo.material_id
         <if test="processId!=null and processId!=''">
-            LEFT JOIN smt_material_package ssmp ON ssmp.material_id = sm.material_id
-            LEFT JOIN smt_package_specification ssps ON ssps.package_specification_id = ssmp.package_specification_id
+            LEFT JOIN base_material_package ssmp ON ssmp.material_id = sm.material_id
+            LEFT JOIN base_package_specification ssps ON ssps.package_specification_id = ssmp.package_specification_id
         </if>
         LEFT JOIN mes_order_material mom ON swo.order_id = mom.order_id and swo.material_id = mom.material_id
-        LEFT JOIN smt_package_specification sps ON sps.package_specification_id = mom.package_specification_id
+        LEFT JOIN base_package_specification sps ON sps.package_specification_id = mom.package_specification_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -247,10 +254,10 @@
         spbd.is_delete,
         spbd.part_material_id
         FROM
-        smt_product_bom_det spbd
+        base_product_bom_det spbd
         <where>
             <if test="materialId!=null and materialId!=''">
-                and parent_bom_id IN (SELECT spb.product_bom_id FROM `smt_product_bom` spb
+                and parent_bom_id IN (SELECT spb.product_bom_id FROM `base_product_bom` spb
                 WHERE spb.`material_id` =#{materialId})
             </if>
         </where>
@@ -277,6 +284,9 @@
                swo.production_quantity,
                swo.output_quantity,
                swo.scheduled_quantity,
+               swo.put_into_process_id,
+               swo.output_process_id,
+               swo.scrap_qty,
                swo.work_order_status,
                swo.pro_line_id,
                sm.material_code     AS 'materialCode',
@@ -288,14 +298,13 @@
                spl.pro_name         AS 'proName',
                swo.route_id         AS 'routeId',
                sr.route_name        AS 'routeName',
-               so.order_code        AS 'orderCode '
-        FROM smt_work_order swo
-                 LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
-                 LEFT JOIN base_tab bt ON bt.material_id = sm.material_id
+               swo.order_code        AS 'orderCode '
+        FROM mes_pm_work_order swo
+                 LEFT JOIN base_material sm ON swo.material_id = sm.material_id
+                 LEFT JOIN base_material_tab bt ON bt.material_id = sm.material_id
                  LEFT JOIN base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
-                 LEFT JOIN smt_route sr ON swo.route_id = sr.route_id
-                 LEFT JOIN smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
-                 LEFT JOIN smt_order so ON so.order_id = swo.order_id
+                 LEFT JOIN base_route sr ON swo.route_id = sr.route_id
+                 LEFT JOIN base_pro_line spl ON swo.pro_line_id = spl.pro_line_id
         where swo.work_order_id = #{workOrderId}
     </select>
 
@@ -314,9 +323,9 @@
                srp.qualification_id,
                sp.process_name,
                sr.route_name
-        FROM smt_route_process srp
-                 LEFT JOIN smt_route sr ON srp.route_id = sr.route_id
-                 LEFT JOIN smt_process sp ON srp.process_id = sp.process_id
+        FROM base_route_process srp
+                 LEFT JOIN base_route sr ON srp.route_id = sr.route_id
+                 LEFT JOIN base_process sp ON srp.process_id = sp.process_id
         where srp.route_id = #{routeId}
         order by srp.order_num
     </select>
