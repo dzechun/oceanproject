@@ -1,14 +1,14 @@
 package com.fantechs.provider.api.fileserver.service;
 
 
-import com.fantechs.common.base.general.dto.bcm.BcmBarCodeDto;
-import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
-import com.fantechs.common.base.general.dto.bcm.BcmLabelDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarCodeDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
-import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
-import com.fantechs.common.base.general.entity.bcm.search.SearchBcmBarCode;
-import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabel;
-import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabelCategory;
+import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarCode;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,11 +29,11 @@ public interface BcmFeignApi {
 
     @ApiOperation("列表")
     @PostMapping("/bcmBarCode/findList")
-    ResponseEntity<List<BcmBarCodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBcmBarCode searchBcmBarCode);
+    ResponseEntity<List<BaseBarCodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarCode searchBaseBarCode);
 
     @ApiOperation("根据工单ID和条码内容修改条码状态")
     @PostMapping("/bcmBarCode/updateByContent")
-    ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody List<BcmBarCodeDet> bcmBarCodeDets);
+    ResponseEntity updateByContent(@ApiParam(value = "查询对象")@RequestBody List<BaseBarCodeDet> baseBarCodeDets);
 
     @ApiOperation("简单文本邮件")
     @GetMapping("/mail/sendSimpleMail")
@@ -48,11 +48,11 @@ public interface BcmFeignApi {
 
     @ApiOperation("获取标签信息列表")
     @PostMapping("/bcmLabel/findList")
-    ResponseEntity<List<BcmLabelDto>> findLabelList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabel searchBcmLabel);
+    ResponseEntity<List<BaseLabelDto>> findLabelList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabel searchBaseLabel);
 
     @ApiOperation("获取标签类别信息列表")
     @PostMapping("/bcmLabelCategory/findList")
-    ResponseEntity<List<BcmLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBcmLabelCategory searchBcmLabelCategory);
+    ResponseEntity<List<BaseLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelCategory searchBaseLabelCategory);
 
     @ApiOperation("打印")
     @PostMapping("/rabbit/print")

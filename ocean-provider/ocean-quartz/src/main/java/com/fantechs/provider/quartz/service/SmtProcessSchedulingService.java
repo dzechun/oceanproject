@@ -1,8 +1,8 @@
 package com.fantechs.provider.quartz.service;
 
-import com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto;
-import com.fantechs.common.base.general.entity.bcm.SmtProcessScheduling;
-import com.fantechs.common.base.general.entity.bcm.search.SearchSmtProcessScheduling;
+import com.fantechs.common.base.general.dto.basic.BaseProcessSchedulingDto;
+import com.fantechs.common.base.general.entity.basic.BaseProcessScheduling;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcessScheduling;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -12,13 +12,13 @@ import java.util.Map;
  * Created by mr.lei on 2021/03/08.
  */
 
-public interface SmtProcessSchedulingService extends IService<SmtProcessScheduling> {
+public interface SmtProcessSchedulingService extends IService<BaseProcessScheduling> {
     /**
      * 查询排程
-     * @param searchSmtProcessScheduling
+     * @param searchBaseProcessScheduling
      * @return
      */
-    List<SmtProcessSchedulingDto> findList(SearchSmtProcessScheduling searchSmtProcessScheduling);
+    List<BaseProcessSchedulingDto> findList(SearchBaseProcessScheduling searchBaseProcessScheduling);
 
     /**
      * 开始任务

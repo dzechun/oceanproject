@@ -8,7 +8,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.entity.bcm.BcmLabel;
+import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -16,7 +16,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.bcm.mapper.BcmLabelMapper;
+import com.fantechs.provider.bcm.mapper.BaseLabelMapper;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
@@ -50,7 +50,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Resource
     private RabbitProducer rabbitProducer;
     @Resource
-    private BcmLabelMapper bcmLabelMapper;
+    private BaseLabelMapper baseLabelMapper;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -131,18 +131,18 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException("参数错误");
         }
-        Example example = new Example(BcmLabel.class);
+        Example example = new Example(BaseLabel.class);
         example.createCriteria().andEqualTo("labelName",labelName);
-        BcmLabel bcmLabel = bcmLabelMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(bcmLabel)){
+        BaseLabel baseLabel = baseLabelMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(baseLabel)){
             throw new BizErrorException("获取标签信息失败");
         }
-        Path file = Paths.get("../"+bcmLabel.getLabelCategoryId());
+        Path file = Paths.get("../"+ baseLabel.getLabelCategoryId());
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
                 response.addHeader("Content-Disposition",
-                        "attachment; filename=" + URLEncoder.encode(bcmLabel.getLabelName(), "UTF-8"));
+                        "attachment; filename=" + URLEncoder.encode(baseLabel.getLabelName(), "UTF-8"));
 
                 System.out.println("以输出流的形式对外输出提供下载");
                 Files.copy(file, response.getOutputStream());// 以输出流的形式对外输出提供下载

@@ -1,12 +1,12 @@
 package com.fantechs.provider.api.imes.storage;
 
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -30,11 +30,11 @@ public interface StorageInventoryFeignApi {
 
     @ApiOperation("储位库存查询")
     @PostMapping("/smtStorageInventory/findList")
-    ResponseEntity<List<SmtStorageInventoryDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorageInventory searchSmtStorageInventory);
+    ResponseEntity<List<WmsInnerStorageInventoryDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchWmsInnerStorageInventory searchWmsInnerStorageInventory);
 
     @ApiOperation("储位库存新增")
     @PostMapping("/smtStorageInventory/add")
-    ResponseEntity<SmtStorageInventory> add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStorageInventory smtStorageInventory);
+    ResponseEntity<WmsInnerStorageInventory> add(@ApiParam(value = "必传：", required = true) @RequestBody WmsInnerStorageInventory wmsInnerStorageInventory);
 
     @ApiOperation("储位库存删除")
     @PostMapping("/smtStorageInventory/delete")
@@ -42,23 +42,23 @@ public interface StorageInventoryFeignApi {
 
     @ApiOperation("储位库存更新")
     @PostMapping("/smtStorageInventory/update")
-    ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody SmtStorageInventory smtStorageInventory);
+    ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody WmsInnerStorageInventory wmsInnerStorageInventory);
 
     @ApiOperation("扣除储位库存")
     @PostMapping("/smtStorageInventory/out")
-    ResponseEntity<SmtStorageInventory> out(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtStorageInventory smtStorageInventory);
+    ResponseEntity<WmsInnerStorageInventory> out(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerStorageInventory wmsInnerStorageInventory);
 
     @ApiOperation("储位库存明细新增")
     @PostMapping("/smtStorageInventoryDet/add")
-    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStorageInventoryDet smtStorageInventoryDet);
+    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody WmsInnerStorageInventoryDet smtStorageInventoryDet);
 
     @ApiOperation("储位库存明细列表")
     @PostMapping("/smtStorageInventoryDet/findList")
-    ResponseEntity<List<SmtStorageInventoryDetDto>> findStorageInventoryDetList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStorageInventoryDet searchSmtStorageInventoryDet);
+    ResponseEntity<List<WmsInnerStorageInventoryDetDto>> findStorageInventoryDetList(@ApiParam(value = "查询对象") @RequestBody SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet);
 
     @ApiOperation("储位库存明细修改")
     @PostMapping("/smtStorageInventoryDet/update")
-    ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = SmtStorageInventoryDet.update.class) SmtStorageInventoryDet smtStorageInventoryDet);
+    ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = WmsInnerStorageInventoryDet.update.class) WmsInnerStorageInventoryDet smtStorageInventoryDet);
 
     @ApiOperation("储位库存明细删除")
     @PostMapping("/smtStorageInventoryDet/delete")

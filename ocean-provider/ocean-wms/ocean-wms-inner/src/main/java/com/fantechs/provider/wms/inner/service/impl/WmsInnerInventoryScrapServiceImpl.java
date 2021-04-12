@@ -1,14 +1,14 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -92,24 +92,24 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             }
 
             //判断库存数量
-            SearchSmtStorageInventory searchSmtStorageInventor = new SearchSmtStorageInventory();
+            SearchWmsInnerStorageInventory searchSmtStorageInventor = new SearchWmsInnerStorageInventory();
             searchSmtStorageInventor.setStorageId(wmsInnerInventoryScrapDet.getStorageId());
             searchSmtStorageInventor.setMaterialId(wmsInnerInventoryScrapDet.getMaterialId());
-            List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
             if(StringUtils.isEmpty(smtStorageInventoryDtos)){
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
 
-            SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-            searchSmtStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtos.get(0).getStorageInventoryId());
-            searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerInventoryScrapDet.getBarCode());
-            List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
-            if(StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+            SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+            searchWmsInnerStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtos.get(0).getStorageInventoryId());
+            searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(wmsInnerInventoryScrapDet.getBarCode());
+            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+            if(StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
 
             //库存数量小于报废数量
-            if(smtStorageInventoryDetDtos.get(0).getMaterialQuantity().compareTo(wmsInnerInventoryScrapDet.getRealityTotalQty()) < 0){
+            if(wmsInnerStorageInventoryDetDtos.get(0).getMaterialQuantity().compareTo(wmsInnerInventoryScrapDet.getRealityTotalQty()) < 0){
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
 
@@ -117,18 +117,18 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
 
             //这里库存明细是否要删除 -> 如果库存为0，则删除。
             //包箱管理表的栈板数据是否要保留 -> 目前不删，
-            SmtStorageInventory smtStorageInventory = smtStorageInventoryDtos.get(0);
-            smtStorageInventory.setQuantity(wmsInnerInventoryScrapDet.getRealityTotalQty());
+            WmsInnerStorageInventory wmsInnerStorageInventory = smtStorageInventoryDtos.get(0);
+            wmsInnerStorageInventory.setQuantity(wmsInnerInventoryScrapDet.getRealityTotalQty());
 
-            List<SmtStorageInventoryDet> smtStorageInventoryDets = new ArrayList<>();
-            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+            List<WmsInnerStorageInventoryDet> smtStorageInventoryDets = new ArrayList<>();
+            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
             smtStorageInventoryDet.setMaterialQuantity(wmsInnerInventoryScrapDet.getRealityTotalQty());
-            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
             smtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerInventoryScrapDet.getBarCode());
             smtStorageInventoryDets.add(smtStorageInventoryDet);
 
-            smtStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
-            storageInventoryFeignApi.out(smtStorageInventory);
+            wmsInnerStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
+            storageInventoryFeignApi.out(wmsInnerStorageInventory);
 
             wmsInnerInventoryScrapDet.setBarCodeStatus((byte) 1);
             wmsInnerInventoryScrapDet.setInventoryScrapStatus((byte) 2);

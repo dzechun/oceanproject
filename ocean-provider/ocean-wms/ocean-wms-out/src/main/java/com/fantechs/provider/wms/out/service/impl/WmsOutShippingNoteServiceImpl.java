@@ -2,9 +2,9 @@ package com.fantechs.provider.wms.out.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
@@ -138,14 +138,14 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
             example.createCriteria().andEqualTo("shippingNoteDetId", wmsOutShippingNoteDet.getShippingNoteDetId());
             List<WmsOutShippingNoteDet> wmsOutShippingNoteDets = wmsOutShippingNoteDetMapper.selectByExample(example);
 
-            SearchSmtStorageInventory searchSmtStorageInventor = new SearchSmtStorageInventory();
+            SearchWmsInnerStorageInventory searchSmtStorageInventor = new SearchWmsInnerStorageInventory();
             searchSmtStorageInventor.setStorageId(wmsOutShippingNoteDets.get(0).getStorageId());
-            List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
             if (StringUtils.isEmpty(smtStorageInventoryDtos)) {
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
             Boolean flag = false;
-            for (SmtStorageInventoryDto smtStorageInventoryDto : smtStorageInventoryDtos) {
+            for (WmsInnerStorageInventoryDto smtStorageInventoryDto : smtStorageInventoryDtos) {
                 if (smtStorageInventoryDto.getMaterialId().equals(wmsOutShippingNoteDets.get(0).getMaterialId())) {
                     if (smtStorageInventoryDto.getQuantity().compareTo(wmsOutShippingNoteDet.getRealityTotalQty()) >= 0) {
                         flag = true;
@@ -262,7 +262,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
         wmsOutHtShippingNoteMapper.insertSelective(wmsOutHtShippingNote);
 
         String storageName = "", moveStorageName = "";
-        
+
         for (WmsOutShippingNoteDet wmsOutShippingNoteDet : wmsOutShippingNote.getWmsOutShippingNoteDetList()) {
 
             wmsOutShippingNoteDet.setShippingNoteId(wmsOutShippingNote.getShippingNoteId());
