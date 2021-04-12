@@ -3,7 +3,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodeCollocationDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -36,7 +36,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
     @Resource
     private SmtWorkOrderBarcodeCollocationMapper smtWorkOrderBarcodeCollocationMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
     @Resource
@@ -59,7 +59,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         Long workOrderId = record.getWorkOrderId();
-        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
         //通过条码集合找到对应的条码规则、流转卡规则
         SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet = new SearchSmtBarcodeRuleSetDet();
         searchSmtBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());

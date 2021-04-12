@@ -20,7 +20,7 @@ import lombok.Data;
  * @date 2021-01-12 19:20:36
  */
 @Data
-@Table(name = "base_tab")
+@Table(name = "base_material_tab")
 public class BaseTab extends ValidGroup implements Serializable {
     /**
      * 页签ID
@@ -392,6 +392,22 @@ public class BaseTab extends ValidGroup implements Serializable {
     @Excel(name = "湿敏等级", height = 20, width = 30)
     @Column(name = "wet_sensitive_level")
     private String wetSensitiveLevel;
+
+    /**
+     * 电压
+     */
+    @ApiModelProperty(name="voltage",value = "电压")
+    @Excel(name = "电压", height = 20, width = 30)
+    @Column(name = "voltage")
+    private BigDecimal voltage;
+
+    /**
+     * 保质期（天）
+     */
+    @ApiModelProperty(name="expirationDate",value = "保质期（天）")
+    @Excel(name = "保质期（天）", height = 20, width = 30)
+    @Column(name = "expiration_date")
+    private Integer expirationDate;
 
     private static final long serialVersionUID = 1L;
 }

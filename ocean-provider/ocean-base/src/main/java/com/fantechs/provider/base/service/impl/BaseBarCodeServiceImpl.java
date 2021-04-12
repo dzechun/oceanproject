@@ -8,9 +8,9 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarCodeDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarCodeWorkDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.basic.BaseBarCode;
 import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarCode;
@@ -179,13 +179,13 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
                 List<BaseBarCodeDet> baseBarCodeDets = baseBarCodeDetMapper.selectByExample(example1);
                 for (BaseBarCodeDet baseBarCodeDet : baseBarCodeDets) {
                     //打印
-                    SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-                    searchSmtWorkOrder.setWorkOrderId(workOrderId);
-                    List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+                    SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                    searchMesPmWorkOrder.setWorkOrderId(workOrderId);
+                    List<MesPmWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
                     if(StringUtils.isEmpty(smtWorkOrderDto)){
                         throw new BizErrorException("获取工单信息失败");
                     }
-                    SmtWorkOrderDto sdto = smtWorkOrderDto.get(0);
+                    MesPmWorkOrderDto sdto = smtWorkOrderDto.get(0);
                     Map<String, Object> map = JSON.parseObject(JSON.toJSONString(sdto),Map.class);
                     map.put("QrCode", baseBarCodeDet.getBarCodeContent());
 
@@ -329,9 +329,9 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
         try {
             for (String s : barCodeId) {
                 BaseBarCode baseBarCode = baseBarCodeMapper.selectByPrimaryKey(Long.parseLong(s));
-                SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-                searchSmtWorkOrder.setWorkOrderId(baseBarCode.getWorkOrderId());
-                List<SmtWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder.setWorkOrderId(baseBarCode.getWorkOrderId());
+                List<MesPmWorkOrderDto> smtWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
                 if(StringUtils.isEmpty(smtWorkOrderDto)){
                     throw new BizErrorException("获取工单信息失败");
                 }
@@ -340,7 +340,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
                 List<BaseBarCodeDet> baseBarCodeDets = baseBarCodeDetMapper.selectByExample(example1);
                 for (BaseBarCodeDet baseBarCodeDet : baseBarCodeDets) {
                     //打印
-                    SmtWorkOrderDto sdto = smtWorkOrderDto.get(0);
+                    MesPmWorkOrderDto sdto = smtWorkOrderDto.get(0);
                     Map<String, Object> map = JSON.parseObject(JSON.toJSONString(sdto),Map.class);
                     map.put("QrCode", baseBarCodeDet.getBarCodeContent());
                     //获取抽检员信息

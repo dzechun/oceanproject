@@ -206,9 +206,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         map.put("processId", qmsQualityConfirmation.getProcessId());
         //如果是成品抽检就打印条码
         if (StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) && (type == null || type != 3)) {
-            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-            searchSmtWorkOrder.setWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
-            List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
             if (StringUtils.isNotEmpty(workOrderList)) {
                 //获取成品工艺路线
                 List<BaseRouteProcess> routeProcesses = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
@@ -217,7 +217,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                     //打印成品条码
                 }
                 //修改工单状态
-                if (workOrderList.get(0).getWorkOrderQuantity().compareTo(qmsQualityConfirmation.getQualifiedQuantity()) == 0) {
+                if (workOrderList.get(0).getWorkOrderQty().compareTo(qmsQualityConfirmation.getQualifiedQuantity()) == 0) {
                     pmFeignApi.updateStatus(workOrderList.get(0).getWorkOrderId(), 4);
                 }
             }
@@ -387,9 +387,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
         BigDecimal quantity = minMatchingQuantity.subtract(alreadyMatchingQuantity);
         if (quantity.compareTo(new BigDecimal(0)) == 1) {
             System.out.println("生成生产领料计划");
-            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-            searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
-            List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(workOrderCardPoolDto.getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
             if (StringUtils.isEmpty(workOrderList)) {
                 throw new BizErrorException("未找到产品工单信息");
             }
@@ -698,9 +698,9 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 throw new BizErrorException("未找到流程单信息");
             }
 
-            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-            searchSmtWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
-            List<SmtWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(workOrderCardPoolList.get(0).getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
             if (StringUtils.isEmpty(workOrderList)) {
                 throw new BizErrorException("未找到流程单的工单信息");
             }

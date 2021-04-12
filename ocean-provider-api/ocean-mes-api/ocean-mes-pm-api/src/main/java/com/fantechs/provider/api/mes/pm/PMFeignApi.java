@@ -1,29 +1,21 @@
 package com.fantechs.provider.api.mes.pm;
 
 import com.fantechs.common.base.general.dto.mes.pm.*;
-import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodePoolDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodePool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
-import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.mes.pm.*;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsQualityConfirmation;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -42,11 +34,11 @@ public interface PMFeignApi {
 
     @ApiOperation("工单列表")
     @PostMapping("/smtWorkOrder/findList")
-    ResponseEntity<List<SmtWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchSmtWorkOrder searchSmtWorkOrder);
+    ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     @ApiOperation("修改工单")
     @PostMapping("/smtWorkOrder/update")
-    ResponseEntity updateSmtWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody SmtWorkOrder smtWorkOrder);
+    ResponseEntity updateSmtWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder);
 
     @ApiOperation("更新工单状态")
     @PostMapping("/smtWorkOrder/updateStatus")
@@ -56,7 +48,7 @@ public interface PMFeignApi {
 
     @ApiOperation(value = "新增工单", notes = "新增工单")
     @PostMapping("/smtWorkOrder/add")
-    ResponseEntity addWorkOrder(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId、proLineId", required = true) @RequestBody SmtWorkOrder smtWorkOrder);
+    ResponseEntity addWorkOrder(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId、proLineId", required = true) @RequestBody MesPmWorkOrder mesPmWorkOrder);
 
     @ApiOperation(value = "新增及更新工单及BOM",notes = "新增及更新工单及BOM")
     @PostMapping("/smtWorkOrder/save")
@@ -110,7 +102,7 @@ public interface PMFeignApi {
 
     @ApiOperation("获取工单的详情")
     @PostMapping("/smtWorkOrder/detail")
-    ResponseEntity<SmtWorkOrder> workOrderDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
+    ResponseEntity<MesPmWorkOrder> workOrderDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("修改")
     @PostMapping("/smtStock/update")

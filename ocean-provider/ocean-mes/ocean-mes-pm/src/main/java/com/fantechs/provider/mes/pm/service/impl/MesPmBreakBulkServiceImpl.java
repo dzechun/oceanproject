@@ -38,7 +38,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
     @Resource
     private MesPmBreakBulkDetMapper mesPmBreakBulkDetMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
     @Resource
@@ -235,7 +235,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 Long routeId = mesPmBreakBulkPrintDto.getRouteId();
                 //查询工艺路线配置
-                List<BaseRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
                 if (StringUtils.isNotEmpty(routeProcesses)) {
                     StringBuffer sb =new StringBuffer();
                     for (BaseRouteProcess routeProcess : routeProcesses) {
@@ -262,7 +262,7 @@ public class MesPmBreakBulkServiceImpl extends BaseService<MesPmBreakBulk> imple
                 mesPmBreakBulkPrintDto.setPrintDate(new Date());
                 Long routeId = mesPmBreakBulkPrintDto.getRouteId();
                 //查询工艺路线配置
-                List<BaseRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+                List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
                 if (StringUtils.isNotEmpty(routeProcesses)) {
                     StringBuffer sb =new StringBuffer();
                     for (BaseRouteProcess routeProcess : routeProcesses) {

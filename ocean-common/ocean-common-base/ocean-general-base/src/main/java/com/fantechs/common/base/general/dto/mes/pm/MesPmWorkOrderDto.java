@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
-public class SmtWorkOrderDto extends SmtWorkOrder implements Serializable {
+public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
 
     private static final long serialVersionUID = 5293503265879392765L;
     /**

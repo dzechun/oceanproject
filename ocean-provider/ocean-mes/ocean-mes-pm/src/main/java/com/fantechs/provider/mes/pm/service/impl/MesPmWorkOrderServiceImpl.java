@@ -7,10 +7,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.*;
-import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -22,7 +22,7 @@ import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderBomService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardCollocationService;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +35,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by wcz on 2020/10/13.
- */
+
 @Service
-public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implements SmtWorkOrderService {
+public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> implements MesPmWorkOrderService {
 
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
     @Resource
@@ -66,49 +64,49 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int save(SmtWorkOrder smtWorkOrder) {
+    public int save(MesPmWorkOrder mesPmWorkOrder) {
         SysUser currentUser = currentUser();
 
 
-        if(StringUtils.isEmpty(smtWorkOrder.getWorkOrderCode())){
-            smtWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
+        if(StringUtils.isEmpty(mesPmWorkOrder.getWorkOrderCode())){
+            mesPmWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
         }else{
-            Example example = new Example(SmtWorkOrder.class);
+            Example example = new Example(MesPmWorkOrder.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
+            criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
 
-            List<SmtWorkOrder> smtWorkOrders = smtWorkOrderMapper.selectByExample(example);
-            if (StringUtils.isNotEmpty(smtWorkOrders)) {
+            List<MesPmWorkOrder> mesPmWorkOrders = mesPmWorkOrderMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(mesPmWorkOrders)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
         }
 
 
-        smtWorkOrder.setCreateUserId(currentUser.getUserId());
-        smtWorkOrder.setCreateTime(new Date());
-        if(smtWorkOrderMapper.insertSelective(smtWorkOrder)<=0){
+        mesPmWorkOrder.setCreateUserId(currentUser.getUserId());
+        mesPmWorkOrder.setCreateTime(new Date());
+        if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0){
             return 0;
         }
 
         //新增工单历史信息
-        recordHistory(smtWorkOrder,"新增");
+        recordHistory(mesPmWorkOrder,"新增");
 
 
         //根据产品BOM生成工单BOM
         //特殊声明是否产生BOM
-        if(StringUtils.isEmpty(smtWorkOrder.getRemark()) || !smtWorkOrder.getRemark().equals("无BOM")){
+        if(StringUtils.isEmpty(mesPmWorkOrder.getRemark()) || !mesPmWorkOrder.getRemark().equals("无BOM")){
             //生成备料单
             SmtStock smtStock = new SmtStock();
-            smtStock.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            smtStock.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
             smtStock.setDeliveryMode(new Byte("0"));
             smtStock.setStatus(new Byte("0"));
             smtStock.setStockCode(CodeUtils.getId("BLD-"));
             // Date date = smtWorkOrder.getPlannedStartTime();
             // Date afterDate = new Date(date.getTime() + 600000);
-            BeanUtils.copyProperties(smtWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
+            BeanUtils.copyProperties(mesPmWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
             smtStockMapper.insertUseGeneratedKeys(smtStock);
 
-            genWorkOrder(smtWorkOrder, smtStock);
+            genWorkOrder(mesPmWorkOrder, smtStock);
         }
 
         return 1;
@@ -117,10 +115,10 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     /**
      * 根据产品BOM明细生成工单BOM信息
      *
-     * @param smtWorkOrder
+     * @param mesPmWorkOrder
      */
     @Transactional(rollbackFor = Exception.class)
-    public void genWorkOrder(SmtWorkOrder smtWorkOrder, SmtStock smtStock) {
+    public void genWorkOrder(MesPmWorkOrder mesPmWorkOrder, SmtStock smtStock) {
         SysUser currentUser = currentUser();
         List<SmtWorkOrderBom> list = new ArrayList<>();
         List<SmtHtWorkOrderBom> htList = new ArrayList<>();
@@ -128,17 +126,17 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         List<SmtStockDet> stockDetList = new ArrayList<>();
         //根据物料ID查询产品BOM信息
         SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
-        searchBaseProductBom.setMaterialId(smtWorkOrder.getMaterialId());
+        searchBaseProductBom.setMaterialId(mesPmWorkOrder.getMaterialId());
         searchBaseProductBom.setIsBomDet(new Byte("1"));
         List<BaseProductBomDto> smtProductBoms = basicFeignApi.findProductBomList(searchBaseProductBom).getData();
         if (StringUtils.isNotEmpty(smtProductBoms)) {
             for (BaseProductBomDto smtProductBomDet : smtProductBoms) {
                 SmtWorkOrderBom smtWorkOrderBom = new SmtWorkOrderBom();
                 BeanUtils.copyProperties(smtProductBomDet, smtWorkOrderBom, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
-                BigDecimal workOrderQuantity = smtWorkOrder.getWorkOrderQuantity();
+                BigDecimal workOrderQuantity = mesPmWorkOrder.getWorkOrderQty();
                 BigDecimal quantity = StringUtils.isEmpty(smtProductBomDet.getQuantity())?new BigDecimal(1):smtProductBomDet.getQuantity();
                 BigDecimal baseQuantity = StringUtils.isEmpty(smtProductBomDet.getBaseQuantity())?new BigDecimal(1):smtProductBomDet.getBaseQuantity();
-                smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                smtWorkOrderBom.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
                 smtWorkOrderBom.setPartMaterialId(smtProductBomDet.getMaterialId());
                 smtWorkOrderBom.setSingleQuantity(quantity);
                 if (StringUtils.isNotEmpty(baseQuantity,quantity)){
@@ -182,7 +180,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int update(SmtWorkOrder smtWorkOrder) {
+    public int update(MesPmWorkOrder mesPmWorkOrder) {
         int i = 0;
         List<SmtWorkOrderBom> list = new ArrayList();
 
@@ -196,42 +194,42 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        SmtWorkOrder order = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrder.getWorkOrderId());
+        MesPmWorkOrder order = mesPmWorkOrderMapper.selectByPrimaryKey(mesPmWorkOrder.getWorkOrderId());
 
         Example stockExample = new Example(SmtStock.class);
-        stockExample.createCriteria().andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
+        stockExample.createCriteria().andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
         SmtStock smtStock = smtStockMapper.selectOneByExample(stockExample);
 
         //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
-        Integer workOrderStatus = order.getWorkOrderStatus();
+        Integer workOrderStatus = order.getWorkOrderStatus().intValue();
         if (workOrderStatus != 4) {
-            Example example = new Example(SmtWorkOrder.class);
+            Example example = new Example(MesPmWorkOrder.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workOrderCode", smtWorkOrder.getWorkOrderCode());
+            criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
 
-            SmtWorkOrder workOrder = smtWorkOrderMapper.selectOneByExample(example);
+            MesPmWorkOrder workOrder = mesPmWorkOrderMapper.selectOneByExample(example);
 
-            if (StringUtils.isNotEmpty(workOrder) && !workOrder.getWorkOrderId().equals(smtWorkOrder.getWorkOrderId())) {
+            if (StringUtils.isNotEmpty(workOrder) && !workOrder.getWorkOrderId().equals(mesPmWorkOrder.getWorkOrderId())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
 
             //修改了工单的产品料号，对应的工单bom也要修改
-            if (!order.getMaterialId().equals(smtWorkOrder.getMaterialId())) {
+            if (!order.getMaterialId().equals(mesPmWorkOrder.getMaterialId())) {
                 //throw new BizErrorException("工单不能修改产品料号信息");
                 Example example1 = new Example(SmtWorkOrderBom.class);
-                example1.createCriteria().andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
+                example1.createCriteria().andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
                 smtWorkOrderBomMapper.deleteByExample(example1);
 
                 //根据产品BOM生成工单BOM
-                genWorkOrder(smtWorkOrder, smtStock);
+                genWorkOrder(mesPmWorkOrder, smtStock);
             }
             //工单的工单数量改变,重新计算零件的工单用量
-            if (!order.getWorkOrderQuantity().equals(smtWorkOrder.getWorkOrderQuantity()) &&
+            if (!order.getWorkOrderQty().equals(mesPmWorkOrder.getWorkOrderQty()) &&
                     (workOrderStatus == 0 || workOrderStatus == 3)) {
 
                 Example example1 = new Example(SmtWorkOrderBom.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("workOrderId", smtWorkOrder.getWorkOrderId());
+                criteria1.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
                 List<SmtWorkOrderBom> workOrderBoms = smtWorkOrderBomMapper.selectByExample(example1);
 
                 List<SmtStockDet> smtStockDets=null;
@@ -250,9 +248,9 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
                         //重新计算后的零件工单用量
                         if(StringUtils.isEmpty(baseQuantity))
                         {
-                            smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+                            smtWorkOrderBom.setQuantity(new BigDecimal(mesPmWorkOrder.getWorkOrderQty().toString()).multiply(singleQuantity));
                         }else{
-                            smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity).multiply(baseQuantity));
+                            smtWorkOrderBom.setQuantity(new BigDecimal(mesPmWorkOrder.getWorkOrderQty().toString()).multiply(singleQuantity).multiply(baseQuantity));
                         }
                         list.add(smtWorkOrderBom);
 
@@ -294,18 +292,18 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
 
 
-            smtWorkOrder.setModifiedUserId(currentUser.getUserId());
-            smtWorkOrder.setModifiedTime(new Date());
-            smtWorkOrder.setCreateTime(null);
-            i = smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
+            mesPmWorkOrder.setModifiedUserId(currentUser.getUserId());
+            mesPmWorkOrder.setModifiedTime(new Date());
+            mesPmWorkOrder.setCreateTime(null);
+            i = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
 
 
             //新增工单历史信息
-            SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
-            BeanUtils.copyProperties(smtWorkOrder, smtHtWorkOrder);
-            smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
-            smtHtWorkOrder.setModifiedTime(new Date());
-            smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
+            MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
+            BeanUtils.copyProperties(mesPmWorkOrder, mesPmHtWorkOrder);
+            mesPmHtWorkOrder.setModifiedUserId(currentUser.getUserId());
+            mesPmHtWorkOrder.setModifiedTime(new Date());
+            smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
         } else {
             throw new BizErrorException("生产完成的工单不允许修改");
         }
@@ -316,7 +314,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
-        List<SmtHtWorkOrder> list = new ArrayList<>();
+        List<MesPmHtWorkOrder> list = new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
@@ -325,19 +323,19 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         String[] workOrderIds = ids.split(",");
         for (String workOrderId : workOrderIds) {
-            SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(workOrderId);
-            if(StringUtils.isNotEmpty(smtWorkOrder.getScheduledQuantity()) && smtWorkOrder.getScheduledQuantity().doubleValue()>0){
-                throw new BizErrorException("工单已排产，不允许删除:"+smtWorkOrder.getWorkOrderCode());
+            MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByPrimaryKey(workOrderId);
+            if(StringUtils.isNotEmpty(mesPmWorkOrder.getScheduledQty()) && mesPmWorkOrder.getScheduledQty().doubleValue()>0){
+                throw new BizErrorException("工单已排产，不允许删除:"+ mesPmWorkOrder.getWorkOrderCode());
             }
-            if (StringUtils.isEmpty(smtWorkOrder)) {
+            if (StringUtils.isEmpty(mesPmWorkOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             //新增工单历史信息
-            SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
-            BeanUtils.copyProperties(smtWorkOrder, smtHtWorkOrder);
-            smtHtWorkOrder.setModifiedUserId(currentUser.getUserId());
-            smtHtWorkOrder.setModifiedTime(new Date());
-            list.add(smtHtWorkOrder);
+            MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
+            BeanUtils.copyProperties(mesPmWorkOrder, mesPmHtWorkOrder);
+            mesPmHtWorkOrder.setModifiedUserId(currentUser.getUserId());
+            mesPmHtWorkOrder.setModifiedTime(new Date());
+            list.add(mesPmHtWorkOrder);
 
             Example example = new Example(SmtWorkOrderBom.class);
             Example.Criteria criteria = example.createCriteria();
@@ -346,21 +344,21 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
         }
         smtHtWorkOrderMapper.insertList(list);
 
-        return smtWorkOrderMapper.deleteByIds(ids);
+        return mesPmWorkOrderMapper.deleteByIds(ids);
     }
 
 
     @Override
-    public List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder) {
-        List<SmtWorkOrderDto> list = smtWorkOrderMapper.findList(searchSmtWorkOrder);
-        for (SmtWorkOrderDto smtWorkOrderDto : list) {
+    public List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder) {
+        List<MesPmWorkOrderDto> list = mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
+        for (MesPmWorkOrderDto smtWorkOrderDto : list) {
             if(StringUtils.isNotEmpty(smtWorkOrderDto.getParentId())){
                 //部件工单，找到主工单
-                SearchSmtWorkOrder searchSmtWorkOrder1 = new SearchSmtWorkOrder();
-                searchSmtWorkOrder1.setWorkOrderId(smtWorkOrderDto.getParentId());
-                List<SmtWorkOrderDto> workOrderDtoList = this.findList(searchSmtWorkOrder1);
+                SearchMesPmWorkOrder searchMesPmWorkOrder1 = new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder1.setWorkOrderId(smtWorkOrderDto.getParentId());
+                List<MesPmWorkOrderDto> workOrderDtoList = this.findList(searchMesPmWorkOrder1);
                 if(StringUtils.isNotEmpty(workOrderDtoList)){
-                    SmtWorkOrderDto smtWorkOrderDto1 = workOrderDtoList.get(0);
+                    MesPmWorkOrderDto smtWorkOrderDto1 = workOrderDtoList.get(0);
                     smtWorkOrderDto.setMaterialCode(smtWorkOrderDto1.getMaterialCode());
                     smtWorkOrderDto.setMaterialName(smtWorkOrderDto1.getMaterialName());
                     smtWorkOrderDto.setMaterialDesc(smtWorkOrderDto1.getMaterialDesc());
@@ -373,7 +371,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
             Long routeId = smtWorkOrderDto.getRouteId();
             //查询工艺路线配置
-            List<BaseRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+            List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
             if (StringUtils.isNotEmpty(routeProcesses)) {
                 StringBuffer sb =new StringBuffer();
                 for (BaseRouteProcess routeProcess : routeProcesses) {
@@ -390,20 +388,20 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     }
 
     @Override
-    public List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder) {
-        return smtWorkOrderMapper.pdaFindList(searchSmtWorkOrder);
+    public List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder) {
+        return mesPmWorkOrderMapper.pdaFindList(searchMesPmWorkOrder);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom) {
-        SmtWorkOrder smtWorkOrder = saveWorkOrderAndBom.getSmtWorkOrder();
-        if(StringUtils.isNotEmpty(smtWorkOrder.getWorkOrderId())){
-            if(this.update(smtWorkOrder)<=0){
+        MesPmWorkOrder mesPmWorkOrder = saveWorkOrderAndBom.getMesPmWorkOrder();
+        if(StringUtils.isNotEmpty(mesPmWorkOrder.getWorkOrderId())){
+            if(this.update(mesPmWorkOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
         }else{
-            if(this.save(smtWorkOrder)<=0){
+            if(this.save(mesPmWorkOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
             if(StringUtils.isEmpty(saveWorkOrderAndBom.getGenerate())){
@@ -411,7 +409,7 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
             }
             if(saveWorkOrderAndBom.getGenerate()){
                 SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
-                smtWorkOrderCardCollocation.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                smtWorkOrderCardCollocation.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
                 smtWorkOrderCardCollocation.setProduceQuantity(1);
                 if(smtWorkOrderCardCollocationService.save(smtWorkOrderCardCollocation)<=0){
                     throw new BizErrorException("生成工单流程卡失败");
@@ -421,13 +419,13 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
         List<SmtWorkOrderBom> smtWorkOrderBomList = saveWorkOrderAndBom.getSmtWorkOrderBomList();
         //删除原本的BOM重新进行添加
-        smtWorkOrderBomService.deleteByMap(ControllerUtil.dynamicCondition("workOrderId",smtWorkOrder.getWorkOrderId()));
+        smtWorkOrderBomService.deleteByMap(ControllerUtil.dynamicCondition("workOrderId", mesPmWorkOrder.getWorkOrderId()));
         if(StringUtils.isNotEmpty(smtWorkOrderBomList)){
             for (SmtWorkOrderBom smtWorkOrderBom : smtWorkOrderBomList) {
                 if(StringUtils.isEmpty(smtWorkOrderBom.getSingleQuantity())){
                     smtWorkOrderBom.setSingleQuantity(new BigDecimal(1));
                 }
-                smtWorkOrderBom.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+                smtWorkOrderBom.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
                 if(smtWorkOrderBomService.save(smtWorkOrderBom)<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006);
                 }
@@ -439,29 +437,29 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
     @Override
     public int updateWorkOrderStatus(Long workOrderId,int status) {
         SysUser sysUser = this.currentUser();
-        SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
-        smtWorkOrder.setWorkOrderId(workOrderId);
-        smtWorkOrder.setWorkOrderStatus(status);
-        smtWorkOrder.setModifiedUserId(sysUser.getUserId());
-        smtWorkOrder.setModifiedTime(new Date());
-        return smtWorkOrderMapper.updateByPrimaryKeySelective(smtWorkOrder);
+        MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
+        mesPmWorkOrder.setWorkOrderId(workOrderId);
+        mesPmWorkOrder.setWorkOrderStatus((byte)status);
+        mesPmWorkOrder.setModifiedUserId(sysUser.getUserId());
+        mesPmWorkOrder.setModifiedTime(new Date());
+        return mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
     }
 
     @Override
     public int finishedProduct(Long workOrderId,Double count) {
-        SmtWorkOrder smtWorkOrder = this.selectByKey(workOrderId);
-        if(StringUtils.isEmpty(smtWorkOrder)){
+        MesPmWorkOrder mesPmWorkOrder = this.selectByKey(workOrderId);
+        if(StringUtils.isEmpty(mesPmWorkOrder)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        double workOrderQuantity = smtWorkOrder.getWorkOrderQuantity().doubleValue();
-        double outputQuantity = smtWorkOrder.getOutputQuantity().doubleValue();
+        double workOrderQuantity = mesPmWorkOrder.getWorkOrderQty().doubleValue();
+        double outputQuantity = mesPmWorkOrder.getOutputQty().doubleValue();
         if((workOrderQuantity-outputQuantity)<count){
             throw new BizErrorException("完工数据大于剩余完工数据");
         }else if((workOrderQuantity-outputQuantity)==count){
-            smtWorkOrder.setWorkOrderStatus(4);
+            mesPmWorkOrder.setWorkOrderStatus((byte)4);
         }
-        smtWorkOrder.setOutputQuantity(new BigDecimal(outputQuantity+count));
-        return this.update(smtWorkOrder);
+        mesPmWorkOrder.setOutputQty(new BigDecimal(outputQuantity+count));
+        return this.update(mesPmWorkOrder);
     }
 
     /**
@@ -478,17 +476,17 @@ public class SmtWorkOrderServiceImpl extends BaseService<SmtWorkOrder> implement
 
     /**
      * 记录操作历史
-     * @param smtWorkOrder
+     * @param mesPmWorkOrder
      * @param operation
      */
-    private void recordHistory(SmtWorkOrder smtWorkOrder,String operation){
-        SmtHtWorkOrder smtHtWorkOrder = new SmtHtWorkOrder();
-        smtHtWorkOrder.setOption1(operation);
-        if (StringUtils.isEmpty(smtWorkOrder)){
+    private void recordHistory(MesPmWorkOrder mesPmWorkOrder, String operation){
+        MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
+        mesPmHtWorkOrder.setOption1(operation);
+        if (StringUtils.isEmpty(mesPmWorkOrder)){
             return;
         }
-        BeanUtils.copyProperties(smtWorkOrder, smtHtWorkOrder);
-        smtHtWorkOrderMapper.insertSelective(smtHtWorkOrder);
+        BeanUtils.copyProperties(mesPmWorkOrder, mesPmHtWorkOrder);
+        smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
     }
 
 

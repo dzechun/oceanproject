@@ -7,6 +7,7 @@
         <result column="material_supplier_code" jdbcType="VARCHAR" property="materialSupplierCode"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="supplier_product_model" jdbcType="VARCHAR" property="supplierProductModel"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -37,6 +38,7 @@
         sms.material_supplier_code,
         sms.supplier_id,
         sms.image,
+        sms.supplier_product_model,
         sms.`status`,
         sms.remark,
         sms.organization_id,

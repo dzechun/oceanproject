@@ -1,6 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 public class SaveWorkOrderDTO {
     @ApiModelProperty(value = "工单信息",example = "工单信息")
-    private SmtWorkOrder smtWorkOrder;
+    private MesPmWorkOrder mesPmWorkOrder;
     @ApiModelProperty(value = "工单BOM信息",example = "工单BOM信息")
     private List<SmtWorkOrderBom> smtWorkOrderBomList;
 }
