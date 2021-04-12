@@ -46,18 +46,18 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
     @Override
     public int save(BaseBadnessPhenotype record) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         this.codeIfRepeat(record);
 
         record.setCreateTime(new Date());
-//        record.setCreateUserId(user.getUserId());
+        record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
-//        record.setModifiedUserId(user.getUserId());
-//        record.setOrgId(user.getOrganizationId());
+        record.setModifiedUserId(user.getUserId());
+        record.setOrgId(user.getOrganizationId());
 
         int i = baseBadnessPhenotypeMapper.insertUseGeneratedKeys(record);
 
@@ -70,14 +70,14 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
     @Override
     public int update(BaseBadnessPhenotype entity) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         this.codeIfRepeat(entity);
 
-//        entity.setModifiedUserId(user.getUserId());
+        entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
 
         BaseHtBadnessPhenotype baseHtBadnessPhenotype = new BaseHtBadnessPhenotype();
@@ -89,10 +89,10 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
     @Override
     public int batchDelete(String ids) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         List<BaseHtBadnessPhenotype> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -113,9 +113,12 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
     private void codeIfRepeat(BaseBadnessPhenotype entity){
         Example example = new Example(BaseBadnessPhenotype.class);
-        Example.Criteria criteria1 = example.createCriteria();
+        Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("badnessPhenotypeCode",entity.getBadnessPhenotypeCode());
+        criteria.andEqualTo("badnessPhenotypeCode",entity.getBadnessPhenotypeCode());
+        if (StringUtils.isNotEmpty(entity.getBadnessPhenotypeId())){
+            criteria.andNotEqualTo("badnessPhenotypeId",entity.getBadnessPhenotypeId());
+        }
         BaseBadnessPhenotype baseBadnessPhenotype = baseBadnessPhenotypeMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseBadnessPhenotype)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
