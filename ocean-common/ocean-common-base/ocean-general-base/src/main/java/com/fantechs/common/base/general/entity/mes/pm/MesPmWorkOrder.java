@@ -187,6 +187,35 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "contract_no")
     private String contractNo;
 
+    /**
+     * 是否打印（0、打印 1、不打印）
+     */
+    @ApiModelProperty(name="ifPrint",value = "是否打印（0、打印 1、不打印）")
+    @Column(name = "if_print")
+    private Byte ifPrint;
+
+
+    /**
+     *  投产工序ID
+     */
+    @ApiModelProperty(name="putIntoProcessId",value = "投产工序ID")
+    @Column(name = "put_into_process_id")
+    private Long putIntoProcessId;
+
+    /**
+     *  产出工序ID
+     */
+    @ApiModelProperty(name="outputProcessId",value = "产出工序ID")
+    @Column(name = "output_process_id")
+    private Long outputProcessId;
+
+    /**
+     *  报废数量
+     */
+    @ApiModelProperty(name="scrapQty",value = "报废数量")
+    @Column(name = "scrap_qty")
+    private BigDecimal scrapQty;
+
     private String remark;
 
     /**

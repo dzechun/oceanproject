@@ -80,7 +80,7 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
             }
         }
         //工单数量
-        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
+        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQty();
 
         //产生数量
         Integer produceQuantity = record.getProduceQuantity();
