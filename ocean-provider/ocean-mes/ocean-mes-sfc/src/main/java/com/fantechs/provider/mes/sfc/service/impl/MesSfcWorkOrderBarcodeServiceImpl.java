@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSp
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
+import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -36,7 +37,7 @@ import java.util.List;
 
 /**
  *
- * Created by leifengzhi on 2021/04/07.
+ * Created by Mr.Lei on 2021/04/07.
  */
 @Service
 public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrderBarcode> implements MesSfcWorkOrderBarcodeService {
@@ -127,16 +128,16 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException("参数错误");
         }
-        BaseLabel baseLabel = mesSfcWorkOrderBarcodeMapper.findByOneLabel(labelName);
-        if(StringUtils.isEmpty(baseLabel)){
+        BaseLabelCategory baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(labelName);
+        if(StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException("获取标签信息失败");
         }
-        Path file = Paths.get("../"+ baseLabel.getLabelCategoryId());
+        Path file = Paths.get("../"+ baseLabelCategory.getLabelCategoryName());
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
                 response.addHeader("Content-Disposition",
-                        "attachment; filename=" + URLEncoder.encode(baseLabel.getLabelName(), "UTF-8"));
+                        "attachment; filename=" + URLEncoder.encode(labelName, "UTF-8"));
 
                 System.out.println("以输出流的形式对外输出提供下载");
                 Files.copy(file, response.getOutputStream());// 以输出流的形式对外输出提供下载

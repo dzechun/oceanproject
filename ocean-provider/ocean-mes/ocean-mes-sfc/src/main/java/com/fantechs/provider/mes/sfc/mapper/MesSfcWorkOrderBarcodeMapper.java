@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
+import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.mybatis.MyMapper;
@@ -24,5 +25,5 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     PrintModel findPrintModel(@Param("viewName")String viewName);
 
-    BaseLabel findByOneLabel(@Param("labelName")String labelName);
+    BaseLabelCategory findByOneLabel(@Param("labelName")String labelName);
 }
