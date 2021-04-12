@@ -20,7 +20,6 @@ import com.fantechs.provider.base.mapper.BaseHtLabelMapper;
 import com.fantechs.provider.base.mapper.BaseLabelCategoryMapper;
 import com.fantechs.provider.base.mapper.BaseLabelMapper;
 import com.fantechs.provider.base.service.BaseLabelService;
-import com.fantechs.provider.base.util.FTPUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,8 +48,6 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     private SecurityFeignApi securityFeignApi;
     @Resource
     private BaseLabelCategoryMapper baseLabelCategoryMapper;
-    @Resource
-    private FTPUtil ftpUtil;
 
     @Override
     public List<BaseLabelDto> findList(SearchBaseLabel searchBaseLabel) {

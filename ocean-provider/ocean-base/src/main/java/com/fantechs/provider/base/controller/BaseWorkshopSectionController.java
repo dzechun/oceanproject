@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @RestController
 @Api(tags = "工段信息管理")
-@RequestMapping("/baseshopSection")
+@RequestMapping("/baseWorkshopSection")
 @Validated
 @Slf4j
 public class BaseWorkshopSectionController {
