@@ -2,7 +2,7 @@ package com.fantechs.common.base.general.entity.basic.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.dto.basic.BaseMaterialPackageDto;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
