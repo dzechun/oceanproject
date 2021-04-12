@@ -1,8 +1,9 @@
-package com.fantechs.provider.imes.storage.service;
+package com.fantechs.service;
 
-import com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto;
-import com.fantechs.common.base.entity.storage.StorageMonthEndInventory;
+
 import com.fantechs.common.base.support.IService;
+import com.fantechs.dto.StorageMonthEndInventoryDto;
+import com.fantechs.entity.StorageMonthEndInventory;
 
 import java.util.List;
 import java.util.Map;

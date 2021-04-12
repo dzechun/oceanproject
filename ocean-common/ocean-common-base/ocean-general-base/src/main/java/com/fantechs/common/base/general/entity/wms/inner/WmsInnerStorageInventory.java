@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.storage;
+package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -23,8 +23,8 @@ import java.util.List;
  * @date 2020-12-04 13:41:50
  */
 @Data
-@Table(name = "smt_storage_inventory")
-public class SmtStorageInventory extends ValidGroup implements Serializable {
+@Table(name = "wms_inner_storage_inventory")
+public class WmsInnerStorageInventory extends ValidGroup implements Serializable {
     /**
      * 储位库存ID
      */
@@ -132,7 +132,7 @@ public class SmtStorageInventory extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    private List<SmtStorageInventoryDet> smtStorageInventoryDets;
+    private List<WmsInnerStorageInventoryDet> smtStorageInventoryDets;
 
     private static final long serialVersionUID = 1L;
 }

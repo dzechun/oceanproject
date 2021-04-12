@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.storage;
+package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -22,8 +22,8 @@ import java.util.Date;
  * @date 2020-12-04 14:39:37
  */
 @Data
-@Table(name = "smt_storage_inventory_det")
-public class SmtStorageInventoryDet extends ValidGroup implements Serializable {
+@Table(name = "wms_inner_storage_inventory_det")
+public class WmsInnerStorageInventoryDet extends ValidGroup implements Serializable {
     /**
      * 储位库存明细ID
      */

@@ -4,16 +4,15 @@ package com.fantechs.provider.wms.in.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInOtherinDto;
 import com.fantechs.common.base.general.entity.wms.in.*;
-import com.fantechs.common.base.general.entity.wms.in.history.WmsInHtFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.history.WmsInHtOtherin;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -130,15 +129,15 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
             storageInventoryFeignApi.add(smtStoragePallet);
 
             //查询储位库存表，有库存累加，无库存新增
-            SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
-            searchSmtStorageInventory.setMaterialId(wmsInOtherinDet.getMaterialId());
-            ResponseEntity<List<SmtStorageInventoryDto>> storageInventoryFeignApiList = storageInventoryFeignApi.findList(searchSmtStorageInventory);
+            SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+            searchWmsInnerStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
+            searchWmsInnerStorageInventory.setMaterialId(wmsInOtherinDet.getMaterialId());
+            ResponseEntity<List<WmsInnerStorageInventoryDto>> storageInventoryFeignApiList = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory);
             if(storageInventoryFeignApiList.getCode() == 0){
-                List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApiList.getData();
+                List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApiList.getData();
                 long storageInventory = 0;
                 if(smtStorageInventoryDtos.size() > 0){
-                    SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
+                    WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                     storageInventory = smtStorageInventoryDto.getStorageInventoryId();
                     //累加库存
                     smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInOtherinDet.getInQuantity()));
@@ -147,19 +146,19 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
                     storageInventoryFeignApi.update(smtStorageInventoryDto);
                 } else {
                     //新增库存
-                    SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                    smtStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
-                    smtStorageInventory.setMaterialId(wmsInOtherinDet.getMaterialId());
-                    smtStorageInventory.setQuantity(wmsInOtherinDet.getInQuantity());
-                    smtStorageInventory.setOrganizationId(user.getOrganizationId());
-                    smtStorageInventory.setCreateTime(new Date());
-                    smtStorageInventory.setCreateUserId(user.getCreateUserId());
-                    smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
-                    storageInventory = smtStorageInventory.getStorageInventoryId();
+                    WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                    wmsInnerStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
+                    wmsInnerStorageInventory.setMaterialId(wmsInOtherinDet.getMaterialId());
+                    wmsInnerStorageInventory.setQuantity(wmsInOtherinDet.getInQuantity());
+                    wmsInnerStorageInventory.setOrganizationId(user.getOrganizationId());
+                    wmsInnerStorageInventory.setCreateTime(new Date());
+                    wmsInnerStorageInventory.setCreateUserId(user.getCreateUserId());
+                    wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
+                    storageInventory = wmsInnerStorageInventory.getStorageInventoryId();
                 }
 
                 //增加库位库存明细
-                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
                 smtStorageInventoryDet.setStorageInventoryId(storageInventory);
                 smtStorageInventoryDet.setMaterialBarcodeCode(wmsInOtherinDet.getPalletCode());
                 smtStorageInventoryDet.setGodownEntry(wmsInOtherin.getOtherinCode());

@@ -1,8 +1,8 @@
-package com.fantechs.common.base.dto.storage;
+package com.fantechs.dto;
 
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.entity.storage.StorageMonthEndInventory;
+import com.fantechs.entity.StorageMonthEndInventory;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

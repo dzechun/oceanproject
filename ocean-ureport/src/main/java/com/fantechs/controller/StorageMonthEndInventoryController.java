@@ -1,14 +1,15 @@
-package com.fantechs.provider.imes.storage.controller;
+package com.fantechs.controller;
 
-import com.fantechs.common.base.dto.storage.StorageMonthEndInventoryDto;
-import com.fantechs.common.base.entity.storage.StorageMonthEndInventory;
-import com.fantechs.common.base.entity.storage.search.SearchStorageMonthEndInventory;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.support.ValidGroup;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.storage.service.StorageMonthEndInventoryService;
+import com.fantechs.dto.StorageMonthEndInventoryDto;
+import com.fantechs.entity.StorageMonthEndInventory;
+import com.fantechs.entity.search.SearchStorageMonthEndInventory;
+import com.fantechs.service.StorageMonthEndInventoryService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -55,7 +56,7 @@ public class StorageMonthEndInventoryController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = StorageMonthEndInventory.update.class) StorageMonthEndInventory storageMonthEndInventory) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = ValidGroup.update.class) StorageMonthEndInventory storageMonthEndInventory) {
         return ControllerUtil.returnCRUD(storageMonthEndInventoryService.update(storageMonthEndInventory));
     }
 

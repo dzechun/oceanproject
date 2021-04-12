@@ -1,11 +1,10 @@
-package com.fantechs.common.base.dto.storage;
+package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,7 +13,7 @@ import java.math.BigDecimal;
  * @Date 2020/12/4 14:43
  */
 @Data
-public class SmtStorageInventoryDetDto extends SmtStorageInventoryDet implements Serializable {
+public class WmsInnerStorageInventoryDetDto extends WmsInnerStorageInventoryDet implements Serializable {
 
     /**
      * 储位Id

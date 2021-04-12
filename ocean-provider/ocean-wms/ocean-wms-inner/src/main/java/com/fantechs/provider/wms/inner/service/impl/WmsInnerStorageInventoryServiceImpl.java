@@ -1,17 +1,17 @@
-package com.fantechs.provider.imes.storage.service.impl;
+package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryDetMapper;
-import com.fantechs.provider.imes.storage.mapper.SmtStorageInventoryMapper;
-import com.fantechs.provider.imes.storage.service.SmtStorageInventoryService;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerStorageInventoryDetMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerStorageInventoryMapper;
+import com.fantechs.provider.wms.inner.service.WmsInnerStorageInventoryService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -26,56 +26,56 @@ import java.util.Map;
  * Created by leifengzhi on 2020/12/02.
  */
 @Service
-public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInventory> implements SmtStorageInventoryService {
+public class WmsInnerStorageInventoryServiceImpl extends BaseService<WmsInnerStorageInventory> implements WmsInnerStorageInventoryService {
 
     @Resource
-    private SmtStorageInventoryMapper smtStorageInventoryMapper;
+    private WmsInnerStorageInventoryMapper wmsInnerStorageInventoryMapper;
     @Resource
-    private SmtStorageInventoryDetMapper smtStorageInventoryDetMapper;
+    private WmsInnerStorageInventoryDetMapper wmsInnerStorageInventoryDetMapper;
 
     @Override
-    public List<SmtStorageInventoryDto> findList(Map<String,Object> map) {
-        return smtStorageInventoryMapper.findList(map);
+    public List<WmsInnerStorageInventoryDto> findList(Map<String,Object> map) {
+        return wmsInnerStorageInventoryMapper.findList(map);
     }
 
     @Override
-    public int out(SmtStorageInventory smtStorageInventory) {
+    public int out(WmsInnerStorageInventory wmsInnerStorageInventory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example =new Example(SmtStorageInventory.class);
-        example.createCriteria().andEqualTo("storageId",smtStorageInventory.getStorageId())
-                .andEqualTo("materialId",smtStorageInventory.getMaterialId());
+        Example example =new Example(WmsInnerStorageInventory.class);
+        example.createCriteria().andEqualTo("storageId", wmsInnerStorageInventory.getStorageId())
+                .andEqualTo("materialId", wmsInnerStorageInventory.getMaterialId());
 
-        List<SmtStorageInventory> smtStorageInventories = smtStorageInventoryMapper.selectByExample(example);
+        List<WmsInnerStorageInventory> smtStorageInventories = wmsInnerStorageInventoryMapper.selectByExample(example);
 
         if(StringUtils.isEmpty(smtStorageInventories)){
             throw new BizErrorException(ErrorCodeEnum.STO30012001);
         }
 
         //主表扣库存
-        smtStorageInventories.get(0).setQuantity(smtStorageInventories.get(0).getQuantity().subtract(smtStorageInventory.getQuantity()));
-        smtStorageInventoryMapper.updateByPrimaryKeySelective(smtStorageInventories.get(0));
+        smtStorageInventories.get(0).setQuantity(smtStorageInventories.get(0).getQuantity().subtract(wmsInnerStorageInventory.getQuantity()));
+        wmsInnerStorageInventoryMapper.updateByPrimaryKeySelective(smtStorageInventories.get(0));
         //子表扣库存 根据入库单号或栈板
-        for (SmtStorageInventoryDet smtStorageInventoryDet : smtStorageInventory.getSmtStorageInventoryDets()) {
-            Example example1 = new Example(SmtStorageInventoryDet.class);
+        for (WmsInnerStorageInventoryDet smtStorageInventoryDet : wmsInnerStorageInventory.getSmtStorageInventoryDets()) {
+            Example example1 = new Example(WmsInnerStorageInventoryDet.class);
             Example.Criteria criteria = example1.createCriteria();
-            criteria.andEqualTo("storageInventoryId",smtStorageInventory.getStorageInventoryId());
+            criteria.andEqualTo("storageInventoryId", wmsInnerStorageInventory.getStorageInventoryId());
             if(StringUtils.isNotEmpty(smtStorageInventoryDet.getGodownEntry())){
                 criteria.andEqualTo("godownEntry",smtStorageInventoryDet.getGodownEntry());
             }
             if(StringUtils.isNotEmpty(smtStorageInventoryDet.getMaterialBarcodeCode())){
                 criteria.andEqualTo("materialBarcodeCode",smtStorageInventoryDet.getMaterialBarcodeCode());
             }
-            List<SmtStorageInventoryDet> smtStorageInventoryDets = smtStorageInventoryDetMapper.selectByExample(example1);
+            List<WmsInnerStorageInventoryDet> smtStorageInventoryDets = wmsInnerStorageInventoryDetMapper.selectByExample(example1);
 
             smtStorageInventoryDets.get(0).setMaterialQuantity(smtStorageInventoryDets.get(0).getMaterialQuantity().subtract(smtStorageInventoryDet.getMaterialQuantity()));
-            smtStorageInventoryDetMapper.updateByPrimaryKeySelective(smtStorageInventoryDets.get(0));
+            wmsInnerStorageInventoryDetMapper.updateByPrimaryKeySelective(smtStorageInventoryDets.get(0));
 
             if(smtStorageInventoryDets.get(0).getMaterialQuantity().doubleValue() == 0){
-                smtStorageInventoryDetMapper.deleteByPrimaryKey(smtStorageInventoryDets.get(0).getStorageInventoryDetId());
+                wmsInnerStorageInventoryDetMapper.deleteByPrimaryKey(smtStorageInventoryDets.get(0).getStorageInventoryDetId());
             }
         }
 
@@ -83,30 +83,30 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
     }
 
     @Override
-    public int save(SmtStorageInventory storageInventory) {
+    public int save(WmsInnerStorageInventory storageInventory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 //        if(StringUtils.isEmpty(user)){
 //            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
 //        }
 
-        Example example =new Example(SmtStorageInventory.class);
+        Example example =new Example(WmsInnerStorageInventory.class);
         example.createCriteria().andEqualTo("storageId",storageInventory.getStorageId())
                 .andEqualTo("materialId",storageInventory.getMaterialId());
 
-        List<SmtStorageInventory> smtStorageInventories = smtStorageInventoryMapper.selectByExample(example);
+        List<WmsInnerStorageInventory> smtStorageInventories = wmsInnerStorageInventoryMapper.selectByExample(example);
 
         int i = 0;
         if(StringUtils.isNotEmpty(smtStorageInventories)){
             BigDecimal quantity = storageInventory.getQuantity();
-            SmtStorageInventory smtStorageInventory = smtStorageInventories.get(0);
-            storageInventory.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+            WmsInnerStorageInventory wmsInnerStorageInventory = smtStorageInventories.get(0);
+            storageInventory.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
             //累加库存
-            quantity = BigDecimal.valueOf(smtStorageInventory.getQuantity().intValue()+quantity.intValue());
-            smtStorageInventory.setQuantity(quantity);
-            super.update(smtStorageInventory);
+            quantity = BigDecimal.valueOf(wmsInnerStorageInventory.getQuantity().intValue()+quantity.intValue());
+            wmsInnerStorageInventory.setQuantity(quantity);
+            super.update(wmsInnerStorageInventory);
         } else {
             example.createCriteria().andEqualTo("storageId",storageInventory.getStorageId());
-            smtStorageInventories = smtStorageInventoryMapper.selectByExample(example);
+            smtStorageInventories = wmsInnerStorageInventoryMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(smtStorageInventories)){
                 throw new BizErrorException("该储位已存在物料，新增失败");
             }
@@ -120,7 +120,7 @@ public class SmtStorageInventoryServiceImpl  extends BaseService<SmtStorageInven
                 storageInventory.setOrganizationId(user.getOrganizationId());
             }
 
-            i = smtStorageInventoryMapper.insertUseGeneratedKeys(storageInventory);
+            i = wmsInnerStorageInventoryMapper.insertUseGeneratedKeys(storageInventory);
         }
 
         return i;

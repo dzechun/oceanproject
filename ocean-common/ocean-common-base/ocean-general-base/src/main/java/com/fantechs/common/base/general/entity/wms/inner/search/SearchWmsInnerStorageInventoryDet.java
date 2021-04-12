@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic.search;
+package com.fantechs.common.base.general.entity.wms.inner.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2020-12-04 14:39:37
  */
 @Data
-public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializable {
+public class SearchWmsInnerStorageInventoryDet extends BaseQuery implements Serializable {
 
     /**
      * 储位编码
@@ -60,5 +60,23 @@ public class SearchSmtStorageInventoryDet extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name = "contractNo", value = "合同号")
     private String contractCode;
+
+    /**
+     * 储位ID
+     */
+    @ApiModelProperty(name="storageId",value = "储位ID")
+    private Long storageId;
+
+    /**
+     * 是否绑定
+     */
+    @ApiModelProperty(name="isBinding",value = "是否绑定")
+    private Byte isBinding;
+
+    /**
+     * 物料ID
+     */
+    @ApiModelProperty(name = "materialId", value = "物料ID")
+    private Long materialId;
 
 }

@@ -1,18 +1,12 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
-import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
-import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderPallet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtherout;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutOtheroutDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtOtherout;
@@ -35,8 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -125,11 +117,11 @@ public class WmsOutOtheroutServiceImpl extends BaseService<WmsOutOtherout> imple
                 }*/
 
                 //修改库存表
-                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-                searchSmtStorageInventory.setStorageId(wmsOutOtheroutDet.getStorageId());
-                searchSmtStorageInventory.setMaterialId(wmsOutOtheroutDet.getMaterialId());
-                List<SmtStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
-                SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
+                SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+                searchWmsInnerStorageInventory.setStorageId(wmsOutOtheroutDet.getStorageId());
+                searchWmsInnerStorageInventory.setMaterialId(wmsOutOtheroutDet.getMaterialId());
+                List<WmsInnerStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+                WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
                 smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutOtheroutDet.getRealityOutquantity()));
                 storageInventoryFeignApi.update(smtStorageInventoryDto);
 

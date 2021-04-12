@@ -1,8 +1,8 @@
-package com.fantechs.common.base.entity.storage;
+package com.fantechs.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -132,7 +132,7 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
      * 库存明细
      */
     @ApiModelProperty(name = "list", value = "库存明细")
-    private List<SmtStorageInventoryDetDto> list;
+    private List<WmsInnerStorageInventoryDetDto> list;
 
     private static final long serialVersionUID = 1L;
 }

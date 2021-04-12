@@ -1,4 +1,4 @@
-package com.fantechs.common.base.entity.basic.search;
+package com.fantechs.common.base.general.entity.wms.inner.search;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @Date 2020/12/2 17:33
  */
 @Data
-public class SearchSmtStorageInventory extends BaseQuery implements Serializable {
+public class SearchWmsInnerStorageInventory extends BaseQuery implements Serializable {
 
     /**
      * 物料描述

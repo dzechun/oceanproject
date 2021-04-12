@@ -1,19 +1,16 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
-import com.fantechs.common.base.general.entity.basic.BaseWarning;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktakingDet;
@@ -21,14 +18,12 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStocktakingDet;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingMapper;
@@ -242,31 +237,31 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                 wmsInnerStocktakingDet.setProfitLossRate(divide);
 
                 //更新储位库存明细数据、根据栈板码获取库存明细信息
-                SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-                searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerStocktakingDet.getPalletCode());
-                List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
-                if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+                SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+                searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(wmsInnerStocktakingDet.getPalletCode());
+                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+                if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                     throw new BizErrorException("无法获取到栈板码对应的库存信息");
                 }
                 //更新储位库存数据、获取库存信息
-                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-                searchSmtStorageInventory.setStorageInventoryId(smtStorageInventoryDetDtos.get(0).getStorageInventoryId());
-                List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+                SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+                searchWmsInnerStorageInventory.setStorageInventoryId(wmsInnerStorageInventoryDetDtos.get(0).getStorageInventoryId());
+                List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
                 if (StringUtils.isEmpty(smtStorageInventoryDtos)){
                     throw new BizErrorException("无法获取到栈板码对应的库存信息");
                 }
 
 
-                SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
-                SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
+                WmsInnerStorageInventoryDetDto wmsInnerStorageInventoryDetDto = wmsInnerStorageInventoryDetDtos.get(0);
+                WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                 if (wmsInnerStocktakingDet.getProfitLossQuantity().compareTo(BigDecimal.valueOf(0)) == 1){
-                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
+                    wmsInnerStorageInventoryDetDto.setMaterialQuantity(wmsInnerStorageInventoryDetDto.getMaterialQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
                     smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInnerStocktakingDet.getMaterialTotal()));
                 }else {
-                    smtStorageInventoryDetDto.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
+                    wmsInnerStorageInventoryDetDto.setMaterialQuantity(wmsInnerStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
                     smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
                 }
-                storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDetDto);
+                storageInventoryFeignApi.updateStorageInventoryDet(wmsInnerStorageInventoryDetDto);
                 storageInventoryFeignApi.update(smtStorageInventoryDto);
             }
 

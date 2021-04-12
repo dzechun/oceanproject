@@ -2,8 +2,8 @@ package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
@@ -26,7 +26,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2021/01/18.
@@ -122,19 +121,19 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
             wmsOutProductionMaterial = wmsOutProductionMaterialMapper.selectByPrimaryKey(wmsOutProductionMaterialdDets.get(0).getProductionMaterialId());
 
             //库存数据
-            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-            smtStorageInventory.setQuantity(wmsOutProductionMaterial.getRealityQty());
-            smtStorageInventory.setStorageId(wmsOutProductionMaterial.getStorageId());
-            smtStorageInventory.setMaterialId(wmsOutProductionMaterial.getMaterialId());
+            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+            wmsInnerStorageInventory.setQuantity(wmsOutProductionMaterial.getRealityQty());
+            wmsInnerStorageInventory.setStorageId(wmsOutProductionMaterial.getStorageId());
+            wmsInnerStorageInventory.setMaterialId(wmsOutProductionMaterial.getMaterialId());
 
-            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
             smtStorageInventoryDet.setMaterialQuantity(wmsOutProductionMaterial.getRealityQty());
             smtStorageInventoryDet.setGodownEntry(wmsOutProductionMaterial.getFinishedProductCode());
-            List<SmtStorageInventoryDet> smtStorageInventoryDets = new ArrayList<>();
+            List<WmsInnerStorageInventoryDet> smtStorageInventoryDets = new ArrayList<>();
             smtStorageInventoryDets.add(smtStorageInventoryDet);
-            smtStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
+            wmsInnerStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
             //扣库存
-            storageInventoryFeignApi.out(smtStorageInventory);
+            storageInventoryFeignApi.out(wmsInnerStorageInventory);
 
             //计算发料数量
             Example example = new Example(WmsOutProductionMaterial.class);

@@ -1,17 +1,15 @@
-package com.fantechs.common.base.dto.storage;
+package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
-public class SmtStorageInventoryDto extends SmtStorageInventory implements Serializable {
+public class WmsInnerStorageInventoryDto extends WmsInnerStorageInventory implements Serializable {
 
     /**
      * 储位编码

@@ -3,14 +3,14 @@ package com.fantechs.provider.client.listener;
 import com.alibaba.fastjson.JSONObject;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
 import com.fantechs.common.base.electronic.entity.SmtSorting;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -25,8 +25,6 @@ import com.fantechs.provider.client.dto.PtlSortingDetailDTO;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import com.google.gson.reflect.TypeToken;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Delivery;
-import com.rabbitmq.client.GetResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -108,26 +106,26 @@ public class ElectronicTagReceiver {
                     smtElectronicTagStorageDtoList.get(0).setQuantity(smtSortingDto.getQuantity());
 
                     // 查询物料库存
-                    SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-                    searchSmtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-                    searchSmtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-                    searchSmtStorageInventory.setStatus((byte) 1);
-                    List<SmtStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+                    SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+                    searchWmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
+                    searchWmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
+                    searchWmsInnerStorageInventory.setStatus((byte) 1);
+                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
                     if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
 //                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
                         // 允许负库存
-                        SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                        smtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-                        smtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-                        smtStorageInventory.setQuantity(smtSortingDto.getQuantity().negate());
-                        smtStorageInventory.setStatus((byte) 1);
-                        storageInventoryFeignApi.add(smtStorageInventory);
+                        WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                        wmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
+                        wmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
+                        wmsInnerStorageInventory.setQuantity(smtSortingDto.getQuantity().negate());
+                        wmsInnerStorageInventory.setStatus((byte) 1);
+                        storageInventoryFeignApi.add(wmsInnerStorageInventory);
                     } else {
                         // 更新物料库存信息
-                        SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                        smtStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-                        smtStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(smtSortingDto.getQuantity()));
-                        storageInventoryFeignApi.update(smtStorageInventory);
+                        WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                        wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
+                        wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(smtSortingDto.getQuantity()));
+                        storageInventoryFeignApi.update(wmsInnerStorageInventory);
                     }
 
                     // 通过仓库区域ID判断当前区域内查找分拣中的物料
