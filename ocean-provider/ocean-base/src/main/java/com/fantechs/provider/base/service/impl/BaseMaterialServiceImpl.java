@@ -9,17 +9,15 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
-import com.fantechs.common.base.general.dto.basic.BaseUnitPriceDto;
-import com.fantechs.common.base.general.dto.bcm.BcmLabelCategoryDto;
-import com.fantechs.common.base.general.dto.bcm.BcmLabelDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSet;
 import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
 import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseUnitPrice;
-import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabel;
-import com.fantechs.common.base.general.entity.bcm.search.SearchBcmLabelCategory;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -413,11 +411,11 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
             //标签编码不为空判断标签信息是否存在
             if (StringUtils.isNotEmpty(labelCode)){
-                SearchBcmLabel searchBcmLabel = new SearchBcmLabel();
-                searchBcmLabel.setCodeQueryMark(1);
-                searchBcmLabel.setLabelCode(labelCode);
-                List<BcmLabelDto> bcmLabelDtos = bcmFeignApi.findLabelList(searchBcmLabel).getData();
-                if (StringUtils.isEmpty(bcmLabelDtos)){
+                SearchBaseLabel searchBaseLabel = new SearchBaseLabel();
+                searchBaseLabel.setCodeQueryMark(1);
+                searchBaseLabel.setLabelCode(labelCode);
+                List<BaseLabelDto> baseLabelDtos = bcmFeignApi.findLabelList(searchBaseLabel).getData();
+                if (StringUtils.isEmpty(baseLabelDtos)){
                     fail.add(i+4);
                     continue;
                 }
@@ -465,15 +463,15 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
             //标签类别编码不为空则判断标签类别信息是否存在
             if (StringUtils.isNotEmpty(labelCategoryCode)){
-                SearchBcmLabelCategory searchBcmLabelCategory = new SearchBcmLabelCategory();
-                searchBcmLabelCategory.setCodeQueryMark(1);
-                searchBcmLabelCategory.setLabelCategoryCode(labelCategoryCode);
-                List<BcmLabelCategoryDto> bcmLabelCategoryDtos = bcmFeignApi.findLabelCategoryList(searchBcmLabelCategory).getData();
-                if (StringUtils.isEmpty(bcmLabelCategoryDtos)){
+                SearchBaseLabelCategory searchBaseLabelCategory = new SearchBaseLabelCategory();
+                searchBaseLabelCategory.setCodeQueryMark(1);
+                searchBaseLabelCategory.setLabelCategoryCode(labelCategoryCode);
+                List<BaseLabelCategoryDto> baseLabelCategoryDtos = bcmFeignApi.findLabelCategoryList(searchBaseLabelCategory).getData();
+                if (StringUtils.isEmpty(baseLabelCategoryDtos)){
                     fail.add(i+4);
                     continue;
                 }
-                baseMaterialImport.setLabelId(bcmLabelCategoryDtos.get(0).getLabelCategoryId());
+                baseMaterialImport.setLabelId(baseLabelCategoryDtos.get(0).getLabelCategoryId());
             }
 
             //包装规格编码不为空则判断包装规格信息是否存在

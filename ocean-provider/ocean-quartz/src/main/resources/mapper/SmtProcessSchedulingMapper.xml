@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.quartz.mapper.SmtProcessSchedulingMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.bcm.SmtProcessScheduling">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProcessScheduling">
     <!--
       WARNING - @mbg.generated
     -->
@@ -22,7 +22,7 @@
     <result column="remark" jdbcType="VARCHAR" property="remark"/>
     <result column="process_scheduling_desc" jdbcType="VARCHAR" property="processSchedulingDesc"/>
   </resultMap>
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto" extends="BaseResultMap">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseProcessSchedulingDto" extends="BaseResultMap">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>

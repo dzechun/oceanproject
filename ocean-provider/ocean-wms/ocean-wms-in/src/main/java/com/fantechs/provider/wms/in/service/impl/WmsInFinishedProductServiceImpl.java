@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
 import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
+import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsPdaInspection;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
@@ -111,16 +112,16 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 if (wmsInFinishedProduct.getInType() == 1) {
                     //半成品入库 直接计算库存。
                     //新增库存
-                    WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
-                    wmsInnerStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
-                    wmsInnerStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
-                    wmsInnerStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
+                    SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                    smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
+                    smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
+                    smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
 
-                    wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
+                    smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
 
                     //增加库位库存明细
-                    WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
-                    smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
+                    SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                    smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
                     smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                     smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
                     storageInventoryFeignApi.add(smtStorageInventoryDet);
@@ -170,16 +171,16 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 storageInventoryFeignApi.add(smtStoragePallet);
 
                 //新增库存
-                WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
-                wmsInnerStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
-                wmsInnerStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
-                wmsInnerStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
+                SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
+                smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
+                smtStorageInventory.setQuantity(wmsInFinishedProductDet.getInQuantity());
 
-                wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
+                smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
 
                 //增加库位库存明细
-                WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
-                smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
+                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
                 smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
                 smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                 smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getInQuantity());
@@ -238,15 +239,15 @@ public class WmsInFinishedProductServiceImpl extends BaseService<WmsInFinishedPr
                 }
 
                 //新增库存
-                WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
-                wmsInnerStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
-                wmsInnerStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
-                wmsInnerStorageInventory.setQuantity(wmsInFinishedProductDet.getCount());
-                wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
+                SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
+                smtStorageInventory.setStorageId(wmsInFinishedProductDet.getStorageId());
+                smtStorageInventory.setMaterialId(wmsInFinishedProductDet.getMaterialId());
+                smtStorageInventory.setQuantity(wmsInFinishedProductDet.getCount());
+                smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
 
                 //增加库位库存明细
-                WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
-                smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
+                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
+                smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
 //                smtStorageInventoryDet.setMaterialBarcodeCode(wmsInFinishedProductDet.getPalletCode());
                 smtStorageInventoryDet.setGodownEntry(wmsInFinishedProduct.getFinishedProductCode());
                 smtStorageInventoryDet.setMaterialQuantity(wmsInFinishedProductDet.getCount());

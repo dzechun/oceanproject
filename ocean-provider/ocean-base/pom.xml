@@ -9,11 +9,10 @@
     </parent>
 
     <groupId>com.fantechs.provider.base</groupId>
-    <artifactId>ocean_v2-base</artifactId>
+    <artifactId>ocean-base</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean_v2-base</name>
+    <name>ocean-base</name>
     <description>Demo project for Spring Boot</description>
-
 
     <dependencies>
         <dependency>
@@ -60,6 +59,30 @@
         <dependency>
             <groupId>com.fantechs.provider.api.qms</groupId>
             <artifactId>ocean-qms-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.security</groupId>
+            <artifactId>ocean-security-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.base</groupId>
+            <artifactId>ocean-base-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
