@@ -87,4 +87,9 @@ where mpwo.work_order_id = #{workOrderId}
 <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
 select * FROM #{viewName}
 </select>
+    <select id="findByOneLabel" resultType="com.fantechs.common.base.general.entity.basic.BaseLabel">
+        select FROM base_label bl
+        LEFT JOIN base_label_category blc ON bl.label_category_id = blc.label_category_id
+        where bl.label_Name =#{labelName}
+    </select>
 </mapper>

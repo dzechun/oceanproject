@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SearchSmtWorkOrder extends BaseQuery implements Serializable {
+public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -2565635736485077385L;
 
     /**

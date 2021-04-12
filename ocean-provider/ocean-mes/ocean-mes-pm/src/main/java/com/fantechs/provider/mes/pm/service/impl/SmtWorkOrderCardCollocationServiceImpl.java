@@ -5,7 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardCollocationDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -19,7 +19,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardCollocationService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +40,9 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
     @Resource
     private SmtWorkOrderCardCollocationMapper smtWorkOrderCardCollocationMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
     @Resource
@@ -66,12 +66,12 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
 
         //通过工单中的物料ID查询到物料料号中的转移批量
         Long workOrderId = smtWorkOrderCardCollocation.getWorkOrderId();
-        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
         if (StringUtils.isEmpty(smtWorkOrderDto)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         //工单数量
-        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQuantity();
+        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQty();
         //转移批量
         Integer transferQuantity = smtWorkOrderDto.getTransferQuantity();
         //产生数量
@@ -89,9 +89,9 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         }
         if(StringUtils.isEmpty(transferQuantity) || transferQuantity==0){
             transferQuantity=-1;
-            if (produceQuantity + generatedQuantity > smtWorkOrderDto.getWorkOrderQuantity().intValue()) {
+            if (produceQuantity + generatedQuantity > smtWorkOrderDto.getWorkOrderQty().intValue()) {
                 throw new BizErrorException("投产数不能大于工单剩余投产数");
-            } else if (produceQuantity + generatedQuantity == smtWorkOrderDto.getWorkOrderQuantity().intValue()) {
+            } else if (produceQuantity + generatedQuantity == smtWorkOrderDto.getWorkOrderQty().intValue()) {
                 smtWorkOrderCardCollocation.setStatus((byte) 2);
             } else {
                 smtWorkOrderCardCollocation.setStatus((byte) 1);
@@ -242,14 +242,14 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         }
 
         //=====判断当前工单是否存在父级工单，如果存在父级工单，是否产生父级流程卡
-        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardCollocation.getWorkOrderId());
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(smtWorkOrderCardCollocation.getWorkOrderId());
         Long parentWorkOrderCardId=0L;
-        if(smtWorkOrder.getParentId()!=0){
+        if(mesPmWorkOrder.getParentId()!=0){
             SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-            searchSmtWorkOrderCardPool.setWorkOrderId(smtWorkOrder.getParentId());
+            searchSmtWorkOrderCardPool.setWorkOrderId(mesPmWorkOrder.getParentId());
             List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
             if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
-                throw new BizErrorException("父级工单未生成流程卡："+smtWorkOrder.getParentId());
+                throw new BizErrorException("父级工单未生成流程卡："+ mesPmWorkOrder.getParentId());
             }
             SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = smtWorkOrderCardPoolDtoList.get(0);
             parentWorkOrderCardId=smtWorkOrderCardPoolDto.getWorkOrderCardPoolId();

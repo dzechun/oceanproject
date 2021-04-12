@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessRecordMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcessRecord">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="barcode_process_id" jdbcType="BIGINT" property="barcodeProcessId" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_ver" jdbcType="VARCHAR" property="materialVer" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="route_code" jdbcType="VARCHAR" property="routeCode" />
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
+    <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="process_code" jdbcType="VARCHAR" property="processCode" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId" />
+    <result column="next_process_code" jdbcType="VARCHAR" property="nextProcessCode" />
+    <result column="next_process_name" jdbcType="VARCHAR" property="nextProcessName" />
+    <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
+    <result column="inspection_code" jdbcType="VARCHAR" property="inspectionCode" />
+    <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult" />
+    <result column="customer_material_id" jdbcType="BIGINT" property="customerMaterialId" />
+    <result column="customer_material_code" jdbcType="VARCHAR" property="customerMaterialCode" />
+    <result column="customer_material_name" jdbcType="VARCHAR" property="customerMaterialName" />
+    <result column="customer_barcode_id" jdbcType="BIGINT" property="customerBarcodeId" />
+    <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode" />
+    <result column="if_hang_up" jdbcType="TINYINT" property="ifHangUp" />
+    <result column="merge_pallet_code" jdbcType="VARCHAR" property="mergePalletCode" />
+    <result column="e_c_n_code" jdbcType="VARCHAR" property="eCNCode" />
+    <result column="rework_code" jdbcType="VARCHAR" property="reworkCode" />
+    <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
+    <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
+    <result column="pass_station_count" jdbcType="INTEGER" property="passStationCount" />
+    <result column="devote_time" jdbcType="TIMESTAMP" property="devoteTime" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+    <result column="in_process_time" jdbcType="TIMESTAMP" property="inProcessTime" />
+    <result column="out_process_time" jdbcType="TIMESTAMP" property="outProcessTime" />
+    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+</mapper>

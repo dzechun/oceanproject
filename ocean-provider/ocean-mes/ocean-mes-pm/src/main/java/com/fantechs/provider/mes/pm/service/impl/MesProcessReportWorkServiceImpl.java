@@ -8,7 +8,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesProcessReport
 import com.fantechs.common.base.general.entity.basic.BaseStaffProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStaffProcess;
 import com.fantechs.common.base.general.entity.mes.pm.MesProcessReportWork;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -16,16 +16,14 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.mes.pm.mapper.MesProcessReportWorkMapper;
 import com.fantechs.provider.mes.pm.service.MesProcessReportWorkService;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,7 +37,7 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
     private MesProcessReportWorkMapper mesProcessReportWorkMapper;
 
     @Resource
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
 
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -65,7 +63,7 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
                 throw new BizErrorException("没有找到工序与报工人员的绑定关系！");
             }
         }
-        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(mesProcessReportWork.getWorkOrderId());
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(mesProcessReportWork.getWorkOrderId());
         SearchMesProcessReportWork searchMesProcessReportWork = new SearchMesProcessReportWork();
         searchMesProcessReportWork.setWorkOrderId(mesProcessReportWork.getWorkOrderId());
         searchMesProcessReportWork.setProcessId(mesProcessReportWork.getProcessId());
@@ -75,9 +73,9 @@ public class MesProcessReportWorkServiceImpl extends BaseService<MesProcessRepor
             totalQuantity = mesProcessReportWorkDtoList.get(0).getTotalQuantity().add(mesProcessReportWork.getQuantity());
         }
 
-        if (totalQuantity.compareTo(smtWorkOrder.getWorkOrderQuantity()) > 0) {
+        if (totalQuantity.compareTo(mesPmWorkOrder.getWorkOrderQuantity()) > 0) {
             throw new BizErrorException("本次报工数量累计超过工单数量！");
-        } else if (totalQuantity.compareTo(smtWorkOrder.getWorkOrderQuantity()) == 0) {
+        } else if (totalQuantity.compareTo(mesPmWorkOrder.getWorkOrderQuantity()) == 0) {
             Example example = new Example(MesProcessReportWork.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("workOrderId", mesProcessReportWork.getWorkOrderId()).andEqualTo("processId", mesProcessReportWork.getProcessId()).andEqualTo("isDelete", 1);

@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.general.dto.mes.pm.*;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
 import com.fantechs.provider.mes.pm.service.MesPmMasterPlanService;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmMasterPlanListDTO;
@@ -11,7 +11,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -41,7 +41,7 @@ public class MesPmMasterPlanController {
     @Resource
     private MesPmMasterPlanService mesPmMasterPlanService;
     @Resource
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
 
     @ApiOperation("查询总计划表（月计划表）列表")
     @PostMapping("/findList")
@@ -141,14 +141,14 @@ public class MesPmMasterPlanController {
                     mesPmMasterPlanDTO.getPlanedEndDate())){
                 throw new BizErrorException("缺少必要数据（工单编码/计划生产总数及排产数/计划开工完工时间）");
             }
-            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-            searchSmtWorkOrder.setWorkOrderCode(mesPmMasterPlanDTO.getWorkOrderCode());
-            List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderCode(mesPmMasterPlanDTO.getWorkOrderCode());
+            List<MesPmWorkOrderDto> smtWorkOrderDtoList = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
             if(StringUtils.isEmpty(smtWorkOrderDtoList) || smtWorkOrderDtoList.size()>1){
                 throw new BizErrorException("工单编号未找到或工单编号不唯一");
             }
             //=====
-            SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+            MesPmWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
             MesPmMasterPlan mesPmMasterPlan = new MesPmMasterPlan();
             mesPmMasterPlan.setWorkOrderId(smtWorkOrderDto.getWorkOrderId());
             mesPmMasterPlan.setProLineId(smtWorkOrderDto.getProLineId());
