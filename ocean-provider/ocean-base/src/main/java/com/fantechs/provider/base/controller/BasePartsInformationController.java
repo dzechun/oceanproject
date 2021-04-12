@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePartsInformationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePartsInformationImport;

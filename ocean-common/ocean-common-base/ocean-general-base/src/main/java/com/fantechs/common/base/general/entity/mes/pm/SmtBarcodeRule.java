@@ -19,12 +19,12 @@ import java.util.List;
 
 /**
  * 条码规则表
- * smt_barcode_rule
+ * base_barcode_rule
  * @author wcz
  * @date 2020-10-26 14:09:43
  */
 @Data
-@Table(name = "smt_barcode_rule")
+@Table(name = "base_barcode_rule")
 public class SmtBarcodeRule extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;

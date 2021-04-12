@@ -2,10 +2,10 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.*;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
@@ -154,11 +154,11 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
 
                 //如果是调拨完成的单据则修改库存信息
                 if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 2){
-                    SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-                    searchSmtStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                    List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-                    if (StringUtils.isNotEmpty(smtStorageMaterials)){
-                        if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
+                    SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
+                    searchBaseStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                    List<BaseStorageMaterial> baseStorageMaterials = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
+                    if (StringUtils.isNotEmpty(baseStorageMaterials)){
+                        if (baseStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
                             throw new BizErrorException("调入储位已存在其他物料");
                         }
                     }

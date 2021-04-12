@@ -16,12 +16,12 @@ import java.util.Date;
 
 /**
  * 工单流转卡配置表
- * smt_work_order_card_collocation
+ * base_work_order_card_collocation
  * @author 18358
  * @date 2020-11-20 15:24:21
  */
 @Data
-@Table(name = "smt_work_order_card_collocation")
+@Table(name = "base_work_order_card_collocation")
 public class SmtWorkOrderCardCollocation extends ValidGroup implements Serializable {
     /**
      * 工单流转卡配置ID

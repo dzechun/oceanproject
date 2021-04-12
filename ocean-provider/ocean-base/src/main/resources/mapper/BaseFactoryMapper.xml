@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseFactoryMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseFactory">
+        <id column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="factory_desc" jdbcType="VARCHAR" property="factoryDesc"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseFactoryDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sf.factory_id,
+        sf.factory_code,
+        sf.factory_name,
+        sf.factory_desc,
+        sf.status,
+        sf.create_user_id,
+        sf.create_time,
+        sf.modified_user_id,
+        sf.modified_time,
+        sf.is_delete,
+        sf.option1,
+        sf.option2,
+        sf.option3,
+        sf.organization_id,
+        sf.remark
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bo.organization_name
+        from fantech_imes_v2.smt_factory sf
+        LEFT JOIN ocean_v2.sys_user su ON sf.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON sf.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sf.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="factoryCode != null and factoryCode !='' and codeQueryMark == null">
+                and sf.factory_code like CONCAT('%', #{factoryCode}, '%')
+            </if>
+            <if test="factoryCode != null and factoryCode !='' and codeQueryMark != null">
+                and sf.factory_code = #{factoryCode}
+            </if>
+            <if test="factoryName != null and factoryName !=''">
+                and sf.factory_name like CONCAT('%', #{factoryName}, '%')
+            </if>
+            <if test="factoryDesc != null and factoryDesc !=''">
+                and sf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
+            </if>
+            <if test="status!=null">
+                and sf.status=#{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+</mapper>

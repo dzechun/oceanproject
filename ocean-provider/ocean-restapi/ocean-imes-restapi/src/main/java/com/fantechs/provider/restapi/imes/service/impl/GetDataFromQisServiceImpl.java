@@ -1,11 +1,11 @@
 package com.fantechs.provider.restapi.imes.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtStorage;
-import com.fantechs.common.base.entity.basic.SmtWarehouse;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.entity.basic.qis.QisResultBean;
 import com.fantechs.common.base.entity.basic.qis.QisWareHouseCW;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorage;
-import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
@@ -56,10 +56,10 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
         getDataFromQisService.updateWarehouse();
 
         //同步U9仓库完成，获取本地的仓库数据
-        SearchSmtWarehouse searchSmtWarehouse1 = new SearchSmtWarehouse();
-        searchSmtWarehouse1.setPageSize(999999);
-        ResponseEntity<List<SmtWarehouse>> responseEntity = basicFeignApi.findList(searchSmtWarehouse1);
-        List<SmtWarehouse> warehouseList = responseEntity.getData();
+        SearchBaseWarehouse searchBaseWarehouse1 = new SearchBaseWarehouse();
+        searchBaseWarehouse1.setPageSize(999999);
+        ResponseEntity<List<BaseWarehouse>> responseEntity = basicFeignApi.findList(searchBaseWarehouse1);
+        List<BaseWarehouse> warehouseList = responseEntity.getData();
 
         //同步QIS储位数据
         String url = restURL.getQisGetNewUpdateCW();
@@ -70,37 +70,37 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
             throw new Exception("获取QIS储位信息失败：" + responseEntity.getMessage());
         }
 
-        List<SmtStorage> storageUpdateList = new ArrayList<>();//批量更新储位集合
-        List<SmtStorage> storageAddList = new ArrayList<>();//批量新增储位集合
+        List<BaseStorage> storageUpdateList = new ArrayList<>();//批量更新储位集合
+        List<BaseStorage> storageAddList = new ArrayList<>();//批量新增储位集合
 
-        SearchSmtStorage searchSmtStorage = new SearchSmtStorage();//储位查询实体
-        searchSmtStorage.setCodeQueryMark((byte) 1);//对编码做等值查询
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();//储位查询实体
+        searchBaseStorage.setCodeQueryMark((byte) 1);//对编码做等值查询
 
         List<QisWareHouseCW> qisWareHouseCWList = responseEntity1.getResult();
 
         for (QisWareHouseCW qisWareHouseCW : qisWareHouseCWList) {
             if (constantBase.getDefaultOrgName().equals(qisWareHouseCW.getOrgname())) {
 
-                SmtStorage smtStorage = new SmtStorage();//储位对象
-                smtStorage.setStorageCode(qisWareHouseCW.getCode());
-                smtStorage.setStorageName(qisWareHouseCW.getName());
-                smtStorage.setCreateTime(new Date());
-                smtStorage.setModifiedTime(new Date());
+                BaseStorage baseStorage = new BaseStorage();//储位对象
+                baseStorage.setStorageCode(qisWareHouseCW.getCode());
+                baseStorage.setStorageName(qisWareHouseCW.getName());
+                baseStorage.setCreateTime(new Date());
+                baseStorage.setModifiedTime(new Date());
                 if (StringUtils.isNotEmpty(warehouseList)){
-                    for (SmtWarehouse smtWarehouse : warehouseList) {
-                        if (smtWarehouse.getWarehouseCode().equals(qisWareHouseCW.getCkNo())){
-                            smtStorage.setWarehouseId(smtWarehouse.getWarehouseId());
+                    for (BaseWarehouse baseWarehouse : warehouseList) {
+                        if (baseWarehouse.getWarehouseCode().equals(qisWareHouseCW.getCkNo())){
+                            baseStorage.setWarehouseId(baseWarehouse.getWarehouseId());
                         }
                     }
                 }
 
                 //判断对储位执行新增还是更新
-                searchSmtStorage.setStorageCode(smtStorage.getStorageCode());
-                ResponseEntity<List<SmtStorage>> storageResponseEntity = basicFeignApi.findList(searchSmtStorage);
+                searchBaseStorage.setStorageCode(baseStorage.getStorageCode());
+                ResponseEntity<List<BaseStorage>> storageResponseEntity = basicFeignApi.findList(searchBaseStorage);
                 if (StringUtils.isNotEmpty(storageResponseEntity.getData())) {
-                    storageUpdateList.add(smtStorage);
+                    storageUpdateList.add(baseStorage);
                 } else {
-                    storageAddList.add(smtStorage);
+                    storageAddList.add(baseStorage);
                 }
             }
 

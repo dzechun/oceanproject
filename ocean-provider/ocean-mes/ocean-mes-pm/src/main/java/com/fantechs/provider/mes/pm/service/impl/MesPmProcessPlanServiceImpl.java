@@ -1,13 +1,8 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtRouteProcess;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmMasterPlanDTO;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessPlanDTO;
-import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
-import com.fantechs.common.base.general.entity.om.MesSchedule;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterialdDet;
-import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.service.MesPmProcessPlanService;
@@ -23,7 +18,6 @@ import com.fantechs.common.base.utils.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -132,12 +126,12 @@ public class MesPmProcessPlanServiceImpl extends BaseService<MesPmProcessPlan> i
         //取出配置的工序排序记录
         if (StringUtils.isNotEmpty(map.get("routeId"))) {
             Boolean flag = false;
-            List<SmtRouteProcess> smtRouteProcesses = basicFeignApi.findConfigureRout(Long.valueOf(map.get("routeId").toString())).getData();
-            if (smtRouteProcesses.size() > 0) {
+            List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(Long.valueOf(map.get("routeId").toString())).getData();
+            if (baseRouteProcesses.size() > 0) {
                 for (MesPmProcessPlanDTO mesPmProcessPlanDTO : mesPmMasterPlanDTOS) {
-                    for (SmtRouteProcess smtRouteProcess : smtRouteProcesses) {
-                        if (mesPmProcessPlanDTO.getProcessId().equals(smtRouteProcess.getProcessId())) {
-                            mesPmProcessPlanDTO.setOrderNum(smtRouteProcess.getOrderNum());
+                    for (BaseRouteProcess baseRouteProcess : baseRouteProcesses) {
+                        if (mesPmProcessPlanDTO.getProcessId().equals(baseRouteProcess.getProcessId())) {
+                            mesPmProcessPlanDTO.setOrderNum(baseRouteProcess.getOrderNum());
                             flag = true;
                             break;
                         } else {

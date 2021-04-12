@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseCurrencyMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseCurrency">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="currency_id" jdbcType="BIGINT" property="currencyId"/>
+        <result column="currency_code" jdbcType="VARCHAR" property="currencyCode"/>
+        <result column="currency_name" jdbcType="VARCHAR" property="currencyName"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseCurrencyDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sc.currency_id,
+        sc.currency_code,
+        sc.currency_name,
+        sc.organization_id,
+        sc.remark,
+        sc.status,
+        sc.create_user_id,
+        sc.create_time,
+        sc.modified_user_id,
+        sc.modified_time,
+        sc.is_delete,
+        sc.option1,
+        sc.option2,
+        sc.option3
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS
+        modified_user_name, bo.organization_name
+        FROM smt_currency sc
+        LEFT JOIN ocean_v2.sys_user su ON sc.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON sc.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sc.organization_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="currencyCode != null">
+                and sc.currency_code like CONCAT('%', #{currencyCode}, '%')
+            </if>
+            <if test="currencyName != null">
+                and sc.currency_name like CONCAT('%', #{currencyName}, '%')
+            </if>
+            <if test="status!=null">
+                and sc.status=#{status}
+            </if>
+        </where>
+        order by sc.create_time desc
+    </select>
+</mapper>

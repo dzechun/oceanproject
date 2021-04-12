@@ -1,18 +1,12 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtProcessCategoryDto;
-import com.fantechs.common.base.entity.basic.SmtProcessCategory;
-import com.fantechs.common.base.entity.basic.history.SmtHtProcessCategory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePartsInformationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePartsInformationImport;
 import com.fantechs.common.base.general.entity.basic.BasePartsInformation;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPartsInformation;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionItem;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionType;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;

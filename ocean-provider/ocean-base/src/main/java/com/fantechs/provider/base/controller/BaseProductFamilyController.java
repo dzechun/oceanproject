@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductFamilyImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;

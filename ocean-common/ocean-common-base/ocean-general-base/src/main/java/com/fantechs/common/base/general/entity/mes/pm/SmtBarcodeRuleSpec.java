@@ -12,12 +12,12 @@ import java.io.Serializable;
 
 
 /**
- * smt_barcode_rule_spec
+ * base_barcode_rule_spec
  * @author 18358
  * @date 2020-11-07 11:55:39
  */
 @Data
-@Table(name = "smt_barcode_rule_spec")
+@Table(name = "base_barcode_rule_spec")
 public class SmtBarcodeRuleSpec extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 4652990118724195429L;
     /**

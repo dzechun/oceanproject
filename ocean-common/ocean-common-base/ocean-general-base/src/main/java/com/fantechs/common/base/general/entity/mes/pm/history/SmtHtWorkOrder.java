@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "smt_ht_work_order")
+@Table(name = "base_ht_work_order")
 @Data
 public class SmtHtWorkOrder implements Serializable {
     private static final long serialVersionUID = -7667412956010519610L;
