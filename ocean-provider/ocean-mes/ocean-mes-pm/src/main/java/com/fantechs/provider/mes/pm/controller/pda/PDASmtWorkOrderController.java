@@ -1,10 +1,10 @@
 package com.fantechs.provider.mes.pm.controller.pda;
 
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -30,13 +30,13 @@ import java.util.List;
 public class PDASmtWorkOrderController {
 
     @Autowired
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
 
     @ApiOperation("工单列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtWorkOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrder searchSmtWorkOrder) {
-        Page<Object> page = PageHelper.startPage(searchSmtWorkOrder.getStartPage(),searchSmtWorkOrder.getPageSize());
-        List<SmtWorkOrderDto> list = smtWorkOrderService.pdaFindList(searchSmtWorkOrder);
+    public ResponseEntity<List<MesPmWorkOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder) {
+        Page<Object> page = PageHelper.startPage(searchMesPmWorkOrder.getStartPage(), searchMesPmWorkOrder.getPageSize());
+        List<MesPmWorkOrderDto> list = mesPmWorkOrderService.pdaFindList(searchMesPmWorkOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

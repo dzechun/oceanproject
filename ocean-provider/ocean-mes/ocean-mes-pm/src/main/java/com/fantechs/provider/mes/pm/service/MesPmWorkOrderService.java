@@ -1,9 +1,9 @@
 package com.fantechs.provider.mes.pm.service;
 
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -13,11 +13,11 @@ import java.util.List;
  * Created by wcz on 2020/10/13.
  */
 
-public interface SmtWorkOrderService extends IService<SmtWorkOrder> {
+public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
 
-    List<SmtWorkOrderDto> findList(SearchSmtWorkOrder searchSmtWorkOrder);
+    List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 
-    List<SmtWorkOrderDto> pdaFindList(SearchSmtWorkOrder searchSmtWorkOrder);
+    List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom);
 

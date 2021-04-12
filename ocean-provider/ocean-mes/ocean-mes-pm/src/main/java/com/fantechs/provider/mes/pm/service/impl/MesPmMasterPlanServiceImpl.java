@@ -3,7 +3,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDetDto;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
 import com.fantechs.common.base.general.entity.mes.pm.*;
@@ -11,7 +11,6 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.pm.service.*;
 import com.fantechs.provider.mes.pm.mapper.MesPmMasterPlanMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -22,7 +21,6 @@ import com.fantechs.common.base.support.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import tk.mybatis.mapper.entity.Example;
 import com.fantechs.common.base.utils.StringUtils;
 import javax.annotation.Resource;
@@ -49,7 +47,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
      @Resource
      private MesPmExplainProcessPlanService mesPmExplainProcessPlanService;
      @Resource
-     private SmtWorkOrderService smtWorkOrderService;
+     private MesPmWorkOrderService mesPmWorkOrderService;
      @Resource
      private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
      @Resource
@@ -157,18 +155,18 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         if(StringUtils.isEmpty(mesPmMasterPlan.getMasterPlanId())){
             //新增
             //判断计划排产数是否大于工单数
-            SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(mesPmMasterPlan.getWorkOrderId());
-            if(StringUtils.isEmpty(smtWorkOrder)){
+            MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(mesPmMasterPlan.getWorkOrderId());
+            if(StringUtils.isEmpty(mesPmWorkOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005);
             }
-            double workOrderQuantity = smtWorkOrder.getWorkOrderQuantity().doubleValue();
-            double scheduledQuantity = smtWorkOrder.getScheduledQuantity().doubleValue();
+            double workOrderQuantity = mesPmWorkOrder.getWorkOrderQuantity().doubleValue();
+            double scheduledQuantity = mesPmWorkOrder.getScheduledQuantity().doubleValue();
 
             if(scheduleQuantity>(workOrderQuantity-scheduledQuantity)){
                 throw new BizErrorException("计划排产数不能大于工单剩余生产数");
             }
-            smtWorkOrder.setScheduledQuantity(new BigDecimal(scheduledQuantity+scheduleQuantity));
-            if(smtWorkOrderService.update(smtWorkOrder)<=0){
+            mesPmWorkOrder.setScheduledQuantity(new BigDecimal(scheduledQuantity+scheduleQuantity));
+            if(mesPmWorkOrderService.update(mesPmWorkOrder)<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
             }
             mesPmMasterPlan.setScheduledQty(null);
@@ -280,8 +278,8 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
         }
         Long workOrderId = mesPmMasterPlan.getWorkOrderId();
-        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(workOrderId);
-        if(StringUtils.isEmpty(smtWorkOrder)){
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(workOrderId);
+        if(StringUtils.isEmpty(mesPmWorkOrder)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
         }
         MasterPlanPrintWorkOrderDTO masterPlanPrintWorkOrderDTO = new MasterPlanPrintWorkOrderDTO();
@@ -297,11 +295,11 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         //=====
 
         //=====查找工单及产品信息
-        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-        searchSmtWorkOrder.setWorkOrderId(workOrderId);
-        List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderId(workOrderId);
+        List<MesPmWorkOrderDto> smtWorkOrderDtoList = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
         if(StringUtils.isNotEmpty(smtWorkOrderDtoList)){
-            SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+            MesPmWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
             masterPlanPrintWorkOrderDTO.setProductModelName(smtWorkOrderDto.getProductModelName());
             masterPlanPrintWorkOrderDTO.setMaterialQuality(smtWorkOrderDto.getMaterialQuality());
             masterPlanPrintWorkOrderDTO.setColor(smtWorkOrderDto.getColor());
@@ -343,8 +341,8 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             throw new BizErrorException("投产大于该计划剩余投产数");
         }*/
         Long workOrderId = mesPmMasterPlan.getWorkOrderId();
-        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(workOrderId);
-        if(StringUtils.isEmpty(smtWorkOrder)){
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(workOrderId);
+        if(StringUtils.isEmpty(mesPmWorkOrder)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005);
         }
         if(StringUtils.isEmpty(turnWorkOrderCardPoolDTO.getGenerate())){
@@ -353,7 +351,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         if(turnWorkOrderCardPoolDTO.getGenerate()){
             //=====查找部件组成信息
             SearchBasePlateParts searchBasePlateParts = new SearchBasePlateParts();
-            searchBasePlateParts.setMaterialId(smtWorkOrder.getMaterialId());
+            searchBasePlateParts.setMaterialId(mesPmWorkOrder.getMaterialId());
             ResponseEntity<List<BasePlatePartsDto>> feignResult = baseFeignApi.findPlatePartsList(searchBasePlateParts);
             if(StringUtils.isEmpty(feignResult)){
                 throw new BizErrorException("未找到部件组成信息");
@@ -376,42 +374,42 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                 double quantity=StringUtils.isEmpty(basePlatePartsDetDto.getQuantity())?1:basePlatePartsDetDto.getQuantity().doubleValue();
                 double curSchedule=turnWorkOrderCardPoolDTO.getScheduleQty().doubleValue()*quantity;
                 //=====查找此主工单对于的部件工单是否存在，如果存在是否超数
-                SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-                searchSmtWorkOrder.setMaterialId(basePlatePartsDetDto.getPlatePartsDetId());
-                searchSmtWorkOrder.setParentId(workOrderId);
-                List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
-                SmtWorkOrder tempsmtWorkOrder;
+                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder.setMaterialId(basePlatePartsDetDto.getPlatePartsDetId());
+                searchMesPmWorkOrder.setParentId(workOrderId);
+                List<MesPmWorkOrderDto> smtWorkOrderDtoList = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
+                MesPmWorkOrder tempsmtWorkOrder;
                 if(StringUtils.isNotEmpty(smtWorkOrderDtoList)){
-                    SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+                    MesPmWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
                     //更新部件工单信息
-                    tempsmtWorkOrder = new SmtWorkOrder();
+                    tempsmtWorkOrder = new MesPmWorkOrder();
                     BeanUtils.copyProperties(smtWorkOrderDto,tempsmtWorkOrder);
                     if(curSchedule>(tempsmtWorkOrder.getWorkOrderQuantity().subtract(tempsmtWorkOrder.getProductionQuantity())).doubleValue()){
                         throw new BizErrorException("当前投产数大于部件工单剩余投产数：（工单）"+smtWorkOrderDto.getWorkOrderCode());
                     }
                     tempsmtWorkOrder.setProductionQuantity(tempsmtWorkOrder.getProductionQuantity().add(new BigDecimal(curSchedule)));
-                    if(smtWorkOrderService.update(tempsmtWorkOrder)<=0){
+                    if(mesPmWorkOrderService.update(tempsmtWorkOrder)<=0){
                         throw new BizErrorException("更新部件工单错误");
                     }
                 }else{
                     //=====根据部件信息生成工单
-                    tempsmtWorkOrder = new SmtWorkOrder();
+                    tempsmtWorkOrder = new MesPmWorkOrder();
                     tempsmtWorkOrder.setParentId(workOrderId);
                     tempsmtWorkOrder.setRouteId(basePlatePartsDetDto.getRouteId());
                     tempsmtWorkOrder.setProLineId(mesPmMasterPlan.getProLineId());
                     tempsmtWorkOrder.setMaterialId(basePlatePartsDetDto.getPlatePartsDetId());
-                    double workOrderQuantity=smtWorkOrder.getWorkOrderQuantity().doubleValue()*quantity;
+                    double workOrderQuantity= mesPmWorkOrder.getWorkOrderQuantity().doubleValue()*quantity;
                     if(curSchedule>workOrderQuantity){
                         throw new BizErrorException("当前投产数大于部件工单总投产数：(部件组成)"+basePlatePartsDetDto.getPlatePartsDetId());
                     }
                     tempsmtWorkOrder.setWorkOrderQuantity(new BigDecimal(workOrderQuantity));
                     tempsmtWorkOrder.setProductionQuantity(new BigDecimal(curSchedule));
                     tempsmtWorkOrder.setRemark("无BOM");
-                    tempsmtWorkOrder.setBarcodeRuleSetId(smtWorkOrder.getBarcodeRuleSetId());
+                    tempsmtWorkOrder.setBarcodeRuleSetId(mesPmWorkOrder.getBarcodeRuleSetId());
                     SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
-                    saveWorkOrderAndBom.setSmtWorkOrder(tempsmtWorkOrder);
+                    saveWorkOrderAndBom.setMesPmWorkOrder(tempsmtWorkOrder);
                     saveWorkOrderAndBom.setGenerate(false);
-                    if(smtWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom)<=0){
+                    if(mesPmWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom)<=0){
                         throw new BizErrorException("新增部件工单错误");
                     }
                     //=====
@@ -427,11 +425,11 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
             }
             //=====
             double curProductionQuantity = turnWorkOrderCardPoolDTO.getScheduleQty().doubleValue()*platePartsDetIdList.size();
-            smtWorkOrder.setProductionQuantity(smtWorkOrder.getProductionQuantity().add(new BigDecimal(curProductionQuantity)));
-            if(smtWorkOrder.getWorkOrderStatus()!=2){
-                smtWorkOrder.setWorkOrderStatus(2);//生产中
+            mesPmWorkOrder.setProductionQuantity(mesPmWorkOrder.getProductionQuantity().add(new BigDecimal(curProductionQuantity)));
+            if(mesPmWorkOrder.getWorkOrderStatus()!=2){
+                mesPmWorkOrder.setWorkOrderStatus(2);//生产中
             }
-            smtWorkOrderService.update(smtWorkOrder);
+            mesPmWorkOrderService.update(mesPmWorkOrder);
         }
 
         mesPmMasterPlan.setTurnCardQty(turnWorkOrderCardPoolDTO.getScheduleQty().add(mesPmMasterPlan.getTurnCardQty()));

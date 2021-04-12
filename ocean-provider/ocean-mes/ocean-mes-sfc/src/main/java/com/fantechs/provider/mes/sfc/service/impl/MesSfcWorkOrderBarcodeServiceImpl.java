@@ -16,13 +16,11 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.bcm.mapper.BaseLabelMapper;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,8 +47,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private PMFeignApi pmFeignApi;
     @Resource
     private RabbitProducer rabbitProducer;
-    @Resource
-    private BaseLabelMapper baseLabelMapper;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -131,9 +127,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException("参数错误");
         }
-        Example example = new Example(BaseLabel.class);
-        example.createCriteria().andEqualTo("labelName",labelName);
-        BaseLabel baseLabel = baseLabelMapper.selectOneByExample(example);
+        BaseLabel baseLabel = mesSfcWorkOrderBarcodeMapper.findByOneLabel(labelName);
         if(StringUtils.isEmpty(baseLabel)){
             throw new BizErrorException("获取标签信息失败");
         }

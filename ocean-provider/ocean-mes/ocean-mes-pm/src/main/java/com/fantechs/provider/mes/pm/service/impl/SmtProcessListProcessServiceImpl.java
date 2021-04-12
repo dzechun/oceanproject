@@ -8,7 +8,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSe
 import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
 import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
 import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -54,9 +54,9 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     @Resource
     private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
     @Resource
     private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
     @Resource
@@ -133,7 +133,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         List<SmtProcessListProcess> list = new ArrayList<>();
         Long workOrderId = smtWorkOrderBarcodePool.getWorkOrderId();
         //获取工单信息
-        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderMapper.selectByWorkOrderId(workOrderId);
+        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
 
         Long packageNumRuleId = null;
         //通过条码集合找到对应的条码规则、流转卡规则
@@ -192,20 +192,20 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         if (StringUtils.isEmpty(smtWorkOrderCardPool)) {
             throw new BizErrorException("未找到对应流程卡");
         }
-        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPool.getWorkOrderId());
-        if (StringUtils.isEmpty(smtWorkOrder)) {
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(smtWorkOrderCardPool.getWorkOrderId());
+        if (StringUtils.isEmpty(mesPmWorkOrder)) {
             throw new BizErrorException("未找到对应工单");
         }
-        if (smtWorkOrder.getWorkOrderStatus() != 0 && smtWorkOrder.getWorkOrderStatus() != 2) {
+        if (mesPmWorkOrder.getWorkOrderStatus() != 0 && mesPmWorkOrder.getWorkOrderStatus() != 2) {
             throw new BizErrorException("工单状态异常");
         }
         //=====
 
         //=====找到执行计划及执行计划工序，判断当前工序是否属于计划中
-        Long parentWorkOrderId = smtWorkOrder.getWorkOrderId();
+        Long parentWorkOrderId = mesPmWorkOrder.getWorkOrderId();
         //先判断当前流程卡工单是否存在父级
-        if (StringUtils.isNotEmpty(smtWorkOrder.getParentId()) && smtWorkOrder.getParentId() != 0) {
-            parentWorkOrderId = smtWorkOrder.getParentId();
+        if (StringUtils.isNotEmpty(mesPmWorkOrder.getParentId()) && mesPmWorkOrder.getParentId() != 0) {
+            parentWorkOrderId = mesPmWorkOrder.getParentId();
         }
         //根据工单找到执行计划（这个地方需要注意，按照东鹏的需求，一个工单只会存在一个执行计划），但是如果是其他的需求有变化的话就需要调整
         //执行计划必须要有个查询标准，才能找到对应的数据
@@ -236,13 +236,13 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
             throw new BizErrorException("当前工序不允许报工");
         }
         //判断当前工序是否在当前工单所属工艺下
-        int count = smtProcessListProcessMapper.isExistProcessInWorkOrder(smtWorkOrder.getWorkOrderId(), processFinishedProductDTO.getProcessId());
+        int count = smtProcessListProcessMapper.isExistProcessInWorkOrder(mesPmWorkOrder.getWorkOrderId(), processFinishedProductDTO.getProcessId());
         if (count <= 0) {
             throw new BizErrorException("当前工序不允许操作当前流程卡：" + smtWorkOrderCardPool.getWorkOrderCardId());
         }
 
         //=====取出当前工序的上工序
-        ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(smtWorkOrder.getRouteId());
+        ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(mesPmWorkOrder.getRouteId());
         if (result.getCode() != 0) {
             throw new BizErrorException(result.getMessage());
         }
@@ -300,14 +300,14 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                 workOrderStartWork(preProcessId, processFinishedProductDTO);
                 return 1;
             }
-            this.startWork(preProcessId, smtWorkOrder, processFinishedProductDTO, false);
+            this.startWork(preProcessId, mesPmWorkOrder, processFinishedProductDTO, false);
         } else if (processFinishedProductDTO.getProcessType() == 2) {
             if (StringUtils.isEmpty(smtWorkOrderCardPool.getParentId()) || smtWorkOrderCardPool.getParentId() == 0) {
                 //工单流程卡报工
-                workOrderCarReport(smtWorkOrder.getRouteId(), preProcessId, processFinishedProductDTO);
+                workOrderCarReport(mesPmWorkOrder.getRouteId(), preProcessId, processFinishedProductDTO);
                 return 1;
             }
-            this.finishWork(smtWorkOrder.getRouteId(), preProcessId, processFinishedProductDTO, false);
+            this.finishWork(mesPmWorkOrder.getRouteId(), preProcessId, processFinishedProductDTO, false);
         }
 
         //=====执行计划与工序的数据回写
@@ -409,13 +409,13 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
      * 开工确认
      *
      * @param preProcessId
-     * @param smtWorkOrder
+     * @param mesPmWorkOrder
      * @param processFinishedProductDTO
      * @return
      */
-    private int startWork(Long preProcessId, SmtWorkOrder smtWorkOrder, ProcessFinishedProductDTO processFinishedProductDTO, boolean startRemain) {
+    private int startWork(Long preProcessId, MesPmWorkOrder mesPmWorkOrder, ProcessFinishedProductDTO processFinishedProductDTO, boolean startRemain) {
         Long curProcessId = processFinishedProductDTO.getProcessId();
-        Long routeId = smtWorkOrder.getRouteId();
+        Long routeId = mesPmWorkOrder.getRouteId();
         Long firstProcessIdWS = smtProcessListProcessMapper.firstProcessIdInWSection(curProcessId, routeId);
         Long firstProcessIdR = smtProcessListProcessMapper.firstProcessIdInRoute(routeId);
 
@@ -511,7 +511,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
 
         if (processFinishedProductDTO.getProcessType() == 1 && processFinishedProductDTO.getOperation() == 2) {
             if (processFinishedProductDTO.getProcessId().equals(firstProcessIdWS) && !processFinishedProductDTO.getProcessId().equals(firstProcessIdR)) {
-                sendMaterial(preProcessId, smtWorkOrder.getWorkOrderId(), smtWorkOrder.getMaterialId(), curStartWorkQty.doubleValue());
+                sendMaterial(preProcessId, mesPmWorkOrder.getWorkOrderId(), mesPmWorkOrder.getMaterialId(), curStartWorkQty.doubleValue());
             }
         }
         return 1;
@@ -642,9 +642,9 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                         //processFinishedProductDTO.getWorkOrderCardPoolId();部件流转卡ID
                         //先判断部件对应的工艺路线是否有当前工序
                         SmtWorkOrderCardPool smtWorkOrderCardPool1 = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
-                        SmtWorkOrder smtWorkOrder1 = smtWorkOrderService.selectByKey(smtWorkOrderCardPool1.getWorkOrderId());
+                        MesPmWorkOrder mesPmWorkOrder1 = mesPmWorkOrderService.selectByKey(smtWorkOrderCardPool1.getWorkOrderId());
                         //部件的工艺路线
-                        List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrder1.getRouteId()).getData();
+                        List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(mesPmWorkOrder1.getRouteId()).getData();
                         for (BaseRouteProcess baseRouteProcess : baseRouteProcesses) {
                             if (baseRouteProcess.getProcessId().equals(preProcessId)) {
                                 //当前部件拥有当前工序的上工序流程
@@ -759,13 +759,13 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     private int workOrderStartWork(Long preProcessId, ProcessFinishedProductDTO processFinishedProductDTO) {
         //=====工单流程卡开工，判断当前工序是否属于工艺路线下最后一个工段
         SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
-        SmtWorkOrder smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPool.getWorkOrderId());
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(smtWorkOrderCardPool.getWorkOrderId());
         // 工单的工艺路线，非部件
-        Long routeId = smtWorkOrder.getRouteId();
-        int resultCount = smtProcessListProcessMapper.isLastSectionInRoute(smtWorkOrder.getRouteId(), processFinishedProductDTO.getProcessId());
+        Long routeId = mesPmWorkOrder.getRouteId();
+        int resultCount = smtProcessListProcessMapper.isLastSectionInRoute(mesPmWorkOrder.getRouteId(), processFinishedProductDTO.getProcessId());
         if (resultCount > 0) {
             SearchMesPmMatchingOrder searchMesPmMatchingOrder = new SearchMesPmMatchingOrder();
-            searchMesPmMatchingOrder.setWorkOrderId(smtWorkOrder.getWorkOrderId());
+            searchMesPmMatchingOrder.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
             List<MesPmMatchingOrderDto> mesPmMatchingOrderDtoList = mesPmMatchingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmMatchingOrder));
             if (StringUtils.isEmpty(mesPmMatchingOrderDtoList)) {
                 throw new BizErrorException("未找到配套数");
@@ -794,18 +794,18 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
             BigDecimal quantity = smtProcessListProcessMapper.getQuantityByWorkOrderId(workOrderId);
             BigDecimal remainQty = processFinishedProductDTO.getCurOutputQty().multiply(quantity);
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : temp) {
-                smtWorkOrder = smtWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
+                mesPmWorkOrder = mesPmWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
                 List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId()).getData();
                 if (resultCount > 0) {
                     //当前工序最后的工段
                     //用工单的工艺路线代替部件的工艺路线开工
-                    smtWorkOrder.setRouteId(routeId);
+                    mesPmWorkOrder.setRouteId(routeId);
                 }
                 ProcessFinishedProductDTO tempProcessFinishedProductDTO = new ProcessFinishedProductDTO();
                 BeanUtils.autoFillEqFields(processFinishedProductDTO, tempProcessFinishedProductDTO);
                 tempProcessFinishedProductDTO.setWorkOrderCardPoolId(smtWorkOrderCardPoolDto.getWorkOrderCardPoolId());
                 tempProcessFinishedProductDTO.setCurOutputQty(remainQty);
-                int i = this.startWork(baseRouteProcesses.get(baseRouteProcesses.size() - 1).getProcessId(), smtWorkOrder, tempProcessFinishedProductDTO, true);
+                int i = this.startWork(baseRouteProcesses.get(baseRouteProcesses.size() - 1).getProcessId(), mesPmWorkOrder, tempProcessFinishedProductDTO, true);
                 if (i == 3) {
                     //找不到品质确认数，不处理该部件
                     continue;
@@ -936,12 +936,12 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         if (StringUtils.isEmpty(smtWorkOrderCardPool)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
-        if (StringUtils.isEmpty(smtWorkOrder)) {
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
+        if (StringUtils.isEmpty(mesPmWorkOrder)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         BaseRouteProcess baseRouteProcess = new BaseRouteProcess();
-        baseRouteProcess.setRouteId(smtWorkOrder.getRouteId());
+        baseRouteProcess.setRouteId(mesPmWorkOrder.getRouteId());
         List<BaseRouteProcess> baseRouteProcessList = smtProcessListProcessMapper.select_smt_route_process(baseRouteProcess);
         List<SmtProcessListProcess> listProcesses = new ArrayList<>();
         for (BaseRouteProcess routeProcess : baseRouteProcessList) {

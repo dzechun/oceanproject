@@ -4,7 +4,7 @@ import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtProcessListProcess;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
@@ -15,7 +15,7 @@ import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper;
 import com.fantechs.provider.mes.pm.service.SmtProcessListProcessService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
-import com.fantechs.provider.mes.pm.service.SmtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -32,7 +32,7 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
     @Resource
-    private SmtWorkOrderService smtWorkOrderService;
+    private MesPmWorkOrderService mesPmWorkOrderService;
     @Resource
     private SmtProcessListProcessService smtProcessListProcessService;
     @Resource
@@ -56,14 +56,14 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
             return null;
         }
         SmtWorkOrderCardPool smtWorkOrderCardPool = smtWorkOrderCardPoolList.get(0);
-        SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-        searchSmtWorkOrder.setWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
-        List<SmtWorkOrderDto> smtWorkOrderDtoList = smtWorkOrderService.findList(searchSmtWorkOrder);
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderId(smtWorkOrderCardPool.getWorkOrderId());
+        List<MesPmWorkOrderDto> smtWorkOrderDtoList = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
         if(StringUtils.isEmpty(smtWorkOrderDtoList))
         {
             return null;
         }
-        SmtWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
+        MesPmWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
         ProcessListWorkOrderDTO processListWorkOrderDTO =new ProcessListWorkOrderDTO();
         processListWorkOrderDTO.setWorkOrderCardId(workOrderCardId);
         processListWorkOrderDTO.setWorkOrderCardPoolId(smtWorkOrderCardPool.getWorkOrderCardPoolId());

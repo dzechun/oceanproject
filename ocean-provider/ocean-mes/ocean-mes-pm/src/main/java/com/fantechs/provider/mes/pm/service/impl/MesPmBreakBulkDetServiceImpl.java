@@ -8,7 +8,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkDetMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmBreakBulkMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmBreakBulkDetService;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class MesPmBreakBulkDetServiceImpl extends BaseService<MesPmBreakBulkDet>
     @Resource
     private MesPmBreakBulkMapper mesPmBreakBulkMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
 
     @Override
     public List<MesPmBreakBulkDetDto> findList(Map<String, Object> map) {
@@ -36,7 +36,7 @@ public class MesPmBreakBulkDetServiceImpl extends BaseService<MesPmBreakBulkDet>
         list.forEach(li->{
             Long routeId = li.getRouteId();
             //查询工艺路线配置
-            List<BaseRouteProcess> routeProcesses = smtWorkOrderMapper.selectRouteProcessByRouteId(routeId);
+            List<BaseRouteProcess> routeProcesses = mesPmWorkOrderMapper.selectRouteProcessByRouteId(routeId);
             if (StringUtils.isNotEmpty(routeProcesses)) {
                 StringBuffer sb =new StringBuffer();
                 for (BaseRouteProcess routeProcess : routeProcesses) {
