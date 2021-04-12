@@ -3,8 +3,6 @@ package com.fantechs.provider.wms.in.service.impl;
 import com.fantechs.common.base.dto.storage.ManagerList;
 import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
-import com.fantechs.common.base.general.dto.bcm.PrintDto;
-import com.fantechs.common.base.general.dto.bcm.PrintModel;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
