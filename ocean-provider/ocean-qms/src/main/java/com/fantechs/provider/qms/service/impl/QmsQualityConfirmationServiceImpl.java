@@ -217,7 +217,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                     //打印成品条码
                 }
                 //修改工单状态
-                if (workOrderList.get(0).getWorkOrderQuantity().compareTo(qmsQualityConfirmation.getQualifiedQuantity()) == 0) {
+                if (workOrderList.get(0).getWorkOrderQty().compareTo(qmsQualityConfirmation.getQualifiedQuantity()) == 0) {
                     pmFeignApi.updateStatus(workOrderList.get(0).getWorkOrderId(), 4);
                 }
             }
