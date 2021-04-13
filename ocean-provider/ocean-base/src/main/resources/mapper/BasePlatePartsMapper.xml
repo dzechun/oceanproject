@@ -57,7 +57,7 @@
     LEFT JOIN ocean_v2.sys_user sus ON bpp.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON bpp.org_id = bo.organization_id
     LEFT JOIN fantech_imes_v2.base_material sm ON sm.material_id = bpp.material_id
-    LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.base_material_tab bt ON bt.material_id = sm.material_id
     LEFT JOIN fantech_imes_v2.base_product_model spm ON spm.product_model_id = bt.product_model_id
     LEFT JOIN fantech_imes_v2.base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
     <where>

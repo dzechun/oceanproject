@@ -91,7 +91,7 @@
         </if>
         from fantech_imes_v2.base_work_order swo
         left join fantech_imes_v2.base_material sm on swo.material_id=sm.material_id
-        LEFT JOIN base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
         left join base_product_model spm on spm.product_model_id = bt.product_model_id
         left join fantech_imes_v2.base_route sr on swo.route_id=sr.route_id
         left join fantech_imes_v2.base_pro_line spl on swo.pro_line_id=spl.pro_line_id

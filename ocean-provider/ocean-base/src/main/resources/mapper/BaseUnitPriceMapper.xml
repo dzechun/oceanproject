@@ -50,7 +50,7 @@
         bo.organization_name
         FROM fantech_imes_v2.base_unit_price bup
         LEFT JOIN fantech_imes_v2.base_material sm ON bup.material_id = sm.material_id
-        LEFT JOIN fantech_imes_v2.base_tab bt ON sm.material_id = bt.material_id
+        LEFT JOIN fantech_imes_v2.base_material_tab bt ON sm.material_id = bt.material_id
         LEFT JOIN fantech_imes_v2.base_product_model spm ON bt.product_model_id = spm.product_model_id
         left join ocean_v2.sys_user su on bup.create_user_id = su.user_id
         left join ocean_v2.sys_user sus on bup.modified_user_id = sus.user_id

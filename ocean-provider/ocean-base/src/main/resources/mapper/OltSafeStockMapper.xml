@@ -84,7 +84,7 @@ order by os.create_time desc
 </select>
 <select id="selectCountByCate" resultType="java.math.BigDecimal">
 SELECT sum(ssi.quantity) FROM base_storage_inventory ssi
-LEFT JOIN base_tab bt ON ssi.material_id = bt.material_id
+LEFT JOIN base_material_tab bt ON ssi.material_id = bt.material_id
 LEFT JOIN base_material_category smc ON bt.material_type = smc.material_category_id
 WHERE smc.material_category_id= #{materialCategoryId}
 </select>
