@@ -119,6 +119,7 @@
         bt.transfer_quantity AS 'transferQuantity',
         spl.pro_name AS 'proName',
         sr.route_name AS 'routeName',
+        sr.route_code AS 'routeCode',
         sbrs.barcode_rule_set_name AS 'barcodeRuleSetName',
         u.user_name AS 'createUserName',
         s.user_name AS 'modifiedUserName',

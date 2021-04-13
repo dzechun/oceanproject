@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -79,6 +80,14 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     @ApiModelProperty(name="routeName" ,value="工艺路线名称")
     @Excel(name = "工艺路线名称", height = 20, width = 30,orderNum="10")
     private String routeName;
+
+    /**
+     * 工艺路线编码
+     */
+    @Transient
+    @ApiModelProperty(name="routeCode",value = "工艺路线编码")
+    @Excel(name = "工艺路线编码", height = 20, width = 30,orderNum="")
+    private String routeCode;
 
     /**
      * 创建用户名称
