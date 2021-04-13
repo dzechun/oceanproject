@@ -15,7 +15,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.security.mapper.SysHtUserMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import com.fantechs.security.service.SysUserService;
@@ -37,7 +37,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     private SysHtUserMapper sysHtUserMapper;
 
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Resource
     private RedisUtil redisUtil;
@@ -214,7 +214,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
                 SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
                 searchBaseFactory.setCodeQueryMark((byte) 1);
                 searchBaseFactory.setFactoryCode(factoryCode);
-                List<BaseFactoryDto> smtFactoryDtos = basicFeignApi.findFactoryList(searchBaseFactory).getData();
+                List<BaseFactoryDto> smtFactoryDtos = baseFeignApi.findFactoryList(searchBaseFactory).getData();
                 if (StringUtils.isEmpty(smtFactoryDtos)){
                     fail.add(i+4);
                     continue;
@@ -227,7 +227,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
                 SearchBaseDept searchBaseDept = new SearchBaseDept();
                 searchBaseDept.setCodeQueryMark(1);
                 searchBaseDept.setDeptCode(deptCode);
-                List<BaseDept> baseDepts = basicFeignApi.selectDepts(searchBaseDept).getData();
+                List<BaseDept> baseDepts = baseFeignApi.selectDepts(searchBaseDept).getData();
                 if (StringUtils.isEmpty(baseDepts)){
                     fail.add(i+4);
                     continue;
