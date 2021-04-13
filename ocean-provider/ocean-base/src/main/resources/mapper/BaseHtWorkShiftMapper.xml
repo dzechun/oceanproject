@@ -10,7 +10,7 @@
     <result column="work_shift_code" jdbcType="VARCHAR" property="workShiftCode" />
     <result column="work_shift_name" jdbcType="VARCHAR" property="workShiftName" />
     <result column="work_shift_desc" jdbcType="VARCHAR" property="workShiftDesc" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -30,7 +30,7 @@
 	bhws.work_shift_code,
 	bhws.work_shift_name,
 	bhws.work_shift_desc,
-	bhws.organization_id,
+	bhws.org_id,
 	bhws.remark,
 	bhws.`status`,
 	bhws.create_user_id,
@@ -46,7 +46,7 @@
     FROM fantech_imes_v2.base_ht_work_shift bhws
     LEFT JOIN ocean_v2.sys_user su ON bhws.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bhws.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhws.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhws.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -5,8 +5,8 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="ht_organization_id" jdbcType="BIGINT" property="htOrganizationId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <id column="ht_org_id" jdbcType="BIGINT" property="htOrganizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
@@ -14,7 +14,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
 
@@ -23,8 +23,8 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    bho.ht_organization_id,
-	bho.organization_id,
+    bho.ht_org_id,
+	bho.org_id,
 	bho.organization_code,
 	bho.organization_name,
 	bho.organization_desc,

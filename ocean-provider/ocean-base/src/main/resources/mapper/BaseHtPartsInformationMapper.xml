@@ -9,7 +9,7 @@
     <result column="parts_information_id" jdbcType="BIGINT" property="partsInformationId" />
     <result column="parts_information_code" jdbcType="VARCHAR" property="partsInformationCode" />
     <result column="parts_information_name" jdbcType="VARCHAR" property="partsInformationName" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -42,7 +42,7 @@
     FROM fantech_imes_v2.base_ht_parts_information bhpi
     LEFT JOIN ocean_v2.sys_user su ON bhpi.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bhpi.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhpi.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhpi.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

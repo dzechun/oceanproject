@@ -8,7 +8,7 @@
     <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="parent_id" jdbcType="BIGINT" property="parentId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -35,7 +35,7 @@
 	sd.parent_id,
 	sd.`status`,
 	sd.remark,
-	sd.organization_id,
+	sd.org_id,
 	sd.create_user_id,
 	sd.create_time,
 	sd.modified_user_id,
@@ -51,10 +51,10 @@
     sf.factory_name,sf.factory_code,
     u.user_name as createUserName,
     s.user_name as modifiedUserName
-    from fantech_imes_v2.smt_dept sd
+    from fantech_imes_v2.base_dept sd
     left join ocean_v2.sys_user u on sd.create_user_id=u.user_id
     left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
-    left join fantech_imes_v2.smt_factory sf on sd.factory_id=sf.factory_id
+    left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -89,10 +89,10 @@
     sf.factory_name,
     u.user_name as createUserName,
     s.user_name as modifiedUserName
-    from fantech_imes_v2.smt_dept sd
+    from fantech_imes_v2.base_dept sd
     left join ocean_v2.sys_user u on sd.create_user_id=u.user_id
     left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
-    left join fantech_imes_v2.smt_factory sf on sd.factory_id=sf.factory_id
+    left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
     where sd.parent_id=#{parentId}
   </select>
 

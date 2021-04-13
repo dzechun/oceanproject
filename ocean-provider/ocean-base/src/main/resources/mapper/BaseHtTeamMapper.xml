@@ -13,7 +13,7 @@
         <result column="work_shop_id" jdbcType="BIGINT" property="workShopId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -37,7 +37,7 @@
         bht.work_shop_id,
         bht.`status`,
         bht.remark,
-        bht.organization_id,
+        bht.org_id,
         bht.create_time,
         bht.create_user_id,
         bht.modified_user_id,
@@ -51,7 +51,7 @@
         sws.work_shop_code, sws.work_shop_name, sws.work_shop_desc,
         su.user_name as create_user_name,sus.user_name as modified_user_name
         from fantech_imes_v2.base_ht_team bht
-        LEFT JOIN fantech_imes_v2.smt_work_shop sws on bht.work_shop_id = sws.work_shop_id
+        LEFT JOIN fantech_imes_v2.base_work_shop sws on bht.work_shop_id = sws.work_shop_id
         LEFT JOIN ocean_v2.sys_user su ON bht.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON bht.modified_user_id = sus.user_id
         <where>

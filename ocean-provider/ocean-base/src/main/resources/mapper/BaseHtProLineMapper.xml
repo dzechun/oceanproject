@@ -9,7 +9,7 @@
         <result column="pro_desc" jdbcType="VARCHAR" property="proDesc"/>
         <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
         <result column="work_shop_id" jdbcType="BIGINT" property="workShopId"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -37,7 +37,7 @@
         shpl.option1,
         shpl.option2,
         shpl.option3,
-        shpl.organization_id,
+        shpl.org_id,
         shpl.remark
     </sql>
 
@@ -49,12 +49,12 @@
         ws.work_shop_name as workShopName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.smt_ht_pro_line shpl
+        from fantech_imes_v2.base_ht_pro_line shpl
         left join ocean_v2.sys_user u on shpl.create_user_id=u.user_id
         left join ocean_v2.sys_user s on shpl.modified_user_id=s.user_id
-        left join fantech_imes_v2.smt_factory f on shpl.factory_id=f.factory_id
-        left join fantech_imes_v2.smt_work_shop ws on shpl.work_shop_id= ws.work_shop_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shpl.organization_id = bo.organization_id
+        left join fantech_imes_v2.base_factory f on shpl.factory_id=f.factory_id
+        left join fantech_imes_v2.base_work_shop ws on shpl.work_shop_id= ws.work_shop_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON shpl.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shpl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

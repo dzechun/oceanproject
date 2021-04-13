@@ -44,18 +44,18 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
     @Override
     public int save(BaseBadnessCategory record) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         this.codeIfRepeat(record);
 
         record.setCreateTime(new Date());
-//        record.setCreateUserId(user.getUserId());
+        record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
-//        record.setModifiedUserId(user.getUserId());
-//        record.setOrgId(user.getOrganizationId());
+        record.setModifiedUserId(user.getUserId());
+        record.setOrgId(user.getOrganizationId());
 
         int i = baseBadnessCategoryMapper.insertUseGeneratedKeys(record);
 
@@ -68,14 +68,14 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
     @Override
     public int update(BaseBadnessCategory entity) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         this.codeIfRepeat(entity);
 
-//        entity.setModifiedUserId(user.getUserId());
+        entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
 
         BaseHtBadnessCategory baseHtBadnessCategory = new BaseHtBadnessCategory();
@@ -87,10 +87,10 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
     @Override
     public int batchDelete(String ids) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         List<BaseHtBadnessCategory> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -111,9 +111,12 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
     private void codeIfRepeat(BaseBadnessCategory entity){
         Example example = new Example(BaseBadnessCategory.class);
-        Example.Criteria criteria1 = example.createCriteria();
+        Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("badnessCategoryCode",entity.getBadnessCategoryCode());
+        criteria.andEqualTo("badnessCategoryCode",entity.getBadnessCategoryCode());
+        if (StringUtils.isNotEmpty(entity.getBadnessCategoryId())){
+            criteria.andNotEqualTo("badnessCategoryId",entity.getBadnessCategoryId());
+        }
         BaseBadnessCategory baseBadnessCategory = baseBadnessCategoryMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseBadnessCategory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);

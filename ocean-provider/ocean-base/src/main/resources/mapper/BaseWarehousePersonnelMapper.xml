@@ -10,7 +10,7 @@
     <result column="personnel_id" jdbcType="BIGINT" property="personnelId" />
     <result column="duty" jdbcType="TINYINT" property="duty" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -33,7 +33,7 @@
 	swp.personnel_id,
 	swp.duty,
 	swp.remark,
-	swp.organization_id,
+	swp.org_id,
 	swp.create_user_id,
 	swp.create_time,
 	swp.modified_user_id,
@@ -47,11 +47,11 @@
     u.user_name as createUserName, s.user_name as modifiedUserName,
     suss.user_code,suss.nick_name,suss.mobile,suss.email,
     bo.organization_name
-    from fantech_imes_v2.smt_warehouse_personnel swp
+    from fantech_imes_v2.base_warehouse_personnel swp
     left join ocean_v2.sys_user u on swp.create_user_id=u.user_id
     left join ocean_v2.sys_user s on swp.modified_user_id=s.user_id
     left join ocean_v2.sys_user suss on swp.personnel_id=suss.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON swp.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON swp.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(swp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

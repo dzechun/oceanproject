@@ -5,11 +5,11 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <id column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -76,7 +76,7 @@
   </delete>
 
   <insert id="insertUser" parameterType="java.util.List">
-    INSERT INTO ocean_v2.sys_organization_user(organization_id, user_id)
+    INSERT INTO ocean_v2.sys_organization_user(org_id, user_id)
     VALUES
     <foreach collection="list" item="item" separator=",">
       (#{item.organizationId},#{item.userId})
@@ -86,7 +86,7 @@
   <select id="findOrganizationByUserId" parameterType="long" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>
     from fantech_imes_v2.base_organization bo
-    left join ocean_v2.sys_organization_user sou on bo.organization_id = sou.organization_id
+    left join ocean_v2.sys_organization_user sou on bo.organization_id = sou.org_id
     where sou.user_id = #{userId}
   </select>
 </mapper>

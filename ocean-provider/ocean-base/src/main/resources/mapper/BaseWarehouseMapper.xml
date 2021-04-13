@@ -13,7 +13,7 @@
         <result column="mrb_operation" jdbcType="TINYINT" property="mrbOperation"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -40,7 +40,7 @@
         sw.mrb_operation,
         sw.`status`,
         sw.remark,
-        sw.organization_id,
+        sw.org_id,
         sw.create_user_id,
         sw.create_time,
         sw.modified_user_id,
@@ -56,10 +56,10 @@
         select  <include refid="Base_Column_List"></include>,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.smt_warehouse sw
+        from fantech_imes_v2.base_warehouse sw
         left join ocean_v2.sys_user u on sw.create_user_id=u.user_id
         left join ocean_v2.sys_user s on sw.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sw.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sw.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -85,7 +85,7 @@
 
     <update id="batchUpdateByCode" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-            update smt_warehouse
+            update base_warehouse
             <set>
                 warehouse_code =#{item.warehouseCode},
                 warehouse_name =#{item.warehouseName},

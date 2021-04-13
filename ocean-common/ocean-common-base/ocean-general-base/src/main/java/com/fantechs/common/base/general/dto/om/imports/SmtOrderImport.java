@@ -91,12 +91,12 @@ public class SmtOrderImport implements Serializable {
     @Excel(name = "产品数量")
     private java.math.BigDecimal total;
 
-    /**
-     * 编箱号
-     */
-    @ApiModelProperty(value = "编箱号",example = "编箱号")
-    @Excel(name = "编箱号")
-    private String boxCode;
+//    /**
+//     * 编箱号
+//     */
+//    @ApiModelProperty(value = "编箱号",example = "编箱号")
+//    @Excel(name = "编箱号")
+//    private String boxCode;
 
     /**
      * 包装规格id

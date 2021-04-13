@@ -8,7 +8,7 @@
         <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc"/>
         <result column="supplier_type" jdbcType="TINYINT" property="supplierType"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -37,7 +37,7 @@
         ss.supplier_type,
         ss.`status`,
         ss.remark,
-        ss.organization_id,
+        ss.org_id,
         ss.create_user_id,
         ss.create_time,
         ss.modified_user_id,
@@ -52,13 +52,13 @@
         select <include refid="Base_Column_List"></include>,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.smt_supplier ss
+        from fantech_imes_v2.base_supplier ss
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
         <if test="addressDetail!=null and addressDetail!=''">
-            LEFT JOIN fantech_imes_v2.smt_supplier_address ssa ON ssa.supplier_id = ss.supplier_id
-            LEFT JOIN fantech_imes_v2.smt_address sa ON sa.address_id = ssa.address_id
+            LEFT JOIN fantech_imes_v2.base_supplier_address ssa ON ssa.supplier_id = ss.supplier_id
+            LEFT JOIN fantech_imes_v2.base_address sa ON sa.address_id = ssa.address_id
         </if>
         <where>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">

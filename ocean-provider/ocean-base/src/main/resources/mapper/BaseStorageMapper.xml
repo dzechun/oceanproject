@@ -14,7 +14,7 @@
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -47,7 +47,7 @@
         ss.warehouse_area_id,
         ss.`status`,
         ss.remark,
-        ss.organization_id,
+        ss.org_id,
         ss.create_user_id,
         ss.create_time,
         ss.modified_user_id,
@@ -65,12 +65,12 @@
         u.user_name as createUserName, s.user_name as modifiedUserName,
         swa.warehouse_area_code, swa.warehouse_area_name, swa.warehouse_area_name as warehouseAreaName,
         bo.organization_name
-        from fantech_imes_v2.smt_storage ss
-        left join fantech_imes_v2.smt_warehouse sw on ss.warehouse_id=sw.warehouse_id
-        left join fantech_imes_v2.smt_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
+        from fantech_imes_v2.base_storage ss
+        left join fantech_imes_v2.base_warehouse sw on ss.warehouse_id=sw.warehouse_id
+        left join fantech_imes_v2.base_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -111,7 +111,7 @@
 
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-            update smt_storage
+            update base_storage
             <set>
                 storage_code =#{item.storageCode},
                 storage_name =#{item.storageName},

@@ -11,8 +11,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInFinishedProductDto;
-import com.fantechs.common.base.general.entity.bcm.BcmBarCodeDet;
-import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsPdaInspection;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;

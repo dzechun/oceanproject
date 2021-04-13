@@ -12,7 +12,7 @@
         <result column="transport_category_id" jdbcType="BIGINT" property="transportCategoryId"/>
         <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="org_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -34,7 +34,7 @@
 	bhse.transport_category_id,
 	bhse.contacts,
 	bhse.phone,
-	bhse.organization_id,
+	bhse.org_id,
 	bhse.remark,
 	bhse.`status`,
 	bhse.create_user_id,
@@ -50,7 +50,7 @@
         FROM fantech_imes_v2.base_ht_shipment_enterprise AS bhse
         LEFT JOIN ocean_v2.sys_user su ON bhse.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON bhse.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON bhse.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON bhse.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(bhse.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -12,7 +12,7 @@
     <result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -28,7 +28,7 @@
 	bsp.effective_end_time,
 	bsp.`status`,
 	bsp.remark,
-	bsp.organization_id,
+	bsp.org_id,
 	bsp.create_user_id,
 	bsp.create_time,
 	bsp.modified_user_id,
