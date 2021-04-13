@@ -9,4 +9,6 @@ import java.util.Map;
 
 public interface SysSpecItemMapper extends MyMapper<SysSpecItem> {
     List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem);
+
+    List<SysSpecItem> findByMenuIdList(SearchSysSpecItem searchSysSpecItem);
 }

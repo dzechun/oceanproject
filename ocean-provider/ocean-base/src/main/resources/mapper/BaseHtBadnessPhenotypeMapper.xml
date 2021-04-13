@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtBadnessPhenotypeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenotype">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_badness_phenotype_id" jdbcType="BIGINT" property="htBadnessPhenotypeId" />
+    <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
+    <result column="badness_phenotype_code" jdbcType="VARCHAR" property="badnessPhenotypeCode" />
+    <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhbp.ht_badness_phenotype_id,
+    bhbp.badness_category_id,
+    bhbp.badness_phenotype_code,
+    bhbp.badness_phenotype_desc,
+    bhbp.org_id,
+    bhbp.remark,
+    bhbp.`status`,
+    bhbp.create_user_id,
+    bhbp.create_time,
+    bhbp.modified_user_id,
+    bhbp.modified_time,
+    bhbp.is_delete
+   </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    from fantech_imes_v2.base_ht_badness_phenotype bhbp
+    left join ocean_v2.sys_user su on bhbp.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on bhbp.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhbp.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="badnessPhenotypeCode != null and badnessPhenotypeCode != ''">
+        and bhbp.badness_phenotype_code like CONCAT('%',#{badnessPhenotypeCode},'%')
+      </if>
+      <if test="badnessPhenotypeDesc != null and badnessPhenotypeDesc != ''">
+        and bhbp.badness_phenotype_desc like CONCAT('%',#{badnessPhenotypeDesc},'%')
+      </if>
+    </where>
+  </select>
+
+
+</mapper>

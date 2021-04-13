@@ -9,7 +9,7 @@
     <result column="unit_price_id" jdbcType="BIGINT" property="unitPriceId" />
     <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -33,7 +33,7 @@
 	bupd.unit_price_id,
 	bupd.unit_price,
 	bupd.process_id,
-	bupd.organization_id,
+	bupd.org_id,
 	bupd.remark,
 	bupd.`status`,
 	bupd.create_user_id,
@@ -48,11 +48,11 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     sp.process_code,sp.process_name,sp.process_desc,
     bo.organization_name
-    FROM fantech_imes.base_unit_price_det bupd
-    LEFT JOIN fantech_imes.smt_process sp ON bupd.process_id = sp.process_id
-    LEFT JOIN ocean.sys_user su on bupd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus on bupd.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON bupd.organization_id = bo.organization_id
+    FROM fantech_imes_v2.base_unit_price_det bupd
+    LEFT JOIN fantech_imes_v2.base_process sp ON bupd.process_id = sp.process_id
+    LEFT JOIN ocean_v2.sys_user su on bupd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus on bupd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bupd.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bupd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

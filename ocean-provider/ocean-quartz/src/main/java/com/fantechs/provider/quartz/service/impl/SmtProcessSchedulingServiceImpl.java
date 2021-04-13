@@ -3,9 +3,9 @@ package com.fantechs.provider.quartz.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto;
-import com.fantechs.common.base.general.entity.bcm.SmtProcessScheduling;
-import com.fantechs.common.base.general.entity.bcm.search.SearchSmtProcessScheduling;
+import com.fantechs.common.base.general.dto.basic.BaseProcessSchedulingDto;
+import com.fantechs.common.base.general.entity.basic.BaseProcessScheduling;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcessScheduling;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -14,7 +14,6 @@ import com.fantechs.provider.quartz.mapper.SmtProcessSchedulingMapper;
 import com.fantechs.provider.quartz.service.SmtProcessSchedulingService;
 import com.fantechs.provider.quartz.config.QuartzDoInterface;
 import com.fantechs.provider.quartz.service.QuartzManagerService;
-import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,7 @@ import java.util.Map;
  * Created by mr.lei on 2021/03/08.
  */
 @Service
-public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessScheduling> implements SmtProcessSchedulingService {
+public class SmtProcessSchedulingServiceImpl extends BaseService<BaseProcessScheduling> implements SmtProcessSchedulingService {
 
     @Resource
     private SmtProcessSchedulingMapper smtProcessSchedulingMapper;
@@ -39,24 +38,24 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
     private String DEFAULT_GROUP = "DEFAULT";
 
     @Override
-    public List<SmtProcessSchedulingDto> findList(SearchSmtProcessScheduling searchSmtProcessScheduling) {
-        return smtProcessSchedulingMapper.findList(searchSmtProcessScheduling);
+    public List<BaseProcessSchedulingDto> findList(SearchBaseProcessScheduling searchBaseProcessScheduling) {
+        return smtProcessSchedulingMapper.findList(searchBaseProcessScheduling);
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int start(Long Id) {
         SysUser sysUser = currentUser();
-        SmtProcessScheduling smtProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(Id);
-        smtProcessScheduling.setProcessSchedulingId(Id);
-        smtProcessScheduling.setModifiedUserId(sysUser.getUserId());
-        smtProcessScheduling.setModifiedTime(new Date());
-        smtProcessScheduling.setExecuteStatus((byte)1);
-        int num = smtProcessSchedulingMapper.updateByPrimaryKeySelective(smtProcessScheduling);
+        BaseProcessScheduling baseProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(Id);
+        baseProcessScheduling.setProcessSchedulingId(Id);
+        baseProcessScheduling.setModifiedUserId(sysUser.getUserId());
+        baseProcessScheduling.setModifiedTime(new Date());
+        baseProcessScheduling.setExecuteStatus((byte)1);
+        int num = smtProcessSchedulingMapper.updateByPrimaryKeySelective(baseProcessScheduling);
 
         //开始任务
         try {
-            if(smtProcessScheduling.getExecuteObjectType()==(byte)0){
+            if(baseProcessScheduling.getExecuteObjectType()==(byte)0){
                 quartzManager.resumeJob(Id.toString(),DEFAULT_GROUP);
             }
         }catch (Exception e){
@@ -69,16 +68,16 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
     @Transactional(rollbackFor = RuntimeException.class)
     public int stop(Long Id) {
         SysUser sysUser = currentUser();
-        SmtProcessScheduling smtProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(Id);
-        smtProcessScheduling.setProcessSchedulingId(Id);
-        smtProcessScheduling.setModifiedUserId(sysUser.getUserId());
-        smtProcessScheduling.setModifiedTime(new Date());
-        smtProcessScheduling.setExecuteStatus((byte)0);
-        int num = smtProcessSchedulingMapper.updateByPrimaryKeySelective(smtProcessScheduling);
+        BaseProcessScheduling baseProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(Id);
+        baseProcessScheduling.setProcessSchedulingId(Id);
+        baseProcessScheduling.setModifiedUserId(sysUser.getUserId());
+        baseProcessScheduling.setModifiedTime(new Date());
+        baseProcessScheduling.setExecuteStatus((byte)0);
+        int num = smtProcessSchedulingMapper.updateByPrimaryKeySelective(baseProcessScheduling);
 
         //开始任务
         try {
-            if(smtProcessScheduling.getExecuteObjectType()==(byte)0) {
+            if(baseProcessScheduling.getExecuteObjectType()==(byte)0) {
                 quartzManager.stopJob(Id.toString(), DEFAULT_GROUP);
             }
         }catch (Exception e){
@@ -90,9 +89,9 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
     @Override
     public List<Map<String, Object>> detail(Long Id) {
         try {
-            SmtProcessScheduling smtProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(Id);
+            BaseProcessScheduling baseProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(Id);
             List<Map<String,Object>> list = new ArrayList<>();
-            if(smtProcessScheduling.getExecuteObjectType()==(byte)0){
+            if(baseProcessScheduling.getExecuteObjectType()==(byte)0){
                 list= quartzManager.getJob(Id.toString(),DEFAULT_GROUP);
             }
             return list;
@@ -103,7 +102,7 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(SmtProcessScheduling record) {
+    public int save(BaseProcessScheduling record) {
         SysUser sysUser = currentUser();
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
@@ -124,7 +123,7 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(SmtProcessScheduling entity) {
+    public int update(BaseProcessScheduling entity) {
         SysUser sysUser = currentUser();
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
@@ -150,12 +149,12 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<SmtProcessSched
         try {
             String[] arrayId = ids.split(",");
             for (String s : arrayId) {
-                SmtProcessScheduling smtProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(s);
-                if(StringUtils.isEmpty(smtProcessScheduling)){
+                BaseProcessScheduling baseProcessScheduling = smtProcessSchedulingMapper.selectByPrimaryKey(s);
+                if(StringUtils.isEmpty(baseProcessScheduling)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
-                if(smtProcessScheduling.getExecuteObjectType()==(byte)0){
-                    quartzManager.deleteJob(smtProcessScheduling.getProcessSchedulingId().toString(),DEFAULT_GROUP);
+                if(baseProcessScheduling.getExecuteObjectType()==(byte)0){
+                    quartzManager.deleteJob(baseProcessScheduling.getProcessSchedulingId().toString(),DEFAULT_GROUP);
                 }
             }
         }catch (Exception e){

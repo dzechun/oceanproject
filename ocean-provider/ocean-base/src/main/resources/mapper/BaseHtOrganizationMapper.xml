@@ -5,8 +5,8 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="ht_organization_id" jdbcType="BIGINT" property="htOrganizationId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <id column="ht_org_id" jdbcType="BIGINT" property="htOrganizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
@@ -14,7 +14,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
 
@@ -23,8 +23,8 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    bho.ht_organization_id,
-	bho.organization_id,
+    bho.ht_org_id,
+	bho.org_id,
 	bho.organization_code,
 	bho.organization_name,
 	bho.organization_desc,
@@ -38,9 +38,9 @@
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    FROM fantech_imes.base_ht_organization bho
-    LEFT JOIN ocean.sys_user su ON bho.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON bho.modified_user_id = sus.user_id
+    FROM fantech_imes_v2.base_ht_organization bho
+    LEFT JOIN ocean_v2.sys_user su ON bho.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bho.modified_user_id = sus.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bho.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

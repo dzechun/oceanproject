@@ -17,13 +17,13 @@ import java.util.Date;
 
 /**
  * 员工操作日志表
- * smt_emp_operation_log
+ * base_emp_operation_log
  *
  * @author jbb
  * @date 2021-03-12 18:45:47
  */
 @Data
-@Table(name = "smt_emp_operation_log")
+@Table(name = "base_emp_operation_log")
 public class SmtEmpOperationLog extends ValidGroup implements Serializable {
     /**
      * 员工操作日志ID

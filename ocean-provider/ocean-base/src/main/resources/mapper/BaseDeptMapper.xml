@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseDeptMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseDept">
+    <id column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="dept_code" jdbcType="VARCHAR" property="deptCode" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc" />
+    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="factory_name" jdbcType="BIGINT" property="factoryName" />
+    <result column="factory_code" jdbcType="BIGINT" property="factoryCode" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <collection property="depts" ofType="com.fantechs.common.base.general.entity.basic.BaseDept" select="com.fantechs.provider.base.mapper.BaseDeptMapper.findById" column="dept_id"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    sd.dept_id,
+	sd.dept_code,
+	sd.dept_name,
+	sd.dept_desc,
+	sd.factory_id,
+	sd.parent_id,
+	sd.`status`,
+	sd.remark,
+	sd.org_id,
+	sd.create_user_id,
+	sd.create_time,
+	sd.modified_user_id,
+	sd.modified_time,
+	sd.is_delete,
+	sd.option1,
+	sd.option2,
+	sd.option3
+  </sql>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseDept" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    sf.factory_name,sf.factory_code,
+    u.user_name as createUserName,
+    s.user_name as modifiedUserName
+    from fantech_imes_v2.base_dept sd
+    left join ocean_v2.sys_user u on sd.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="deptCode!=null and deptCode!='' and codeQueryMark != 1">
+        and sd.dept_code like CONCAT('%', #{deptCode}, '%')
+      </if>
+      <if test="deptCode!=null and deptCode!='' and codeQueryMark == 1">
+        and sd.dept_code = #{deptCode}
+      </if>
+      <if test="deptName!=null and deptName!=''">
+        and sd.dept_name like CONCAT('%', #{deptName}, '%')
+      </if>
+      <if test="deptDesc!=null and deptDesc!=''">
+        and sd.dept_desc like CONCAT('%', #{deptDesc}, '%')
+      </if>
+      <if test="factoryId!=null and factoryId!=''">
+        and sd.factory_id=#{factoryId}
+      </if>
+      <if test="parentId!=null and parentId!=''">
+        and sd.parent_id=#{parentId}
+      </if>
+      <if test="status!=null">
+        and sd.status=#{status}
+      </if>
+    </where>
+    order by sd.create_time desc
+  </select>
+
+  <select id="findById" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseDept" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    sf.factory_name,
+    u.user_name as createUserName,
+    s.user_name as modifiedUserName
+    from fantech_imes_v2.base_dept sd
+    left join ocean_v2.sys_user u on sd.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
+    where sd.parent_id=#{parentId}
+  </select>
+
+</mapper>

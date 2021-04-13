@@ -1,0 +1,107 @@
+package com.fantechs.provider.base.service.impl;
+
+
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.entity.basic.BaseCustomer;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseCustomer;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.mapper.BaseCustomerMapper;
+import com.fantechs.provider.base.service.BaseCustomerService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+
+/**
+ *
+ * Created by wcz on 2020/09/27.
+ */
+@Service
+public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implements BaseCustomerService {
+
+    @Resource
+    private BaseCustomerMapper baseCustomerMapper;
+
+    @Override
+    public List<BaseCustomer> findList(SearchBaseCustomer searchBaseCustomer) {
+        return baseCustomerMapper.findList(searchBaseCustomer);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int save(BaseCustomer baseCustomer) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Example example = new Example(BaseCustomer.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("customerCode", baseCustomer.getCustomerCode());
+        List<BaseCustomer> baseCustomers = baseCustomerMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(baseCustomers)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        baseCustomer.setCreateUserId(currentUser.getUserId());
+        baseCustomer.setCreateTime(new Date());
+        baseCustomer.setModifiedUserId(currentUser.getUserId());
+        baseCustomer.setModifiedTime(new Date());
+        int i = baseCustomerMapper.insertSelective(baseCustomer);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        int i=0;
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        String[] customerIds = ids.split(",");
+        for (String customerId : customerIds) {
+            BaseCustomer baseCustomer = baseCustomerMapper.selectByPrimaryKey(customerId);
+            if(StringUtils.isEmpty(baseCustomer)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+        }
+
+        return baseCustomerMapper.deleteByIds(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(BaseCustomer baseCustomer) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Example example = new Example(BaseCustomer.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("customerCode", baseCustomer.getCustomerCode());
+
+        BaseCustomer customer = baseCustomerMapper.selectOneByExample(example);
+
+        if(StringUtils.isNotEmpty(customer)&&!customer.getCustomerId().equals(baseCustomer.getCustomerId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        baseCustomer.setModifiedUserId(currentUser.getUserId());
+        baseCustomer.setModifiedTime(new Date());
+        int i= baseCustomerMapper.updateByPrimaryKeySelective(baseCustomer);
+
+        return i;
+    }
+}

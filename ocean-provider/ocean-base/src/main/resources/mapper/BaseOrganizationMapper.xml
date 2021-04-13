@@ -5,11 +5,11 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <id column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -42,9 +42,9 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    FROM fantech_imes.base_organization bo
-    LEFT JOIN ocean.sys_user su ON bo.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON bo.modified_user_id = sus.user_id
+    FROM fantech_imes_v2.base_organization bo
+    LEFT JOIN ocean_v2.sys_user su ON bo.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bo.modified_user_id = sus.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -72,11 +72,11 @@
   </select>
 
   <delete id="deleteUserByOrganization" parameterType="long">
-    DELETE FROM ocean.sys_organization_user WHERE organization_user_id = #{organizationId}
+    DELETE FROM ocean_v2.sys_organization_user WHERE organization_user_id = #{organizationId}
   </delete>
 
   <insert id="insertUser" parameterType="java.util.List">
-    INSERT INTO ocean.sys_organization_user(organization_id, user_id)
+    INSERT INTO ocean_v2.sys_organization_user(org_id, user_id)
     VALUES
     <foreach collection="list" item="item" separator=",">
       (#{item.organizationId},#{item.userId})
@@ -85,8 +85,8 @@
 
   <select id="findOrganizationByUserId" parameterType="long" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>
-    from fantech_imes.base_organization bo
-    left join ocean.sys_organization_user sou on bo.organization_id = sou.organization_id
+    from fantech_imes_v2.base_organization bo
+    left join ocean_v2.sys_organization_user sou on bo.organization_id = sou.org_id
     where sou.user_id = #{userId}
   </select>
 </mapper>

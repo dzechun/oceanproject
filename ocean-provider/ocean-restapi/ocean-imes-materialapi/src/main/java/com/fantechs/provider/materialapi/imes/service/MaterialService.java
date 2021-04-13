@@ -1,7 +1,7 @@
 package com.fantechs.provider.materialapi.imes.service;
 
 
-import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -16,5 +16,5 @@ public interface MaterialService {
     String testMethod(String testName);
 
     @WebMethod
-    String syncMaterial(List<SmtMaterial> smtMaterials);
+    String syncMaterial(List<BaseMaterial> baseMaterials);
 }

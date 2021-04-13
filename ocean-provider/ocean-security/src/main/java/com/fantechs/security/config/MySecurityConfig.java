@@ -1,11 +1,14 @@
 package com.fantechs.security.config;
 
 
-
+import com.fantechs.security.filter.CustomAuthenticationDetailsSource;
 import com.fantechs.security.securityIntercepter.*;
 import com.fantechs.security.service.impl.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,11 +16,13 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 
@@ -38,6 +43,9 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
     private MyAccessDeniedHandler myAccessDeniedHandler;
     @Resource
     private MyLogoutSuccessHandler myLogoutSuccessHandler;
+
+    @Autowired
+    private CustomAuthenticationDetailsSource customAuthenticationDetailsSource;
 
     private String[] white_list={
 //            "/*/**"
@@ -76,6 +84,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/tologin")
                 .loginProcessingUrl("/login")
+                .authenticationDetailsSource(customAuthenticationDetailsSource)
                 .successHandler(myAuthenticationSuccessHandler)//可以配置登录成功的提示
                 .failureHandler(myAuthenticationFailHandler)//登录失败的提示
                 .permitAll()
@@ -85,6 +94,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(myLogoutSuccessHandler)//退出登录的提示
                 .permitAll().
                 and().csrf().disable()
+//                .addFilterAt(new MyUsernamePasswordAuthenticationFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().accessDeniedHandler(myAccessDeniedHandler);
     }
 
@@ -97,6 +107,12 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
 

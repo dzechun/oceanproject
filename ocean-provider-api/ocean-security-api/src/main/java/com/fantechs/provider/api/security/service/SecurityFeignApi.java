@@ -26,7 +26,7 @@ import java.util.List;
 public interface SecurityFeignApi {
 
     @PostMapping(value = "/login")
-    ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password);
+    ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password,@RequestParam(value = "orgId") Long orgId);
 
 
     @GetMapping(value = "/logout")

@@ -1,9 +1,6 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
-import com.fantechs.common.base.entity.basic.SmtFactory;
-import com.fantechs.common.base.entity.basic.history.SmtHtFactory;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductFamilyImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
@@ -22,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -198,11 +194,12 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         if (StringUtils.isNotEmpty(productFamilyImports)){
             for (BaseProductFamilyImport productFamilyImport : productFamilyImports) {
                 BaseProductFamily baseProductFamily = new BaseProductFamily();
-                BeanUtils.copyProperties(baseProductFamily,productFamilyImport);
+                BeanUtils.copyProperties(productFamilyImport,baseProductFamily);
                 baseProductFamily.setCreateTime(new Date());
                 baseProductFamily.setCreateUserId(currentUser.getUserId());
                 baseProductFamily.setModifiedTime(new Date());
                 baseProductFamily.setModifiedUserId(currentUser.getUserId());
+                baseProductFamily.setStatus((byte) 1);
                 list.add(baseProductFamily);
             }
 

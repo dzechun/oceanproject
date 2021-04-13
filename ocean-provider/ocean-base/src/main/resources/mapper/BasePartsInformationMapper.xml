@@ -8,7 +8,7 @@
     <id column="parts_information_id" jdbcType="BIGINT" property="partsInformationId" />
     <result column="parts_information_code" jdbcType="VARCHAR" property="partsInformationCode" />
     <result column="parts_information_name" jdbcType="VARCHAR" property="partsInformationName" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -40,10 +40,10 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name
-    FROM fantech_imes.base_parts_information bpi
-    LEFT JOIN ocean.sys_user su ON bpi.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON bpi.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON bpi.organization_id = bo.organization_id
+    FROM fantech_imes_v2.base_parts_information bpi
+    LEFT JOIN ocean_v2.sys_user su ON bpi.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bpi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bpi.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bpi.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProLineMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProLine">
+        <id column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="pro_code" jdbcType="VARCHAR" property="proCode"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="pro_desc" jdbcType="VARCHAR" property="proDesc"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="work_shop_id" jdbcType="BIGINT" property="workShopId"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        spl.pro_line_id,
+        spl.pro_code,
+        spl.pro_name,
+        spl.pro_desc,
+        spl.factory_id,
+        spl.work_shop_id,
+        spl.status,
+        spl.create_user_id,
+        spl.create_time,
+        spl.modified_user_id,
+        spl.modified_time,
+        spl.is_delete,
+        spl.option1,
+        spl.option2,
+        spl.option3,
+        spl.org_id,
+        spl.remark
+    </sql>
+
+    <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        f.factory_name as factoryName,
+        ws.work_shop_name as workShopName,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes_v2.base_pro_line spl
+        left join ocean_v2.sys_user u on spl.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on spl.modified_user_id=s.user_id
+        left join fantech_imes_v2.base_factory f on spl.factory_id=f.factory_id
+        left join fantech_imes_v2.base_work_shop ws on spl.work_shop_id= ws.work_shop_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spl.org_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(spl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="proCode!=null and proCode!='' and codeQueryMark==1">
+                and spl.pro_code = #{proCode}
+            </if>
+            <if test="proCode!=null and proCode!='' and codeQueryMark!=1">
+                and spl.pro_code like CONCAT('%', #{proCode}, '%')
+            </if>
+            <if test="proName!=null and proName!=''">
+                and spl.pro_name like CONCAT('%', #{proName}, '%')
+            </if>
+            <if test="proDesc!=null and proDesc!=''">
+                and spl.pro_desc like CONCAT('%', #{proDesc}, '%')
+            </if>
+            <if test="workShopId!=null and workShopId!=''">
+                and spl.work_shop_id = #{workShopId}
+            </if>
+            <if test="status!=null">
+                and spl.status=#{status}
+            </if>
+        </where>
+        order by spl.create_time desc
+    </select>
+</mapper>

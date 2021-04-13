@@ -52,6 +52,8 @@
       <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
       <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
       <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
+      <result column="voltage" jdbcType="DECIMAL" property="voltage" />
+      <result column="expiration_date" jdbcType="DECIMAL" property="expirationDate" />
   </resultMap>
 
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseTabDto" extends="BaseResultMap">
@@ -73,53 +75,55 @@
     </resultMap>
 
   <sql id="Base_Column_List">
-    bt.tab_id,
-	bt.material_id,
-	bt.inspection_item_id,
-	bt.package_specification_id,
-	bt.product_model_id,
-	bt.label_category_id,
-	bt.label_id,
-	bt.inspection_type_id,
-	bt.supplier_id,
-	bt.simple_name,
-	bt.english_describe,
-	bt.material_property,
-	bt.image,
-	bt.is_quality_test,
-	bt.is_batch,
-	bt.is_case_code,
-	bt.is_sequence_code,
-	bt.if_compoboard,
-	bt.issue_method,
-	bt.if_linking_board,
-	bt.linking_board_number,
-	bt.takt,
-	bt.min_safety_stock,
-	bt.max_safety_stock,
-	bt.purchase_cycle,
-	bt.transfer_quantity,
-	bt.main_unit,
-	bt.sub_unit,
-	bt.conversion_rate,
-	bt.customer_material_code,
-	bt.color,
-	bt.supply_mode,
-	bt.length,
-	bt.width,
-	bt.height,
-	bt.volume,
-	bt.net_weight,
-	bt.gross_weight,
-	bt.material_type,
-	bt.purchase_quantity,
-	bt.storage_temperature,
-	bt.storage_humidity,
-	bt.storage_require_desc,
-	bt.packing_method,
-	bt.is_wet_sensitive,
-	bt.wet_sensitive_level,
-	bt.material_quality
+      bmt.tab_id,
+	bmt.material_id,
+	bmt.inspection_item_id,
+	bmt.package_specification_id,
+	bmt.product_model_id,
+	bmt.label_category_id,
+	bmt.label_id,
+	bmt.inspection_type_id,
+	bmt.supplier_id,
+	bmt.simple_name,
+	bmt.english_describe,
+	bmt.material_property,
+	bmt.image,
+	bmt.is_quality_test,
+	bmt.is_batch,
+	bmt.is_case_code,
+	bmt.is_sequence_code,
+	bmt.if_compoboard,
+	bmt.issue_method,
+	bmt.if_linking_board,
+	bmt.linking_board_number,
+	bmt.takt,
+	bmt.min_safety_stock,
+	bmt.max_safety_stock,
+	bmt.purchase_cycle,
+	bmt.transfer_quantity,
+	bmt.main_unit,
+	bmt.sub_unit,
+	bmt.conversion_rate,
+	bmt.customer_material_code,
+	bmt.color,
+	bmt.supply_mode,
+	bmt.length,
+	bmt.width,
+	bmt.height,
+	bmt.volume,
+	bmt.net_weight,
+	bmt.gross_weight,
+	bmt.material_type,
+	bmt.purchase_quantity,
+	bmt.storage_temperature,
+	bmt.storage_humidity,
+	bmt.storage_require_desc,
+	bmt.packing_method,
+	bmt.is_wet_sensitive,
+	bmt.wet_sensitive_level,
+	bmt.material_quality,
+    bmt.voltage,
+    bmt.expiration_date
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -131,20 +135,20 @@
       blc.label_category_code,blc.label_category_name,
       bl.label_code,bl.label_name,
       ss.supplier_name,ss.supplier_code
-    FROM fantech_imes.base_tab bt
-    LEFT JOIN fantech_imes.qms_inspection_item qii ON bt.inspection_item_id = qii.inspection_item_id
-    LEFT JOIN fantech_imes.qms_inspection_type qit ON bt.inspection_type_id = qit.inspection_type_id
-    LEFT JOIN fantech_imes.smt_package_specification sps ON bt.package_specification_id = sps.package_specification_id
-    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-    LEFT JOIN fantech_imes.bcm_label_category blc ON bt.label_category_id = blc.label_category_id
-    LEFT JOIN fantech_imes.bcm_label bl ON bt.label_id = bl.label_id
-    LEFT JOIN fantech_imes.smt_supplier ss ON bt.supplier_id = ss.supplier_id
+    FROM fantech_imes_v2.base_material_tab bmt
+    LEFT JOIN fantech_imes_v2.qms_inspection_item qii ON bmt.inspection_item_id = qii.inspection_item_id
+    LEFT JOIN fantech_imes_v2.qms_inspection_type qit ON bmt.inspection_type_id = qit.inspection_type_id
+    LEFT JOIN fantech_imes_v2.base_package_specification sps ON bmt.package_specification_id = sps.package_specification_id
+    LEFT JOIN fantech_imes_v2.base_product_model spm ON bmt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes_v2.bcm_label_category blc ON bmt.label_category_id = blc.label_category_id
+    LEFT JOIN fantech_imes_v2.bcm_label bl ON bmt.label_id = bl.label_id
+    LEFT JOIN fantech_imes_v2.base_supplier ss ON bmt.supplier_id = ss.supplier_id
     <where>
       <if test="materialId != null">
-        and bt.material_id = #{materialId}
+        and bmt.material_id = #{materialId}
       </if>
       <if test="productModelId != null">
-        and bt.product_model_id = #{productModelId}
+        and bmt.product_model_id = #{productModelId}
       </if>
     </where>
   </select>

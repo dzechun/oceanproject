@@ -36,6 +36,9 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
+        if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())){
+            return sysSpecItemMapper.findByMenuIdList(searchSysSpecItem);
+        }
         return sysSpecItemMapper.findList(searchSysSpecItem);
     }
 

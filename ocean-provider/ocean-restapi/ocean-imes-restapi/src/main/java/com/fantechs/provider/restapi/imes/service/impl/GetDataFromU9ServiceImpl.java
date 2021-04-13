@@ -1,12 +1,12 @@
 package com.fantechs.provider.restapi.imes.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtWarehouse;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.entity.basic.U9.CustGetItemInfo;
 import com.fantechs.common.base.entity.basic.U9.CustGetWhInfo;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.DateUtils;
@@ -21,7 +21,6 @@ import com.fantechs.provider.restapi.imes.service.GetDataFromU9Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -56,47 +55,47 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
         //获取U9物料信息
         List<CustGetItemInfo> listItemInfos = getMaterialByU9();
         Date date = new Date();
-        List<SmtMaterial> smtMaterialAddList = new ArrayList<>();//物料新增集合
-        List<SmtMaterial> smtMaterialUpdateList = new ArrayList<>();//物料更新集合
+        List<BaseMaterial> baseMaterialAddList = new ArrayList<>();//物料新增集合
+        List<BaseMaterial> baseMaterialUpdateList = new ArrayList<>();//物料更新集合
 
-        SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();//物料信息查询对象
-        searchSmtMaterial.setCodeQueryMark(1);
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();//物料信息查询对象
+        searchBaseMaterial.setCodeQueryMark(1);
         for (CustGetItemInfo info : listItemInfos) {
-            SmtMaterial smtMaterial = new SmtMaterial();
-            smtMaterial.setMaterialCode(info.get料品编码());
-            smtMaterial.setMaterialName(info.get品名());
-            smtMaterial.setMaterialDesc(info.get描述());
+            BaseMaterial baseMaterial = new BaseMaterial();
+            baseMaterial.setMaterialCode(info.get料品编码());
+            baseMaterial.setMaterialName(info.get品名());
+            baseMaterial.setMaterialDesc(info.get描述());
             //smtMaterial.setMaterialType(StringUtils.isEmpty(info.get物料分类()) ? null : info.get物料分类());
 
             //保存物料信息
-            searchSmtMaterial.setMaterialCode(info.get料品编码());
-            ResponseEntity<List<SmtMaterial>> responseEntity = basicFeignApi.findList(searchSmtMaterial);
+            searchBaseMaterial.setMaterialCode(info.get料品编码());
+            ResponseEntity<List<BaseMaterial>> responseEntity = basicFeignApi.findList(searchBaseMaterial);
             if (StringUtils.isNotEmpty(responseEntity.getData())) {
-                smtMaterialUpdateList.add(smtMaterial);
+                baseMaterialUpdateList.add(baseMaterial);
             } else {
-                smtMaterialAddList.add(smtMaterial);
+                baseMaterialAddList.add(baseMaterial);
             }
             //集合满1000条数据时执行一次新增和更新操作
-            if (listItemInfos.size() > 1000 && smtMaterialAddList.size() > 0 && smtMaterialAddList.size() % 1000 == 0) {
+            if (listItemInfos.size() > 1000 && baseMaterialAddList.size() > 0 && baseMaterialAddList.size() % 1000 == 0) {
                 //批量更新物料
-                if (StringUtils.isNotEmpty(smtMaterialAddList)) {
-                    basicFeignApi.batchUpdateByCode(smtMaterialUpdateList);
-                    smtMaterialUpdateList.clear();
+                if (StringUtils.isNotEmpty(baseMaterialAddList)) {
+                    basicFeignApi.batchUpdateByCode(baseMaterialUpdateList);
+                    baseMaterialUpdateList.clear();
                 }
                 //批量新增物料
-                if (StringUtils.isNotEmpty(smtMaterialAddList)) {
-                    basicFeignApi.addList(smtMaterialAddList);
-                    smtMaterialAddList.clear();
+                if (StringUtils.isNotEmpty(baseMaterialAddList)) {
+                    basicFeignApi.addList(baseMaterialAddList);
+                    baseMaterialAddList.clear();
                 }
             }
         }
         //批量更新物料
-        if (StringUtils.isNotEmpty(smtMaterialAddList)) {
-            basicFeignApi.batchUpdateByCode(smtMaterialUpdateList);
+        if (StringUtils.isNotEmpty(baseMaterialAddList)) {
+            basicFeignApi.batchUpdateByCode(baseMaterialUpdateList);
         }
         //批量新增物料
-        if (StringUtils.isNotEmpty(smtMaterialAddList)) {
-            basicFeignApi.addList(smtMaterialAddList);
+        if (StringUtils.isNotEmpty(baseMaterialAddList)) {
+            basicFeignApi.addList(baseMaterialAddList);
         }
         // 释放Redis锁
         if (StringUtils.isNotEmpty(redisUtil.get("updateMaterial"))) {
@@ -142,33 +141,33 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
         List<CustGetWhInfo> listWhInfos = getWarehouseInfoFromU9();
 
         Date date = new Date();
-        List<SmtWarehouse> smtWarehousesAddList = new ArrayList<>();//批量新增集合
-        List<SmtWarehouse> smtWarehousesUpdateList = new ArrayList<>();//批量更新集合
+        List<BaseWarehouse> baseWarehousesAddList = new ArrayList<>();//批量新增集合
+        List<BaseWarehouse> baseWarehousesUpdateList = new ArrayList<>();//批量更新集合
 
-        SearchSmtWarehouse searchSmtWarehouse = new SearchSmtWarehouse();//仓库查询实体
-        searchSmtWarehouse.setCodeQueryMark(1);
+        SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();//仓库查询实体
+        searchBaseWarehouse.setCodeQueryMark(1);
         if (StringUtils.isNotEmpty(listWhInfos)) {
             for (CustGetWhInfo info : listWhInfos) {
-                SmtWarehouse smtWarehouse = new SmtWarehouse();
-                smtWarehouse.setWarehouseCode(info.getCode());
-                smtWarehouse.setWarehouseName(info.getName());
-                searchSmtWarehouse.setWarehouseCode(smtWarehouse.getWarehouseCode());
-                ResponseEntity<List<SmtWarehouse>> responseEntity = basicFeignApi.findList(searchSmtWarehouse);
+                BaseWarehouse baseWarehouse = new BaseWarehouse();
+                baseWarehouse.setWarehouseCode(info.getCode());
+                baseWarehouse.setWarehouseName(info.getName());
+                searchBaseWarehouse.setWarehouseCode(baseWarehouse.getWarehouseCode());
+                ResponseEntity<List<BaseWarehouse>> responseEntity = basicFeignApi.findList(searchBaseWarehouse);
                 if (StringUtils.isNotEmpty(responseEntity.getData())) {
-                    smtWarehousesUpdateList.add(smtWarehouse);
+                    baseWarehousesUpdateList.add(baseWarehouse);
                 } else {
-                    smtWarehousesAddList.add(smtWarehouse);
+                    baseWarehousesAddList.add(baseWarehouse);
                 }
             }
         }
 
-        logger.info("/material/updateMaterialByU9  同步更新仓库信息接口 " + " smtWarehousesAddList:" + JSON.toJSONString(smtWarehousesUpdateList));
-        if (StringUtils.isNotEmpty(smtWarehousesUpdateList)) {
-            basicFeignApi.batchUpdateWarehouseByCode(smtWarehousesUpdateList);
+        logger.info("/material/updateMaterialByU9  同步更新仓库信息接口 " + " smtWarehousesAddList:" + JSON.toJSONString(baseWarehousesUpdateList));
+        if (StringUtils.isNotEmpty(baseWarehousesUpdateList)) {
+            basicFeignApi.batchUpdateWarehouseByCode(baseWarehousesUpdateList);
         }
-        logger.info("/material/updateMaterialByU9  同步新增仓库信息接口 " + " smtWarehousesUpdateList:" + JSON.toJSONString(smtWarehousesAddList));
-        if (StringUtils.isNotEmpty(smtWarehousesAddList)) {
-            basicFeignApi.batchSave(smtWarehousesAddList);
+        logger.info("/material/updateMaterialByU9  同步新增仓库信息接口 " + " smtWarehousesUpdateList:" + JSON.toJSONString(baseWarehousesAddList));
+        if (StringUtils.isNotEmpty(baseWarehousesAddList)) {
+            basicFeignApi.batchSave(baseWarehousesAddList);
         }
 
         // 释放Redis锁

@@ -1,23 +1,13 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
-import com.fantechs.common.base.dto.basic.SmtWorkShopDto;
-import com.fantechs.common.base.entity.basic.SmtFactory;
-import com.fantechs.common.base.entity.basic.SmtWorkShop;
-import com.fantechs.common.base.entity.basic.history.SmtHtWorkShop;
-import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto;
-import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShiftImport;
-import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShiftTime;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProductFamily;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShift;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -31,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 

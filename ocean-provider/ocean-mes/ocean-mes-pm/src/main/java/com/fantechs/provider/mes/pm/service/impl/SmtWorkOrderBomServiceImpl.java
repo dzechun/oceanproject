@@ -3,8 +3,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBomDto;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmMasterPlan;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.SmtHtWorkOrderBom;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBom;
@@ -15,7 +14,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.SmtHtWorkOrderBomMapper;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderBomMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderBomService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
     @Resource
     private SmtHtWorkOrderBomMapper smtHtWorkOrderBomMapper;
     @Resource
-    private SmtWorkOrderMapper smtWorkOrderMapper;
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -50,8 +49,8 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
-        if (StringUtils.isEmpty(smtWorkOrder)) {
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+        if (StringUtils.isEmpty(mesPmWorkOrder)) {
             throw new BizErrorException("该工单不存在");
         }
         /*Example example = new Example(SmtWorkOrderBom.class);
@@ -63,15 +62,15 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 throw new BizErrorException("零件料号已存在");
             }*/
 
-        if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
+        if (mesPmWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
             throw new BizErrorException("零件料号不能选择产品料号");
         }
 
-        if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId()) || smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())) {
+        if (mesPmWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId()) || smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())) {
             throw new BizErrorException("代用料号不能选择产品料号或零件料号");
         }
         BigDecimal singleQuantity = smtWorkOrderBom.getSingleQuantity();
-        smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(singleQuantity));
+        smtWorkOrderBom.setQuantity(new BigDecimal(mesPmWorkOrder.getWorkOrderQty().toString()).multiply(singleQuantity));
         smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
         smtWorkOrderBom.setCreateTime(new Date());
         smtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
@@ -96,9 +95,9 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
         //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
-        Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+        Byte workOrderStatus = mesPmWorkOrder.getWorkOrderStatus();
         if (workOrderStatus == 0 || workOrderStatus == 2) {
             /*Example example = new Example(SmtWorkOrderBom.class);
             Example.Criteria criteria = example.createCriteria();
@@ -110,15 +109,15 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
                 throw new BizErrorException("零件料号已存在");
             }*/
 
-            if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
+            if (mesPmWorkOrder.getMaterialId().equals(smtWorkOrderBom.getPartMaterialId())) {
                 throw new BizErrorException("零件料号不能选择产品料号");
             }
-            if (smtWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId()) || smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())) {
+            if (mesPmWorkOrder.getMaterialId().equals(smtWorkOrderBom.getSubMaterialId()) || smtWorkOrderBom.getPartMaterialId().equals(smtWorkOrderBom.getSubMaterialId())) {
                 throw new BizErrorException("代用料号不能选择产品料号或零件料号");
             }
 
             if (singleQuantity.compareTo(smtWorkOrderBom.getSingleQuantity()) != 0) {
-                smtWorkOrderBom.setQuantity(new BigDecimal(smtWorkOrder.getWorkOrderQuantity().toString()).multiply(smtWorkOrderBom.getSingleQuantity()));
+                smtWorkOrderBom.setQuantity(new BigDecimal(mesPmWorkOrder.getWorkOrderQty().toString()).multiply(smtWorkOrderBom.getSingleQuantity()));
             } else {
                 smtWorkOrderBom.setQuantity(orderBom.getQuantity());
             }
@@ -149,9 +148,9 @@ public class SmtWorkOrderBomServiceImpl extends BaseService<SmtWorkOrderBom> imp
         String[] workOrderBomIds = ids.split(",");
         for (String workOrderBomId : workOrderBomIds) {
             SmtWorkOrderBom smtWorkOrderBom = smtWorkOrderBomMapper.selectByPrimaryKey(workOrderBomId);
-            SmtWorkOrder smtWorkOrder = smtWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
+            MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByPrimaryKey(smtWorkOrderBom.getWorkOrderId());
             //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
-            Integer workOrderStatus = smtWorkOrder.getWorkOrderStatus();
+            Byte workOrderStatus = mesPmWorkOrder.getWorkOrderStatus();
             if (workOrderStatus == 0 || workOrderStatus == 2) {
                 if (StringUtils.isEmpty(smtWorkOrderBom)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);

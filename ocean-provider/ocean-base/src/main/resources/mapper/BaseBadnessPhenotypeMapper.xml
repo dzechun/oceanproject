@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseBadnessPhenotypeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
+    <result column="badness_phenotype_code" jdbcType="VARCHAR" property="badnessPhenotypeCode" />
+    <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bbp.badness_phenotype_id,
+    bbp.badness_phenotype_code,
+    bbp.badness_phenotype_desc,
+    bbp.org_id,
+    bbp.remark,
+    bbp.`status`,
+    bbp.create_user_id,
+    bbp.create_time,
+    bbp.modified_user_id,
+    bbp.modified_time,
+    bbp.is_delete
+   </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    from fantech_imes_v2.base_badness_phenotype bbp
+    left join ocean_v2.sys_user su on bbp.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on bbp.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bbp.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="badnessPhenotypeCode != null and badnessPhenotypeCode != ''">
+        and bbp.badness_phenotype_code like CONCAT('%',#{badnessPhenotypeCode},'%')
+      </if>
+      <if test="badnessPhenotypeDesc != null and badnessPhenotypeDesc != ''">
+        and bbp.badness_phenotype_desc like CONCAT('%',#{badnessPhenotypeDesc},'%')
+      </if>
+    </where>
+  </select>
+
+
+
+</mapper>

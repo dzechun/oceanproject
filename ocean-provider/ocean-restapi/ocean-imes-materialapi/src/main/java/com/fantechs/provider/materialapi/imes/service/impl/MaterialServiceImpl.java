@@ -1,6 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.fantechs.common.base.entity.basic.SmtMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 
 import com.fantechs.provider.materialapi.imes.service.MaterialService;
@@ -24,13 +24,13 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public String syncMaterial(List<SmtMaterial> smtMaterials) {
+    public String syncMaterial(List<BaseMaterial> baseMaterials) {
 
-        if(smtMaterials.size() <= 0){
+        if(baseMaterials.size() <= 0){
             return "fail";
         }
         //新增物料
-        basicFeignApi.batchUpdateSmtMaterial(smtMaterials);
+        basicFeignApi.batchUpdateSmtMaterial(baseMaterials);
 
         return "success";
     }

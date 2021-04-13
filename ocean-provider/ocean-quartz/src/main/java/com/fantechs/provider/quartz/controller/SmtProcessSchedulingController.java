@@ -1,14 +1,11 @@
 package com.fantechs.provider.quartz.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.bcm.SmtProcessSchedulingDto;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.bcm.SmtProcessScheduling;
-import com.fantechs.common.base.general.entity.bcm.search.SearchSmtProcessScheduling;
+import com.fantechs.common.base.general.dto.basic.BaseProcessSchedulingDto;
+import com.fantechs.common.base.general.entity.basic.BaseProcessScheduling;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcessScheduling;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.ValidGroup;
-import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.quartz.service.QuartzManagerService;
 import com.fantechs.provider.quartz.service.SmtProcessSchedulingService;
@@ -22,9 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +40,8 @@ public class SmtProcessSchedulingController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SmtProcessScheduling smtProcessScheduling) {
-        return ControllerUtil.returnCRUD(smtProcessSchedulingService.save(smtProcessScheduling));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcessScheduling baseProcessScheduling) {
+        return ControllerUtil.returnCRUD(smtProcessSchedulingService.save(baseProcessScheduling));
     }
 
     @ApiOperation("删除")
@@ -57,15 +52,15 @@ public class SmtProcessSchedulingController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= ValidGroup.update.class) SmtProcessScheduling smtProcessScheduling) {
-        return ControllerUtil.returnCRUD(smtProcessSchedulingService.update(smtProcessScheduling));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= ValidGroup.update.class) BaseProcessScheduling baseProcessScheduling) {
+        return ControllerUtil.returnCRUD(smtProcessSchedulingService.update(baseProcessScheduling));
     }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<SmtProcessSchedulingDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSmtProcessScheduling searchSmtProcessScheduling) {
-        Page<Object> page = PageHelper.startPage(searchSmtProcessScheduling.getStartPage(),searchSmtProcessScheduling.getPageSize());
-        List<SmtProcessSchedulingDto> list = smtProcessSchedulingService.findList(searchSmtProcessScheduling);
+    public ResponseEntity<List<BaseProcessSchedulingDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProcessScheduling searchBaseProcessScheduling) {
+        Page<Object> page = PageHelper.startPage(searchBaseProcessScheduling.getStartPage(), searchBaseProcessScheduling.getPageSize());
+        List<BaseProcessSchedulingDto> list = smtProcessSchedulingService.findList(searchBaseProcessScheduling);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

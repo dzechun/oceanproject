@@ -2,11 +2,11 @@ package com.fantechs.security.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
-import com.fantechs.common.base.entity.basic.SmtDept;
-import com.fantechs.common.base.entity.basic.search.SearchSmtDept;
-import com.fantechs.common.base.entity.basic.search.SearchSmtFactory;
+import com.fantechs.common.base.general.entity.basic.BaseDept;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
@@ -211,10 +211,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
             //如果工厂编码不为空则判断厂别信息是否存在
             if (StringUtils.isNotEmpty(factoryCode)){
-                SearchSmtFactory searchSmtFactory = new SearchSmtFactory();
-                searchSmtFactory.setCodeQueryMark((byte) 1);
-                searchSmtFactory.setFactoryCode(factoryCode);
-                List<SmtFactoryDto> smtFactoryDtos = basicFeignApi.findFactoryList(searchSmtFactory).getData();
+                SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
+                searchBaseFactory.setCodeQueryMark((byte) 1);
+                searchBaseFactory.setFactoryCode(factoryCode);
+                List<BaseFactoryDto> smtFactoryDtos = basicFeignApi.findFactoryList(searchBaseFactory).getData();
                 if (StringUtils.isEmpty(smtFactoryDtos)){
                     fail.add(i+4);
                     continue;
@@ -224,15 +224,15 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
             //如果部门编码不为空则判断部门信息是否存在
             if (StringUtils.isNotEmpty(deptCode)){
-                SearchSmtDept searchSmtDept = new SearchSmtDept();
-                searchSmtDept.setCodeQueryMark(1);
-                searchSmtDept.setDeptCode(deptCode);
-                List<SmtDept> smtDepts = basicFeignApi.selectDepts(searchSmtDept).getData();
-                if (StringUtils.isEmpty(smtDepts)){
+                SearchBaseDept searchBaseDept = new SearchBaseDept();
+                searchBaseDept.setCodeQueryMark(1);
+                searchBaseDept.setDeptCode(deptCode);
+                List<BaseDept> baseDepts = basicFeignApi.selectDepts(searchBaseDept).getData();
+                if (StringUtils.isEmpty(baseDepts)){
                     fail.add(i+4);
                     continue;
                 }
-                sysUserExcelDTO.setDeptId(smtDepts.get(0).getDeptId());
+                sysUserExcelDTO.setDeptId(baseDepts.get(0).getDeptId());
             }
 
             //判断集合中是否已经存在该用户
@@ -287,19 +287,35 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     }
 
     @Override
-    public int switchOrganization(Long organizationId,String token) {
+    public int switchOrganization(Long organizationId) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        SysUser sysUser = JSON.parseObject(JSON.toJSONString(redisUtil.get(token)), SysUser.class);
+        SysUser sysUser = JSON.parseObject(JSON.toJSONString(redisUtil.get(CurrentUserInfoUtils.getToken())), SysUser.class);
         sysUser.setOrganizationId(organizationId);
-        redisUtil.set(token,sysUser);
+        redisUtil.set(CurrentUserInfoUtils.getToken(),sysUser);
         return 1;
     }
 
     @Override
     public List<String> findAllRoleId(Long userId) {
         return sysUserMapper.findAllRoleId(userId);
+    }
+
+    @Override
+    public int updatePassword(String oldPassword, String newPassword) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if (!new BCryptPasswordEncoder().matches(oldPassword, user.getPassword())){
+            throw new BizErrorException("旧密码不正确");
+        }
+        Example example = new Example(SysUser.class);
+        example.createCriteria().andEqualTo("userId",user.getUserId());
+        user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+
+        return sysUserMapper.updateByExampleSelective(user,example);
     }
 }

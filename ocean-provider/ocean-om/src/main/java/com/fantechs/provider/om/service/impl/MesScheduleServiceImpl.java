@@ -1,16 +1,13 @@
 package com.fantechs.provider.om.service.impl;
 
-import com.fantechs.common.base.entity.basic.history.WmsInHtStorageBillsDet;
-import com.fantechs.common.base.entity.storage.WmsInStorageBillsDet;
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
-import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.dto.om.MesScheduleDTO;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesHtSchedule;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -21,12 +18,10 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.om.mapper.MesScheduleDetailMapper;
 import com.fantechs.provider.om.mapper.MesScheduleMapper;
 import com.fantechs.provider.om.service.MesScheduleService;
 import com.fantechs.provider.om.service.SmtOrderService;
 import com.fantechs.provider.om.service.ht.MesHtScheduleService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -222,16 +217,16 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             }
             smtOrderService.orderMaterialSchedule(mesOrderMaterialDTO.getOrderMaterialId());
             //根据产品信息生成工单
-            SmtWorkOrder smtWorkOrder = new SmtWorkOrder();
-            smtWorkOrder.setOrderId(smtOrder.getOrderId());
-            smtWorkOrder.setProLineId(proLineId);
-            smtWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
-            smtWorkOrder.setWorkOrderQuantity(mesOrderMaterialDTO.getTotal());
-            smtWorkOrder.setContractNo(smtOrder.getContractCode());
-            smtWorkOrder.setWorkOrderStatus(1);
-            smtWorkOrder.setRemark("无BOM");
+            MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
+            mesPmWorkOrder.setOrderId(smtOrder.getOrderId());
+            mesPmWorkOrder.setProLineId(proLineId);
+            mesPmWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
+            //mesPmWorkOrder.setWorkOrderQuantity(mesOrderMaterialDTO.getTotal());
+            mesPmWorkOrder.setContractNo(smtOrder.getContractCode());
+            //mesPmWorkOrder.setWorkOrderStatus(1);
+            mesPmWorkOrder.setRemark("无BOM");
             SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
-            saveWorkOrderAndBom.setSmtWorkOrder(smtWorkOrder);
+            saveWorkOrderAndBom.setMesPmWorkOrder(mesPmWorkOrder);
             saveWorkOrderAndBom.setGenerate(false);
             ResponseEntity responseEntity = pmFeignApi.saveWorkOrder(saveWorkOrderAndBom);
             if(responseEntity.getCode()!=0){

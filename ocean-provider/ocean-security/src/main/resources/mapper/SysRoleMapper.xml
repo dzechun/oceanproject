@@ -54,8 +54,8 @@
   <select id="findMenuRoles" resultMap="BaseResultMapDto" >
     select sr.role_id,sr.role_code, sr.role_name, sr.role_desc, sr.create_user_id, sr.create_time, sr.modified_user_id,
     sr.modified_time,sr.status, sr.is_delete,sar.menu_id
-    from ocean.sys_auth_role sar
-    left join ocean.sys_role sr on sar.role_id = sr.role_id
+    from sys_auth_role sar
+    left join sys_role sr on sar.role_id = sr.role_id
   </select>
 
 </mapper>

@@ -14,7 +14,6 @@
     <name>ocean-base</name>
     <description>Demo project for Spring Boot</description>
 
-
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
@@ -45,6 +44,53 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.mes.pm</groupId>
+            <artifactId>ocean-mes-pm-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.bcm</groupId>
+            <artifactId>ocean-bcm-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.qms</groupId>
+            <artifactId>ocean-qms-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.security</groupId>
+            <artifactId>ocean-security-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.base</groupId>
+            <artifactId>ocean-base-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -60,15 +106,15 @@
                         <!--此处可以指定包含jar包-->
                         <include>
                             <groupId>com.fantechs.common.base</groupId>
-                            <artifactId>ocean-public-base</artifactId>
+                            <artifactId>ocean_v2-public-base</artifactId>
                         </include>
                         <include>
                             <groupId>com.fantechs.common.config</groupId>
-                            <artifactId>ocean-base-config</artifactId>
+                            <artifactId>ocean_v2-base-config</artifactId>
                         </include>
                         <include>
                             <groupId>>com.fantechs.provider.api.security</groupId>
-                            <artifactId>ocean-security-api</artifactId>
+                            <artifactId>ocean_v2-security-api</artifactId>
                         </include>
                     </includes>
                 </configuration>

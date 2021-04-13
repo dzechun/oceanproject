@@ -9,8 +9,8 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrder;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.qms.QmsFirstInspectionDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.qms.QmsDisqualification;
@@ -142,10 +142,10 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
         applyFeignApi.updateStatus(qmsFirstInspection.getWorkOrderId(),status);
         if (qmsFirstInspection.getInspectionResult() == 2){
 
-            SearchSmtWorkOrder searchSmtWorkOrder = new SearchSmtWorkOrder();
-            searchSmtWorkOrder.setWorkOrderId(qmsFirstInspection.getWorkOrderId());
-            List<SmtWorkOrderDto> workOrderDtoList = pmFeignApi.findWorkOrderList(searchSmtWorkOrder).getData();
-            SmtWorkOrderDto workOrderDto = workOrderDtoList.get(0);
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(qmsFirstInspection.getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            MesPmWorkOrderDto workOrderDto = workOrderDtoList.get(0);
             String msg  = workOrderDto.getWorkOrderCode()+";";
             msg += workOrderDto.getProName()+";";
             msg += workOrderDto.getMaterialCode()+";";

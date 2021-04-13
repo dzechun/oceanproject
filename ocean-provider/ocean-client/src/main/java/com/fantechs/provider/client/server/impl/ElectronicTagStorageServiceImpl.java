@@ -3,8 +3,8 @@ package com.fantechs.provider.client.server.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtLoadingDetDto;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
@@ -16,15 +16,15 @@ import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagS
 import com.fantechs.common.base.electronic.entity.search.SearchSmtLoading;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtLoadingDet;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
-import com.fantechs.common.base.entity.basic.SmtMaterial;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -114,14 +114,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<SmtElectronicTagStorageDto> list = new LinkedList<>();
         List<SmtSorting> smtSortingList = new LinkedList<>();
         for (SmtSorting sorting : sortingDtoList) {
-            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-            searchSmtMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-            if (StringUtils.isEmpty(smtMaterials)) {
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
+            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
             SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
+            searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
             List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
             if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
@@ -176,9 +176,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (StringUtils.isEmpty(materialCode)) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
-        SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-        searchSmtStorageMaterial.setMaterialCode(materialCode);
-        List<SmtStorageMaterial> storageMaterialList = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
+        SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
+        searchBaseStorageMaterial.setMaterialCode(materialCode);
+        List<BaseStorageMaterial> storageMaterialList = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
         if (StringUtils.isEmpty(storageMaterialList)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
         }
@@ -223,14 +223,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             if (StringUtils.isNotEmpty(smtSortingList)) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
             }
-            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-            searchSmtMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-            if (StringUtils.isEmpty(smtMaterials)) {
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
+            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
             SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
+            searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
             List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
             if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
@@ -302,14 +302,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             for (SmtLoadingDetDto smtLoadingDetDto : smtLoading.getSmtLoadingDetDtoList()) {
 
-                SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-                searchSmtMaterial.setMaterialCode(smtLoadingDetDto.getMaterialCode());
-                List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-                if (StringUtils.isEmpty(smtMaterials)) {
+                SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+                searchBaseMaterial.setMaterialCode(smtLoadingDetDto.getMaterialCode());
+                List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+                if (StringUtils.isEmpty(baseMaterials)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
                 }
                 SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-                searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
+                searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
                 List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
                 if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
@@ -329,7 +329,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
                 SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
                 smtLoadingDet.setLoadingId(smtLoading.getLoadingId());
-                smtLoadingDet.setMaterialId(smtMaterials.get(0).getMaterialId());
+                smtLoadingDet.setMaterialId(baseMaterials.get(0).getMaterialId());
                 smtLoadingDet.setPlanQty(smtLoadingDetDto.getPlanQty());
                 if (StringUtils.isEmpty(smtLoadingDetDtoList)) {
                     electronicTagFeignApi.addSmtLoadingDet(smtLoadingDet);
@@ -473,44 +473,44 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
 
             // 查询物料库存
-            SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
-            searchSmtStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
-            searchSmtStorageInventory.setStatus((byte) 1);
-            List<SmtStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+            SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+            searchWmsInnerStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
+            searchWmsInnerStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
+            searchWmsInnerStorageInventory.setStatus((byte) 1);
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
 
-            List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtoList = new LinkedList<>();
+            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtoList = new LinkedList<>();
             // 更新物料库存信息
-            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-            smtStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
-            smtStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
+            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+            wmsInnerStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
+            wmsInnerStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
             if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
-                smtStorageInventory.setQuantity(smtLoadingDetDto.getActualQty());
-                smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
+                wmsInnerStorageInventory.setQuantity(smtLoadingDetDto.getActualQty());
+                wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
             } else {
-                smtStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-                smtStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().add(smtLoadingDetDto.getActualQty()));
-                storageInventoryFeignApi.update(smtStorageInventory);
+                wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
+                wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().add(smtLoadingDetDto.getActualQty()));
+                storageInventoryFeignApi.update(wmsInnerStorageInventory);
 
                 // 查询物料入库明细
-                SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-                searchSmtStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-                searchSmtStorageInventoryDet.setGodownEntry(smtLoadingDetDto.getLoadingCode());
-                searchSmtStorageInventoryDet.setStatus((byte) 1);
-                smtStorageInventoryDetDtoList = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
+                SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+                searchWmsInnerStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
+                searchWmsInnerStorageInventoryDet.setGodownEntry(smtLoadingDetDto.getLoadingCode());
+                searchWmsInnerStorageInventoryDet.setStatus((byte) 1);
+                wmsInnerStorageInventoryDetDtoList = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
             }
 
             // 更新物料入库明细
-            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
+            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
             smtStorageInventoryDet.setMaterialBarcodeCode(smtLoadingDetDto.getMaterialCode());
             smtStorageInventoryDet.setGodownEntry(smtLoadingDetDto.getLoadingCode());
-            if (StringUtils.isEmpty(smtStorageInventoryDetDtoList)) {
+            if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtoList)) {
                 smtStorageInventoryDet.setMaterialQuantity(smtLoadingDetDto.getActualQty());
                 storageInventoryFeignApi.add(smtStorageInventoryDet);
             } else {
-                smtStorageInventoryDet.setStorageInventoryDetId(smtStorageInventoryDetDtoList.get(0).getStorageInventoryDetId());
-                smtStorageInventoryDet.setMaterialQuantity(smtStorageInventoryDetDtoList.get(0).getMaterialQuantity().add(smtLoadingDetDto.getActualQty()));
+                smtStorageInventoryDet.setStorageInventoryDetId(wmsInnerStorageInventoryDetDtoList.get(0).getStorageInventoryDetId());
+                smtStorageInventoryDet.setMaterialQuantity(wmsInnerStorageInventoryDetDtoList.get(0).getMaterialQuantity().add(smtLoadingDetDto.getActualQty()));
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
             }
 
@@ -692,14 +692,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         electronicTagFeignApi.updateSmtSorting(smtSorting);
 
         for (SmtSorting sorting : sortingDtoList) {
-            SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-            searchSmtMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-            if (StringUtils.isEmpty(smtMaterials)) {
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
+            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
             SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
+            searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
             List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
             if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
@@ -712,27 +712,27 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
 
             // 查询物料库存
-            SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-            searchSmtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-            searchSmtStorageInventory.setStatus((byte) 1);
-            List<SmtStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
+            SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+            searchWmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
+            searchWmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
+            searchWmsInnerStorageInventory.setStatus((byte) 1);
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
             if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
 //                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
                 // 允许负库存
-                SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                smtStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-                smtStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-                smtStorageInventory.setQuantity(sorting.getQuantity().negate());
-                smtStorageInventory.setStatus((byte) 1);
-                storageInventoryFeignApi.add(smtStorageInventory);
+                WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                wmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
+                wmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
+                wmsInnerStorageInventory.setQuantity(sorting.getQuantity().negate());
+                wmsInnerStorageInventory.setStatus((byte) 1);
+                storageInventoryFeignApi.add(wmsInnerStorageInventory);
             }
 
             // 更新物料库存信息
-            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-            smtStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-            smtStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(sorting.getQuantity()));
-            storageInventoryFeignApi.update(smtStorageInventory);
+            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+            wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
+            wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(sorting.getQuantity()));
+            storageInventoryFeignApi.update(wmsInnerStorageInventory);
 
             //不同的标签可能对应的队列不一样，最终一条一条发给客户端
             fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
@@ -777,14 +777,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     public String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception {
 
-        SearchSmtMaterial searchSmtMaterial = new SearchSmtMaterial();
-        searchSmtMaterial.setMaterialCode(materialCode);
-        List<SmtMaterial> smtMaterials = basicFeignApi.findSmtMaterialList(searchSmtMaterial).getData();
-        if (StringUtils.isEmpty(smtMaterials)) {
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        searchBaseMaterial.setMaterialCode(materialCode);
+        List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+        if (StringUtils.isEmpty(baseMaterials)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
         }
         SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-        searchSmtElectronicTagStorage.setMaterialId(smtMaterials.get(0).getMaterialId().toString());
+        searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
         List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
 
         if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {

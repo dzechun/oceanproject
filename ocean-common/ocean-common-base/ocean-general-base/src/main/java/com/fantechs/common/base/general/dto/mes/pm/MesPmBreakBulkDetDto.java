@@ -156,5 +156,11 @@ public class MesPmBreakBulkDetDto extends MesPmBreakBulkDet implements Serializa
     @ApiModelProperty(name = "processLink",value = "工序链")
     private String processLink;
 
+    /**
+     * 主工单
+     */
+    @ApiModelProperty(name="parentWorkOrderCode",value = "主工单")
+    private String parentWorkOrderCode;
+
     private MesPmBreakBulk mesPmBreakBulk;
 }

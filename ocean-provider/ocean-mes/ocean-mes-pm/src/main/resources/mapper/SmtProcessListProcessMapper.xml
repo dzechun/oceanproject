@@ -42,7 +42,7 @@
                extends="BaseResultMap">
 
     </resultMap>
-    <resultMap id="SmtRouteProcess" type="com.fantechs.common.base.entity.basic.SmtRouteProcess">
+    <resultMap id="SmtRouteProcess" type="com.fantechs.common.base.general.entity.basic.BaseRouteProcess">
         <id column="route_process_id" jdbcType="BIGINT" property="routeProcessId"/>
         <result column="route_id" jdbcType="BIGINT" property="routeId"/>
         <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
@@ -180,7 +180,7 @@
     </select>
 
     <select id="select_smt_route_process" resultMap="SmtRouteProcess"
-            parameterType="com.fantechs.common.base.entity.basic.SmtRouteProcess">
+            parameterType="com.fantechs.common.base.general.entity.basic.BaseRouteProcess">
         select
         route_process_id,route_id,section_id,process_id,next_process_id,previous_process_id,order_num,is_pass,is_must_pass,inspection_time,qualification_id
         from fantech_imes.smt_route_process
@@ -206,7 +206,7 @@
                  LEFT JOIN smt_route_process rp ON wo.route_id = rp.route_id
         where wo.work_order_id = #{workOrderId}
     </select>
-    <select id="findSmtProcess" resultType="com.fantechs.common.base.entity.basic.SmtProcess">
+    <select id="findSmtProcess" resultType="com.fantechs.common.base.general.entity.basic.BaseProcess">
         SELECT sp.is_job_scan   AS 'isJobScan',
                sp.is_start_scan AS 'isStartScan',
                sp.is_quality    AS 'isQuality'

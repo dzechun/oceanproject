@@ -14,7 +14,7 @@
     <result column="quantity" jdbcType="DECIMAL" property="quantity" />
     <result column="color" jdbcType="VARCHAR" property="color" />
     <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -43,7 +43,7 @@
 	bppd.quantity,
 	bppd.color,
 	bppd.material_quality,
-	bppd.organization_id,
+	bppd.org_id,
 	bppd.remark,
 	bppd.`status`,
 	bppd.create_user_id,
@@ -56,12 +56,12 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     bpi.parts_information_code,bpi.parts_information_name,sr.route_name
-    from fantech_imes.base_plate_parts_det bppd
-    LEFT JOIN ocean.sys_user su ON bppd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON bppd.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON bppd.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
-    LEFT JOIN fantech_imes.smt_route sr ON sr.route_id = bppd.route_id
+    from fantech_imes_v2.base_plate_parts_det bppd
+    LEFT JOIN ocean_v2.sys_user su ON bppd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bppd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bppd.org_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
+    LEFT JOIN fantech_imes_v2.base_route sr ON sr.route_id = bppd.route_id
     <where>
       <if test="platePartsDetId != null and platePartsDetId!=''">
         and bppd.plate_parts_det_id = #{platePartsDetId}
@@ -91,12 +91,12 @@
 
   <select id="findById" resultMap="BaseResultMapDto" parameterType="long">
       select <include refid="Base_Column_List"></include>,bpi.parts_information_code,bpi.parts_information_name,sr.route_name
-      from fantech_imes.base_plate_parts_det bppd
-      LEFT JOIN ocean.sys_user su ON bppd.create_user_id = su.user_id
-      LEFT JOIN ocean.sys_user sus ON bppd.modified_user_id = sus.user_id
-      LEFT JOIN fantech_imes.base_organization bo ON bppd.organization_id = bo.organization_id
-      LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
-      LEFT JOIN fantech_imes.smt_route sr ON sr.route_id = bppd.route_id
+      from fantech_imes_v2.base_plate_parts_det bppd
+      LEFT JOIN ocean_v2.sys_user su ON bppd.create_user_id = su.user_id
+      LEFT JOIN ocean_v2.sys_user sus ON bppd.modified_user_id = sus.user_id
+      LEFT JOIN fantech_imes_v2.base_organization bo ON bppd.org_id = bo.organization_id
+      LEFT JOIN fantech_imes_v2.base_parts_information bpi ON bpi.parts_information_id = bppd.parts_information_id
+      LEFT JOIN fantech_imes_v2.base_route sr ON sr.route_id = bppd.route_id
       where bppd.plate_parts_id = #{platePartsId}
   </select>
 </mapper>

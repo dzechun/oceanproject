@@ -38,8 +38,8 @@ public class LoginController {
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
-    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password){
-        ResponseEntity responseEntity = securityFeignApi.login(username, password);
+    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId){
+        ResponseEntity responseEntity = securityFeignApi.login(username, password,orgId);
         return  responseEntity;
     }
 

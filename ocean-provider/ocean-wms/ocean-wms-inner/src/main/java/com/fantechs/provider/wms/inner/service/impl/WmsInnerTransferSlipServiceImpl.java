@@ -2,13 +2,15 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.storage.*;
-import com.fantechs.common.base.entity.basic.SmtStorageMaterial;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageMaterial;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventory;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -25,19 +27,16 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
-import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtTransferSlipMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerTransferSlipMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerTransferSlipService;
-import io.micrometer.core.instrument.search.Search;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -155,33 +154,33 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
 
                 //如果是调拨完成的单据则修改库存信息
                 if (wmsInnerTransferSlipDetDto.getTransferSlipStatus() == 2){
-                    SearchSmtStorageMaterial searchSmtStorageMaterial = new SearchSmtStorageMaterial();
-                    searchSmtStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                    List<SmtStorageMaterial> smtStorageMaterials = basicFeignApi.findStorageMaterialList(searchSmtStorageMaterial).getData();
-                    if (StringUtils.isNotEmpty(smtStorageMaterials)){
-                        if (smtStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
+                    SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
+                    searchBaseStorageMaterial.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                    List<BaseStorageMaterial> baseStorageMaterials = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
+                    if (StringUtils.isNotEmpty(baseStorageMaterials)){
+                        if (baseStorageMaterials.get(0).getMaterialId() != wmsInnerTransferSlipDetDto.getMaterialId()){
                             throw new BizErrorException("调入储位已存在其他物料");
                         }
                     }
 
                     //移除调出储位的库存明细信息
-                    SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-                    searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-                    List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
-                    if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+                    SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+                    searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
+                    List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+                    if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                         throw new BizErrorException("无法获取到储位的库存信息");
                     }
-                    SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
-                    storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(smtStorageInventoryDetDto.getStorageInventoryDetId()));
+                    WmsInnerStorageInventoryDetDto wmsInnerStorageInventoryDetDto = wmsInnerStorageInventoryDetDtos.get(0);
+                    storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(wmsInnerStorageInventoryDetDto.getStorageInventoryDetId()));
 
                     //修改储位库存数据
-                    SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-                    searchSmtStorageInventory.setStorageInventoryId(smtStorageInventoryDetDto.getStorageInventoryId());
-                    List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
-                    if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+                    SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+                    searchWmsInnerStorageInventory.setStorageInventoryId(wmsInnerStorageInventoryDetDto.getStorageInventoryId());
+                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+                    if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                         throw new BizErrorException("获取储位库存数失败");
                     }
-                    SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
+                    WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                     smtStorageInventoryDto.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
                     storageInventoryFeignApi.update(smtStorageInventoryDto);
 
@@ -210,27 +209,27 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                         storageInventoryFeignApi.add(smtStoragePallet);
 
                         //获取调入储位的储位库存数据
-                        SearchSmtStorageInventory searchSmtStorageInventory1 = new SearchSmtStorageInventory();
-                        searchSmtStorageInventory1.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                        List<SmtStorageInventoryDto> smtStorageInventoryDtos1 = storageInventoryFeignApi.findList(searchSmtStorageInventory1).getData();
-                        if (StringUtils.isNotEmpty(searchSmtStorageInventory1)){
+                        SearchWmsInnerStorageInventory searchWmsInnerStorageInventory1 = new SearchWmsInnerStorageInventory();
+                        searchWmsInnerStorageInventory1.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                        List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos1 = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory1).getData();
+                        if (StringUtils.isNotEmpty(searchWmsInnerStorageInventory1)){
                             //不为空则更新库存数量
-                            SmtStorageInventoryDto smtStorageInventoryDto1 = smtStorageInventoryDtos1.get(0);
+                            WmsInnerStorageInventoryDto smtStorageInventoryDto1 = smtStorageInventoryDtos1.get(0);
                             smtStorageInventoryDto1.setQuantity(smtStorageInventoryDto1.getQuantity().subtract(wmsInnerTransferSlipDetDto.getRealityTotalQty()));
-                            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                            BeanUtils.copyProperties(smtStorageInventoryDto1,smtStorageInventory);
-                            smtStorageInventory.setModifiedTime(new Date());
-                            smtStorageInventory.setModifiedUserId(user.getUserId());
-                            storageInventoryFeignApi.update(smtStorageInventory);
+                            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                            BeanUtils.copyProperties(smtStorageInventoryDto1, wmsInnerStorageInventory);
+                            wmsInnerStorageInventory.setModifiedTime(new Date());
+                            wmsInnerStorageInventory.setModifiedUserId(user.getUserId());
+                            storageInventoryFeignApi.update(wmsInnerStorageInventory);
 
                             //新增储位库存明细
-                            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-                            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+                            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
+                            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
                             smtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-                            smtStorageInventoryDet.setGodownEntry(smtStorageInventoryDetDto.getGodownEntry());
-                            smtStorageInventoryDet.setProductionCode(smtStorageInventoryDetDto.getProductionCode());
-                            smtStorageInventoryDet.setProductionDate(smtStorageInventoryDetDto.getProductionDate());
-                            smtStorageInventoryDet.setSupplierId(smtStorageInventoryDetDto.getSupplierId());
+                            smtStorageInventoryDet.setGodownEntry(wmsInnerStorageInventoryDetDto.getGodownEntry());
+                            smtStorageInventoryDet.setProductionCode(wmsInnerStorageInventoryDetDto.getProductionCode());
+                            smtStorageInventoryDet.setProductionDate(wmsInnerStorageInventoryDetDto.getProductionDate());
+                            smtStorageInventoryDet.setSupplierId(wmsInnerStorageInventoryDetDto.getSupplierId());
                             smtStorageInventoryDet.setCreateTime(new Date());
                             smtStorageInventoryDet.setCreateUserId(user.getUserId());
                             smtStorageInventoryDet.setModifiedTime(new Date());
@@ -239,24 +238,24 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                             storageInventoryFeignApi.add(smtStorageInventoryDet);
                         }else {
                             //新增储位库存数据
-                            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                            smtStorageInventory.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                            smtStorageInventory.setMaterialId(wmsInnerTransferSlipDetDto.getMaterialId());
-                            smtStorageInventory.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
-                            smtStorageInventory.setCreateTime(new Date());
-                            smtStorageInventory.setCreateUserId(user.getUserId());
-                            smtStorageInventory.setModifiedTime(new Date());
-                            smtStorageInventory.setModifiedUserId(user.getUserId());
-                            smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
+                            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                            wmsInnerStorageInventory.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                            wmsInnerStorageInventory.setMaterialId(wmsInnerTransferSlipDetDto.getMaterialId());
+                            wmsInnerStorageInventory.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
+                            wmsInnerStorageInventory.setCreateTime(new Date());
+                            wmsInnerStorageInventory.setCreateUserId(user.getUserId());
+                            wmsInnerStorageInventory.setModifiedTime(new Date());
+                            wmsInnerStorageInventory.setModifiedUserId(user.getUserId());
+                            wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
 
                             //新增储位库存明细
-                            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-                            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+                            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
+                            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
                             smtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-                            smtStorageInventoryDet.setGodownEntry(smtStorageInventoryDetDto.getGodownEntry());
-                            smtStorageInventoryDet.setProductionCode(smtStorageInventoryDetDto.getProductionCode());
-                            smtStorageInventoryDet.setProductionDate(smtStorageInventoryDetDto.getProductionDate());
-                            smtStorageInventoryDet.setSupplierId(smtStorageInventoryDetDto.getSupplierId());
+                            smtStorageInventoryDet.setGodownEntry(wmsInnerStorageInventoryDetDto.getGodownEntry());
+                            smtStorageInventoryDet.setProductionCode(wmsInnerStorageInventoryDetDto.getProductionCode());
+                            smtStorageInventoryDet.setProductionDate(wmsInnerStorageInventoryDetDto.getProductionDate());
+                            smtStorageInventoryDet.setSupplierId(wmsInnerStorageInventoryDetDto.getSupplierId());
                             smtStorageInventoryDet.setCreateTime(new Date());
                             smtStorageInventoryDet.setCreateUserId(user.getUserId());
                             smtStorageInventoryDet.setModifiedTime(new Date());
@@ -344,21 +343,21 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                 }
 
                 //移除调出储位的库存明细信息
-                SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-                searchSmtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-                List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
-                if (StringUtils.isNotEmpty(smtStorageInventoryDetDtos)){
-                    SmtStorageInventoryDetDto smtStorageInventoryDetDto = smtStorageInventoryDetDtos.get(0);
-                    storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(smtStorageInventoryDetDto.getStorageInventoryDetId()));
+                SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+                searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
+                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+                if (StringUtils.isNotEmpty(wmsInnerStorageInventoryDetDtos)){
+                    WmsInnerStorageInventoryDetDto wmsInnerStorageInventoryDetDto = wmsInnerStorageInventoryDetDtos.get(0);
+                    storageInventoryFeignApi.deleteStorageInventoryDet(String.valueOf(wmsInnerStorageInventoryDetDto.getStorageInventoryDetId()));
 
                     //修改储位库存数据
-                    SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-                    searchSmtStorageInventory.setStorageInventoryId(smtStorageInventoryDetDto.getStorageInventoryId());
-                    List<SmtStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
-                    if (StringUtils.isEmpty(smtStorageInventoryDetDtos)){
+                    SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+                    searchWmsInnerStorageInventory.setStorageInventoryId(wmsInnerStorageInventoryDetDto.getStorageInventoryId());
+                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+                    if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                         throw new BizErrorException("获取储位库存数失败");
                     }
-                    SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
+                    WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
                     smtStorageInventoryDto.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
 
                     //删除储位栈板关系
@@ -386,27 +385,27 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                         storageInventoryFeignApi.add(smtStoragePallet);
 
                         //获取调入储位的储位库存数据
-                        SearchSmtStorageInventory searchSmtStorageInventory1 = new SearchSmtStorageInventory();
-                        searchSmtStorageInventory1.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                        List<SmtStorageInventoryDto> smtStorageInventoryDtos1 = storageInventoryFeignApi.findList(searchSmtStorageInventory1).getData();
+                        SearchWmsInnerStorageInventory searchWmsInnerStorageInventory1 = new SearchWmsInnerStorageInventory();
+                        searchWmsInnerStorageInventory1.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                        List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos1 = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory1).getData();
                         if (StringUtils.isNotEmpty(smtStorageInventoryDtos1)){
                             //不为空则更新库存数量
-                            SmtStorageInventoryDto smtStorageInventoryDto1 = smtStorageInventoryDtos1.get(0);
+                            WmsInnerStorageInventoryDto smtStorageInventoryDto1 = smtStorageInventoryDtos1.get(0);
                             smtStorageInventoryDto1.setQuantity(smtStorageInventoryDto1.getQuantity().subtract(wmsInnerTransferSlipDetDto.getRealityTotalQty()));
-                            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                            BeanUtils.copyProperties(smtStorageInventoryDto1,smtStorageInventory);
-                            smtStorageInventory.setModifiedTime(new Date());
-                            smtStorageInventory.setModifiedUserId(user.getUserId());
-                            storageInventoryFeignApi.update(smtStorageInventory);
+                            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                            BeanUtils.copyProperties(smtStorageInventoryDto1, wmsInnerStorageInventory);
+                            wmsInnerStorageInventory.setModifiedTime(new Date());
+                            wmsInnerStorageInventory.setModifiedUserId(user.getUserId());
+                            storageInventoryFeignApi.update(wmsInnerStorageInventory);
 
                             //新增储位库存明细
-                            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-                            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+                            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
+                            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
                             smtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-                            smtStorageInventoryDet.setGodownEntry(smtStorageInventoryDetDto.getGodownEntry());
-                            smtStorageInventoryDet.setProductionCode(smtStorageInventoryDetDto.getProductionCode());
-                            smtStorageInventoryDet.setProductionDate(smtStorageInventoryDetDto.getProductionDate());
-                            smtStorageInventoryDet.setSupplierId(smtStorageInventoryDetDto.getSupplierId());
+                            smtStorageInventoryDet.setGodownEntry(wmsInnerStorageInventoryDetDto.getGodownEntry());
+                            smtStorageInventoryDet.setProductionCode(wmsInnerStorageInventoryDetDto.getProductionCode());
+                            smtStorageInventoryDet.setProductionDate(wmsInnerStorageInventoryDetDto.getProductionDate());
+                            smtStorageInventoryDet.setSupplierId(wmsInnerStorageInventoryDetDto.getSupplierId());
                             smtStorageInventoryDet.setCreateTime(new Date());
                             smtStorageInventoryDet.setCreateUserId(user.getUserId());
                             smtStorageInventoryDet.setModifiedTime(new Date());
@@ -415,24 +414,24 @@ public class WmsInnerTransferSlipServiceImpl extends BaseService<WmsInnerTransfe
                             storageInventoryFeignApi.add(smtStorageInventoryDet);
                         }else {
                             //新增储位库存数据
-                            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-                            smtStorageInventory.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
-                            smtStorageInventory.setMaterialId(wmsInnerTransferSlipDetDto.getMaterialId());
-                            smtStorageInventory.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
-                            smtStorageInventory.setCreateTime(new Date());
-                            smtStorageInventory.setCreateUserId(user.getUserId());
-                            smtStorageInventory.setModifiedTime(new Date());
-                            smtStorageInventory.setModifiedUserId(user.getUserId());
-                            smtStorageInventory = storageInventoryFeignApi.add(smtStorageInventory).getData();
+                            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
+                            wmsInnerStorageInventory.setStorageId(wmsInnerTransferSlipDetDto.getInStorageId());
+                            wmsInnerStorageInventory.setMaterialId(wmsInnerTransferSlipDetDto.getMaterialId());
+                            wmsInnerStorageInventory.setQuantity(wmsInnerTransferSlipDetDto.getRealityTotalQty());
+                            wmsInnerStorageInventory.setCreateTime(new Date());
+                            wmsInnerStorageInventory.setCreateUserId(user.getUserId());
+                            wmsInnerStorageInventory.setModifiedTime(new Date());
+                            wmsInnerStorageInventory.setModifiedUserId(user.getUserId());
+                            wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
 
                             //新增储位库存明细
-                            SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-                            smtStorageInventoryDet.setStorageInventoryId(smtStorageInventory.getStorageInventoryId());
+                            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
+                            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
                             smtStorageInventoryDet.setMaterialBarcodeCode(wmsInnerTransferSlipDetDto.getPalletCode());
-                            smtStorageInventoryDet.setGodownEntry(smtStorageInventoryDetDto.getGodownEntry());
-                            smtStorageInventoryDet.setProductionCode(smtStorageInventoryDetDto.getProductionCode());
-                            smtStorageInventoryDet.setProductionDate(smtStorageInventoryDetDto.getProductionDate());
-                            smtStorageInventoryDet.setSupplierId(smtStorageInventoryDetDto.getSupplierId());
+                            smtStorageInventoryDet.setGodownEntry(wmsInnerStorageInventoryDetDto.getGodownEntry());
+                            smtStorageInventoryDet.setProductionCode(wmsInnerStorageInventoryDetDto.getProductionCode());
+                            smtStorageInventoryDet.setProductionDate(wmsInnerStorageInventoryDetDto.getProductionDate());
+                            smtStorageInventoryDet.setSupplierId(wmsInnerStorageInventoryDetDto.getSupplierId());
                             smtStorageInventoryDet.setCreateTime(new Date());
                             smtStorageInventoryDet.setCreateUserId(user.getUserId());
                             smtStorageInventoryDet.setModifiedTime(new Date());

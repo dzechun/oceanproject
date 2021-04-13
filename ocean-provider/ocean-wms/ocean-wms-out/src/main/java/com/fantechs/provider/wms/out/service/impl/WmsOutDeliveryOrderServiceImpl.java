@@ -2,13 +2,13 @@ package com.fantechs.provider.wms.out.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDetDto;
-import com.fantechs.common.base.dto.storage.SmtStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventory;
-import com.fantechs.common.base.entity.basic.search.SearchSmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.storage.SmtStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
@@ -140,20 +140,20 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
                 wmsOutDeliveryOrderPalletMapper.insertSelective(wmsOutDeliveryOrderPallet);
 
                 //修改库存明细表库存数
-                SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-                searchSmtStorageInventoryDet.setMaterialBarcodeCode(s);
-                List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet).getData();
-                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-                smtStorageInventoryDet.setStorageInventoryDetId(smtStorageInventoryDetDtos.get(0).getStorageInventoryDetId());
+                SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+                searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(s);
+                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+                WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
+                smtStorageInventoryDet.setStorageInventoryDetId(wmsInnerStorageInventoryDetDtos.get(0).getStorageInventoryDetId());
                 smtStorageInventoryDet.setMaterialQuantity(BigDecimal.valueOf(0));
                 storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
             }
             //修改库存表
-            SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setStorageId(wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId()).getStorageId());//出货通知单明细 储位ID
-            searchSmtStorageInventory.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
-            List<SmtStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchSmtStorageInventory).getData();
-            SmtStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
+            SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
+            searchWmsInnerStorageInventory.setStorageId(wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId()).getStorageId());//出货通知单明细 储位ID
+            searchWmsInnerStorageInventory.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
+            List<WmsInnerStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+            WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
             smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutDeliveryOrderDet.getOutTotalQty()));
             storageInventoryFeignApi.update(smtStorageInventoryDto);
 

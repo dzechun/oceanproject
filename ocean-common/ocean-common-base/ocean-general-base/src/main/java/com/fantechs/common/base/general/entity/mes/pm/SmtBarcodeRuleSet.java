@@ -17,12 +17,12 @@ import java.util.Date;
 
 /**
  * 条码规则集合表
- * smt_barcode_rule_set
+ * base_barcode_rule_set
  * @author 18358
  * @date 2020-11-09 17:57:19
  */
 @Data
-@Table(name = "smt_barcode_rule_set")
+@Table(name = "base_barcode_rule_set")
 public class SmtBarcodeRuleSet extends ValidGroup implements Serializable {
     private static final long serialVersionUID = 7548697567720143055L;
     /**

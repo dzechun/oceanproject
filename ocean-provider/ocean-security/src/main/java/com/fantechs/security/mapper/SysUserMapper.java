@@ -1,7 +1,7 @@
 package com.fantechs.security.mapper;
 
 
-import com.fantechs.common.base.entity.basic.SmtDept;
+import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.mybatis.MyMapper;
@@ -12,7 +12,7 @@ public interface SysUserMapper extends MyMapper<SysUser> {
 
     List<SysUser> selectUsers(SearchSysUser searchSysUser);
 
-    SmtDept selectDept(String factoryName,String deptName);
+    BaseDept selectDept(String factoryName, String deptName);
 
     List<String> findAllRoleId(Long userId);
 

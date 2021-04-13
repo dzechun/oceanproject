@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "smt_work_order")
+@Table(name = "base_work_order")
 @Data
 public class SmtWorkOrder extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -6958409644458668492L;
@@ -179,9 +179,9 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 合同号
@@ -196,6 +196,27 @@ public class SmtWorkOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="ifPrint",value = "是否打印（0、打印 1、不打印）")
     @Column(name = "if_print")
     private Byte ifPrint;
+
+    /**
+     *  投产工序ID
+     */
+    @ApiModelProperty(name="putIntoProcessId",value = "投产工序ID")
+    @Column(name = "put_into_process_id")
+    private Long putIntoProcessId;
+
+    /**
+     *  产出工序ID
+     */
+    @ApiModelProperty(name="outputProcessId",value = "产出工序ID")
+    @Column(name = "output_process_id")
+    private Long outputProcessId;
+
+    /**
+     *  报废数量
+     */
+    @ApiModelProperty(name="scrapQty",value = "报废数量")
+    @Column(name = "scrap_qty")
+    private BigDecimal scrapQty;
 
     /**
      * 备注

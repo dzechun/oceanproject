@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtWorkshopSectionMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtWorkshopSection">
+        <id column="ht_section_id" jdbcType="BIGINT" property="htSectionId"/>
+        <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
+        <result column="section_code" jdbcType="VARCHAR" property="sectionCode"/>
+        <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
+        <result column="section_desc" jdbcType="VARCHAR" property="sectionDesc"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        shws.ht_section_id,
+        shws.section_id,
+        shws.section_code,
+        shws.section_name,
+        shws.section_desc,
+        shws.`status`,
+        shws.remark,
+        shws.org_id,
+        shws.create_user_id,
+        shws.create_time,
+        shws.modified_user_id,
+        shws.modified_time,
+        shws.is_delete,
+        shws.option1,
+        shws.option2,
+        shws.option3
+    </sql>
+
+    <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkshopSection"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes_v2.base_ht_workshop_section shws
+        left join ocean_v2.sys_user u on shws.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on shws.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON shws.org_id = bo.organization_id
+        <where>
+            <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
+                AND date_format(shws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="sectionCode!=null and sectionCode!=''">
+                and shws.section_code like CONCAT('%', #{sectionCode}, '%')
+            </if>
+            <if test="sectionName!=null and sectionName!=''">
+                and shws.section_name like CONCAT('%', #{sectionName}, '%')
+            </if>
+            <if test="sectionDesc!=null and sectionDesc!=''">
+                and shws.section_desc like CONCAT('%', #{sectionDesc}, '%')
+            </if>
+        </where>
+        order by shws.modified_time desc
+    </select>
+</mapper>

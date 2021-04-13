@@ -12,7 +12,7 @@
     <result column="notification_method" jdbcType="TINYINT" property="notificationMethod" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -32,7 +32,7 @@
 	bhw.notification_method,
 	bhw.`status`,
 	bhw.remark,
-	bhw.organization_id,
+	bhw.org_id,
 	bhw.create_user_id,
 	bhw.create_time,
 	bhw.modified_user_id,
@@ -44,10 +44,10 @@
     select<include refid="Base_Column_List"/>,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name
-    FROM fantech_imes.base_ht_warning bhw
-    left join ocean.sys_user su on bhw.create_user_id = su.user_id
-    left join ocean.sys_user sus on bhw.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON bhw.organization_id = bo.organization_id
+    FROM fantech_imes_v2.base_ht_warning bhw
+    left join ocean_v2.sys_user su on bhw.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on bhw.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhw.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

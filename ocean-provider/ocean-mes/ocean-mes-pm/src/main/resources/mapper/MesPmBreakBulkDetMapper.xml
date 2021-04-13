@@ -56,12 +56,14 @@
   bt.color,
 spm.product_model_name,
 bt.material_quality,
-wo.route_id
+wo.route_id,
+swo1.work_order_code AS 'parentWorkOrderCode'
 </sql>
 <select id="findList" resultMap="BaseResultMapDto" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmBreakBulkDet">
     SELECT <include refid="Base_Column_List"/>,pb.work_order_id,wo.work_order_code,sm.material_code,sm.material_name,sm.version,sm.material_desc,wo.production_quantity,spl.pro_name,wo.work_order_status,sr.route_name,sp.process_id,sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,bo.organization_name FROM mes_pm_break_bulk_det pbd
          left join mes_pm_break_bulk pb on  pbd.break_bulk_id = pb.break_bulk_id
          LEFT JOIN smt_work_order wo ON pb.work_order_id = wo.work_order_id
+         left join smt_work_order swo1 on swo1.work_order_id = swo.parent_id
         left join fantech_imes.smt_material sm on wo.material_id=sm.material_id
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         left join smt_product_model spm on spm.product_model_id = bt.product_model_id

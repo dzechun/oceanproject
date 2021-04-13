@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.basic.SmtFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductFamilyImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductFamily;
@@ -108,7 +107,7 @@ public class BaseProductFamilyController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入产品族信息",notes = "从excel导入产品族信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {

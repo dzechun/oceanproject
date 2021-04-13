@@ -13,12 +13,12 @@ import lombok.Data;
 
 /**
  * 备料信息表
- * smt_stock
+ * base_stock
  * @author mr.lei
  * @date 2020-11-24 14:52:57
  */
 @Data
-@Table(name = "smt_stock")
+@Table(name = "base_stock")
 public class SmtStock extends ValidGroup implements Serializable {
     /**
      * 备料id
