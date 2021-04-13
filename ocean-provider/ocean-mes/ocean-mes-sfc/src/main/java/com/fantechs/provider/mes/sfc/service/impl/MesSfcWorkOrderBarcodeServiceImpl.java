@@ -83,6 +83,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_order");
                     break;
             }
+            if(labelRuteDto.getBarcodeType()==(byte)0){
+                //生成条码过站记录
+
+            }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelRuteDto.getLabelName());
@@ -91,6 +95,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             printModelList.add(printModel);
             rabbitProducer.sendPrint(printDto);
 
+            mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
             this.update(mesSfcWorkOrderBarcode);
         }
         return 1;
@@ -170,6 +175,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         String code = pmFeignApi.generateCode(list,maxCode,null).getData();
         record.setBarcode(code);
 
+        //待打印状态
+        record.setBarcodeStatus((byte)3);
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
