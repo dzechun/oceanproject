@@ -1,8 +1,11 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
@@ -10,14 +13,18 @@ import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
@@ -49,6 +56,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private PMFeignApi pmFeignApi;
     @Resource
     private RabbitProducer rabbitProducer;
+    @Resource
+    private MesSfcBarcodeProcessMapper mesSfcBarcodeProcessMapper;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -91,7 +100,19 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setWorkOrderCode(mesSfcWorkOrderBarcode.getWorkOrderCode());
                 mesSfcBarcodeProcess.setBarcodeType((byte)2);
                 mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
-
+                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
+                MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
+                mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+                mesSfcBarcodeProcess.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+                mesSfcBarcodeProcess.setMaterialName(mesPmWorkOrderDto.getMaterialName());
+                mesSfcBarcodeProcess.setMaterialVer(mesPmWorkOrderDto.getVersion());
+                mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
+                mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
+                mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
+                if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
+                    throw new BizErrorException("条码过站失败");
+                }
             }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
