@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.BaseService;
@@ -83,8 +84,13 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_order");
                     break;
             }
-            if(labelRuteDto.getBarcodeType()==(byte)0){
+            if(labelRuteDto.getBarcodeType()==(byte)0 &&mesSfcWorkOrderBarcode.getBarcodeType()==(byte)2){
                 //生成条码过站记录
+                MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
+                mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
+                mesSfcBarcodeProcess.setWorkOrderCode(mesSfcWorkOrderBarcode.getWorkOrderCode());
+                mesSfcBarcodeProcess.setBarcodeType((byte)2);
+                mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
 
             }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
