@@ -138,11 +138,11 @@
     FROM fantech_imes_v2.base_material_tab bmt
     LEFT JOIN fantech_imes_v2.qms_inspection_item qii ON bmt.inspection_item_id = qii.inspection_item_id
     LEFT JOIN fantech_imes_v2.qms_inspection_type qit ON bmt.inspection_type_id = qit.inspection_type_id
-    LEFT JOIN fantech_imes_v2.smt_package_specification sps ON bmt.package_specification_id = sps.package_specification_id
-    LEFT JOIN fantech_imes_v2.smt_product_model spm ON bmt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes_v2.base_package_specification sps ON bmt.package_specification_id = sps.package_specification_id
+    LEFT JOIN fantech_imes_v2.base_product_model spm ON bmt.product_model_id = spm.product_model_id
     LEFT JOIN fantech_imes_v2.bcm_label_category blc ON bmt.label_category_id = blc.label_category_id
     LEFT JOIN fantech_imes_v2.bcm_label bl ON bmt.label_id = bl.label_id
-    LEFT JOIN fantech_imes_v2.smt_supplier ss ON bmt.supplier_id = ss.supplier_id
+    LEFT JOIN fantech_imes_v2.base_supplier ss ON bmt.supplier_id = ss.supplier_id
     <where>
       <if test="materialId != null">
         and bmt.material_id = #{materialId}

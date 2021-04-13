@@ -8,7 +8,7 @@
         <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -43,7 +43,7 @@
         spm.option1,
         spm.option2,
         spm.option3,
-        spm.organization_id,
+        spm.org_id,
         spm.remark
     </sql>
 
@@ -53,11 +53,11 @@
         bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.smt_product_model spm
+        from fantech_imes_v2.base_product_model spm
         left join ocean_v2.sys_user u on spm.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spm.modified_user_id=s.user_id
         left join fantech_imes_v2.base_product_family bpf on spm.product_family_id = bpf.product_family_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spm.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spm.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

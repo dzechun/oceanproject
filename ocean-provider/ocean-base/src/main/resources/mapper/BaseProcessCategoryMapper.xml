@@ -7,7 +7,7 @@
         <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName"/>
         <result column="process_category_desc" jdbcType="VARCHAR" property="processCategoryDesc"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -40,7 +40,7 @@
         spc.option1,
         spc.option2,
         spc.option3,
-        spc.organization_id,
+        spc.org_id,
         spc.remark
     </sql>
 
@@ -48,10 +48,10 @@
         select<include refid="Base_Column_List"/>,
         u.user_name as create_user_name, s.user_name as modified_user_name,
         bo.organization_name
-        from smt_process_category spc
+        from base_process_category spc
         left join ocean_v2.sys_user u on spc.create_user_id = u.user_id
         left join ocean_v2.sys_user s on spc.modified_user_id = s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spc.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spc.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

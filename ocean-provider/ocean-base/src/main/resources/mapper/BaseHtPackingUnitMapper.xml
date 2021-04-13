@@ -10,7 +10,7 @@
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_unit_desc" jdbcType="VARCHAR" property="packingUnitDesc" />
     <result column="is_chief" jdbcType="TINYINT" property="isChief" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -43,17 +43,17 @@
     shpu.option1,
     shpu.option2,
     shpu.option3,
-    shpu.organization_id,
+    shpu.org_id,
 	shpu.remark
   </sql>
 
   <select id="findHtList"  resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.smt_ht_packing_unit shpu
+    from fantech_imes_v2.base_ht_packing_unit shpu
     LEFT JOIN ocean_v2.sys_user su  ON shpu.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON shpu.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON shpu.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON shpu.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shpu.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

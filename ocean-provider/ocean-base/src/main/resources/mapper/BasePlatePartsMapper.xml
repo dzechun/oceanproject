@@ -8,7 +8,7 @@
     <id column="plate_parts_id" jdbcType="BIGINT" property="platePartsId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="if_customized" jdbcType="TINYINT" property="ifCustomized" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -38,7 +38,7 @@
 	bpp.plate_parts_id,
 	bpp.if_customized,
 	bpp.material_id,
-	bpp.organization_id,
+	bpp.org_id,
 	bpp.remark,
 	bpp.`status`,
 	bpp.create_user_id,
@@ -55,11 +55,11 @@
     from fantech_imes_v2.base_plate_parts bpp
     LEFT JOIN ocean_v2.sys_user su ON bpp.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bpp.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bpp.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes_v2.smt_material sm ON sm.material_id = bpp.material_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bpp.org_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_material sm ON sm.material_id = bpp.material_id
     LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
-    LEFT JOIN fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-    LEFT JOIN fantech_imes_v2.smt_package_specification sps ON sps.package_specification_id = bt.package_specification_id
+    LEFT JOIN fantech_imes_v2.base_product_model spm ON spm.product_model_id = bt.product_model_id
+    LEFT JOIN fantech_imes_v2.base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
     <where>
       <if test="platePartsId != null and platePartsId!=''">
         and bpp.plate_parts_id = #{platePartsId}

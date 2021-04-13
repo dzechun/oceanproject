@@ -11,7 +11,7 @@
         <result column="if_default" jdbcType="TINYINT" property="ifDefault"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -30,14 +30,14 @@
         ssa.modified_time,
         ssa.status,
         ssa.is_delete,
-        ssa.organization_id,
+        ssa.org_id,
         ssa.remark
     </sql>
 
     <select id="findList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
-        from fantech_imes_v2.smt_supplier_address ssa
+        from fantech_imes_v2.base_supplier_address ssa
         <where>
             <if test="supplierAddressId != null and supplierAddressId != ''">
                 and ssa.supplier_address_id like CONCAT('%', #{supplierAddressId}, '%')

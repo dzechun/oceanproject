@@ -15,7 +15,7 @@
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
         <result column="station_id" jdbcType="BIGINT" property="stationId"/>
         <result column="consumption" jdbcType="DECIMAL" property="consumption"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -61,7 +61,7 @@
         shkm.option1,
         shkm.option2,
         shkm.option3,
-        shkm.organization_id, shkm.remark
+        shkm.org_id, shkm.remark
     </sql>
 
     <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
@@ -72,15 +72,15 @@
         sm2.material_code AS part_material_code, sm2.material_desc AS part_material_desc, sm2.version AS
         part_material_version,
         sp.process_name AS process_name, ss.station_name AS station_name, bo.organization_name
-        FROM fantech_imes_v2.smt_ht_key_material shkm
+        FROM fantech_imes_v2.base_ht_key_material shkm
         LEFT JOIN ocean_v2.sys_user su ON shkm.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON shkm.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.smt_product_model spm ON shkm.product_model_id = spm.product_model_id
-        LEFT JOIN fantech_imes_v2.smt_material sm1 ON shkm.material_id = sm1.material_id
-        LEFT JOIN fantech_imes_v2.smt_material sm2 ON shkm.part_material_id = sm2.material_id
-        LEFT JOIN fantech_imes_v2.smt_process sp ON shkm.process_id = sp.process_id
-        LEFT JOIN fantech_imes_v2.smt_station ss ON shkm.station_id = ss.station_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shkm.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_product_model spm ON shkm.product_model_id = spm.product_model_id
+        LEFT JOIN fantech_imes_v2.base_material sm1 ON shkm.material_id = sm1.material_id
+        LEFT JOIN fantech_imes_v2.base_material sm2 ON shkm.part_material_id = sm2.material_id
+        LEFT JOIN fantech_imes_v2.base_process sp ON shkm.process_id = sp.process_id
+        LEFT JOIN fantech_imes_v2.base_station ss ON shkm.station_id = ss.station_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON shkm.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shkm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

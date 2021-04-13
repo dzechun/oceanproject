@@ -11,7 +11,7 @@
     <result column="end_time" jdbcType="TIME" property="endTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -26,7 +26,7 @@
 	bwst.end_time,
 	bwst.`status`,
 	bwst.remark,
-	bwst.organization_id,
+	bwst.org_id,
 	bwst.create_user_id,
 	bwst.create_time,
 	bwst.modified_user_id,

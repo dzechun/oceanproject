@@ -12,7 +12,7 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="status" jdbcType="BIT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="is_delete" jdbcType="BIT" property="isDelete"/>
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
@@ -42,7 +42,7 @@
         ws.option1,
         ws.option2,
         ws.option3,
-        ws.organization_id,
+        ws.org_id,
         ws.remark
     </sql>
 
@@ -51,11 +51,11 @@
         <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS
         modified_user_name,sf.factory_name,
         bo.organization_name
-        from fantech_imes_v2.smt_work_shop ws
+        from fantech_imes_v2.base_work_shop ws
         LEFT JOIN ocean_v2.sys_user su ON ws.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON ws.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.smt_factory sf ON sf.factory_id = ws.factory_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ws.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_factory sf ON sf.factory_id = ws.factory_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON ws.org_id = bo.organization_id
         <where>
             <if test="workShopCode != null and workShopCode != '' and codeQueryMark != 1">
                 and ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')

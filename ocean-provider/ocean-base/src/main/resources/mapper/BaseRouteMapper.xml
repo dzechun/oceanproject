@@ -10,7 +10,7 @@
         <result column="standard_time" jdbcType="TIMESTAMP" property="standardTime"/>
         <result column="readiness_time" jdbcType="TIMESTAMP" property="readinessTime"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -40,7 +40,7 @@
         sr.standard_time,
         sr.`status`,
         sr.remark,
-        sr.organization_id,
+        sr.org_id,
         sr.create_user_id,
         sr.create_time,
         sr.modified_user_id,
@@ -56,10 +56,10 @@
         select <include refid="Base_Column_List"></include>,
         u.user_name as create_user_name, s.user_name as modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.smt_route sr
+        from fantech_imes_v2.base_route sr
         left join ocean_v2.sys_user u on sr.create_user_id=u.user_id
         left join ocean_v2.sys_user s on sr.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sr.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sr.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

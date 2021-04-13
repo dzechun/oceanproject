@@ -7,7 +7,7 @@
         <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
         <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
         <result column="factory_desc" jdbcType="VARCHAR" property="factoryDesc"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -36,7 +36,7 @@
         hf.option1,
         hf.option2,
         hf.option3,
-        hf.organization_id,
+        hf.org_id,
         hf.remark
     </sql>
 
@@ -44,10 +44,10 @@
         select
         <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.smt_ht_factory hf
+        from fantech_imes_v2.base_ht_factory hf
         LEFT JOIN ocean_v2.sys_user su ON hf.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON hf.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON hf.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON hf.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(hf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

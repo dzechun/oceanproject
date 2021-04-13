@@ -11,7 +11,7 @@
     <result column="calendar_name" jdbcType="VARCHAR" property="calendarName" />
     <result column="calendar_desc" jdbcType="VARCHAR" property="calendarDesc" />
     <result column="date" jdbcType="VARCHAR" property="date" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -41,7 +41,7 @@
 	bc.calendar_name,
 	bc.calendar_desc,
 	bc.date,
-	bc.organization_id,
+	bc.org_id,
 	bc.remark,
 	bc.`status`,
 	bc.create_user_id,
@@ -58,8 +58,8 @@
     FROM fantech_imes_v2.base_calendar bc
     LEFT JOIN ocean_v2.sys_user su ON bc.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bc.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.smt_pro_line spl ON bc.pro_line_id = spl.pro_line_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bc.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_pro_line spl ON bc.pro_line_id = spl.pro_line_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bc.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
