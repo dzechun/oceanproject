@@ -31,7 +31,7 @@ public class BaseHtOrganization implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30)
-    @Column(name = "org_id")
+    @Column(name = "organization_id")
     private Long organizationId;
 
     /**

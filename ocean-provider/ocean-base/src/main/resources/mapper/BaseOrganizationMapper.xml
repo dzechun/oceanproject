@@ -5,11 +5,10 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="org_id" jdbcType="BIGINT" property="organizationId" />
+    <id column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
-    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -30,7 +29,6 @@
 	bo.organization_code,
 	bo.organization_name,
 	bo.organization_desc,
-	bo.organization_id,
 	bo.remark,
 	bo.`status`,
 	bo.create_user_id,
@@ -54,9 +52,6 @@
       </if>
       <if test="organizationCode != null and organizationCode!='' and codeQueryMark != null">
         and bo.organization_code = #{organizationCode}
-      </if>
-      <if test="organizationCode != null and organizationCode!=''">
-        and bo.organization_code like CONCAT('%', #{organizationCode}, '%')
       </if>
       <if test="organizationName != null and organizationName!=''">
         and bo.organization_name like CONCAT('%', #{organizationName}, '%')
