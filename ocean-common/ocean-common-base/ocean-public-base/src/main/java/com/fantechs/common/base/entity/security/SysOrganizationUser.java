@@ -21,7 +21,7 @@ public class SysOrganizationUser extends ValidGroup implements Serializable {
      * 组织用户关系id
      */
     @ApiModelProperty(name="organizationUserId",value = "组织用户关系id")
-    @Excel(name = "组织用户关系id", height = 20, width = 30) 
+    @Excel(name = "组织用户关系id", height = 20, width = 30)
     @Id
     @Column(name = "organization_user_id")
     private Long organizationUserId;
@@ -30,15 +30,15 @@ public class SysOrganizationUser extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30) 
-    @Column(name = "organization_id")
+    @Excel(name = "组织id", height = 20, width = 30)
+    @Column(name = "org_id")
     private Long organizationId;
 
     /**
      * 用户id
      */
     @ApiModelProperty(name="userId",value = "用户id")
-    @Excel(name = "用户id", height = 20, width = 30) 
+    @Excel(name = "用户id", height = 20, width = 30)
     @Column(name = "user_id")
     private Long userId;
 

@@ -120,6 +120,13 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     private String productionProcessName;
 
     /**
+     * 产出工序
+     */
+    @Transient
+    @ApiModelProperty(name="outputProcessName" ,value="产出工序")
+    private String outputProcessName;
+
+    /**
      * 流转卡规则解析码
      */
     @Transient

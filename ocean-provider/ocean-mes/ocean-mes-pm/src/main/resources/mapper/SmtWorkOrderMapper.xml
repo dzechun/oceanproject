@@ -129,7 +129,9 @@
         spm.product_model_name AS 'productModelName',
         bt.material_quality AS 'materialQuality',
         swo1.work_order_code AS 'parentWorkOrderCode',
-        sps.package_specification_quantity AS 'packageSpecificationQuantity'
+        sps.package_specification_quantity AS 'packageSpecificationQuantity',
+        putbp.process_name AS 'putIntoProcessName',
+        outbp.process_name AS 'productionProcessName'
         FROM
         mes_pm_work_order swo
         left join mes_pm_work_order swo1 on swo1.work_order_id = swo.parent_id
@@ -143,6 +145,8 @@
         left join ocean.sys_user u on swo.create_user_id=u.user_id
         left join ocean.sys_user s on swo.modified_user_id=s.user_id
         LEFT JOIN base_organization bo ON swo.org_id = bo.organization_id
+        left join base_process putbp ON putbp.process_id = swo.put_into_process_id
+        left join base_process outbp ON outbp.process_id = swo.output_process_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
