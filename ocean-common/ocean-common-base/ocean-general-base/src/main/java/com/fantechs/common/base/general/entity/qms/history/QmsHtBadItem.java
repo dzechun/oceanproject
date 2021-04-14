@@ -88,7 +88,7 @@ public class QmsHtBadItem extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     private Long organizationId;
 
     /**
