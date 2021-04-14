@@ -21,7 +21,6 @@ import com.fantechs.provider.base.mapper.BaseLabelCategoryMapper;
 import com.fantechs.provider.base.mapper.BaseLabelMapper;
 import com.fantechs.provider.base.service.BaseLabelService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @author Mr.Lei
@@ -64,10 +65,17 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         if(StringUtils.isEmpty(file)){
-            throw new BizErrorException("未监测到上传的标签文件");
+            throw new BizErrorException("未检测到上传的标签文件");
         }
         if(StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals("")){
             throw new BizErrorException("请规范标签文件名称");
+        }
+
+        //匹配文件后缀
+        String reg = ".+(.btw|.BTW)$";
+        Matcher matcher = Pattern.compile(reg).matcher(file.getOriginalFilename());
+        if(!matcher.find()){
+            throw new BizErrorException("标签模版文件格式不正确");
         }
         if(record.getIsDefaultLabel()==(byte)1){
             Example example = new Example(BaseLabel.class);
@@ -87,11 +95,12 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
         //名称+编码
-        record.setLabelName(file.getOriginalFilename()+record.getLabelCode());
+        String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().indexOf("."));
+        record.setLabelName(fileName+record.getLabelCode());
         record.setLabelVersion("0.0.1");
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
         //文件上传
-        String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file);
+        String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,record.getLabelName());
 
         record.setSavePath(path);
         record.setCreateTime(new Date());
@@ -132,7 +141,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
         if(file!=null){
             //文件上传
-            String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file);
+            String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,entity.getLabelName());
 
             entity.setSavePath(path);
         }
@@ -177,7 +186,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
      * Upload the tag template to the server
      * @param file
      */
-    private String UploadFile(String labelCategoryName,MultipartFile file){
+    private String UploadFile(String labelCategoryName,MultipartFile file,String fileName){
         try {
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("LabelFilePath");
@@ -186,7 +195,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
             InputStream stream = file.getInputStream();
             String path = map.get("path") + labelCategoryName;
-            FileOutputStream fs=new FileOutputStream(path);
+            FileOutputStream fs=new FileOutputStream(path+fileName+".btw");
             byte[] buffer =new byte[1024*1024];
             int bytesum = 0;
             int byteread = 0;
