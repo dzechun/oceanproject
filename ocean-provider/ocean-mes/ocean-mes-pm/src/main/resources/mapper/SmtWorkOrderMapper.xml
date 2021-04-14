@@ -23,7 +23,6 @@
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
         <result column="contract_no" jdbcType="BIGINT" property="contractNo"/>
-        <result column="if_print" jdbcType="TINYINT" property="ifPrint"/>
 
         <result column="put_into_process_id" jdbcType="BIGINT" property="putIntoProcessId"/>
         <result column="output_process_id" jdbcType="BIGINT" property="outputProcessId"/>

@@ -2,28 +2,27 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardCollocationDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardPoolDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSetDet;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
-import com.fantechs.common.base.general.entity.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderCardCollocationDto;
+import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardCollocation;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
+import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardPool;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.mapper.*;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderBarcodePoolMapper;
+import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardCollocationMapper;
+import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardCollocationService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
-import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
-import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -48,16 +47,18 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
     private MesPmWorkOrderService mesPmWorkOrderService;
     @Resource
     private SmtWorkOrderCardPoolMapper smtWorkOrderCardPoolMapper;
-    @Resource
-    private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
+//    @Resource
+//    private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
     @Resource
     private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
     @Resource
     private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
-    @Resource
-    private BaseBarcodeRuleSetDetMapper BaseBarcodeRuleSetDetMapper;
-    @Resource
-    private BaseBarcodeRuleMapper BaseBarcodeRuleMapper;
+//    @Resource
+//    private BaseBarcodeRuleSetDetMapper BaseBarcodeRuleSetDetMapper;
+//    @Resource
+//    private BaseBarcodeRuleMapper BaseBarcodeRuleMapper;
+//    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -116,52 +117,53 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         smtWorkOrderCardCollocation.setGeneratedQuantity(produceQuantity + generatedQuantity);
 
 
-        Long cardCode = null;
-        Long barcodeRuleId = null;
-        //通过条码集合找到对应的条码规则、流转卡规则
-        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
-        searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
-        List<BaseBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = BaseBarcodeRuleSetDetMapper.findList(searchBaseBarcodeRuleSetDet);
-        if (StringUtils.isEmpty(smtBarcodeRuleSetDetList)) {
-            throw new BizErrorException("没有找到相关的条码集合规则");
-        }
-        for (BaseBarcodeRuleSetDet baseBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
-            BaseBarcodeRule baseBarcodeRule = BaseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
-            if (StringUtils.isEmpty(baseBarcodeRule)) {
-                throw new BizErrorException("未找到条码规则");
-            }
-            //产品条码规则
-            if (baseBarcodeRule.getBarcodeRuleCategoryId() == 1) {
-                barcodeRuleId = baseBarcodeRule.getBarcodeRuleId();
-                continue;
-            }
-            if (baseBarcodeRule.getBarcodeRuleCategoryId() == 6) {
-                //流转卡条码规则
-                cardCode = baseBarcodeRule.getBarcodeRuleId();
-                continue;
-            }
-        }
-
-        if (StringUtils.isEmpty(cardCode)) {
-            throw new BizErrorException("没有找到相关的流转卡条码规则");
-        }
-        //工单流转卡
-        //如果转移批次量设置为-1，代表生成流程卡数总为1张，一张代表投产数
-        List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity,transferQuantity);
-        //产品条码流转卡
-        if (StringUtils.isNotEmpty(barcodeRuleId) && transferQuantity!=-1) {
-            generateBarcode(list, smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
-        }
+//        Long cardCode = null;
+//        Long barcodeRuleId = null;
+//        //通过条码集合找到对应的条码规则、流转卡规则
+//        SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet = new SearchBaseBarcodeRuleSet();
+//        searchBaseBarcodeRuleSet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
+//        List<BaseBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetList(searchBaseBarcodeRuleSet).getData();
+//
+//        if (StringUtils.isEmpty(smtBarcodeRuleSetDetList)) {
+//            throw new BizErrorException("没有找到相关的条码集合规则");
+//        }
+//        for (BaseBarcodeRuleSetDet baseBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
+//            BaseBarcodeRule baseBarcodeRule = BaseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
+//            if (StringUtils.isEmpty(baseBarcodeRule)) {
+//                throw new BizErrorException("未找到条码规则");
+//            }
+//            //产品条码规则
+//            if (baseBarcodeRule.getBarcodeRuleCategoryId() == 1) {
+//                barcodeRuleId = baseBarcodeRule.getBarcodeRuleId();
+//                continue;
+//            }
+//            if (baseBarcodeRule.getBarcodeRuleCategoryId() == 6) {
+//                //流转卡条码规则
+//                cardCode = baseBarcodeRule.getBarcodeRuleId();
+//                continue;
+//            }
+//        }
+//
+//        if (StringUtils.isEmpty(cardCode)) {
+//            throw new BizErrorException("没有找到相关的流转卡条码规则");
+//        }
+//        //工单流转卡
+//        //如果转移批次量设置为-1，代表生成流程卡数总为1张，一张代表投产数
+//        List<SmtWorkOrderCardPool> list = generateCardCode(smtWorkOrderCardCollocation, cardCode, produceQuantity,transferQuantity);
+//        //产品条码流转卡
+//        if (StringUtils.isNotEmpty(barcodeRuleId) && transferQuantity!=-1) {
+//            generateBarcode(list, smtWorkOrderCardCollocation, barcodeRuleId, transferQuantity);
+//        }
         int result=0;
-        if(StringUtils.isEmpty(smtWorkOrderCardCollocation.getWorkOrderCardCollocationId())){
-            smtWorkOrderCardCollocation.setCreateUserId(currentUser.getUserId());
-            smtWorkOrderCardCollocation.setCreateTime(new Date());
-            result=smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
-        }else{
-            smtWorkOrderCardCollocation.setModifiedUserId(currentUser.getUserId());
-            smtWorkOrderCardCollocation.setModifiedTime(new Date());
-            result=smtWorkOrderCardCollocationMapper.updateByPrimaryKeySelective(smtWorkOrderCardCollocation);
-        }
+//        if(StringUtils.isEmpty(smtWorkOrderCardCollocation.getWorkOrderCardCollocationId())){
+//            smtWorkOrderCardCollocation.setCreateUserId(currentUser.getUserId());
+//            smtWorkOrderCardCollocation.setCreateTime(new Date());
+//            result=smtWorkOrderCardCollocationMapper.insertSelective(smtWorkOrderCardCollocation);
+//        }else{
+//            smtWorkOrderCardCollocation.setModifiedUserId(currentUser.getUserId());
+//            smtWorkOrderCardCollocation.setModifiedTime(new Date());
+//            result=smtWorkOrderCardCollocationMapper.updateByPrimaryKeySelective(smtWorkOrderCardCollocation);
+//        }
         return result;
     }
 
@@ -172,51 +174,51 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
      * @param barcodeRuleId
      * @param quantity
      */
-    @Transactional(rollbackFor = Exception.class)
-    public void generateBarcode(List<SmtWorkOrderCardPool> list, SmtWorkOrderCardCollocation smtWorkOrderCardCollocation, Long barcodeRuleId, Integer quantity) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        List<SmtWorkOrderBarcodePool> workOrderBarcodePools = new ArrayList<>();
-        String workOrderBarcode = null;
-        //查询该规则生成的条码规则解析码条数
-        Example example = new Example(SmtWorkOrderBarcodePool.class);
-        example.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
-        example.setOrderByClause("`barcode` desc");
-        List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
-
-        Example example1 = new Example(BaseBarcodeRuleSpec.class);
-        example1.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
-        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example1);
-        if (StringUtils.isNotEmpty(smtWorkOrderBarcodePools)) {
-            workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
-        }
-
-        for (SmtWorkOrderCardPool smtWorkOrderCardPool : list) {
-            Long workOrderCardPoolId = smtWorkOrderCardPool.getWorkOrderCardPoolId();
-            for (int i = 0; i < quantity; i++) {
-                if (StringUtils.isNotEmpty(ruleSpecs)) {
-                    workOrderBarcode = BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, workOrderBarcode);
-                    workOrderBarcode = BarcodeRuleUtils.analysisCode(ruleSpecs, workOrderBarcode, null);
-                } else {
-                    throw new BizErrorException("该工单条码规则没有配置");
-                }
-
-                SmtWorkOrderBarcodePool smtWorkOrderBarcodePool = new SmtWorkOrderBarcodePool();
-                smtWorkOrderBarcodePool.setTaskCode(CodeUtils.getId("PROD"));
-                smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderCardCollocation.getWorkOrderId());
-                smtWorkOrderBarcodePool.setWorkOrderCardPoolId(workOrderCardPoolId);
-                smtWorkOrderBarcodePool.setBarcodeRuleId(barcodeRuleId);
-                smtWorkOrderBarcodePool.setBarcode(workOrderBarcode);
-                smtWorkOrderBarcodePool.setTaskStatus((byte) 0);
-                smtWorkOrderBarcodePool.setStatus((byte) 1);
-                smtWorkOrderBarcodePool.setCreateUserId(currentUser.getUserId());
-                smtWorkOrderBarcodePool.setCreateTime(new Date());
-                smtWorkOrderBarcodePool.setModifiedUserId(currentUser.getUserId());
-                smtWorkOrderBarcodePool.setModifiedTime(new Date());
-                workOrderBarcodePools.add(smtWorkOrderBarcodePool);
-            }
-        }
-        smtWorkOrderBarcodePoolMapper.insertList(workOrderBarcodePools);
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    public void generateBarcode(List<SmtWorkOrderCardPool> list, SmtWorkOrderCardCollocation smtWorkOrderCardCollocation, Long barcodeRuleId, Integer quantity) {
+//        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+//        List<SmtWorkOrderBarcodePool> workOrderBarcodePools = new ArrayList<>();
+//        String workOrderBarcode = null;
+//        //查询该规则生成的条码规则解析码条数
+//        Example example = new Example(SmtWorkOrderBarcodePool.class);
+//        example.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
+//        example.setOrderByClause("`barcode` desc");
+//        List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
+//
+//        Example example1 = new Example(BaseBarcodeRuleSpec.class);
+//        example1.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
+//        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example1);
+//        if (StringUtils.isNotEmpty(smtWorkOrderBarcodePools)) {
+//            workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
+//        }
+//
+//        for (SmtWorkOrderCardPool smtWorkOrderCardPool : list) {
+//            Long workOrderCardPoolId = smtWorkOrderCardPool.getWorkOrderCardPoolId();
+//            for (int i = 0; i < quantity; i++) {
+//                if (StringUtils.isNotEmpty(ruleSpecs)) {
+//                    workOrderBarcode = BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, workOrderBarcode);
+//                    workOrderBarcode = BarcodeRuleUtils.analysisCode(ruleSpecs, workOrderBarcode, null);
+//                } else {
+//                    throw new BizErrorException("该工单条码规则没有配置");
+//                }
+//
+//                SmtWorkOrderBarcodePool smtWorkOrderBarcodePool = new SmtWorkOrderBarcodePool();
+//                smtWorkOrderBarcodePool.setTaskCode(CodeUtils.getId("PROD"));
+//                smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderCardCollocation.getWorkOrderId());
+//                smtWorkOrderBarcodePool.setWorkOrderCardPoolId(workOrderCardPoolId);
+//                smtWorkOrderBarcodePool.setBarcodeRuleId(barcodeRuleId);
+//                smtWorkOrderBarcodePool.setBarcode(workOrderBarcode);
+//                smtWorkOrderBarcodePool.setTaskStatus((byte) 0);
+//                smtWorkOrderBarcodePool.setStatus((byte) 1);
+//                smtWorkOrderBarcodePool.setCreateUserId(currentUser.getUserId());
+//                smtWorkOrderBarcodePool.setCreateTime(new Date());
+//                smtWorkOrderBarcodePool.setModifiedUserId(currentUser.getUserId());
+//                smtWorkOrderBarcodePool.setModifiedTime(new Date());
+//                workOrderBarcodePools.add(smtWorkOrderBarcodePool);
+//            }
+//        }
+//        smtWorkOrderBarcodePoolMapper.insertList(workOrderBarcodePools);
+//    }
 
     /**
      * 生成工单流转卡解析码
@@ -239,7 +241,7 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
 
         Example example1 = new Example(BaseBarcodeRuleSpec.class);
         example1.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
-        List<BaseBarcodeRuleSpec> list = baseBarcodeRuleSpecMapper.selectByExample(example1);
+//        List<BaseBarcodeRuleSpec> list = baseBarcodeRuleSpecMapper.selectByExample(example1);
         if (StringUtils.isNotEmpty(smtWorkOrderCardPools)) {
             workOrderCardCode = smtWorkOrderCardPools.get(0).getWorkOrderCardId();
         }
@@ -248,26 +250,26 @@ public class SmtWorkOrderCardCollocationServiceImpl extends BaseService<SmtWorkO
         MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderService.selectByKey(smtWorkOrderCardCollocation.getWorkOrderId());
         Long parentWorkOrderCardId=0L;
         if(mesPmWorkOrder.getParentId()!=0){
-            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
-            searchSmtWorkOrderCardPool.setWorkOrderId(mesPmWorkOrder.getParentId());
-            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
-            if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
-                throw new BizErrorException("父级工单未生成流程卡："+ mesPmWorkOrder.getParentId());
-            }
-            SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = smtWorkOrderCardPoolDtoList.get(0);
-            parentWorkOrderCardId=smtWorkOrderCardPoolDto.getWorkOrderCardPoolId();
+//            SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool = new SearchSmtWorkOrderCardPool();
+//            searchSmtWorkOrderCardPool.setWorkOrderId(mesPmWorkOrder.getParentId());
+//            List<SmtWorkOrderCardPoolDto> smtWorkOrderCardPoolDtoList = smtWorkOrderCardPoolService.findList(searchSmtWorkOrderCardPool);
+//            if(StringUtils.isEmpty(smtWorkOrderCardPoolDtoList)){
+//                throw new BizErrorException("父级工单未生成流程卡："+ mesPmWorkOrder.getParentId());
+//            }
+//            SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto = smtWorkOrderCardPoolDtoList.get(0);
+//            parentWorkOrderCardId=smtWorkOrderCardPoolDto.getWorkOrderCardPoolId();
         }
         //=====
 
         //循环次数
         int count=transferQuantity==-1?1:produceQuantity;
         for (int i = 0; i < count; i++) {
-            if (StringUtils.isNotEmpty(list)) {
-                workOrderCardCode = BarcodeRuleUtils.getMaxSerialNumber(list, workOrderCardCode);
-                workOrderCardCode = BarcodeRuleUtils.analysisCode(list, workOrderCardCode, null);
-            } else {
-                throw new BizErrorException("该工单流转卡规则没有配置");
-            }
+//            if (StringUtils.isNotEmpty(list)) {
+//                workOrderCardCode = BarcodeRuleUtils.getMaxSerialNumber(list, workOrderCardCode);
+//                workOrderCardCode = BarcodeRuleUtils.analysisCode(list, workOrderCardCode, null);
+//            } else {
+//                throw new BizErrorException("该工单流转卡规则没有配置");
+//            }
 
             SmtWorkOrderCardPool smtWorkOrderCardPool = new SmtWorkOrderCardPool();
             smtWorkOrderCardPool.setTaskCode(CodeUtils.getId("WOED"));
