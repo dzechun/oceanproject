@@ -43,24 +43,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
-    @Resource
-    private SmtWorkOrderBomMapper smtWorkOrderBomMapper;
-    @Resource
-    private SmtHtWorkOrderBomMapper smtHtWorkOrderBomMapper;
-    @Resource
-    private SmtWorkOrderCardCollocationMapper smtWorkOrderCardCollocationMapper;
-    @Resource
-    private SmtStockMapper smtStockMapper;
-    @Resource
-    private SmtStockDetMapper smtStockDetMapper;
-    @Resource
-    private SmtWorkOrderBomService smtWorkOrderBomService;
-    @Resource
-    private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
-    @Resource
-    private BasicFeignApi basicFeignApi;
-    @Resource
-    private BaseFeignApi baseFeignApi;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -91,92 +74,9 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         //新增工单历史信息
         recordHistory(mesPmWorkOrder,"新增");
 
-
-        //根据产品BOM生成工单BOM
-        //特殊声明是否产生BOM
-//        if(StringUtils.isEmpty(mesPmWorkOrder.getRemark()) || !mesPmWorkOrder.getRemark().equals("无BOM")){
-//            //生成备料单
-//            SmtStock smtStock = new SmtStock();
-//            smtStock.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
-//            smtStock.setDeliveryMode(new Byte("0"));
-//            smtStock.setStatus(new Byte("0"));
-//            smtStock.setStockCode(CodeUtils.getId("BLD-"));
-//            // Date date = smtWorkOrder.getPlannedStartTime();
-//            // Date afterDate = new Date(date.getTime() + 600000);
-//            BeanUtils.copyProperties(mesPmWorkOrder, smtStock, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
-//            smtStockMapper.insertUseGeneratedKeys(smtStock);
-//
-//            genWorkOrder(mesPmWorkOrder, smtStock);
-//        }
-
         return 1;
     }
 
-    /**
-     * 根据产品BOM明细生成工单BOM信息
-     *
-     * @param mesPmWorkOrder
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void genWorkOrder(MesPmWorkOrder mesPmWorkOrder, SmtStock smtStock) {
-        SysUser currentUser = currentUser();
-        List<SmtWorkOrderBom> list = new ArrayList<>();
-        List<SmtHtWorkOrderBom> htList = new ArrayList<>();
-
-        List<SmtStockDet> stockDetList = new ArrayList<>();
-        //根据物料ID查询产品BOM信息
-        SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
-        searchBaseProductBom.setMaterialId(mesPmWorkOrder.getMaterialId());
-        searchBaseProductBom.setIsBomDet(new Byte("1"));
-        List<BaseProductBomDto> smtProductBoms = basicFeignApi.findProductBomList(searchBaseProductBom).getData();
-        if (StringUtils.isNotEmpty(smtProductBoms)) {
-            for (BaseProductBomDto smtProductBomDet : smtProductBoms) {
-                SmtWorkOrderBom smtWorkOrderBom = new SmtWorkOrderBom();
-                BeanUtils.copyProperties(smtProductBomDet, smtWorkOrderBom, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
-                BigDecimal workOrderQuantity = mesPmWorkOrder.getWorkOrderQty();
-                BigDecimal quantity = StringUtils.isEmpty(smtProductBomDet.getQuantity())?new BigDecimal(1):smtProductBomDet.getQuantity();
-                BigDecimal baseQuantity = StringUtils.isEmpty(smtProductBomDet.getBaseQuantity())?new BigDecimal(1):smtProductBomDet.getBaseQuantity();
-                smtWorkOrderBom.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
-                smtWorkOrderBom.setPartMaterialId(smtProductBomDet.getMaterialId());
-                smtWorkOrderBom.setSingleQuantity(quantity);
-                if (StringUtils.isNotEmpty(baseQuantity,quantity)){
-                    smtWorkOrderBom.setQuantity(new BigDecimal(workOrderQuantity.toString()).multiply(quantity).multiply(baseQuantity));
-                }
-                smtWorkOrderBom.setCreateUserId(currentUser.getUserId());
-                smtWorkOrderBom.setCreateTime(new Date());
-                list.add(smtWorkOrderBom);
-
-                //备料单明细
-                SmtStockDet smtStockDet = new SmtStockDet();
-                smtStockDet.setStockId(smtStock.getStockId());
-                smtStockDet.setMaterialId(StringUtils.isEmpty(smtWorkOrderBom.getPartMaterialId())?smtWorkOrderBom.getSubMaterialId():smtWorkOrderBom.getPartMaterialId());
-                smtStockDet.setPlanQuantity(smtWorkOrderBom.getQuantity());
-                smtStockDet.setStockQuantity(StringUtils.isEmpty(smtWorkOrderBom.getBaseQuantity())?new BigDecimal(1):smtWorkOrderBom.getBaseQuantity());
-                smtStockDet.setStatus(new Byte("0"));
-                BeanUtils.copyProperties(smtWorkOrderBom, smtStockDet, new String[]{"createUserId", "createTime", "modifiedUserId", "modifiedTime"});
-                stockDetList.add(smtStockDet);
-            }
-            //批量新增工单BOM信息
-            smtWorkOrderBomMapper.insertList(list);
-
-            //批量新增备料明细
-            smtStockDetMapper.insertList(stockDetList);
-
-            if (StringUtils.isNotEmpty(list)) {
-                for (SmtWorkOrderBom smtWorkOrderBom : list) {
-                    //新增工单BOM历史信息
-                    SmtHtWorkOrderBom smtHtWorkOrderBom = new SmtHtWorkOrderBom();
-                    BeanUtils.copyProperties(smtWorkOrderBom, smtHtWorkOrderBom);
-                    smtHtWorkOrderBom.setModifiedUserId(currentUser.getUserId());
-                    smtHtWorkOrderBom.setModifiedTime(new Date());
-                    htList.add(smtHtWorkOrderBom);
-                }
-            }
-            //批量新增工单BOM历史信息
-            smtHtWorkOrderBomMapper.insertList(htList);
-        }
-
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -247,11 +147,6 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             mesPmHtWorkOrder.setModifiedUserId(currentUser.getUserId());
             mesPmHtWorkOrder.setModifiedTime(new Date());
             list.add(mesPmHtWorkOrder);
-
-            Example example = new Example(SmtWorkOrderBom.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workOrderId", workOrderId);
-            smtWorkOrderBomMapper.deleteByExample(example);
         }
         smtHtWorkOrderMapper.insertList(list);
 
