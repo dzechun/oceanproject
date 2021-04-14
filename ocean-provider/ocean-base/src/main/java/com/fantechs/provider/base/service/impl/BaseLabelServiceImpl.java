@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -88,10 +90,10 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         record.setLabelName(file.getOriginalFilename()+record.getLabelCode());
         record.setLabelVersion("0.0.1");
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
-        record.setSavePath("bartender服务器");
         //文件上传
+        String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file);
 
-
+        record.setSavePath(path);
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
@@ -128,9 +130,12 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         }
 
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
-//        if(file!=null){
-//            rabbitProducer.sendFiles(entity.getLabelVersion(),entity.getLabelName(),file);
-//        }
+        if(file!=null){
+            //文件上传
+            String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file);
+
+            entity.setSavePath(path);
+        }
 
         //update version number
         entity.setLabelVersion(this.generationVersion(entity.getLabelVersion()));
@@ -172,12 +177,31 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
      * Upload the tag template to the server
      * @param file
      */
-    private void UploadFile(MultipartFile file){
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("LabelFilePath");
-        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
-        List<SysSpecItem> sysSpecItemList = itemList.getData();
-        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+    private String UploadFile(String labelCategoryName,MultipartFile file){
+        try {
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("LabelFilePath");
+            ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
+            List<SysSpecItem> sysSpecItemList = itemList.getData();
+            Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+            InputStream stream = file.getInputStream();
+            String path = map.get("path") + labelCategoryName;
+            FileOutputStream fs=new FileOutputStream(path);
+            byte[] buffer =new byte[1024*1024];
+            int bytesum = 0;
+            int byteread = 0;
+            while ((byteread=stream.read(buffer))!=-1)
+            {
+                bytesum+=byteread;
+                fs.write(buffer,0,byteread);
+                fs.flush();
+            }
+            fs.close();
+            stream.close();
+            return path;
+        }catch (Exception e){
+            throw new BizErrorException("标签模版上传失败");
+        }
     }
 
     /**
