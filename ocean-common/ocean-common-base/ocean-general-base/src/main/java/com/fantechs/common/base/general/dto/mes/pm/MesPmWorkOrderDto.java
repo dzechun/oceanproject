@@ -188,25 +188,14 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name = "productModelName",value = "产品型号")
     private String productModelName;
-    /**
-     * 产品材质
-     */
-    @Transient
-    @ApiModelProperty(name = "materialQuality",value = "产品材质")
-    private String materialQuality;
+
     /**
      * 单位
      */
     @Transient
     @ApiModelProperty(name = "mainUnit",value = "单位")
     private String mainUnit;
-    /**
-     * 父工单编码
-     */
-    @Transient
-    @ApiModelProperty(value = "父工单编码",example = "父工单编码")
-    @Excel(name = "父工单编码")
-    private String parentWorkOrderCode;
+
     /**
      * 工序链
      */

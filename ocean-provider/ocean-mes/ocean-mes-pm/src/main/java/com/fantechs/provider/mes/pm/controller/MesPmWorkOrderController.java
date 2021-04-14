@@ -76,15 +76,6 @@ public class MesPmWorkOrderController {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.update(mesPmWorkOrder));
     }
 
-    @ApiOperation("更新工单状态")
-    @PostMapping("/updateStatus")
-    public ResponseEntity updateStatus(
-            @ApiParam(value = "工单ID",required = true) @RequestParam Long workOrderID,
-            @ApiParam(value = "工单状态",required = true) @RequestParam Integer status
-                                       ) {
-        return ControllerUtil.returnCRUD(mesPmWorkOrderService.updateWorkOrderStatus(workOrderID,status));
-    }
-
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<MesPmWorkOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
@@ -106,15 +97,6 @@ public class MesPmWorkOrderController {
         Page<Object> page = PageHelper.startPage(searchMesPmWorkOrder.getStartPage(), searchMesPmWorkOrder.getPageSize());
         List<MesPmHtWorkOrder> list = smtHtWorkOrderService.findList(searchMesPmWorkOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
-
-    @ApiOperation("工单记录完工数量")
-    @GetMapping("/finishedProduct")
-    public ResponseEntity<Integer> finishedProduct(
-            @ApiParam(value = "工单ID")@RequestParam Long workOrderId,
-            @ApiParam(value = "完工数量")@RequestParam Double count
-    ){
-        return ControllerUtil.returnCRUD(mesPmWorkOrderService.finishedProduct(workOrderId, count));
     }
 
     @PostMapping(value = "/export")
