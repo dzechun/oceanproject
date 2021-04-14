@@ -27,7 +27,7 @@ public class BaseOrganization extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Id
-    @Column(name = "org_id")
+    @Column(name = "organization_id")
     @NotNull(groups = update.class,message = "组织id不能为空")
     private Long organizationId;
 
