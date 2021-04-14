@@ -44,55 +44,5 @@ public class BaseOrganizationUser extends ValidGroup implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
-    /**
-     * 备注
-     */
-    @ApiModelProperty(name="remark",value = "备注")
-    @Column(name = "remark")
-    private String remark;
-
-    /**
-     * 状态（0、不启用 1、启用）
-     */
-    @ApiModelProperty(name="status",value = "状态（0、不启用 1、启用）")
-    private Byte status;
-
-    /**
-     * 创建人ID
-     */
-    @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Column(name = "create_user_id")
-    private Long createUserId;
-
-    /**
-     * 创建时间
-     */
-    @ApiModelProperty(name="createTime",value = "创建时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "create_time")
-    private Date createTime;
-
-    /**
-     * 修改人ID
-     */
-    @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Column(name = "modified_user_id")
-    private Long modifiedUserId;
-
-    /**
-     * 修改时间
-     */
-    @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "modified_time")
-    private Date modifiedTime;
-
-    /**
-     * 逻辑删除（0、删除 1、正常）
-     */
-    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Column(name = "is_delete")
-    private Byte isDelete;
-
     private static final long serialVersionUID = 1L;
 }
