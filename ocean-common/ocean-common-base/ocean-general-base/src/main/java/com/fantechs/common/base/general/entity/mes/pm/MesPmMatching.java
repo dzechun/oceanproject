@@ -80,7 +80,7 @@ public class MesPmMatching extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     private Long organizationId;
 
     /**

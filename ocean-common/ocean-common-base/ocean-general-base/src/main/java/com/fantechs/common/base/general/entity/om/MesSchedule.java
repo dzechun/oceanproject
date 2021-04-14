@@ -24,7 +24,7 @@ public class MesSchedule implements Serializable {
     * 组织代码id
     */
     @ApiModelProperty(value = "组织代码id",example = "组织代码id")
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     @Excel(name = "组织代码id")
     private Long organizationId;
 
