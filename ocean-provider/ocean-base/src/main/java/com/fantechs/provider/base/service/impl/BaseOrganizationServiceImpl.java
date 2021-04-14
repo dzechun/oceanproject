@@ -141,7 +141,11 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
             sysOrganizationUser.setUserId(userId);
             list.add(sysOrganizationUser);
         }
-        return baseOrganizationMapper.insertUser(list);
+        int i = 1;
+        if (StringUtils.isNotEmpty(list)){
+            i = baseOrganizationMapper.insertUser(list);
+        }
+        return i;
     }
 
     @Override
