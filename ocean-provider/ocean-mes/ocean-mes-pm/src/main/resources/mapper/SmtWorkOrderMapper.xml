@@ -123,18 +123,14 @@
         sbrs.barcode_rule_set_name AS 'barcodeRuleSetName',
         u.user_name AS 'createUserName',
         s.user_name AS 'modifiedUserName',
-        swo.order_code AS 'orderCode',
         bo.organization_name AS 'organizationName',
         bt.color AS 'color',
         spm.product_model_name AS 'productModelName',
-        bt.material_quality AS 'materialQuality',
-        swo1.work_order_code AS 'parentWorkOrderCode',
         sps.package_specification_quantity AS 'packageSpecificationQuantity',
         putbp.process_name AS 'putIntoProcessName',
         outbp.process_name AS 'productionProcessName'
         FROM
         mes_pm_work_order swo
-        left join mes_pm_work_order swo1 on swo1.work_order_id = swo.parent_id
         left join base_material sm on swo.material_id=sm.material_id
         LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
         left join base_package_specification sps on sps.package_specification_id = bt.package_specification_id

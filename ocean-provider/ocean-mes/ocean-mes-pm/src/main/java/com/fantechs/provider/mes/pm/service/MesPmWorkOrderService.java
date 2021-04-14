@@ -21,9 +21,4 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
 
     int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom);
 
-    //更新工单状态
-    int updateWorkOrderStatus(Long workOrderId,int status);
-
-    //工单完工产品
-    int finishedProduct(Long workOrderId,Double count);
 }
