@@ -159,7 +159,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException("获取标签信息失败");
         }
-        Path file = Paths.get("../"+ baseLabelCategory.getLabelCategoryName());
+        Path file = Paths.get("/label/"+ baseLabelCategory.getLabelCategoryName()+"/"+labelName);
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
