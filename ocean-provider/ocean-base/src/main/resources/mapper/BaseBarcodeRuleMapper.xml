@@ -33,7 +33,7 @@
     select sbr.barcode_rule_id,sbr.barcode_rule_code,sbr.barcode_rule_name,sbr.barcode_rule_desc,sbr.barcode_rule_category_id,ssi.spec_name as barcode_rule_category_name,
     sbr.barcode_rule, sbr.org_id, sbr.remark,sbr.status,sbr.create_user_id, u.user_name as create_user_name,sbr.create_time,sbr.modified_user_id,s.user_name as modified_user_name,sbr.modified_time,
     sbr.is_delete
-    from fantech_imes_v2.smt_barcode_rule sbr
+    from fantech_imes_v2.base_barcode_rule sbr
     left join ocean_v2.sys_spec_item ssi on sbr.barcode_rule_category_id=ssi.spec_id
     left join ocean_v2.sys_user u on sbr.create_user_id=u.user_id
     left join ocean_v2.sys_user s on sbr.modified_user_id=s.user_id
@@ -62,11 +62,11 @@
         and sbr.barcode_rule = #{barcodeRule}
       </if>
       <if test="searchType==1 and barcodeRuleSetId!=null and barcodeRuleSetId!=''">
-        AND sbr.barcode_rule_id IN (SELECT sbrsd.barcode_rule_id FROM smt_barcode_rule_set_det sbrsd WHERE sbrsd.barcode_rule_set_id=#{barcodeRuleSetId})
+        AND sbr.barcode_rule_id IN (SELECT sbrsd.barcode_rule_id FROM base_barcode_rule_set_det sbrsd WHERE sbrsd.barcode_rule_set_id=#{barcodeRuleSetId})
         AND sbr.status=1
       </if>
       <if test="searchType==0 and barcodeRuleSetId!=null and barcodeRuleSetId!=''">
-        AND  sbr.barcode_rule_id NOT IN (SELECT sbrsd.barcode_rule_id FROM smt_barcode_rule_set_det sbrsd WHERE sbrsd.barcode_rule_set_id=#{barcodeRuleSetId})
+        AND  sbr.barcode_rule_id NOT IN (SELECT sbrsd.barcode_rule_id FROM base_barcode_rule_set_det sbrsd WHERE sbrsd.barcode_rule_set_id=#{barcodeRuleSetId})
         AND  sbr.status=1
       </if>
     </where>
