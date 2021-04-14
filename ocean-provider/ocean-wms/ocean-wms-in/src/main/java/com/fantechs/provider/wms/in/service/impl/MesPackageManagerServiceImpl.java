@@ -5,7 +5,7 @@ import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
@@ -350,21 +350,21 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
-        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = new ArrayList<>();
+        List<BaseBarcodeRuleSpec> baseBarcodeRuleSpecList = new ArrayList<>();
         if(mesPackageManager.getType()==(byte)1){
             //包箱条码
-             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
+             baseBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
         }else if(mesPackageManager.getType()==(byte)2){
             //栈板
-            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
+            baseBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
         }
 
-        if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
+        if(StringUtils.isEmpty(baseBarcodeRuleSpecList)){
             throw new BizErrorException("请设置包箱条码规则");
         }
         //取总共条码生成数
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
@@ -383,12 +383,12 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
      * @return
      */
     private String getBoxNoCode(MesPackageManager mesPackageManager){
-        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findNoCode((byte)7);
-        if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
+        List<BaseBarcodeRuleSpec> baseBarcodeRuleSpecList = mesPackageManagerMapper.findNoCode((byte)7);
+        if(StringUtils.isEmpty(baseBarcodeRuleSpecList)){
             throw new BizErrorException("未匹配到标签No序号规则");
         }
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }

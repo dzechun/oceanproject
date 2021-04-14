@@ -33,7 +33,7 @@
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
     </resultMap>
 
-    <resultMap id="SmtBarcodeRuleSpecResultMap" type="com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec">
+    <resultMap id="SmtBarcodeRuleSpecResultMap" type="com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec">
         <id column="barcode_rule_spec_id" jdbcType="BIGINT" property="barcodeRuleSpecId"/>
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId"/>
         <result column="spec_id" jdbcType="BIGINT" property="specId"/>

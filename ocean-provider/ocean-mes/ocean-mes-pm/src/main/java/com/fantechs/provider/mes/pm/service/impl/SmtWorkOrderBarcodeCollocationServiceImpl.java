@@ -1,10 +1,13 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.SmtWorkOrderBarcodeCollocationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSetDet;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSetDet;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderBarcodeCollocation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -40,11 +43,11 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
     @Resource
     private SmtWorkOrderBarcodePoolMapper smtWorkOrderBarcodePoolMapper;
     @Resource
-    private SmtBarcodeRuleSpecMapper smtBarcodeRuleSpecMapper;
+    private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
     @Resource
-    private SmtBarcodeRuleSetDetMapper SmtBarcodeRuleSetDetMapper;
+    private BaseBarcodeRuleSetDetMapper BaseBarcodeRuleSetDetMapper;
     @Resource
-    private SmtBarcodeRuleMapper SmtBarcodeRuleMapper;
+    private BaseBarcodeRuleMapper BaseBarcodeRuleMapper;
 
     @Override
     public List<SmtWorkOrderBarcodeCollocationDto> findList(SearchSmtWorkOrderBarcodeCollocation searchSmtWorkOrderBarcodeCollocation) {
@@ -61,21 +64,21 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         Long workOrderId = record.getWorkOrderId();
         MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
         //通过条码集合找到对应的条码规则、流转卡规则
-        SearchSmtBarcodeRuleSetDet searchSmtBarcodeRuleSetDet = new SearchSmtBarcodeRuleSetDet();
-        searchSmtBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
-        List<SmtBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = SmtBarcodeRuleSetDetMapper.findList(searchSmtBarcodeRuleSetDet);
+        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+        searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
+        List<BaseBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = BaseBarcodeRuleSetDetMapper.findList(searchBaseBarcodeRuleSetDet);
         if(StringUtils.isEmpty(smtBarcodeRuleSetDetList)){
             throw new BizErrorException("没有找到相关的条码集合规则");
         }
         Long barcodeRuleId = null;
-        for(SmtBarcodeRuleSetDet smtBarcodeRuleSetDet:smtBarcodeRuleSetDetList){
-            SmtBarcodeRule smtBarcodeRule = SmtBarcodeRuleMapper.selectByPrimaryKey(smtBarcodeRuleSetDet.getBarcodeRuleId());
+        for(BaseBarcodeRuleSetDet baseBarcodeRuleSetDet :smtBarcodeRuleSetDetList){
+            BaseBarcodeRule baseBarcodeRule = BaseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
             if(StringUtils.isEmpty()){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             //产品条码规则
-            if(smtBarcodeRule.getBarcodeRuleCategoryId()==1){
-                barcodeRuleId = smtBarcodeRule.getBarcodeRuleId();
+            if(baseBarcodeRule.getBarcodeRuleCategoryId()==1){
+                barcodeRuleId = baseBarcodeRule.getBarcodeRuleId();
                 break;
             }
         }
@@ -131,9 +134,9 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
         example.setOrderByClause("`barcode` desc");
         List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
 
-        Example example1= new Example(SmtBarcodeRuleSpec.class);
+        Example example1= new Example(BaseBarcodeRuleSpec.class);
         example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
-        List<SmtBarcodeRuleSpec> ruleSpecs = smtBarcodeRuleSpecMapper.selectByExample(example1);
+        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example1);
         if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
             workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
         }
