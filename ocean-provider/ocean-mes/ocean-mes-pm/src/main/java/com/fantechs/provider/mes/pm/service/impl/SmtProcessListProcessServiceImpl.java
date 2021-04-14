@@ -26,7 +26,6 @@ import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.*;
-import com.fantechs.provider.mes.pm.utils.BarcodeRuleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -57,12 +56,12 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private MesPmWorkOrderService mesPmWorkOrderService;
-    @Resource
-    private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
-    @Resource
-    private BaseBarcodeRuleSetDetMapper baseBarcodeRuleSetDetMapper;
-    @Resource
-    private BaseBarcodeRuleMapper baseBarcodeRuleMapper;
+//    @Resource
+//    private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
+//    @Resource
+//    private BaseBarcodeRuleSetDetMapper baseBarcodeRuleSetDetMapper;
+//    @Resource
+//    private BaseBarcodeRuleMapper baseBarcodeRuleMapper;
     @Resource
     private MesPmMasterPlanService mesPmMasterPlanService;
     @Resource
@@ -130,58 +129,59 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool) {
-        List<SmtProcessListProcess> list = new ArrayList<>();
-        Long workOrderId = smtWorkOrderBarcodePool.getWorkOrderId();
-        //获取工单信息
-        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
-
-        Long packageNumRuleId = null;
-        //通过条码集合找到对应的条码规则、流转卡规则
-        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
-        searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
-        List<BaseBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = baseBarcodeRuleSetDetMapper.findList(searchBaseBarcodeRuleSetDet);
-        if (StringUtils.isEmpty(smtBarcodeRuleSetDetList)) {
-            throw new BizErrorException("没有找到相关的条码集合规则");
-        }
-        for (BaseBarcodeRuleSetDet baseBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
-            BaseBarcodeRule baseBarcodeRule = baseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
-            if (StringUtils.isEmpty(baseBarcodeRule)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-            //彩盒条码规则
-            if (baseBarcodeRule.getBarcodeRuleCategoryId() == 3) {
-                packageNumRuleId = baseBarcodeRule.getBarcodeRuleId();
-                continue;
-            }
-        }
-
-        Long barcodeRuleId = smtWorkOrderBarcodePool.getBarcodeRuleId();
-        //查询该工单对应工艺路线下的工序
-        List<ProcessListDto> processListDtos = smtProcessListProcessMapper.findProcess(workOrderId);
-        if (StringUtils.isNotEmpty(processListDtos)) {
-            for (ProcessListDto processListDto : processListDtos) {
-                SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
-                Long processId = processListDto.getProcessId();
-                smtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderBarcodePool.getWorkOrderCardPoolId());
-                smtProcessListProcess.setWorkOrderBarcodePoolId(smtWorkOrderBarcodePool.getWorkOrderBarcodePoolId());
-                smtProcessListProcess.setProcessId(processId);
-                smtProcessListProcess.setStatus((byte) 0);
-                smtProcessListProcess.setIsHold((byte) 0);
-                smtProcessListProcess.setProcessListProcessCode(CodeUtils.getId("SPLP"));
-                //彩盒号
-                if (StringUtils.isNotEmpty(packageNumRuleId)) {
-                    String packageNum = generateCode(barcodeRuleId);
-                    smtProcessListProcess.setPackageNum(packageNum);
-                }
-                //箱号
-                //栈板号
-                smtProcessListProcess.setIsDelete((byte) 1);
-                list.add(smtProcessListProcess);
-            }
-        } else {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-        }
-        return smtProcessListProcessMapper.insertList(list);
+//        List<SmtProcessListProcess> list = new ArrayList<>();
+//        Long workOrderId = smtWorkOrderBarcodePool.getWorkOrderId();
+//        //获取工单信息
+//        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
+//
+//        Long packageNumRuleId = null;
+//        //通过条码集合找到对应的条码规则、流转卡规则
+//        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+//        searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(smtWorkOrderDto.getBarcodeRuleSetId());
+//        List<BaseBarcodeRuleSetDetDto> smtBarcodeRuleSetDetList = baseBarcodeRuleSetDetMapper.findList(searchBaseBarcodeRuleSetDet);
+//        if (StringUtils.isEmpty(smtBarcodeRuleSetDetList)) {
+//            throw new BizErrorException("没有找到相关的条码集合规则");
+//        }
+//        for (BaseBarcodeRuleSetDet baseBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
+//            //BaseBarcodeRule baseBarcodeRule = baseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
+//            if (StringUtils.isEmpty(baseBarcodeRule)) {
+//                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+//            }
+//            //彩盒条码规则
+//            if (baseBarcodeRule.getBarcodeRuleCategoryId() == 3) {
+//                packageNumRuleId = baseBarcodeRule.getBarcodeRuleId();
+//                continue;
+//            }
+//        }
+//
+//        Long barcodeRuleId = smtWorkOrderBarcodePool.getBarcodeRuleId();
+//        //查询该工单对应工艺路线下的工序
+//        List<ProcessListDto> processListDtos = smtProcessListProcessMapper.findProcess(workOrderId);
+//        if (StringUtils.isNotEmpty(processListDtos)) {
+//            for (ProcessListDto processListDto : processListDtos) {
+//                SmtProcessListProcess smtProcessListProcess = new SmtProcessListProcess();
+//                Long processId = processListDto.getProcessId();
+//                smtProcessListProcess.setWorkOrderCardPoolId(smtWorkOrderBarcodePool.getWorkOrderCardPoolId());
+//                smtProcessListProcess.setWorkOrderBarcodePoolId(smtWorkOrderBarcodePool.getWorkOrderBarcodePoolId());
+//                smtProcessListProcess.setProcessId(processId);
+//                smtProcessListProcess.setStatus((byte) 0);
+//                smtProcessListProcess.setIsHold((byte) 0);
+//                smtProcessListProcess.setProcessListProcessCode(CodeUtils.getId("SPLP"));
+//                //彩盒号
+//                if (StringUtils.isNotEmpty(packageNumRuleId)) {
+//                    String packageNum = generateCode(barcodeRuleId);
+//                    smtProcessListProcess.setPackageNum(packageNum);
+//                }
+//                //箱号
+//                //栈板号
+//                smtProcessListProcess.setIsDelete((byte) 1);
+//                list.add(smtProcessListProcess);
+//            }
+//        } else {
+//            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+//        }
+//        return smtProcessListProcessMapper.insertList(list);
+        return 0;
     }
 
     @Override
@@ -914,15 +914,16 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
 
     @Transactional(rollbackFor = Exception.class)
     public String generateCode(Long barcodeRuleId) {
-        String maxCode = null;
-        Example example = new Example(BaseBarcodeRuleSpec.class);
-        example.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
-        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(ruleSpecs)) {
-            maxCode = BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, maxCode);
-            maxCode = BarcodeRuleUtils.analysisCode(ruleSpecs, maxCode, null);
-        }
-        return maxCode;
+//        String maxCode = null;
+//        Example example = new Example(BaseBarcodeRuleSpec.class);
+//        example.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
+//        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example);
+//        if (StringUtils.isNotEmpty(ruleSpecs)) {
+//            maxCode = BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, maxCode);
+//            maxCode = BarcodeRuleUtils.analysisCode(ruleSpecs, maxCode, null);
+//        }
+//        return maxCode;
+        return null;
     }
 
     @Override

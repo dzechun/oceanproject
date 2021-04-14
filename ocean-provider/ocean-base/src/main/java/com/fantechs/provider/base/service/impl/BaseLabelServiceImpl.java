@@ -77,7 +77,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(!matcher.find()){
             throw new BizErrorException("标签模版文件格式不正确");
         }
-        if(record.getIsDefaultLabel()==(byte)1){
+        if(record.getIsDefaultLabel() != null && record.getIsDefaultLabel()==(byte)1){
             Example example = new Example(BaseLabel.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("labelCategoryId",record.getLabelCategoryId());
