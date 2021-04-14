@@ -32,11 +32,11 @@
     select shu.ht_user_id,shu.user_id, shu.user_name, shu.user_code, shu.nick_name, shu.password, shu.status, shu.factory_id,f.factory_name,
     shu.dept_id, d.dept_name,shu.telephone,shu.mobile, shu.email, shu.create_user_id,u.user_name as createUserName, shu.create_time,
     shu.modified_user_id,s.user_name as modifiedUserName, shu.modified_time
-    from ocean.sys_ht_user shu
-    left join ocean.sys_user u on shu.create_user_id=u.user_id
-    left join ocean.sys_user s on shu.modified_user_id=s.user_id
-    left join fantech_imes.smt_factory f on shu.factory_id=f.factory_id
-    left join fantech_imes.smt_dept d on shu.dept_id=d.dept_id
+    from ocean_v2.sys_ht_user shu
+    left join ocean_v2.sys_user u on shu.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on shu.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_factory f on shu.factory_id=f.factory_id
+    left join fantech_imes_v2.base_dept d on shu.dept_id=d.dept_id
     <where>
       1=1
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

@@ -1,26 +1,21 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
@@ -164,7 +159,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException("获取标签信息失败");
         }
-        Path file = Paths.get("../"+ baseLabelCategory.getLabelCategoryName());
+        Path file = Paths.get("/label/"+ baseLabelCategory.getLabelCategoryName()+"/"+labelName);
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
@@ -192,9 +187,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         String maxCode = mesSfcWorkOrderBarcodeMapper.findMaxCode(record.getBarcodeType(),record.getWorkOrderId());
         //查询条码规则集合
         LabelRuteDto labelRuteDto = record.getLabelRuteDto();
-        SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
-        searchSmtBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
-        List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
+        SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+        searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
+        List<BaseBarcodeRuleSpec> list = pmFeignApi.findSpec(searchBaseBarcodeRuleSpec).getData();
         if(list.size()<1){
             throw new BizErrorException("请设置条码规则");
         }
