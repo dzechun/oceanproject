@@ -18,6 +18,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarc
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
@@ -49,6 +50,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private MesSfcWorkOrderBarcodeMapper mesSfcWorkOrderBarcodeMapper;
     @Resource
     private PMFeignApi pmFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
     @Resource
     private RabbitProducer rabbitProducer;
     @Resource
@@ -189,12 +192,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         LabelRuteDto labelRuteDto = record.getLabelRuteDto();
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
         searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
-        List<BaseBarcodeRuleSpec> list = pmFeignApi.findSpec(searchBaseBarcodeRuleSpec).getData();
+        List<BaseBarcodeRuleSpec> list = baseFeignApi.findSpec(searchBaseBarcodeRuleSpec).getData();
         if(list.size()<1){
             throw new BizErrorException("请设置条码规则");
         }
         //生成条码
-        String code = pmFeignApi.generateCode(list,maxCode,null).getData();
+        String code = baseFeignApi.generateCode(list,maxCode,null).getData();
         record.setBarcode(code);
 
         //待打印状态

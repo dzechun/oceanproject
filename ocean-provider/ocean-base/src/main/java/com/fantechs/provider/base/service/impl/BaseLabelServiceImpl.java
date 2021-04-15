@@ -194,7 +194,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             List<SysSpecItem> sysSpecItemList = itemList.getData();
             Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
             InputStream stream = file.getInputStream();
-            String path = map.get("path") + labelCategoryName;
+            String path = map.get("path") +labelCategoryName+"/";
             FileOutputStream fs=new FileOutputStream(path+fileName+".btw");
             byte[] buffer =new byte[1024*1024];
             int bytesum = 0;
