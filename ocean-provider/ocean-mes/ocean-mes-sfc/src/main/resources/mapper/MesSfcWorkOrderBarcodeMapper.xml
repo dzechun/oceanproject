@@ -85,7 +85,17 @@ where mpwo.work_order_id = #{workOrderId}
     WHERE blc.label_category_code = #{labelCategoryCode}
 </select>
 <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-select * FROM #{viewName}
+select * FROM <choose>
+    <when test="barcodeType==2">
+        view_workOrder
+    </when>
+    <when test="barcodeType==4">
+        view_order
+    </when>
+</choose>
+<where>
+    id = #{id}
+</where>
 </select>
     <select id="findByOneLabel" resultType="com.fantechs.common.base.general.entity.basic.BaseLabelCategory">
         select blc.label_category_name FROM base_label_category blc

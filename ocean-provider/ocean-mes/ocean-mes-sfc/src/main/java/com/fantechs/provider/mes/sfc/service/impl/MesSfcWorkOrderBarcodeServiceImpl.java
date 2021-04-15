@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -70,7 +71,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //查询模版信息
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectByPrimaryKey(s);
             LabelRuteDto labelRuteDto = null;
-            PrintModel printModel = null;
             switch (mesSfcWorkOrderBarcode.getBarcodeType()){
                 case 2:
                     //获取工单类别模版
@@ -79,7 +79,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                         //获取默认模版
                         labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
                     }
-                    printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_workOrder");
                     break;
                 case 4:
                     //获取销售类别模版
@@ -88,8 +87,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                         //获取默认模版
                         labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
                     }
-                    printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_order");
                     break;
+            }
+            PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getBarcodeType(),mesSfcWorkOrderBarcode.getWorkOrderId());
+            if(StringUtils.isEmpty(labelRuteDto)){
+                throw new BizErrorException("获取标签信息失败");
             }
             if(labelRuteDto.getBarcodeType()==(byte)0 &&mesSfcWorkOrderBarcode.getBarcodeType()==(byte)2){
                 //生成条码过站记录
@@ -112,10 +114,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     throw new BizErrorException("条码过站失败");
                 }
             }
+
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelRuteDto.getLabelName());
             printDto.setLabelVersion(labelRuteDto.getLabelVersion());
+            printDto.setPrintName("测试");
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);
             rabbitProducer.sendPrint(printDto);
@@ -146,7 +150,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",workOrderId);
                 break;
         }
-        if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
+        if(StringUtils.isEmpty(labelRuteDto)||StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
             throw new BizErrorException(barcodeType==1?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
         }
         return labelRuteDto;
@@ -192,13 +196,20 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         LabelRuteDto labelRuteDto = record.getLabelRuteDto();
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
         searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
-        List<BaseBarcodeRuleSpec> list = baseFeignApi.findSpec(searchBaseBarcodeRuleSpec).getData();
+        ResponseEntity<List<BaseBarcodeRuleSpec>> responseEntity= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getMessage());
+        }
+        List<BaseBarcodeRuleSpec> list = responseEntity.getData();
         if(list.size()<1){
             throw new BizErrorException("请设置条码规则");
         }
         //生成条码
-        String code = baseFeignApi.generateCode(list,maxCode,null).getData();
-        record.setBarcode(code);
+        ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,null);
+        if(rs.getCode()!=0){
+            throw new BizErrorException(rs.getMessage());
+        }
+        record.setBarcode(rs.getData());
 
         //待打印状态
         record.setBarcodeStatus((byte)3);
