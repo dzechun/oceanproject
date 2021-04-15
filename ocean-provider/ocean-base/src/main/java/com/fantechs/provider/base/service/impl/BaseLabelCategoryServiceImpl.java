@@ -159,8 +159,12 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
                     isOk = oldFile.renameTo(file);
                 }
             }else{
+                //label文件下的该子文件不存在则新建
                 if(!file.exists()){
                     isOk = file.mkdirs();
+                }else {
+                    //已存在则放行
+                    isOk = true;
                 }
             }
         return isOk;
