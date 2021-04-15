@@ -47,7 +47,7 @@
     LEFT JOIN fantech_imes_v2.base_organization bo ON bbp.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(bbp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="badnessPhenotypeCode != null and badnessPhenotypeCode != ''">
         and bbp.badness_phenotype_code like CONCAT('%',#{badnessPhenotypeCode},'%')

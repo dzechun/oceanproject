@@ -24,7 +24,7 @@ public class BaseBadnessDuty extends ValidGroup implements Serializable {
      * 不良责任代码
      */
     @ApiModelProperty(name="badnessDutyCode",value = "不良责任代码")
-    @Excel(name = "不良责任代码", height = 20, width = 30,orderNum="")
+    @Excel(name = "不良责任代码", height = 20, width = 30,orderNum="1")
     @Column(name = "badness_duty_code")
     private String badnessDutyCode;
 
@@ -32,7 +32,7 @@ public class BaseBadnessDuty extends ValidGroup implements Serializable {
      * 不良责任描述
      */
     @ApiModelProperty(name="badnessDutyDesc",value = "不良责任描述")
-    @Excel(name = "不良责任描述", height = 20, width = 30,orderNum="")
+    @Excel(name = "不良责任描述", height = 20, width = 30,orderNum="2")
     @Column(name = "badness_duty_desc")
     private String badnessDutyDesc;
 
@@ -46,7 +46,7 @@ public class BaseBadnessDuty extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="3")
     private String remark;
 
     /**
@@ -67,7 +67,7 @@ public class BaseBadnessDuty extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -83,7 +83,7 @@ public class BaseBadnessDuty extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

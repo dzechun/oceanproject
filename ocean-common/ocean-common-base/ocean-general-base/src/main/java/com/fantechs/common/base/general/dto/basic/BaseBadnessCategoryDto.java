@@ -39,7 +39,7 @@ public class BaseBadnessCategoryDto extends BaseBadnessCategory implements Seria
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="4")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="4")
     private String organizationName;
 
 }
