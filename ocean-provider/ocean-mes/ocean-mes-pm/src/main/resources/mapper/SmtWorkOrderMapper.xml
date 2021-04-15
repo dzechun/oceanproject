@@ -127,7 +127,7 @@
         spm.product_model_name AS 'productModelName',
         sps.package_specification_quantity AS 'packageSpecificationQuantity',
         putbp.process_name AS 'putIntoProcessName',
-        outbp.process_name AS 'productionProcessName'
+        outbp.process_name AS 'outputProcessName'
         FROM
         mes_pm_work_order swo
         left join base_material sm on swo.material_id=sm.material_id
