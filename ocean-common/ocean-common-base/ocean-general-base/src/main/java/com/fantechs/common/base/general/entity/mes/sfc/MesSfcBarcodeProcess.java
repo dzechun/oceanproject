@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -16,6 +18,7 @@ import lombok.Data;
  * @date 2021-04-09 15:29:27
  */
 @Data
+@Builder
 @Table(name = "mes_sfc_barcode_process")
 public class MesSfcBarcodeProcess extends ValidGroup implements Serializable {
     /**

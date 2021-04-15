@@ -267,6 +267,24 @@ public enum ErrorCodeEnum {
 
     STO30012001(30012001,"库存不存在"),
 
+    // region PDA 作业相关 error code enum
+
+    PDA40012000(40012000, "条码不存在"),
+    PDA40012001(40012001, "条码重复"),
+    PDA40012002(40012002, "条码barCode=%s的过站数据不存在"),
+    PDA40012003(40012003, "条码流程不正确，当前工序ProcessCode=%s, 下一工序NextProcess=%s"),
+    PDA40012004(40012004, "条码状态不正确，当前状态BarcodeStatus=%s"),
+    PDA40012005(40012005, "工单编码WorkOrderCode=%s的工单不存在"),
+    PDA40012006(40012006, "工单状态已完成或已挂起"),
+    PDA40012007(40012007, "工单编码WorkOrderCode=%s的工单投产数量大于等于工单数"),
+    PDA40012008(40012008, "工艺路线不存在"),
+    PDA40012009(40012009, "工艺路线中工序ProcessId=%s不存在"),
+    PDA40012010(40012010, "工序ProcessId=%s是必过工序，不可跳过！"),
+    PDA40012011(40012011, "工艺路线中工序ProcessId=%s不存在！"),
+    PDA40012012(40012012, "工序ProcessId=%s不存在！"),
+
+    // endregion
+
 
     ;
     private Integer code;
