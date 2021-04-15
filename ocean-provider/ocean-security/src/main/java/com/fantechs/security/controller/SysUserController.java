@@ -81,7 +81,7 @@ public class SysUserController {
 
     @PostMapping("/switchOrganization")
     @ApiOperation(value = "切换用户组织",notes = "切换用户组织")
-    public ResponseEntity switchOrganization(@ApiParam(value = "组织ID",required = true) @RequestParam Long organizationId,@ApiParam(value = "token",required = true) @RequestParam String token) {
+    public ResponseEntity switchOrganization(@ApiParam(value = "组织ID",required = true) @RequestParam Long organizationId) {
         return ControllerUtil.returnCRUD(sysUserService.switchOrganization(organizationId));
     }
 
