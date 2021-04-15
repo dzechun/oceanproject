@@ -21,7 +21,7 @@
 
   <sql id="Base_Column_List">
     bhbp.ht_badness_phenotype_id,
-    bhbp.badness_category_id,
+    bhbp.badness_phenotype_id,
     bhbp.badness_phenotype_code,
     bhbp.badness_phenotype_desc,
     bhbp.org_id,
