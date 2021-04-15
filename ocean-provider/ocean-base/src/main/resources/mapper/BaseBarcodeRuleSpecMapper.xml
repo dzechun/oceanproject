@@ -30,8 +30,8 @@
     select sbrs.barcode_rule_spec_id,sbrs.barcode_rule_id,sbr.barcode_rule,sbrs.spec_id,ssi.spec_name,sbrs.specification,sbrs.barcode_length,sbrs.initial_value,
     sbrs.step,sbrs.fill_operator,sbrs.fill_direction,sbrs.customize_name,sbrs.intercept_length,sbrs.intercept_position,sbrs.intercept_direction,
     sbrs.customize_value, sbrs.org_id, sbrs.remark, bo.organization_name
-    from fantech_imes_v2.smt_barcode_rule_spec sbrs
-    left join fantech_imes_v2.smt_barcode_rule sbr on sbrs.barcode_rule_id=sbr.barcode_rule_id
+    from fantech_imes_v2.base_barcode_rule_spec sbrs
+    left join fantech_imes_v2.base_barcode_rule sbr on sbrs.barcode_rule_id=sbr.barcode_rule_id
     left join ocean_v2.sys_spec_item ssi on sbrs.spec_id=ssi.spec_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON sbrs.org_id = bo.organization_id
     <where>
@@ -45,7 +45,7 @@
 
   <update id="updateBatch"  parameterType="java.util.List">
     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-      update smt_barcode_rule_spec
+      update base_barcode_rule_spec
       <set>
         barcode_rule_id = #{item.barcodeRuleId},spec_id = #{item.specId}, specification = #{item.specification}, initial_value = #{item.initialValue}, step = #{item.step},
         fill_operator = #{item.fillOperator},fill_direction = #{item.fillDirection},customize_name = #{item.customizeName},intercept_length = #{item.interceptLength},

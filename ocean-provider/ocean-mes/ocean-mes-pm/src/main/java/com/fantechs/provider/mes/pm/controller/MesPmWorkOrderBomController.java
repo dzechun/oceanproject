@@ -31,9 +31,9 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "工单BOM信息")
-@RequestMapping("/smtWorkOrderBom")
+@RequestMapping("/mesPmWorkOrderBom")
 @Validated
-public class SmtWorkOrderBomController {
+public class MesPmWorkOrderBomController {
 
     @Autowired
     private SmtWorkOrderBomService smtWorkOrderBomService;
