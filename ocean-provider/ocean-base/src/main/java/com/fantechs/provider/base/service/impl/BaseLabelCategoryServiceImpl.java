@@ -157,9 +157,9 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
                 File oldFile = new File(path+oldDocName);
                 if(oldFile.exists()){
                     isOk = oldFile.renameTo(file);
-                }else {
-                    isOk = file.mkdirs();
                 }
+            }else {
+                isOk = file.mkdirs();
             }
         return isOk;
     }
