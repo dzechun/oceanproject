@@ -44,7 +44,7 @@
     FROM fantech_imes_v2.base_ht_sample_standard AS bhss
     LEFT JOIN ocean_v2.sys_user su ON bhss.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bhss.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhss.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhss.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

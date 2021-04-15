@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -81,6 +82,14 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     private String routeName;
 
     /**
+     * 工艺路线编码
+     */
+    @Transient
+    @ApiModelProperty(name="routeCode",value = "工艺路线编码")
+    @Excel(name = "工艺路线编码", height = 20, width = 30,orderNum="")
+    private String routeCode;
+
+    /**
      * 创建用户名称
      */
     @Transient
@@ -109,6 +118,13 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name="productionProcessName" ,value="产出工序")
     private String productionProcessName;
+
+    /**
+     * 产出工序
+     */
+    @Transient
+    @ApiModelProperty(name="outputProcessName" ,value="产出工序")
+    private String outputProcessName;
 
     /**
      * 流转卡规则解析码
@@ -172,25 +188,14 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name = "productModelName",value = "产品型号")
     private String productModelName;
-    /**
-     * 产品材质
-     */
-    @Transient
-    @ApiModelProperty(name = "materialQuality",value = "产品材质")
-    private String materialQuality;
+
     /**
      * 单位
      */
     @Transient
     @ApiModelProperty(name = "mainUnit",value = "单位")
     private String mainUnit;
-    /**
-     * 父工单编码
-     */
-    @Transient
-    @ApiModelProperty(value = "父工单编码",example = "父工单编码")
-    @Excel(name = "父工单编码")
-    private String parentWorkOrderCode;
+
     /**
      * 工序链
      */

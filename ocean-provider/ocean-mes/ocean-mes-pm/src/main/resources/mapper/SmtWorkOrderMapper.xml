@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder">
+        <id column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty"/>
+        <result column="production_qty" jdbcType="DECIMAL" property="productionQty"/>
+        <result column="output_qty" jdbcType="DECIMAL" property="outputQty"/>
+        <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
+        <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus"/>
+        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
+        <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
+        <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
+        <result column="plan_end_time" jdbcType="TIMESTAMP" property="planEndTime"/>
+        <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime"/>
+        <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="contract_no" jdbcType="BIGINT" property="contractNo"/>
+
+        <result column="put_into_process_id" jdbcType="BIGINT" property="putIntoProcessId"/>
+        <result column="output_process_id" jdbcType="BIGINT" property="outputProcessId"/>
+        <result column="scrap_qty" jdbcType="DECIMAL" property="scrapQty"/>
+
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto">
+
+    </resultMap>
+
+    <resultMap id="BomResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductBomDet">
+        <result column="product_bom_det_id" jdbcType="BIGINT" property="productBomDetId"/>
+        <result column="product_bom_id" jdbcType="BIGINT" property="productBomId"/>
+        <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId"/>
+        <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
+        <result column="base_quantity" jdbcType="DECIMAL" property="baseQuantity"/>
+        <result column="position" jdbcType="VARCHAR" property="position"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="RouteResultMapDto" type="com.fantechs.common.base.general.entity.basic.BaseRouteProcess">
+        <result column="route_process_id" jdbcType="BIGINT" property="routeProcessId"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="section_id" jdbcType="BIGINT" property="sectionId"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="next_process_id" jdbcType="BIGINT" property="nextProcessId"/>
+        <result column="previous_process_id" jdbcType="BIGINT" property="previousProcessId"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="is_pass" jdbcType="TINYINT" property="isPass"/>
+        <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass"/>
+        <result column="inspection_time" jdbcType="INTEGER" property="inspectionTime"/>
+        <result column="qualification_id" jdbcType="BIGINT" property="qualificationId"/>
+
+        <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    </resultMap>
+
+    <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder"
+            resultMap="BaseResultMapDto">
+        SELECT
+        swo.work_order_id,
+        swo.work_order_code,
+        swo.parent_id,
+        swo.order_id,
+        swo.material_id,
+        swo.work_order_qty,
+        swo.production_qty,
+        swo.output_qty,
+        swo.scheduled_qty,
+        swo.work_order_status,
+        swo.pro_line_id,
+        swo.barcode_rule_set_id,
+        swo.route_id,
+        swo.work_order_type,
+        swo.schedule_date,
+        swo.plan_start_time,
+        swo.plan_end_time,
+        swo.actual_start_time,
+        swo.actual_end_time,
+        swo.create_user_id,
+        swo.create_time,
+        swo.modified_user_id,
+        swo.modified_time,
+        swo.is_delete,
+        swo.org_id,
+        swo.put_into_process_id,
+        swo.output_process_id,
+        swo.scrap_qty,
+        swo.remark,
+        swo.contract_no,
+        sm.material_code AS 'materialCode',
+        sm.material_name AS 'materialName',
+        sm.version AS 'version',
+        sm.material_desc AS 'materialDesc',
+        bt.main_unit AS 'mainUnit',
+        bt.transfer_quantity AS 'transferQuantity',
+        spl.pro_name AS 'proName',
+        sr.route_name AS 'routeName',
+        sr.route_code AS 'routeCode',
+        sbrs.barcode_rule_set_name AS 'barcodeRuleSetName',
+        u.user_name AS 'createUserName',
+        s.user_name AS 'modifiedUserName',
+        bo.organization_name AS 'organizationName',
+        bt.color AS 'color',
+        spm.product_model_name AS 'productModelName',
+        sps.package_specification_quantity AS 'packageSpecificationQuantity',
+        putbp.process_name AS 'putIntoProcessName',
+        outbp.process_name AS 'productionProcessName'
+        FROM
+        mes_pm_work_order swo
+        left join base_material sm on swo.material_id=sm.material_id
+        LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
+        left join base_package_specification sps on sps.package_specification_id = bt.package_specification_id
+        left join base_product_model spm on spm.product_model_id = bt.product_model_id
+        left join base_route sr on swo.route_id=sr.route_id
+        left join base_pro_line spl on swo.pro_line_id=spl.pro_line_id
+        left join base_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
+        left join ocean.sys_user u on swo.create_user_id=u.user_id
+        left join ocean.sys_user s on swo.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON swo.org_id = bo.organization_id
+        left join base_process putbp ON putbp.process_id = swo.put_into_process_id
+        left join base_process outbp ON outbp.process_id = swo.output_process_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="workOrderId!=null">
+                and swo.work_order_id =#{workOrderId}
+            </if>
+            <if test="parentId!=null">
+                and swo.parent_id like CONCAT('%', #{parentId}, '%')
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and swo.material_id=#{materialId}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            and swo.is_delete = 1
+        </where>
+        order by swo.modified_time desc
+    </select>
+
+    <select id="selectByWorkOrderId" parameterType="java.lang.Long" resultMap="BaseResultMapDto">
+        SELECT swo.work_order_id,
+               swo.work_order_code,
+               swo.parent_id,
+               swo.order_id,
+               swo.material_id,
+               swo.barcode_rule_set_id,
+               swo.work_order_type,
+               swo.plan_start_time,
+               swo.plan_end_time,
+               swo.actual_start_time,
+               swo.actual_end_time,
+               swo.create_user_id,
+               swo.create_time,
+               swo.modified_user_id,
+               swo.modified_time,
+               swo.is_delete,
+               swo.work_order_qty,
+               swo.production_qty,
+               swo.output_qty,
+               swo.scheduled_qty,
+               swo.put_into_process_id,
+               swo.output_process_id,
+               swo.scrap_qty,
+               swo.work_order_status,
+               swo.pro_line_id,
+               sm.material_code     AS 'materialCode',
+               sm.material_name     AS 'materialName',
+               sm.version           AS 'version',
+               sm.material_desc     AS 'materialDesc',
+               bt.transfer_quantity AS 'transferQuantity',
+               bppd.quantity        AS 'quantity',
+               spl.pro_name         AS 'proName',
+               swo.route_id         AS 'routeId',
+               sr.route_name        AS 'routeName',
+               swo.order_code        AS 'orderCode '
+        FROM mes_pm_work_order swo
+                 LEFT JOIN base_material sm ON swo.material_id = sm.material_id
+                 LEFT JOIN base_material_tab bt ON bt.material_id = sm.material_id
+                 LEFT JOIN base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
+                 LEFT JOIN base_route sr ON swo.route_id = sr.route_id
+                 LEFT JOIN base_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+        where swo.work_order_id = #{workOrderId}
+    </select>
+
+
+    <select id="selectRouteProcessByRouteId" parameterType="java.lang.Long" resultMap="RouteResultMapDto">
+        SELECT srp.route_process_id,
+               srp.route_id,
+               srp.section_id,
+               srp.process_id,
+               srp.next_process_id,
+               srp.previous_process_id,
+               srp.order_num,
+               srp.is_pass,
+               srp.is_must_pass,
+               srp.inspection_time,
+               srp.qualification_id,
+               sp.process_name,
+               sr.route_name
+        FROM base_route_process srp
+                 LEFT JOIN base_route sr ON srp.route_id = sr.route_id
+                 LEFT JOIN base_process sp ON srp.process_id = sp.process_id
+        where srp.route_id = #{routeId}
+        order by srp.order_num
+    </select>
+</mapper>

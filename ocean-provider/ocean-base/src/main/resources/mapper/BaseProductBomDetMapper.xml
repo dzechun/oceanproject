@@ -12,7 +12,7 @@
         <result column="base_quantity" jdbcType="DECIMAL" property="baseQuantity"/>
         <result column="position" jdbcType="VARCHAR" property="position"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="parent_bom_id" jdbcType="BIGINT" property="parentId"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -51,7 +51,7 @@
 	spbd.position,
 	spbd.parent_id,
 	spbd.remark,
-	spbd.organization_id,
+	spbd.org_id,
 	spbd.create_user_id,
 	spbd.create_time,
 	spbd.modified_user_id,
@@ -69,13 +69,13 @@
         sp.process_name,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.smt_product_bom_det spbd
-        left join fantech_imes_v2.smt_material sm on spbd.part_material_id=sm.material_id
-        left join fantech_imes_v2.smt_material sml on spbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.smt_process sp on spbd.process_id=sp.process_id
+        from fantech_imes_v2.base_product_bom_det spbd
+        left join fantech_imes_v2.base_material sm on spbd.part_material_id=sm.material_id
+        left join fantech_imes_v2.base_material sml on spbd.sub_material_id=sml.material_id
+        left join fantech_imes_v2.base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spbd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -106,13 +106,13 @@
         sp.process_name,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
-        from smt_product_bom_det spbd
-        left join fantech_imes_v2.smt_material sm on spbd.part_material_id=sm.material_id
-        left join fantech_imes_v2.smt_material sml on spbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.smt_process sp on spbd.process_id=sp.process_id
+        from base_product_bom_det spbd
+        left join fantech_imes_v2.base_material sm on spbd.part_material_id=sm.material_id
+        left join fantech_imes_v2.base_material sml on spbd.sub_material_id=sml.material_id
+        left join fantech_imes_v2.base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
         where parent_id = #{productBomId}
     </select>
 
@@ -123,13 +123,13 @@
         sp.process_name,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
-        from smt_product_bom_det spbd
-        left join fantech_imes_v2.smt_material sm on spbd.part_material_id=sm.material_id
-        left join fantech_imes_v2.smt_material sml on spbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.smt_process sp on spbd.process_id=sp.process_id
+        from base_product_bom_det spbd
+        left join fantech_imes_v2.base_material sm on spbd.part_material_id=sm.material_id
+        left join fantech_imes_v2.base_material sml on spbd.sub_material_id=sml.material_id
+        left join fantech_imes_v2.base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
         where parent_id = #{productBomDetId}
     </select>
 </mapper>

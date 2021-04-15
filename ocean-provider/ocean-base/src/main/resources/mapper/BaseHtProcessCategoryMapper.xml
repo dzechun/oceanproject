@@ -10,7 +10,7 @@
     <result column="process_category_code" jdbcType="VARCHAR" property="processCategoryCode" />
     <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName" />
     <result column="process_category_desc" jdbcType="VARCHAR" property="processCategoryDesc" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -42,17 +42,17 @@
     shpc.option1,
     shpc.option2,
     shpc.option3,
-    shpc.organization_id,
+    shpc.org_id,
     shpc.remark
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"/>,  su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name
-    from smt_ht_process_category shpc
+    from base_ht_process_category shpc
       LEFT JOIN ocean_v2.sys_user su  ON shpc.create_user_id = su.user_id
       LEFT JOIN ocean_v2.sys_user sus ON shpc.modified_user_id = sus.user_id
-      LEFT JOIN fantech_imes_v2.base_organization bo ON shpc.organization_id = bo.organization_id
+      LEFT JOIN fantech_imes_v2.base_organization bo ON shpc.org_id = bo.organization_id
       <where>
           <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
               and date_format(shpc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

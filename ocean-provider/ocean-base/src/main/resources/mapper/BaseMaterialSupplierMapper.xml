@@ -7,7 +7,8 @@
         <result column="material_supplier_code" jdbcType="VARCHAR" property="materialSupplierCode"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="image" jdbcType="VARCHAR" property="image"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="supplier_product_model" jdbcType="VARCHAR" property="supplierProductModel"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -37,9 +38,10 @@
         sms.material_supplier_code,
         sms.supplier_id,
         sms.image,
+        sms.supplier_product_model,
         sms.`status`,
         sms.remark,
-        sms.organization_id,
+        sms.org_id,
         sms.create_user_id,
         sms.create_time,
         sms.modified_user_id,
@@ -57,12 +59,12 @@
         ss.supplier_name,
         u.user_name as create_user_name, s.user_name as modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.smt_material_supplier sms
-        left join fantech_imes_v2.smt_material sm on sms.material_id=sm.material_id
-        left join fantech_imes_v2.smt_supplier ss on sms.supplier_id=ss.supplier_id
+        from fantech_imes_v2.base_material_supplier sms
+        left join fantech_imes_v2.base_material sm on sms.material_id=sm.material_id
+        left join fantech_imes_v2.base_supplier ss on sms.supplier_id=ss.supplier_id
         left join ocean_v2.sys_user u on sms.create_user_id=u.user_id
         left join ocean_v2.sys_user s on sms.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sms.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sms.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sms.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

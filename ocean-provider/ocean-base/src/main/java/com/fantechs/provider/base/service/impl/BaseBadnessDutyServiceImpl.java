@@ -44,18 +44,18 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
 
     @Override
     public int save(BaseBadnessDuty record) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         this.codeIfRepeat(record);
 
         record.setCreateTime(new Date());
-//        record.setCreateUserId(user.getUserId());
+        record.setCreateUserId(user.getUserId());
         record.setModifiedTime(new Date());
-//        record.setModifiedUserId(user.getUserId());
-//        record.setOrgId(user.getOrganizationId());
+        record.setModifiedUserId(user.getUserId());
+        record.setOrgId(user.getOrganizationId());
 
         int i = baseBadnessDutyMapper.insertUseGeneratedKeys(record);
 
@@ -68,14 +68,14 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
 
     @Override
     public int update(BaseBadnessDuty entity) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         this.codeIfRepeat(entity);
 
-//        entity.setModifiedUserId(user.getUserId());
+        entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
 
         BaseHtBadnessDuty baseHtBadnessDuty = new BaseHtBadnessDuty();
@@ -87,10 +87,10 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
 
     @Override
     public int batchDelete(String ids) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         List<BaseHtBadnessDuty> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -111,9 +111,12 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
 
     private void codeIfRepeat(BaseBadnessDuty entity){
         Example example = new Example(BaseBadnessDuty.class);
-        Example.Criteria criteria1 = example.createCriteria();
+        Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("badnessDutyCode",entity.getBadnessDutyCode());
+        criteria.andEqualTo("badnessDutyCode",entity.getBadnessDutyCode());
+        if (StringUtils.isNotEmpty(entity.getBadnessDutyId())){
+            criteria.andNotEqualTo("badnessDutyId",entity.getBadnessDutyId());
+        }
         BaseBadnessDuty baseBadnessDuty = baseBadnessDutyMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseBadnessDuty)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);

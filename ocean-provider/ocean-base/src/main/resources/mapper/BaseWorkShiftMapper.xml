@@ -9,7 +9,7 @@
     <result column="work_shift_code" jdbcType="VARCHAR" property="workShiftCode" />
     <result column="work_shift_name" jdbcType="VARCHAR" property="workShiftName" />
     <result column="work_shift_desc" jdbcType="VARCHAR" property="workShiftDesc" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -30,7 +30,7 @@
 	bws.work_shift_code,
 	bws.work_shift_name,
 	bws.work_shift_desc,
-	bws.organization_id,
+	bws.org_id,
 	bws.remark,
 	bws.`status`,
 	bws.create_user_id,

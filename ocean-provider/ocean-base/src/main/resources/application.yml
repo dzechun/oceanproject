@@ -11,3 +11,13 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+  mail:
+    host: smtp.qq.com
+    username: 1613582568@qq.com
+    password: vnvnancndwoyecfb
+    port: 587
+    protocol: smtp
+    default-encoding: UTF-8
+print:
+  ip: 192.168.150.223
+  port: 8098

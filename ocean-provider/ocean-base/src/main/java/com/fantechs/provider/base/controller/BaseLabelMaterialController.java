@@ -32,7 +32,7 @@ import java.util.List;
 */
 @RestController
 @Api(tags = "产品标签关联信息")
-@RequestMapping("/bcmLabelMaterial")
+@RequestMapping("/baseLabelMaterial")
 @Validated
 public class BaseLabelMaterialController {
 

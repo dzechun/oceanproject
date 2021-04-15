@@ -15,7 +15,7 @@
         <result column="finish_time" jdbcType="DECIMAL" property="finishTime"/>
 
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -44,7 +44,7 @@
         sp.finish_time,
         sp.`status`,
         sp.remark,
-        sp.organization_id,
+        sp.org_id,
         sp.create_user_id,
         sp.create_time,
         sp.modified_user_id,
@@ -62,12 +62,12 @@
         spc.process_category_name as processCategoryName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.smt_process sp
-        left join fantech_imes_v2.smt_workshop_section sws on sp.section_id=sws.section_id
-        left join smt_process_category spc on sp.process_category_id=spc.process_category_id
+        from fantech_imes_v2.base_process sp
+        left join fantech_imes_v2.base_workshop_section sws on sp.section_id=sws.section_id
+        left join fantech_imes_v2.base_process_category spc on sp.process_category_id=spc.process_category_id
         left join ocean_v2.sys_user u on sp.create_user_id=u.user_id
         left join ocean_v2.sys_user s on sp.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sp.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sp.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -106,11 +106,11 @@
                 and sp.is_start_scan = #{isStartScan}
             </if>
             <if test="searchType==1 and routeId!=null and routeId!= ''">
-                and sp.process_id IN (SELECT srp.process_id FROM smt_route_process srp WHERE srp.route_id=#{routeId})
+                and sp.process_id IN (SELECT srp.process_id FROM base_route_process srp WHERE srp.route_id=#{routeId})
                 and sp.status=1
             </if>
             <if test="searchType==0 and routeId!=null and routeId!= ''">
-                and sp.process_id NOT IN (SELECT srp.process_id FROM smt_route_process srp WHERE srp.route_id=#{routeId})
+                and sp.process_id NOT IN (SELECT srp.process_id FROM base_route_process srp WHERE srp.route_id=#{routeId})
                 and sp.status=1
             </if>
 

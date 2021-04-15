@@ -221,9 +221,9 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             mesPmWorkOrder.setOrderId(smtOrder.getOrderId());
             mesPmWorkOrder.setProLineId(proLineId);
             mesPmWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
-            mesPmWorkOrder.setWorkOrderQuantity(mesOrderMaterialDTO.getTotal());
+            //mesPmWorkOrder.setWorkOrderQuantity(mesOrderMaterialDTO.getTotal());
             mesPmWorkOrder.setContractNo(smtOrder.getContractCode());
-            mesPmWorkOrder.setWorkOrderStatus(1);
+            //mesPmWorkOrder.setWorkOrderStatus(1);
             mesPmWorkOrder.setRemark("无BOM");
             SaveWorkOrderAndBom saveWorkOrderAndBom = new SaveWorkOrderAndBom();
             saveWorkOrderAndBom.setMesPmWorkOrder(mesPmWorkOrder);

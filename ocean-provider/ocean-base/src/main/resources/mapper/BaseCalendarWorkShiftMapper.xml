@@ -9,7 +9,7 @@
     <result column="work_shift_id" jdbcType="BIGINT" property="workShiftId" />
     <result column="calendar_id" jdbcType="BIGINT" property="calendarId" />
     <result column="day" jdbcType="TINYINT" property="day" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -31,7 +31,7 @@
 	bcws.`day`,
 	bcws.`status`,
 	bcws.remark,
-	bcws.organization_id,
+	bcws.org_id,
 	bcws.create_user_id,
 	bcws.create_time,
 	bcws.modified_user_id,
@@ -45,7 +45,7 @@
     FROM fantech_imes_v2.base_calendar_work_shift bcws
     LEFT JOIN ocean_v2.sys_user su ON bcws.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bcws.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bcws.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bcws.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime != null and endTime != ''">
         and date_format(bcws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

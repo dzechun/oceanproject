@@ -24,10 +24,14 @@
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
       <!-- 添加.gz 历史日志会启用压缩 大大缩小日志文件所占空间 -->
       <fileNamePattern>${LOG_PATH}/info/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-      <maxHistory>10</maxHistory><!--  保留30天日志 -->
-      <maxFileSize>100MB</maxFileSize>
+      <!--保留5天内的日志文件-->
+      <maxHistory>5</maxHistory>
+      <!--超过1GB日志分片-->
+      <maxFileSize>1GB</maxFileSize>
       <!--日志文件的总大小-->
       <totalSizeCap>5GB</totalSizeCap>
+      <!--启动项目删除旧日志-->
+      <cleanHistoryOnStart>true</cleanHistoryOnStart>
     </rollingPolicy>
   </appender>
 
@@ -41,10 +45,14 @@
     </filter>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
       <fileNamePattern>${LOG_PATH}/error/${LOG_FILE}-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-      <maxHistory>10</maxHistory>
-      <maxFileSize>100MB</maxFileSize>
+      <!--保留5天内的日志文件-->
+      <maxHistory>5</maxHistory>
+      <!--超过1GB日志分片-->
+      <maxFileSize>1GB</maxFileSize>
       <!--日志文件的总大小-->
-      <totalSizeCap>1GB</totalSizeCap>
+      <totalSizeCap>5GB</totalSizeCap>
+      <!--启动项目删除旧日志-->
+      <cleanHistoryOnStart>true</cleanHistoryOnStart>
     </rollingPolicy>
     <encoder charset="UTF-8">
       <Pattern>%date [%level] [%thread] %logger{60} [%file : %line] %msg%n</Pattern>

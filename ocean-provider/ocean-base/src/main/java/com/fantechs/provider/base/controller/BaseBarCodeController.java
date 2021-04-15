@@ -29,7 +29,7 @@ import java.util.List;
 */
 @RestController
 @Api(tags = "条码管理")
-@RequestMapping("/bcmBarCode")
+@RequestMapping("/baseBarCode")
 @Validated
 public class BaseBarCodeController {
 

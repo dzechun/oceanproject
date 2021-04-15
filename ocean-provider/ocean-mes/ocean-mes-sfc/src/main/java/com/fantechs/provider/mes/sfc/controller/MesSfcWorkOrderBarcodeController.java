@@ -23,8 +23,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- *
- * Created by leifengzhi on 2021/04/07.
+ *  条码打印接口
+ * Created by Mr.lei on 2021/04/07.
  */
 @RestController
 @Api(tags = "条码打印")
@@ -38,7 +38,8 @@ public class MesSfcWorkOrderBarcodeController {
     @ApiOperation("生成条码")
     @PostMapping("/add")
     public ResponseEntity<MesSfcWorkOrderBarcode> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode) {
-        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.save(mesSfcWorkOrderBarcode));
+        MesSfcWorkOrderBarcode mesSfcWorkOrderBarcodes = mesSfcWorkOrderBarcodeService.add(mesSfcWorkOrderBarcode);
+        return ControllerUtil.returnDataSuccess(mesSfcWorkOrderBarcodes,StringUtils.isEmpty(mesSfcWorkOrderBarcodes)?0:1);
     }
 
     @ApiOperation("补打列表")

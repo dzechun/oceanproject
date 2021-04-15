@@ -6,61 +6,32 @@
       WARNING - @mbg.generated
     -->
     <id column="organization_user_id" jdbcType="BIGINT" property="organizationUserId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseOrganizationDto" extends="BaseResultMap">
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseOrganizationUserDto" extends="BaseResultMap">
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="organization_desc" jdbcType="VARCHAR" property="organizationDesc" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     bou.organization_user_id,
-	bou.organization_id,
-	bou.user_id,
-	bou.remark,
-	bou.`status`,
-	bou.create_user_id,
-	bou.create_time,
-	bou.modified_user_id,
-	bou.modified_time,
-	bou.is_delete
+	bou.org_id,
+	bou.user_id
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    bo.organization_code, bo.organization_name, bo.organization_desc,
-    suss.user_name AS user_name
-    FROM fantech_imes_v2.base_organization_user bou
-    LEFT JOIN ocean_v2.sys_user su ON bou.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON bou.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bou.organization_id = bo.organization_id
+    select <include refid="Base_Column_List"/>,bo.organization_code, bo.organization_name, bo.organization_desc
+    FROM ocean_v2.sys_organization_user bou
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bou.org_id = bo.organization_id
     LEFT JOIN ocean_v2.sys_user suss ON bou.user_id = suss.user_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bou.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
       <if test="userId!=null and userId!=''">
         and bo.userId=#{userId}
       </if>
-      <if test="status!=null">
-        and bou.status=#{status}
-      </if>
     </where>
-    order by create_time desc
   </select>
 </mapper>

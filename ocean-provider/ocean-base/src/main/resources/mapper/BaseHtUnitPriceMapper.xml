@@ -10,7 +10,7 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="unit_price" jdbcType="DECIMAL" property="materialId"/>
     <result column="process_id" jdbcType="BIGINT" property="processId"/>
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -37,7 +37,7 @@
         bhup.material_id,
         bhup.unit_price,
         bhup.process_id,
-        bhup.organization_id,
+        bhup.org_id,
         bhup.remark,
         bhup.`status`,
         bhup.create_user_id,
@@ -55,13 +55,13 @@
     sp.process_code,sp.process_name,sp.process_desc,
     bo.organization_name
     FROM fantech_imes_v2.base_ht_unit_price bhup
-    LEFT JOIN fantech_imes_v2.smt_material sm ON bhup.material_id = sm.material_id
-    LEFT JOIN fantech_imes_v2.base_tab bt ON sm.material_id = bt.material_id
-    LEFT JOIN fantech_imes_v2.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-    LEFT JOIN fantech_imes_v2.smt_process sp ON bhup.process_id = sp.process_id
+    LEFT JOIN fantech_imes_v2.base_material sm ON bhup.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.base_material_tab bt ON sm.material_id = bt.material_id
+    LEFT JOIN fantech_imes_v2.base_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes_v2.base_process sp ON bhup.process_id = sp.process_id
     LEFT JOIN ocean_v2.sys_user su on bhup.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus on bhup.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON sm.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON sm.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

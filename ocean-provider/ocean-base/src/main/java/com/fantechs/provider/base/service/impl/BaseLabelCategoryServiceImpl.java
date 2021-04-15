@@ -151,22 +151,22 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
         List<SysSpecItem> sysSpecItemList = itemList.getData();
         Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-        if(!StringUtils.isEmpty(oldDocName)){
-            String path = map.get("path").toString();
-            File file = new File(path+oldDocName);
-            if(file.exists()){
-                isOk = file.delete();
-            }else {
-                isOk=true;
-            }
-        }
-        if(!StringUtils.isEmpty(docName)){
             String path = map.get("path").toString();
             File file = new File(path+docName);
-            if(!file.exists()){
-                isOk = file.mkdirs();
+            if(!StringUtils.isEmpty(oldDocName)){
+                File oldFile = new File(path+oldDocName);
+                if(oldFile.exists()){
+                    isOk = oldFile.renameTo(file);
+                }
+            }else{
+                //label文件下的该子文件不存在则新建
+                if(!file.exists()){
+                    isOk = file.mkdirs();
+                }else {
+                    //已存在则放行
+                    isOk = true;
+                }
             }
-        }
         return isOk;
     }
 }

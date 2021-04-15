@@ -67,10 +67,17 @@ public class BaseMaterialSupplier extends ValidGroup implements Serializable {
     private String image;
 
     /**
+     * 客户产品型号
+     */
+    @ApiModelProperty(name="supplierProductModel",value = "客户产品型号")
+    @Column(name = "supplier_product_model")
+    private String supplierProductModel;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     private Long organizationId;
 
     /**

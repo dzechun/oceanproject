@@ -129,7 +129,7 @@ public class SmtHtOrder implements Serializable {
     * 组织id
     */
     @ApiModelProperty(value = "组织id",example = "组织id")
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     @Excel(name = "组织id")
     private Long organizationId;
 

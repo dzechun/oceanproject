@@ -9,7 +9,7 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
     <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -44,7 +44,7 @@
 	sppr.route_id,
 	sppr.`status`,
 	sppr.remark,
-	sppr.organization_id,
+	sppr.org_id,
 	sppr.create_user_id,
 	sppr.create_time,
 	sppr.modified_user_id,
@@ -64,14 +64,14 @@
     bo.organization_name,
     sr.route_name, sr.route_code, sr.route_desc,
     u.user_name as create_user_name,s.user_name as modified_user_name
-    from fantech_imes_v2.smt_product_process_route sppr
-    left join fantech_imes_v2.smt_pro_line spl on sppr.pro_line_id=spl.pro_line_id
-    left join fantech_imes_v2.smt_product_model spm on sppr.product_model_id=spm.product_model_id
-    left join fantech_imes_v2.smt_material sm on sppr.material_id=sm.material_id
+    from fantech_imes_v2.base_product_process_route sppr
+    left join fantech_imes_v2.base_pro_line spl on sppr.pro_line_id=spl.pro_line_id
+    left join fantech_imes_v2.base_product_model spm on sppr.product_model_id=spm.product_model_id
+    left join fantech_imes_v2.base_material sm on sppr.material_id=sm.material_id
     left join ocean_v2.sys_user u on sppr.create_user_id=u.user_id
     left join ocean_v2.sys_user s on sppr.modified_user_id=s.user_id
-    left join fantech_imes_v2.smt_route sr on sppr.route_id = sr.route_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON sppr.organization_id = bo.organization_id
+    left join fantech_imes_v2.base_route sr on sppr.route_id = sr.route_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON sppr.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sppr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

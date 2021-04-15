@@ -12,7 +12,7 @@
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -41,7 +41,7 @@
         shwa.warehouse_id,
         shwa.`status`,
         shwa.remark,
-        shwa.organization_id,
+        shwa.org_id,
         shwa.create_user_id,
         shwa.create_time,
         shwa.modified_user_id,
@@ -57,11 +57,11 @@
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         sw.warehouse_name,
         bo.organization_name
-        FROM fantech_imes_v2.smt_ht_warehouse_area shwa
+        FROM fantech_imes_v2.base_ht_warehouse_area shwa
         LEFT JOIN ocean_v2.sys_user su ON shwa.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON shwa.modified_user_id = sus.user_id
-        LEfT JOIN fantech_imes_v2.smt_warehouse sw ON shwa.warehouse_id= sw.warehouse_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shwa.organization_id = bo.organization_id
+        LEfT JOIN fantech_imes_v2.base_warehouse sw ON shwa.warehouse_id= sw.warehouse_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON shwa.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shwa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

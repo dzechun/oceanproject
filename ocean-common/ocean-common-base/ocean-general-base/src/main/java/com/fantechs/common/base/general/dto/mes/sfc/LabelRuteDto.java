@@ -48,7 +48,7 @@ public class LabelRuteDto implements Serializable {
      * 条码类型(0.SN,1.CSN)
      */
     @ApiModelProperty(name = "barcodeType",value = "条码类型(0.SN,1.CSN)")
-    private String barcodeType;
+    private Byte barcodeType;
 
     /**
      * 打印方式

@@ -15,7 +15,7 @@
     <result column="is_team_piecework" jdbcType="TINYINT" property="isTeamPiecework" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -47,7 +47,7 @@
 	bhs.is_team_piecework, 
 	bhs.`status`, 
 	bhs.remark, 
-	bhs.organization_id, 
+	bhs.org_id,
 	bhs.create_user_id, 
 	bhs.create_time, 
 	bhs.modified_user_id, 
@@ -64,8 +64,8 @@
       sf.factory_code,sf.factory_name,sf.factory_desc
       from fantech_imes_v2.base_ht_staff bhs
       left join fantech_imes_v2.base_team bt on bhs.team_id = bt.team_id
-      left join fantech_imes_v2.smt_work_shop sws on bt.work_shop_id = sws.work_shop_id
-      left join fantech_imes_v2.smt_factory sf on sws.factory_id = sf.factory_id
+      left join fantech_imes_v2.base_work_shop sws on bt.work_shop_id = sws.work_shop_id
+      left join fantech_imes_v2.base_factory sf on sws.factory_id = sf.factory_id
       left join ocean_v2.sys_user su on bhs.create_user_id = su.user_id
       left join ocean_v2.sys_user sus on bhs.modified_user_id = sus.user_id
       <where>

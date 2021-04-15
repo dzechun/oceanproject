@@ -7,7 +7,7 @@
         <result column="section_code" jdbcType="VARCHAR" property="sectionCode"/>
         <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
         <result column="section_desc" jdbcType="VARCHAR" property="sectionDesc"/>
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -30,7 +30,7 @@
         shws.section_desc,
         shws.`status`,
         shws.remark,
-        shws.organization_id,
+        shws.org_id,
         shws.create_user_id,
         shws.create_time,
         shws.modified_user_id,
@@ -46,10 +46,10 @@
         select <include refid="Base_Column_List"></include>,
         s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.smt_ht_workshop_section shws
+        from fantech_imes_v2.base_ht_workshop_section shws
         left join ocean_v2.sys_user u on shws.create_user_id=u.user_id
         left join ocean_v2.sys_user s on shws.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shws.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON shws.org_id = bo.organization_id
         <where>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
                 AND date_format(shws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

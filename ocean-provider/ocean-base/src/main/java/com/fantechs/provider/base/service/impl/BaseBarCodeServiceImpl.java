@@ -8,13 +8,14 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarCodeDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarCodeWorkDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSpecDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.basic.BaseBarCode;
 import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarCode;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -23,9 +24,12 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.BaseBarCodeDetMapper;
 import com.fantechs.provider.base.mapper.BaseBarCodeMapper;
+import com.fantechs.provider.base.mapper.BaseBarcodeRuleSpecMapper;
 import com.fantechs.provider.base.service.BaseBarCodeService;
-import com.fantechs.provider.base.util.FTPUtil;
+import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
+import com.fantechs.provider.base.util.BarcodeRuleUtils;
 import com.fantechs.provider.base.util.SocketClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +53,13 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Resource
     private BaseBarCodeMapper baseBarCodeMapper;
     @Resource
-    private FTPUtil ftpUtil;
-    @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
     private BaseBarCodeDetMapper baseBarCodeDetMapper;
+    @Resource
+    private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
+    @Resource
+    private BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
     @Resource
     private PMFeignApi pmFeignApi;
 
@@ -79,17 +85,25 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
             throw new BizErrorException("获取工单信息绑定条码规则信息失败");
         }
         //生成规则
-        SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
-        searchSmtBarcodeRuleSpec.setBarcodeRuleId(baseBarCodeWorkDto.getBarcodeRuleId());
-        List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
+        SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+        searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCodeWorkDto.getBarcodeRuleId());
+        List<BaseBarcodeRuleSpecDto> list = baseBarcodeRuleSpecMapper.findList(searchBaseBarcodeRuleSpec);
+        ArrayList<BaseBarcodeRuleSpec> baseBarcodeRuleSpecs = new ArrayList<>();
+        if (StringUtils.isNotEmpty(list)){
+            for (BaseBarcodeRuleSpecDto baseBarcodeRuleSpecDto : list) {
+                BaseBarcodeRuleSpec baseBarcodeRuleSpec = new BaseBarcodeRuleSpec();
+                BeanUtils.copyProperties(baseBarcodeRuleSpecDto,baseBarcodeRuleSpec);
+                baseBarcodeRuleSpecs.add(baseBarcodeRuleSpec);
+            }
+        }
         Example example1 = new Example(BaseBarCode.class);
         example1.createCriteria().andEqualTo("workOrderId", baseBarCodeWorkDto.getWorkOrderId());
         List<BaseBarCode> baseBarCodes = baseBarCodeMapper.selectByExample(example1);
         String maxCode = baseBarCodeMapper.selMaxCode(baseBarCodeWorkDto.getWorkOrderId());
         if(!StringUtils.isEmpty(maxCode)){
-            maxCode = pmFeignApi.generateMaxCode(list, maxCode).getData();
+            maxCode = BarcodeRuleUtils.getMaxSerialNumber(baseBarcodeRuleSpecs, maxCode);
         }
-        String code = pmFeignApi.generateCode(list,maxCode, baseBarCodeWorkDto.getMaterialCode()).getData();
+        String code = BarcodeRuleUtils.analysisCode(baseBarcodeRuleSpecs,maxCode, baseBarCodeWorkDto.getMaterialCode());
         baseBarCodeWorkDto.setBarcode(code);
         return baseBarCodeWorkDto;
     }
@@ -120,7 +134,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
             InputStream fis = null;
             BufferedInputStream bis = null;
             try {
-                fis = downloadFile(map,savePath).get(0);
+                //fis = downloadFile(map,savePath).get(0);
                 bis = new BufferedInputStream(fis);
                 OutputStream os = response.getOutputStream();
                 int i = bis.read(buffer);
@@ -263,14 +277,14 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
         for (Integer i = 0; i < record.getPrintQuantity(); i++) {
             BaseBarCodeDet baseBarCodeDet = new BaseBarCodeDet();
             baseBarCodeDet.setBarCodeId(record.getBarCodeId());
-            SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
-            searchSmtBarcodeRuleSpec.setBarcodeRuleId(record.getBarcodeRuleId());
-            List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
+            SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+            searchBaseBarcodeRuleSpec.setBarcodeRuleId(record.getBarcodeRuleId());
+            List<BaseBarcodeRuleSpec> list = baseBarcodeRuleSpecService.findSpec(searchBaseBarcodeRuleSpec);
             String max = baseBarCodeMapper.selMaxCode(record.getWorkOrderId());
-            String maxCode = pmFeignApi.generateMaxCode(list, max).getData();
+            String maxCode = BarcodeRuleUtils.getMaxSerialNumber(list, max);
             //String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
             //生成流水号
-            String code = pmFeignApi.generateCode(list,maxCode,record.getMaterialCode()).getData();
+            String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
             baseBarCodeDet.setBarCodeContent(code);
             baseBarCodeDet.setCreateTime(new Date());
             baseBarCodeDet.setCreateUserId(currentUserInfo.getUserId());
@@ -362,29 +376,29 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
      * @param savePath
      * @return
      */
-    @Transactional(rollbackFor = RuntimeException.class)
-    public List<InputStream> downloadFile(Map map, List<String> savePath) {
-        boolean isLogin = false;
-        List<InputStream> ins = new ArrayList<>();
-        //上传FTP服务器
-        for (String s : savePath) {
-            try {
-                String ip = map.get("ip").toString();
-                Integer port = Integer.parseInt(map.get("port").toString());
-                String username = map.get("username").toString();
-                String password = map.get("password").toString();
-                isLogin = this.ftpUtil.connectFTP(ip, port, username, password);
-                if (isLogin) {
-                    String[] path = s.split("/");
-                    InputStream in = this.ftpUtil.downFile(path[0], path[1]);
-                    ins.add(in);
-                }
-            } catch (Exception e) {
-                throw new BizErrorException(ErrorCodeEnum.valueOf("下载失败"));
-            } finally {
-                this.ftpUtil.loginOut();
-            }
-        }
-        return ins;
-    }
+//    @Transactional(rollbackFor = RuntimeException.class)
+//    public List<InputStream> downloadFile(Map map, List<String> savePath) {
+//        boolean isLogin = false;
+//        List<InputStream> ins = new ArrayList<>();
+//        //上传FTP服务器
+//        for (String s : savePath) {
+//            try {
+//                String ip = map.get("ip").toString();
+//                Integer port = Integer.parseInt(map.get("port").toString());
+//                String username = map.get("username").toString();
+//                String password = map.get("password").toString();
+//                isLogin = this.ftpUtil.connectFTP(ip, port, username, password);
+//                if (isLogin) {
+//                    String[] path = s.split("/");
+//                    InputStream in = this.ftpUtil.downFile(path[0], path[1]);
+//                    ins.add(in);
+//                }
+//            } catch (Exception e) {
+//                throw new BizErrorException(ErrorCodeEnum.valueOf("下载失败"));
+//            } finally {
+//                this.ftpUtil.loginOut();
+//            }
+//        }
+//        return ins;
+//    }
 }
