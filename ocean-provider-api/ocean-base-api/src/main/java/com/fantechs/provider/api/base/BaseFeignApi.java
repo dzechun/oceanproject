@@ -221,25 +221,25 @@ public interface BaseFeignApi {
     ResponseEntity print(@RequestBody PrintDto printDto);
 
     @ApiOperation("列表")
-    @PostMapping("/smtBarcodeRuleSpec/findSpec")
+    @PostMapping("/baseBarcodeRuleSpec/findSpec")
     ResponseEntity<List<BaseBarcodeRuleSpec>> findSpec(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec);
 
     @ApiOperation(value = "获取最大流水号")
-    @PostMapping("/smtBarcodeRule/generateMaxCode")
+    @PostMapping("/baseBarcodeRule/generateMaxCode")
     ResponseEntity<String> generateMaxCode(
             @ApiParam(value = "条码规则集合")@RequestBody List<BaseBarcodeRuleSpec> list,
             @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode);
 
     @ApiOperation("查询条码规则列表")
-    @PostMapping("/smtBarcodeRule/findList")
+    @PostMapping("/baseBarcodeRule/findList")
     ResponseEntity<List<BaseBarcodeRuleDto>> findBarcodeRulList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRule searchBaseBarcodeRule);
 
     @ApiOperation("条码规则集合列表")
-    @PostMapping("/smtBarcodeRuleSet/findList")
+    @PostMapping("/baseBarcodeRuleSet/findList")
     ResponseEntity<List<BaseBarcodeRuleSetDto>> findBarcodeRuleSetList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet);
 
     @ApiOperation("生成条码")
-    @PostMapping("/smtBarcodeRule/generateCode")
+    @PostMapping("/baseBarcodeRule/generateCode")
     ResponseEntity<String> generateCode(
             @ApiParam(value = "条码规则集合") @RequestBody List<BaseBarcodeRuleSpec> list,
             @ApiParam(value = "最大条码数") @RequestParam(required = false) String maxCode,
