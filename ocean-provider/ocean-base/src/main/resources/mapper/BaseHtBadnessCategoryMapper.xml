@@ -39,7 +39,7 @@
     from fantech_imes_v2.base_ht_badness_category bhbc
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(bhbc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
         and bhbc.badness_category_code like CONCAT('%',#{badnessCategoryCode},'%')
