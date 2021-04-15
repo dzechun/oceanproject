@@ -151,10 +151,9 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
         List<SysSpecItem> sysSpecItemList = itemList.getData();
         Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
-        if(!StringUtils.isEmpty(docName)){
             String path = map.get("path").toString();
             File file = new File(path+docName);
-            if(StringUtils.isEmpty(oldDocName)){
+            if(!StringUtils.isEmpty(oldDocName)){
                 File oldFile = new File(path+oldDocName);
                 if(oldFile.exists()){
                     isOk = oldFile.renameTo(file);
@@ -164,7 +163,6 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
                     isOk = file.mkdirs();
                 }
             }
-        }
         return isOk;
     }
 }
