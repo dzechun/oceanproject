@@ -77,7 +77,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(!matcher.find()){
             throw new BizErrorException("标签模版文件格式不正确");
         }
-        if(record.getIsDefaultLabel()==(byte)1){
+        if(record.getIsDefaultLabel() != null && record.getIsDefaultLabel()==(byte)1){
             Example example = new Example(BaseLabel.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("labelCategoryId",record.getLabelCategoryId());
@@ -194,7 +194,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             List<SysSpecItem> sysSpecItemList = itemList.getData();
             Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
             InputStream stream = file.getInputStream();
-            String path = map.get("path") + labelCategoryName;
+            String path = map.get("path") +labelCategoryName+"/";
             FileOutputStream fs=new FileOutputStream(path+fileName+".btw");
             byte[] buffer =new byte[1024*1024];
             int bytesum = 0;

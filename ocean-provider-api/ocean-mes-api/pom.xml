@@ -12,6 +12,7 @@
     <artifactId>ocean-mes-api</artifactId>
     <modules>
         <module>ocean-mes-pm-api</module>
+        <module>ocean-mes-sfc-api</module>
     </modules>
     <groupId>com.fantechs.provider.api.mes</groupId>
     <version>0.0.1-SNAPSHOT</version>

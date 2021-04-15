@@ -1,31 +1,30 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmMatchingOrder;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessFinishedProductDTO;
+import com.fantechs.common.base.general.dto.mes.pm.ProcessListDto;
+import com.fantechs.common.base.general.dto.mes.pm.SmtProcessListProcessDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtProcessListProcess;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCardPool;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.BaseProcess;
-import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
-import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtProcessListProcessMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper;
+import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +129,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int startJob(SmtWorkOrderBarcodePool smtWorkOrderBarcodePool) {
-        List<SmtProcessListProcess> list = new ArrayList<>();
+//        List<SmtProcessListProcess> list = new ArrayList<>();
 //        Long workOrderId = smtWorkOrderBarcodePool.getWorkOrderId();
 //        //获取工单信息
 //        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
@@ -144,7 +143,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
 //            throw new BizErrorException("没有找到相关的条码集合规则");
 //        }
 //        for (BaseBarcodeRuleSetDet baseBarcodeRuleSetDet : smtBarcodeRuleSetDetList) {
-//            BaseBarcodeRule baseBarcodeRule = baseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
+//            //BaseBarcodeRule baseBarcodeRule = baseBarcodeRuleMapper.selectByPrimaryKey(baseBarcodeRuleSetDet.getBarcodeRuleId());
 //            if (StringUtils.isEmpty(baseBarcodeRule)) {
 //                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
 //            }
@@ -181,7 +180,8 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
 //        } else {
 //            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
 //        }
-        return smtProcessListProcessMapper.insertList(list);
+//        return smtProcessListProcessMapper.insertList(list);
+        return 0;
     }
 
     @Override
@@ -914,15 +914,16 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
 
     @Transactional(rollbackFor = Exception.class)
     public String generateCode(Long barcodeRuleId) {
-        String maxCode = null;
-        Example example = new Example(BaseBarcodeRuleSpec.class);
-        example.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
+//        String maxCode = null;
+//        Example example = new Example(BaseBarcodeRuleSpec.class);
+//        example.createCriteria().andEqualTo("barcodeRuleId", barcodeRuleId);
 //        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example);
 //        if (StringUtils.isNotEmpty(ruleSpecs)) {
 //            maxCode = BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, maxCode);
 //            maxCode = BarcodeRuleUtils.analysisCode(ruleSpecs, maxCode, null);
 //        }
-        return maxCode;
+//        return maxCode;
+        return null;
     }
 
     @Override

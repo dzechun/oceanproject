@@ -56,10 +56,10 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SmtWorkOrderBarcodeCollocation record) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+//        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+//        if(StringUtils.isEmpty(currentUser)){
+//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+//        }
 //        Long workOrderId = record.getWorkOrderId();
 //        MesPmWorkOrderDto smtWorkOrderDto = mesPmWorkOrderMapper.selectByWorkOrderId(workOrderId);
 //        //通过条码集合找到对应的条码规则、流转卡规则
@@ -81,9 +81,9 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
 //                break;
 //            }
 //        }
-        //工单数量
+//        //工单数量
 //        BigDecimal workOrderQuantity = smtWorkOrderDto.getWorkOrderQty();
-
+//
 //        //产生数量
 //        Integer produceQuantity = record.getProduceQuantity();
 //        //已产生数量
@@ -113,7 +113,8 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
 //
 //        //生成工单规则解析码
 //        generateBarcode(record, barcodeRuleId, produceQuantity);
-        return smtWorkOrderBarcodeCollocationMapper.insertSelective(record);
+//        return smtWorkOrderBarcodeCollocationMapper.insertSelective(record);
+        return 1;
     }
 
     /**
@@ -124,43 +125,43 @@ public class SmtWorkOrderBarcodeCollocationServiceImpl  extends BaseService<SmtW
      */
     @Transactional(rollbackFor = Exception.class)
     public void generateBarcode(SmtWorkOrderBarcodeCollocation smtWorkOrderBarcodeCollocation, Long barcodeRuleId, Integer quantity) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        List<SmtWorkOrderBarcodePool> workOrderBarcodePools=new ArrayList<>();
-        String workOrderBarcode=null;
-        //查询该规则生成的条码规则解析码条数
-        Example example= new Example(SmtWorkOrderBarcodePool.class);
-        example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
-        example.setOrderByClause("`barcode` desc");
-        List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
-
-        Example example1= new Example(BaseBarcodeRuleSpec.class);
-        example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+//        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+//        List<SmtWorkOrderBarcodePool> workOrderBarcodePools=new ArrayList<>();
+//        String workOrderBarcode=null;
+//        //查询该规则生成的条码规则解析码条数
+//        Example example= new Example(SmtWorkOrderBarcodePool.class);
+//        example.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
+//        example.setOrderByClause("`barcode` desc");
+//        List<SmtWorkOrderBarcodePool> smtWorkOrderBarcodePools = smtWorkOrderBarcodePoolMapper.selectByExample(example);
+//
+//        Example example1= new Example(BaseBarcodeRuleSpec.class);
+//        example1.createCriteria().andEqualTo("barcodeRuleId",barcodeRuleId);
 //        List<BaseBarcodeRuleSpec> ruleSpecs = baseBarcodeRuleSpecMapper.selectByExample(example1);
-        if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
-            workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
-        }
-        for (int i=0;i<quantity;i++){
+//        if(StringUtils.isNotEmpty(smtWorkOrderBarcodePools)){
+//            workOrderBarcode = smtWorkOrderBarcodePools.get(0).getBarcode();
+//        }
+//        for (int i=0;i<quantity;i++){
 //            if(StringUtils.isNotEmpty(ruleSpecs)){
 //                workOrderBarcode= BarcodeRuleUtils.getMaxSerialNumber(ruleSpecs, workOrderBarcode);
 //                workOrderBarcode= BarcodeRuleUtils.analysisCode(ruleSpecs,workOrderBarcode,null);
 //            }else {
 //                throw new BizErrorException("该工单条码规则没有配置");
 //            }
-
-            SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
-            smtWorkOrderBarcodePool.setTaskCode(CodeUtils.getId("PROD"));
-            smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderBarcodeCollocation.getWorkOrderId());
-            smtWorkOrderBarcodePool.setBarcodeRuleId(barcodeRuleId);
-            smtWorkOrderBarcodePool.setBarcode(workOrderBarcode);
-            smtWorkOrderBarcodePool.setTaskStatus((byte) 0);
-            smtWorkOrderBarcodePool.setStatus((byte) 1);
-            smtWorkOrderBarcodePool.setCreateUserId(currentUser.getUserId());
-            smtWorkOrderBarcodePool.setCreateTime(new Date());
-            smtWorkOrderBarcodePool.setModifiedUserId(currentUser.getUserId());
-            smtWorkOrderBarcodePool.setModifiedTime(new Date());
-            workOrderBarcodePools.add(smtWorkOrderBarcodePool);
-        }
-        smtWorkOrderBarcodePoolMapper.insertList(workOrderBarcodePools);
+//
+//            SmtWorkOrderBarcodePool smtWorkOrderBarcodePool=new SmtWorkOrderBarcodePool();
+//            smtWorkOrderBarcodePool.setTaskCode(CodeUtils.getId("PROD"));
+//            smtWorkOrderBarcodePool.setWorkOrderId(smtWorkOrderBarcodeCollocation.getWorkOrderId());
+//            smtWorkOrderBarcodePool.setBarcodeRuleId(barcodeRuleId);
+//            smtWorkOrderBarcodePool.setBarcode(workOrderBarcode);
+//            smtWorkOrderBarcodePool.setTaskStatus((byte) 0);
+//            smtWorkOrderBarcodePool.setStatus((byte) 1);
+//            smtWorkOrderBarcodePool.setCreateUserId(currentUser.getUserId());
+//            smtWorkOrderBarcodePool.setCreateTime(new Date());
+//            smtWorkOrderBarcodePool.setModifiedUserId(currentUser.getUserId());
+//            smtWorkOrderBarcodePool.setModifiedTime(new Date());
+//            workOrderBarcodePools.add(smtWorkOrderBarcodePool);
+//        }
+//        smtWorkOrderBarcodePoolMapper.insertList(workOrderBarcodePools);
     }
 
     @Override

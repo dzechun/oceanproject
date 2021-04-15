@@ -13,8 +13,10 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.wms.in.service.MesPackageManagerService;
 import com.fantechs.provider.wms.in.mapper.MesPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -43,11 +45,13 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
      @Resource
      private MesPackageManagerMapper mesPackageManagerMapper;
      @Resource
-     private PMFeignApi applyFeignApi;
+     private BaseFeignApi baseFeignApi;
      @Resource
      private MesHtPackageManagerService mesHtPackageManagerService;
     @Resource
-    private BcmFeignApi bcmFeignApi;
+    private SFCFeignApi sfcFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<MesPackageManager> selectAll(Map<String,Object> map) {
@@ -234,7 +238,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006);
                 }
             }
-            ResponseEntity<Integer> responseEntity = applyFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
+            ResponseEntity<Integer> responseEntity = pmFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getMessage());
             }
@@ -276,7 +280,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }
             printDto.setPrintName(mesPackageManager.getPrintName());
             printDto.setPrintModelList(printModelList);
-            ResponseEntity res = bcmFeignApi.print(printDto);
+            ResponseEntity res = sfcFeignApi.print(printDto);
             if(res.getCode()!=0){
                 throw new BizErrorException("打印失败");
             }
@@ -364,7 +368,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
         //取总共条码生成数
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
@@ -388,7 +392,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             throw new BizErrorException("未匹配到标签No序号规则");
         }
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
