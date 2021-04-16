@@ -4,8 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmDeliveryNoteDto;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionType;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryNote;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryNoteDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtDeliveryNote;

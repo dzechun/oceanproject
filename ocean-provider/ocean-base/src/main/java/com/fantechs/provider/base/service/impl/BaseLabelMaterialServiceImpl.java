@@ -63,6 +63,7 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
+        record.setOrgId(currentUserInfo.getOrganizationId());
 
         return baseLabelMaterialMapper.insertUseGeneratedKeys(record);
     }
@@ -85,6 +86,7 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(currentUserInfo.getUserId());
+        entity.setOrgId(currentUserInfo.getOrganizationId());
 
         BaseHtLabelMaterial baseHtLabelMaterial = new BaseHtLabelMaterial();
         BeanUtils.copyProperties(entity, baseHtLabelMaterial);

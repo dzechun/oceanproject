@@ -4,9 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
-import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenotype;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -14,10 +12,8 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseBadnessPhenotypeMapper;
 import com.fantechs.provider.base.mapper.BaseHtBadnessPhenotypeMapper;
 import com.fantechs.provider.base.service.BaseBadnessPhenotypeService;
-import com.fantechs.provider.base.service.BaseHtBadnessPhenotypeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -79,7 +75,7 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-
+        entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessPhenotype baseHtBadnessPhenotype = new BaseHtBadnessPhenotype();
         BeanUtils.copyProperties(entity,baseHtBadnessPhenotype);
         baseHtBadnessPhenotypeMapper.insert(baseHtBadnessPhenotype);

@@ -62,6 +62,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
         baseSignature.setCreateTime(new Date());
         baseSignature.setModifiedUserId(currentUser.getUserId());
         baseSignature.setModifiedTime(new Date());
+        baseSignature.setOrganizationId(currentUser.getOrganizationId());
         baseSignatureMapper.insertUseGeneratedKeys(baseSignature);
 
         //新增物料特征码历史信息
@@ -120,6 +121,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
 
         baseSignature.setModifiedUserId(currentUser.getUserId());
         baseSignature.setModifiedTime(new Date());
+        baseSignature.setOrganizationId(currentUser.getOrganizationId());
         int i= baseSignatureMapper.updateByPrimaryKeySelective(baseSignature);
 
         //新增物料特征码历史信息
@@ -222,6 +224,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
                 if (StringUtils.isEmpty(baseSignature.getStatus())){
                     baseSignature.setStatus(1);
                 }
+                baseSignature.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseSignature);
             }
 

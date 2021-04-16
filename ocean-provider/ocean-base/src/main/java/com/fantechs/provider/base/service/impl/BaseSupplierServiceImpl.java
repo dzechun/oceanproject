@@ -62,6 +62,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         record.setModifiedUserId(currentUser.getUserId());
         record.setModifiedTime(new Date());
         record.setIsDelete((byte) 1);
+        record.setOrganizationId(currentUser.getOrganizationId());
         int i = baseSupplierMapper.insertUseGeneratedKeys(record);
 
         List<BaseAddressDto> address = record.getList();
@@ -86,6 +87,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(currentUser.getUserId());
+        entity.setOrganizationId(currentUser.getOrganizationId());
         int i = baseSupplierMapper.updateByPrimaryKeySelective(entity);
 
         Example supplierAddressExample = new Example(BaseSupplierAddress.class);
@@ -206,6 +208,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
                 baseSupplier.setModifiedTime(new Date());
                 baseSupplier.setModifiedUserId(currentUser.getUserId());
                 baseSupplier.setSupplierType(supplierType);
+                baseSupplier.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseSupplier);
             }
             success = baseSupplierMapper.insertList(list);

@@ -68,6 +68,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
         baseWorkShop.setModifiedUserId(user.getUserId());
         baseWorkShop.setModifiedTime(new Date());
         baseWorkShop.setStatus(StringUtils.isEmpty(baseWorkShop.getStatus())?1: baseWorkShop.getStatus());
+        baseWorkShop.setOrganizationId(user.getOrganizationId());
         baseWorkShopMapper.insertUseGeneratedKeys(baseWorkShop);
 
         BaseHtWorkShop baseHtWorkShop = new BaseHtWorkShop();
@@ -136,6 +137,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
         }
         baseWorkShop.setModifiedTime(new Date());
         baseWorkShop.setModifiedUserId(user.getUserId());
+        baseWorkShop.setOrganizationId(user.getOrganizationId());
 
         BaseHtWorkShop baseHtWorkShop = new BaseHtWorkShop();
         BeanUtils.copyProperties(baseWorkShop, baseHtWorkShop);

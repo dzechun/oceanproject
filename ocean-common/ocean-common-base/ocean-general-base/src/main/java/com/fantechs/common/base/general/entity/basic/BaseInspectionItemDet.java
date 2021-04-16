@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.qms;
+package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -21,7 +21,7 @@ import java.util.Date;
  */
 @Data
 @Table(name = "qms_inspection_item_det")
-public class QmsInspectionItemDet extends ValidGroup implements Serializable {
+public class BaseInspectionItemDet extends ValidGroup implements Serializable {
     /**
      * 检验项目明细ID
      */

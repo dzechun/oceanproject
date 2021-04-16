@@ -48,6 +48,7 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
         baseCurrency.setModifiedTime(new Date());
         baseCurrency.setModifiedUserId(currentUser.getUserId());
         baseCurrency.setStatus(StringUtils.isEmpty(baseCurrency.getStatus())?1: baseCurrency.getStatus());
+        baseCurrency.setOrganizationId(currentUser.getOrganizationId());
         return baseCurrencyMapper.insertUseGeneratedKeys(baseCurrency);
     }
 
@@ -73,6 +74,7 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
 
         baseCurrency.setModifiedUserId(currentUser.getUserId());
         baseCurrency.setModifiedTime(new Date());
+        baseCurrency.setOrganizationId(currentUser.getOrganizationId());
         return baseCurrencyMapper.updateByPrimaryKeySelective(baseCurrency);
     }
 

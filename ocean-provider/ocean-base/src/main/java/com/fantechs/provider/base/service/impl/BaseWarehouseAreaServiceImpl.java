@@ -64,6 +64,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         baseWarehouseArea.setCreateTime(new Date());
         baseWarehouseArea.setModifiedUserId(currentUser.getUserId());
         baseWarehouseArea.setModifiedTime(new Date());
+        baseWarehouseArea.setOrganizationId(currentUser.getOrganizationId());
         baseWarehouseAreaMapper.insertUseGeneratedKeys(baseWarehouseArea);
 
         //新增历史记录
@@ -83,7 +84,8 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         int i=0;
         baseWarehouseArea.setModifiedUserId(currentUser.getUserId());
         baseWarehouseArea.setModifiedTime(new Date());
-         i= baseWarehouseAreaMapper.updateByPrimaryKeySelective(baseWarehouseArea);
+        baseWarehouseArea.setOrganizationId(currentUser.getOrganizationId());
+        i= baseWarehouseAreaMapper.updateByPrimaryKeySelective(baseWarehouseArea);
 
         //新增历史记录
         BaseHtWarehouseArea baseHtWarehouseArea =new BaseHtWarehouseArea();

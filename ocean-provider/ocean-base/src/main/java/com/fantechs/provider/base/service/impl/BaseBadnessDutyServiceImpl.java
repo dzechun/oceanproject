@@ -4,9 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessDutyDto;
-import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessDuty;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessDuty;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -77,7 +75,7 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-
+        entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessDuty baseHtBadnessDuty = new BaseHtBadnessDuty();
         BeanUtils.copyProperties(entity,baseHtBadnessDuty);
         baseHtBadnessDutyMapper.insert(baseHtBadnessDuty);

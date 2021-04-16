@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.jnlp.UnavailableServiceException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,6 +103,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
         }
         basePlateParts.setModifiedTime(new Date());
         basePlateParts.setModifiedUserId(user.getUserId());
+        basePlateParts.setOrganizationId(user.getOrganizationId());
 
         BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
         BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);

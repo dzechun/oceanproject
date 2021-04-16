@@ -72,6 +72,7 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
+        record.setOrgId(currentUserInfo.getOrganizationId());
 
         return baseLabelCategoryMapper.insertUseGeneratedKeys(record);
     }
@@ -92,6 +93,7 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
+        entity.setOrgId(currentUserInfo.getOrganizationId());
         int num = baseLabelCategoryMapper.updateByPrimaryKeySelective(entity);
 
         BaseLabelCategory bcm = baseLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());

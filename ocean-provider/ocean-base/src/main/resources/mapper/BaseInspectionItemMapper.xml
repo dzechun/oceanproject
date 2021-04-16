@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.qms.mapper.QmsInspectionItemMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsInspectionItem">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseInspectionItemMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseInspectionItem">
         <!--
           WARNING - @mbg.generated
         -->
@@ -30,7 +30,7 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-               type="com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto">
+               type="com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -48,7 +48,7 @@
         select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS
         modified_user_name,
         bo.organization_name
-        from fantech_imes.qms_inspection_item qii
+        from fantech_imes.base_inspection_item qii
         LEFT JOIN ocean.sys_user su ON qii.create_user_id = su.user_id
         LEFT JOIN ocean.sys_user sus ON qii.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes.base_organization bo ON qii.organization_id = bo.organization_id
@@ -80,7 +80,7 @@
     <select id="getMax" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
-        from fantech_imes.qms_inspection_item qii ORDER BY qii.inspection_item_id desc limit 1
+        from fantech_imes.base_inspection_item qii ORDER BY qii.inspection_item_id desc limit 1
     </select>
 
 </mapper>

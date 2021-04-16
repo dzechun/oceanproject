@@ -14,6 +14,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtPartsInformationMapper;
 import com.fantechs.provider.base.mapper.BasePartsInformationMapper;
 import com.fantechs.provider.base.service.BasePartsInformationService;
+import cz.mallat.uasparser.UASparser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,12 +67,13 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(BasePartsInformation basePartsInformation) {
-//        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(user)){
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         basePartsInformation.setModifiedTime(new Date());
-//        basePartsInformation.setModifiedUserId(user.getUserId());
+        basePartsInformation.setModifiedUserId(user.getUserId());
+        basePartsInformation.setOrganizationId(user.getOrganizationId());
 
         BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
         BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
@@ -162,6 +164,7 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
                 basePartsInformation.setCreateUserId(currentUser.getUserId());
                 basePartsInformation.setModifiedTime(new Date());
                 basePartsInformation.setModifiedUserId(currentUser.getUserId());
+                basePartsInformation.setOrganizationId(currentUser.getOrganizationId());
                 list.add(basePartsInformation);
             }
             success = basePartsInformationMapper.insertList(list);
