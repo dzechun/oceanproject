@@ -21,7 +21,7 @@
 
   <sql id="Base_Column_List">
     bhbp.ht_badness_phenotype_id,
-    bhbp.badness_category_id,
+    bhbp.badness_phenotype_id,
     bhbp.badness_phenotype_code,
     bhbp.badness_phenotype_desc,
     bhbp.org_id,
@@ -43,7 +43,7 @@
     LEFT JOIN fantech_imes_v2.base_organization bo ON bhbp.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(bhbp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="badnessPhenotypeCode != null and badnessPhenotypeCode != ''">
         and bhbp.badness_phenotype_code like CONCAT('%',#{badnessPhenotypeCode},'%')
