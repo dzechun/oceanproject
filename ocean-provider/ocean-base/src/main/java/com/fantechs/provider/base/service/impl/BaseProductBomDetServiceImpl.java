@@ -68,6 +68,7 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         baseProductBomDet.setCreateTime(new Date());
         baseProductBomDet.setModifiedUserId(currentUser.getUserId());
         baseProductBomDet.setModifiedTime(new Date());
+        baseProductBomDet.setOrganizationId(currentUser.getOrganizationId());
         baseProductBomDetMapper.insertUseGeneratedKeys(baseProductBomDet);
 
         //新增产品BOM详细历史信息
@@ -106,6 +107,7 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
 
         baseProductBomDet.setModifiedUserId(currentUser.getUserId());
         baseProductBomDet.setModifiedTime(new Date());
+        baseProductBomDet.setOrganizationId(currentUser.getOrganizationId());
         int i = baseProductBomDetMapper.updateByPrimaryKeySelective(baseProductBomDet);
 
         //新增产品BOM详细历史信息

@@ -68,6 +68,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
         basePackageSpecification.setCreateTime(new Date());
         basePackageSpecification.setModifiedUserId(user.getUserId());
         basePackageSpecification.setModifiedTime(new Date());
+        basePackageSpecification.setOrganizationId(user.getOrganizationId());
 
         //新增包装规格
         basePackageSpecificationMapper.insertUseGeneratedKeys(basePackageSpecification);
@@ -117,6 +118,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         basePackageSpecification.setModifiedUserId(user.getUserId());
         basePackageSpecification.setModifiedTime(new Date());
+        basePackageSpecification.setOrganizationId(user.getOrganizationId());
 
         BaseHtPackageSpecification baseHtPackageSpecification = new BaseHtPackageSpecification();
         BeanUtils.copyProperties(basePackageSpecification, baseHtPackageSpecification);
