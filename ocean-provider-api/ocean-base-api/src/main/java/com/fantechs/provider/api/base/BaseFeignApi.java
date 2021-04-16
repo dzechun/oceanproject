@@ -7,6 +7,8 @@ import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -244,4 +246,13 @@ public interface BaseFeignApi {
             @ApiParam(value = "条码规则集合") @RequestBody List<BaseBarcodeRuleSpec> list,
             @ApiParam(value = "最大条码数") @RequestParam(required = false) String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code);
+
+    @ApiOperation("获取检验项目列表")
+    @PostMapping("/qmsInspectionItem/findList")
+    ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionItem searchQmsInspectionItem);
+
+    @ApiOperation("获取检验类型列表")
+    @PostMapping("/qmsInspectionType/findList")
+    ResponseEntity<List<BaseInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
+
 }

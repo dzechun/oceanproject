@@ -30,14 +30,6 @@ public interface QmsFeignApi {
     @PostMapping("/qmsQualityConfirmation/getQualityQuantity")
     ResponseEntity<QmsQualityConfirmation> getQualityQuantity(@ApiParam(value = "workOrderCardPoolId", required = true) @RequestParam Long workOrderCardPoolId, @ApiParam(value = "workOrderCardPoolId", required = true) @RequestParam Long processId);
 
-    @ApiOperation("获取检验项目列表")
-    @PostMapping("/qmsInspectionItem/findList")
-    ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionItem searchQmsInspectionItem);
-
-    @ApiOperation("获取检验类型列表")
-    @PostMapping("/qmsInspectionType/findList")
-    ResponseEntity<List<BaseInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
-
     @ApiOperation("获取pda质检列表")
     @PostMapping("/qmsPdaInspection/findList")
     ResponseEntity<List<QmsPdaInspectionDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchQmsPdaInspection searchQmsPdaInspection);

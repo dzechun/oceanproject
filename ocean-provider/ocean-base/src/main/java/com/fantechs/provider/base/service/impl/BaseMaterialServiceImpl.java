@@ -24,6 +24,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
@@ -59,7 +60,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Resource
     private BaseProductModelMapper baseProductModelMapper;
     @Resource
-    private QmsFeignApi qmsFeignApi;
+    private BaseFeignApi baseFeignApi;
     @Resource
     private BaseTabMapper baseTabMapper;
     @Resource
@@ -440,7 +441,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchQmsInspectionItem searchQmsInspectionItem = new SearchQmsInspectionItem();
                 searchQmsInspectionItem.setInspectionItemCode(inspectionItemCode);
                 searchQmsInspectionItem.setCodeQueryMark((byte) 1);
-                List<BaseInspectionItemDto> qmsInspectionItemDtos = qmsFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
+                List<BaseInspectionItemDto> qmsInspectionItemDtos = baseFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
                 if (StringUtils.isEmpty(qmsInspectionItemDtos)){
                     fail.add(i+4);
                     continue;
@@ -453,7 +454,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchQmsInspectionType searchQmsInspectionType = new SearchQmsInspectionType();
                 searchQmsInspectionType.setCodeQueryMark((byte) 1);
                 searchQmsInspectionType.setInspectionTypeCode(inspectionTypeCode);
-                List<BaseInspectionTypeDto> baseInspectionTypeDtos = qmsFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
+                List<BaseInspectionTypeDto> baseInspectionTypeDtos = baseFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
                 if (StringUtils.isEmpty(baseInspectionTypeDtos)){
                     fail.add(i+4);
                     continue;
