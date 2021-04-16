@@ -368,7 +368,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
         }
         //取总共条码生成数
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null,null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
@@ -392,7 +392,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             throw new BizErrorException("未匹配到标签No序号规则");
         }
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null,null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
