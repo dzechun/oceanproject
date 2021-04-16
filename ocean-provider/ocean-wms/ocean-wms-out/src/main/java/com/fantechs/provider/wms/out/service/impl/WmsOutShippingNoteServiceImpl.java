@@ -99,7 +99,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
                         for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
                             String email = baseWarningPersonnelDto.getEmail();//获取邮箱
                             String shippingNoteCode = "CPRK20210331001";//单号
-                            bcmFeignApi.sendSimpleMail(email, "有新的出货通知单", "出货通知单单号：" + shippingNoteCode
+                            baseFeignApi.sendSimpleMail(email, "有新的出货通知单", "出货通知单单号：" + shippingNoteCode
                                     + "，调出储位名称：测试储位1"
                                     + "，调入储位名称: 测试储位2");
                         }
@@ -288,7 +288,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
                     for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
                         String email = baseWarningPersonnelDto.getEmail();//获取邮箱
                         String shippingNoteCode = wmsOutHtShippingNote.getShippingNoteCode();//单号
-                        bcmFeignApi.sendSimpleMail(email, "有新的出货通知单", "出货通知单单号：" + shippingNoteCode
+                        baseFeignApi.sendSimpleMail(email, "有新的出货通知单", "出货通知单单号：" + shippingNoteCode
                                 + "，调出储位名称：" + storageName
                                 + "，调入储位名称: " + moveStorageName);
                     }

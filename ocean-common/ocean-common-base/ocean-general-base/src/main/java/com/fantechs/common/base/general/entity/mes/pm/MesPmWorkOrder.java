@@ -26,7 +26,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "work_order_id")
     private Long workOrderId;
@@ -35,7 +34,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 工单编码
      */
     @ApiModelProperty(name="workOrderCode",value = "工单编码")
-    @Excel(name = "工单编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单编码", height = 20, width = 30)
     @Column(name = "work_order_code")
     private String workOrderCode;
 
@@ -43,7 +42,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 父工单ID
      */
     @ApiModelProperty(name="parentId",value = "父工单ID")
-    @Excel(name = "父工单ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "父工单ID", height = 20, width = 30)
     @Column(name = "parent_id")
     private Long parentId;
 
@@ -51,7 +50,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 订单ID
      */
     @ApiModelProperty(name="orderId",value = "订单ID")
-    @Excel(name = "订单ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "订单ID", height = 20, width = 30)
     @Column(name = "order_id")
     private Long orderId;
 
@@ -59,7 +58,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 产品料号ID
      */
     @ApiModelProperty(name="materialId",value = "产品料号ID")
-    @Excel(name = "产品料号ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -67,7 +65,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 工单数量
      */
     @ApiModelProperty(name="workOrderQty",value = "工单数量")
-    @Excel(name = "工单数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单数量", height = 20, width = 30)
     @Column(name = "work_order_qty")
     private BigDecimal workOrderQty;
 
@@ -75,7 +73,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 投产数量
      */
     @ApiModelProperty(name="productionQty",value = "投产数量")
-    @Excel(name = "投产数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "投产数量", height = 20, width = 30)
     @Column(name = "production_qty")
     private BigDecimal productionQty;
 
@@ -83,7 +81,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 完工数量
      */
     @ApiModelProperty(name="outputQty",value = "完工数量")
-    @Excel(name = "完工数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "完工数量", height = 20, width = 30)
     @Column(name = "output_qty")
     private BigDecimal outputQty;
 
@@ -91,15 +89,15 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 当前排产数量
      */
     @ApiModelProperty(name="scheduledQty",value = "当前排产数量")
-    @Excel(name = "当前排产数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "当前排产数量", height = 20, width = 30)
     @Column(name = "scheduled_qty")
     private BigDecimal scheduledQty;
 
     /**
-     * 工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起)
+     * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
      */
-    @ApiModelProperty(name="workOrderStatus",value = "工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起)")
-    @Excel(name = "工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起)", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="workOrderStatus",value = "工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
+    @Excel(name = "工单状态", height = 20, width = 30,replace = {"Initial_1","Release_2","WIP_3","Hold_4","Cancel_5","Complete_6","Delete_7"})
     @Column(name = "work_order_status")
     private Byte workOrderStatus;
 
@@ -107,7 +105,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 线别ID
      */
     @ApiModelProperty(name="proLineId",value = "线别ID")
-    @Excel(name = "线别ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "线别ID", height = 20, width = 30)
     @Column(name = "pro_line_id")
     private Long proLineId;
 
@@ -115,7 +113,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 工艺路线ID
      */
     @ApiModelProperty(name="routeId",value = "工艺路线ID")
-    @Excel(name = "工艺路线ID", height = 20, width = 30,orderNum="")
     @Column(name = "route_id")
     private Long routeId;
 
@@ -123,7 +120,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 条码规则集合ID
      */
     @ApiModelProperty(name="barcodeRuleSetId",value = "条码规则集合ID")
-    @Excel(name = "条码规则集合ID", height = 20, width = 30,orderNum="")
     @Column(name = "barcode_rule_set_id")
     private Long barcodeRuleSetId;
 
@@ -131,7 +127,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 工单类型(0、量产 1、试产 2、返工 3、维修)
      */
     @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
-    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单类型", height = 20, width = 30,replace = {"量产_0","试产_1","返工_2","维修_3"})
     @Column(name = "work_order_type")
     private Byte workOrderType;
 
@@ -139,7 +135,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 排产日期
      */
     @ApiModelProperty(name="scheduleDate",value = "排产日期")
-    @Excel(name = "排产日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "排产日期", height = 20, width = 30)
     @Column(name = "schedule_date")
     private Date scheduleDate;
 
@@ -147,7 +143,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 计划开始时间
      */
     @ApiModelProperty(name="planStartTime",value = "计划开始时间")
-    @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "计划开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_start_time")
     private Date planStartTime;
@@ -156,7 +152,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 计划结束时间
      */
     @ApiModelProperty(name="planEndTime",value = "计划结束时间")
-    @Excel(name = "计划结束时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "计划结束时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_end_time")
     private Date planEndTime;
@@ -165,7 +161,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 实际开始时间
      */
     @ApiModelProperty(name="actualStartTime",value = "实际开始时间")
-    @Excel(name = "实际开始时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "实际开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_start_time")
     private Date actualStartTime;
@@ -174,7 +170,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 实际结束时间
      */
     @ApiModelProperty(name="actualEndTime",value = "实际结束时间")
-    @Excel(name = "实际结束时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "实际结束时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_end_time")
     private Date actualEndTime;
@@ -183,7 +179,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 合同号
      */
     @ApiModelProperty(name="contractNo",value = "合同号")
-    @Excel(name = "合同号", height = 20, width = 30,orderNum="")
+    @Excel(name = "合同号", height = 20, width = 30)
     @Column(name = "contract_no")
     private String contractNo;
 
@@ -214,7 +210,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="")
     @Column(name = "org_id")
     private Long orgId;
 
@@ -222,7 +217,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -230,7 +224,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -239,7 +233,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -247,7 +240,7 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -256,7 +249,6 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 

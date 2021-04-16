@@ -61,6 +61,7 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
             baseBarcodeRuleSet.setCreateTime(new Date());
             baseBarcodeRuleSet.setModifiedUserId(currentUser.getUserId());
             baseBarcodeRuleSet.setModifiedTime(new Date());
+            baseBarcodeRuleSet.setOrganizationId(currentUser.getOrganizationId());
             int i = baseBarcodeRuleSetMapper.insertUseGeneratedKeys(baseBarcodeRuleSet);
 
             //新增工单BOM历史信息
@@ -88,6 +89,7 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
 
             baseBarcodeRuleSet.setModifiedUserId(currentUser.getUserId());
             baseBarcodeRuleSet.setModifiedTime(new Date());
+            baseBarcodeRuleSet.setOrganizationId(currentUser.getOrganizationId());
             int i = baseBarcodeRuleSetMapper.updateByPrimaryKeySelective(baseBarcodeRuleSet);
 
             //新增工单BOM历史信息

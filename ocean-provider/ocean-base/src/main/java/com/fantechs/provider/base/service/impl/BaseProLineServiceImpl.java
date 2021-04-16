@@ -66,6 +66,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
         baseProLine.setCreateTime(new Date());
         baseProLine.setModifiedUserId(currentUser.getUserId());
         baseProLine.setModifiedTime(new Date());
+        baseProLine.setOrganizationId(currentUser.getOrganizationId());
         baseProLineMapper.insertUseGeneratedKeys(baseProLine);
 
         //新增生产线历史信息
@@ -93,6 +94,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
 
         baseProLine.setModifiedUserId(currentUser.getUserId());
         baseProLine.setModifiedTime(new Date());
+        baseProLine.setOrganizationId(currentUser.getOrganizationId());
         int i= baseProLineMapper.updateByPrimaryKeySelective(baseProLine);
 
         //新增生产线历史信息

@@ -45,6 +45,7 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
         baseAddress.setModifiedTime(new Date());
         baseAddress.setModifiedUserId(currentUser.getUserId());
         baseAddress.setStatus(StringUtils.isEmpty(baseAddress.getStatus())?1: baseAddress.getStatus());
+        baseAddress.setOrganizationId(currentUser.getOrganizationId());
         return baseAddressMapper.insertUseGeneratedKeys(baseAddress);
     }
 
@@ -66,6 +67,7 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
 
         baseAddress.setModifiedUserId(currentUser.getUserId());
         baseAddress.setModifiedTime(new Date());
+        baseAddress.setOrganizationId(currentUser.getOrganizationId());
         return baseAddressMapper.updateByPrimaryKeySelective(baseAddress);
     }
 

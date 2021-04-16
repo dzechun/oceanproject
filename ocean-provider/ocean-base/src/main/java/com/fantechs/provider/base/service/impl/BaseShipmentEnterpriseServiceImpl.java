@@ -63,6 +63,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
         baseShipmentEnterprise.setModifiedTime(new Date());
         baseShipmentEnterprise.setModifiedUserId(user.getUserId());
         baseShipmentEnterprise.setStatus(StringUtils.isEmpty(baseShipmentEnterprise.getStatus())?1:baseShipmentEnterprise.getStatus());
+        baseShipmentEnterprise.setOrganizationId(user.getOrganizationId());
         int i = baseShipmentEnterpriseMapper.insertUseGeneratedKeys(baseShipmentEnterprise);
 
         BaseHtShipmentEnterprise baseHtShipmentEnterprise = new BaseHtShipmentEnterprise();
@@ -101,6 +102,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
 
         baseShipmentEnterprise.setModifiedUserId(user.getUserId());
         baseShipmentEnterprise.setModifiedTime(new Date());
+        baseShipmentEnterprise.setOrganizationId(user.getOrganizationId());
 
         BaseHtShipmentEnterprise baseHtShipmentEnterprise = new BaseHtShipmentEnterprise();
         BeanUtils.copyProperties(baseShipmentEnterprise,baseHtShipmentEnterprise);

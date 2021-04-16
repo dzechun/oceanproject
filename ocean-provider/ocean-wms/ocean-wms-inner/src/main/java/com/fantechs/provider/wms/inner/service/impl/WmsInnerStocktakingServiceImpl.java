@@ -60,8 +60,6 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
     @Resource
     private WmsInnerHtStocktakingDetMapper wmsInnerHtStocktakingDetMapper;
     @Resource
-    private BcmFeignApi bcmFeignApi;
-    @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
     private StorageInventoryFeignApi storageInventoryFeignApi;
@@ -130,7 +128,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                     for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelDtoList) {
                         String email = baseWarningPersonnelDto.getEmail();//获取邮箱
                         String stocktakingCode = wmsInnerStocktaking.getStocktakingCode();//获取盘点单号
-                        bcmFeignApi.sendSimpleMail(email,"新盘点任务","盘点单号：" + stocktakingCode
+                        baseFeignApi.sendSimpleMail(email,"新盘点任务","盘点单号：" + stocktakingCode
                                 + "储位名称：" + wmsInnerStocktakingDetDtos.get(0).getStorageName() + "储位编码: " + wmsInnerStocktakingDetDtos.get(0).getStorageCode());
                     }
                 }

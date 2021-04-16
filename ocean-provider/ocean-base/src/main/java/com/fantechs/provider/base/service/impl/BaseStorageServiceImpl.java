@@ -61,6 +61,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         baseStorage.setCreateTime(new Date());
         baseStorage.setModifiedUserId(currentUser.getUserId());
         baseStorage.setModifiedTime(new Date());
+        baseStorage.setOrganizationId(currentUser.getOrganizationId());
         baseStorageMapper.insertUseGeneratedKeys(baseStorage);
 
         //新增储位历史信息
@@ -137,6 +138,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 
         storage.setModifiedUserId(currentUser.getUserId());
         storage.setModifiedTime(new Date());
+        storage.setOrganizationId(currentUser.getOrganizationId());
         int i = baseStorageMapper.updateByPrimaryKeySelective(storage);
 
         //新增储位历史信息

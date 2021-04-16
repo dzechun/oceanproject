@@ -64,6 +64,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
         baseBarcodeRule.setCreateTime(new Date());
         baseBarcodeRule.setModifiedUserId(currentUser.getUserId());
         baseBarcodeRule.setModifiedTime(new Date());
+        baseBarcodeRule.setOrganizationId(currentUser.getOrganizationId());
         int i = baseBarcodeRuleMapper.insertUseGeneratedKeys(baseBarcodeRule);
 
         //新增条码规则历史信息
@@ -95,6 +96,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
 
         baseBarcodeRule.setModifiedUserId(currentUser.getUserId());
         baseBarcodeRule.setModifiedTime(new Date());
+        baseBarcodeRule.setOrganizationId(currentUser.getOrganizationId());
         int i = baseBarcodeRuleMapper.updateByPrimaryKeySelective(baseBarcodeRule);
 
 
@@ -170,6 +172,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
 
             baseBarcodeRule.setCreateTime(new Date());
             baseBarcodeRule.setCreateUserId(currentUser.getUserId());
+            baseBarcodeRule.setOrganizationId(currentUser.getOrganizationId());
             i = baseBarcodeRuleMapper.insertUseGeneratedKeys(baseBarcodeRule);
 
             /**

@@ -56,6 +56,7 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
         baseStorageMaterial.setCreateTime(new Date());
         baseStorageMaterial.setModifiedUserId(currentUser.getUserId());
         baseStorageMaterial.setModifiedTime(new Date());
+        baseStorageMaterial.setOrganizationId(currentUser.getOrganizationId());
         baseStorageMaterialMapper.insertUseGeneratedKeys(baseStorageMaterial);
 
         //新增储位物料历史信息
@@ -117,6 +118,7 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
 
         baseStorageMaterial.setModifiedUserId(currentUser.getUserId());
         baseStorageMaterial.setModifiedTime(new Date());
+        baseStorageMaterial.setOrganizationId(currentUser.getOrganizationId());
         int i = baseStorageMaterialMapper.updateByPrimaryKeySelective(baseStorageMaterial);
 
         //新增储位物料历史信息

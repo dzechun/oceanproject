@@ -56,6 +56,7 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
         baseCalendar.setModifiedTime(new Date());
         baseCalendar.setModifiedUserId(user.getUserId());
         baseCalendar.setStatus(StringUtils.isEmpty(baseCalendar.getStatus()) ? 1 : baseCalendar.getStatus());
+        baseCalendar.setOrganizationId(user.getOrganizationId());
         return baseCalendarMapper.insertUseGeneratedKeys(baseCalendar);
     }
 
@@ -68,6 +69,7 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
 
         baseCalendar.setModifiedUserId(user.getUserId());
         baseCalendar.setModifiedTime(new Date());
+        baseCalendar.setOrganizationId(user.getOrganizationId());
 
         return baseCalendarMapper.updateByPrimaryKeySelective(baseCalendar);
     }

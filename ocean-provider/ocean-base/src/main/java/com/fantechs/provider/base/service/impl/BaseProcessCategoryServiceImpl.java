@@ -57,6 +57,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
         baseProcessCategory.setCreateTime(new Date());
         baseProcessCategory.setModifiedTime(new Date());
         baseProcessCategory.setModifiedUserId(currentUserInfo.getUserId());
+        baseProcessCategory.setOrganizationId(currentUserInfo.getOrganizationId());
         baseProcessCategoryMapper.insertUseGeneratedKeys(baseProcessCategory);
 
         //新增工序类别历史信息
@@ -84,6 +85,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
 
         baseProcessCategory.setModifiedUserId(currentUserInfo.getUserId());
         baseProcessCategory.setModifiedTime(new Date());
+        baseProcessCategory.setOrganizationId(currentUserInfo.getOrganizationId());
         baseProcessCategoryMapper.updateByPrimaryKeySelective(baseProcessCategory);
 
         //新增工序列表历史信息
@@ -175,6 +177,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
             baseProcessCategory.setModifiedTime(new Date());
             baseProcessCategory.setModifiedUserId(currentUser.getUserId());
             baseProcessCategory.setStatus((byte) 1);
+            baseProcessCategory.setOrganizationId(currentUser.getOrganizationId());
             list.add(baseProcessCategory);
         }
 

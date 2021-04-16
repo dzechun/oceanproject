@@ -62,6 +62,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         baseProductFamily.setModifiedTime(new Date());
         baseProductFamily.setModifiedUserId(user.getUserId());
         baseProductFamily.setStatus(StringUtils.isEmpty(baseProductFamily.getStatus())?1:baseProductFamily.getStatus());
+        baseProductFamily.setOrganizationId(user.getOrganizationId());
         int i = baseProductFamilyMapper.insertUseGeneratedKeys(baseProductFamily);
 
         BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
@@ -101,6 +102,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
 
         baseProductFamily.setModifiedUserId(user.getUserId());
         baseProductFamily.setModifiedTime(new Date());
+        baseProductFamily.setOrganizationId(user.getOrganizationId());
 
         BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
         BeanUtils.copyProperties(baseProductFamily,baseHtProductFamily);
@@ -200,6 +202,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
                 baseProductFamily.setModifiedTime(new Date());
                 baseProductFamily.setModifiedUserId(currentUser.getUserId());
                 baseProductFamily.setStatus((byte) 1);
+                baseProductFamily.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseProductFamily);
             }
 

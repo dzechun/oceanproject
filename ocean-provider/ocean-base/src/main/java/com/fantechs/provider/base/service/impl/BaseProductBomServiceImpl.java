@@ -79,6 +79,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
         baseProductBom.setCreateTime(new Date());
         baseProductBom.setModifiedUserId(currentUser.getUserId());
         baseProductBom.setModifiedTime(new Date());
+        baseProductBom.setOrganizationId(currentUser.getOrganizationId());
         baseProductBomMapper.insertUseGeneratedKeys(baseProductBom);
 
         //新增产品BOM历史信息
@@ -137,6 +138,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
         baseProductBom.setModifiedUserId(currentUser.getUserId());
         baseProductBom.setModifiedTime(new Date());
+        baseProductBom.setOrganizationId(currentUser.getOrganizationId());
         int i= baseProductBomMapper.updateByPrimaryKeySelective(baseProductBom);
 
         //新增产品BOM历史信息

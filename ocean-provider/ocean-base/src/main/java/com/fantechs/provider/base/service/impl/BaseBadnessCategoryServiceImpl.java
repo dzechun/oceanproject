@@ -5,9 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessCategoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
-import com.fantechs.common.base.general.entity.basic.BaseShipmentEnterprise;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtShipmentEnterprise;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -56,6 +54,7 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
         record.setModifiedTime(new Date());
         record.setModifiedUserId(user.getUserId());
         record.setOrgId(user.getOrganizationId());
+        record.setOrgId(user.getOrganizationId());
 
         int i = baseBadnessCategoryMapper.insertUseGeneratedKeys(record);
 
@@ -77,7 +76,7 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-
+        entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessCategory baseHtBadnessCategory = new BaseHtBadnessCategory();
         BeanUtils.copyProperties(entity,baseHtBadnessCategory);
         baseHtBadnessCategoryMapper.insert(baseHtBadnessCategory);

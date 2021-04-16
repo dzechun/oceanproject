@@ -61,6 +61,7 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
             baseMaterialSupplier.setCreateUserId(currentUser.getUserId());
             baseMaterialSupplier.setModifiedUserId(currentUser.getUserId());
             baseMaterialSupplier.setModifiedTime(new Date());
+            baseMaterialSupplier.setOrganizationId(currentUser.getOrganizationId());
             int i = baseMaterialSupplierMapper.insertSelective(baseMaterialSupplier);
             return i;
         }
@@ -82,6 +83,7 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
             }
             baseMaterialSupplier.setModifiedTime(new Date());
             baseMaterialSupplier.setModifiedUserId(currentUser.getUserId());
+            baseMaterialSupplier.setOrganizationId(currentUser.getOrganizationId());
             int i = baseMaterialSupplierMapper.updateByPrimaryKeySelective(baseMaterialSupplier);
             return i;
         }
@@ -198,6 +200,7 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
                 if (StringUtils.isEmpty(baseMaterialSupplier.getStatus())){
                     baseMaterialSupplier.setStatus(1);
                 }
+                baseMaterialSupplier.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseMaterialSupplier);
             }
 
