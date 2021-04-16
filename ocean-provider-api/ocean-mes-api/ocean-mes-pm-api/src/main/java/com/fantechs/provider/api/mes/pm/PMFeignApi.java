@@ -38,7 +38,7 @@ import java.util.List;
 public interface PMFeignApi {
 
     @ApiOperation("工单列表")
-    @PostMapping("/smtWorkOrder/findList")
+    @PostMapping("//mesPmWorkOrder/findList")
     ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     @ApiOperation("修改工单")
