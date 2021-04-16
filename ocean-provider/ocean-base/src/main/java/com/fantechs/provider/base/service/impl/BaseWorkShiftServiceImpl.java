@@ -59,6 +59,7 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
         baseWorkShift.setModifiedTime(new Date());
         baseWorkShift.setModifiedUserId(user.getUserId());
         baseWorkShift.setStatus(StringUtils.isEmpty(baseWorkShift.getStatus())?1:baseWorkShift.getStatus());
+        baseWorkShift.setOrganizationId(user.getOrganizationId());
         int i = baseWorkShiftMapper.insertUseGeneratedKeys(baseWorkShift);
 
         //新增班次履历
@@ -89,6 +90,7 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
 
         baseWorkShift.setModifiedUserId(user.getUserId());
         baseWorkShift.setModifiedTime(new Date());
+        baseWorkShift.setOrganizationId(user.getOrganizationId());
 
         BaseHtWorkShift baseHtWorkShift = new BaseHtWorkShift();
         BeanUtils.copyProperties(baseWorkShift,baseHtWorkShift);

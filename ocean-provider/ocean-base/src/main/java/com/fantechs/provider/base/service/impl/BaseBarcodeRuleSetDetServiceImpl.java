@@ -79,6 +79,7 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
                         baseBarcodeRuleSetDet.setCreateTime(new Date());
                         baseBarcodeRuleSetDet.setModifiedUserId(currentUser.getUserId());
                         baseBarcodeRuleSetDet.setModifiedTime(new Date());
+                        baseBarcodeRuleSetDet.setOrganizationId(currentUser.getOrganizationId());
                         list.add(baseBarcodeRuleSetDet);
                 }
                 return baseBarcodeRuleSetDetMapper.insertList(list);
@@ -107,6 +108,7 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
                 baseBarcodeRuleSetDet.setCreateTime(new Date());
                 baseBarcodeRuleSetDet.setModifiedUserId(currentUser.getUserId());
                 baseBarcodeRuleSetDet.setModifiedTime(new Date());
+                baseBarcodeRuleSetDet.setOrganizationId(currentUser.getOrganizationId());
                 return baseBarcodeRuleSetDetMapper.insertUseGeneratedKeys(baseBarcodeRuleSetDet);
         }
 
@@ -131,6 +133,7 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
 
                 baseBarcodeRuleSetDet.setModifiedUserId(currentUser.getUserId());
                 baseBarcodeRuleSetDet.setModifiedTime(new Date());
+                baseBarcodeRuleSetDet.setOrganizationId(currentUser.getOrganizationId());
                 return baseBarcodeRuleSetDetMapper.updateByPrimaryKeySelective(baseBarcodeRuleSetDet);
         }
 

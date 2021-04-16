@@ -51,6 +51,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
         basePackingUnit.setCreateUserId(currentUserInfo.getUserId());
         basePackingUnit.setModifiedTime(new Date());
         basePackingUnit.setModifiedUserId(currentUserInfo.getUserId());
+        basePackingUnit.setOrganizationId(currentUserInfo.getOrganizationId());
         int i = basePackingUnitMapper.insertUseGeneratedKeys(basePackingUnit);
 
         BaseHtPackingUnit baseHtPackingUnit = new BaseHtPackingUnit();
@@ -79,6 +80,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
 
         basePackingUnit.setModifiedTime(new Date());
         basePackingUnit.setModifiedUserId(currentUserInfo.getUserId());
+        basePackingUnit.setOrganizationId(currentUserInfo.getOrganizationId());
         int i = basePackingUnitMapper.updateByPrimaryKeySelective(basePackingUnit);
 
         BaseHtPackingUnit baseHtPackingUnit = new BaseHtPackingUnit();
@@ -166,6 +168,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
                 if (StringUtils.isEmpty(basePackingUnit.getStatus())){
                     basePackingUnit.setStatus((byte) 1);
                 }
+                basePackingUnit.setOrganizationId(currentUser.getOrganizationId());
                 list.add(basePackingUnit);
             }
             success += basePackingUnitMapper.insertList(list);

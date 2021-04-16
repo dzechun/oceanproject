@@ -108,6 +108,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
         record.setIsDelete((byte) 0);
+        record.setOrgId(currentUserInfo.getOrganizationId());
         int num = baseLabelMapper.insertUseGeneratedKeys(record);
 
         BaseHtLabel baseHtLabel = new BaseHtLabel();
@@ -152,6 +153,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
+        entity.setOrgId(currentUserInfo.getOrganizationId());
 
         BaseHtLabel baseHtLabel = new BaseHtLabel();
         BeanUtils.copyProperties(entity, baseHtLabel);

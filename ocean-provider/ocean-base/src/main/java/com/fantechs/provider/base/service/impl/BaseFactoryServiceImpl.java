@@ -70,6 +70,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
         baseFactory.setModifiedUserId(user.getUserId());
         baseFactory.setModifiedTime(new Date());
         baseFactory.setStatus(StringUtils.isEmpty(baseFactory.getStatus())?1: baseFactory.getStatus());
+        baseFactory.setOrganizationId(user.getOrganizationId());
         int i = baseFactoryMapper.insertUseGeneratedKeys(baseFactory);
 
         BaseHtFactory baseHtFactory = new BaseHtFactory();
@@ -143,6 +144,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
         }
         baseFactory.setModifiedTime(new Date());
         baseFactory.setModifiedUserId(user.getUserId());
+        baseFactory.setOrganizationId(user.getOrganizationId());
 
         BaseHtFactory baseHtFactory = new BaseHtFactory();
         BeanUtils.copyProperties(baseFactory, baseHtFactory);
@@ -203,6 +205,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
             baseFactory.setModifiedTime(new Date());
             baseFactory.setModifiedUserId(currentUser.getUserId());
             baseFactory.setStatus(1);
+            baseFactory.setOrganizationId(currentUser.getOrganizationId());
             list.add(baseFactory);
         }
 

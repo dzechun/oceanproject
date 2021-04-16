@@ -75,6 +75,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         baseStaff.setCreateUserId(user.getUserId());
         baseStaff.setModifiedTime(new Date());
         baseStaff.setModifiedUserId(user.getUserId());
+        baseStaff.setOrganizationId(user.getOrganizationId());
         int i = baseStaffMapper.insertUseGeneratedKeys(baseStaff);
 
         //新增人员信息和工种关系
@@ -82,6 +83,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         if (StringUtils.isNotEmpty(baseStaffProcessList)){
             for (BaseStaffProcess baseStaffProcess : baseStaffProcessList) {
                 baseStaffProcess.setStaffId(baseStaff.getStaffId());
+                baseStaffProcess.setOrganizationId(user.getOrganizationId());
             }
             baseStaffProcessService.batchSave(baseStaff.getBaseStaffProcessList());
         }
@@ -115,6 +117,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         //更新人员信息
         baseStaff.setModifiedUserId(user.getUserId());
         baseStaff.setModifiedTime(new Date());
+        baseStaff.setOrganizationId(user.getOrganizationId());
         int i = baseStaffMapper.updateByPrimaryKeySelective(baseStaff);
 
         //更新人员工种关系
@@ -126,6 +129,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         if (StringUtils.isNotEmpty(baseStaffProcessList)) {
             for (BaseStaffProcess baseStaffProcess : baseStaffProcessList) {
                 baseStaffProcess.setStaffId(baseStaff.getStaffId());
+                baseStaffProcess.setOrganizationId(user.getOrganizationId());
             }
             baseStaffProcessService.batchSave(baseStaff.getBaseStaffProcessList());
         }
@@ -243,6 +247,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
             baseStaff.setModifiedTime(new Date());
             baseStaff.setModifiedUserId(currentUser.getUserId());
             baseStaff.setStatus((byte) 1);
+            baseStaff.setOrganizationId(currentUser.getOrganizationId());
             baseStaffMapper.insertUseGeneratedKeys(baseStaff);
 
             //新增员工履历
@@ -260,6 +265,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
                 baseStaffProcess.setModifiedUserId(currentUser.getUserId());
                 baseStaffProcess.setStatus((byte) 1);
                 baseStaffProcess.setStaffId(baseStaff.getStaffId());
+                baseStaffProcess.setOrganizationId(currentUser.getOrganizationId());
                 success += baseStaffProcessMapper.insertSelective(baseStaffProcess);
             }
         }
