@@ -7,6 +7,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
 import org.apache.commons.lang.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -19,7 +20,7 @@ import java.util.*;
 @Component
 public class BarcodeRuleUtils {
 
-    @Resource
+    @Autowired
     private static BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
     /**
      *

@@ -19,6 +19,5 @@ public interface BaseBarcodeRuleSpecMapper extends MyMapper<BaseBarcodeRuleSpec>
     @Select("select information_schema.routines.SPECIFIC_NAME from information_schema.routines where routine_schema='fantech_imes_v2' and routine_type = 'FUNCTION'")
     List<String> findFunction();
 
-    @Select("<script>select ${functionName}(<if test=“params != null and params != ‘’”>#{params}</if>)</script>")
     String executeFunction(@Param("functionName")String functionName, @Param("params")String params);
 }

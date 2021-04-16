@@ -61,4 +61,7 @@
       </where>
     </foreach>
   </update>
+  <select id="executeFunction" resultType="java.lang.String">
+    select ${functionName}(<if test="params!=null and params!=''">#{params}</if>)
+  </select>
 </mapper>
