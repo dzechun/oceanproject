@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2020-12-22 10:27:58
  */
 @Data
-@Table(name = "bcm_bar_code")
+@Table(name = "base_bar_code")
 public class BaseBarCode extends ValidGroup implements Serializable {
     /**
      * 条码\流转卡生产id

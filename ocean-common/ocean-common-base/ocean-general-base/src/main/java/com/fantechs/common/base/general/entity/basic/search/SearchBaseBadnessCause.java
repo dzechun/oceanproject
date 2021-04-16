@@ -5,6 +5,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -12,15 +13,15 @@ import java.io.Serializable;
 public class SearchBaseBadnessCause extends BaseQuery implements Serializable {
 
     /**
-     * 不良类别代码
+     * 不良原因代码
      */
-    @ApiModelProperty(name="badnessCategoryCode",value = "不良类别代码")
-    private String badnessCategoryCode;
+    @ApiModelProperty(name="badnessCauseCode",value = "不良原因代码")
+    private String badnessCauseCode;
 
     /**
-     * 不良类别描述
+     * 不良原因描述
      */
-    @ApiModelProperty(name="badnessCategoryDesc",value = "不良类别描述")
-    private String badnessCategoryDesc;
+    @ApiModelProperty(name="badnessCauseDesc",value = "不良原因描述")
+    private String badnessCauseDesc;
 
 }
