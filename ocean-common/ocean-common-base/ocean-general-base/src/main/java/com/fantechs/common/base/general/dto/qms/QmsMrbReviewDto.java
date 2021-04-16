@@ -1,19 +1,12 @@
 package com.fantechs.common.base.general.dto.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionType;
 import com.fantechs.common.base.general.entity.qms.QmsMrbReview;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
 public class QmsMrbReviewDto extends QmsMrbReview implements Serializable {
