@@ -1,5 +1,7 @@
 package com.fantechs.common.base.utils;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -115,10 +117,20 @@ public class CodeUtils {
 
     public static  String getTypeCode(String str,String customizeValue){
         String ruleType=null;
-        Map<String, Object> map=null;
+        Map<String, Object> map= new HashMap<>();
         Calendar cal = Calendar.getInstance();
         if(StringUtils.isNotEmpty(customizeValue)){
-            map= JsonUtils.jsonToMap(customizeValue);
+            JSONArray jsonArray = JSONArray.fromObject(customizeValue);
+            for(int i=0;i<jsonArray.size();i++) {
+                JSONObject obj = JSONObject.fromObject(jsonArray.get(i));
+                Iterator it = obj.keys();
+                while (it.hasNext()) {
+                    String key = String.valueOf(it.next());
+                    String value = (String) obj.get(key);
+                    map.put(key, value);
+                }
+            }
+            //map= JsonUtils.jsonToMap(customizeValue);
         }
         switch(str){
             //月

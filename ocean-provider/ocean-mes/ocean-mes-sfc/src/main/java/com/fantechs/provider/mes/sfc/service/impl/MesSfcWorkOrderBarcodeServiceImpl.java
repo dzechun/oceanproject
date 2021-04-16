@@ -228,7 +228,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 throw new BizErrorException("请设置条码规则");
             }
             //生成条码
-            ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode.toString(),null,"4");
+            ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode.toString(),null,record.getWorkOrderId().toString());
             if(rs.getCode()!=0){
                 throw new BizErrorException(rs.getMessage());
             }
