@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.qms.history;
+package com.fantechs.common.base.general.entity.basic.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -16,52 +16,52 @@ import java.util.Date;
 ;
 
 /**
- * 检验项目历史表
- * qms_ht_inspection_item
+ * 检验类型历史
+ * qms_ht_inspection_type
  */
 @Data
-@Table(name = "qms_ht_inspection_item")
-public class QmsHtInspectionItem implements Serializable {
+@Table(name = "qms_ht_inspection_type")
+public class BaseHtInspectionType implements Serializable {
     /**
-     * 检验项目历史ID
+     * 检验类型历史ID
      */
-    @ApiModelProperty(name="htInspectionItemId",value = "检验项目历史ID")
-    @Excel(name = "检验项目历史ID", height = 20, width = 30)
+    @ApiModelProperty(name="htInspectionTypeId",value = "检验类型历史ID")
+    @Excel(name = "检验类型历史ID", height = 20, width = 30)
     @Id
-    @Column(name = "ht_inspection_item_id")
-    private Long htInspectionItemId;
+    @Column(name = "ht_inspection_type_id")
+    private Long htInspectionTypeId;
 
     /**
-     * 检验项目ID
+     * 检验类型ID
      */
-    @ApiModelProperty(name="inspectionItemId",value = "检验项目ID")
-    @Excel(name = "检验项目ID", height = 20, width = 30)
-    @Column(name = "inspection_item_id")
-    private Long inspectionItemId;
+    @ApiModelProperty(name="inspectionTypeId",value = "检验类型ID")
+    @Excel(name = "检验类型ID", height = 20, width = 30)
+    @Column(name = "inspection_type_id")
+    private Long inspectionTypeId;
 
     /**
-     * 检验项目单号
+     * 检验类型单号
      */
-    @ApiModelProperty(name="inspectionItemCode",value = "检验项目单号")
-    @Excel(name = "检验项目单号", height = 20, width = 30)
-    @Column(name = "inspection_item_code")
-    private String inspectionItemCode;
+    @ApiModelProperty(name="inspectionTypeCode",value = "检验类型单号")
+    @Excel(name = "检验类型单号", height = 20, width = 30)
+    @Column(name = "inspection_type_code")
+    private String inspectionTypeCode;
 
     /**
-     * 检验项目名称
+     * 检验类型名称
      */
-    @ApiModelProperty(name="inspectionItemName",value = "检验项目名称")
-    @Excel(name = "检验项目名称", height = 20, width = 30)
-    @Column(name = "inspection_item_name")
-    private String inspectionItemName;
+    @ApiModelProperty(name="inspectionTypeName",value = "检验类型名称")
+    @Excel(name = "检验类型名称", height = 20, width = 30)
+    @Column(name = "inspection_type_name")
+    private String inspectionTypeName;
 
     /**
-     * 检验项目水平
+     * 检验类型水平
      */
-    @ApiModelProperty(name="inspectionItemLevel",value = "检验项目水平")
-    @Excel(name = "检验项目水平", height = 20, width = 30)
-    @Column(name = "inspection_item_level")
-    private Long inspectionItemLevel;
+    @ApiModelProperty(name="inspectionTypeLevel",value = "检验类型水平")
+    @Excel(name = "检验类型水平", height = 20, width = 30)
+    @Column(name = "inspection_type_level")
+    private Long inspectionTypeLevel;
 
     /**
      * 检验工具

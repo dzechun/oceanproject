@@ -1,21 +1,15 @@
-package com.fantechs.common.base.general.dto.qms;
+package com.fantechs.common.base.general.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionItemDet;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionItemDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
-public class QmsInspectionItemDetDto extends QmsInspectionItemDet implements Serializable {
+public class BaseInspectionItemDetDto extends BaseInspectionItemDet implements Serializable {
 
     /**
      * 检验项目单号

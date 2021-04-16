@@ -1,7 +1,7 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
-import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
+import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
+import com.fantechs.common.base.general.dto.basic.BaseInspectionTypeDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
@@ -32,11 +32,11 @@ public interface QmsFeignApi {
 
     @ApiOperation("获取检验项目列表")
     @PostMapping("/qmsInspectionItem/findList")
-    ResponseEntity<List<QmsInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionItem searchQmsInspectionItem);
+    ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionItem searchQmsInspectionItem);
 
     @ApiOperation("获取检验类型列表")
     @PostMapping("/qmsInspectionType/findList")
-    ResponseEntity<List<QmsInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
+    ResponseEntity<List<BaseInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
 
     @ApiOperation("获取pda质检列表")
     @PostMapping("/qmsPdaInspection/findList")

@@ -13,8 +13,8 @@ import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
-import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
-import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
+import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
+import com.fantechs.common.base.general.dto.basic.BaseInspectionTypeDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
@@ -24,7 +24,6 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
@@ -441,7 +440,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchQmsInspectionItem searchQmsInspectionItem = new SearchQmsInspectionItem();
                 searchQmsInspectionItem.setInspectionItemCode(inspectionItemCode);
                 searchQmsInspectionItem.setCodeQueryMark((byte) 1);
-                List<QmsInspectionItemDto> qmsInspectionItemDtos = qmsFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
+                List<BaseInspectionItemDto> qmsInspectionItemDtos = qmsFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
                 if (StringUtils.isEmpty(qmsInspectionItemDtos)){
                     fail.add(i+4);
                     continue;
@@ -454,12 +453,12 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchQmsInspectionType searchQmsInspectionType = new SearchQmsInspectionType();
                 searchQmsInspectionType.setCodeQueryMark((byte) 1);
                 searchQmsInspectionType.setInspectionTypeCode(inspectionTypeCode);
-                List<QmsInspectionTypeDto> qmsInspectionTypeDtos = qmsFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
-                if (StringUtils.isEmpty(qmsInspectionTypeDtos)){
+                List<BaseInspectionTypeDto> baseInspectionTypeDtos = qmsFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
+                if (StringUtils.isEmpty(baseInspectionTypeDtos)){
                     fail.add(i+4);
                     continue;
                 }
-                baseMaterialImport.setInspectionTypeId(qmsInspectionTypeDtos.get(0).getInspectionTypeId());
+                baseMaterialImport.setInspectionTypeId(baseInspectionTypeDtos.get(0).getInspectionTypeId());
             }
 
             //标签类别编码不为空则判断标签类别信息是否存在
