@@ -94,10 +94,10 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     private BigDecimal scheduledQty;
 
     /**
-     * 工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起)
+     * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
      */
-    @ApiModelProperty(name="workOrderStatus",value = "工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起)")
-    @Excel(name = "工单状态", height = 20, width = 30,replace = {"待生产_0","待首检","生产中","暂停生产","生产完成","工单挂起_5"})
+    @ApiModelProperty(name="workOrderStatus",value = "工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
+    @Excel(name = "工单状态", height = 20, width = 30,replace = {"Initial_1","Release_2","WIP_3","Hold_4","Cancel_5","Complete_6","Delete_7"})
     @Column(name = "work_order_status")
     private Byte workOrderStatus;
 
