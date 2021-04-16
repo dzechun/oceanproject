@@ -10,6 +10,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,7 +22,17 @@ import java.util.*;
 public class BarcodeRuleUtils {
 
     @Autowired
-    private static BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
+    private BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
+
+    // 声明对象
+    private static BarcodeRuleUtils barcodeRuleUtils;
+
+    @PostConstruct // 初始化
+    public void init(){
+        barcodeRuleUtils = this;
+        barcodeRuleUtils.baseBarcodeRuleSpecService = this.baseBarcodeRuleSpecService;
+    }
+
     /**
      *
      * @param list 条码规则配置
@@ -131,7 +142,7 @@ public class BarcodeRuleUtils {
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else if("[f]".equals(specification)){
                     //执行函数获取解析码
-                    sb.append(baseBarcodeRuleSpecService.executeFunction(functionName,params));
+                    sb.append(barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params));
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
                     sb.append(typeCode);
