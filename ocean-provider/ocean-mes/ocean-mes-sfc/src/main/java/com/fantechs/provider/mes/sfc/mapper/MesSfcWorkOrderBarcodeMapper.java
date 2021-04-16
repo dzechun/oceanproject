@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarc
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -25,5 +26,9 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     PrintModel findPrintModel(@Param("barcodeType")Byte barcodeType,@Param("id")Long id);
 
-    BaseLabelCategory findByOneLabel(@Param("labelName")String labelName);
+    String findByOneLabel(@Param("labelName")String labelName);
+
+    Integer findCountCode(@Param("barcodeType")Byte barcodeType,@Param("workOrderId")Long workOrderId);
+
+    String findVersion(@Param("labelName")String labelName);
 }
