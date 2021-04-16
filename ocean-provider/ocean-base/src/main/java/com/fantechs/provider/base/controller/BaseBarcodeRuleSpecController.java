@@ -56,8 +56,8 @@ public class BaseBarcodeRuleSpecController {
     }
 
     @ApiOperation("函数列表")
-    @GetMapping("/executeFunction")
-    public ResponseEntity<List<String>> executeFunction(@RequestParam String functionName,@RequestParam String params){
+    @GetMapping("/findFunction")
+    public ResponseEntity<List<String>> findFunction(@RequestParam String functionName,@RequestParam String params){
         List<String> ss = baseBarcodeRuleSpecService.findFunction();
         return ControllerUtil.returnDataSuccess(ss,StringUtils.isEmpty(ss)?0:1);
     }

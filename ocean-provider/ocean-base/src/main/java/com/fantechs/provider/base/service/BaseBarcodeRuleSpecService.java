@@ -19,4 +19,6 @@ public interface BaseBarcodeRuleSpecService extends IService<BaseBarcodeRuleSpec
     List<BaseBarcodeRuleSpec> findSpec(SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec);
 
     List<String> findFunction();
+
+    String executeFunction(String functionName,String params);
 }
