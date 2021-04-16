@@ -55,7 +55,7 @@
     LEFT JOIN fantech_imes_v2.base_badness_category bbca ON bhbc.badness_category_id = bbca.badness_category_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bbcbhbc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(bhbc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="badnessCauseCode != null and badnessCauseCode != ''">
         and bhbc.badness_cause_code like CONCAT('%',#{badnessCauseCode},'%')
