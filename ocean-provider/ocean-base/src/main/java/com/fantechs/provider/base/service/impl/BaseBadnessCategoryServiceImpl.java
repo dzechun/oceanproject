@@ -56,6 +56,7 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
         record.setModifiedTime(new Date());
         record.setModifiedUserId(user.getUserId());
         record.setOrgId(user.getOrganizationId());
+        record.setOrgId(user.getOrganizationId());
 
         int i = baseBadnessCategoryMapper.insertUseGeneratedKeys(record);
 
@@ -77,7 +78,7 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-
+        entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessCategory baseHtBadnessCategory = new BaseHtBadnessCategory();
         BeanUtils.copyProperties(entity,baseHtBadnessCategory);
         baseHtBadnessCategoryMapper.insert(baseHtBadnessCategory);

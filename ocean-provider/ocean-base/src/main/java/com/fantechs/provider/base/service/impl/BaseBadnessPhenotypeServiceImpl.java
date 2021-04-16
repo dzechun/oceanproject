@@ -79,7 +79,7 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-
+        entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessPhenotype baseHtBadnessPhenotype = new BaseHtBadnessPhenotype();
         BeanUtils.copyProperties(entity,baseHtBadnessPhenotype);
         baseHtBadnessPhenotypeMapper.insert(baseHtBadnessPhenotype);

@@ -77,7 +77,7 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-
+        entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessDuty baseHtBadnessDuty = new BaseHtBadnessDuty();
         BeanUtils.copyProperties(entity,baseHtBadnessDuty);
         baseHtBadnessDutyMapper.insert(baseHtBadnessDuty);
