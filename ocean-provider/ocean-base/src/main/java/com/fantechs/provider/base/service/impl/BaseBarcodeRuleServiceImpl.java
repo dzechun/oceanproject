@@ -189,6 +189,12 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
             //配置好条码规则后，设置进条码规则中
             baseBarcodeRule.setBarcodeRule(barcodeRule);
             this.update(baseBarcodeRule);
+
+
+            for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
+                baseBarcodeRuleSpec.setFillDirection(StringUtils.isEmpty(baseBarcodeRuleSpec.getFillDirection()) ? (byte)0 : baseBarcodeRuleSpec.getFillDirection());
+                baseBarcodeRuleSpec.setInterceptDirection(StringUtils.isEmpty(baseBarcodeRuleSpec.getInterceptDirection()) ? 0 : baseBarcodeRuleSpec.getFillDirection());
+            }
             baseBarcodeRuleSpecMapper.insertList(list);
         }else {
 

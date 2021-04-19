@@ -29,12 +29,12 @@ public class BaseBarcodeRule extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
-     * 条码规则集合ID
+     * 条码规则ID
      */
-    @ApiModelProperty(name="barcodeRuleId",value = "条码规则集合ID")
+    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
     @Id
     @Column(name = "barcode_rule_id")
-    @NotNull(groups =update.class,message = "条码规则集合ID不能为空")
+    @NotNull(groups =update.class,message = "条码规则ID不能为空")
     private Long barcodeRuleId;
 
     /**
