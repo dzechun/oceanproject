@@ -2,6 +2,7 @@ package com.fantechs.provider.client.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fanctechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
@@ -54,7 +55,7 @@ public class ElectronicTagReceiver {
     private ElectronicTagFeignApi electronicTagFeignApi;
 
     @Autowired
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private InnerFeignApi innerFeignApi;
 
     @Value("${mesAPI.resApi}")
     private String resApiUrl;
@@ -110,7 +111,7 @@ public class ElectronicTagReceiver {
                     searchWmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
                     searchWmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
                     searchWmsInnerStorageInventory.setStatus((byte) 1);
-                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getBody();
                     if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
 //                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
                         // 允许负库存
@@ -119,13 +120,13 @@ public class ElectronicTagReceiver {
                         wmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
                         wmsInnerStorageInventory.setQuantity(smtSortingDto.getQuantity().negate());
                         wmsInnerStorageInventory.setStatus((byte) 1);
-                        storageInventoryFeignApi.add(wmsInnerStorageInventory);
+                        innerFeignApi.add(wmsInnerStorageInventory);
                     } else {
                         // 更新物料库存信息
                         WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
                         wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
                         wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(smtSortingDto.getQuantity()));
-                        storageInventoryFeignApi.update(wmsInnerStorageInventory);
+                        innerFeignApi.update(wmsInnerStorageInventory);
                     }
 
                     // 通过仓库区域ID判断当前区域内查找分拣中的物料
