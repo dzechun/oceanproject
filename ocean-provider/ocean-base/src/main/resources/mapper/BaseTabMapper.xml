@@ -52,7 +52,7 @@
       <result column="material_qty" jdbcType="VARCHAR" property="materialQuality" />
       <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
       <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
-      <result column="voltage" jdbcType="DECIMAL" property="voltage" />
+      <result column="voltage" jdbcType="VARCHAR" property="voltage" />
       <result column="expiration_date" jdbcType="DECIMAL" property="expirationDate" />
   </resultMap>
 
