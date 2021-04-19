@@ -245,7 +245,8 @@ public interface BaseFeignApi {
     ResponseEntity<String> generateCode(
             @ApiParam(value = "条码规则集合") @RequestBody List<BaseBarcodeRuleSpec> list,
             @ApiParam(value = "最大条码数") @RequestParam(required = false) String maxCode,
-            @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code);
+            @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code,
+            @ApiParam(value = "执行函数参数")@RequestParam (required = false)String params);
 
     @ApiOperation("获取检验项目列表")
     @PostMapping("/qmsInspectionItem/findList")

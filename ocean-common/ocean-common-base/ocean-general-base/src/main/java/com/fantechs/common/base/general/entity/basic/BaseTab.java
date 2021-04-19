@@ -399,7 +399,7 @@ public class BaseTab extends ValidGroup implements Serializable {
     @ApiModelProperty(name="voltage",value = "电压")
     @Excel(name = "电压", height = 20, width = 30)
     @Column(name = "voltage")
-    private BigDecimal voltage;
+    private String voltage;
 
     /**
      * 保质期（天）

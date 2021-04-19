@@ -38,6 +38,16 @@ public class BaseBarcodeRuleSpecServiceImpl extends BaseService<BaseBarcodeRuleS
                 return baseBarcodeRuleSpecMapper.selectByExample(example);
         }
 
+        @Override
+        public List<String> findFunction() {
+                return baseBarcodeRuleSpecMapper.findFunction();
+        }
+
+        @Override
+        public String executeFunction(String functionName, String params) {
+                return baseBarcodeRuleSpecMapper.executeFunction(functionName,params);
+        }
+
 
        /* @Override
         @Transactional(rollbackFor = Exception.class)

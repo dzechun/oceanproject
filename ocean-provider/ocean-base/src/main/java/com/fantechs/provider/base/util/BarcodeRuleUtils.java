@@ -5,9 +5,13 @@ import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
 import org.apache.commons.lang.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -17,14 +21,27 @@ import java.util.*;
 @Component
 public class BarcodeRuleUtils {
 
+    @Autowired
+    private BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
+
+    // 声明对象
+    private static BarcodeRuleUtils barcodeRuleUtils;
+
+    @PostConstruct // 初始化
+    public void init(){
+        barcodeRuleUtils = this;
+        barcodeRuleUtils.baseBarcodeRuleSpecService = this.baseBarcodeRuleSpecService;
+    }
+
     /**
      *
      * @param list 条码规则配置
      * @param maxCode  已生成的最大流水号
      * @param code 产品料号、生产线别、客户料号
+     * @param params 执行函数参数
      * @return
      */
-    public static String analysisCode(List<BaseBarcodeRuleSpec> list, String maxCode, String code){
+    public static String analysisCode(List<BaseBarcodeRuleSpec> list, String maxCode, String code,String params){
         StringBuilder sb=new StringBuilder();
         Calendar cal= Calendar.getInstance();
         if(StringUtils.isNotEmpty(list)){
@@ -47,6 +64,8 @@ public class BarcodeRuleUtils {
                 Integer interceptPosition = baseBarcodeRuleSpec.getInterceptPosition();
                 //初始值
                 Integer initialValue = baseBarcodeRuleSpec.getInitialValue();
+                //自定义函数名称
+                String functionName = baseBarcodeRuleSpec.getCustomizeName();
 
 
                 if("[G]".equals(specification)){
@@ -118,9 +137,12 @@ public class BarcodeRuleUtils {
                 }else if("[b]".equals(specification)){
                     customizeValue="0123456789ABCDEFGHJKLMNPQRSTVWXYZ";
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
-                }else if("[c]".equals(specification)){
-                    customizeValue="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                }else if("[c]".equals(specification)) {
+                    customizeValue = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
+                }else if("[f]".equals(specification)){
+                    //执行函数获取解析码
+                    sb.append(barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params));
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
                     sb.append(typeCode);
@@ -216,8 +238,6 @@ public class BarcodeRuleUtils {
 
         return sb.toString();
     }
-
-
    }
 
 
