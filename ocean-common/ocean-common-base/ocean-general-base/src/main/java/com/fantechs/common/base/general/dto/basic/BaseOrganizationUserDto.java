@@ -14,20 +14,6 @@ import java.io.Serializable;
 public class BaseOrganizationUserDto extends BaseOrganizationUser implements Serializable {
 
     /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    private String modifiedUserName;
-
-    /**
      * 组织编码
      */
     @ApiModelProperty(name="organizationCode",value = "组织编码")

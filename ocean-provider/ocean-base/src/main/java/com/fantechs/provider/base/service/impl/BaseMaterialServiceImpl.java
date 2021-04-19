@@ -11,10 +11,10 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
-import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleSetDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSet;
-import com.fantechs.common.base.general.dto.qms.QmsInspectionItemDto;
-import com.fantechs.common.base.general.dto.qms.QmsInspectionTypeDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
+import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
+import com.fantechs.common.base.general.dto.basic.BaseInspectionTypeDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
@@ -24,8 +24,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
@@ -61,9 +60,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Resource
     private BaseProductModelMapper baseProductModelMapper;
     @Resource
-    private QmsFeignApi qmsFeignApi;
-    @Resource
-    private PMFeignApi pmFeignApi;
+    private BaseFeignApi baseFeignApi;
     @Resource
     private BaseTabMapper baseTabMapper;
     @Resource
@@ -72,6 +69,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     private BaseLabelMapper baseLabelMapper;
     @Resource
     private BaseLabelCategoryMapper baseLabelCategoryMapper;
+    @Resource
+    private BaseBarcodeRuleSetMapper baseBarcodeRuleSetMapper;
 
     @Override
     public List<BaseMaterialDto> findList(Map<String, Object> map){
@@ -442,7 +441,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchQmsInspectionItem searchQmsInspectionItem = new SearchQmsInspectionItem();
                 searchQmsInspectionItem.setInspectionItemCode(inspectionItemCode);
                 searchQmsInspectionItem.setCodeQueryMark((byte) 1);
-                List<QmsInspectionItemDto> qmsInspectionItemDtos = qmsFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
+                List<BaseInspectionItemDto> qmsInspectionItemDtos = baseFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
                 if (StringUtils.isEmpty(qmsInspectionItemDtos)){
                     fail.add(i+4);
                     continue;
@@ -455,12 +454,12 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 SearchQmsInspectionType searchQmsInspectionType = new SearchQmsInspectionType();
                 searchQmsInspectionType.setCodeQueryMark((byte) 1);
                 searchQmsInspectionType.setInspectionTypeCode(inspectionTypeCode);
-                List<QmsInspectionTypeDto> qmsInspectionTypeDtos = qmsFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
-                if (StringUtils.isEmpty(qmsInspectionTypeDtos)){
+                List<BaseInspectionTypeDto> baseInspectionTypeDtos = baseFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
+                if (StringUtils.isEmpty(baseInspectionTypeDtos)){
                     fail.add(i+4);
                     continue;
                 }
-                baseMaterialImport.setInspectionTypeId(qmsInspectionTypeDtos.get(0).getInspectionTypeId());
+                baseMaterialImport.setInspectionTypeId(baseInspectionTypeDtos.get(0).getInspectionTypeId());
             }
 
             //标签类别编码不为空则判断标签类别信息是否存在
@@ -504,15 +503,15 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
             //条码规则集合编码不为空则判断条码规则集合信息是否存在
             if (StringUtils.isNotEmpty(barcodeRuleSetCode)){
-                SearchSmtBarcodeRuleSet searchSmtBarcodeRuleSet = new SearchSmtBarcodeRuleSet();
-                searchSmtBarcodeRuleSet.setCodeQueryMark(1);
-                searchSmtBarcodeRuleSet.setBarcodeRuleSetCode(barcodeRuleSetCode);
-                List<SmtBarcodeRuleSetDto> smtBarcodeRuleSetDtos = pmFeignApi.findBarcodeRuleSetList(searchSmtBarcodeRuleSet).getData();
-                if (StringUtils.isEmpty(smtBarcodeRuleSetDtos)){
+                SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet = new SearchBaseBarcodeRuleSet();
+                searchBaseBarcodeRuleSet.setCodeQueryMark(1);
+                searchBaseBarcodeRuleSet.setBarcodeRuleSetCode(barcodeRuleSetCode);
+                List<BaseBarcodeRuleSetDto> baseBarcodeRuleSetDtos = baseBarcodeRuleSetMapper.findList(searchBaseBarcodeRuleSet);
+                if (StringUtils.isEmpty(baseBarcodeRuleSetDtos)){
                     fail.add(i+4);
                     continue;
                 }
-                baseMaterialImport.setBarcodeRuleSetId(smtBarcodeRuleSetDtos.get(0).getBarcodeRuleSetId());
+                baseMaterialImport.setBarcodeRuleSetId(baseBarcodeRuleSetDtos.get(0).getBarcodeRuleSetId());
             }
 
             //判断集合中是否存在重复数据

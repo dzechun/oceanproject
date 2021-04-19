@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
@@ -140,9 +141,19 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
 
     private LabelRuteDto labelRuteDto;
 
+    /**
+     * 产生数量
+     */
     @Transient
     @ApiModelProperty(name = "qty",value = "打印数量")
     private Integer qty;
+
+    /**
+     * 工单数量
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderQty",value = "工单数量")
+    private BigDecimal workOrderQty;
 
     private static final long serialVersionUID = 1L;
 }

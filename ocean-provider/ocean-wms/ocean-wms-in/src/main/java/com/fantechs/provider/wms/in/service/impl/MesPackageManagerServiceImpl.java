@@ -5,7 +5,7 @@ import com.fantechs.common.base.dto.storage.MesPackageManagerInDTO;
 import com.fantechs.common.base.dto.storage.SaveMesPackageManagerDTO;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.entity.basic.history.MesHtPackageManager;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
@@ -13,8 +13,10 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.wms.in.service.MesPackageManagerService;
 import com.fantechs.provider.wms.in.mapper.MesPackageManagerMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -43,11 +45,13 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
      @Resource
      private MesPackageManagerMapper mesPackageManagerMapper;
      @Resource
-     private PMFeignApi applyFeignApi;
+     private BaseFeignApi baseFeignApi;
      @Resource
      private MesHtPackageManagerService mesHtPackageManagerService;
     @Resource
-    private BcmFeignApi bcmFeignApi;
+    private SFCFeignApi sfcFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<MesPackageManager> selectAll(Map<String,Object> map) {
@@ -234,7 +238,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006);
                 }
             }
-            ResponseEntity<Integer> responseEntity = applyFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
+            ResponseEntity<Integer> responseEntity = pmFeignApi.finishedProduct(mesPackageManager.getWorkOrderId(), total);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getMessage());
             }
@@ -276,7 +280,7 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
             }
             printDto.setPrintName(mesPackageManager.getPrintName());
             printDto.setPrintModelList(printModelList);
-            ResponseEntity res = bcmFeignApi.print(printDto);
+            ResponseEntity res = sfcFeignApi.print(printDto);
             if(res.getCode()!=0){
                 throw new BizErrorException("打印失败");
             }
@@ -350,21 +354,21 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
 
     private void printCode(MesPackageManager mesPackageManager){
         //根据包装规格获取条码规则，生成条码
-        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = new ArrayList<>();
+        List<BaseBarcodeRuleSpec> baseBarcodeRuleSpecList = new ArrayList<>();
         if(mesPackageManager.getType()==(byte)1){
             //包箱条码
-             smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
+             baseBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
         }else if(mesPackageManager.getType()==(byte)2){
             //栈板
-            smtBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
+            baseBarcodeRuleSpecList = mesPackageManagerMapper.findBarcodeRule(mesPackageManager.getPackageSpecificationId(),mesPackageManager.getMaterialId());
         }
 
-        if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
+        if(StringUtils.isEmpty(baseBarcodeRuleSpecList)){
             throw new BizErrorException("请设置包箱条码规则");
         }
         //取总共条码生成数
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null,null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }
@@ -383,12 +387,12 @@ public class MesPackageManagerServiceImpl extends BaseService<MesPackageManager>
      * @return
      */
     private String getBoxNoCode(MesPackageManager mesPackageManager){
-        List<SmtBarcodeRuleSpec> smtBarcodeRuleSpecList = mesPackageManagerMapper.findNoCode((byte)7);
-        if(StringUtils.isEmpty(smtBarcodeRuleSpecList)){
+        List<BaseBarcodeRuleSpec> baseBarcodeRuleSpecList = mesPackageManagerMapper.findNoCode((byte)7);
+        if(StringUtils.isEmpty(baseBarcodeRuleSpecList)){
             throw new BizErrorException("未匹配到标签No序号规则");
         }
         int printBarcodeCount = mesPackageManagerMapper.findPrintBarcodeCount();
-        ResponseEntity<String> responseEntity = applyFeignApi.generateCode(smtBarcodeRuleSpecList, printBarcodeCount + "", null);
+        ResponseEntity<String> responseEntity = baseFeignApi.generateCode(baseBarcodeRuleSpecList, printBarcodeCount + "", null,null);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012008,responseEntity.getMessage());
         }

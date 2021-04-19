@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.in.mapper;
 
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.entity.storage.MesPackageManager;
 import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,8 +19,8 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
    //以特定过滤条件查询
    List<MesPackageManagerDTO> selectFilterAll(Map<String,Object> map);
    //通过包装规格ID找到条码规则
-    List<SmtBarcodeRuleSpec> findBarcodeRule(@Param("packageSpecificationId") Long packageSpecificationId,
-                                             @Param("materialId") Long materialId);
+    List<BaseBarcodeRuleSpec> findBarcodeRule(@Param("packageSpecificationId") Long packageSpecificationId,
+                                              @Param("materialId") Long materialId);
     //查找条码打印总次数
     int findPrintBarcodeCount();
     //查询还剩余可打印数量
@@ -33,5 +33,5 @@ public interface MesPackageManagerMapper extends MyMapper<MesPackageManager> {
 
     BigDecimal findWorkOrderQty(@Param("workOrderId") long workOrderId);
 
-    List<SmtBarcodeRuleSpec> findNoCode(@Param("barcodeRuleCategoryId") Byte barcodeRuleCategoryId);
+    List<BaseBarcodeRuleSpec> findNoCode(@Param("barcodeRuleCategoryId") Byte barcodeRuleCategoryId);
 }

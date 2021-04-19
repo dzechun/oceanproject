@@ -68,6 +68,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         baseWarehouse.setCreateTime(new Date());
         baseWarehouse.setModifiedUserId(currentUser.getUserId());
         baseWarehouse.setModifiedTime(new Date());
+        baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
         baseWarehouseMapper.insertUseGeneratedKeys(baseWarehouse);
 
         //新增仓库历史信息
@@ -80,6 +81,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         if (StringUtils.isNotEmpty(baseWarehousePersonnels)){
             for (BaseWarehousePersonnel baseWarehousePersonnel : baseWarehousePersonnels) {
                 baseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
+                baseWarehousePersonnel.setOrganizationId(currentUser.getOrganizationId());
             }
             baseWarehousePersonnelMapper.insertList(baseWarehousePersonnels);
         }
@@ -150,6 +152,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
         baseWarehouse.setModifiedUserId(currentUser.getUserId());
         baseWarehouse.setModifiedTime(new Date());
+        baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
         int i= baseWarehouseMapper.updateByPrimaryKeySelective(baseWarehouse);
 
         //删除原有绑定关系
@@ -163,6 +166,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         if (StringUtils.isNotEmpty(baseWarehousePersonnels)){
             for (BaseWarehousePersonnel baseWarehousePersonnel : baseWarehousePersonnels) {
                 baseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
+                baseWarehousePersonnel.setOrganizationId(currentUser.getOrganizationId());
             }
             baseWarehousePersonnelMapper.insertList(baseWarehousePersonnels);
         }

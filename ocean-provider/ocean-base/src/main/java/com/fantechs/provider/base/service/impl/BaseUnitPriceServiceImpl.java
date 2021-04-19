@@ -80,6 +80,7 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
         baseUnitPrice.setModifiedTime(new Date());
         baseUnitPrice.setModifiedUserId(user.getUserId());
         baseUnitPrice.setOrganizationId(user.getOrganizationId());
+        baseUnitPrice.setOrganizationId(user.getOrganizationId());
         int i = baseUnitPriceMapper.insertUseGeneratedKeys(baseUnitPrice);
 
         //新增履历
@@ -102,6 +103,7 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
                 baseUnitPriceDet.setCreateUserId(user.getUserId());
                 baseUnitPriceDet.setModifiedTime(new Date());
                 baseUnitPriceDet.setModifiedUserId(user.getUserId());
+                baseUnitPriceDet.setOrganizationId(user.getOrganizationId());
             }
         }
         if (StringUtils.isNotEmpty(baseUnitPriceDetDtoList)){
@@ -150,6 +152,7 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
                 baseUnitPriceDet.setCreateUserId(user.getUserId());
                 baseUnitPriceDet.setModifiedTime(new Date());
                 baseUnitPriceDet.setModifiedUserId(user.getUserId());
+                baseUnitPriceDet.setOrganizationId(user.getOrganizationId());
             }
         }
         if (StringUtils.isNotEmpty(baseUnitPriceDetDtoList)){

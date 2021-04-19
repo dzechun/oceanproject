@@ -50,8 +50,8 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
      private MesPmWorkOrderService mesPmWorkOrderService;
      @Resource
      private SmtWorkOrderCardPoolService smtWorkOrderCardPoolService;
-     @Resource
-     private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
+//     @Resource
+//     private SmtWorkOrderCardCollocationService smtWorkOrderCardCollocationService;
      @Resource
      private BaseFeignApi baseFeignApi;
 
@@ -301,7 +301,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
         if(StringUtils.isNotEmpty(smtWorkOrderDtoList)){
             MesPmWorkOrderDto smtWorkOrderDto = smtWorkOrderDtoList.get(0);
             masterPlanPrintWorkOrderDTO.setProductModelName(smtWorkOrderDto.getProductModelName());
-            masterPlanPrintWorkOrderDTO.setMaterialQuality(smtWorkOrderDto.getMaterialQuality());
+//            masterPlanPrintWorkOrderDTO.setMaterialQuality(smtWorkOrderDto.getMaterialQuality());
             masterPlanPrintWorkOrderDTO.setColor(smtWorkOrderDto.getColor());
             masterPlanPrintWorkOrderDTO.setWorkOrderQuantity(smtWorkOrderDto.getWorkOrderQty());
             masterPlanPrintWorkOrderDTO.setScheduleDate(smtWorkOrderDto.getScheduleDate());
@@ -418,9 +418,9 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                 SmtWorkOrderCardCollocation smtWorkOrderCardCollocation = new SmtWorkOrderCardCollocation();
                 smtWorkOrderCardCollocation.setWorkOrderId(tempsmtWorkOrder.getWorkOrderId());
                 smtWorkOrderCardCollocation.setProduceQuantity((int)curSchedule);
-                if(smtWorkOrderCardCollocationService.save(smtWorkOrderCardCollocation)<=0){
-                    throw new BizErrorException("生成部件流程卡错误");
-                }
+//                if(smtWorkOrderCardCollocationService.save(smtWorkOrderCardCollocation)<=0){
+//                    throw new BizErrorException("生成部件流程卡错误");
+//                }
                 //=====
             }
             //=====

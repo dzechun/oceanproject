@@ -66,6 +66,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
           baseRoute.setCreateTime(new Date());
           baseRoute.setModifiedUserId(currentUser.getUserId());
           baseRoute.setModifiedTime(new Date());
+          baseRoute.setOrganizationId(currentUser.getOrganizationId());
           baseRouteMapper.insertUseGeneratedKeys(baseRoute);
 
           //新增工艺路线历史信息
@@ -96,6 +97,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
 
           baseRoute.setModifiedUserId(currentUser.getUserId());
           baseRoute.setModifiedTime(new Date());
+          baseRoute.setOrganizationId(currentUser.getOrganizationId());
           int i= baseRouteMapper.updateByPrimaryKeySelective(baseRoute);
 
           //新增工艺路线历史信息
@@ -164,6 +166,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
             //更新产品工艺路线绑定的工艺路线
             BaseProductProcessRoute baseProductProcessRoute = baseRoute.getBaseProductProcessRoute();
             baseProductProcessRoute.setRouteId(baseRoute.getRouteId());
+            baseProductProcessRoute.setOrganizationId(currentUser.getOrganizationId());
             baseProductProcessRouteService.update(baseProductProcessRoute);
             return i;
         }

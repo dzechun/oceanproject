@@ -59,6 +59,7 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
         baseBadnessCause.setModifiedTime(new Date());
         baseBadnessCause.setModifiedUserId(currentUser.getUserId());
         baseBadnessCause.setStatus((byte) 1);
+        baseBadnessCause.setOrgId(currentUser.getOrganizationId());
         int i = baseBadnessCauseMapper.insertUseGeneratedKeys(baseBadnessCause);
 
         BaseHtBadnessCause baseHtBadnessCause = new BaseHtBadnessCause();
@@ -88,6 +89,7 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
 
         baseBadnessCause.setModifiedTime(new Date());
         baseBadnessCause.setModifiedUserId(currentUser.getUserId());
+        baseBadnessCause.setOrgId(currentUser.getOrganizationId());
         int i = baseBadnessCauseMapper.updateByPrimaryKeySelective(baseBadnessCause);
 
         BaseHtBadnessCause baseHtBadnessCause = new BaseHtBadnessCause();

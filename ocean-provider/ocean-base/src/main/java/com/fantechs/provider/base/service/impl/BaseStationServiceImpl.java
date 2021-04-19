@@ -65,6 +65,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
         baseStation.setCreateTime(new Date());
         baseStation.setModifiedUserId(currentUser.getUserId());
         baseStation.setModifiedTime(new Date());
+        baseStation.setOrganizationId(currentUser.getOrganizationId());
         baseStationMapper.insertUseGeneratedKeys(baseStation);
 
         //新增工位历史信息
@@ -193,6 +194,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
             baseStation.setStatus(1);
             baseStation.setProcessId(baseProcess.getProcessId());
             baseStation.setSectionId(baseWorkshopSection.getSectionId());
+            baseStation.setOrganizationId(currentUser.getOrganizationId());
             list.add(baseStation);
         }
 

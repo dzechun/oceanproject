@@ -1,8 +1,13 @@
 package com.fantechs.provider.api.mes.pm;
 
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
@@ -33,7 +38,7 @@ import java.util.List;
 public interface PMFeignApi {
 
     @ApiOperation("工单列表")
-    @PostMapping("/smtWorkOrder/findList")
+    @PostMapping("//mesPmWorkOrder/findList")
     ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     @ApiOperation("修改工单")
@@ -57,13 +62,6 @@ public interface PMFeignApi {
     @ApiOperation(value = "产生工单流转卡", notes = "产生工单流转卡")
     @PostMapping("/smtWorkOrderCardCollocation/generateWorkOrderCardCollocation")
     ResponseEntity generateWorkOrderCardCollocation(@ApiParam(value = "必传：", required = true) @RequestBody @Validated SmtWorkOrderCardCollocation smtWorkOrderCardCollocation);
-
-    @ApiOperation("生成条码")
-    @PostMapping("/smtBarcodeRule/generateCode")
-    ResponseEntity<String> generateCode(
-            @ApiParam(value = "条码规则集合") @RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数") @RequestParam(required = false) String maxCode,
-            @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code);
 
     @ApiOperation("工单记录完工数量")
     @GetMapping("/smtWorkOrder/finishedProduct")
@@ -124,16 +122,6 @@ public interface PMFeignApi {
     @PostMapping("/smtProcessListProcess/startJob")
     ResponseEntity startJob(@ApiParam(value = "必传：", required = true) @RequestBody SmtWorkOrderBarcodePool smtWorkOrderBarcodePool);
 
-    @ApiOperation("列表")
-    @PostMapping("/smtBarcodeRuleSpec/findSpec")
-    ResponseEntity<List<SmtBarcodeRuleSpec>> findSpec(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec);
-
-    @ApiOperation(value = "获取最大流水号")
-    @PostMapping("/smtBarcodeRule/generateMaxCode")
-    ResponseEntity<String> generateMaxCode(
-            @ApiParam(value = "条码规则集合")@RequestBody List<SmtBarcodeRuleSpec> list,
-            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode);
-
     @ApiOperation("通过流程单获取工单相关信息")
     @PostMapping("/smtWorkOrderCardPool/findWO")
     ResponseEntity<ProcessListWorkOrderDTO> selectWorkOrderDtoByWorkOrderCardId(
@@ -148,11 +136,6 @@ public interface PMFeignApi {
     @PostMapping("/smtWorkOrderBom/findList")
     ResponseEntity<List<SmtWorkOrderBomDto>> findWordOrderBomList(@ApiParam(value = "查询对象")@RequestBody SearchSmtWorkOrderBom searchSmtWorkOrderBom);
 
-
-    @ApiOperation("查询条码规则列表")
-    @PostMapping("/smtBarcodeRule/findList")
-    ResponseEntity<List<SmtBarcodeRuleDto>> findBarcodeRulList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRule searchSmtBarcodeRule);
-
     @ApiOperation("查询总计划表（月计划表）列表")
     @PostMapping("/mesPmMasterPlan/findList")
     ResponseEntity<List<MesPmMasterPlanDTO>> findPmMasterPlanlist(
@@ -163,7 +146,4 @@ public interface PMFeignApi {
     @PostMapping("/mesPmMatchingOrder/findMinMatchingQuantity")
     ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId, @ApiParam(value = "工段ID")@RequestParam long sectionId,@ApiParam(value = "数量")@RequestParam BigDecimal qualityQuantity,@ApiParam(value = "流转卡ID") @RequestParam(required = false) Long workOrderCardPoolId);
 
-    @ApiOperation("条码规则集合列表")
-    @PostMapping("/smtBarcodeRuleSet/findList")
-    ResponseEntity<List<SmtBarcodeRuleSetDto>> findBarcodeRuleSetList(@ApiParam(value = "查询对象")@RequestBody SearchSmtBarcodeRuleSet searchSmtBarcodeRuleSet);
 }

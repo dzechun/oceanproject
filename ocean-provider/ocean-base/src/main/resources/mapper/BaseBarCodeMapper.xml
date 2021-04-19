@@ -89,7 +89,7 @@
         <if test="barCodeType==2">
             ,wobp.work_order_card_id as barcode
         </if>
-        from fantech_imes_v2.base_work_order swo
+        from fantech_imes_v2.smt_work_order swo
         left join fantech_imes_v2.base_material sm on swo.material_id=sm.material_id
         LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
         left join base_product_model spm on spm.product_model_id = bt.product_model_id
@@ -124,7 +124,7 @@
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>bl.print_mode,bl.save_path,su.user_name as
         create_user_name,sus.user_name as modified_user_name, bo.organization_name
-        FROM bcm_bar_code bc
+        FROM base_bar_code bc
         LEFT JOIN bcm_label_material blm ON bc.label_material_id = blm.label_material_id
         LEFT JOIN bcm_label bl ON blm.label_id = bl.label_id
         LEFT JOIN base_work_order sw on bc.work_order_id = sw.work_order_id

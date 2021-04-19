@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseInspectionItemMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseInspectionItem">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId"/>
+        <result column="inspection_item_code" jdbcType="VARCHAR" property="inspectionItemCode"/>
+        <result column="inspection_item_name" jdbcType="VARCHAR" property="inspectionItemName"/>
+        <result column="inspection_item_level" jdbcType="BIGINT" property="inspectionItemLevel"/>
+        <result column="inspection_tool" jdbcType="BIGINT" property="inspectionTool"/>
+        <result column="inspection_standard" jdbcType="VARCHAR" property="inspectionStandard"/>
+        <result column="inspection_nape" jdbcType="BIGINT" property="inspectionNape"/>
+        <result column="batch" jdbcType="DECIMAL" property="batch"/>
+        <result column="aql" jdbcType="DECIMAL" property="aql"/>
+        <result column="sampling_amount" jdbcType="DECIMAL" property="samplingAmount"/>
+        <result column="ac" jdbcType="DECIMAL" property="ac"/>
+        <result column="re" jdbcType="DECIMAL" property="re"/>
+        <result column="test_method" jdbcType="BIGINT" property="testMethod"/>
+        <result column="test_times" jdbcType="DECIMAL" property="testTimes"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    qii.inspection_item_id,qii.inspection_item_code,qii.inspection_item_name,
+    qii.inspection_item_level,qii.inspection_tool,qii.inspection_standard,qii.inspection_nape,
+    qii.batch,qii.aql,qii.sampling_amount,qii.ac,qii.re,qii.test_method,qii.test_times,qii.remark,
+    qii.status,qii.create_user_id,qii.create_time,qii.modified_user_id,qii.modified_time,qii.is_delete, qii.organization_id,
+	qii.remark
+  </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS
+        modified_user_name,
+        bo.organization_name
+        from fantech_imes.base_inspection_item qii
+        LEFT JOIN ocean.sys_user su ON qii.create_user_id = su.user_id
+        LEFT JOIN ocean.sys_user sus ON qii.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes.base_organization bo ON qii.organization_id = bo.organization_id
+        <where>
+            <if test="inspectionItemCode != null and inspectionItemCode != ''">
+                <if test="codeQueryMark != null and codeQueryMark !='' and codeQueryMark == 1">
+                    and qii.inspection_item_code = #{inspectionItemCode}
+                </if>
+                <if test="codeQueryMark != 1">
+                    and qii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')
+                </if>
+            </if>
+            <if test="inspectionItemName != null and inspectionItemName != ''">
+                and qii.inspection_item_name like CONCAT('%', #{inspectionItemName}, '%')
+            </if>
+            <if test="inspectionItemLevel != null and inspectionItemLevel != ''">
+                and qii.inspection_item_level like CONCAT('%', #{inspectionItemLevel}, '%')
+            </if>
+            <if test="inspectionNape != null and inspectionNape != ''">
+                and qii.inspection_nape like CONCAT('%', #{inspectionNape}, '%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(qii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getMax" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from fantech_imes.base_inspection_item qii ORDER BY qii.inspection_item_id desc limit 1
+    </select>
+
+</mapper>

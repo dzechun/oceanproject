@@ -65,6 +65,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
         baseProcess.setCreateTime(new Date());
         baseProcess.setModifiedUserId(currentUser.getUserId());
         baseProcess.setModifiedTime(new Date());
+        baseProcess.setOrganizationId(currentUser.getOrganizationId());
         baseProcessMapper.insertUseGeneratedKeys(baseProcess);
 
         //新增工序历史信息
@@ -143,6 +144,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
 
         baseProcess.setModifiedUserId(currentUser.getUserId());
         baseProcess.setModifiedTime(new Date());
+        baseProcess.setOrganizationId(currentUser.getOrganizationId());
         int i = baseProcessMapper.updateByPrimaryKeySelective(baseProcess);
 
         //新增工序历史信息
@@ -254,6 +256,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
                 baseProcess.setCreateUserId(currentUser.getUserId());
                 baseProcess.setModifiedTime(new Date());
                 baseProcess.setModifiedUserId(currentUser.getUserId());
+                baseProcess.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseProcess);
             }
 

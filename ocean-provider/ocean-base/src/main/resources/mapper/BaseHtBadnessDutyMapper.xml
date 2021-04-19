@@ -17,6 +17,9 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -35,11 +38,15 @@
     </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
-    select<include refid="Base_Column_List"/>
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
     from fantech_imes_v2.base_ht_badness_duty bhbd
+    left join ocean_v2.sys_user su on bhbd.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on bhbd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhbd.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bup.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(bhbd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
         and bhbd.badness_duty_code like CONCAT('%',#{badnessDutyCode},'%')

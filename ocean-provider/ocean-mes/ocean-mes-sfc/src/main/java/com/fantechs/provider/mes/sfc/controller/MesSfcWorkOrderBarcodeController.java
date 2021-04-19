@@ -23,7 +23,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- *
+ *  条码打印接口
  * Created by Mr.lei on 2021/04/07.
  */
 @RestController
@@ -37,8 +37,9 @@ public class MesSfcWorkOrderBarcodeController {
 
     @ApiOperation("生成条码")
     @PostMapping("/add")
-    public ResponseEntity<MesSfcWorkOrderBarcode> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode) {
-        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.save(mesSfcWorkOrderBarcode));
+    public ResponseEntity<List<MesSfcWorkOrderBarcode>> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode) {
+        List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodes = mesSfcWorkOrderBarcodeService.add(mesSfcWorkOrderBarcode);
+        return ControllerUtil.returnDataSuccess(mesSfcWorkOrderBarcodes,StringUtils.isEmpty(mesSfcWorkOrderBarcodes)?0:1);
     }
 
     @ApiOperation("补打列表")
@@ -51,8 +52,9 @@ public class MesSfcWorkOrderBarcodeController {
 
     @ApiOperation("打印/补打")
     @PostMapping("/print")
-    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
-        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print(ids));
+    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
+                                @ApiParam(value = "打印类型（1，打印，2，补打）",required = true)@RequestParam Byte printType){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print(ids,printType));
     }
 
     @ApiOperation("规则解析及标签模版")

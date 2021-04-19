@@ -66,6 +66,7 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
         baseProductModel.setCreateTime(new Date());
         baseProductModel.setModifiedUserId(currentUser.getUserId());
         baseProductModel.setModifiedTime(new Date());
+        baseProductModel.setOrganizationId(currentUser.getOrganizationId());
         int i = baseProductModelMapper.insertUseGeneratedKeys(baseProductModel);
 
         //新增产品型号历史信息
@@ -92,6 +93,7 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
 
         baseProductModel.setModifiedUserId(currentUser.getUserId());
         baseProductModel.setModifiedTime(new Date());
+        baseProductModel.setOrganizationId(currentUser.getOrganizationId());
         int i = baseProductModelMapper.updateByPrimaryKeySelective(baseProductModel);
 
         //新增产品型号历史信息

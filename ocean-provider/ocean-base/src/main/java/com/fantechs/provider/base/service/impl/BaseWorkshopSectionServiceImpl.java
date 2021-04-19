@@ -59,6 +59,7 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         baseWorkshopSection.setCreateTime(new Date());
         baseWorkshopSection.setModifiedTime(new Date());
         baseWorkshopSection.setModifiedUserId(currentUser.getUserId());
+        baseWorkshopSection.setOrganizationId(currentUser.getOrganizationId());
         workshopSectionMapper.insertUseGeneratedKeys(baseWorkshopSection);
 
         //添加工段历史信息
@@ -84,6 +85,7 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         }
         baseWorkshopSection.setModifiedUserId(currentUser.getUserId());
         baseWorkshopSection.setModifiedTime(new Date());
+        baseWorkshopSection.setOrganizationId(currentUser.getOrganizationId());
         int i = workshopSectionMapper.updateByPrimaryKeySelective(baseWorkshopSection);
 
         //添加工段历史信息
@@ -186,6 +188,7 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
                 baseWorkshopSection.setCreateUserId(currentUser.getUserId());
                 baseWorkshopSection.setModifiedTime(new Date());
                 baseWorkshopSection.setModifiedUserId(currentUser.getUserId());
+                baseWorkshopSection.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseWorkshopSection);
             }
 

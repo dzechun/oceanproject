@@ -85,11 +85,27 @@ where mpwo.work_order_id = #{workOrderId}
     WHERE blc.label_category_code = #{labelCategoryCode}
 </select>
 <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-select * FROM #{viewName}
+select * FROM <choose>
+    <when test="barcodeType==2">
+        view_workOrder
+    </when>
+    <when test="barcodeType==4">
+        view_order
+    </when>
+</choose>
+<where>
+    id = #{id}
+</where>
 </select>
-    <select id="findByOneLabel" resultType="com.fantechs.common.base.general.entity.basic.BaseLabelCategory">
+    <select id="findByOneLabel" resultType="java.lang.String">
         select blc.label_category_name FROM base_label_category blc
         LEFT JOIN base_label bl ON bl.label_category_id = blc.label_category_id
         where bl.label_Name =#{labelName}
+    </select>
+    <select id="findCountCode" resultType="java.lang.Integer">
+        select COUNT(*) FROM mes_sfc_work_order_barcode where barcode_type=#{barcodeType} and work_order_id=#{workOrderId}
+    </select>
+    <select id="findVersion" resultType="java.lang.String">
+        select label_version From base_label where label_name=#{labelName}
     </select>
 </mapper>

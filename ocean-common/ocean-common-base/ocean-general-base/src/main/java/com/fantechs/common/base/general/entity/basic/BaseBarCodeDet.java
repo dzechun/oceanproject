@@ -15,7 +15,7 @@ import lombok.Data;
  * @date 2021-01-22 09:53:53
  */
 @Data
-@Table(name = "bcm_bar_code_det")
+@Table(name = "base_bar_code_det")
 public class BaseBarCodeDet extends ValidGroup implements Serializable {
     /**
      * 工单条码明细id
@@ -54,7 +54,7 @@ public class BaseBarCodeDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30) 
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     private Long organizationId;
 
     /**

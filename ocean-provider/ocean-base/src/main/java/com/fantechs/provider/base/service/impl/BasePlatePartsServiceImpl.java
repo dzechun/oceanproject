@@ -102,6 +102,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
         }
         basePlateParts.setModifiedTime(new Date());
         basePlateParts.setModifiedUserId(user.getUserId());
+        basePlateParts.setOrganizationId(user.getOrganizationId());
 
         BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
         BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);

@@ -112,16 +112,24 @@ public class BaseMaterialController {
     @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
+
+        // 导入操作
         try {
-            // 导入操作
             List<BaseMaterialImport> baseMaterialImports = EasyPoiUtils.importExcel(file,2,1, BaseMaterialImport.class);
-            Map<String, Object> resultMap = baseMaterialService.importExcel(baseMaterialImports);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
-        } catch (Exception e) {
+            try {
+                Map<String, Object> resultMap = baseMaterialService.importExcel(baseMaterialImports);
+                return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+            }catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            }
+        }catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
         }
+
     }
 
     @ApiOperation(value = "获取物料履历列表",notes = "获取物料履历列表")

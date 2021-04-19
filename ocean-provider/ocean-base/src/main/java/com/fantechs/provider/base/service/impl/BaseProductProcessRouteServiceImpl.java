@@ -98,6 +98,7 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         baseProductProcessRoute.setCreateTime(new Date());
         baseProductProcessRoute.setModifiedUserId(currentUser.getUserId());
         baseProductProcessRoute.setModifiedTime(new Date());
+        baseProductProcessRoute.setOrganizationId(currentUser.getOrganizationId());
         int i = baseProductProcessRouteMapper.insertUseGeneratedKeys(baseProductProcessRoute);
 
         //新增产品工艺路线历史信息
@@ -143,6 +144,7 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
 
         baseProductProcessRoute.setModifiedUserId(currentUser.getUserId());
         baseProductProcessRoute.setModifiedTime(new Date());
+        baseProductProcessRoute.setOrganizationId(currentUser.getOrganizationId());
         int i = baseProductProcessRouteMapper.updateByPrimaryKeySelective(baseProductProcessRoute);
 
         //新增产品工艺路线历史信息
@@ -282,6 +284,7 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
             baseProductProcessRoute.setCreateUserId(currentUser.getUserId());
             baseProductProcessRoute.setModifiedTime(new Date());
             baseProductProcessRoute.setModifiedUserId(currentUser.getUserId());
+            baseProductProcessRoute.setOrganizationId(currentUser.getOrganizationId());
             success += baseProductProcessRouteMapper.insertUseGeneratedKeys(baseProductProcessRoute);
 
             //新增履历

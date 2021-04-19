@@ -69,6 +69,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
         baseDept.setCreateTime(new Date());
         baseDept.setModifiedUserId(currentUser.getUserId());
         baseDept.setModifiedTime(new Date());
+        baseDept.setOrganizationId(currentUser.getOrganizationId());
         int i = baseDeptMapper.insertSelective(baseDept);
 
         //新增部门历史信息
@@ -108,6 +109,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
 
         baseDept.setModifiedUserId(currentUser.getUserId());
         baseDept.setModifiedTime(new Date());
+        baseDept.setOrganizationId(currentUser.getOrganizationId());
         int i= baseDeptMapper.updateByPrimaryKeySelective(baseDept);
 
         //新增部门历史信息
@@ -256,6 +258,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
                 baseDept.setModifiedTime(new Date());
                 baseDept.setModifiedUserId(currentUser.getUserId());
                 baseDept.setStatus(1);
+                baseDept.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseDept);
             }
         }

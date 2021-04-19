@@ -60,6 +60,7 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
         baseSampleStandard.setModifiedUserId(user.getUserId());
         baseSampleStandard.setStatus((byte) 1);
         baseSampleStandard.setOrgId(user.getUserId());
+        baseSampleStandard.setOrgId(user.getOrganizationId());
         baseSampleStandardMapper.insertUseGeneratedKeys(baseSampleStandard);
 
         BaseHtSampleStandard baseHtSampleStandard = new BaseHtSampleStandard();

@@ -1,33 +1,33 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.SmtBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrder;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
+import io.swagger.annotations.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +55,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Resource
     private PMFeignApi pmFeignApi;
     @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
     private RabbitProducer rabbitProducer;
     @Resource
     private MesSfcBarcodeProcessMapper mesSfcBarcodeProcessMapper;
@@ -66,13 +68,15 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids) {
+    public int print(String ids,Byte printType) {
+        if(StringUtils.isEmpty(ids)){
+            throw new BizErrorException("参数传递错误");
+        }
         String[] arrId = ids.split(",");
         for (String s : arrId) {
             //查询模版信息
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectByPrimaryKey(s);
             LabelRuteDto labelRuteDto = null;
-            PrintModel printModel = null;
             switch (mesSfcWorkOrderBarcode.getBarcodeType()){
                 case 2:
                     //获取工单类别模版
@@ -81,7 +85,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                         //获取默认模版
                         labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
                     }
-                    printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_workOrder");
                     break;
                 case 4:
                     //获取销售类别模版
@@ -90,19 +93,24 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                         //获取默认模版
                         labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
                     }
-                    printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel("view_order");
                     break;
             }
-            if(labelRuteDto.getBarcodeType()==(byte)0 &&mesSfcWorkOrderBarcode.getBarcodeType()==(byte)2){
+            PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getBarcodeType(),mesSfcWorkOrderBarcode.getWorkOrderId());
+            if(StringUtils.isEmpty(labelRuteDto)){
+                throw new BizErrorException("获取标签信息失败");
+            }
+            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getBarcodeType()==(byte)2 &&printType==(byte)1){
                 //生成条码过站记录
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
                 mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
                 mesSfcBarcodeProcess.setWorkOrderCode(mesSfcWorkOrderBarcode.getWorkOrderCode());
                 mesSfcBarcodeProcess.setBarcodeType((byte)2);
                 mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
+
                 SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
                 searchMesPmWorkOrder.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
                 MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
+
                 mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
                 mesSfcBarcodeProcess.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
                 mesSfcBarcodeProcess.setMaterialName(mesPmWorkOrderDto.getMaterialName());
@@ -113,17 +121,19 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
                     throw new BizErrorException("条码过站失败");
                 }
+
+                mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
+                this.update(mesSfcWorkOrderBarcode);
             }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelRuteDto.getLabelName());
             printDto.setLabelVersion(labelRuteDto.getLabelVersion());
+            printDto.setPrintName("测试");
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);
+            printDto.setPrintModelList(printModelList);
             rabbitProducer.sendPrint(printDto);
-
-            mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
-            this.update(mesSfcWorkOrderBarcode);
         }
         return 1;
     }
@@ -134,6 +144,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         SysUser sysUser = currentUser();
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
+        entity.setOrgId(sysUser.getOrganizationId());
         return mesSfcWorkOrderBarcodeMapper.updateByPrimaryKeySelective(entity);
     }
 
@@ -148,7 +159,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",workOrderId);
                 break;
         }
-        if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
+        if(StringUtils.isEmpty(labelRuteDto)||StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
             throw new BizErrorException(barcodeType==1?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
         }
         return labelRuteDto;
@@ -160,16 +171,22 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException("参数错误");
         }
-        BaseLabelCategory baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(labelName);
+        String fileName =labelName.substring(0,labelName.indexOf("."));
+        String baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(fileName);
         if(StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException("获取标签信息失败");
         }
-        Path file = Paths.get("../"+ baseLabelCategory.getLabelCategoryName());
+        //查询版本号
+        String version = mesSfcWorkOrderBarcodeMapper.findVersion(fileName);
+        if(StringUtils.isEmpty(version)){
+            throw new BizErrorException("标签版本获取失败");
+        }
+        Path file = Paths.get("/label/"+ baseLabelCategory+"/"+labelName);
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
                 response.addHeader("Content-Disposition",
-                        "attachment; filename=" + URLEncoder.encode(labelName, "UTF-8"));
+                        "attachment; filename=" + URLEncoder.encode(labelName+"|"+version, "UTF-8"));
 
                 System.out.println("以输出流的形式对外输出提供下载");
                 Files.copy(file, response.getOutputStream());// 以输出流的形式对外输出提供下载
@@ -183,35 +200,55 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public MesSfcWorkOrderBarcode add(MesSfcWorkOrderBarcode record) {
+    public List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record) {
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(record.getWorkOrderId())){
             throw new BizErrorException("绑定单据唯一码不能为空");
         }
-        //获取生成的最大条码
-        String maxCode = mesSfcWorkOrderBarcodeMapper.findMaxCode(record.getBarcodeType(),record.getWorkOrderId());
-        //查询条码规则集合
-        LabelRuteDto labelRuteDto = record.getLabelRuteDto();
-        SearchSmtBarcodeRuleSpec searchSmtBarcodeRuleSpec = new SearchSmtBarcodeRuleSpec();
-        searchSmtBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
-        List<SmtBarcodeRuleSpec> list = pmFeignApi.findSpec(searchSmtBarcodeRuleSpec).getData();
-        if(list.size()<1){
-            throw new BizErrorException("请设置条码规则");
+        //判断条码产生数量不能大于工单数量
+        Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
+        if(count>=record.getWorkOrderQty().doubleValue()){
+            throw new BizErrorException("条码产生数量超出单据数量范围");
         }
-        //生成条码
-        String code = pmFeignApi.generateCode(list,maxCode,null).getData();
-        record.setBarcode(code);
+        List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
+        for (Integer i = 0; i < record.getQty(); i++) {
+            record.setWorkOrderBarcodeId(null);
+            //获取生成的最大条码
+            Integer maxCode = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
+            //查询条码规则集合
+            LabelRuteDto labelRuteDto = record.getLabelRuteDto();
+            SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+            searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
+            ResponseEntity<List<BaseBarcodeRuleSpec>> responseEntity= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getMessage());
+            }
+            List<BaseBarcodeRuleSpec> list = responseEntity.getData();
+            if(list.size()<1){
+                throw new BizErrorException("请设置条码规则");
+            }
+            //生成条码
+            ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode.toString(),null,record.getWorkOrderId().toString());
+            if(rs.getCode()!=0){
+                throw new BizErrorException(rs.getMessage());
+            }
+            record.setBarcode(rs.getData());
 
-        //待打印状态
-        record.setBarcodeStatus((byte)3);
-        record.setCreateTime(new Date());
-        record.setCreateUserId(sysUser.getUserId());
-        record.setModifiedTime(new Date());
-        record.setModifiedUserId(sysUser.getUserId());
-        mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(record);
-        return record;
+            //待打印状态
+            record.setBarcodeStatus((byte)3);
+            record.setCreateTime(new Date());
+            record.setCreateUserId(sysUser.getUserId());
+            record.setModifiedTime(new Date());
+            record.setModifiedUserId(sysUser.getUserId());
+            record.setOrgId(sysUser.getOrganizationId());
+            mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(record);
+            MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
+            BeanUtil.copyProperties(record,mesSfcWorkOrderBarcode);
+            mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
+        }
+
+        return mesSfcWorkOrderBarcodeList;
     }
-
     /**
      * 获取当前登录用户
      * @return

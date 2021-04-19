@@ -184,17 +184,17 @@ public class QmsFirstInspectionServiceImpl extends BaseService<QmsFirstInspectio
             if (StringUtils.isNotEmpty(baseWarningDtos)){
                 BaseWarningDto baseWarningDto = baseWarningDtos.get(0);
                 List<BaseWarningPersonnelDto> baseWarningPersonnelList = baseWarningDto.getBaseWarningPersonnelDtoList();
-                for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
-                    if (baseWarningDto.getNotificationMethod() == 0){
-                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getWechat(),"首检不通过",msg);
-                    }else if (baseWarningDto.getNotificationMethod() == 1){
-                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getMobile(),"首检不通过",msg);
-                    }else if (baseWarningDto.getNotificationMethod() == 2){
-                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getDingTalk(),"首检不通过",msg);
-                    }else if (baseWarningDto.getNotificationMethod() == 3){
-                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"首检不通过",msg);
-                    }
-                }
+//                for (BaseWarningPersonnelDto baseWarningPersonnelDto : baseWarningPersonnelList) {
+//                    if (baseWarningDto.getNotificationMethod() == 0){
+//                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getWechat(),"首检不通过",msg);
+//                    }else if (baseWarningDto.getNotificationMethod() == 1){
+//                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getMobile(),"首检不通过",msg);
+//                    }else if (baseWarningDto.getNotificationMethod() == 2){
+//                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getDingTalk(),"首检不通过",msg);
+//                    }else if (baseWarningDto.getNotificationMethod() == 3){
+//                        bcmFeignApi.sendSimpleMail(baseWarningPersonnelDto.getEmail(),"首检不通过",msg);
+//                    }
+//                }
             }
 
         }

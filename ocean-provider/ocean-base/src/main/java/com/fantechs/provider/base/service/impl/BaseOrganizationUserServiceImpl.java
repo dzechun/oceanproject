@@ -43,12 +43,6 @@ public class BaseOrganizationUserServiceImpl extends BaseService<BaseOrganizatio
             throw new BizErrorException("该绑定关系已存在");
         }
 
-        baseOrganizationUser.setCreateUserId(user.getUserId());
-        baseOrganizationUser.setCreateTime(new Date());
-        baseOrganizationUser.setModifiedUserId(user.getUserId());
-        baseOrganizationUser.setModifiedTime(new Date());
-        baseOrganizationUser.setStatus(StringUtils.isEmpty(baseOrganizationUser.getStatus())?1:baseOrganizationUser.getStatus());
-
         return baseOrganizationUserMapper.insertUseGeneratedKeys(baseOrganizationUser);
     }
 
@@ -69,8 +63,6 @@ public class BaseOrganizationUserServiceImpl extends BaseService<BaseOrganizatio
             throw new BizErrorException("该绑定关系已存在");
         }
 
-        baseOrganizationUser.setModifiedUserId(user.getUserId());
-        baseOrganizationUser.setModifiedTime(new Date());
         return baseOrganizationUserMapper.updateByPrimaryKeySelective(baseOrganizationUser);
     }
 

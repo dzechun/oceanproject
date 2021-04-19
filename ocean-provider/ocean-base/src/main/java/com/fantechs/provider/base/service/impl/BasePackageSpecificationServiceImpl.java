@@ -9,8 +9,8 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecif
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialPackage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.SmtBarcodeRuleDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtBarcodeRule;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -43,9 +43,9 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     @Resource
     private BaseProcessMapper baseProcessMapper;
     @Resource
-    private PMFeignApi pmFeignApi;
-    @Resource
     private BasePackingUnitMapper basePackingUnitMapper;
+    @Resource
+    private BaseBarcodeRuleMapper baseBarcodeRuleMapper;
 
 
     @Override
@@ -68,6 +68,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
         basePackageSpecification.setCreateTime(new Date());
         basePackageSpecification.setModifiedUserId(user.getUserId());
         basePackageSpecification.setModifiedTime(new Date());
+        basePackageSpecification.setOrganizationId(user.getOrganizationId());
 
         //新增包装规格
         basePackageSpecificationMapper.insertUseGeneratedKeys(basePackageSpecification);
@@ -117,6 +118,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         basePackageSpecification.setModifiedUserId(user.getUserId());
         basePackageSpecification.setModifiedTime(new Date());
+        basePackageSpecification.setOrganizationId(user.getOrganizationId());
 
         BaseHtPackageSpecification baseHtPackageSpecification = new BaseHtPackageSpecification();
         BeanUtils.copyProperties(basePackageSpecification, baseHtPackageSpecification);
@@ -260,15 +262,15 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
             //如果条码规则编码不为空，则判断条码规则信息是否存在
             if (StringUtils.isNotEmpty(barcodeRuleCode)){
-                SearchSmtBarcodeRule searchSmtBarcodeRule = new SearchSmtBarcodeRule();
-                searchSmtBarcodeRule.setBarcodeRuleCode(barcodeRuleCode);
-                searchSmtBarcodeRule.setCodeQueryMark((byte) 1);
-                List<SmtBarcodeRuleDto> smtBarcodeRuleDtos = pmFeignApi.findBarcodeRulList(searchSmtBarcodeRule).getData();
-                if (StringUtils.isEmpty(smtBarcodeRuleDtos)){
+                SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+                searchBaseBarcodeRule.setBarcodeRuleCode(barcodeRuleCode);
+                searchBaseBarcodeRule.setCodeQueryMark((byte) 1);
+                List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseBarcodeRuleMapper.findList(searchBaseBarcodeRule);
+                if (StringUtils.isEmpty(baseBarcodeRuleDtos)){
                     fail.add(i+4);
                     continue;
                 }
-                basePackageSpecificationImport.setBarcodeRuleId(smtBarcodeRuleDtos.get(0).getBarcodeRuleId());
+                basePackageSpecificationImport.setBarcodeRuleId(baseBarcodeRuleDtos.get(0).getBarcodeRuleId());
             }
 
             //如果包装单位编码不为空，则判断包装单位信息是否存在
