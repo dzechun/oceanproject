@@ -13,7 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtProductionMaterialMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutProductionMaterialMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutProductionMaterialdDetMapper;
@@ -40,7 +40,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
     @Resource
     private WmsOutHtProductionMaterialMapper wmsOutHtProductionMaterialMapper;
     @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<WmsOutProductionMaterialDto> findList(Map<String, Object> map) {
@@ -133,7 +133,7 @@ public class WmsOutProductionMaterialServiceImpl extends BaseService<WmsOutProdu
             smtStorageInventoryDets.add(smtStorageInventoryDet);
             wmsInnerStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
             //扣库存
-            storageInventoryFeignApi.out(wmsInnerStorageInventory);
+            baseFeignApi.out(wmsInnerStorageInventory);
 
             //计算发料数量
             Example example = new Example(WmsOutProductionMaterial.class);

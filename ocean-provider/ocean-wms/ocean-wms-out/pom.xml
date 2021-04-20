@@ -31,12 +31,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.imes.storage</groupId>
-            <artifactId>ocean-storage-inventory-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.api.bcm</groupId>
             <artifactId>ocean-bcm-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -72,10 +66,6 @@
                     <include>
                         <groupId>com.fantechs.common.base.general</groupId>
                         <artifactId>ocean-general-base</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.provider.api.imes.storage</groupId>
-                        <artifactId>ocean-storage-inventory-api</artifactId>
                     </include>
                 </includes>
                 </configuration>

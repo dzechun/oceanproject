@@ -20,7 +20,7 @@ import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.om.mapper.SmtHtOrderMapper;
 import com.fantechs.provider.om.mapper.SmtOrderMapper;
 import com.fantechs.provider.om.service.SmtOrderService;
@@ -48,7 +48,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
     @Resource
     private MesHtOrderMaterialService mesHtOrderMaterialService;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
 
     @Override
@@ -277,7 +277,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setCodeQueryMark(1);
             searchBaseMaterial.setMaterialCode(materialCode);
-            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)){
                 fail.add(i+4);
                 continue;
@@ -288,7 +288,7 @@ public class SmtOrderServiceImpl extends BaseService<SmtOrder> implements SmtOrd
             SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
             searchBaseSupplier.setSupplierCode(supplierCode);
             searchBaseSupplier.setCodeQueryMark((byte) 1);
-            List<BaseSupplier> baseSuppliers = basicFeignApi.findSupplierList(searchBaseSupplier).getData();
+            List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
             if (StringUtils.isEmpty(baseSuppliers)){
                 fail.add(i+4);
                 continue;

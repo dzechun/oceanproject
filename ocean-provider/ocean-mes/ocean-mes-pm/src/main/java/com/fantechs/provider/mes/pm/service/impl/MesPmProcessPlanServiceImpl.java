@@ -4,7 +4,7 @@ import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProcessPlan;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmProcessPlanDTO;
 import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.mes.pm.service.MesPmProcessPlanService;
 import com.fantechs.provider.mes.pm.mapper.MesPmProcessPlanMapper;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -34,7 +34,7 @@ public class MesPmProcessPlanServiceImpl extends BaseService<MesPmProcessPlan> i
     @Resource
     private MesPmProcessPlanMapper mesPmProcessPlanMapper;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<MesPmProcessPlan> selectAll(Map<String, Object> map) {
@@ -126,7 +126,7 @@ public class MesPmProcessPlanServiceImpl extends BaseService<MesPmProcessPlan> i
         //取出配置的工序排序记录
         if (StringUtils.isNotEmpty(map.get("routeId"))) {
             Boolean flag = false;
-            List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(Long.valueOf(map.get("routeId").toString())).getData();
+            List<BaseRouteProcess> baseRouteProcesses = baseFeignApi.findConfigureRout(Long.valueOf(map.get("routeId").toString())).getData();
             if (baseRouteProcesses.size() > 0) {
                 for (MesPmProcessPlanDTO mesPmProcessPlanDTO : mesPmMasterPlanDTOS) {
                     for (BaseRouteProcess baseRouteProcess : baseRouteProcesses) {

@@ -1,14 +1,23 @@
 package com.fantechs.provider.api.base;
 
+import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
+import com.fantechs.common.base.entity.storage.SmtStoragePallet;
+import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -255,5 +265,58 @@ public interface BaseFeignApi {
     @ApiOperation("获取检验类型列表")
     @PostMapping("/qmsInspectionType/findList")
     ResponseEntity<List<BaseInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
+
+
+    @ApiOperation("储位库存查询")
+    @PostMapping("/smtStorageInventory/findList")
+    ResponseEntity<List<WmsInnerStorageInventoryDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchWmsInnerStorageInventory searchWmsInnerStorageInventory);
+
+    @ApiOperation("储位库存新增")
+    @PostMapping("/smtStorageInventory/add")
+    ResponseEntity<WmsInnerStorageInventory> add(@ApiParam(value = "必传：", required = true) @RequestBody WmsInnerStorageInventory wmsInnerStorageInventory);
+
+    @ApiOperation("储位库存删除")
+    @PostMapping("/smtStorageInventory/delete")
+    ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
+
+    @ApiOperation("储位库存更新")
+    @PostMapping("/smtStorageInventory/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody WmsInnerStorageInventory wmsInnerStorageInventory);
+
+    @ApiOperation("扣除储位库存")
+    @PostMapping("/smtStorageInventory/out")
+    ResponseEntity<WmsInnerStorageInventory> out(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerStorageInventory wmsInnerStorageInventory);
+
+    @ApiOperation("储位库存明细新增")
+    @PostMapping("/smtStorageInventoryDet/add")
+    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody WmsInnerStorageInventoryDet smtStorageInventoryDet);
+
+    @ApiOperation("储位库存明细列表")
+    @PostMapping("/smtStorageInventoryDet/findList")
+    ResponseEntity<List<WmsInnerStorageInventoryDetDto>> findStorageInventoryDetList(@ApiParam(value = "查询对象") @RequestBody SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet);
+
+    @ApiOperation("储位库存明细修改")
+    @PostMapping("/smtStorageInventoryDet/update")
+    ResponseEntity updateStorageInventoryDet(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = WmsInnerStorageInventoryDet.update.class) WmsInnerStorageInventoryDet smtStorageInventoryDet);
+
+    @ApiOperation("储位库存明细删除")
+    @PostMapping("/smtStorageInventoryDet/delete")
+    ResponseEntity deleteStorageInventoryDet(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
+
+    @ApiOperation("储位栈板关系表新增")
+    @PostMapping("/smtStoragePallet/add")
+    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);
+
+    @ApiOperation("储位与栈板列表")
+    @PostMapping("/smtStoragePallet/findList")
+    ResponseEntity<List<SmtStoragePalletDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStoragePallet searchSmtStoragePallet);
+
+    @ApiOperation("储位栈板关系表修改")
+    @PostMapping("/smtStoragePallet/update")
+    ResponseEntity update(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);
+
+    @ApiOperation("储位栈板关系表删除")
+    @PostMapping("/smtStoragePallet/delete")
+    ResponseEntity deleteSmtStoragePallet(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
 
 }

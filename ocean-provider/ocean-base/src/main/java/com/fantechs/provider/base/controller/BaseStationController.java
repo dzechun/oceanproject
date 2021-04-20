@@ -112,12 +112,18 @@ public class BaseStationController {
         try {
             // 导入操作
             List<BaseStation> baseStations = EasyPoiUtils.importExcel(file, BaseStation.class);
-            Map<String, Object> resultMap = baseStationService.importExcel(baseStations);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
-        } catch (Exception e) {
+            try {
+                Map<String, Object> resultMap = baseStationService.importExcel(baseStations);
+                return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            }
+        }catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

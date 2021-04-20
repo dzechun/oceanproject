@@ -13,7 +13,7 @@
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="quantity" jdbcType="DECIMAL" property="quantity" />
     <result column="color" jdbcType="VARCHAR" property="color" />
-    <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
+    <result column="material_qty" jdbcType="VARCHAR" property="materialQuality" />
     <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -42,7 +42,7 @@
 	bppd.unit,
 	bppd.quantity,
 	bppd.color,
-	bppd.material_quality,
+	bppd.material_qty,
 	bppd.org_id,
 	bppd.remark,
 	bppd.`status`,
