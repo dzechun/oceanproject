@@ -102,13 +102,19 @@ public class BaseSupplierController {
                                       @RequestPart(value="file") MultipartFile file,@ApiParam(value = "身份标识（1、供应商 2、客户）") @RequestParam Byte supplierType){
         try {
             // 导入操作
-            List<BaseSupplierImport> baseSupplierImports = EasyPoiUtils.importExcel(file,2,1, BaseSupplierImport.class);
-            Map<String, Object> resultMap = baseSupplierService.importExcel(baseSupplierImports,supplierType);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
-        } catch (Exception e) {
+            List<BaseSupplierImport> baseSupplierImports = EasyPoiUtils.importExcel(file, 2, 1, BaseSupplierImport.class);
+            try {
+                Map<String, Object> resultMap = baseSupplierService.importExcel(baseSupplierImports, supplierType);
+                return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            }
+        }catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 
