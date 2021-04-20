@@ -1,7 +1,5 @@
 package com.fantechs.provider.agv.service;
 
-import com.fantechs.common.base.support.IService;
-
 import java.util.Map;
 
 public interface DispatchService {

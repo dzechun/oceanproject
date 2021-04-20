@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fanctechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.SmtLoadingDetDto;
 import com.fantechs.common.base.electronic.dto.SmtSortingDto;
@@ -17,25 +15,26 @@ import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagS
 import com.fantechs.common.base.electronic.entity.search.SearchSmtLoading;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtLoadingDet;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
-import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
-import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.dto.PtlLoadingDTO;
 import com.fantechs.provider.client.dto.PtlLoadingDetDTO;
@@ -52,8 +51,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by lfz on 2020/12/9.
@@ -61,13 +63,13 @@ import java.util.*;
 @Service
 public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageService {
     private static final Logger log = LoggerFactory.getLogger(ElectronicTagReceiver.class);
-    @Autowired
+    @Resource
     private FanoutSender fanoutSender;
-    @Autowired
+    @Resource
     private ElectronicTagFeignApi electronicTagFeignApi;
-    @Autowired
-    private BasicFeignApi basicFeignApi;
-    @Autowired
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
     private InnerFeignApi innerFeignApi;
 
     @Value("${mesAPI.resApi}")
@@ -117,7 +119,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         for (SmtSorting sorting : sortingDtoList) {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
@@ -179,7 +181,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
         SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
         searchBaseStorageMaterial.setMaterialCode(materialCode);
-        List<BaseStorageMaterial> storageMaterialList = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
+        List<BaseStorageMaterial> storageMaterialList = baseFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
         if (StringUtils.isEmpty(storageMaterialList)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
         }
@@ -226,7 +228,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             }
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
@@ -305,7 +307,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
                 SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
                 searchBaseMaterial.setMaterialCode(smtLoadingDetDto.getMaterialCode());
-                List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+                List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterials)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
                 }
@@ -696,7 +698,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         for (SmtSorting sorting : sortingDtoList) {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+            List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
@@ -781,7 +783,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(materialCode);
-        List<BaseMaterial> baseMaterials = basicFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+        List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
         if (StringUtils.isEmpty(baseMaterials)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
         }

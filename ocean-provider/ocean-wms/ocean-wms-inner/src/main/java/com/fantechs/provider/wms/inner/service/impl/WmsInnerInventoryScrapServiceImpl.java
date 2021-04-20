@@ -21,7 +21,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtInventoryScrapMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryScrapDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryScrapMapper;
@@ -48,7 +48,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
     @Resource
     private WmsInnerInventoryScrapDetMapper wmsInnerInventoryScrapDetMapper;
     @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<WmsInnerInventoryScrapDto> findList(Map<String, Object> map) {
@@ -84,7 +84,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             searchSmtStoragePallet.setIsBinding((byte) 2);
             searchSmtStoragePallet.setIsDelete((byte) 1);
             //判断栈板是否绑定区域
-            List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+            List<SmtStoragePalletDto> smtStoragePallets = baseFeignApi.findList(searchSmtStoragePallet).getData();
             if(!StringUtils.isEmpty(smtStoragePallets)){
                 if (smtStoragePallets.size() > 0) {
                     throw new BizErrorException(wmsInnerInventoryScrapDet.getBarCode() + "已报废，不允许重复报废");
@@ -95,7 +95,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             SearchWmsInnerStorageInventory searchSmtStorageInventor = new SearchWmsInnerStorageInventory();
             searchSmtStorageInventor.setStorageId(wmsInnerInventoryScrapDet.getStorageId());
             searchSmtStorageInventor.setMaterialId(wmsInnerInventoryScrapDet.getMaterialId());
-            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = baseFeignApi.findList(searchSmtStorageInventor).getData();
             if(StringUtils.isEmpty(smtStorageInventoryDtos)){
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
@@ -103,7 +103,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
             searchWmsInnerStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtos.get(0).getStorageInventoryId());
             searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(wmsInnerInventoryScrapDet.getBarCode());
-            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = baseFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
             if(StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
@@ -128,7 +128,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             smtStorageInventoryDets.add(smtStorageInventoryDet);
 
             wmsInnerStorageInventory.setSmtStorageInventoryDets(smtStorageInventoryDets);
-            storageInventoryFeignApi.out(wmsInnerStorageInventory);
+            baseFeignApi.out(wmsInnerStorageInventory);
 
             wmsInnerInventoryScrapDet.setBarCodeStatus((byte) 1);
             wmsInnerInventoryScrapDet.setInventoryScrapStatus((byte) 2);
@@ -140,7 +140,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             searchSmtStoragePallet = new SearchSmtStoragePallet();
             searchSmtStoragePallet.setPalletCode(wmsInnerInventoryScrapDet.getBarCode());
             searchSmtStoragePallet.setStorageId(wmsInnerInventoryScrapDet.getStorageId());
-            smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+            smtStoragePallets = baseFeignApi.findList(searchSmtStoragePallet).getData();
             if (smtStoragePallets.size() <= 0) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100);
             }
@@ -150,7 +150,7 @@ public class WmsInnerInventoryScrapServiceImpl extends BaseService<WmsInnerInven
             smtStoragePallet.setIsBinding((byte)2);
             smtStoragePallet.setModifiedUserId(user.getUserId());
             smtStoragePallet.setModifiedTime(new Date());
-            storageInventoryFeignApi.update(smtStoragePallet);
+            baseFeignApi.update(smtStoragePallet);
         }
 
         //改变主表状态

@@ -23,7 +23,6 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.pm.mapper.MesPmMatchingDetMapper;
@@ -51,8 +50,6 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
     private MesPmMatchingOrderMapper mesPmMatchingOrderMapper;
     @Resource
     private InFeignApi inFeignApi;
-    @Resource
-    private BasicFeignApi basicFeignApi;
     @Resource
     private QmsFeignApi qmsFeignApi;
     @Resource
@@ -134,12 +131,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                             throw new BizErrorException("未找到流程单的工单信息");
                         }
 
-                        List<BaseRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
+                        List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(workOrderList.get(0).getRouteId()).getData();
                         if (StringUtils.isEmpty(routeProcessList)) {
                             throw new BizErrorException("未找到工艺路线信息");
                         }
                         for (int i = routeProcessList.size() - 1; i >= 0; i--) {
-                            BaseProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                            BaseProcess process = baseFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
                             if (StringUtils.isNotEmpty(process) && process.getIsQuality() == 1) {
                                 processId = process.getProcessId();
                                 break;
@@ -149,12 +146,12 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
 
                     if (switch1) {
                         Long routeId = smtWorkOrderCardPoolDto.getRouteId();
-                        List<BaseRouteProcess> routeProcessList = basicFeignApi.findConfigureRout(routeId).getData();
+                        List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(routeId).getData();
                         if (StringUtils.isEmpty(routeProcessList)) {
                             throw new BizErrorException("未找到工艺路线信息");
                         }
                         for (int i = routeProcessList.size() - 1; i >= 0; i--) {
-                            //SmtProcess process = basicFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
+                            //SmtProcess process = baseFeignApi.processDetail(routeProcessList.get(i).getProcessId()).getData();
                             if (routeProcessList.get(i).getSectionId() == sectionId) {
                                 processId = routeProcessList.get(i).getProcessId();
                                 break;
@@ -476,7 +473,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
             //获取储位ID
             SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
             searchBaseStorageMaterial.setMaterialId(saveMesPmMatchingOrderDto.getMaterialId());
-            List<BaseStorageMaterial> baseStorageMaterials = basicFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
+            List<BaseStorageMaterial> baseStorageMaterials = baseFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
             if (StringUtils.isEmpty(baseStorageMaterials)) {
                 throw new BizErrorException("该产品还未绑定储位");
             }

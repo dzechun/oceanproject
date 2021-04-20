@@ -1,6 +1,5 @@
 package com.fantechs.provider.agv.service.impl;
 
-import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.agv.service.DispatchService;

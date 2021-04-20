@@ -1,30 +1,28 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStocktakingDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktaking;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStocktakingDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStocktakingDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtStocktakingMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStocktakingDetMapper;
@@ -61,8 +59,7 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
     private WmsInnerHtStocktakingDetMapper wmsInnerHtStocktakingDetMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
-    @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+  
 
     @Override
     public List<WmsInnerStocktakingDto> findList(Map<String, Object> map) {
@@ -237,14 +234,14 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                 //更新储位库存明细数据、根据栈板码获取库存明细信息
                 SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
                 searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(wmsInnerStocktakingDet.getPalletCode());
-                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = baseFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
                 if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtos)){
                     throw new BizErrorException("无法获取到栈板码对应的库存信息");
                 }
                 //更新储位库存数据、获取库存信息
                 SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
                 searchWmsInnerStorageInventory.setStorageInventoryId(wmsInnerStorageInventoryDetDtos.get(0).getStorageInventoryId());
-                List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+                List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = baseFeignApi.findList(searchWmsInnerStorageInventory).getData();
                 if (StringUtils.isEmpty(smtStorageInventoryDtos)){
                     throw new BizErrorException("无法获取到栈板码对应的库存信息");
                 }
@@ -259,8 +256,8 @@ public class WmsInnerStocktakingServiceImpl extends BaseService<WmsInnerStocktak
                     wmsInnerStorageInventoryDetDto.setMaterialQuantity(wmsInnerStorageInventoryDetDto.getMaterialQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
                     smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsInnerStocktakingDet.getMaterialTotal()));
                 }
-                storageInventoryFeignApi.updateStorageInventoryDet(wmsInnerStorageInventoryDetDto);
-                storageInventoryFeignApi.update(smtStorageInventoryDto);
+                baseFeignApi.updateStorageInventoryDet(wmsInnerStorageInventoryDetDto);
+                baseFeignApi.update(smtStorageInventoryDto);
             }
 
             wmsInnerStocktakingDet.setStocktakingId(wmsInnerStocktaking.getStocktakingId());

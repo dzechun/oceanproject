@@ -12,7 +12,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcessRecor
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessRecordService;
 import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessService;
@@ -42,7 +42,7 @@ public class BarcodeUtils {
     @Resource
     private static PMFeignApi pmFeignApi;
     @Resource
-    private static BasicFeignApi basicFeignApi;
+    private static BaseFeignApi baseFeignApi;
 
     /**
      * @param barCode   产品条码
@@ -115,7 +115,7 @@ public class BarcodeUtils {
         MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .workOrderCode(dto.getBarCode())
                 .build());
-        ResponseEntity<List<BaseRouteProcess>> responseEntity = basicFeignApi.findConfigureRout(dto.getRouteId());
+        ResponseEntity<List<BaseRouteProcess>> responseEntity = baseFeignApi.findConfigureRout(dto.getRouteId());
         if(responseEntity.getCode() != 0){
             throw new BizErrorException(ErrorCodeEnum.PDA40012008);
         }
@@ -145,7 +145,7 @@ public class BarcodeUtils {
             throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
         }
         BaseRouteProcess routeProcess = routeProcessOptional.get();
-        ResponseEntity<BaseProcess> processResponseEntity = basicFeignApi.processDetail(routeProcess.getNextProcessId());
+        ResponseEntity<BaseProcess> processResponseEntity = baseFeignApi.processDetail(routeProcess.getNextProcessId());
         if(processResponseEntity.getCode() != 0){
             throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
         }

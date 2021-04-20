@@ -44,21 +44,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.imes.basic</groupId>
-            <artifactId>ocean-imes-basic</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.imes.basic</groupId>
-            <artifactId>ocean-imes-basic-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
             <version>4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.base</groupId>
+            <artifactId>ocean-base-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
 

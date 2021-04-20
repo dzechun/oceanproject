@@ -21,7 +21,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.out.mapper.*;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryOrderService;
 import org.springframework.beans.BeanUtils;
@@ -49,7 +49,7 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
     @Resource
     private WmsOutDeliveryOrderDetMapper wmsOutDeliveryOrderDetMapper;
     @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BaseFeignApi baseFeignApi;
     @Resource
     private WmsOutDeliveryOrderPalletMapper wmsOutDeliveryOrderPalletMapper;
     @Resource
@@ -123,12 +123,12 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
                 SearchSmtStoragePallet searchSmtStoragePallet = new SearchSmtStoragePallet();
                 searchSmtStoragePallet.setPalletCode(s);
 
-                List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+                List<SmtStoragePalletDto> smtStoragePallets = baseFeignApi.findList(searchSmtStoragePallet).getData();
                 if (smtStoragePallets.size() <= 0) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100);
                 }
                 //删除栈板与储位关系
-                storageInventoryFeignApi.deleteSmtStoragePallet(String.valueOf(smtStoragePallets.get(0).getStoragePalletId()));
+                baseFeignApi.deleteSmtStoragePallet(String.valueOf(smtStoragePallets.get(0).getStoragePalletId()));
 
                 //添加出库单明细与栈板关系表
                 WmsOutDeliveryOrderPallet wmsOutDeliveryOrderPallet = new WmsOutDeliveryOrderPallet();
@@ -142,20 +142,20 @@ public class WmsOutDeliveryOrderServiceImpl  extends BaseService<WmsOutDeliveryO
                 //修改库存明细表库存数
                 SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
                 searchWmsInnerStorageInventoryDet.setMaterialBarcodeCode(s);
-                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = storageInventoryFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
+                List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = baseFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
                 WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
                 smtStorageInventoryDet.setStorageInventoryDetId(wmsInnerStorageInventoryDetDtos.get(0).getStorageInventoryDetId());
                 smtStorageInventoryDet.setMaterialQuantity(BigDecimal.valueOf(0));
-                storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
+                baseFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
             }
             //修改库存表
             SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
             searchWmsInnerStorageInventory.setStorageId(wmsOutShippingNoteDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDet.getShippingNoteDetId()).getStorageId());//出货通知单明细 储位ID
             searchWmsInnerStorageInventory.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
-            List<WmsInnerStorageInventoryDto> smtStorageInventories = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory).getData();
+            List<WmsInnerStorageInventoryDto> smtStorageInventories = baseFeignApi.findList(searchWmsInnerStorageInventory).getData();
             WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventories.get(0);
             smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().subtract(wmsOutDeliveryOrderDet.getOutTotalQty()));
-            storageInventoryFeignApi.update(smtStorageInventoryDto);
+            baseFeignApi.update(smtStorageInventoryDto);
 
             //回写出货通知单出货状态
             Example example = new Example(WmsOutDeliveryOrderDet.class);

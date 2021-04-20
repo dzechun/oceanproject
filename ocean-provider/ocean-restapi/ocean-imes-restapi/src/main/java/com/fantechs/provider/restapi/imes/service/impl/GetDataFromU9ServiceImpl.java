@@ -1,18 +1,18 @@
 package com.fantechs.provider.restapi.imes.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.entity.basic.U9.CustGetItemInfo;
 import com.fantechs.common.base.entity.basic.U9.CustGetWhInfo;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.restapi.imes.config.ConstantBase;
 import com.fantechs.provider.restapi.imes.config.DynamicDataSourceHolder;
 import com.fantechs.provider.restapi.imes.mapper.CustGetItemInfoFromU9Mapper;
@@ -40,7 +40,7 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
     @Resource
     private CustGetItemInfoFromU9Mapper custGetItemInfoFromU9Mapper;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
     @Resource
     private CustGetWharehouseInfoFromU9Mapper custGetWharehouseInfoFromU9Mapper;
 
@@ -69,7 +69,7 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
 
             //保存物料信息
             searchBaseMaterial.setMaterialCode(info.get料品编码());
-            ResponseEntity<List<BaseMaterial>> responseEntity = basicFeignApi.findList(searchBaseMaterial);
+            ResponseEntity<List<BaseMaterial>> responseEntity = baseFeignApi.findList(searchBaseMaterial);
             if (StringUtils.isNotEmpty(responseEntity.getData())) {
                 baseMaterialUpdateList.add(baseMaterial);
             } else {
@@ -79,23 +79,23 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
             if (listItemInfos.size() > 1000 && baseMaterialAddList.size() > 0 && baseMaterialAddList.size() % 1000 == 0) {
                 //批量更新物料
                 if (StringUtils.isNotEmpty(baseMaterialAddList)) {
-                    basicFeignApi.batchUpdateByCode(baseMaterialUpdateList);
+                    baseFeignApi.batchUpdateByCode(baseMaterialUpdateList);
                     baseMaterialUpdateList.clear();
                 }
                 //批量新增物料
                 if (StringUtils.isNotEmpty(baseMaterialAddList)) {
-                    basicFeignApi.addList(baseMaterialAddList);
+                    baseFeignApi.addList(baseMaterialAddList);
                     baseMaterialAddList.clear();
                 }
             }
         }
         //批量更新物料
         if (StringUtils.isNotEmpty(baseMaterialAddList)) {
-            basicFeignApi.batchUpdateByCode(baseMaterialUpdateList);
+            baseFeignApi.batchUpdateByCode(baseMaterialUpdateList);
         }
         //批量新增物料
         if (StringUtils.isNotEmpty(baseMaterialAddList)) {
-            basicFeignApi.addList(baseMaterialAddList);
+            baseFeignApi.addList(baseMaterialAddList);
         }
         // 释放Redis锁
         if (StringUtils.isNotEmpty(redisUtil.get("updateMaterial"))) {
@@ -152,7 +152,7 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
                 baseWarehouse.setWarehouseCode(info.getCode());
                 baseWarehouse.setWarehouseName(info.getName());
                 searchBaseWarehouse.setWarehouseCode(baseWarehouse.getWarehouseCode());
-                ResponseEntity<List<BaseWarehouse>> responseEntity = basicFeignApi.findList(searchBaseWarehouse);
+                ResponseEntity<List<BaseWarehouse>> responseEntity = baseFeignApi.findList(searchBaseWarehouse);
                 if (StringUtils.isNotEmpty(responseEntity.getData())) {
                     baseWarehousesUpdateList.add(baseWarehouse);
                 } else {
@@ -163,11 +163,11 @@ public class GetDataFromU9ServiceImpl implements GetDataFromU9Service {
 
         logger.info("/material/updateMaterialByU9  同步更新仓库信息接口 " + " smtWarehousesAddList:" + JSON.toJSONString(baseWarehousesUpdateList));
         if (StringUtils.isNotEmpty(baseWarehousesUpdateList)) {
-            basicFeignApi.batchUpdateWarehouseByCode(baseWarehousesUpdateList);
+            baseFeignApi.batchUpdateWarehouseByCode(baseWarehousesUpdateList);
         }
         logger.info("/material/updateMaterialByU9  同步新增仓库信息接口 " + " smtWarehousesUpdateList:" + JSON.toJSONString(baseWarehousesAddList));
         if (StringUtils.isNotEmpty(baseWarehousesAddList)) {
-            basicFeignApi.batchSave(baseWarehousesAddList);
+            baseFeignApi.batchSave(baseWarehousesAddList);
         }
 
         // 释放Redis锁
