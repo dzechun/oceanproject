@@ -1,7 +1,7 @@
-package com.fantechs.provider.om.mapper.sales;
+package com.fantechs.provider.om.mapper;
 
-import com.fantechs.common.base.general.dto.om.sales.OmSalesOrderDto;
-import com.fantechs.common.base.general.entity.om.sales.OmSalesOrder;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
+import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

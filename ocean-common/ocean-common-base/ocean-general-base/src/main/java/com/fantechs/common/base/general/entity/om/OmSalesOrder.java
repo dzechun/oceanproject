@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.om.sales;
+package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
@@ -55,7 +55,7 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 客户订单号
      */
     @ApiModelProperty(name="customerOrderCode",value = "客户订单号")
-    @Excel(name = "客户订单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "客户订单号", height = 20, width = 30,orderNum="")
     @Column(name = "customer_order_code")
     private String customerOrderCode;
 
@@ -66,6 +66,14 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     @Excel(name = "来源单据号", height = 20, width = 30,orderNum="") 
     @Column(name = "source_order_id")
     private Long sourceOrderId;
+
+    /**
+     * 条码规则集合ID
+     */
+    @ApiModelProperty(name="barcodeRuleSetId",value = "条码规则集合ID")
+    @Excel(name = "条码规则集合ID", height = 20, width = 30,orderNum="")
+    @Column(name = "barcode_rule_set_id")
+    private Long barcodeRuleSetId;
 
     /**
      * 交货方式
@@ -126,7 +134,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -142,7 +151,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 制单日期
      */
     @ApiModelProperty(name="makeOrderDate",value = "制单日期")
-    @Excel(name = "制单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "制单日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "make_order_date")
     private Date makeOrderDate;
 
@@ -158,7 +168,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 审核日期
      */
     @ApiModelProperty(name="auditDate",value = "审核日期")
-    @Excel(name = "审核日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "审核日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "audit_date")
     private Date auditDate;
 

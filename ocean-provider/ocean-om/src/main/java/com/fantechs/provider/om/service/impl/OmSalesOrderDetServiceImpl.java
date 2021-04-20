@@ -1,17 +1,16 @@
-package com.fantechs.provider.om.service.impl.sales;
+package com.fantechs.provider.om.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.om.sales.OmSalesOrderDetDto;
-import com.fantechs.common.base.general.entity.om.sales.OmSalesOrderDet;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.om.mapper.sales.OmSalesOrderDetMapper;
-import com.fantechs.provider.om.service.sales.OmSalesOrderDetService;
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
+import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
+import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

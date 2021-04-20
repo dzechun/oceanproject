@@ -1,16 +1,17 @@
-package com.fantechs.provider.om.service.impl.sales;
+package com.fantechs.provider.om.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.om.sales.OmSalesOrderDto;
-import com.fantechs.common.base.general.entity.om.sales.OmSalesOrder;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
+import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.om.mapper.sales.OmSalesOrderMapper;
-import com.fantechs.provider.om.service.sales.OmSalesOrderService;
+import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
+import com.fantechs.provider.om.service.OmSalesOrderService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,15 +36,19 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             throw new BizErrorException((ErrorCodeEnum.UAC10011039));
         }
 
+        omSalesOrder.setSalesOrderId(null);
+        omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+        omSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
+        omSalesOrder.setCreateTime(new Date());
+        omSalesOrder.setCreateUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedTime(new Date());
 
-        recordHistory(omSalesOrder, "新增");
+        int result = omSalesOrderMapper.insertUseGeneratedKeys(omSalesOrder);
 
-        if(omSalesOrderMapper.insert(omSalesOrder)<=0) {
-            return 0;
-        }
-        return 1;
+//        recordHistory(omSalesOrder, "新增");
+//
+        return result;
     }
 
     @Override
@@ -59,7 +64,6 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             if(StringUtils.isEmpty(omSalesOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            recordHistory(omSalesOrder, "删除");
         }
         if(omSalesOrderMapper.deleteByIds(ids)<=0) {
             return 0;
@@ -77,9 +81,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedTime(new Date());
 
-        recordHistory(omSalesOrder, "更新");
 
-        if(omSalesOrderMapper.updateByPrimaryKey(omSalesOrder)<=0) {
+        if(omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrder)<=0) {
             return 0;
         }
         return 1;
@@ -95,7 +98,4 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         return omSalesOrderMapper.findHtList(map);
     }
 
-    private void recordHistory(OmSalesOrder omSalesOrder, String operation) {
-
-    }
 }
