@@ -1,18 +1,19 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.basic.BaseProcess;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStaffDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStaffImport;
-import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
+import com.fantechs.common.base.general.entity.basic.BaseStaff;
+import com.fantechs.common.base.general.entity.basic.BaseStaffProcess;
+import com.fantechs.common.base.general.entity.basic.BaseTeam;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStaff;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStaffProcessService;
 import com.fantechs.provider.base.service.BaseStaffService;
@@ -39,10 +40,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     private BaseStaffProcessService baseStaffProcessService;
     @Resource
     private BaseTeamMapper baseTeamMapper;
-    @Resource
-    private BasicFeignApi basicFeignApi;
-    @Resource
-    private BaseOrganizationMapper baseOrganizationMapper;
     @Resource
     private BaseStaffProcessMapper baseStaffProcessMapper;
     @Resource

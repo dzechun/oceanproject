@@ -21,7 +21,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
@@ -77,7 +77,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
     @Resource
     private QmsFeignApi qmsFeignApi;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
 
     @Override
@@ -242,7 +242,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
         }
 
         //=====取出当前工序的上工序
-        ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(mesPmWorkOrder.getRouteId());
+        ResponseEntity<List<BaseRouteProcess>> result = baseFeignApi.findConfigureRout(mesPmWorkOrder.getRouteId());
         if (result.getCode() != 0) {
             throw new BizErrorException(result.getMessage());
         }
@@ -644,7 +644,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
                         SmtWorkOrderCardPool smtWorkOrderCardPool1 = smtWorkOrderCardPoolService.selectByKey(processFinishedProductDTO.getWorkOrderCardPoolId());
                         MesPmWorkOrder mesPmWorkOrder1 = mesPmWorkOrderService.selectByKey(smtWorkOrderCardPool1.getWorkOrderId());
                         //部件的工艺路线
-                        List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(mesPmWorkOrder1.getRouteId()).getData();
+                        List<BaseRouteProcess> baseRouteProcesses = baseFeignApi.findConfigureRout(mesPmWorkOrder1.getRouteId()).getData();
                         for (BaseRouteProcess baseRouteProcess : baseRouteProcesses) {
                             if (baseRouteProcess.getProcessId().equals(preProcessId)) {
                                 //当前部件拥有当前工序的上工序流程
@@ -795,7 +795,7 @@ public class SmtProcessListProcessServiceImpl extends BaseService<SmtProcessList
             BigDecimal remainQty = processFinishedProductDTO.getCurOutputQty().multiply(quantity);
             for (SmtWorkOrderCardPoolDto smtWorkOrderCardPoolDto : temp) {
                 mesPmWorkOrder = mesPmWorkOrderService.selectByKey(smtWorkOrderCardPoolDto.getWorkOrderId());
-                List<BaseRouteProcess> baseRouteProcesses = basicFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId()).getData();
+                List<BaseRouteProcess> baseRouteProcesses = baseFeignApi.findConfigureRout(smtWorkOrderCardPoolDto.getRouteId()).getData();
                 if (resultCount > 0) {
                     //当前工序最后的工段
                     //用工单的工艺路线代替部件的工艺路线开工

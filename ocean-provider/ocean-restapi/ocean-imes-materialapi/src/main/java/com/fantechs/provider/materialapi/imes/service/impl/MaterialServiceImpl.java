@@ -1,8 +1,8 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
 import javax.annotation.Resource;
@@ -16,7 +16,7 @@ import java.util.List;
 public class MaterialServiceImpl implements MaterialService {
 
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public String testMethod(String testName) {
@@ -30,7 +30,7 @@ public class MaterialServiceImpl implements MaterialService {
             return "fail";
         }
         //新增物料
-        basicFeignApi.batchUpdateSmtMaterial(baseMaterials);
+        baseFeignApi.batchUpdateSmtMaterial(baseMaterials);
 
         return "success";
     }

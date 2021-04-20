@@ -22,7 +22,6 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.qms.mapper.QmsAndinStorageQuarantineMapper;
@@ -54,11 +53,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
     @Resource
     private QmsHtAndinStorageQuarantineMapper qmsHtAndinStorageQuarantineMapper;
     @Resource
-    private BasicFeignApi basicFeignApi;
-    @Resource
     private BaseFeignApi baseFeignApi;
-    @Resource
-    private BcmFeignApi bcmFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
 
@@ -179,7 +174,7 @@ public class QmsAndinStorageQuarantineServiceImpl extends BaseService<QmsAndinSt
         String msg = list.getData().get(0).getWorkOrderCode()+";";
         msg += mesPackageManagerDTO.getBarCode()+";";
 
-        BaseWarehouseArea baseWarehouseArea = basicFeignApi.warehouseAreaDetail(qmsAndinStorageQuarantine.getInspectionWaitingAreaId()).getData();
+        BaseWarehouseArea baseWarehouseArea = baseFeignApi.warehouseAreaDetail(qmsAndinStorageQuarantine.getInspectionWaitingAreaId()).getData();
         if (StringUtils.isEmpty(baseWarehouseArea)){
             msg += "区域信息不存在";
         }else {

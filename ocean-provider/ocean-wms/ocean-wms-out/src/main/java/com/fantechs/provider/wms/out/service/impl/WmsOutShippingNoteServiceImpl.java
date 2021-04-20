@@ -2,18 +2,18 @@ package com.fantechs.provider.wms.out.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.storage.SmtStoragePallet;
 import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarningDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarningPersonnelDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutShippingNoteDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarning;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNote;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNotePallet;
@@ -26,7 +26,6 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.fileserver.service.BcmFeignApi;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtShippingNoteMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutShippingNoteMapper;
@@ -56,14 +55,10 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
     @Resource
     private WmsOutHtShippingNoteMapper wmsOutHtShippingNoteMapper;
     @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BaseFeignApi baseFeignApi;
     @Resource
     private WmsOutShippingNotePalletMapper wmsOutShippingNotePalletMapper;
 
-    @Resource
-    private BcmFeignApi bcmFeignApi;
-    @Resource
-    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<WmsOutShippingNoteDto> findList(Map<String, Object> map) {
@@ -140,7 +135,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
 
             SearchWmsInnerStorageInventory searchSmtStorageInventor = new SearchWmsInnerStorageInventory();
             searchSmtStorageInventor.setStorageId(wmsOutShippingNoteDets.get(0).getStorageId());
-            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApi.findList(searchSmtStorageInventor).getData();
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = baseFeignApi.findList(searchSmtStorageInventor).getData();
             if (StringUtils.isEmpty(smtStorageInventoryDtos)) {
                 throw new BizErrorException(ErrorCodeEnum.STO30012001);
             }
@@ -167,7 +162,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
                 searchSmtStoragePallet.setIsBinding((byte) 1);
                 searchSmtStoragePallet.setIsDelete((byte) 1);
                 //判断栈板是否绑定区域
-                List<SmtStoragePalletDto> smtStoragePallets = storageInventoryFeignApi.findList(searchSmtStoragePallet).getData();
+                List<SmtStoragePalletDto> smtStoragePallets = baseFeignApi.findList(searchSmtStoragePallet).getData();
                 if (smtStoragePallets.size() <= 0) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100);
                 }
@@ -178,7 +173,7 @@ public class WmsOutShippingNoteServiceImpl extends BaseService<WmsOutShippingNot
                 smtStoragePallet.setStorageId(wmsOutShippingNoteDet.getMoveStorageId());
                 smtStoragePallet.setModifiedTime(new Date());
                 smtStoragePallet.setModifiedUserId(user.getUserId());
-                storageInventoryFeignApi.update(smtStoragePallet);
+                baseFeignApi.update(smtStoragePallet);
 
                 //重新添加子表与栈板关系表
                 WmsOutShippingNotePallet wmsOutShippingNotePallet = new WmsOutShippingNotePallet();

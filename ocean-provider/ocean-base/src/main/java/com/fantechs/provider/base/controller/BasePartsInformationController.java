@@ -112,13 +112,19 @@ public class BasePartsInformationController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BasePartsInformationImport> basePartsInformationImports = EasyPoiUtils.importExcel(file,2,1, BasePartsInformationImport.class);
-            Map<String, Object> resultMap = basePartsInformationService.importExcel(basePartsInformationImports);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
-        } catch (Exception e) {
+            List<BasePartsInformationImport> basePartsInformationImports = EasyPoiUtils.importExcel(file, 2, 1, BasePartsInformationImport.class);
+            try {
+                Map<String, Object> resultMap = basePartsInformationService.importExcel(basePartsInformationImports);
+                return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            }
+        }catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

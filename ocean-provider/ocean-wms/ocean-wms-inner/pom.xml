@@ -30,18 +30,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.imes.basic</groupId>
-            <artifactId>ocean-imes-basic-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.imes.storage</groupId>
-            <artifactId>ocean-storage-inventory-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.api.wms.in</groupId>
             <artifactId>ocean-wms-in-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>

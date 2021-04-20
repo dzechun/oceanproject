@@ -17,7 +17,6 @@
     <modules>
         <module>ocean-fileserver</module>  <!-- 文件服务 -->
         <module>ocean-security</module>    <!-- 用户认证中心 -->
-        <module>ocean-imes</module>    <!-- imes服务 -->
         <module>ocean-quartz</module>    <!-- 定时任务调度器 -->
         <module>ocean-electronic-tag</module> <!-- 电子标签 -->
         <module>ocean-client</module>     <!-- 客户端服务 -->
@@ -34,6 +33,5 @@
         <module>ocean-srm</module>    <!-- 供应商管理 -->
         <module>ocean-tem</module>
         <module>ocean-agv</module>
-<!--        <module>ocean-exhibition-client</module>     &lt;!&ndash;展厅客户端&ndash;&gt;-->
     </modules>
 </project>

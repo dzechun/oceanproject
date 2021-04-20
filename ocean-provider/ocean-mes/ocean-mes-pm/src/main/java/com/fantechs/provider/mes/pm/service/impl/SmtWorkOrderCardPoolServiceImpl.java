@@ -11,7 +11,7 @@ import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtWorkOrderCard
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.mes.pm.mapper.SmtWorkOrderCardPoolMapper;
 import com.fantechs.provider.mes.pm.service.SmtProcessListProcessService;
 import com.fantechs.provider.mes.pm.service.SmtWorkOrderCardPoolService;
@@ -36,7 +36,7 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
     @Resource
     private SmtProcessListProcessService smtProcessListProcessService;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<SmtWorkOrderCardPoolDto> findList(SearchSmtWorkOrderCardPool searchSmtWorkOrderCardPool) {
@@ -110,7 +110,7 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         Date date = new Date();
         if(StringUtils.isNotEmpty(noPutIntoCardDTOList)){
             for (NoPutIntoCardDTO noPutIntoCardDTO : noPutIntoCardDTOList) {
-                ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
+                ResponseEntity<List<BaseRouteProcess>> result = baseFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
                 if(result.getCode()!=0){
                     throw new BizErrorException(result.getMessage());
                 }
@@ -140,7 +140,7 @@ public class SmtWorkOrderCardPoolServiceImpl extends BaseService<SmtWorkOrderCar
         Date date = new Date();
         if(StringUtils.isNotEmpty(noPutIntoCardDTOList)){
             for (NoPutIntoCardDTO noPutIntoCardDTO : noPutIntoCardDTOList) {
-                ResponseEntity<List<BaseRouteProcess>> result = basicFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
+                ResponseEntity<List<BaseRouteProcess>> result = baseFeignApi.findConfigureRout(noPutIntoCardDTO.getRouteId());
                 if(result.getCode()!=0){
                     throw new BizErrorException(result.getMessage());
                 }

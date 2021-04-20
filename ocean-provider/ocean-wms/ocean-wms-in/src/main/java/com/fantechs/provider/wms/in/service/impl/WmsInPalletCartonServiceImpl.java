@@ -6,8 +6,7 @@ import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPalletCarton;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
-import com.fantechs.provider.wms.in.mapper.WmsInPalletCartonMapper;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.in.service.WmsInPalletCartonService;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +21,7 @@ import java.util.List;
 public class WmsInPalletCartonServiceImpl extends BaseService<WmsInPalletCarton> implements WmsInPalletCartonService {
 
     @Resource
-    private WmsInPalletCartonMapper wmsInPalletCartonMapper;
-    @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public String checkPallet(String palletCode) {
@@ -33,7 +30,7 @@ public class WmsInPalletCartonServiceImpl extends BaseService<WmsInPalletCarton>
         smtStoragePallet.setPalletCode(palletCode);
         smtStoragePallet.setIsDelete((byte)1);
         smtStoragePallet.setIsBinding((byte)1);
-        ResponseEntity<List<SmtStoragePalletDto>> smtStoragePallets =  storageInventoryFeignApi.findList(smtStoragePallet);
+        ResponseEntity<List<SmtStoragePalletDto>> smtStoragePallets =  baseFeignApi.findList(smtStoragePallet);
         if(smtStoragePallets.getData().size() > 0){
             return "false";
         }else{

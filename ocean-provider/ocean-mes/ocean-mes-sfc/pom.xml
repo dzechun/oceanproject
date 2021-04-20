@@ -47,12 +47,6 @@
             <artifactId>spring-amqp</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.imes.basic</groupId>
-            <artifactId>ocean-imes-basic-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.api.base</groupId>
             <artifactId>ocean-om-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>

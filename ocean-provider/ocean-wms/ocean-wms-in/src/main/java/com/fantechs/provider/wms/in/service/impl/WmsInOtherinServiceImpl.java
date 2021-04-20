@@ -19,7 +19,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.storage.StorageInventoryFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.in.controller.pda.PDAMesPackageManagerController;
 import com.fantechs.provider.wms.in.mapper.WmsInHtOtherinMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInOtherinDetMapper;
@@ -49,7 +49,7 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
     @Resource
     private WmsInOtherinDetMapper wmsInOtherinDetMapper;
     @Resource
-    private StorageInventoryFeignApi storageInventoryFeignApi;
+    private BaseFeignApi baseFeignApi;
     @Resource
     private WmsInPalletCartonMapper wmsInPalletCartonMapper;
     @Resource
@@ -126,15 +126,15 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
             smtStoragePallet.setPalletCode(wmsInOtherinDet.getPalletCode());
             smtStoragePallet.setStorageId(wmsInOtherinDet.getStorageId());
             //存储位与栈板关系表smt
-            storageInventoryFeignApi.add(smtStoragePallet);
+            baseFeignApi.add(smtStoragePallet);
 
             //查询储位库存表，有库存累加，无库存新增
             SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
             searchWmsInnerStorageInventory.setStorageId(wmsInOtherinDet.getStorageId());
             searchWmsInnerStorageInventory.setMaterialId(wmsInOtherinDet.getMaterialId());
-            ResponseEntity<List<WmsInnerStorageInventoryDto>> storageInventoryFeignApiList = storageInventoryFeignApi.findList(searchWmsInnerStorageInventory);
-            if(storageInventoryFeignApiList.getCode() == 0){
-                List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = storageInventoryFeignApiList.getData();
+            ResponseEntity<List<WmsInnerStorageInventoryDto>> baseFeignApiList = baseFeignApi.findList(searchWmsInnerStorageInventory);
+            if(baseFeignApiList.getCode() == 0){
+                List<WmsInnerStorageInventoryDto> smtStorageInventoryDtos = baseFeignApiList.getData();
                 long storageInventory = 0;
                 if(smtStorageInventoryDtos.size() > 0){
                     WmsInnerStorageInventoryDto smtStorageInventoryDto = smtStorageInventoryDtos.get(0);
@@ -143,7 +143,7 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
                     smtStorageInventoryDto.setQuantity(smtStorageInventoryDto.getQuantity().add(wmsInOtherinDet.getInQuantity()));
                     smtStorageInventoryDto.setModifiedTime(new Date());
                     smtStorageInventoryDto.setModifiedUserId(user.getUserId());
-                    storageInventoryFeignApi.update(smtStorageInventoryDto);
+                    baseFeignApi.update(smtStorageInventoryDto);
                 } else {
                     //新增库存
                     WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
@@ -153,7 +153,7 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
                     wmsInnerStorageInventory.setOrganizationId(user.getOrganizationId());
                     wmsInnerStorageInventory.setCreateTime(new Date());
                     wmsInnerStorageInventory.setCreateUserId(user.getCreateUserId());
-                    wmsInnerStorageInventory = storageInventoryFeignApi.add(wmsInnerStorageInventory).getData();
+                    wmsInnerStorageInventory = baseFeignApi.add(wmsInnerStorageInventory).getData();
                     storageInventory = wmsInnerStorageInventory.getStorageInventoryId();
                 }
 
@@ -164,7 +164,7 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
                 smtStorageInventoryDet.setGodownEntry(wmsInOtherin.getOtherinCode());
                 smtStorageInventoryDet.setMaterialQuantity(wmsInOtherinDet.getInQuantity());
                 //生产批号，生产日期，供应商ID无
-                storageInventoryFeignApi.add(smtStorageInventoryDet);
+                baseFeignApi.add(smtStorageInventoryDet);
             }else{
                 //查询失败
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);

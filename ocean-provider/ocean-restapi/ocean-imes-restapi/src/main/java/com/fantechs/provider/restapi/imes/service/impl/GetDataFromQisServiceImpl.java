@@ -1,14 +1,14 @@
 package com.fantechs.provider.restapi.imes.service.impl;
 
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.entity.basic.qis.QisResultBean;
 import com.fantechs.common.base.entity.basic.qis.QisWareHouseCW;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.restapi.imes.config.ConstantBase;
 import com.fantechs.provider.restapi.imes.config.DataSource;
 import com.fantechs.provider.restapi.imes.config.RestURL;
@@ -37,7 +37,7 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
     @Resource
     private RedisUtil redisUtil;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
 
     @Override
@@ -58,7 +58,7 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
         //同步U9仓库完成，获取本地的仓库数据
         SearchBaseWarehouse searchBaseWarehouse1 = new SearchBaseWarehouse();
         searchBaseWarehouse1.setPageSize(999999);
-        ResponseEntity<List<BaseWarehouse>> responseEntity = basicFeignApi.findList(searchBaseWarehouse1);
+        ResponseEntity<List<BaseWarehouse>> responseEntity = baseFeignApi.findList(searchBaseWarehouse1);
         List<BaseWarehouse> warehouseList = responseEntity.getData();
 
         //同步QIS储位数据
@@ -96,7 +96,7 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
 
                 //判断对储位执行新增还是更新
                 searchBaseStorage.setStorageCode(baseStorage.getStorageCode());
-                ResponseEntity<List<BaseStorage>> storageResponseEntity = basicFeignApi.findList(searchBaseStorage);
+                ResponseEntity<List<BaseStorage>> storageResponseEntity = baseFeignApi.findList(searchBaseStorage);
                 if (StringUtils.isNotEmpty(storageResponseEntity.getData())) {
                     storageUpdateList.add(baseStorage);
                 } else {
@@ -108,12 +108,12 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
             if (qisWareHouseCWList.size() > 1000 && storageAddList.size() > 0 && storageAddList.size() % 1000 == 0) {
                 //批量更新储位
                 if (StringUtils.isNotEmpty(storageUpdateList)) {
-                    basicFeignApi.batchUpdate(storageUpdateList);
+                    baseFeignApi.batchUpdate(storageUpdateList);
                     storageAddList.clear();
                 }
                 //批量新增储位
                 if (StringUtils.isNotEmpty(storageAddList)) {
-                    basicFeignApi.batchAdd(storageAddList);
+                    baseFeignApi.batchAdd(storageAddList);
                     storageAddList.clear();
                 }
             }
@@ -123,12 +123,12 @@ public class GetDataFromQisServiceImpl implements GetDataFromQisService {
         //数量小于1000时的批量操作
         //批量更新储位
         if (StringUtils.isNotEmpty(storageUpdateList)) {
-            basicFeignApi.batchUpdate(storageUpdateList);
+            baseFeignApi.batchUpdate(storageUpdateList);
             storageAddList.clear();
         }
         //批量新增储位
         if (StringUtils.isNotEmpty(storageAddList)) {
-            basicFeignApi.batchAdd(storageAddList);
+            baseFeignApi.batchAdd(storageAddList);
             storageAddList.clear();
         }
 

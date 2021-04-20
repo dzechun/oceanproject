@@ -6,14 +6,14 @@ import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
 import com.fantechs.common.base.electronic.entity.SmtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.history.SmtHtElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.imes.basic.BasicFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.electronic.mapper.SmtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.mapper.SmtHtElectronicTagStorageMapper;
 import com.fantechs.provider.electronic.service.SmtElectronicTagStorageService;
@@ -38,7 +38,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
     @Resource
     private SmtEquipmentServiceImpl smtEquipmentService;
     @Resource
-    private BasicFeignApi basicFeignApi;
+    private BaseFeignApi baseFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -162,7 +162,7 @@ public class SmtElectronicTagStorageServiceImpl extends BaseService<SmtElectroni
             }
 
             //判断该编码对应的储位是否存在
-            BaseStorage storage = basicFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
+            BaseStorage storage = baseFeignApi.detail(Long.valueOf(smtElectronicTagStorageDto.getStorageId())).getData();
             //判断该编码对应的设备是否存在
             SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
             searchSmtEquipment.setEquipmentCode(equipmentCode);
