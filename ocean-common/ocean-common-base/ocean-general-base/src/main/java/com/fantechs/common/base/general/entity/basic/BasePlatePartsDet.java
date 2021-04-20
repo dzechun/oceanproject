@@ -86,7 +86,7 @@ public class BasePlatePartsDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="texture",value = "材质")
     @Excel(name = "材质", height = 20, width = 30)
-    @Column(name = "material_quality")
+    @Column(name = "material_qty")
     private String materialQuality;
 
     /**
