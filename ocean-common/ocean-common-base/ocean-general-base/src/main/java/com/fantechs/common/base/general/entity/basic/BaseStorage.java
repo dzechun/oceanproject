@@ -7,9 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -239,9 +237,4 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     private String option3;
 
-    /**
-     * 储位物料关系集合
-     */
-    @ApiModelProperty(name="baseStorageMaterials",value = "储位物料关系集合")
-    private List<BaseStorageMaterial> baseStorageMaterials = new ArrayList<>();
 }
