@@ -209,7 +209,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                     throw new BizErrorException("无法获取到部件信息");
                 }
 
-                BigDecimal quantity = basePlatePartsDetDtos.get(0).getQuantity();//部件用量
+                BigDecimal quantity = basePlatePartsDetDtos.get(0).getUseQty();//部件用量
                 if (quantity == null || BigDecimal.valueOf(0).compareTo(quantity) == 0 || BigDecimal.valueOf(0).compareTo(quantity) == 1) {
                     throw new BizErrorException("部件用量必须大于0");
                 }
@@ -356,7 +356,7 @@ public class MesPmMatchingOrderServiceImpl extends BaseService<MesPmMatchingOrde
                 throw new BizErrorException("无法获取到部件信息");
             }
 
-            BigDecimal quantity = basePlatePartsDetDtos.get(0).getQuantity();//部件用量
+            BigDecimal quantity = basePlatePartsDetDtos.get(0).getUseQty();//部件用量
             if (quantity == null || BigDecimal.valueOf(0).compareTo(quantity) == 0 || BigDecimal.valueOf(0).compareTo(quantity) == 1) {
                 throw new BizErrorException("部件用量必须大于0");
             }
