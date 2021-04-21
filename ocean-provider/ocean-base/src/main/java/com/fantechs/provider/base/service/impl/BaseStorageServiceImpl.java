@@ -7,7 +7,6 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -64,17 +63,6 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         baseStorage.setModifiedTime(new Date());
         baseStorage.setOrganizationId(currentUser.getOrganizationId());
         baseStorageMapper.insertUseGeneratedKeys(baseStorage);
-
-        //新增储位和物料关系
-        List<BaseStorageMaterial> baseStorageMaterials = baseStorage.getBaseStorageMaterials();
-        if(StringUtils.isNotEmpty(baseStorageMaterials)){
-            for (BaseStorageMaterial baseStorageMaterial : baseStorageMaterials) {
-                baseStorageMaterial.setStorageId(baseStorage.getStorageId());
-            }
-        }
-        if(StringUtils.isNotEmpty(baseStorageMaterials)){
-            baseStorageMaterialMapper.insertList(baseStorageMaterials);
-        }
 
         //新增储位历史信息
         BaseHtStorage baseHtStorage = new BaseHtStorage();
@@ -157,40 +145,12 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         BaseHtStorage baseHtStorage = new BaseHtStorage();
         org.springframework.beans.BeanUtils.copyProperties(storage, baseHtStorage);
         baseHtStorageMapper.insertSelective(baseHtStorage);
-
-        //移除旧的绑定关系
-        Example example1 = new Example(BaseStorageMaterial.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("storageId",baseStorage.getStorageId());
-        baseStorageMaterialMapper.deleteByExample(example1);
-
-        //新增绑定关系
-        List<BaseStorageMaterial> baseStorageMaterials = storage.getBaseStorageMaterials();
-        if(StringUtils.isNotEmpty(baseStorageMaterials)){
-            for (BaseStorageMaterial baseStorageMaterial : baseStorageMaterials) {
-                baseStorageMaterial.setStorageId(baseStorage.getStorageId());
-            }
-        }
-        if(StringUtils.isNotEmpty(baseStorageMaterials)){
-            baseStorageMaterialMapper.insertList(baseStorageMaterials);
-        }
-
         return i;
     }
 
     @Override
     public List<BaseStorage> findList(SearchBaseStorage searchBaseStorage) {
-        List<BaseStorage> baseStorages = baseStorageMapper.findList(searchBaseStorage);
-        SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
-
-        for (BaseStorage baseStorage: baseStorages) {
-            searchBaseStorageMaterial.setStorageId(baseStorage.getStorageId());
-            List<BaseStorageMaterial> baseStorageMaterials = baseStorageMaterialMapper.findList(searchBaseStorageMaterial);
-            if(StringUtils.isNotEmpty(baseStorageMaterials)){
-                baseStorage.setBaseStorageMaterials(baseStorageMaterials);
-            }
-        }
-        return baseStorages;
+        return baseStorageMapper.findList(searchBaseStorage);
     }
 
 
