@@ -33,7 +33,19 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     public int save(OmSalesOrder omSalesOrder) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException((ErrorCodeEnum.UAC10011039));
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        if(StringUtils.isEmpty(omSalesOrder.getSalesOrderCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "销售订单号不能为空");
+        }
+
+        if(StringUtils.isEmpty(omSalesOrder.getContractCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "合同号不能为空");
+        }
+
+        if(StringUtils.isEmpty(omSalesOrder.getCustomerOrderCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "客户订单号不能为空");
         }
 
         omSalesOrder.setSalesOrderId(null);
@@ -60,7 +72,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
         String[] idArray = ids.split(",");
         for(String id : idArray) {
-            OmSalesOrder omSalesOrder = omSalesOrderMapper.selectByPrimaryKey(id);
+            OmSalesOrder omSalesOrder = omSalesOrderMapper.selectByPrimaryKey(Long.valueOf(id));
             if(StringUtils.isEmpty(omSalesOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
@@ -78,6 +90,18 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        if(StringUtils.isEmpty(omSalesOrder.getSalesOrderCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "销售订单号不能为空");
+        }
+
+        if(StringUtils.isEmpty(omSalesOrder.getContractCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "合同号不能为空");
+        }
+
+        if(StringUtils.isEmpty(omSalesOrder.getCustomerOrderCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "客户订单号不能为空");
+        }
+
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedTime(new Date());
 
@@ -93,9 +117,5 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         return omSalesOrderMapper.findList(map);
     }
 
-    @Override
-    public List<OmSalesOrderDto> findHtList(Map<String, Object> map) {
-        return omSalesOrderMapper.findHtList(map);
-    }
 
 }

@@ -10,6 +10,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
+import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 
     @Resource
     private OmSalesOrderDetMapper omSalesOrderDetMapper;
+    @Resource
+    private OmSalesOrderMapper omSalesOrderMapper;
 
     @Override
     public int save(OmSalesOrderDet omSalesOrderDet) {
@@ -35,15 +38,37 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+
+        if(StringUtils.isEmpty(omSalesOrderDet.getSalesOrderId())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "销售订单ID不能为空");
+        }
+        if(StringUtils.isEmpty(omSalesOrderDet.getSourceLineNumber())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "行号不能为空");
+        }
+
+        //数据库有限制这个字段不能为空
+        if(StringUtils.isEmpty(omSalesOrderDet.getProjectCode())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "项目号不能为空");
+        }
+
+        omSalesOrderDet.setSalesOrderDetId(null);
+
+        //根据销售订单ID获取客户订单号
+        String customerOrderCode = omSalesOrderMapper.getCustomerOrderCode(omSalesOrderDet.getSalesOrderId());
+        if(StringUtils.isEmpty(customerOrderCode)) {
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + omSalesOrderDet.getSourceLineNumber());
+
+        omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
+        omSalesOrderDet.setCreateTime(new Date());
+        omSalesOrderDet.setCreateUserId(currentUserInfo.getUserId());
         omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrderDet.setModifiedTime(new Date());
 
-        recordHistory(omSalesOrderDet, "新增");
+        int result = omSalesOrderDetMapper.insertUseGeneratedKeys(omSalesOrderDet);
 
-        if(omSalesOrderDetMapper.insert(omSalesOrderDet)<=0) {
-            return 0;
-        }
-        return 1;
+        return result;
     }
 
     @Override
@@ -59,7 +84,6 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
             if(StringUtils.isEmpty(omSalesOrderDet)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            recordHistory(omSalesOrderDet, "删除");
         }
         if(omSalesOrderDetMapper.deleteByIds(ids)<=0) {
             return 0;
@@ -77,9 +101,8 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrderDet.setModifiedTime(new Date());
 
-        recordHistory(omSalesOrderDet, "更新");
 
-        if(omSalesOrderDetMapper.updateByPrimaryKey(omSalesOrderDet)<=0) {
+        if(omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDet)<=0) {
             return 0;
         }
         return 1;
@@ -88,14 +111,5 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
     @Override
     public List<OmSalesOrderDetDto> findList(Map<String, Object> map) {
         return omSalesOrderDetMapper.findList(map);
-    }
-
-    @Override
-    public List<OmSalesOrderDetDto> findHtList(Map<String, Object> map) {
-        return omSalesOrderDetMapper.findHtList(map);
-    }
-
-    private void recordHistory(OmSalesOrderDet omSalesOrderDet, String operation) {
-
     }
 }

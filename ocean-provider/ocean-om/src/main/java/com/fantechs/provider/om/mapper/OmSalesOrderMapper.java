@@ -12,5 +12,5 @@ import java.util.Map;
 public interface OmSalesOrderMapper extends MyMapper<OmSalesOrder> {
     List<OmSalesOrderDto> findList(Map<String, Object> map);
 
-    List<OmSalesOrderDto> findHtList(Map<String, Object> map);
+    String getCustomerOrderCode(Long salesOrderId);
 }

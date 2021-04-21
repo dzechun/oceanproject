@@ -11,6 +11,4 @@ import java.util.Map;
 @Mapper
 public interface OmSalesOrderDetMapper extends MyMapper<OmSalesOrderDet> {
     List<OmSalesOrderDetDto> findList(Map<String, Object> map);
-
-    List<OmSalesOrderDetDto> findHtList(Map<String, Object> map);
 }

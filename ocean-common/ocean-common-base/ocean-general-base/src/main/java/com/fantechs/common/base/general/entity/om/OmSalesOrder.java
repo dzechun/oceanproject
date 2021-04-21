@@ -62,10 +62,18 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     /**
      * 来源单据号
      */
-    @ApiModelProperty(name="sourceOrderId",value = "来源单据号")
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据号")
     @Excel(name = "来源单据号", height = 20, width = 30,orderNum="") 
-    @Column(name = "source_order_id")
-    private Long sourceOrderId;
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 来源单据行号
+     */
+    @ApiModelProperty(name="sourceOrderLineNumber",value = "来源单据行号")
+    @Excel(name = "来源单据行号", height = 20, width = 30,orderNum="")
+    @Column(name = "source_order_line_number")
+    private String sourceOrderLineNumber;
 
     /**
      * 条码规则集合ID

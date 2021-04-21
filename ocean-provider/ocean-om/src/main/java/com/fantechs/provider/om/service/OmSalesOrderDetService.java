@@ -13,6 +13,4 @@ import java.util.Map;
 
 public interface OmSalesOrderDetService extends IService<OmSalesOrderDet> {
     List<OmSalesOrderDetDto> findList(Map<String, Object> map);
-
-    List<OmSalesOrderDetDto> findHtList(Map<String, Object> map);
 }

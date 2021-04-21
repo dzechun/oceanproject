@@ -14,8 +14,6 @@ public class SearchOmSalesOrderDto extends BaseQuery implements Serializable {
      * 销售订单号
      */
     @ApiModelProperty(name="salesOrderCode",value = "销售订单号")
-    @Excel(name = "销售订单号", height = 20, width = 30,orderNum="")
-    @Column(name = "sales_order_code")
     private String salesOrderCode;
     /**
      * 客户订单号
