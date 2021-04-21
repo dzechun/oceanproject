@@ -9,11 +9,11 @@
     <result column="plate_parts_id" jdbcType="BIGINT" property="platePartsId" />
     <result column="parts_information_id" jdbcType="BIGINT" property="partsInformationId" />
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
-    <result column="specification" jdbcType="VARCHAR" property="specification" />
+    <result column="spec" jdbcType="VARCHAR" property="spec" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
-    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="use_qty" jdbcType="DECIMAL" property="useQty" />
     <result column="color" jdbcType="VARCHAR" property="color" />
-    <result column="material_qty" jdbcType="VARCHAR" property="materialQuality" />
+    <result column="texture" jdbcType="VARCHAR" property="texture" />
     <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -38,11 +38,11 @@
 	bppd.plate_parts_id,
 	bppd.parts_information_id,
 	bppd.route_id,
-	bppd.specification,
+	bppd.spec,
 	bppd.unit,
-	bppd.quantity,
+	bppd.use_qty,
 	bppd.color,
-	bppd.material_qty,
+	bppd.texture,
 	bppd.org_id,
 	bppd.remark,
 	bppd.`status`,
