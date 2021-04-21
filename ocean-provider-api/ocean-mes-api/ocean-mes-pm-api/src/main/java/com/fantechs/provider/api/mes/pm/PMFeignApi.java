@@ -1,13 +1,7 @@
 package com.fantechs.provider.api.mes.pm;
 
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.dto.mes.pm.*;
 import com.fantechs.common.base.general.dto.mes.pm.search.*;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.mes.pm.SmtStockDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.SmtWorkOrderCardCollocation;
