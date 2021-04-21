@@ -56,9 +56,9 @@ public class BasePlatePartsDet extends ValidGroup implements Serializable {
     /**
      * 规格
      */
-    @ApiModelProperty(name="specification",value = "规格")
+    @ApiModelProperty(name="spec",value = "规格")
     @Excel(name = "规格", height = 20, width = 30)
-    private String specification;
+    private String spec;
 
     /**
      * 单位
@@ -70,9 +70,9 @@ public class BasePlatePartsDet extends ValidGroup implements Serializable {
     /**
      * 用量
      */
-    @ApiModelProperty(name="quantity",value = "用量")
+    @ApiModelProperty(name="useQty",value = "用量")
     @Excel(name = "用量", height = 20, width = 30)
-    private BigDecimal quantity;
+    private BigDecimal useQty;
 
     /**
      * 颜色
@@ -86,8 +86,8 @@ public class BasePlatePartsDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="texture",value = "材质")
     @Excel(name = "材质", height = 20, width = 30)
-    @Column(name = "material_quality")
-    private String materialQuality;
+    @Column(name = "texture")
+    private String texture;
 
     /**
      * 组织id

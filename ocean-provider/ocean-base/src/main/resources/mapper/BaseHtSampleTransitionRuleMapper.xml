@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtSampleTransitionRuleMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtSampleTransitionRule">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_sample_transition_rule_id" jdbcType="BIGINT" property="htSampleTransitionRuleId" />
+    <result column="sample_transition_rule_id" jdbcType="BIGINT" property="sampleTransitionRuleId" />
+    <result column="sample_transition_rule_code" jdbcType="VARCHAR" property="sampleTransitionRuleCode" />
+    <result column="sample_transition_rule_desc" jdbcType="VARCHAR" property="sampleTransitionRuleDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhstr.ht_sample_transition_rule_id,
+    bhstr.sample_transition_rule_id,
+	bhstr.sample_transition_rule_code,
+	bhstr.sample_transition_rule_desc,
+	bhstr.org_id,
+	bhstr.remark,
+	bhstr.`status`,
+	bhstr.create_user_id,
+	bhstr.create_time,
+	bhstr.modified_user_id,
+	bhstr.modified_time,
+	bhstr.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM base_ht_sample_transition_rule AS bhstr
+    LEFT JOIN ocean_v2.sys_user su ON bhstr.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bhstr.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhstr.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhstr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="sampleSransitionRuleCode != null and sampleSransitionRuleCode!=''">
+        and bhstr.sample_transition_rule_code like CONCAT('%', #{sampleSransitionRuleCode}, '%')
+      </if>
+      <if test="sampleSransitionRuleDesc != null and sampleSransitionRuleDesc!=''">
+        and bhstr.sample_transition_rule_desc like CONCAT('%', #{sampleSransitionRuleDesc}, '%')
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>
