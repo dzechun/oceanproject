@@ -374,7 +374,7 @@ public class BaseTab extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialQuality",value = "材质")
     @Excel(name = "材质", height = 20, width = 30)
-    @Column(name = "material_qty")
+    @Column(name = "material_quality")
     private String materialQuality;
 
     /**
@@ -408,6 +408,78 @@ public class BaseTab extends ValidGroup implements Serializable {
     @Excel(name = "保质期（天）", height = 20, width = 30)
     @Column(name = "expiration_date")
     private Integer expirationDate;
+
+    /**
+     * 最小存储温度
+     */
+    @ApiModelProperty(name="minStorageTemperature",value = "最小存储温度")
+    @Excel(name = "最小存储温度", height = 20, width = 30)
+    @Column(name = "min_storage_temperature")
+    private String minStorageTemperature;
+
+    /**
+     * 最大存储温度
+     */
+    @ApiModelProperty(name="maxStorageTemperature",value = "最大存储温度")
+    @Excel(name = "最大存储温度", height = 20, width = 30)
+    @Column(name = "max_storage_temperature")
+    private String maxStorageTemperature;
+
+    /**
+     * 最小存储湿度
+     */
+    @ApiModelProperty(name="minStorageHumidity",value = "最小存储湿度")
+    @Excel(name = "最小存储湿度", height = 20, width = 30)
+    @Column(name = "min_storage_humidity")
+    private String minStorageHumidity;
+
+    /**
+     * 最大存储湿度
+     */
+    @ApiModelProperty(name="maxStorageHumidity",value = "最大存储湿度")
+    @Excel(name = "最大存储湿度", height = 20, width = 30)
+    @Column(name = "max_storage_humidity")
+    private String maxStorageHumidity;
+
+    /**
+     * 标签模板路径
+     */
+    @ApiModelProperty(name="labelSavePath",value = "标签模板路径")
+    @Excel(name = "标签模板路径", height = 20, width = 30)
+    @Column(name = "label_save_path")
+    private String labelSavePath;
+
+    /**
+     * 标签模板名称
+     */
+    @ApiModelProperty(name="labelName",value = "标签模板名称")
+    @Excel(name = "标签模板名称", height = 20, width = 30)
+    @Column(name = "label_name")
+    private String labelName;
+
+    /**
+     * 设定载具数
+     */
+    @ApiModelProperty(name="vehicleCount",value = "设定载具数")
+    @Excel(name = "设定载具数", height = 20, width = 30)
+    @Column(name = "vehicle_count")
+    private String vehicleCount;
+
+    /**
+     * 优化配送方式
+     */
+    @ApiModelProperty(name="idsType",value = "优化配送方式")
+    @Excel(name = "优化配送方式", height = 20, width = 30)
+    @Column(name = "ids_type")
+    private String idsType;
+
+    /**
+     * 配送载具数算法
+     */
+    @ApiModelProperty(name="idsVehicleCountArithmetic",value = "配送载具数算法")
+    @Excel(name = "配送载具数算法", height = 20, width = 30)
+    @Column(name = "ids_vehicle_count_arithmetic")
+    private String idsVehicleCountArithmetic;
 
     private static final long serialVersionUID = 1L;
 }

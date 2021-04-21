@@ -49,11 +49,20 @@
       <result column="storage_humidity" jdbcType="VARCHAR" property="storageHumidity" />
       <result column="storage_require_desc" jdbcType="VARCHAR" property="storageRequireDesc" />
       <result column="packing_method" jdbcType="INTEGER" property="packingMethod" />
-      <result column="material_qty" jdbcType="VARCHAR" property="materialQuality" />
+      <result column="material_quality" jdbcType="VARCHAR" property="materialQuality" />
       <result column="is_wet_sensitive" jdbcType="TINYINT" property="isWetSensitive" />
       <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
       <result column="voltage" jdbcType="VARCHAR" property="voltage" />
       <result column="expiration_date" jdbcType="DECIMAL" property="expirationDate" />
+      <result column="min_storage_temperature" jdbcType="VARCHAR" property="minStorageTemperature" />
+      <result column="max_storage_temperature" jdbcType="VARCHAR" property="maxStorageTemperature" />
+      <result column="min_storage_humidity" jdbcType="VARCHAR" property="minStorageHumidity" />
+      <result column="max_storage_humidity" jdbcType="VARCHAR" property="maxStorageHumidity" />
+      <result column="label_save_path" jdbcType="VARCHAR" property="labelSavePath" />
+      <result column="label_name" jdbcType="VARCHAR" property="labelName" />
+      <result column="vehicle_count" jdbcType="VARCHAR" property="vehicleCount" />
+      <result column="ids_type" jdbcType="VARCHAR" property="idsType" />
+      <result column="ids_vehicle_count_arithmetic" jdbcType="VARCHAR" property="idsVehicleCountArithmetic" />
   </resultMap>
 
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseTabDto" extends="BaseResultMap">
@@ -121,9 +130,18 @@
 	bmt.packing_method,
 	bmt.is_wet_sensitive,
 	bmt.wet_sensitive_level,
-	bmt.material_qty,
+	bmt.material_quality,
     bmt.voltage,
-    bmt.expiration_date
+    bmt.expiration_date,
+    bmt.min_storage_temperature,
+    bmt.max_storage_temperature,
+    bmt.min_storage_humidity,
+    bmt.max_storage_humidity,
+    bmt.label_save_path,
+    bmt.label_name,
+    bmt.vehicle_count,
+    bmt.ids_type,
+    bmt.ids_vehicle_count_arithmetic
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
