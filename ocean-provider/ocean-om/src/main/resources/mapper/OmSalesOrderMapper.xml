@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.om.mapper.OmSalesOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+        <result column="source_order_line_number" jdbcType="VARCHAR" property="sourceOrderLineNumber" />
+        <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId" />
+        <result column="delivery_type" jdbcType="VARCHAR" property="deliveryType" />
+        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept" />
+        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName" />
+        <result column="data_source" jdbcType="VARCHAR" property="dataSource" />
+        <result column="order_type" jdbcType="TINYINT" property="orderType" />
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName" />
+        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
+        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
+        <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    so.sales_order_id, so.sales_order_code, so.contract_code, so.supplier_id, so.customer_order_code,
+    so.source_order_code, so.source_order_line_number, so.barcode_rule_set_id, so.delivery_type, so.sales_dept,
+    so.sales_user_name, so.data_source, so.order_type, so.order_status, so.status, so.order_date, so.make_order_user_name,
+    so.make_order_date, so.audit_user_name, so.audit_date, so.remark, so.org_id, so.create_user_id,
+    so.create_time, so.modified_user_id, so.modified_time, so.is_delete, so.option1, so.option2, so.option3
+  </sql>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from om_sales_order so
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND {#endTime}
+            </if>
+
+            <if test="status != null">
+                and so.status = #{status}
+            </if>
+
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                and so.sales_order_code = #{salesOrderCode}
+            </if>
+
+            <if test="customerOrderCode != null and customerOrderCode != ''">
+                and so.customer_order_code = #{customerOrderCode}
+            </if>
+
+            <if test="contractCode != null and contractCode != ''">
+                and so.contract_code = #{contractCode}
+            </if>
+        </where>
+        order by so.modified_time desc
+    </select>
+
+    <select id="getCustomerOrderCode" parameterType="java.lang.Long" resultType="java.lang.String">
+        select
+        so.customer_order_code
+        from om_sales_order so
+        <where>
+            <if test="_parameter != null">
+                and so.sales_order_id = #{salesOrderId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
