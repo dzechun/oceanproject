@@ -28,6 +28,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -111,18 +112,16 @@ public class BaseWorkshopSectionController {
         try {
             // 导入操作
             List<BaseWorkshopSectionImport> baseWorkshopSectionImports = EasyPoiUtils.importExcel(file, 2, 1, BaseWorkshopSectionImport.class);
-            try {
-                Map<String, Object> resultMap = baseWorkshopSectionService.importExcel(baseWorkshopSectionImports);
-                return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error(e.getMessage());
-                return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
-            }
-        }catch (Exception e) {
+            Map<String, Object> resultMap = baseWorkshopSectionService.importExcel(baseWorkshopSectionImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (NoSuchElementException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
