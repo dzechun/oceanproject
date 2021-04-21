@@ -76,7 +76,7 @@
         and bspa.sampling_plan_aql_id =  #{samplingPlanAqlId}
       </if>
     </where>
-    order by create_time desc
+    order by bspar.create_time desc
   </select>
 
 </mapper>

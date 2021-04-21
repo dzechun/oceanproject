@@ -73,7 +73,7 @@
         and bss.sample_standard_name like CONCAT('%', #{sampleStandardName}, '%')
       </if>
     </where>
-    order by create_time desc
+    order by bsp.create_time desc
   </select>
 
 </mapper>
