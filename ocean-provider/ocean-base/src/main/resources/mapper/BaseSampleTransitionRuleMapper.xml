@@ -61,7 +61,7 @@
         and bstr.sample_transition_rule_desc like CONCAT('%', #{sampleTransitionRuleDesc}, '%')
       </if>
     </where>
-    order by create_tirme desc
+    order by bstr.create_time desc
   </select>
 
 
