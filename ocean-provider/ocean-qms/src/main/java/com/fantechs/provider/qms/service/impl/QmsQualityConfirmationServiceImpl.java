@@ -485,7 +485,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                         searchBasePlatePartsDet.setPlatePartsDetId(smtWorkOrderCardPoolDto.getMaterialId());
                         List<BasePlatePartsDetDto> basePlatePartsDetDtos = baseFeignApi.findPlatePartsDetList(searchBasePlatePartsDet).getData();
                         WmsOutProductionMaterialdDet wmsOutProductionMaterialdDet = new WmsOutProductionMaterialdDet();
-                        wmsOutProductionMaterialdDet.setQuantity(basePlatePartsDetDtos.size() != 0 ? basePlatePartsDetDtos.get(0).getQuantity() : new BigDecimal(1));
+                        wmsOutProductionMaterialdDet.setQuantity(basePlatePartsDetDtos.size() != 0 ? basePlatePartsDetDtos.get(0).getUseQty() : new BigDecimal(1));
                         wmsOutProductionMaterialdDet.setProductionMaterialId(wmsOutProductionMaterial.getProductionMaterialId());
                         wmsOutProductionMaterialdDet.setProcessId(ifProcess ?qmsQualityConfirmation.getProcessId():qmsQualityConfirmationList.get(0).getProcessId());
                         wmsOutProductionMaterialdDet.setMaterialId(smtWorkOrderCardPoolDto.getMaterialId());
@@ -651,7 +651,7 @@ public class QmsQualityConfirmationServiceImpl extends BaseService<QmsQualityCon
                 }
             }
 
-            BigDecimal divide = processListProcess.getOutputQuantity().divide(basePlatePartsDetDto.getQuantity(), 0);
+            BigDecimal divide = processListProcess.getOutputQuantity().divide(basePlatePartsDetDto.getUseQty(), 0);
             if (quantity == null) {
                 quantity = divide;
                 continue;
