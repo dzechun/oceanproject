@@ -9,7 +9,6 @@
         <result column="version" jdbcType="VARCHAR" property="version"/>
         <result column="base" jdbcType="DECIMAL" property="base"/>
         <result column="material_source" jdbcType="INTEGER" property="materialSource"/>
-        <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
         <result column="system_source" jdbcType="VARCHAR" property="systemSource"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="min_package_number" jdbcType="INTEGER" property="minPackageNumber"/>

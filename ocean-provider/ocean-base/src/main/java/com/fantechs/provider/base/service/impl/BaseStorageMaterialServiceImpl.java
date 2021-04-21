@@ -45,7 +45,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
         Example example = new Example(BaseStorageMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId", baseStorageMaterial.getStorageId());
-        criteria.andEqualTo("materialId",baseStorageMaterial.getMaterialId());
        /* criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
         criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());*/
         List<BaseStorageMaterial> baseStorageMaterials = baseStorageMaterialMapper.selectByExample(example);
@@ -107,7 +106,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
         Example example = new Example(BaseStorageMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId", baseStorageMaterial.getStorageId())
-                .andEqualTo("materialId", baseStorageMaterial.getMaterialId())
                 .andNotEqualTo("storageMaterialId", baseStorageMaterial.getStorageMaterialId());
         /*criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
         criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());*/

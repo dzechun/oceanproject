@@ -1,14 +1,14 @@
-package com.fantechs.provider.om.controller;
+package com.fantechs.provider.om.controller.sales;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
-import com.fantechs.common.base.general.entity.om.OmSalesOrder;
+import com.fantechs.common.base.general.dto.om.sales.OmSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.sales.SearchOmSalesOrder;
+import com.fantechs.common.base.general.entity.om.sales.OmSalesOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.om.service.OmSalesOrderService;
+import com.fantechs.provider.om.service.sales.OmSalesOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
@@ -63,30 +63,30 @@ public class OmSalesOrderController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto) {
-        Page<Object> page = PageHelper.startPage(searchOmSalesOrderDto.getStartPage(),searchOmSalesOrderDto.getPageSize());
-        List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrderDto));
+    public ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrder searchOmSalesOrder) {
+        Page<Object> page = PageHelper.startPage(searchOmSalesOrder.getStartPage(),searchOmSalesOrder.getPageSize());
+        List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<OmSalesOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrder) {
-//        Page<Object> page = PageHelper.startPage(searchOmSalesOrder.getStartPage(),searchOmSalesOrder.getPageSize());
-//        List<OmSalesOrderDto> list = omSalesOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<OmSalesOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrder searchOmSalesOrder) {
+        Page<Object> page = PageHelper.startPage(searchOmSalesOrder.getStartPage(),searchOmSalesOrder.getPageSize());
+        List<OmSalesOrderDto> list = omSalesOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
-//    @PostMapping(value = "/export")
-//    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-//    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-//    @RequestBody(required = false) SearchOmSalesOrderDto searchOmSalesOrder){
-//    List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
-//    try {
-//        // 导出操作
-//        EasyPoiUtils.exportExcel(list, "导出信息", "OmSalesOrder信息", OmSalesOrderDto.class, "OmSalesOrder.xls", response);
-//        } catch (Exception e) {
-//        throw new BizErrorException(e);
-//        }
-//    }
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchOmSalesOrder searchOmSalesOrder){
+    List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
+    try {
+        // 导出操作
+        EasyPoiUtils.exportExcel(list, "导出信息", "OmSalesOrder信息", OmSalesOrderDto.class, "OmSalesOrder.xls", response);
+        } catch (Exception e) {
+        throw new BizErrorException(e);
+        }
+    }
 }

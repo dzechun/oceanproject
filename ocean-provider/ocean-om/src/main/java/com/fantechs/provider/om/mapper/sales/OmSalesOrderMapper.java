@@ -1,7 +1,7 @@
-package com.fantechs.provider.om.mapper;
+package com.fantechs.provider.om.mapper.sales;
 
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
-import com.fantechs.common.base.general.entity.om.OmSalesOrder;
+import com.fantechs.common.base.general.dto.om.sales.OmSalesOrderDto;
+import com.fantechs.common.base.general.entity.om.sales.OmSalesOrder;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,5 +12,5 @@ import java.util.Map;
 public interface OmSalesOrderMapper extends MyMapper<OmSalesOrder> {
     List<OmSalesOrderDto> findList(Map<String, Object> map);
 
-    String getCustomerOrderCode(Long salesOrderId);
+    List<OmSalesOrderDto> findHtList(Map<String, Object> map);
 }

@@ -54,7 +54,6 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
         record.setModifiedTime(new Date());
         record.setModifiedUserId(user.getUserId());
         record.setOrgId(user.getOrganizationId());
-        record.setOrgId(user.getOrganizationId());
 
         int i = baseBadnessCategoryMapper.insertUseGeneratedKeys(record);
 

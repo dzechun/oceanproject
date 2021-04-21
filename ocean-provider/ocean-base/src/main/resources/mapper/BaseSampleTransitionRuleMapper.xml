@@ -17,7 +17,7 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     <collection property="list" ofType="com.fantechs.common.base.general.entity.basic.BaseSampleTransitionRuleDet"
-                column="sample_transition_rule_id" select="com.fantechs.provider.base.mapper.BaseSampleTransitionRuleDetMapper.findList">
+                column="{sampleTransitionRuleId=sample_transition_rule_id}" select="com.fantechs.provider.base.mapper.BaseSampleTransitionRuleDetMapper.findList">
 
     </collection>
   </resultMap>
@@ -54,14 +54,14 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bstr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="sampleSransitionRuleCode != null and sampleSransitionRuleCode!=''">
-        and bstr.sample_transition_rule_code like CONCAT('%', #{sampleSransitionRuleCode}, '%')
+      <if test="sampleTransitionRuleCode != null and sampleTransitionRuleCode!=''">
+        and bstr.sample_transition_rule_code like CONCAT('%', #{sampleTransitionRuleCode}, '%')
       </if>
-      <if test="sampleSransitionRuleDesc != null and sampleSransitionRuleDesc!=''">
-        and bstr.sample_transition_rule_desc like CONCAT('%', #{sampleSransitionRuleDesc}, '%')
+      <if test="sampleTransitionRuleDesc != null and sampleTransitionRuleDesc!=''">
+        and bstr.sample_transition_rule_desc like CONCAT('%', #{sampleTransitionRuleDesc}, '%')
       </if>
     </where>
-    order by create_time desc
+    order by create_tirme desc
   </select>
 
 

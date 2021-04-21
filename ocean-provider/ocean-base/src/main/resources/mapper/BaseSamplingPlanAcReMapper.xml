@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseSamplingPlanAcReMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSamplingPlanAcRe">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="sampling_plan_ac_re_id" jdbcType="BIGINT" property="samplingPlanAcReId" />
+    <result column="sampling_plan_aql_id" jdbcType="BIGINT" property="samplingPlanAqlId" />
+    <result column="batch_floor" jdbcType="INTEGER" property="batchFloor" />
+    <result column="batch_upper_limit" jdbcType="INTEGER" property="batchUpperLimit" />
+    <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty" />
+    <result column="ac_value" jdbcType="INTEGER" property="acValue" />
+    <result column="re_value" jdbcType="INTEGER" property="reValue" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanAcReDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bspar.sampling_plan_ac_re_id,
+	bspar.sampling_plan_aql_id,
+	bspar.batch_floor,
+	bspar.batch_upper_limit,
+	bspar.sample_qty,
+	bspar.ac_value,
+	bspar.re_value,
+	bspar.org_id,
+	bspar.remark,
+	bspar.`status`,
+	bspar.create_user_id,
+	bspar.create_time,
+	bspar.modified_user_id,
+	bspar.modified_time,
+	bspar.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM base_sampling_plan_ac_re AS bspar
+    LEFT JOIN ocean_v2.sys_user su ON bspar.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bspar.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON bspar.org_id = bo.organization_id
+    LEFT JOIN base_sampling_plan_aql bspa ON bspa.sampling_plan_aql_id = bspar.sampling_plan_aql_id
+    LEFT JOIN base_sampling_plan bsp ON bsp.sampling_plan_id = bspa.sampling_plan_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bspar.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="batch != null and batch != '' and batch &lt;= 500000">
+        and bspar.batch_floor &lt;= #{batch} and  bspar.batch_upper_limit &gt;= #{batch}
+      </if>
+      <if test="batch != null and batch != '' and batch > 500000">
+        and bspar.batch_floor &lt;= 500001
+      </if>
+      <if test="aqlValue != null and aqlValue!=''">
+        and bspa.aql_value =  #{aqlValue}
+      </if>
+      <if test="samplingPlanId != null and samplingPlanId!=''">
+        and bsp.sampling_plan_id =  #{samplingPlanId}
+      </if>
+      <if test="samplingPlanAqlId != null and samplingPlanAqlId!=''">
+        and bspa.sampling_plan_aql_id =  #{samplingPlanAqlId}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

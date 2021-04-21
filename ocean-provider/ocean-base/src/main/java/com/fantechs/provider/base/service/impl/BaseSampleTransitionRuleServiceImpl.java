@@ -60,10 +60,12 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
         record.setOrgId(user.getOrganizationId());
 
         int i = baseSampleTransitionRuleMapper.insertUseGeneratedKeys(record);
-        for (BaseSampleTransitionRuleDet baseSampleTransitionRuleDet : record.getList()) {
-            baseSampleTransitionRuleDet.setSampleTransitionRuleId(record.getSampleTransitionRuleId());
+        if (StringUtils.isNotEmpty(record.getList())){
+            for (BaseSampleTransitionRuleDet baseSampleTransitionRuleDet : record.getList()) {
+                baseSampleTransitionRuleDet.setSampleTransitionRuleId(record.getSampleTransitionRuleId());
+            }
+            baseSampleTransitionRuleDetMapper.insertList(record.getList());
         }
-        baseSampleTransitionRuleDetMapper.insertList(record.getList());
 
         BaseHtSampleTransitionRule baseHtSampleTransitionRule = new BaseHtSampleTransitionRule();
         BeanUtils.copyProperties(record,baseHtSampleTransitionRule);
@@ -93,7 +95,9 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
         example.createCriteria().andEqualTo("sampleTransitionRuleId",entity.getSampleTransitionRuleId());
         baseSampleTransitionRuleDetMapper.deleteByExample(example);
 
-        baseSampleTransitionRuleDetMapper.insertList(entity.getList());
+        if (StringUtils.isNotEmpty(entity.getList())){
+            baseSampleTransitionRuleDetMapper.insertList(entity.getList());
+        }
 
         return baseSampleTransitionRuleMapper.updateByPrimaryKeySelective(entity);
     }
