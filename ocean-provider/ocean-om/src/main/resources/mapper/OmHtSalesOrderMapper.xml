@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.om.mapper.OmHtSalesOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmHtSalesOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_sales_order_id" jdbcType="BIGINT" property="htSalesOrderId" />
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+        <result column="source_order_line_number" jdbcType="VARCHAR" property="sourceOrderLineNumber" />
+        <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId" />
+        <result column="delivery_type" jdbcType="VARCHAR" property="deliveryType" />
+        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept" />
+        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName" />
+        <result column="data_source" jdbcType="VARCHAR" property="dataSource" />
+        <result column="order_type" jdbcType="TINYINT" property="orderType" />
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName" />
+        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
+        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
+        <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto">
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hso.ht_sales_order_id, hso.sales_order_id, hso.sales_order_code, hso.contract_code,
+        hso.supplier_id, hso.customer_order_code, hso.source_order_code, hso.source_order_line_number,
+        hso.barcode_rule_set_id, hso.delivery_type, hso.sales_dept, hso.sales_user_name,
+        hso.data_source, hso.order_type, hso.order_status, hso.status, hso.order_date,
+        hso.make_order_user_name, hso.make_order_date, hso.audit_user_name, hso.audit_date,
+        hso.remark, hso.org_id, hso.create_user_id, hso.create_time, hso.modified_user_id,
+        hso.modified_time, hso.is_delete, hso.option1, hso.option2, hso.option3
+    </sql>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select
+        <include refid="Base_Column_List" />, bs.supplier_name, bbrs.barcode_rule_set_name
+        from om_ht_sales_order hso
+        left join base_supplier bs on hso.supplier_id = bs.supplier_id
+        left join base_barcode_rule_set bbrs on hso.barcode_rule_set_id = bbrs.barcode_rule_set_id
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(hso.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+
+            <if test="status != null">
+                and hso.status = #{status}
+            </if>
+
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                and hso.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
+            </if>
+
+            <if test="customerOrderCode != null and customerOrderCode != ''">
+                and hso.customer_order_code like CONCAT('%', #{customerOrderCode}, '%')
+            </if>
+
+            <if test="contractCode != null and contractCode != ''">
+                and hso.contract_code like CONCAT('%', #{contractCode}, '%')
+            </if>
+        </where>
+        order by hso.modified_time desc
+    </select>
+
+</mapper>

@@ -1,29 +1,43 @@
-package com.fantechs.common.base.general.entity.om.sales;
+package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Date;
+
+;
+;
+
 /**
- * 销售订单
- * om_sales_order
+ * 销售订单履历表
+ * om_ht_sales_order
  * @author Law
- * @date 2021-04-19 13:32:06
+ * @date 2021-04-21 14:55:37
  */
 @Data
-@Table(name = "om_sales_order")
-public class OmSalesOrder extends ValidGroup implements Serializable {
+@Table(name = "om_ht_sales_order")
+public class OmHtSalesOrder extends ValidGroup implements Serializable {
+    /**
+     * 销售订单ID
+     */
+    @ApiModelProperty(name="htSalesOrderId",value = "销售订单ID")
+    @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "ht_sales_order_id")
+    private Long htSalesOrderId;
+
     /**
      * 销售订单ID
      */
     @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
     @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "sales_order_id")
     private Long salesOrderId;
 
@@ -62,10 +76,26 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     /**
      * 来源单据号
      */
-    @ApiModelProperty(name="sourceOrderId",value = "来源单据号")
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据号")
     @Excel(name = "来源单据号", height = 20, width = 30,orderNum="") 
-    @Column(name = "source_order_id")
-    private Long sourceOrderId;
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 来源单据行号
+     */
+    @ApiModelProperty(name="sourceOrderLineNumber",value = "来源单据行号")
+    @Excel(name = "来源单据行号", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_order_line_number")
+    private String sourceOrderLineNumber;
+
+    /**
+     * 条码规则集合ID
+     */
+    @ApiModelProperty(name="barcodeRuleSetId",value = "条码规则集合ID")
+    @Excel(name = "条码规则集合ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_rule_set_id")
+    private Long barcodeRuleSetId;
 
     /**
      * 交货方式
