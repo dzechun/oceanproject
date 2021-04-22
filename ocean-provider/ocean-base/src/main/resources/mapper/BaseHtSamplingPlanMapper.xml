@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtSamplingPlanMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtSamplingPlan">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_sampling_plan_id" jdbcType="BIGINT" property="htSamplingPlanId" />
+    <result column="sampling_plan_id" jdbcType="BIGINT" property="samplingPlanId" />
+    <result column="sampling_plan_code" jdbcType="VARCHAR" property="samplingPlanCode" />
+    <result column="sampling_plan_desc" jdbcType="VARCHAR" property="samplingPlanDesc" />
+    <result column="test_level" jdbcType="VARCHAR" property="testLevel" />
+    <result column="sample_standard_id" jdbcType="BIGINT" property="sampleStandardId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bsp.sampling_plan_id,
+	bsp.sampling_plan_code,
+	bsp.sampling_plan_desc,
+	bsp.test_level,
+	bsp.sample_standard_id,
+	bsp.org_id,
+	bsp.remark,
+	bsp.`status`,
+	bsp.create_user_id,
+	bsp.create_time,
+	bsp.modified_user_id,
+	bsp.modified_time,
+	bsp.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name,bss.sample_standard_name
+    FROM base_ht_sampling_plan AS bsp
+    LEFT JOIN ocean_v2.sys_user su ON bsp.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bsp.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON bsp.org_id = bo.organization_id
+    LEFT JOIN base_sample_standard bss ON bss.sample_standard_id = bsp.sample_standard_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bsp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="samplingPlanCode != null and samplingPlanCode!=''">
+        and bsp.sampling_plan_code like CONCAT('%', #{samplingPlanCode}, '%')
+      </if>
+      <if test="samplingPlanDesc != null and samplingPlanDesc!=''">
+        and bsp.sampling_plan_desc like CONCAT('%', #{samplingPlanDesc}, '%')
+      </if>
+      <if test="testLevel != null and testLevel!=''">
+        and bsp.test_level like CONCAT('%', #{testLevel}, '%')
+      </if>
+      <if test="sampleStandardName != null and sampleStandardName!=''">
+        and bss.sample_standard_name like CONCAT('%', #{sampleStandardName}, '%')
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+</mapper>

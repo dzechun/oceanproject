@@ -47,7 +47,7 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        if(record.getIsProcess()==(byte)1 && record.getProcessId() == null){
+        if(record.getIsProcess()==(byte)1){
             throw new BizErrorException("请绑定工序");
         }
         Example example = new Example(BaseLabelMaterial.class);

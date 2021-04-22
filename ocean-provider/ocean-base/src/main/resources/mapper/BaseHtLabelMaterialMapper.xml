@@ -24,7 +24,6 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-        <result column="label_code" jdbcType="VARCHAR" property="labelCode"/>
         <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
         <result column="label_version" jdbcType="VARCHAR" property="labelVersion"/>
         <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
@@ -51,7 +50,7 @@
   </sql>
     <select id="findList" resultMap="BaseResultMap">
         SELECT<include refid="Base_Column_List"/>,sm.material_code,sm.version as
-        material_version,sm.material_desc,bl.label_name,bl.label_code,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,
+        material_version,sm.material_desc,bl.label_name,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,
         sus.user_name as modified_user_name, bo.organization_name FROM base_ht_label_material bcm
         LEFT JOIN base_material sm ON bcm.material_id = sm.material_id
         LEFT JOIN base_label bl ON bl.label_id = bcm.label_id
@@ -61,9 +60,6 @@
         LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON bcm.org_id = bo.organization_id
         <where>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(bcm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-            </if>
             <if test="materialId!=null and materialId!=''">
                 and bcm.material_id = #{materialId}
             </if>
@@ -83,7 +79,7 @@
                 and sm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
             <if test="labelCode!=null and labelCode!=''">
-                and bl.label_code like CONCAT('%',#{labelCode},'%')
+                and bl.laben_code like CONCAT('%',#{labelCode},'%')
             </if>
             <if test="labelName!=null and labelName!=''">
                 and bl.label_name like CONCAT('%',#{labelName},'%')
@@ -96,6 +92,9 @@
             </if>
             <if test="labelCategoryName!=null and labelCategoryName!=''">
                 and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bcm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
         order by bcm.create_time desc

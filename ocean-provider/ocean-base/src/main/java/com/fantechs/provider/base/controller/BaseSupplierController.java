@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -103,18 +104,16 @@ public class BaseSupplierController {
         try {
             // 导入操作
             List<BaseSupplierImport> baseSupplierImports = EasyPoiUtils.importExcel(file, 2, 1, BaseSupplierImport.class);
-            try {
-                Map<String, Object> resultMap = baseSupplierService.importExcel(baseSupplierImports, supplierType);
-                return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error(e.getMessage());
-                return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
-            }
-        }catch (Exception e) {
+            Map<String, Object> resultMap = baseSupplierService.importExcel(baseSupplierImports, supplierType);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (NoSuchElementException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 

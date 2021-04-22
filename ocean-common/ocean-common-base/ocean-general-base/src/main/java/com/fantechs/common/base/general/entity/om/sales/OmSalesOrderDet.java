@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.om;
+package com.fantechs.common.base.general.entity.om.sales;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
@@ -14,7 +14,7 @@ import lombok.Data;
  * 销售订单明细
  * om_sales_order_det
  * @author Law
- * @date 2021-04-20 17:20:23
+ * @date 2021-04-19 13:23:04
  */
 @Data
 @Table(name = "om_sales_order_det")
@@ -29,28 +29,12 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private Long salesOrderDetId;
 
     /**
-     * 销售订单ID
-     */
-    @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
-    @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="")
-    @Column(name = "sales_order_id")
-    private Long salesOrderId;
-
-    /**
      * 客户订单行号
      */
     @ApiModelProperty(name="customerOrderLineNumber",value = "客户订单行号")
     @Excel(name = "客户订单行号", height = 20, width = 30,orderNum="") 
     @Column(name = "customer_order_line_number")
-    private String customerOrderLineNumber;
-
-    /**
-     * 来源行号
-     */
-    @ApiModelProperty(name="sourceLineNumber",value = "来源行号")
-    @Excel(name = "来源行号", height = 20, width = 30,orderNum="")
-    @Column(name = "source_line_number")
-    private String sourceLineNumber;
+    private Long customerOrderLineNumber;
 
     /**
      * 项目号

@@ -371,7 +371,7 @@ public class MesPmMasterPlanServiceImpl extends BaseService<MesPmMasterPlan>  im
                     continue;
                 }
                 //部件用量
-                double quantity=StringUtils.isEmpty(basePlatePartsDetDto.getQuantity())?1:basePlatePartsDetDto.getQuantity().doubleValue();
+                double quantity=StringUtils.isEmpty(basePlatePartsDetDto.getUseQty())?1:basePlatePartsDetDto.getUseQty().doubleValue();
                 double curSchedule=turnWorkOrderCardPoolDTO.getScheduleQty().doubleValue()*quantity;
                 //=====查找此主工单对于的部件工单是否存在，如果存在是否超数
                 SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();

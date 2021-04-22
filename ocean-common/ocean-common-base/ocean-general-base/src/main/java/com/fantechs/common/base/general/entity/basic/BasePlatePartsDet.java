@@ -72,6 +72,7 @@ public class BasePlatePartsDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="useQty",value = "用量")
     @Excel(name = "用量", height = 20, width = 30)
+    @Column(name = "use_qty")
     private BigDecimal useQty;
 
     /**
