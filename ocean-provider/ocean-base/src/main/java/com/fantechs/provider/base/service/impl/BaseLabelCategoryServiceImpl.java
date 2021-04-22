@@ -73,8 +73,14 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         record.setModifiedTime(new Date());
         record.setModifiedUserId(currentUserInfo.getUserId());
         record.setOrgId(currentUserInfo.getOrganizationId());
+        int num = baseLabelCategoryMapper.insertUseGeneratedKeys(record);
 
-        return baseLabelCategoryMapper.insertUseGeneratedKeys(record);
+        //新增历史记录
+        BaseHtLabelCategory baseHtLabelCategory = new BaseHtLabelCategory();
+        BeanUtils.copyProperties(record, baseHtLabelCategory);
+        baseHtLabelCategoryMapper.insertSelective(baseHtLabelCategory);
+
+        return num;
     }
 
     @Override
@@ -105,7 +111,7 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         //新增历史记录
         BaseHtLabelCategory baseHtLabelCategory = new BaseHtLabelCategory();
         BeanUtils.copyProperties(entity, baseHtLabelCategory);
-        baseHtLabelCategoryMapper.updateByPrimaryKeySelective(baseHtLabelCategory);
+        baseHtLabelCategoryMapper.insertSelective(baseHtLabelCategory);
 
         return num;
     }
