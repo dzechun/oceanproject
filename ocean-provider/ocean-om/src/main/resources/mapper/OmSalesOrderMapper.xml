@@ -37,6 +37,11 @@
         <result column="option3" jdbcType="VARCHAR" property="option3" />
     </resultMap>
 
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDto">
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
     so.sales_order_id, so.sales_order_code, so.contract_code, so.supplier_id, so.customer_order_code,
     so.source_order_code, so.source_order_line_number, so.barcode_rule_set_id, so.delivery_type, so.sales_dept,
@@ -45,10 +50,12 @@
     so.create_time, so.modified_user_id, so.modified_time, so.is_delete, so.option1, so.option2, so.option3
   </sql>
 
-    <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>, bs.supplier_name, bbrs.barcode_rule_set_name
         from om_sales_order so
+        left join base_supplier bs on so.supplier_id = bs.supplier_id
+        left join base_barcode_rule_set bbrs on so.barcode_rule_set_id = bbrs.barcode_rule_set_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND {#endTime}
@@ -59,29 +66,18 @@
             </if>
 
             <if test="salesOrderCode != null and salesOrderCode != ''">
-                and so.sales_order_code = #{salesOrderCode}
+                and so.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>
 
             <if test="customerOrderCode != null and customerOrderCode != ''">
-                and so.customer_order_code = #{customerOrderCode}
+                and so.customer_order_code like CONCAT('%', #{customerOrderCode}, '%')
             </if>
 
             <if test="contractCode != null and contractCode != ''">
-                and so.contract_code = #{contractCode}
+                and so.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
         </where>
         order by so.modified_time desc
-    </select>
-
-    <select id="getCustomerOrderCode" parameterType="java.lang.Long" resultType="java.lang.String">
-        select
-        so.customer_order_code
-        from om_sales_order so
-        <where>
-            <if test="_parameter != null">
-                and so.sales_order_id = #{salesOrderId}
-            </if>
-        </where>
     </select>
 
 </mapper>

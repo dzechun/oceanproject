@@ -36,30 +36,30 @@ public class OmSalesOrderDetController {
     @Resource
     private OmSalesOrderDetService omSalesOrderDetService;
 
-    @ApiOperation(value = "新增",notes = "新增")
-    @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmSalesOrderDet omSalesOrderDet) {
-        return ControllerUtil.returnCRUD(omSalesOrderDetService.save(omSalesOrderDet));
-    }
-
-    @ApiOperation("删除")
-    @PostMapping("/delete")
-    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
-        return ControllerUtil.returnCRUD(omSalesOrderDetService.batchDelete(ids));
-    }
-
-    @ApiOperation("修改")
-    @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet) {
-        return ControllerUtil.returnCRUD(omSalesOrderDetService.update(omSalesOrderDet));
-    }
-
-    @ApiOperation("获取详情")
-    @PostMapping("/detail")
-    public ResponseEntity<OmSalesOrderDet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(omSalesOrderDet,StringUtils.isEmpty(omSalesOrderDet)?0:1);
-    }
+//    @ApiOperation(value = "新增",notes = "新增")
+//    @PostMapping("/add")
+//    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmSalesOrderDet omSalesOrderDet) {
+//        return ControllerUtil.returnCRUD(omSalesOrderDetService.save(omSalesOrderDet));
+//    }
+//
+//    @ApiOperation("删除")
+//    @PostMapping("/delete")
+//    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+//        return ControllerUtil.returnCRUD(omSalesOrderDetService.batchDelete(ids));
+//    }
+//
+//    @ApiOperation("修改")
+//    @PostMapping("/update")
+//    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet) {
+//        return ControllerUtil.returnCRUD(omSalesOrderDetService.update(omSalesOrderDet));
+//    }
+//
+//    @ApiOperation("获取详情")
+//    @PostMapping("/detail")
+//    public ResponseEntity<OmSalesOrderDet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+//        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetService.selectByKey(id);
+//        return  ControllerUtil.returnDataSuccess(omSalesOrderDet,StringUtils.isEmpty(omSalesOrderDet)?0:1);
+//    }
 
     @ApiOperation("列表")
     @PostMapping("/findList")

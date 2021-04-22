@@ -42,6 +42,13 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
 
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         sod.sales_order_det_id, sod.sales_order_id, sod.customer_order_line_number, sod.project_code,
         sod.inner_batch_number, sod.contract_code, sod.material_id, sod.type, sod.if_free_gift, sod.unit_name,
@@ -54,9 +61,12 @@
         sod.modified_user_id, sod.modified_time
     </sql>
 
-    <select id="findList" parameterType="map" resultMap="BaseResultMap">
-        select<include refid="Base_Column_List"/>
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select<include refid="Base_Column_List"/>, bm.material_name, bm.version,
+        bm.material_desc, bw.warehouse_name
         from om_sales_order_det sod
+        left join base_material bm on sod.material_id = bm.material_id
+        left join base_warehouse bw on sod.warehouse_id = bw.warehouse_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

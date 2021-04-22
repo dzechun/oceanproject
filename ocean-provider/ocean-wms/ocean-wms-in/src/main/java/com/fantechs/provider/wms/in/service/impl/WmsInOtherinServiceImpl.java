@@ -77,6 +77,7 @@ public class WmsInOtherinServiceImpl  extends BaseService<WmsInOtherin> implemen
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
 
+
         wmsInOtherin.setOtherinCode(CodeUtils.getId("QTRK-"));
         wmsInOtherin.setInType(StringUtils.isEmpty(wmsInOtherin.getInType()) ? 0 :wmsInOtherin.getInType());
         wmsInOtherin.setInStatus(StringUtils.isEmpty(wmsInOtherin.getInStatus()) ? 0 :wmsInOtherin.getInStatus());
