@@ -43,6 +43,35 @@ public class BaseSamplingPlanAqlServiceImpl extends BaseService<BaseSamplingPlan
     }
 
     @Override
+    public int batchSave(List<BaseSamplingPlanAql> list) {
+        try{
+            for (BaseSamplingPlanAql baseSamplingPlanAql : list) {
+                this.save(baseSamplingPlanAql);
+            }
+            return 1;
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public int batchUpdate(List<BaseSamplingPlanAql> list) {
+        try{
+            if (StringUtils.isNotEmpty(list)){
+                Example example = new Example(BaseSamplingPlanAql.class);
+                example.createCriteria().andEqualTo("samplingPlanId",list.get(0).getSamplingPlanId());
+                baseSamplingPlanAqlMapper.deleteByExample(example);
+            }
+            for (BaseSamplingPlanAql baseSamplingPlanAql : list) {
+                this.save(baseSamplingPlanAql);
+            }
+            return 1;
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
     public int save(BaseSamplingPlanAql record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

@@ -14,4 +14,7 @@ import java.util.Map;
 
 public interface BaseSamplingPlanAqlService extends IService<BaseSamplingPlanAql> {
     List<BaseSamplingPlanAqlDto> findList(Map<String, Object> map);
+
+    int batchUpdate(List<BaseSamplingPlanAql> list);
+
 }
