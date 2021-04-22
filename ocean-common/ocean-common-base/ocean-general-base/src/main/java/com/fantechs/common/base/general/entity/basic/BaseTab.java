@@ -374,7 +374,7 @@ public class BaseTab extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialQuality",value = "材质")
     @Excel(name = "材质", height = 20, width = 30)
-    @Column(name = "material_qty")
+    @Column(name = "material_quality")
     private String materialQuality;
 
     /**
