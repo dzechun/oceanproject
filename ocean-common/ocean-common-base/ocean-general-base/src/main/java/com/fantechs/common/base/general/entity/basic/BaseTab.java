@@ -1,14 +1,11 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import javax.persistence.*;
-import javax.validation.Validation;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -334,7 +331,7 @@ public class BaseTab extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="purchaseQuantity",value = "采购批量")
     @Excel(name = "采购批量", height = 20, width = 30)
-    @Column(name = "material_quality")
+    @Column(name = "purchase_qty")
     private BigDecimal purchaseQuantity;
 
     /**
