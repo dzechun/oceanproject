@@ -43,6 +43,7 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -62,7 +63,7 @@
     </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-        select<include refid="Base_Column_List"/>, bm.material_name, bm.version,
+        select<include refid="Base_Column_List"/>, bm.material_code, bm.material_name, bm.version,
         bm.material_desc, bw.warehouse_name
         from om_sales_order_det sod
         left join base_material bm on sod.material_id = bm.material_id

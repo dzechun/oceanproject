@@ -9,11 +9,15 @@ import java.io.Serializable;
 @Data
 public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable {
     /**
+     *
+     */
+    @ApiModelProperty(name = "materialCode", value = "物料编码")
+    private String materialCode;
+    /**
      * 物料名称
      */
     @ApiModelProperty(name = "materialName", value = "物料名称")
     private String materialName;
-
 
     /**
      * 物料版本
