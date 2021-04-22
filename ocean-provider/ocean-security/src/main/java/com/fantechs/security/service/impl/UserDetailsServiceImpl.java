@@ -5,12 +5,14 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysRole;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.filter.CustomWebAuthenticationDetails;
 import com.fantechs.security.mapper.SysOrganizationUserMapper;
 import com.fantechs.security.mapper.SysRoleMapper;
+import com.fantechs.security.mapper.SysSpecItemMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +48,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private SysRoleMapper sysRoleMapper;
     @Resource
     private SysOrganizationUserMapper sysOrganizationUserMapper;
+    @Resource
+    private SysSpecItemMapper sysSpecItemMapper;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -70,7 +74,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BizErrorException(ErrorCodeEnum.GL99990401);
         }
 
-        if(StringUtils.isNotEmpty(CustomWebAuthenticationDetails.ORGANIZATIONID)){
+        Example specExample1 = new Example(SysSpecItem.class);
+        specExample1.createCriteria().andEqualTo("specCode","isOrg");
+        SysSpecItem sysSpecItem = sysSpecItemMapper.selectOneByExample(specExample1);
+        String paraValue = sysSpecItem.getParaValue();
+        if(Integer.valueOf(paraValue) == 1 && StringUtils.isNotEmpty(CustomWebAuthenticationDetails.ORGANIZATIONID)){
             Example example1 = new Example(SysOrganizationUser.class);
             example1.createCriteria().andEqualTo("userId",user.getUserId());
             List<SysOrganizationUser> sysOrganizationUsers = sysOrganizationUserMapper.selectByExample(example1);

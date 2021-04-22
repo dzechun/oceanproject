@@ -35,8 +35,8 @@ public class BaseSamplingPlanAqlController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseSamplingPlanAql baseSamplingPlanAql) {
-        return ControllerUtil.returnCRUD(baseSamplingPlanAqlService.save(baseSamplingPlanAql));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<BaseSamplingPlanAql> list) {
+        return ControllerUtil.returnCRUD(baseSamplingPlanAqlService.batchSave(list));
     }
 
     @ApiOperation("删除")
@@ -47,8 +47,8 @@ public class BaseSamplingPlanAqlController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseSamplingPlanAql.update.class) BaseSamplingPlanAql baseSamplingPlanAql) {
-        return ControllerUtil.returnCRUD(baseSamplingPlanAqlService.update(baseSamplingPlanAql));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseSamplingPlanAql.update.class) List<BaseSamplingPlanAql> list) {
+        return ControllerUtil.returnCRUD(baseSamplingPlanAqlService.batchUpdate(list));
     }
 
     @ApiOperation("获取详情")
