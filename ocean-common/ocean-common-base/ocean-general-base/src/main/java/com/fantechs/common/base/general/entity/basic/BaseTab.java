@@ -334,7 +334,7 @@ public class BaseTab extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="purchaseQuantity",value = "采购批量")
     @Excel(name = "采购批量", height = 20, width = 30)
-    @Column(name = "material_quality")
+    @Column(name = "purchase_qty")
     private BigDecimal purchaseQuantity;
 
     /**
