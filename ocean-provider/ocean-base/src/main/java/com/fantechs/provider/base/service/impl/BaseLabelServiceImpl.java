@@ -125,12 +125,9 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        if(StringUtils.isEmpty(file) && StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals("")){
+        if(StringUtils.isNotEmpty(file) && (StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals(""))){
             throw new BizErrorException("请规范标签文件名称");
-        }else{
-            entity.setLabelName(file.getOriginalFilename());
         }
-
         Example example = new Example(BaseLabel.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCode",entity.getLabelCode());
@@ -143,6 +140,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
         if(file!=null){
             //文件上传
+            entity.setLabelName(file.getOriginalFilename());
             String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,entity.getLabelName());
 
             entity.setSavePath(path);
