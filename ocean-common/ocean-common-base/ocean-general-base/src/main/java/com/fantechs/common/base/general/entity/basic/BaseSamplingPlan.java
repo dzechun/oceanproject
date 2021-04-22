@@ -36,10 +36,10 @@ public class BaseSamplingPlan extends ValidGroup implements Serializable {
     /**
      * 抽样方案名称
      */
-    @ApiModelProperty(name="samplingPlanName",value = "抽样方案名称")
+    @ApiModelProperty(name="samplingPlanDesc",value = "抽样方案名称")
     @Excel(name = "抽样方案名称", height = 20, width = 30,orderNum="2")
-    @Column(name = "sampling_plan_name")
-    private String samplingPlanName;
+    @Column(name = "sampling_plan_desc")
+    private String samplingPlanDesc;
 
     /**
      * 检验水平

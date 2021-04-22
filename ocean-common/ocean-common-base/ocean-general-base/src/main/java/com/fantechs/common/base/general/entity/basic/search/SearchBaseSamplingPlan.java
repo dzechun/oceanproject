@@ -19,8 +19,8 @@ public class SearchBaseSamplingPlan extends BaseQuery implements Serializable {
     /**
      * 抽样方案名称
      */
-    @ApiModelProperty(name="samplingPlanName",value = "抽样方案名称")
-    private String samplingPlanName;
+    @ApiModelProperty(name="samplingPlanDesc",value = "抽样方案名称")
+    private String samplingPlanDesc;
 
     /**
      * 检验水平

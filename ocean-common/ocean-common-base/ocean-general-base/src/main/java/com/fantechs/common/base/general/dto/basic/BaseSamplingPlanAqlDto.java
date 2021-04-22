@@ -35,12 +35,4 @@ public class BaseSamplingPlanAqlDto extends BaseSamplingPlanAql implements Seria
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="5")
     private String organizationName;
 
-    /**
-     * 抽样标准类型名称
-     */
-    @Transient
-    @ApiModelProperty(name = "sampleStandardName",value = "抽样标准类型名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="4")
-    private String sampleStandardName;
-
 }

@@ -7,7 +7,7 @@
     -->
     <id column="sampling_plan_id" jdbcType="BIGINT" property="samplingPlanId" />
     <result column="sampling_plan_code" jdbcType="VARCHAR" property="samplingPlanCode" />
-    <result column="sampling_plan_name" jdbcType="VARCHAR" property="samplingPlanName" />
+    <result column="sampling_plan_desc" jdbcType="VARCHAR" property="samplingPlanDesc" />
     <result column="test_level" jdbcType="VARCHAR" property="testLevel" />
     <result column="sample_standard_id" jdbcType="BIGINT" property="sampleStandardId" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -25,7 +25,7 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanAqlDto">
+             type="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -35,7 +35,7 @@
   <sql id="Base_Column_List">
     bsp.sampling_plan_id,
 	bsp.sampling_plan_code,
-	bsp.sampling_plan_name,
+	bsp.sampling_plan_desc,
 	bsp.test_level,
 	bsp.sample_standard_id,
 	bsp.org_id,
@@ -63,8 +63,8 @@
       <if test="samplingPlanCode != null and samplingPlanCode!=''">
         and bsp.sampling_plan_code like CONCAT('%', #{samplingPlanCode}, '%')
       </if>
-      <if test="samplingPlanName != null and samplingPlanName!=''">
-        and bsp.sampling_plan_name like CONCAT('%', #{samplingPlanName}, '%')
+      <if test="samplingPlanDesc != null and samplingPlanDesc!=''">
+        and bsp.sampling_plan_desc like CONCAT('%', #{samplingPlanDesc}, '%')
       </if>
       <if test="testLevel != null and testLevel!=''">
         and bsp.test_level like CONCAT('%', #{testLevel}, '%')
