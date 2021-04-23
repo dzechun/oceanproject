@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.basic.BaseSamplingPlanAql;
+import com.fantechs.common.base.general.entity.basic.BaseSamplePlan;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,13 +10,13 @@ import java.io.Serializable;
 
 
 @Data
-public class BaseSamplingPlanAqlDto extends BaseSamplingPlanAql implements Serializable {
+public class BaseSamplePlanDto extends BaseSamplePlan implements Serializable {
     /**
      * 创建用户名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -24,7 +24,7 @@ public class BaseSamplingPlanAqlDto extends BaseSamplingPlanAql implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
     /**
@@ -32,7 +32,13 @@ public class BaseSamplingPlanAqlDto extends BaseSamplingPlanAql implements Seria
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="5")
     private String organizationName;
+
+    /**
+     * 检验标准类型
+     */
+    @Transient
+    @ApiModelProperty(name="sampleStandardId",value = "检验标准类型")
+    private String sampleStandardName;
 
 }

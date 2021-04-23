@@ -9,19 +9,19 @@ import java.math.BigDecimal;
 
 
 @Data
-public class SearchBaseSamplingPlanAcRe extends BaseQuery implements Serializable {
+public class SearchBaseSamplePlanAcRe extends BaseQuery implements Serializable {
 
     /**
      * 抽样方案ID
      */
-    @ApiModelProperty(name="samplingPlanId",value = "抽样方案ID")
-    private Long samplingPlanId;
+    @ApiModelProperty(name="samplePlanId",value = "抽样方案ID")
+    private Long samplePlanId;
 
     /**
      * 抽样方案AQL值表ID
      */
-    @ApiModelProperty(name="samplingPlanAqlId",value = "抽样方案AQL值表ID")
-    private Long samplingPlanAqlId;
+    @ApiModelProperty(name="samplePlanAqlId",value = "抽样方案AQL值表ID")
+    private Long samplePlanAqlId;
 
     /**
      * 批量

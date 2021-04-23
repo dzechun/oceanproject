@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.base.mapper.BaseSamplingPlanMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSamplingPlan">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseSamplePlanMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSamplePlan">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="sampling_plan_id" jdbcType="BIGINT" property="samplingPlanId" />
-    <result column="sampling_plan_code" jdbcType="VARCHAR" property="samplingPlanCode" />
-    <result column="sampling_plan_desc" jdbcType="VARCHAR" property="samplingPlanDesc" />
+    <id column="sample_plan_id" jdbcType="BIGINT" property="samplePlanId" />
+    <result column="sample_plan_code" jdbcType="VARCHAR" property="samplePlanCode" />
+    <result column="sample_plan_desc" jdbcType="VARCHAR" property="samplePlanDesc" />
     <result column="test_level" jdbcType="VARCHAR" property="testLevel" />
     <result column="sample_standard_id" jdbcType="BIGINT" property="sampleStandardId" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -18,14 +18,14 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <collection property="list" ofType="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanAqlDto"
-                column="{samplingPlanId=sampling_plan_id}" select="com.fantechs.provider.base.mapper.BaseSamplingPlanAqlMapper.findList">
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.basic.BaseSamplePlanAqlDto"
+                column="{samplePlanId=sample_plan_id}" select="com.fantechs.provider.base.mapper.BaseSamplePlanAqlMapper.findList">
 
     </collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanDto">
+             type="com.fantechs.common.base.general.dto.basic.BaseSamplePlanDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -33,9 +33,9 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    bsp.sampling_plan_id,
-	bsp.sampling_plan_code,
-	bsp.sampling_plan_desc,
+    bsp.sample_plan_id,
+	bsp.sample_plan_code,
+	bsp.sample_plan_desc,
 	bsp.test_level,
 	bsp.sample_standard_id,
 	bsp.org_id,
@@ -51,7 +51,7 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name,bss.sample_standard_name
-    FROM base_sampling_plan AS bsp
+    FROM base_sample_plan AS bsp
     LEFT JOIN ocean_v2.sys_user su ON bsp.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bsp.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bsp.org_id = bo.organization_id
@@ -60,11 +60,11 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bsp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="samplingPlanCode != null and samplingPlanCode!=''">
-        and bsp.sampling_plan_code like CONCAT('%', #{samplingPlanCode}, '%')
+      <if test="samplePlanCode != null and samplePlanCode!=''">
+        and bsp.sample_plan_code like CONCAT('%', #{samplePlanCode}, '%')
       </if>
-      <if test="samplingPlanDesc != null and samplingPlanDesc!=''">
-        and bsp.sampling_plan_desc like CONCAT('%', #{samplingPlanDesc}, '%')
+      <if test="samplePlanDesc != null and samplePlanDesc!=''">
+        and bsp.sample_plan_desc like CONCAT('%', #{samplePlanDesc}, '%')
       </if>
       <if test="testLevel != null and testLevel!=''">
         and bsp.test_level like CONCAT('%', #{testLevel}, '%')

@@ -16,16 +16,16 @@ import java.util.List;
 
 
 @Data
-@Table(name = "base_sampling_plan_aql")
-public class BaseSamplingPlanAql extends ValidGroup implements Serializable {
+@Table(name = "base_sample_plan_aql")
+public class BaseSamplePlanAql extends ValidGroup implements Serializable {
     /**
      * 抽样方案AQL值表ID
      */
-    @ApiModelProperty(name="samplingPlanAqlId",value = "抽样方案AQL值表ID")
+    @ApiModelProperty(name="samplePlanAqlId",value = "抽样方案AQL值表ID")
     @Excel(name = "抽样方案AQL值表ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "sampling_plan_aql_id")
-    private Long samplingPlanAqlId;
+    @Column(name = "sample_plan_aql_id")
+    private Long samplePlanAqlId;
 
     /**
      * 检验严格度(1-放宽 2-正常 3-加严)
@@ -46,10 +46,18 @@ public class BaseSamplingPlanAql extends ValidGroup implements Serializable {
     /**
      * 抽样方案ID
      */
-    @ApiModelProperty(name="samplingPlanId",value = "抽样方案ID")
+    @ApiModelProperty(name="samplePlanId",value = "抽样方案ID")
     @Excel(name = "抽样方案ID", height = 20, width = 30,orderNum="")
-    @Column(name = "sampling_plan_id")
-    private Long samplingPlanId;
+    @Column(name = "sample_plan_id")
+    private Long samplePlanId;
+
+    /**
+     * 抽样方式(1-一次抽样 2-二次抽样 3-多重抽样 4-序贯抽样)
+     */
+    @ApiModelProperty(name="sampleType",value = "抽样方式(1-一次抽样 2-二次抽样 3-多重抽样 4-序贯抽样)")
+    @Excel(name = "抽样方式(1-一次抽样 2-二次抽样 3-多重抽样 4-序贯抽样)", height = 20, width = 30,orderNum="")
+    @Column(name = "sample_type")
+    private Byte sampleType;
 
     /**
      * 状态（0、无效 1、有效）
@@ -114,7 +122,7 @@ public class BaseSamplingPlanAql extends ValidGroup implements Serializable {
      * AcRe集合
      */
     @ApiModelProperty(name="list",value = "AcRe集合")
-    private List<BaseSamplingPlanAcRe> list;
+    private List<BaseSamplePlanAcRe> list;
 
     private static final long serialVersionUID = 1L;
 }

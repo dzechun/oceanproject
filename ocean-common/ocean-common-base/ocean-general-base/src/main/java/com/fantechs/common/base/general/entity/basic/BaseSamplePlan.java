@@ -15,31 +15,31 @@ import java.util.List;
 
 
 @Data
-@Table(name = "base_sampling_plan")
-public class BaseSamplingPlan extends ValidGroup implements Serializable {
+@Table(name = "base_sample_plan")
+public class BaseSamplePlan extends ValidGroup implements Serializable {
     /**
      * 抽样方案ID
      */
-    @ApiModelProperty(name="samplingPlanId",value = "抽样方案ID")
+    @ApiModelProperty(name="samplePlanId",value = "抽样方案ID")
     @Id
-    @Column(name = "sampling_plan_id")
-    private Long samplingPlanId;
+    @Column(name = "sample_plan_id")
+    private Long samplePlanId;
 
     /**
      * 抽样方案编码
      */
-    @ApiModelProperty(name="samplingPlanCode",value = "抽样方案编码")
+    @ApiModelProperty(name="samplePlanCode",value = "抽样方案编码")
     @Excel(name = "抽样方案编码", height = 20, width = 30,orderNum="1")
-    @Column(name = "sampling_plan_code")
-    private String samplingPlanCode;
+    @Column(name = "sample_plan_code")
+    private String samplePlanCode;
 
     /**
      * 抽样方案名称
      */
-    @ApiModelProperty(name="samplingPlanDesc",value = "抽样方案名称")
+    @ApiModelProperty(name="samplePlanDesc",value = "抽样方案名称")
     @Excel(name = "抽样方案名称", height = 20, width = 30,orderNum="2")
-    @Column(name = "sampling_plan_desc")
-    private String samplingPlanDesc;
+    @Column(name = "sample_plan_desc")
+    private String samplePlanDesc;
 
     /**
      * 检验水平
@@ -118,7 +118,7 @@ public class BaseSamplingPlan extends ValidGroup implements Serializable {
      * AQL集合
      */
     @ApiModelProperty(name="list",value = "AQL集合")
-    private List<BaseSamplingPlanAql> list;
+    private List<BaseSamplePlanAql> list;
 
     private static final long serialVersionUID = 1L;
 }

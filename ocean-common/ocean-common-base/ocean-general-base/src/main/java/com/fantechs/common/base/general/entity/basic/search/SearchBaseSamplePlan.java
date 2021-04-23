@@ -8,19 +8,19 @@ import java.io.Serializable;
 
 
 @Data
-public class SearchBaseSamplingPlan extends BaseQuery implements Serializable {
+public class SearchBaseSamplePlan extends BaseQuery implements Serializable {
 
     /**
      * 抽样方案编码
      */
-    @ApiModelProperty(name="samplingPlanCode",value = "抽样方案编码")
-    private String samplingPlanCode;
+    @ApiModelProperty(name="samplePlanCode",value = "抽样方案编码")
+    private String samplePlanCode;
 
     /**
      * 抽样方案名称
      */
-    @ApiModelProperty(name="samplingPlanDesc",value = "抽样方案名称")
-    private String samplingPlanDesc;
+    @ApiModelProperty(name="samplePlanDesc",value = "抽样方案名称")
+    private String samplePlanDesc;
 
     /**
      * 检验水平
@@ -29,10 +29,10 @@ public class SearchBaseSamplingPlan extends BaseQuery implements Serializable {
     private String testLevel;
 
     /**
-     * 检验标准类型
+     * 检验标准类型名称
      */
-    @ApiModelProperty(name="inspectionTypeId",value = "检验标准类型")
-    private Long inspectionTypeId;
+    @ApiModelProperty(name="sampleStandardName",value = "检验标准类型名称")
+    private Long sampleStandardName;
 
     /**
      * 状态（0、无效 1、有效）
