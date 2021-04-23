@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.base.mapper.BaseSamplingPlanAqlMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSamplingPlanAql">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseSamplePlanAqlMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSamplePlanAql">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="sampling_plan_aql_id" jdbcType="BIGINT" property="samplingPlanAqlId" />
+    <id column="sample_plan_aql_id" jdbcType="BIGINT" property="samplePlanAqlId" />
     <result column="inspection_rigor_level" jdbcType="TINYINT" property="inspectionRigorLevel" />
     <result column="aql_value" jdbcType="DECIMAL" property="aqlValue" />
-    <result column="sampling_plan_id" jdbcType="BIGINT" property="samplingPlanId" />
+    <result column="sample_plan_id" jdbcType="BIGINT" property="samplePlanId" />
+    <result column="sample_type" jdbcType="BIGINT" property="sampleType" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -17,24 +18,25 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <collection property="list" ofType="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanAcReDto"
-                column="{samplingPlanAqlId=sampling_plan_aql_id}" select="com.fantechs.provider.base.mapper.BaseSamplingPlanAcReMapper.findList">
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.basic.BaseSamplePlanAcReDto"
+                column="{samplePlanAqlId=sample_plan_aql_id}" select="com.fantechs.provider.base.mapper.BaseSamplePlanAcReMapper.findList">
 
     </collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.basic.BaseSamplingPlanAqlDto">
+             type="com.fantechs.common.base.general.dto.basic.BaseSamplePlanAqlDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    bspa.sampling_plan_aql_id,
+    bspa.sample_plan_aql_id,
 	bspa.inspection_rigor_level,
 	bspa.aql_value,
-	bspa.sampling_plan_id,
+	bspa.sample_plan_id,
+	bspa.sample_type,
 	bspa.org_id,
 	bspa.remark,
 	bspa.`status`,
@@ -48,7 +50,7 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name
-    FROM base_sampling_plan_aql AS bspa
+    FROM base_sample_plan_aql AS bspa
     LEFT JOIN ocean_v2.sys_user su ON bspa.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON bspa.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bspa.org_id = bo.organization_id
@@ -62,8 +64,8 @@
       <if test="aqlValue != null and aqlValue!=''">
         and bspa.aql_value =  #{aqlValue}
       </if>
-      <if test="samplingplanAqlId != null and samplingplanAqlId!=''">
-        and bspa.sampling_plan_aql_id = #{samplingplanAqlId}
+      <if test="sampleplanAqlId != null and sampleplanAqlId!=''">
+        and bspa.sample_plan_aql_id = #{sampleplanAqlId}
       </if>
     </where>
     order by bspa.create_time desc

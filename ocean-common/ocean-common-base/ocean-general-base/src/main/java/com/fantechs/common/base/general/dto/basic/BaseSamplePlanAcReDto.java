@@ -1,17 +1,17 @@
 package com.fantechs.common.base.general.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.basic.BaseSamplingPlan;
+import com.fantechs.common.base.general.entity.basic.BaseSamplePlanAcRe;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
 
 @Data
-public class BaseSamplingPlanDto extends BaseSamplingPlan implements Serializable {
+public class BaseSamplePlanAcReDto extends BaseSamplePlanAcRe implements Serializable {
+
     /**
      * 创建用户名称
      */
@@ -34,12 +34,5 @@ public class BaseSamplingPlanDto extends BaseSamplingPlan implements Serializabl
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
-
-    /**
-     * 检验标准类型
-     */
-    @Transient
-    @ApiModelProperty(name="sampleStandardId",value = "检验标准类型")
-    private String sampleStandardName;
 
 }

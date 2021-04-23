@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.basic.history;
+package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -9,62 +9,70 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
 @Data
-@Table(name = "base_ht_sampling_plan")
-public class BaseHtSamplingPlan extends ValidGroup implements Serializable {
+@Table(name = "base_sample_plan_ac_re")
+public class BaseSamplePlanAcRe extends ValidGroup implements Serializable {
     /**
-     * 抽样方案履历表ID
+     * 抽样方案AC/RE值表ID
      */
-    @ApiModelProperty(name="htSamplingPlanId",value = "抽样方案履历表ID")
-    @Excel(name = "抽样方案履历表ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="samplePlanAcReId",value = "抽样方案AC/RE值表ID")
+    @Excel(name = "抽样方案AC/RE值表ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "ht_sampling_plan_id")
-    private Long htSamplingPlanId;
+    @Column(name = "sample_plan_ac_re_id")
+    private Long samplePlanAcReId;
 
     /**
-     * 抽样方案ID
+     * 抽样方案AQL值表ID
      */
-    @ApiModelProperty(name="samplingPlanId",value = "抽样方案ID")
-    @Excel(name = "抽样方案ID", height = 20, width = 30,orderNum="")
-    @Column(name = "sampling_plan_id")
-    private Long samplingPlanId;
+    @ApiModelProperty(name="samplePlanAqlId",value = "抽样方案AQL值表ID")
+    @Excel(name = "抽样方案AQL值表ID", height = 20, width = 30,orderNum="")
+    @Column(name = "sample_plan_aql_id")
+    private Long samplePlanAqlId;
 
     /**
-     * 抽样方案编码
+     * 批量下限
      */
-    @ApiModelProperty(name="samplingPlanCode",value = "抽样方案编码")
-    @Excel(name = "抽样方案编码", height = 20, width = 30,orderNum="")
-    @Column(name = "sampling_plan_code")
-    private String samplingPlanCode;
+    @ApiModelProperty(name="batchFloor",value = "批量下限")
+    @Excel(name = "批量下限", height = 20, width = 30,orderNum="")
+    @Column(name = "batch_floor")
+    private Integer batchFloor;
 
     /**
-     * 抽样方案名称
+     * 批量上限
      */
-    @ApiModelProperty(name="samplingPlanDesc",value = "抽样方案名称")
-    @Excel(name = "抽样方案名称", height = 20, width = 30,orderNum="")
-    @Column(name = "sampling_plan_desc")
-    private String samplingPlanDesc;
+    @ApiModelProperty(name="batchUpperLimit",value = "批量上限")
+    @Excel(name = "批量上限", height = 20, width = 30,orderNum="")
+    @Column(name = "batch_upper_limit")
+    private Integer batchUpperLimit;
 
     /**
-     * 检验水平
+     * 样本数
      */
-    @ApiModelProperty(name="testLevel",value = "检验水平")
-    @Excel(name = "检验水平", height = 20, width = 30,orderNum="")
-    @Column(name = "test_level")
-    private String testLevel;
+    @ApiModelProperty(name="sampleQty",value = "样本数")
+    @Excel(name = "样本数", height = 20, width = 30,orderNum="")
+    @Column(name = "sample_qty")
+    private BigDecimal sampleQty;
 
     /**
-     * 检验标准类型
+     * AC值
      */
-    @ApiModelProperty(name="sampleStandardId",value = "检验标准类型")
-    @Excel(name = "检验标准类型", height = 20, width = 30,orderNum="")
-    @Column(name = "sample_standard_id")
-    private Long sampleStandardId;
+    @ApiModelProperty(name="acValue",value = "AC值")
+    @Excel(name = "AC值", height = 20, width = 30,orderNum="")
+    @Column(name = "ac_value")
+    private Integer acValue;
+
+    /**
+     * RE值
+     */
+    @ApiModelProperty(name="reValue",value = "RE值")
+    @Excel(name = "RE值", height = 20, width = 30,orderNum="")
+    @Column(name = "re_value")
+    private Integer reValue;
 
     /**
      * 状态（0、无效 1、有效）
@@ -121,22 +129,9 @@ public class BaseHtSamplingPlan extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
-
-    /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    private String modifiedUserName;
 
     private static final long serialVersionUID = 1L;
 }

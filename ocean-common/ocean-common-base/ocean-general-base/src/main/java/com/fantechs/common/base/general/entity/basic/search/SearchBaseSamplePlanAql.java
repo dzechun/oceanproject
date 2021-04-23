@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 
 @Data
-public class SearchBaseSamplingPlanAql extends BaseQuery implements Serializable {
+public class SearchBaseSamplePlanAql extends BaseQuery implements Serializable {
 
     /**
      * 检验严格度(1-放宽 2-正常 3-加严)
@@ -26,7 +26,7 @@ public class SearchBaseSamplingPlanAql extends BaseQuery implements Serializable
     /**
      * 抽样方案ID
      */
-    @ApiModelProperty(name="samplingPlanId",value = "抽样方案ID")
-    private Long samplingPlanId;
+    @ApiModelProperty(name="samplePlanId",value = "抽样方案ID")
+    private Long samplePlanId;
 
 }
