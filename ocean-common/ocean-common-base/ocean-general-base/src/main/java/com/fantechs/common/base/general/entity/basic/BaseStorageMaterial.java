@@ -64,6 +64,34 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 货主ID
+     */
+    @ApiModelProperty(name = "materialOwnerId",value = "货主ID")
+    @Column(name = "material_owner_id")
+    private Long materialOwnerId;
+
+    /**
+     * 货主名称
+     */
+    @Transient
+    @ApiModelProperty(name = "materialOwnerName",value = "货主ID")
+    private String materialOwnerName;
+
+    /**
+     * 上架策略
+     */
+    @Column(name = "putaway_tactics")
+    @ApiModelProperty(name = "putawayTactics",value = "上架策略")
+    private Integer putawayTactics;
+
+    /**
+     * 补货策略
+     */
+    @Column(name = "replenish_tactics")
+    @ApiModelProperty(name = "replenishTactics",value = "补货策略")
+    private Integer replenishTactics;
+
+    /**
      * 物料编码
      */
     @Transient
@@ -114,7 +142,6 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "warehouse_area_id")
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
-    //@NotNull(message = "仓库区域ID不能为空")
     private Long warehouseAreaId;
 
     /**
