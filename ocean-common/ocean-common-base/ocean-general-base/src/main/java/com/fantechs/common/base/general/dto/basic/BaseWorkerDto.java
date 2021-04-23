@@ -1,24 +1,38 @@
-package com.fantechs.common.base.general.dto.om;
+package com.fantechs.common.base.general.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
+import com.fantechs.common.base.general.entity.basic.BaseWorker;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
-public class OmHtSalesOrderDto extends OmHtSalesOrder implements Serializable {
+public class BaseWorkerDto extends BaseWorker implements Serializable {
+    /**
+     * 用户帐号
+     */
     @Transient
-    @ApiModelProperty(name = "supplierName", value = "客户名称")
-    @Excel(name = "客户名称", height = 20, width = 30)
-    private String supplierName;
-
+    @ApiModelProperty(name = "userName", value = "用户帐号")
+    @Excel(name = "用户帐号", height = 20, width = 30)
+    private String userName;
+    /**
+     * 用户名称
+     */
     @Transient
-    @ApiModelProperty(name = "barcodeRuleSetName", value = "条码规则集合名称")
-    @Excel(name = "条码规则集合名称", height = 20, width = 30)
-    private String barcodeRuleSetName;
+    @ApiModelProperty(name = "nickName", value = "用户名称")
+    @Excel(name = "用户名称", height = 20, width = 30)
+    private String nickName;
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
+    private String warehouseName;
     /**
      * 创建用户名称
      */
