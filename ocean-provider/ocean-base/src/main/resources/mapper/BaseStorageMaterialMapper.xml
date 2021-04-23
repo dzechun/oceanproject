@@ -7,6 +7,11 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
+
+        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="putaway_tactics" jdbcType="TINYINT" property="putawayTactics"/>
+        <result column="replenish_tactics" jdbcType="TINYINT" property="replenishTactics"/>
+
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -28,6 +33,11 @@
         ssm.material_id,
         ssm.warehouse_id,
         ssm.warehouse_area_id,
+
+        ssm.material_owner_id,
+        ssm.putaway_tactics,
+        ssm.replenish_tactics,
+
         ssm.`status`,
         ssm.remark,
         ssm.org_id,
@@ -49,7 +59,7 @@
         sw.warehouse_name as warehouseName,
         swa.warehouse_area_name as warehouseAreaName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
-        bo.organization_name
+        bo.organization_name,bmo.material_owner_name as materialOwnerName
         from fantech_imes_v2.base_storage_material ssm
         left join fantech_imes_v2.base_storage ss on ssm.storage_id=ss.storage_id
         left join fantech_imes_v2.base_material sm on ssm.material_id=sm.material_id
@@ -58,6 +68,7 @@
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ssm.org_id = bo.organization_id
+        LEFT JOIN base_material_owner bmo ON bom.material_owner_id = ssm.material_owner_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -65,6 +76,11 @@
             <if test="warehouseId!=null and warehouseId!=''">
                 and ssm.warehouse_id=#{warehouseId}
             </if>
+
+            <if test="materialOwnerName!=null and materialOwnerName!=''">
+                and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
+            </if>
+
             <if test="warehouseName!=null and warehouseName!=''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>

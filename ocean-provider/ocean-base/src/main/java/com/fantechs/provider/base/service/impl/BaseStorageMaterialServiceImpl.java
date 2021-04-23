@@ -42,17 +42,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(BaseStorageMaterial.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("storageId", baseStorageMaterial.getStorageId());
-        criteria.andEqualTo("materialId",baseStorageMaterial.getMaterialId());
-       /* criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
-        criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());*/
-        List<BaseStorageMaterial> baseStorageMaterials = baseStorageMaterialMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(baseStorageMaterials)) {
-            throw new BizErrorException("该仓库区域的仓库的储位上的物料已存在");
-        }
-
         baseStorageMaterial.setCreateUserId(currentUser.getUserId());
         baseStorageMaterial.setCreateTime(new Date());
         baseStorageMaterial.setModifiedUserId(currentUser.getUserId());
@@ -102,20 +91,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        Example example = new Example(BaseStorageMaterial.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("storageId", baseStorageMaterial.getStorageId())
-                .andEqualTo("materialId", baseStorageMaterial.getMaterialId())
-                .andNotEqualTo("storageMaterialId", baseStorageMaterial.getStorageMaterialId());
-        /*criteria.andEqualTo("warehouseId",smtStorageMaterial.getWarehouseId());
-        criteria.andEqualTo("warehouseAreaId",smtStorageMaterial.getWarehouseAreaId());*/
-
-        BaseStorageMaterial storageMaterial = baseStorageMaterialMapper.selectOneByExample(example);
-
-        if (StringUtils.isNotEmpty(storageMaterial) && !storageMaterial.getStorageMaterialId().equals(baseStorageMaterial.getStorageMaterialId())) {
-            throw new BizErrorException("该仓库区域的仓库的储位上的物料已存在");
         }
 
         baseStorageMaterial.setModifiedUserId(currentUser.getUserId());

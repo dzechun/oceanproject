@@ -76,4 +76,10 @@ public class SearchBaseStorageMaterial extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    /**
+     * 货主名称
+     */
+    @ApiModelProperty(name = "materialOwnerName",value = "货主名称")
+    private String materialOwnerName;
 }
