@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 销售订单
@@ -143,9 +144,10 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
     @Excel(name = "订单日期", height = 20, width = 30,orderNum="")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "order_date")
-    private Date orderDate;
+    private String orderDate;
 
     /**
      * 制单人员
@@ -160,9 +162,10 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="makeOrderDate",value = "制单日期")
     @Excel(name = "制单日期", height = 20, width = 30,orderNum="")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "make_order_date")
-    private Date makeOrderDate;
+    private String makeOrderDate;
 
     /**
      * 审核人员
@@ -177,9 +180,10 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="auditDate",value = "审核日期")
     @Excel(name = "审核日期", height = 20, width = 30,orderNum="")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "audit_date")
-    private Date auditDate;
+    private String auditDate;
 
     /**
      * 备注
@@ -208,8 +212,9 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -225,8 +230,9 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
