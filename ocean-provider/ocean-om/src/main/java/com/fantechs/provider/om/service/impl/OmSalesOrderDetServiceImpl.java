@@ -37,15 +37,15 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
     private OmHtSalesOrderDetService omHtSalesOrderDetService;
 
     @Override
-    public int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, SysUser currentUserInfo) {
+    public int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, Integer lineNumber, SysUser currentUserInfo) {
         OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
 
         BeanUtils.autoFillEqFields(omSalesOrderDetDto, omSalesOrderDet);
 
-        return this.save(omSalesOrderDet, customerOrderCode, currentUserInfo);
+        return this.save(omSalesOrderDet, customerOrderCode, lineNumber, currentUserInfo);
     }
 
-    private int save(OmSalesOrderDet omSalesOrderDet, String customerOrderCode, SysUser currentUserInfo) {
+    private int save(OmSalesOrderDet omSalesOrderDet, String customerOrderCode, Integer lineNumber, SysUser currentUserInfo) {
 //        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
 //        if(StringUtils.isEmpty(currentUserInfo)) {
 //            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -54,9 +54,6 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 
         if(StringUtils.isEmpty(omSalesOrderDet.getSalesOrderId())) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "销售订单ID不能为空");
-        }
-        if(StringUtils.isEmpty(omSalesOrderDet.getSourceLineNumber())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "行号不能为空");
         }
 
         //数据库有限制这个字段不能为空
@@ -71,7 +68,10 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 //        if(StringUtils.isEmpty(customerOrderCode)) {
 //            throw new BizErrorException(ErrorCodeEnum.GL9999404);
 //        }
-        omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + omSalesOrderDet.getSourceLineNumber());
+        if(StringUtils.isEmpty(omSalesOrderDet.getSourceLineNumber())) {
+            omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
+        }
+        omSalesOrderDet.setSourceLineNumber(String.format("%03d", lineNumber));
 
         omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
         omSalesOrderDet.setCreateTime(new Date());

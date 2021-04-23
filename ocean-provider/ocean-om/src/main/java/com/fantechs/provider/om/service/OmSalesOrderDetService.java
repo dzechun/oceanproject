@@ -15,7 +15,7 @@ import java.util.Map;
 public interface OmSalesOrderDetService extends IService<OmSalesOrderDet> {
     List<OmSalesOrderDetDto> findList(Map<String, Object> map);
 
-    int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, SysUser currentUserInfo);
+    int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, Integer lineNumber, SysUser currentUserInfo);
 
     int updateDto(OmSalesOrderDetDto omSalesOrderDetDto, SysUser currentUserInfo);
 }

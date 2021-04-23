@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
@@ -19,10 +20,7 @@ import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -54,9 +52,10 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             return 0;
         }
 
-        for(OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDto.getOmSalesOrderDetDtoList()) {
+        for(int i = 0; i < omSalesOrderDto.getOmSalesOrderDetDtoList().size(); i++) {
+            OmSalesOrderDetDto omSalesOrderDetDto = omSalesOrderDto.getOmSalesOrderDetDtoList().get(i);
             omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
-            if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), currentUserInfo) <= 0) {
+            if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), i, currentUserInfo) <= 0) {
                 return 0;
             }
         }
@@ -144,8 +143,37 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             return 0;
         }
 
+        Map<String, Object> findParaMap = new HashMap<>();
+        findParaMap.put("salesOrderId", omSalesOrder.getSalesOrderId());
+        List<OmSalesOrderDetDto> dbOmSalesOrderDet = omSalesOrderDetService.findList(findParaMap);
+
+        List<Long> dbDataList = new ArrayList<>();
+        int maxLineNumber = 1;
+        for(OmSalesOrderDetDto omSalesOrderDetDto : dbOmSalesOrderDet) {
+            dbDataList.add(omSalesOrderDetDto.getSalesOrderDetId());
+            int lineNumber = Integer.parseInt(omSalesOrderDetDto.getSourceLineNumber());
+            maxLineNumber = Math.max(lineNumber, maxLineNumber);
+        }
+
+        List<Long> newDataList = new ArrayList<>();
         for(OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDto.getOmSalesOrderDetDtoList()) {
-            if(omSalesOrderDetService.updateDto(omSalesOrderDetDto, currentUserInfo) <= 0) {
+            if(omSalesOrderDetDto.getSalesOrderDetId() == null) {
+                omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
+                if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), maxLineNumber, currentUserInfo) <= 0) {
+                    return 0;
+                }
+                ++maxLineNumber;
+            } else {
+                newDataList.add(omSalesOrderDetDto.getSalesOrderDetId());
+                if(omSalesOrderDetService.updateDto(omSalesOrderDetDto, currentUserInfo) <= 0) {
+                    return 0;
+                }
+            }
+        }
+
+        String result = this.getDiffList(newDataList, dbDataList);
+        if(!StringUtils.isEmpty(result)) {
+            if(omSalesOrderDetService.batchDelete(this.getDiffList(newDataList, dbDataList)) <= 0 ) {
                 return 0;
             }
         }
@@ -195,12 +223,45 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
 
     private void recordHistory(OmSalesOrder omSalesOrder, String operation) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUserInfo)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         OmHtSalesOrder omHtSalesOrder = new OmHtSalesOrder();
         if(StringUtils.isEmpty(omSalesOrder)) {
             return;
         }
         BeanUtils.autoFillEqFields(omSalesOrder, omHtSalesOrder);
         omHtSalesOrder.setOption1(operation);
+        omHtSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
+        omHtSalesOrder.setCreateTime(new Date());
+        omHtSalesOrder.setCreateUserId(currentUserInfo.getUserId());
+        omHtSalesOrder.setModifiedTime(new Date());
+        omHtSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
+
         omHtSalesOrderService.save(omHtSalesOrder);
+    }
+
+    private String getDiffList(List<Long> newDataList, List<Long> dbDataList) {
+        StringBuffer idsString = new StringBuffer();
+        if(dbDataList != null && !dbDataList.isEmpty() && newDataList != null && !newDataList.isEmpty()) {
+            Map<Long, Long> newDataMap = new HashMap<>();
+            for(Long newDataId : newDataList) {
+                newDataMap.put(newDataId, newDataId);
+            }
+
+
+            for(Long dbId : dbDataList) {
+                if(!newDataMap.containsKey(dbId)) {
+                    idsString.append(dbId);
+                    idsString.append(',');
+                }
+            }
+            if(idsString.length() > 0) {
+                idsString.deleteCharAt(idsString.length()-1);
+            }
+        }
+
+        return idsString.toString();
     }
 }
