@@ -112,7 +112,7 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
                 for (BaseSamplePlanAqlDto baseSamplingPlanAqlDto : samplingPlanAqlList) {
                     aqlIds+=baseSamplingPlanAqlDto.getSamplePlanAqlId()+",";
                 }
-                baseSamplePlanAqlService.batchDelete(aqlIds);
+                baseSamplePlanAqlService.batchDelete(aqlIds.substring(0, aqlIds.length() - 1));
             }
         }
 
