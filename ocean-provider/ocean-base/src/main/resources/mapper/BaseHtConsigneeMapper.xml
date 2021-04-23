@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtConsigneeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtConsignee">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_consignee_id" jdbcType="BIGINT" property="htConsigneeId" />
+    <result column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
+    <result column="consignee_code" jdbcType="VARCHAR" property="consigneeCode" />
+    <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="material_owner_desc" jdbcType="VARCHAR" property="materialOwnerDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhc.ht_consignee_id,
+    bhc.consignee_id,
+    bhc.consignee_code,
+    bhc.consignee_name,
+    bhc.company_name,
+    bhc.material_owner_id,
+    bhc.link_man_name,
+    bhc.link_man_phone,
+    bhc.fax_number,
+    bhc.e_mail_address,
+    bhc.address,
+    bhc.material_owner_desc,
+    bhc.`status`,
+    bhc.remark,
+    bhc.org_id,
+    bhc.create_user_id,
+    bhc.create_time,
+    bhc.modified_user_id,
+    bhc.modified_time,
+    bhc.is_delete,
+    bhc.option1,
+    bhc.option2,
+    bhc.option3
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    bo.organization_name,bmo.material_owner_name
+    from fantech_imes_v2.base_ht_consignee bhc
+    LEFT JOIN fantech_imes_v2.base_material_owner bmo on bhc.material_owner_id=bmo.material_owner_id
+    LEFT JOIN ocean_v2.sys_user su ON bhc.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bhc.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhc.org_id = bo.organization_id
+    <where>
+      <if test="consigneeCode != null and consigneeCode!=''">
+        and bhc.consignee_code like CONCAT('%', #{consigneeCode}, '%')
+      </if>
+      <if test="consigneeName != null and consigneeName!=''">
+        and bhc.consignee_name like CONCAT('%', #{consigneeName}, '%')
+      </if>
+    </where>
+    order by bhc.modified_time desc
+  </select>
+
+</mapper>
