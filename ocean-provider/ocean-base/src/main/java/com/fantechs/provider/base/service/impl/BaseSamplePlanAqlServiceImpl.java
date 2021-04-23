@@ -83,6 +83,11 @@ public class BaseSamplePlanAqlServiceImpl extends BaseService<BaseSamplePlanAql>
         int i = baseSamplePlanAqlMapper.insertUseGeneratedKeys(record);
 
         if (StringUtils.isNotEmpty(record.getList())){
+
+            Example example = new Example(BaseSamplePlanAcRe.class);
+            example.createCriteria().andEqualTo("samplePlanAqlId",record.getSamplePlanAqlId());
+            baseSamplePlanAcReMapper.deleteByExample(example);
+
             List<BaseSamplePlanAcRe> list = record.getList();
             for (BaseSamplePlanAcRe baseSamplePlanAcRe : list) {
                 baseSamplePlanAcRe.setSamplePlanAqlId(record.getSamplePlanAqlId());

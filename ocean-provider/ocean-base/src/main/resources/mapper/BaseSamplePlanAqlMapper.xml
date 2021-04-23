@@ -64,8 +64,11 @@
       <if test="aqlValue != null and aqlValue!=''">
         and bspa.aql_value =  #{aqlValue}
       </if>
-      <if test="sampleplanAqlId != null and sampleplanAqlId!=''">
-        and bspa.sample_plan_aql_id = #{sampleplanAqlId}
+      <if test="samplePlanAqlId != null and samplePlanAqlId!=''">
+        and bspa.sample_plan_aql_id = #{samplePlanAqlId}
+      </if>
+      <if test="samplePlanId != null and samplePlanId!=''">
+        and bspa.sample_plan_id = #{samplePlanId}
       </if>
     </where>
     order by bspa.create_time desc
