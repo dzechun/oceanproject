@@ -44,9 +44,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Resource
     private BaseWarehouseAreaMapper baseWarehouseAreaMapper;
 
-    @Resource
-    private BaseWarehousePersonnelMapper baseWarehousePersonnelMapper;
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -75,16 +72,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         BaseHtWarehouse baseHtWarehouse = new BaseHtWarehouse();
         BeanUtils.copyProperties(baseWarehouse, baseHtWarehouse);
         int i = baseHtWarehouseMapper.insertSelective(baseHtWarehouse);
-
-        //新增仓库人员关系
-        List<BaseWarehousePersonnel> baseWarehousePersonnels = baseWarehouse.getBaseWarehousePersonnels();
-        if (StringUtils.isNotEmpty(baseWarehousePersonnels)){
-            for (BaseWarehousePersonnel baseWarehousePersonnel : baseWarehousePersonnels) {
-                baseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
-                baseWarehousePersonnel.setOrganizationId(currentUser.getOrganizationId());
-            }
-            baseWarehousePersonnelMapper.insertList(baseWarehousePersonnels);
-        }
 
         return i;
     }
@@ -121,12 +108,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
             baseHtWarehouse.setModifiedUserId(currentUser.getUserId());
             baseHtWarehouse.setModifiedTime(new Date());
             list.add(baseHtWarehouse);
-
-            //删除仓库人员关系
-            Example example1 = new Example(BaseWarehousePersonnel.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("warehouseId",warehouseId);
-            baseWarehousePersonnelMapper.deleteByExample(example1);
         }
         baseHtWarehouseMapper.insertList(list);
 
@@ -155,22 +136,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
         int i= baseWarehouseMapper.updateByPrimaryKeySelective(baseWarehouse);
 
-        //删除原有绑定关系
-        Example example1 = new Example(BaseWarehousePersonnel.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("warehouseId", baseWarehouse.getWarehouseId());
-        baseWarehousePersonnelMapper.deleteByExample(example1);
-
-        //新增绑定关系
-        List<BaseWarehousePersonnel> baseWarehousePersonnels = baseWarehouse.getBaseWarehousePersonnels();
-        if (StringUtils.isNotEmpty(baseWarehousePersonnels)){
-            for (BaseWarehousePersonnel baseWarehousePersonnel : baseWarehousePersonnels) {
-                baseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
-                baseWarehousePersonnel.setOrganizationId(currentUser.getOrganizationId());
-            }
-            baseWarehousePersonnelMapper.insertList(baseWarehousePersonnels);
-        }
-
         //新增仓库历史信息
         BaseHtWarehouse baseHtWarehouse =new BaseHtWarehouse();
         BeanUtils.copyProperties(baseWarehouse, baseHtWarehouse);
@@ -182,17 +147,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Override
     public List<BaseWarehouse> findList(SearchBaseWarehouse searchBaseWarehouse) {
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(searchBaseWarehouse);
-        if (StringUtils.isNotEmpty(baseWarehouses)){
-            SearchBaseWarehousePersonnel searchBaseWarehousePersonnel = new SearchBaseWarehousePersonnel();
-
-            for (BaseWarehouse baseWarehouse : baseWarehouses) {
-                searchBaseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
-                List<BaseWarehousePersonnel> list = baseWarehousePersonnelMapper.findList(searchBaseWarehousePersonnel);
-                if (StringUtils.isNotEmpty(list)){
-                    baseWarehouse.setBaseWarehousePersonnels(list);
-                }
-            }
-        }
         return baseWarehouses;
     }
 
