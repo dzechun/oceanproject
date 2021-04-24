@@ -13,6 +13,17 @@
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
+        <result column="roadway" jdbcType="Integer" property="roadway"/>
+        <result column="row_number" jdbcType="Integer" property="rowNumber"/>
+        <result column="column_number" jdbcType="Integer" property="columnNumber"/>
+        <result column="level_number" jdbcType="Integer" property="levelNumber"/>
+        <result column="putaway_move_line_no" jdbcType="Integer" property="putawayMoveLineNo"/>
+        <result column="picking_move_line_no" jdbcType="Integer" property="pickingMoveLineNo"/>
+        <result column="stock_move_line_no" jdbcType="Integer" property="stockMoveLineNo"/>
+        <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
+        <result column="surplus_load" jdbcType="BigDecimal" property="surplusLoad"/>
+        <result column="surplus_volume" jdbcType="BigDecimal" property="surplusVolume"/>
+        <result column="surplus_can_put_salver" jdbcType="Integer" property="surplusCanPutSalver"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -45,6 +56,17 @@
         ss.warehouse_state,
         ss.warehouse_id,
         ss.warehouse_area_id,
+        ss.roadway,
+        ss.row_number,
+        ss.column_number,
+        ss.level_number,
+        ss.putaway_move_line_no,
+        ss.picking_move_line_no,
+        ss.stock_move_line_no,
+        ss.if_stock_lock,
+        ss.surplus_load,
+        ss.surplus_volume,
+        ss.surplus_can_put_salver,
         ss.`status`,
         ss.remark,
         ss.org_id,
@@ -120,7 +142,18 @@
                 capacity =#{capacity},
                 temperature =#{temperature},
                 unit =#{unit},
-                warehouse_state =#{warehouseState}
+                warehouse_state =#{warehouseState},
+                roadway =#{roadway},
+                row_number =#{rowNumber},
+                column_number =#{columnNumber},
+                level_number =#{levelNumber},
+                putaway_move_line_no =#{putawayMoveLineNo},
+                picking_move_line_no =#{pickingMoveLineNo},
+                stock_move_line_no =#{stockMoveLineNo},
+                if_stock_lock =#{ifStockLock},
+                surplus_load =#{surplusLoad},
+                surplus_volume =#{surplusVolume},
+                surplus_can_put_salver =#{surplusCanPutSalver},
                 warehouse_id =#{item.warehouseId},
                 warehouse_area_id =#{item.warehouseAreaId},
                 status =#{item.status},

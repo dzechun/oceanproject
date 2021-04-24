@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -183,10 +184,10 @@ public class BaseWarehouse extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     /**
-     * 仓库人员关系集合
+     * 仓库货主关系集合
      */
-    @ApiModelProperty(name = "baseWarehousePersonnels",value = "仓库人员关系集合")
-    private List<BaseWarehousePersonnel> baseWarehousePersonnels = new ArrayList<>();
+    @ApiModelProperty(name = "baseMaterialOwnerReWhDtos",value = "仓库货主关系集合")
+    private List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = new ArrayList<>();
 
     /**
      * 扩展字段1

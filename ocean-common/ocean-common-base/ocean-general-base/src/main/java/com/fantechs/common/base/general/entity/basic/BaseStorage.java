@@ -141,6 +141,90 @@ public class BaseStorage extends ValidGroup implements Serializable {
     private Byte warehouseState;
 
     /**
+     * 工作区
+     */
+    @ApiModelProperty(name="workingAreaId",value = "工作区")
+    @Column(name = "working_area_id")
+    private Long workingAreaId;
+
+    /**
+     * 巷道
+     */
+    @ApiModelProperty(name="roadway",value = "巷道")
+    @Column(name = "roadway")
+    private Integer roadway;
+
+    /**
+     * 排
+     */
+    @ApiModelProperty(name="rowNumber",value = "排")
+    @Column(name = "row_number")
+    private Integer rowNumber;
+
+    /**
+     * 列
+     */
+    @ApiModelProperty(name="columnNumber",value = "列")
+    @Column(name = "column_number")
+    private Integer columnNumber;
+
+    /**
+     * 层
+     */
+    @ApiModelProperty(name="levelNumber",value = "层")
+    @Column(name = "level_number")
+    private Integer levelNumber;
+
+    /**
+     * 上架动线号
+     */
+    @ApiModelProperty(name="putawayMoveLineNo",value = "上架动线号")
+    @Column(name = "putaway_move_line_no")
+    private Integer putawayMoveLineNo;
+
+    /**
+     * 拣货动线号
+     */
+    @ApiModelProperty(name="pickingMoveLineNo",value = "拣货动线号")
+    @Column(name = "picking_move_line_no")
+    private Integer pickingMoveLineNo;
+
+    /**
+     * 盘点动线号
+     */
+    @ApiModelProperty(name="stockMoveLineNo",value = "盘点动线号")
+    @Column(name = "stock_move_line_no")
+    private Integer stockMoveLineNo;
+
+    /**
+     * 盘点锁(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifStockLock",value = "盘点锁(0-否 1-是)")
+    @Column(name = "if_stock_lock")
+    private Byte ifStockLock;
+
+    /**
+     * 剩余载重
+     */
+    @ApiModelProperty(name="surplusLoad",value = "剩余载重")
+    @Column(name = "surplus_load")
+    private BigDecimal surplusLoad;
+
+    /**
+     * 剩余容积
+     */
+    @ApiModelProperty(name="surplusVolume",value = "剩余容积")
+    @Column(name = "surplus_volume")
+    private BigDecimal surplusVolume;
+
+    /**
+     * 剩余可放托盘数
+     */
+    @ApiModelProperty(name="surplusCanPutSalver",value = "剩余可放托盘数")
+    @Column(name = "surplus_can_put_salver")
+    private Integer surplusCanPutSalver;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
@@ -109,6 +110,12 @@ public class BaseWarehouseController {
     @PostMapping("/batchSave")
     public ResponseEntity batchSave(@ApiParam(value = "批量新增")@RequestBody List<BaseWarehouse> baseWarehouses) {
         return ControllerUtil.returnDataSuccess("", baseWarehouseService.batchSave(baseWarehouses));
+    }
+
+    @ApiOperation(value = "绑定货主",notes = "绑定货主")
+    @PostMapping("/bind")
+    public ResponseEntity bind(@ApiParam(value = "必传：materialOwnerId、warehouseId",required = true)@RequestBody @Validated BaseMaterialOwnerReWh baseMaterialOwnerReWh) {
+        return ControllerUtil.returnCRUD(baseWarehouseService.bind(baseMaterialOwnerReWh));
     }
 
 }

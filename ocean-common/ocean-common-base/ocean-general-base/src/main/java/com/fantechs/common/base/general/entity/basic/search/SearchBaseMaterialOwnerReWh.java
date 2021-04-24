@@ -16,8 +16,14 @@ public class SearchBaseMaterialOwnerReWh extends BaseQuery implements Serializab
     private static final long serialVersionUID = 6008776606055814825L;
 
     /**
-     * ID
+     * 货主信息ID
      */
     @ApiModelProperty(name="materialOwnerId",value = "货主信息ID")
     private Long materialOwnerId;
+
+    /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
 }

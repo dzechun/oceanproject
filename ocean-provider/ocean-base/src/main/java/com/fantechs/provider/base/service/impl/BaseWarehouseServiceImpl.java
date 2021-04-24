@@ -2,10 +2,13 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.general.entity.basic.BaseWarehousePersonnel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehousePersonnel;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -13,10 +16,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtWarehouseMapper;
-import com.fantechs.provider.base.mapper.BaseWarehouseAreaMapper;
-import com.fantechs.provider.base.mapper.BaseWarehouseMapper;
-import com.fantechs.provider.base.mapper.BaseWarehousePersonnelMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseWarehouseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,6 +43,9 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
     @Resource
     private BaseWarehouseAreaMapper baseWarehouseAreaMapper;
+
+    @Resource
+    private BaseMaterialOwnerReWhMapper baseMaterialOwnerReWhMapper;
 
 
     @Override
@@ -147,6 +150,17 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Override
     public List<BaseWarehouse> findList(SearchBaseWarehouse searchBaseWarehouse) {
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(searchBaseWarehouse);
+        if (StringUtils.isNotEmpty(baseWarehouses)){
+            SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh = new SearchBaseMaterialOwnerReWh();
+
+            for (BaseWarehouse baseWarehouse : baseWarehouses) {
+                searchBaseMaterialOwnerReWh.setWarehouseId(baseWarehouse.getWarehouseId());
+                List<BaseMaterialOwnerReWhDto> list = baseMaterialOwnerReWhMapper.findList(searchBaseMaterialOwnerReWh);
+                if (StringUtils.isNotEmpty(list)){
+                    baseWarehouse.setBaseMaterialOwnerReWhDtos(list);
+                }
+            }
+        }
         return baseWarehouses;
     }
 
@@ -162,5 +176,34 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Override
     public int insertList(List<BaseWarehouse> baseWarehouses) {
         return baseWarehouseMapper.insertList(baseWarehouses);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int bind(BaseMaterialOwnerReWh baseMaterialOwnerReWh) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Example example = new Example(BaseMaterialOwnerReWh.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialOwnerId", baseMaterialOwnerReWh.getMaterialOwnerId())
+                .andEqualTo("warehouseId",baseMaterialOwnerReWh.getWarehouseId())
+                .andNotEqualTo("material_owner_re_wh_id",baseMaterialOwnerReWh.getMaterialOwnerReWhId());
+        List<BaseMaterialOwnerReWh> baseMaterialOwnerReWhs = baseMaterialOwnerReWhMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(baseMaterialOwnerReWhs)){
+            throw new BizErrorException("该仓库与货主绑定关系已存在");
+        }
+
+        baseMaterialOwnerReWh.setCreateUserId(currentUser.getUserId());
+        baseMaterialOwnerReWh.setCreateTime(new Date());
+        baseMaterialOwnerReWh.setModifiedUserId(currentUser.getUserId());
+        baseMaterialOwnerReWh.setModifiedTime(new Date());
+        baseMaterialOwnerReWh.setStatus(StringUtils.isEmpty(baseMaterialOwnerReWh.getStatus())?1:baseMaterialOwnerReWh.getStatus());
+        baseMaterialOwnerReWh.setOrgId(currentUser.getOrganizationId());
+        int i = baseMaterialOwnerReWhMapper.insertUseGeneratedKeys(baseMaterialOwnerReWh);
+
+        return i;
     }
 }
