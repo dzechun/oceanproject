@@ -24,6 +24,12 @@ public class SearchBaseWorkingArea extends BaseQuery implements Serializable {
     private String warehouseAreaName;
 
     /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+    /**
      * 状态
      */
     @ApiModelProperty(name = "status",value = "状态")

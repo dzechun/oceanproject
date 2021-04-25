@@ -26,6 +26,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -45,12 +46,13 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select<include refid="Base_Column_List"/>,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    bwas.warehouse_area_name
+    bwas.warehouse_area_name,bw.warehouse_name
     from base_working_area bwa
     left join ocean_v2.sys_user su on bwa.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on bwa.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bwa.org_id = bo.organization_id
     LEFT JOIN base_warehouse_area bwas ON bwas.warehouse_area_id = bwa.warehouse_area_id
+    LEFT JOIN base_warehouse bw ON bw.warehouse_id = bwas.warehouse_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bwa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -60,6 +62,9 @@
       </if>
       <if test="warehouseAreaName != null and warehouseAreaName != ''">
         and bwas.warehouse_area_name like CONCAT('%',#{warehouseAreaName},'%')
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
       </if>
       <if test="status != null and status != ''">
         and bwa.status = #{status}
