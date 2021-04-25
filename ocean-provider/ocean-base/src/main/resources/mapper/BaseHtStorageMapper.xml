@@ -14,6 +14,18 @@
         <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
+        <result column="storage_type" jdbcType="TINYINT" property="storageType"/>
+        <result column="roadway" jdbcType="INTEGER" property="roadway"/>
+        <result column="row_no" jdbcType="INTEGER" property="rowNo"/>
+        <result column="column_no" jdbcType="INTEGER" property="columnNo"/>
+        <result column="level_no" jdbcType="INTEGER" property="levelNo"/>
+        <result column="putaway_move_line_no" jdbcType="INTEGER" property="putawayMoveLineNo"/>
+        <result column="picking_move_line_no" jdbcType="INTEGER" property="pickingMoveLineNo"/>
+        <result column="stock_move_line_no" jdbcType="INTEGER" property="stockMoveLineNo"/>
+        <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
+        <result column="surplus_load" jdbcType="DECIMAL" property="surplusLoad"/>
+        <result column="surplus_volume" jdbcType="DECIMAL" property="surplusVolume"/>
+        <result column="surplus_can_put_salver" jdbcType="INTEGER" property="surplusCanPutSalver"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -42,6 +54,18 @@
         shs.warehouse_state,
         shs.warehouse_id,
         shs.warehouse_area_id,
+        shs.storage_type,
+        shs.roadway,
+        shs.row_no,
+        shs.column_no,
+        shs.level_no,
+        shs.putaway_move_line_no,
+        shs.picking_move_line_no,
+        shs.stock_move_line_no,
+        shs.if_stock_lock,
+        shs.surplus_load,
+        shs.surplus_volume,
+        shs.surplus_can_put_salver,
         shs.`status`,
         shs.remark,
         shs.org_id,
