@@ -38,12 +38,12 @@
         bw.modified_time, bw.is_delete, bw.option1, bw.option2, bw.option3
     </sql>
 
-    <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT
         <include refid="Base_Column_List"/>,
         su.user_name, su.nick_name, bwh.warehouse_name, bo.organization_name,
         suc.user_name AS create_user_name,
-        sum.user_name AS modified_user_name,
+        sum.user_name AS modified_user_name
         FROM base_worker bw
         LEFT JOIN base_warehouse bwh on bw.warehouse_id = bwh.warehouse_id
         LEFT JOIN base_organization bo on bw.org_id = bo.organization_id

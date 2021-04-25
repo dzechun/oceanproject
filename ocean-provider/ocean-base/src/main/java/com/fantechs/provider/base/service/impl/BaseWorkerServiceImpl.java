@@ -46,6 +46,7 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         baseWorker.setCreateUserId(currentUserInfo.getUserId());
         baseWorker.setModifiedTime(new Date());
         baseWorker.setModifiedUserId(currentUserInfo.getUserId());
+        baseWorker.setOrgId(currentUserInfo.getOrganizationId());
 
         return baseWorkerMapper.insertUseGeneratedKeys(baseWorker);
     }

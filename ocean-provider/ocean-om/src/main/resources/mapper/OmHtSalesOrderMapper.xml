@@ -61,7 +61,7 @@
         <include refid="Base_Column_List" />, bs.supplier_name, bbrs.barcode_rule_set_name,
         bo.organization_name,
         su.user_name AS create_user_name,
-        sus.user_name AS modified_user_name,
+        sus.user_name AS modified_user_name
         from om_ht_sales_order hso
         left join base_supplier bs on hso.supplier_id = bs.supplier_id
         left join base_barcode_rule_set bbrs on hso.barcode_rule_set_id = bbrs.barcode_rule_set_id
