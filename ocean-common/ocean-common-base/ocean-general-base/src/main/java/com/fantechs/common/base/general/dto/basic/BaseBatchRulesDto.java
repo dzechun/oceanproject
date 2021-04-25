@@ -17,7 +17,7 @@ public class BaseBatchRulesDto extends BaseBatchRules implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="13")
     private String createUserName;
 
     /**
@@ -25,14 +25,14 @@ public class BaseBatchRulesDto extends BaseBatchRules implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="16")
     private String modifiedUserName;
     /**
      * 仓库名称
      */
     @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="2")
     private String  warehouseName;
 
     /**
@@ -40,7 +40,7 @@ public class BaseBatchRulesDto extends BaseBatchRules implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    @Excel(name = "货主名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "货主名称", height = 20, width = 30,orderNum="11")
     private String materialOwnerName;
 
     /**
