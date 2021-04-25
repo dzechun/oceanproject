@@ -81,7 +81,7 @@
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
             <if test="warehouseAreaId!=null and warehouseAreaId!=''">
-                and ssm.warehouse_area_id=#{warehouseAreaId}
+                and ss.warehouse_area_id=#{warehouseAreaId}
             </if>
             <if test="warehouseAreaName!=null and warehouseAreaName!=''">
                 and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
