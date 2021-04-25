@@ -61,6 +61,7 @@
         and bwas.warehouse_area_name like CONCAT('%',#{warehouseAreaName},'%')
       </if>
     </where>
+    order by modified_time desc
   </select>
 
 </mapper>
