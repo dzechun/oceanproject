@@ -28,6 +28,15 @@
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_desc" jdbcType="VARCHAR" property="warehouseDesc"/>
+    <result column="material_owner_code" jdbcType="VARCHAR" property="materialOwnerCode"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="material_owner_short_name" jdbcType="VARCHAR" property="materialOwnerShortName"/>
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress"/>
+    <result column="address" jdbcType="VARCHAR" property="address"/>
+    <result column="material_owner_desc" jdbcType="VARCHAR" property="materialOwnerDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -51,9 +60,12 @@
     select <include refid="Base_Column_List"></include>,
     bw.warehouse_code,bw.warehouse_name,bw.warehouse_desc,
     u.user_name as create_user_name, s.user_name as modified_user_name,
+    bmo.material_owner_code,bmo.material_owner_name,bmo.material_owner_short_name,bmo.link_man_name,
+    bmo.link_man_phone,bmo.fax_number,bmo.e_mail_address,bmo.address,bmo.material_owner_desc,
     bo.organization_name
     from fantech_imes_v2.base_material_owner_re_wh bmorw
     left join fantech_imes_v2.base_warehouse bw on bmorw.warehouse_id=bw.warehouse_id
+    left join fantech_imes_v2.base_material_owner bmo on bmorw.material_owner_id=bmo.material_owner_id
     left join ocean_v2.sys_user u on bmorw.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bmorw.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON bmorw.org_id = bo.organization_id

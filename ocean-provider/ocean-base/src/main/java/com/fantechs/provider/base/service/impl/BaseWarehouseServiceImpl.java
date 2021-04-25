@@ -71,6 +71,16 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
         baseWarehouseMapper.insertUseGeneratedKeys(baseWarehouse);
 
+        //新增货主和仓库关系
+        List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = baseWarehouse.getBaseMaterialOwnerReWhDtos();
+        if(StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
+            for (BaseMaterialOwnerReWhDto baseMaterialOwnerReWhDto : baseMaterialOwnerReWhDtos) {
+                baseMaterialOwnerReWhDto.setWarehouseId(baseWarehouse.getWarehouseId());
+                baseMaterialOwnerReWhDto.setOrgId(currentUser.getOrganizationId());
+            }
+            baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhDtos);
+        }
+
         //新增仓库历史信息
         BaseHtWarehouse baseHtWarehouse = new BaseHtWarehouse();
         BeanUtils.copyProperties(baseWarehouse, baseHtWarehouse);
@@ -111,6 +121,12 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
             baseHtWarehouse.setModifiedUserId(currentUser.getUserId());
             baseHtWarehouse.setModifiedTime(new Date());
             list.add(baseHtWarehouse);
+
+            //删除原有绑定关系
+            Example example1 = new Example(BaseMaterialOwnerReWh.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("warehouseId", baseWarehouse.getWarehouseId());
+            baseMaterialOwnerReWhMapper.deleteByExample(example1);
         }
         baseHtWarehouseMapper.insertList(list);
 
@@ -138,6 +154,22 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         baseWarehouse.setModifiedTime(new Date());
         baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
         int i= baseWarehouseMapper.updateByPrimaryKeySelective(baseWarehouse);
+
+        //删除原有绑定关系
+        Example example1 = new Example(BaseMaterialOwnerReWh.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("warehouseId", baseWarehouse.getWarehouseId());
+        baseMaterialOwnerReWhMapper.deleteByExample(example1);
+
+        //新增货主和仓库关系
+        List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = baseWarehouse.getBaseMaterialOwnerReWhDtos();
+        if(StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
+            for (BaseMaterialOwnerReWhDto baseMaterialOwnerReWhDto : baseMaterialOwnerReWhDtos) {
+                baseMaterialOwnerReWhDto.setWarehouseId(baseWarehouse.getWarehouseId());
+                baseMaterialOwnerReWhDto.setOrgId(currentUser.getOrganizationId());
+            }
+            baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhDtos);
+        }
 
         //新增仓库历史信息
         BaseHtWarehouse baseHtWarehouse =new BaseHtWarehouse();
@@ -178,32 +210,4 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         return baseWarehouseMapper.insertList(baseWarehouses);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int bind(BaseMaterialOwnerReWh baseMaterialOwnerReWh) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        Example example = new Example(BaseMaterialOwnerReWh.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialOwnerId", baseMaterialOwnerReWh.getMaterialOwnerId())
-                .andEqualTo("warehouseId",baseMaterialOwnerReWh.getWarehouseId())
-                .andNotEqualTo("material_owner_re_wh_id",baseMaterialOwnerReWh.getMaterialOwnerReWhId());
-        List<BaseMaterialOwnerReWh> baseMaterialOwnerReWhs = baseMaterialOwnerReWhMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(baseMaterialOwnerReWhs)){
-            throw new BizErrorException("该仓库与货主绑定关系已存在");
-        }
-
-        baseMaterialOwnerReWh.setCreateUserId(currentUser.getUserId());
-        baseMaterialOwnerReWh.setCreateTime(new Date());
-        baseMaterialOwnerReWh.setModifiedUserId(currentUser.getUserId());
-        baseMaterialOwnerReWh.setModifiedTime(new Date());
-        baseMaterialOwnerReWh.setStatus(StringUtils.isEmpty(baseMaterialOwnerReWh.getStatus())?1:baseMaterialOwnerReWh.getStatus());
-        baseMaterialOwnerReWh.setOrgId(currentUser.getOrganizationId());
-        int i = baseMaterialOwnerReWhMapper.insertUseGeneratedKeys(baseMaterialOwnerReWh);
-
-        return i;
-    }
 }

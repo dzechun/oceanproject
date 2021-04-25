@@ -73,6 +73,9 @@
             <if test="materialOwnerName!=null and materialOwnerName!=''">
                 and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
             </if>
+            <if test="status!=null and status!=''">
+                and bmo.status = #{status}
+            </if>
         </where>
         order by bmo.create_time desc
     </select>

@@ -39,6 +39,69 @@ public class BaseMaterialOwnerReWhDto extends BaseMaterialOwnerReWh implements S
     private String warehouseDesc;
 
     /**
+     * 货主编码
+     */
+    @Transient
+    @ApiModelProperty(name="materialOwnerCode" ,value="货主编码")
+    private String materialOwnerCode;
+
+    /**
+     * 货主名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialOwnerName" ,value="货主名称")
+    private String materialOwnerName;
+
+    /**
+     * 货主简称
+     */
+    @Transient
+    @ApiModelProperty(name="materialOwnerShortName" ,value="货主简称")
+    private String materialOwnerShortName;
+
+    /**
+     * 联系人
+     */
+    @Transient
+    @ApiModelProperty(name="linkManName" ,value="联系人")
+    private String linkManName;
+
+    /**
+     * 联系电话
+     */
+    @Transient
+    @ApiModelProperty(name="linkManPhone" ,value="联系电话")
+    private String linkManPhone;
+
+    /**
+     * 传真
+     */
+    @Transient
+    @ApiModelProperty(name="faxNumber" ,value="传真")
+    private String faxNumber;
+
+    /**
+     * 邮箱
+     */
+    @Transient
+    @ApiModelProperty(name="eMailAddress" ,value="邮箱")
+    private String eMailAddress;
+
+    /**
+     * 详细地址
+     */
+    @Transient
+    @ApiModelProperty(name="address" ,value="详细地址")
+    private String address;
+
+    /**
+     * 描述
+     */
+    @Transient
+    @ApiModelProperty(name="materialOwnerDesc" ,value="描述")
+    private String materialOwnerDesc;
+
+    /**
      * 创建用户名称
      */
     @Transient

@@ -112,10 +112,4 @@ public class BaseWarehouseController {
         return ControllerUtil.returnDataSuccess("", baseWarehouseService.batchSave(baseWarehouses));
     }
 
-    @ApiOperation(value = "绑定货主",notes = "绑定货主")
-    @PostMapping("/bind")
-    public ResponseEntity bind(@ApiParam(value = "必传：materialOwnerId、warehouseId",required = true)@RequestBody @Validated BaseMaterialOwnerReWh baseMaterialOwnerReWh) {
-        return ControllerUtil.returnCRUD(baseWarehouseService.bind(baseMaterialOwnerReWh));
-    }
-
 }

@@ -15,5 +15,4 @@ public interface BaseWarehouseService extends IService<BaseWarehouse>{
 
     int insertList(List<BaseWarehouse> baseWarehouses);
 
-    int bind(BaseMaterialOwnerReWh baseMaterialOwnerReWh);
 }
