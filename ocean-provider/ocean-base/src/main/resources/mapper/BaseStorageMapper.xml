@@ -13,17 +13,17 @@
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
-        <result column="roadway" jdbcType="Integer" property="roadway"/>
-        <result column="row_number" jdbcType="Integer" property="rowNumber"/>
-        <result column="column_number" jdbcType="Integer" property="columnNumber"/>
-        <result column="level_number" jdbcType="Integer" property="levelNumber"/>
-        <result column="putaway_move_line_no" jdbcType="Integer" property="putawayMoveLineNo"/>
-        <result column="picking_move_line_no" jdbcType="Integer" property="pickingMoveLineNo"/>
-        <result column="stock_move_line_no" jdbcType="Integer" property="stockMoveLineNo"/>
+        <result column="roadway" jdbcType="INTEGER" property="roadway"/>
+        <result column="row_number" jdbcType="INTEGER" property="rowNumber"/>
+        <result column="column_number" jdbcType="INTEGER" property="columnNumber"/>
+        <result column="level_number" jdbcType="INTEGER" property="levelNumber"/>
+        <result column="putaway_move_line_no" jdbcType="INTEGER" property="putawayMoveLineNo"/>
+        <result column="picking_move_line_no" jdbcType="INTEGER" property="pickingMoveLineNo"/>
+        <result column="stock_move_line_no" jdbcType="INTEGER" property="stockMoveLineNo"/>
         <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
-        <result column="surplus_load" jdbcType="BigDecimal" property="surplusLoad"/>
-        <result column="surplus_volume" jdbcType="BigDecimal" property="surplusVolume"/>
-        <result column="surplus_can_put_salver" jdbcType="Integer" property="surplusCanPutSalver"/>
+        <result column="surplus_load" jdbcType="DECIMAL" property="surplusLoad"/>
+        <result column="surplus_volume" jdbcType="DECIMAL" property="surplusVolume"/>
+        <result column="surplus_can_put_salver" jdbcType="INTEGER" property="surplusCanPutSalver"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
