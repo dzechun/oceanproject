@@ -82,4 +82,10 @@ public class SearchBaseStorageMaterial extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name = "materialOwnerName",value = "货主名称")
     private String materialOwnerName;
+
+    /**
+     * 状态
+     */
+    @ApiModelProperty(name = "status",value = "状态")
+    private Byte status;
 }

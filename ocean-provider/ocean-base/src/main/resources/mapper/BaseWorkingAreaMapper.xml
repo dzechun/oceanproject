@@ -61,8 +61,11 @@
       <if test="warehouseAreaName != null and warehouseAreaName != ''">
         and bwas.warehouse_area_name like CONCAT('%',#{warehouseAreaName},'%')
       </if>
+      <if test="status != null and status != ''">
+        and bwa.status = #{status}
+      </if>
     </where>
-    order by modified_time desc
+    order by create_time desc
   </select>
 
 </mapper>

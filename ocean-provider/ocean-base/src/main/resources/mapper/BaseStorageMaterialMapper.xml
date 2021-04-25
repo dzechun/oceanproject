@@ -110,6 +110,9 @@
             <if test="status!=null">
                 and ssm.status=#{status}
             </if>
+            <if test="status != null and status != ''">
+                and ssm.status = #{status}
+            </if>
         </where>
         order by ssm.create_time desc
     </select>
