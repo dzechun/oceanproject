@@ -117,10 +117,13 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 detIds.append(omSalesOrderDetDto.getSalesOrderDetId().toString());
                 detIds.append(',');
             }
-            detIds.deleteCharAt(detIds.length()-1);
-            if(omSalesOrderDetService.batchDelete(detIds.toString()) <= 0) {
-                return 0;
+            if(detIds.length() > 0) {
+                detIds.deleteCharAt(detIds.length()-1);
+                if(omSalesOrderDetService.batchDelete(detIds.toString()) <= 0) {
+                    return 0;
+                }
             }
+
         }
         if(omSalesOrderMapper.deleteByIds(ids)<=0) {
             return 0;
@@ -233,11 +236,11 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         }
         BeanUtils.autoFillEqFields(omSalesOrder, omHtSalesOrder);
         omHtSalesOrder.setOption1(operation);
-        omHtSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
-        omHtSalesOrder.setCreateTime(new Date());
-        omHtSalesOrder.setCreateUserId(currentUserInfo.getUserId());
-        omHtSalesOrder.setModifiedTime(new Date());
-        omHtSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
+//        omHtSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
+//        omHtSalesOrder.setCreateTime(new Date());
+//        omHtSalesOrder.setCreateUserId(currentUserInfo.getUserId());
+//        omHtSalesOrder.setModifiedTime(new Date());
+//        omHtSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
 
         omHtSalesOrderService.save(omHtSalesOrder);
     }
