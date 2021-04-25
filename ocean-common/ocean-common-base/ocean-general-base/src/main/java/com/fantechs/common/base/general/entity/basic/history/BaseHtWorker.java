@@ -103,7 +103,7 @@ public class BaseHtWorker extends ValidGroup implements Serializable {
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
-    private Date createTime;
+    private String createTime;
 
     /**
      * 修改人ID
@@ -120,7 +120,7 @@ public class BaseHtWorker extends ValidGroup implements Serializable {
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
-    private Date modifiedTime;
+    private String modifiedTime;
 
     /**
      * 逻辑删除（0、删除 1、正常）

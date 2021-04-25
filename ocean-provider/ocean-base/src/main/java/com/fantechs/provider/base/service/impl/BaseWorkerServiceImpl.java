@@ -61,8 +61,11 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         baseWorker.setModifiedUserId(currentUserInfo.getUserId());
         baseWorker.setOrgId(currentUserInfo.getOrganizationId());
 
-        recordHistory(baseWorker, currentUserInfo, "新增");
-        return baseWorkerMapper.insertUseGeneratedKeys(baseWorker);
+        if(baseWorkerMapper.insertUseGeneratedKeys(baseWorker) <= 0) {
+            recordHistory(baseWorker, currentUserInfo, "新增");
+            return 0;
+        }
+        return 1;
     }
 
     @Override
@@ -117,7 +120,8 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         BaseHtWorker baseHtWorker = new BaseHtWorker();
         BeanUtils.autoFillEqFields(baseWorker, baseHtWorker);
         baseHtWorker.setOption1(operation);
-
+        baseHtWorker.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+        baseHtWorker.setModifiedUserId(currentUserInfo.getUserId());
         baseHtWorkerService.save(baseHtWorker);
     }
 
