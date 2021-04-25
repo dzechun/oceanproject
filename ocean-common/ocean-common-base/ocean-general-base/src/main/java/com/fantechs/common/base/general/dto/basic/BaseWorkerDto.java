@@ -45,7 +45,7 @@ public class BaseWorkerDto extends BaseWorker implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "创建账号", height = 20, width = 30)
+    @Excel(name = "修改账号", height = 20, width = 30)
     private String modifiedUserName;
 
     /**

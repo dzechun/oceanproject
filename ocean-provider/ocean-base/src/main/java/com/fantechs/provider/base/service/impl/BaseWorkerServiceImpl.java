@@ -6,10 +6,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorker;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtWorker;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.mapper.BaseHtWorkerMapper;
 import com.fantechs.provider.base.mapper.BaseWorkerMapper;
+import com.fantechs.provider.base.service.BaseHtWorkerService;
 import com.fantechs.provider.base.service.BaseWorkerService;
 import org.omg.CORBA.Current;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 
     @Resource
     private BaseWorkerMapper baseWorkerMapper;
+    @Resource
+    private BaseHtWorkerService baseHtWorkerService;
 
 
 
@@ -42,12 +48,18 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "添加：仓库ID不能为空");
         }
 
+        baseWorker.setWorkerId(null);
+        if(StringUtils.isEmpty(baseWorker.getStatus())) {
+            baseWorker.setStatus((byte)1);
+        }
+
         baseWorker.setCreateTime(new Date());
         baseWorker.setCreateUserId(currentUserInfo.getUserId());
         baseWorker.setModifiedTime(new Date());
         baseWorker.setModifiedUserId(currentUserInfo.getUserId());
         baseWorker.setOrgId(currentUserInfo.getOrganizationId());
 
+        recordHistory(baseWorker, currentUserInfo, "新增");
         return baseWorkerMapper.insertUseGeneratedKeys(baseWorker);
     }
 
@@ -56,6 +68,9 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         SysUser currentUserInfo = this.getCurrentUserInfo();
         for(String id : ids.split(",")) {
             BaseWorker baseWorker = baseWorkerMapper.selectByPrimaryKey(id);
+            baseWorker.setModifiedUserId(currentUserInfo.getUserId());
+            baseWorker.setModifiedTime(new Date());
+            recordHistory(baseWorker, currentUserInfo, "删除");
             if(StringUtils.isEmpty(baseWorker)) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
@@ -74,6 +89,8 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 
         baseWorker.setModifiedTime(new Date());
         baseWorker.setModifiedUserId(currentUserInfo.getUserId());
+
+        recordHistory(baseWorker, currentUserInfo, "修改");
         return baseWorkerMapper.updateByPrimaryKeySelective(baseWorker);
     }
 
@@ -90,4 +107,16 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
             return currentUserInfo;
         }
     }
+
+    private void recordHistory(BaseWorker baseWorker, SysUser currentUserInfo, String operation) {
+        if(StringUtils.isEmpty(baseWorker)) {
+            return;
+        }
+        BaseHtWorker baseHtWorker = new BaseHtWorker();
+        BeanUtils.autoFillEqFields(baseWorker, baseHtWorker);
+        baseHtWorker.setOption1(operation);
+
+        baseHtWorkerService.save(baseHtWorker);
+    }
+
 }

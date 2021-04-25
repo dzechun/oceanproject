@@ -3,11 +3,13 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorker;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtWorker;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.service.BaseHtWorkerService;
 import com.fantechs.provider.base.service.BaseWorkerService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -28,13 +30,15 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/23.
  */
 @RestController
-@Api(tags = "baseWorker控制器")
+@Api(tags = "工作人员信息")
 @RequestMapping("/baseWorker")
 @Validated
 public class BaseWorkerController {
 
     @Resource
     private BaseWorkerService baseWorkerService;
+    @Resource
+    private BaseHtWorkerService baseHtWorkerService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -69,13 +73,13 @@ public class BaseWorkerController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<BaseWorker>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorker searchBaseWorker) {
-//        Page<Object> page = PageHelper.startPage(searchBaseWorker.getStartPage(),searchBaseWorker.getPageSize());
-//        List<BaseWorker> list = baseWorkerService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseWorker));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<BaseHtWorker>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorker searchBaseWorker) {
+        Page<Object> page = PageHelper.startPage(searchBaseWorker.getStartPage(),searchBaseWorker.getPageSize());
+        List<BaseHtWorker> list = baseHtWorkerService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorker));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
@@ -84,7 +88,7 @@ public class BaseWorkerController {
     List<BaseWorkerDto> list = baseWorkerService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorker));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseWorker信息", BaseWorkerDto.class, "BaseWorker.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "工作人员信息", BaseWorkerDto.class, "BaseWorker.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
