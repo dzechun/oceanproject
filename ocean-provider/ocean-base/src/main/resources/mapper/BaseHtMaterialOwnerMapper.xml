@@ -72,6 +72,9 @@
       <if test="materialOwnerName!=null and materialOwnerName!=''">
         and bhmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and bc.status = #{status}
+      </if>
     </where>
     order by bhmo.create_time desc
   </select>

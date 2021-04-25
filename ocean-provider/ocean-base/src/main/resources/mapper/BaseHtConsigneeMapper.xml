@@ -77,6 +77,9 @@
       <if test="consigneeName != null and consigneeName!=''">
         and bhc.consignee_name like CONCAT('%', #{consigneeName}, '%')
       </if>
+      <if test="status!=null and status!=''">
+        and bc.status = #{status}
+      </if>
     </where>
     order by bhc.modified_time desc
   </select>
