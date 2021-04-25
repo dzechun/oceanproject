@@ -11,7 +11,6 @@
         <result column="capacity" jdbcType="DECIMAL" property="capacity"/>
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
-        <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
         <result column="storage_type" jdbcType="TINYINT" property="storageType"/>
@@ -51,7 +50,6 @@
         shs.capacity,
         shs.temperature,
         shs.unit,
-        shs.warehouse_state,
         shs.warehouse_id,
         shs.warehouse_area_id,
         shs.storage_type,

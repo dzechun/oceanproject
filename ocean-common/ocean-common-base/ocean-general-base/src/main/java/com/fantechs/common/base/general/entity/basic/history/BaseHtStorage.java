@@ -106,13 +106,6 @@ public class BaseHtStorage implements Serializable {
     private String unit;
 
     /**
-     * 仓库状态（0、储存 1、领用 2、出货）
-     */
-    @ApiModelProperty(name="status",value = "仓库状态（0、储存 1、领用 2、出货）")
-    @Column(name = "warehouse_state")
-    private Byte warehouseState;
-
-    /**
      * 库位类型（1-存货 2-收货 3-发货）
      */
     @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
