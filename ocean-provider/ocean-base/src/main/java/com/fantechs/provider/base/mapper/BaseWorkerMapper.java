@@ -11,4 +11,5 @@ import java.util.Map;
 @Mapper
 public interface BaseWorkerMapper extends MyMapper<BaseWorker> {
     List<BaseWorkerDto> findList(Map<String, Object> map);
+    BaseWorkerDto selectDtoByKey(Long id);
 }

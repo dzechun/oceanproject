@@ -8,7 +8,6 @@
         <id column="ht_worker_id" jdbcType="BIGINT" property="htWorkerId" />
         <result column="worker_id" jdbcType="BIGINT" property="workerId" />
         <result column="user_id" jdbcType="BIGINT" property="userId" />
-        <result column="worker_code" jdbcType="VARCHAR" property="workerCode" />
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
         <result column="status" jdbcType="TINYINT" property="status" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -24,6 +23,7 @@
 
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode" />
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -32,7 +32,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        bhw.ht_worker_id, bhw.user_id, bhw.worker_code, bhw.warehouse_id, bhw.status,
+        bhw.ht_worker_id, bhw.user_id, bhw.warehouse_id, bhw.status,
         bhw.remark, bhw.org_id, bhw.create_user_id, bhw.create_time, bhw.modified_user_id,
         bhw.modified_time, bhw.is_delete, bhw.option1, bhw.option2, bhw.option3
     </sql>
@@ -40,7 +40,7 @@
     <select id="findList" parameterType="map" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>,
-        su.user_name, su.nick_name,
+        su.user_name, su.nick_name, su.user_code,
         bw.warehouse_name,
         suc.user_name AS create_user_name,
         sumod.user_name AS modified_user_name,

@@ -6,7 +6,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaReWDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorker;
+import com.fantechs.common.base.general.entity.basic.BaseWorkingAreaReW;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorker;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -17,11 +19,15 @@ import com.fantechs.provider.base.mapper.BaseHtWorkerMapper;
 import com.fantechs.provider.base.mapper.BaseWorkerMapper;
 import com.fantechs.provider.base.service.BaseHtWorkerService;
 import com.fantechs.provider.base.service.BaseWorkerService;
+import com.fantechs.provider.base.service.BaseWorkingAreaReWService;
+import javafx.beans.binding.ObjectExpression;
 import org.omg.CORBA.Current;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,14 +36,31 @@ import java.util.Map;
  * Created by leifengzhi on 2021/04/23.
  */
 @Service
+@Transactional
 public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements BaseWorkerService {
 
     @Resource
     private BaseWorkerMapper baseWorkerMapper;
     @Resource
     private BaseHtWorkerService baseHtWorkerService;
+    @Resource
+    private BaseWorkingAreaReWService baseWorkingAreaReWService;
+
+    @Override
+    public int saveDto(BaseWorkerDto baseWorkerDto) {
+
+        BaseWorker baseWorker = new BaseWorker();
+        BeanUtils.autoFillEqFields(baseWorkerDto, baseWorker);
+        this.save(baseWorker);
+
+        List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = baseWorkerDto.getBaseWorkingAreaReWDtoList();
+        for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+            baseWorkingAreaReWService.saveDto(baseWorkingAreaReWDto);
+        }
 
 
+        return 0;
+    }
 
     @Override
     public int save(BaseWorker baseWorker) {
@@ -75,6 +98,20 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
             BaseWorker baseWorker = baseWorkerMapper.selectByPrimaryKey(id);
             baseWorker.setModifiedUserId(currentUserInfo.getUserId());
             baseWorker.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+
+            Map<String, Object> searchMap = new HashMap<>();
+            searchMap.put("workerId", id);
+            List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = baseWorkingAreaReWService.findList(searchMap);
+            StringBuffer deleteIds = new StringBuffer();
+            for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+                deleteIds.append(baseWorkingAreaReWDto.getWorkingAreaReWId());
+                deleteIds.append(',');
+            }
+            if(deleteIds.length() > 0) {
+                deleteIds.deleteCharAt(deleteIds.length() - 1);
+                baseWorkingAreaReWService.batchDelete(deleteIds.toString());
+            }
+
             recordHistory(baseWorker, currentUserInfo, "删除");
             if(StringUtils.isEmpty(baseWorker)) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
@@ -82,6 +119,38 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         }
 
         return baseWorkerMapper.deleteByIds(ids);
+    }
+
+    @Override
+    public int updateDto(BaseWorkerDto baseWorkerDto) {
+        BaseWorker baseWorker = new BaseWorker();
+        BeanUtils.autoFillEqFields(baseWorkerDto, baseWorker);
+        this.update(baseWorker);
+
+        Map<String, Object> searchMap = new HashMap<>();
+        searchMap.put("workerId", baseWorker.getWorkerId());
+        List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = baseWorkingAreaReWService.findList(searchMap);
+        StringBuffer deleteIds = new StringBuffer();
+        for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+            deleteIds.append(baseWorkingAreaReWDto.getWorkingAreaReWId());
+            deleteIds.append(',');
+        }
+        if(deleteIds.length() > 0) {
+            deleteIds.deleteCharAt(deleteIds.length() - 1);
+            baseWorkingAreaReWService.batchDelete(deleteIds.toString());
+        }
+
+        for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+            baseWorkingAreaReWService.saveDto((baseWorkingAreaReWDto));
+        }
+
+//        List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = baseWorkerDto.getBaseWorkingAreaReWDtoList();
+//        for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+//            baseWorkingAreaReWService.updateDto(baseWorkingAreaReWDto);
+//        }
+
+
+        return 0;
     }
 
     @Override
@@ -97,6 +166,18 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 
         recordHistory(baseWorker, currentUserInfo, "修改");
         return baseWorkerMapper.updateByPrimaryKeySelective(baseWorker);
+    }
+
+    @Override
+    public BaseWorkerDto selectDtoByKey(Long id) {
+        BaseWorkerDto baseWorkerDto = baseWorkerMapper.selectDtoByKey(id);
+
+        Map<String, Object> searchMap = new HashMap<>();
+        searchMap.put("workerId", baseWorkerDto.getWorkerId());
+        List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = baseWorkingAreaReWService.findList(searchMap);
+        baseWorkerDto.setBaseWorkingAreaReWDtoList(baseWorkingAreaReWDtoList);
+
+        return baseWorkerDto;
     }
 
     @Override

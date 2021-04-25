@@ -7,7 +7,6 @@
         -->
         <id column="worker_id" jdbcType="BIGINT" property="workerId" />
         <result column="user_id" jdbcType="BIGINT" property="userId" />
-        <result column="worker_code" jdbcType="VARCHAR" property="workerCode" />
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
         <result column="status" jdbcType="TINYINT" property="status" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -25,6 +24,7 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseWorkerDto">
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -41,7 +41,7 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT
         <include refid="Base_Column_List"/>,
-        su.user_name, su.nick_name, bwh.warehouse_name, bo.organization_name,
+        su.user_name, su.nick_name, su.user_code, bwh.warehouse_name, bo.organization_name,
         suc.user_name AS create_user_name,
         sumod.user_name AS modified_user_name
         FROM base_worker bw
@@ -71,6 +71,25 @@
             </if>
             <if test="createUserName != null and createUserName != ''">
                 AND suc.user_name LIKE CONCAT('%', #{createUserName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDtoByKey" parameterType="map" resultMap="BaseResultMapDto">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        su.user_name, su.nick_name, su.user_code, bwh.warehouse_name, bo.organization_name,
+        suc.user_name AS create_user_name,
+        sumod.user_name AS modified_user_name
+        FROM base_worker bw
+        LEFT JOIN base_warehouse bwh ON bw.warehouse_id = bwh.warehouse_id
+        LEFT JOIN base_organization bo ON bw.org_id = bo.organization_id
+        LEFT JOIN ocean_v2.sys_user su ON bw.user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user suc ON bw.create_user_id = suc.user_id
+        LEFT JOIN ocean_v2.sys_user sumod ON bw.modified_user_id = sumod.user_id
+        <where>
+            <if test="workerId != null">
+                AND bw.worker_id = #{workerId}
             </if>
         </where>
     </select>

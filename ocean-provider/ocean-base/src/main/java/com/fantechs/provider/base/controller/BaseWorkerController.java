@@ -42,8 +42,8 @@ public class BaseWorkerController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseWorker baseWorker) {
-        return ControllerUtil.returnCRUD(baseWorkerService.save(baseWorker));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseWorkerDto baseWorkerDto) {
+        return ControllerUtil.returnCRUD(baseWorkerService.saveDto(baseWorkerDto));
     }
 
     @ApiOperation("删除")
@@ -54,15 +54,15 @@ public class BaseWorkerController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseWorker.update.class) BaseWorker baseWorker) {
-        return ControllerUtil.returnCRUD(baseWorkerService.update(baseWorker));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseWorker.update.class) BaseWorkerDto baseWorkerDto) {
+        return ControllerUtil.returnCRUD(baseWorkerService.updateDto(baseWorkerDto));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<BaseWorker> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        BaseWorker  baseWorker = baseWorkerService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(baseWorker,StringUtils.isEmpty(baseWorker)?0:1);
+    public ResponseEntity<BaseWorkerDto> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+        BaseWorkerDto  baseWorkerDto = baseWorkerService.selectDtoByKey(id);
+        return  ControllerUtil.returnDataSuccess(baseWorkerDto,StringUtils.isEmpty(baseWorkerDto)?0:1);
     }
 
     @ApiOperation("列表")

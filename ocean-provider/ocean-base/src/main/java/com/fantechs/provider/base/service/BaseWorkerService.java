@@ -13,5 +13,8 @@ import java.util.Map;
  */
 
 public interface BaseWorkerService extends IService<BaseWorker> {
+    int saveDto(BaseWorkerDto baseWorkerDto);
+    int updateDto(BaseWorkerDto baseWorkerDto);
+    BaseWorkerDto selectDtoByKey(Long id);
     List<BaseWorkerDto> findList(Map<String, Object> map);
 }
