@@ -30,7 +30,7 @@ import java.util.List;
  * Created by wcz on 2020/09/24.
  */
 @RestController
-@Api(tags = "储位物料信息管理")
+@Api(tags = "物料专用库位管理")
 @RequestMapping("/baseStorageMaterial")
 @Validated
 public class BaseStorageMaterialController {
@@ -93,12 +93,12 @@ public class BaseStorageMaterialController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出储位物料信息excel",notes = "导出储位物料信息excel",produces = "application/octet-stream")
+    @ApiOperation(value = "导出物料专用库位信息excel",notes = "导出储位物料信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseStorageMaterial searchBaseStorageMaterial){
         List<BaseStorageMaterial> list = baseStorageMaterialService.findList(searchBaseStorageMaterial);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "储位物料信息", "储位物料信息", BaseStorageMaterial.class, "储位物料信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "物料专用库位信息", "物料专用库位信息", BaseStorageMaterial.class, "物料专用库位.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
