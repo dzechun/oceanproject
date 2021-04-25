@@ -152,7 +152,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         List<OmSalesOrderDetDto> dbOmSalesOrderDet = omSalesOrderDetService.findList(findParaMap);
 
         List<Long> dbDataList = new ArrayList<>();
-        int maxLineNumber = 1;
+        int maxLineNumber = 0;
         for(OmSalesOrderDetDto omSalesOrderDetDto : dbOmSalesOrderDet) {
             dbDataList.add(omSalesOrderDetDto.getSalesOrderDetId());
             int lineNumber = Integer.parseInt(omSalesOrderDetDto.getSourceLineNumber());
@@ -163,7 +163,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         for(OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDto.getOmSalesOrderDetDtoList()) {
             if(omSalesOrderDetDto.getSalesOrderDetId() == null) {
                 omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
-                if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), maxLineNumber, currentUserInfo) <= 0) {
+                if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), maxLineNumber + 1, currentUserInfo) <= 0) {
                     return 0;
                 }
                 ++maxLineNumber;

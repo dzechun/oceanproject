@@ -61,15 +61,12 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 
         omSalesOrderDet.setSalesOrderDetId(null);
 
-//        //根据销售订单ID获取客户订单号
-//        String customerOrderCode = omSalesOrderMapper.getCustomerOrderCode(omSalesOrderDet.getSalesOrderId());
-//        if(StringUtils.isEmpty(customerOrderCode)) {
-//            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+
+//        if(StringUtils.isEmpty(omSalesOrderDet.getSourceLineNumber())) {
+//            omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
 //        }
-        if(StringUtils.isEmpty(omSalesOrderDet.getSourceLineNumber())) {
-            omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
-        }
         omSalesOrderDet.setSourceLineNumber(String.format("%03d", lineNumber));
+        omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
 
         omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
         omSalesOrderDet.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
@@ -145,8 +142,9 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
             return;
         }
         BeanUtils.autoFillEqFields(omSalesOrderDet, omHtSalesOrderDet);
+//        omHtSalesOrderDet.setCustomerOrderLineNumber(Long.parseLong(omSalesOrderDet.getCustomerOrderLineNumber()));
         omHtSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
         omHtSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
-        omHtSalesOrderDetService.save(omHtSalesOrderDet);
+//        omHtSalesOrderDetService.save(omHtSalesOrderDet);
     }
 }
