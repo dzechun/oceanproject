@@ -10,6 +10,13 @@ import java.io.Serializable;
 public class SearchBaseStorage extends BaseQuery implements Serializable {
 
     private static final long serialVersionUID = -6508024716295865028L;
+
+    /**
+     * 储位类型
+     */
+    @ApiModelProperty(name = "storageType",value = "储位类型")
+    private String storageType;
+
     /**
      * 储位编码
      */
@@ -19,13 +26,13 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
     /**
      * 储位名称
      */
-    @ApiModelProperty(name = "storageCode",value = "储位名称")
+    @ApiModelProperty(name = "storageName",value = "储位名称")
     private String storageName;
 
     /**
      * 储位描述
      */
-    @ApiModelProperty(name = "storageCode",value = "储位描述")
+    @ApiModelProperty(name = "storageDesc",value = "储位描述")
     private String storageDesc;
 
     /**
