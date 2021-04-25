@@ -38,7 +38,7 @@ public class SearchBaseWorker extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    private String createTime;
     /**
      * 创建用户名称
      */
