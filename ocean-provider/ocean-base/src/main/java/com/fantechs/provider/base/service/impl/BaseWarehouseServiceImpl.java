@@ -150,6 +150,17 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Override
     public List<BaseWarehouse> findList(SearchBaseWarehouse searchBaseWarehouse) {
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(searchBaseWarehouse);
+        if (StringUtils.isNotEmpty(baseWarehouses)){
+            SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh = new SearchBaseMaterialOwnerReWh();
+
+            for (BaseWarehouse baseWarehouse : baseWarehouses) {
+                searchBaseMaterialOwnerReWh.setWarehouseId(baseWarehouse.getWarehouseId());
+                List<BaseMaterialOwnerReWhDto> list = baseMaterialOwnerReWhMapper.findList(searchBaseMaterialOwnerReWh);
+                if (StringUtils.isNotEmpty(list)){
+                    baseWarehouse.setBaseMaterialOwnerReWhDtos(list);
+                }
+            }
+        }
         return baseWarehouses;
     }
 
