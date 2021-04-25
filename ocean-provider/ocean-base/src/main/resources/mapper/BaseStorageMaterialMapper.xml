@@ -5,8 +5,6 @@
         <id column="storage_material_id" jdbcType="BIGINT" property="storageMaterialId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
-        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
 
         <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
         <result column="putaway_tactics" jdbcType="TINYINT" property="putawayTactics"/>
@@ -31,8 +29,6 @@
         ssm.storage_material_id,
         ssm.storage_id,
         ssm.material_id,
-        ssm.warehouse_id,
-        ssm.warehouse_area_id,
 
         ssm.material_owner_id,
         ssm.putaway_tactics,
@@ -63,18 +59,18 @@
         from fantech_imes_v2.base_storage_material ssm
         left join fantech_imes_v2.base_storage ss on ssm.storage_id=ss.storage_id
         left join fantech_imes_v2.base_material sm on ssm.material_id=sm.material_id
-        left join fantech_imes_v2.base_warehouse sw on ssm.warehouse_id=sw.warehouse_id
-        left join fantech_imes_v2.base_warehouse_area swa on ssm.warehouse_area_id=swa.warehouse_area_id
+        left join fantech_imes_v2.base_warehouse sw on ss.warehouse_id=sw.warehouse_id
+        left join fantech_imes_v2.base_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ssm.org_id = bo.organization_id
-        LEFT JOIN base_material_owner bmo ON bom.material_owner_id = ssm.material_owner_id
+        LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ssm.material_owner_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ssm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
             <if test="warehouseId!=null and warehouseId!=''">
-                and ssm.warehouse_id=#{warehouseId}
+                and sw.warehouse_id=#{warehouseId}
             </if>
 
             <if test="materialOwnerName!=null and materialOwnerName!=''">
