@@ -96,7 +96,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
-            //被仓库区域引用
+            //被库区引用
             Example example = new Example(BaseWarehouseArea.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("warehouseId",warehouseId);
@@ -150,17 +150,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Override
     public List<BaseWarehouse> findList(SearchBaseWarehouse searchBaseWarehouse) {
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(searchBaseWarehouse);
-        if (StringUtils.isNotEmpty(baseWarehouses)){
-            SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh = new SearchBaseMaterialOwnerReWh();
-
-            for (BaseWarehouse baseWarehouse : baseWarehouses) {
-                searchBaseMaterialOwnerReWh.setWarehouseId(baseWarehouse.getWarehouseId());
-                List<BaseMaterialOwnerReWhDto> list = baseMaterialOwnerReWhMapper.findList(searchBaseMaterialOwnerReWh);
-                if (StringUtils.isNotEmpty(list)){
-                    baseWarehouse.setBaseMaterialOwnerReWhDtos(list);
-                }
-            }
-        }
         return baseWarehouses;
     }
 

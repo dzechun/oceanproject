@@ -92,9 +92,10 @@ public class OmSalesOrderController {
     List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "OmSalesOrder信息", OmSalesOrderDto.class, "OmSalesOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "销售订单信息", "OmSalesOrder信息", OmSalesOrderDto.class, "OmSalesOrder.xls", response);
         } catch (Exception e) {
-        throw new BizErrorException(e);
+//            e.printStackTrace();
+            throw new BizErrorException(e);
         }
     }
 }

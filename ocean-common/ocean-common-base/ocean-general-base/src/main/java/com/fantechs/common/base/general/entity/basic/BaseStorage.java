@@ -141,6 +141,13 @@ public class BaseStorage extends ValidGroup implements Serializable {
     private Byte warehouseState;
 
     /**
+     * 库位类型（1-存货 2-收货 3-发货）
+     */
+    @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    @Column(name = "storage_type")
+    private Byte storageType;
+
+    /**
      * 工作区
      */
     @ApiModelProperty(name="workingAreaId",value = "工作区")
@@ -157,23 +164,23 @@ public class BaseStorage extends ValidGroup implements Serializable {
     /**
      * 排
      */
-    @ApiModelProperty(name="rowNumber",value = "排")
-    @Column(name = "row_number")
-    private Integer rowNumber;
+    @ApiModelProperty(name="rowNo",value = "排")
+    @Column(name = "row_no")
+    private Integer rowNo;
 
     /**
      * 列
      */
-    @ApiModelProperty(name="columnNumber",value = "列")
-    @Column(name = "column_number")
-    private Integer columnNumber;
+    @ApiModelProperty(name="columnNo",value = "列")
+    @Column(name = "column_no")
+    private Integer columnNo;
 
     /**
      * 层
      */
-    @ApiModelProperty(name="levelNumber",value = "层")
-    @Column(name = "level_number")
-    private Integer levelNumber;
+    @ApiModelProperty(name="levelNo",value = "层")
+    @Column(name = "level_no")
+    private Integer levelNo;
 
     /**
      * 上架动线号
