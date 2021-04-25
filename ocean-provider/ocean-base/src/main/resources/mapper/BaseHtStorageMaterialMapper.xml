@@ -74,6 +74,9 @@
       <if test="warehouseName!=null and warehouseName!=''">
         and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
       </if>
+      <if test="materialOwnerName!=null and materialOwnerName!=''">
+        and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
+      </if>
       <if test="warehouseAreaId!=null and warehouseAreaId!=''">
         and ss.warehouse_area_id=#{warehouseAreaId}
       </if>

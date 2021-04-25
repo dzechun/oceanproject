@@ -71,7 +71,7 @@ public class BaseHtStorageMaterial implements Serializable {
      * 货主名称
      */
     @Transient
-    @ApiModelProperty(name = "materialOwnerName",value = "货主ID")
+    @ApiModelProperty(name = "materialOwnerName",value = "货主名称")
     private String materialOwnerName;
 
     /**
