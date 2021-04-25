@@ -148,6 +148,14 @@ public class BaseStorage extends ValidGroup implements Serializable {
     private Long workingAreaId;
 
     /**
+     * 工作区编码
+     */
+    @Transient
+    @ApiModelProperty(name="workingAreaCode" ,value="工作区编码")
+    @Excel(name = "工作区编码", height = 20, width = 30)
+    private String workingAreaCode;
+
+    /**
      * 巷道
      */
     @ApiModelProperty(name="roadway",value = "巷道")
