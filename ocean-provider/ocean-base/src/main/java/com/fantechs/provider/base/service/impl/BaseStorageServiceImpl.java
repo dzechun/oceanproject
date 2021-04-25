@@ -64,7 +64,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         baseStorage.setOrganizationId(currentUser.getOrganizationId());
         baseStorageMapper.insertUseGeneratedKeys(baseStorage);
 
-        //新增储位历史信息
+        //新增库位历史信息
         BaseHtStorage baseHtStorage = new BaseHtStorage();
         org.springframework.beans.BeanUtils.copyProperties(baseStorage, baseHtStorage);
         int i = baseHtStorageMapper.insertSelective(baseHtStorage);
@@ -89,7 +89,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
-            //被储位物料引用
+            //被库位物料引用
             Example example = new Example(BaseStorageMaterial.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("storageId", storageId);
@@ -98,7 +98,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
 
-            //该储位和电子标签控制器绑定
+            //该库位和电子标签控制器绑定
 //            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
 //            searchSmtElectronicTagStorage.setStorageId(storageId);
 //            ResponseEntity<List<SmtElectronicTagStorageDto>> list1 = electronicTagFeignApi.findList(searchSmtElectronicTagStorage);
@@ -106,7 +106,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 //                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
 //            }
 
-            //新增储位历史信息
+            //新增库位历史信息
             BaseHtStorage baseHtStorage = new BaseHtStorage();
             org.springframework.beans.BeanUtils.copyProperties(baseStorage, baseHtStorage);
             baseHtStorage.setModifiedUserId(currentUser.getUserId());
@@ -141,7 +141,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         storage.setOrganizationId(currentUser.getOrganizationId());
         int i = baseStorageMapper.updateByPrimaryKeySelective(storage);
 
-        //新增储位历史信息
+        //新增库位历史信息
         BaseHtStorage baseHtStorage = new BaseHtStorage();
         org.springframework.beans.BeanUtils.copyProperties(storage, baseHtStorage);
         baseHtStorageMapper.insertSelective(baseHtStorage);

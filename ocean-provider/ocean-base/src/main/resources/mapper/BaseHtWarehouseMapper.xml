@@ -10,6 +10,10 @@
     <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory" />
     <result column="capacity" jdbcType="DECIMAL" property="capacity" />
     <result column="temperature" jdbcType="DECIMAL" property="temperature" />
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+    <result column="address" jdbcType="VARCHAR" property="address"/>
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="org_id" jdbcType="BIGINT" property="organizationId" />
@@ -34,6 +38,10 @@
 	shw.warehouse_category,
 	shw.temperature,
 	shw.capacity,
+    shw.link_man_name,
+    shw.link_man_phone,
+    shw.fax_number,
+    shw.address,
 	shw.unit,
 	shw.`status`,
 	shw.remark,

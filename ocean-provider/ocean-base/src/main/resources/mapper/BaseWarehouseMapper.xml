@@ -11,6 +11,10 @@
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="complete_analysis" jdbcType="TINYINT" property="completeAnalysis"/>
         <result column="mrb_operation" jdbcType="TINYINT" property="mrbOperation"/>
+        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
@@ -38,6 +42,10 @@
         sw.unit,
         sw.complete_analysis,
         sw.mrb_operation,
+        sw.link_man_name,
+        sw.link_man_phone,
+        sw.fax_number,
+        sw.address,
         sw.`status`,
         sw.remark,
         sw.org_id,
@@ -91,6 +99,10 @@
                 warehouse_name =#{item.warehouseName},
                 warehouse_desc =#{item.warehouseDesc},
                 warehouse_category =#{warehouseCategory},
+                link_man_name =#{item.linkManName},
+                link_man_phone =#{item.linkManPhone},
+                fax_number =#{item.faxNumber},
+                address =#{item.address},
                 sw.capacity =#{capacity},
                 sw.temperature =#{temperature},
                 sw.unit =#{unit},
