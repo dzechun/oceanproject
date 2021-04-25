@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtBatchRulesMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtBatchRules">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_batch_rules_id" jdbcType="BIGINT" property="htBatchRulesId" />
+    <result column="batch_rules_id" jdbcType="BIGINT" property="batchRulesId" />
+    <result column="batch_rules_name" jdbcType="VARCHAR" property="batchRulesName" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="not_mixed_with" jdbcType="TINYINT" property="notMixedWith" />
+    <result column="tail_after_batch" jdbcType="TINYINT" property="tailAfterBatch" />
+    <result column="tail_after_date_in_produced" jdbcType="TINYINT" property="tailAfterDateInProduced" />
+    <result column="tail_after_receiving_code" jdbcType="TINYINT" property="tailAfterReceivingCode" />
+    <result column="tail_after_quality_date" jdbcType="TINYINT" property="tailAfterQualityDate" />
+    <result column="tail_after_sale_code" jdbcType="TINYINT" property="tailAfterSaleCode" />
+    <result column="tail_after_supplier" jdbcType="TINYINT" property="tailAfterSupplier" />
+    <result column="tail_after_receive_date" jdbcType="TINYINT" property="tailAfterReceiveDate" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+  <sql id="BaseColumnMap">
+bbr.batch_ht_rules_id
+    bbr.batch_rules_id,
+    bbr.batch_rules_name,
+    bbr.warehouse_id,
+bbr.not_mixed_with,
+bbr.tail_after_batch,
+bbr.tail_after_date_in_produced,
+bbr.tail_after_receiving_code,
+bbr.tail_after_quality_date,
+bbr.tail_after_sale_code,
+bbr.tail_after_supplier,
+bbr.tail_after_receive_date,
+bbr.material_owner_id,
+bbr.status,
+bbr.remark,
+bbr.org_id,
+bbr.create_user_id,
+bbr.create_time,
+bbr.modified_user_id,
+bbr.modified_time,
+bbr.is_delete,
+bbr.option1,
+bbr.option2,
+bbr.option3
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM base_batch_rules bbr
+    left join base_warehouse bw on bbr.warehouse_id = bw.warehouse_id
+    left join base_material_owner bmo on bbr.material_owner_id = bmo.material_owner_id
+    LEFT JOIN ocean_v2.sys_user su ON bbr.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bbr.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bbr.org_id = bo.organization_id
+    <where>
+      <if test="warehouseName !=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
+      <if test="materialOwnerName !=null and materialOwnerName!=''">
+        and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+      </if>
+      <if test="batchRulesName !=null and batchRulesName!=''">
+        and bbr.batch_rules_name like CONCAT('%',#{batchRulesName},'%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bbr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status !=''">
+        and bbr.status = #{status}
+      </if>
+      <if test="createUserName !='' and createUserName!=null">
+        and su.user_name like concat('%',#{createUserName},'%')
+      </if>
+    </where>
+    order by bbr.create_tim desc
+  </select>
+</mapper>
