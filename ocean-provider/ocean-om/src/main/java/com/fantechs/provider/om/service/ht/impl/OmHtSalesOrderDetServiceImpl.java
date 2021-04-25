@@ -23,6 +23,11 @@ public class OmHtSalesOrderDetServiceImpl extends BaseService<OmHtSalesOrderDet>
     private OmHtSalesOrderDetMapper omHtSalesOrderDetMapper;
 
     @Override
+    public int save(OmHtSalesOrderDet omHtSalesOrderDet) {
+        return omHtSalesOrderDetMapper.insertUseGeneratedKeys(omHtSalesOrderDet);
+    }
+
+    @Override
     public List<OmHtSalesOrderDetDto> findList(Map<String, Object> map) {
         return omHtSalesOrderDetMapper.findList(map);
     }

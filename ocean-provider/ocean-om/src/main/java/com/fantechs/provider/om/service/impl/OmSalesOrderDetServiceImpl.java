@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 
+import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -9,10 +10,7 @@ import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.ReflectUtils;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderDetService;
@@ -74,13 +72,13 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         omSalesOrderDet.setSourceLineNumber(String.format("%03d", lineNumber));
 
         omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
-        omSalesOrderDet.setCreateTime(new Date());
+        omSalesOrderDet.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
         omSalesOrderDet.setCreateUserId(currentUserInfo.getUserId());
         omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
-        omSalesOrderDet.setModifiedTime(new Date());
+        omSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 
         int result = omSalesOrderDetMapper.insertUseGeneratedKeys(omSalesOrderDet);
-        recordHistory(omSalesOrderDet);
+        recordHistory(omSalesOrderDet, currentUserInfo);
 
         return result;
     }
@@ -98,7 +96,7 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
             if(StringUtils.isEmpty(omSalesOrderDet)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            recordHistory(omSalesOrderDet);
+            recordHistory(omSalesOrderDet, currentUserInfo);
         }
         if(omSalesOrderDetMapper.deleteByIds(ids)<=0) {
             return 0;
@@ -126,13 +124,13 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 //        }
 
         omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
-        omSalesOrderDet.setModifiedTime(new Date());
+        omSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 
 
         if(omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDet)<=0) {
             return 0;
         }
-        recordHistory(omSalesOrderDet);
+        recordHistory(omSalesOrderDet, currentUserInfo);
         return 1;
     }
 
@@ -141,12 +139,14 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         return omSalesOrderDetMapper.findList(map);
     }
 
-    private void recordHistory(OmSalesOrderDet omSalesOrderDet){
-//        OmHtSalesOrderDet omHtSalesOrderDet = new OmHtSalesOrderDet();
-//        if(StringUtils.isEmpty(omSalesOrderDet)){
-//            return;
-//        }
-//        BeanUtils.autoFillEqFields(omSalesOrderDet, omHtSalesOrderDet);
-//        omHtSalesOrderDetService.save(omHtSalesOrderDet);
+    private void recordHistory(OmSalesOrderDet omSalesOrderDet, SysUser currentUserInfo){
+        OmHtSalesOrderDet omHtSalesOrderDet = new OmHtSalesOrderDet();
+        if(StringUtils.isEmpty(omSalesOrderDet)){
+            return;
+        }
+        BeanUtils.autoFillEqFields(omSalesOrderDet, omHtSalesOrderDet);
+        omHtSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+        omHtSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
+        omHtSalesOrderDetService.save(omHtSalesOrderDet);
     }
 }

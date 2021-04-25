@@ -321,7 +321,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "create_time")
-    private Date createTime;
+    private String createTime;
 
     /**
      * 修改人ID
@@ -339,7 +339,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "modified_time")
-    private Date modifiedTime;
+    private String modifiedTime;
 
     private static final long serialVersionUID = 1L;
 }

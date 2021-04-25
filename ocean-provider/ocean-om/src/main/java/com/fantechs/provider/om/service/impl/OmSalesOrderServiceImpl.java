@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 
+import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -81,14 +82,14 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         omSalesOrder.setSalesOrderId(null);
         omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
         omSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
-        omSalesOrder.setCreateTime(new Date());
+        omSalesOrder.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
         omSalesOrder.setCreateUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
-        omSalesOrder.setModifiedTime(new Date());
+        omSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 
         int result = omSalesOrderMapper.insertUseGeneratedKeys(omSalesOrder);
 
-        recordHistory(omSalesOrder, "新增");
+        recordHistory(omSalesOrder, currentUserInfo, "新增");
 //
         return result;
     }
@@ -106,7 +107,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             if(StringUtils.isEmpty(omSalesOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            recordHistory(omSalesOrder, "删除");
+            recordHistory(omSalesOrder, currentUserInfo, "删除");
             //获取对应表体id
             //删除表体先
             SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
@@ -203,13 +204,13 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         }
 
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
-        omSalesOrder.setModifiedTime(new Date());
+        omSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 
 
         if(omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrder)<=0) {
             return 0;
         }
-        recordHistory(omSalesOrder, "更新");
+        recordHistory(omSalesOrder, currentUserInfo, "更新");
         return 1;
     }
 
@@ -225,11 +226,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     }
 
 
-    private void recordHistory(OmSalesOrder omSalesOrder, String operation) {
-        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+    private void recordHistory(OmSalesOrder omSalesOrder, SysUser currentUserInfo, String operation) {
         OmHtSalesOrder omHtSalesOrder = new OmHtSalesOrder();
         if(StringUtils.isEmpty(omSalesOrder)) {
             return;
@@ -239,8 +236,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 //        omHtSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
 //        omHtSalesOrder.setCreateTime(new Date());
 //        omHtSalesOrder.setCreateUserId(currentUserInfo.getUserId());
-//        omHtSalesOrder.setModifiedTime(new Date());
-//        omHtSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
+        omHtSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+        omHtSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
 
         omHtSalesOrderService.save(omHtSalesOrder);
     }
