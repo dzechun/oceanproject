@@ -81,13 +81,13 @@ select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_nam
   <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
     and date_format(bbr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
 </if>
-<if test="status !=''">
+<if test="status !=null">
   and bbr.status = #{status}
 </if>
 <if test="createUserName !='' and createUserName!=null">
   and su.user_name like concat('%',#{createUserName},'%')
 </if>
 </where>
-order by bbr.create_tim desc
+order by bbr.create_time desc
   </select>
 </mapper>
