@@ -22,7 +22,7 @@ public class BaseMaterialOwnerDto extends BaseMaterialOwner implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30)
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="11")
     private String createUserName;
 
     /**
@@ -30,7 +30,7 @@ public class BaseMaterialOwnerDto extends BaseMaterialOwner implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30)
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
     private String modifiedUserName;
 
     /**
@@ -38,6 +38,6 @@ public class BaseMaterialOwnerDto extends BaseMaterialOwner implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30)
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="15")
     private String organizationName;
 }
