@@ -29,11 +29,10 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-
     </resultMap>
 
     <sql id="Base_Column_List">
-        bw.worker_id, bw.user_id, bw.worker_code, bw.warehouse_id, bw.status,
+        bw.worker_id, bw.user_id, bw.warehouse_id, bw.status,
         bw.remark, bw.org_id, bw.create_user_id, bw.create_time, bw.modified_user_id,
         bw.modified_time, bw.is_delete, bw.option1, bw.option2, bw.option3
     </sql>
@@ -75,7 +74,7 @@
         </where>
     </select>
 
-    <select id="selectDtoByKey" parameterType="map" resultMap="BaseResultMapDto">
+    <select id="selectDtoByKey" parameterType="Long" resultMap="BaseResultMapDto">
         SELECT
         <include refid="Base_Column_List"/>,
         su.user_name, su.nick_name, su.user_code, bwh.warehouse_name, bo.organization_name,
@@ -88,8 +87,8 @@
         LEFT JOIN ocean_v2.sys_user suc ON bw.create_user_id = suc.user_id
         LEFT JOIN ocean_v2.sys_user sumod ON bw.modified_user_id = sumod.user_id
         <where>
-            <if test="workerId != null">
-                AND bw.worker_id = #{workerId}
+            <if test="_parameter != null">
+                AND bw.worker_id = #{_parameter}
             </if>
         </where>
     </select>

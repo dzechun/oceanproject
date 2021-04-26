@@ -50,13 +50,6 @@ public class BaseHtWorker extends ValidGroup implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
-    /**
-     * 工号
-     */
-    @ApiModelProperty(name="workerCode",value = "用户工号")
-//    @Excel(name = "用户工号", height = 20, width = 30,orderNum="")
-    @Column(name = "user_code")
-    private String userCode;
 
     /**
      * 仓库ID
@@ -173,6 +166,13 @@ public class BaseHtWorker extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 工号
+     */
+    @Transient
+    @ApiModelProperty(name="workerCode",value = "用户工号")
+    private String userCode;
 
     private static final long serialVersionUID = 1L;
 }

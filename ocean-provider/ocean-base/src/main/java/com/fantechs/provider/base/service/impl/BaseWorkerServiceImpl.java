@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -55,11 +52,12 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 
         List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = baseWorkerDto.getBaseWorkingAreaReWDtoList();
         for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+            baseWorkingAreaReWDto.setWorkerId(baseWorker.getWorkerId());
             baseWorkingAreaReWService.saveDto(baseWorkingAreaReWDto);
         }
 
 
-        return 0;
+        return 1;
     }
 
     @Override
@@ -85,9 +83,10 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         baseWorker.setOrgId(currentUserInfo.getOrganizationId());
 
         if(baseWorkerMapper.insertUseGeneratedKeys(baseWorker) <= 0) {
-            recordHistory(baseWorker, currentUserInfo, "新增");
+
             return 0;
         }
+        recordHistory(baseWorker, currentUserInfo, "新增");
         return 1;
     }
 
@@ -140,7 +139,8 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
             baseWorkingAreaReWService.batchDelete(deleteIds.toString());
         }
 
-        for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkingAreaReWDtoList) {
+        for(BaseWorkingAreaReWDto baseWorkingAreaReWDto : baseWorkerDto.getBaseWorkingAreaReWDtoList()) {
+            baseWorkingAreaReWDto.setWorkerId(baseWorker.getWorkerId());
             baseWorkingAreaReWService.saveDto((baseWorkingAreaReWDto));
         }
 
@@ -150,7 +150,7 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 //        }
 
 
-        return 0;
+        return 1;
     }
 
     @Override
@@ -182,7 +182,14 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 
     @Override
     public List<BaseWorkerDto> findList(Map<String, Object> map) {
-        return baseWorkerMapper.findList(map);
+        List<BaseWorkerDto> baseWorkerDtoList = baseWorkerMapper.findList(map);
+        for(BaseWorkerDto baseWorkerDto : baseWorkerDtoList) {
+            Map<String, Object> searchMap = new HashMap<>();
+            searchMap.put("workerId", baseWorkerDto.getWorkerId());
+            List<BaseWorkingAreaReWDto> baseWorkingAreaReWDtoList = new ArrayList<>(baseWorkingAreaReWService.findList(searchMap));
+            baseWorkerDto.setBaseWorkingAreaReWDtoList(baseWorkingAreaReWDtoList);
+        }
+        return baseWorkerDtoList;
     }
 
     private SysUser getCurrentUserInfo() {
