@@ -13,7 +13,7 @@
     <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
     <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
     <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
-    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="material_owner_desc" jdbcType="VARCHAR" property="materialOwnerDesc" />
     <result column="status" jdbcType="TINYINT" property="status" />

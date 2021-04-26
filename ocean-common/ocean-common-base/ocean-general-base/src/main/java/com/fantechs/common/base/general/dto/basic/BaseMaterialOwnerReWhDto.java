@@ -84,8 +84,8 @@ public class BaseMaterialOwnerReWhDto extends BaseMaterialOwnerReWh implements S
      * 邮箱
      */
     @Transient
-    @ApiModelProperty(name="eMailAddress" ,value="邮箱")
-    private String eMailAddress;
+    @ApiModelProperty(name="emailAddress" ,value="邮箱")
+    private String emailAddress;
 
     /**
      * 详细地址
