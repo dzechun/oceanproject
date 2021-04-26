@@ -122,7 +122,7 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="orderType",value = "订单类型")
     @Excel(name = "订单类型", height = 20, width = 30, orderNum = "10")
     @Column(name = "order_type")
-    private Byte orderType;
+    private String orderType;
 
     /**
      * 订单状态
