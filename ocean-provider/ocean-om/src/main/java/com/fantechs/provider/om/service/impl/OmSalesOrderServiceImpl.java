@@ -19,6 +19,7 @@ import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.OmSalesOrderService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -28,6 +29,7 @@ import java.util.*;
  * Created by leifengzhi on 2021/04/19.
  */
 @Service
+@Transactional
 public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implements OmSalesOrderService {
 
     @Resource
