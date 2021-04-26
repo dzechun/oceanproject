@@ -79,10 +79,13 @@
         and bmo.material_owner_name LIKE CONCAT('%',#{materialOwnerName},'%')
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
-        and bw.warehouse_name = #{warehouseName}
+        and bw.warehouse_name LIKE CONCAT('%',#{warehouseName},'%')
       </if>
       <if test="status!=null">
         and bot.status=#{status}
+      </if>
+      <if test="businessType!=null">
+        and bot.business_type=#{businessType}
       </if>
     </where>
   </select>

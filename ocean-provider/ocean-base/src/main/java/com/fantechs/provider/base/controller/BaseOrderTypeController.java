@@ -3,11 +3,13 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderType;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.service.BaseHtOrderTypeService;
 import com.fantechs.provider.base.service.BaseOrderTypeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -35,6 +37,8 @@ public class BaseOrderTypeController {
 
     @Resource
     private BaseOrderTypeService baseOrderTypeService;
+    @Resource
+    private BaseHtOrderTypeService baseHtOrderTypeService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -69,13 +73,13 @@ public class BaseOrderTypeController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-/*    @ApiOperation("历史列表")
+    @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BaseOrderType>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderType searchBaseOrderType) {
+    public ResponseEntity<List<BaseHtOrderType>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderType searchBaseOrderType) {
         Page<Object> page = PageHelper.startPage(searchBaseOrderType.getStartPage(),searchBaseOrderType.getPageSize());
-        List<BaseOrderType> list = baseOrderTypeService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseOrderType));
+        List<BaseHtOrderType> list = baseHtOrderTypeService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseOrderType));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }*/
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

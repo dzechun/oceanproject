@@ -56,7 +56,7 @@ public class BaseOrderTypeDto extends BaseOrderType implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="11")
     private String organizationName;
 
     /**
