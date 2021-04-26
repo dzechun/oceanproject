@@ -93,10 +93,10 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     /**
      * 邮箱
      */
-    @ApiModelProperty(name="eMailAddress",value = "邮箱")
+    @ApiModelProperty(name="emailAddress",value = "邮箱")
     @Excel(name = "邮箱", height = 20, width = 30)
     @Column(name = "e_mail_address")
-    private String eMailAddress;
+    private String emailAddress;
 
     /**
      * 详细地址

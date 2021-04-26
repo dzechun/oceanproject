@@ -67,7 +67,7 @@
  <select id="findMaxCode" resultType="java.lang.String">
  select barcode FROM mes_sfc_work_order_barcode where barcode_type = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id LIMIT 1
 </select>
-<!--查询条码解析码及标签模版-->
+<!--查询条码解析码及标签模版（工单条码打印）-->
 <select id="findRule" resultMap="BaseRuleMap">
     SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode',
     bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode' FROM mes_pm_work_order mpwo

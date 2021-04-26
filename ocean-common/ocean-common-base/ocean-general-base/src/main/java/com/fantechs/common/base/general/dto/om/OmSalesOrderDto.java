@@ -42,7 +42,7 @@ public class OmSalesOrderDto extends OmSalesOrder implements Serializable {
      * 修改用户名称
      */
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "创建账号", height = 20, width = 30, orderNum = "20")
+    @Excel(name = "修改账号", height = 20, width = 30, orderNum = "20")
     private String modifiedUserName;
 
     /**

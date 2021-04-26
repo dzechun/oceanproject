@@ -17,7 +17,7 @@
         <result column="sales_dept" jdbcType="VARCHAR" property="salesDept" />
         <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName" />
         <result column="data_source" jdbcType="VARCHAR" property="dataSource" />
-        <result column="order_type" jdbcType="TINYINT" property="orderType" />
+        <result column="order_type" jdbcType="VARCHAR" property="orderType" />
         <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
         <result column="status" jdbcType="TINYINT" property="status" />
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -40,6 +40,9 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDto">
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -52,13 +55,21 @@
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select
-        <include refid="Base_Column_List"/>, bs.supplier_name, bbrs.barcode_rule_set_name
+        <include refid="Base_Column_List"/>,
+        bs.supplier_name,
+        bbrs.barcode_rule_set_name,
+        suc.user_name as create_user_name,
+        bo.organization_name,
+        sumod.user_name as modified_user_name
         from om_sales_order so
         left join base_supplier bs on so.supplier_id = bs.supplier_id
         left join base_barcode_rule_set bbrs on so.barcode_rule_set_id = bbrs.barcode_rule_set_id
+        left join ocean_v2.sys_user suc on so.create_user_id = suc.user_id
+        left join base_organization bo on so.org_id = bo.organization_id
+        left join ocean_v2.sys_user sumod on so.modified_user_id = sumod.user_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND {#endTime}
+                and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
 
             <if test="status != null">
@@ -79,5 +90,4 @@
         </where>
         order by so.modified_time desc
     </select>
-
 </mapper>
