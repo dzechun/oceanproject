@@ -18,30 +18,29 @@ import javax.validation.constraints.Null;
 public class BaseStorage extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -3338572709820716313L;
     /**
-     * 储位ID
+     * 库位ID
      */
     @Id
     @Column(name = "storage_id")
-    @ApiModelProperty(name = "storageId",value = "储位ID")
-    @NotNull(groups = update.class,message = "储位id不能为空")
+    @ApiModelProperty(name = "storageId",value = "库位ID")
+    @NotNull(groups = update.class,message = "库位id不能为空")
     private Long storageId;
 
     /**
-     * 储位编码
+     * 库位编码
      */
     @Column(name = "storage_code")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30)
-    @NotBlank(message = "储位编码不能为空")
+    @ApiModelProperty(name = "storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30)
+    @NotBlank(message = "库位编码不能为空")
     private String storageCode;
 
     /**
-     * 储位名称
+     * 库位名称
      */
     @Column(name = "storage_name")
-    @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30)
-    @NotBlank(message = "储位名称不能为空")
+    @ApiModelProperty(name = "storageName",value = "库位名称")
+    @Excel(name = "库位名称", height = 20, width = 30)
     private String storageName;
 
     /**
@@ -53,11 +52,11 @@ public class BaseStorage extends ValidGroup implements Serializable {
     private String level;
 
     /**
-     * 储位描述
+     * 库位描述
      */
     @Column(name = "storage_desc")
-    @ApiModelProperty(name = "storageDesc",value = "储位描述")
-    @Excel(name = "储位描述", height = 20, width = 30)
+    @ApiModelProperty(name = "storageDesc",value = "库位描述")
+    @Excel(name = "库位描述", height = 20, width = 30)
     private String storageDesc;
 
     /**
