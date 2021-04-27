@@ -5,11 +5,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderType;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtOrderType;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.mapper.BaseHtOrderTypeMapper;
 import com.fantechs.provider.base.mapper.BaseOrderTypeMapper;
 import com.fantechs.provider.base.service.BaseOrderTypeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -27,6 +30,8 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
 
     @Resource
     private BaseOrderTypeMapper baseOrderTypeMapper;
+    @Resource
+    private BaseHtOrderTypeMapper baseHtOrderTypeMapper;
 
     @Override
     public List<BaseOrderTypeDto> findList(Map<String, Object> map) {
@@ -54,6 +59,13 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
         baseOrderType.setModifiedUserId(currentUser.getUserId());
         int i = baseOrderTypeMapper.insertSelective(baseOrderType);
 
+        //新增履历
+        BaseHtOrderType baseHtOrderType = new BaseHtOrderType();
+        BeanUtils.copyProperties(baseOrderType,baseHtOrderType);
+        baseHtOrderType.setModifiedTime(new Date());
+        baseHtOrderType.setModifiedUserId(currentUser.getUserId());
+        baseHtOrderTypeMapper.insertSelective(baseHtOrderType);
+
         return i;
     }
 
@@ -76,6 +88,14 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
         baseOrderType.setModifiedTime(new Date());
         baseOrderType.setModifiedUserId(currentUser.getUserId());
         int i = baseOrderTypeMapper.updateByPrimaryKeySelective(baseOrderType);
+
+        //新增履历
+        BaseHtOrderType baseHtOrderType = new BaseHtOrderType();
+        BeanUtils.copyProperties(baseOrderType,baseHtOrderType);
+        baseHtOrderType.setModifiedTime(new Date());
+        baseHtOrderType.setModifiedUserId(currentUser.getUserId());
+        baseHtOrderTypeMapper.insertSelective(baseHtOrderType);
+
         return i;
     }
 
@@ -93,6 +113,13 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
             if (StringUtils.isEmpty(baseOrderType)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            //新增履历
+            BaseHtOrderType baseHtOrderType = new BaseHtOrderType();
+            BeanUtils.copyProperties(baseOrderType,baseHtOrderType);
+            baseHtOrderType.setModifiedTime(new Date());
+            baseHtOrderType.setModifiedUserId(currentUser.getUserId());
+            baseHtOrderTypeMapper.insertSelective(baseHtOrderType);
         }
 
         return baseOrderTypeMapper.deleteByIds(ids);

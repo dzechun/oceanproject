@@ -17,30 +17,29 @@ import javax.validation.constraints.NotNull;
 public class BaseStorage extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -3338572709820716313L;
     /**
-     * 储位ID
+     * 库位ID
      */
     @Id
     @Column(name = "storage_id")
-    @ApiModelProperty(name = "storageId",value = "储位ID")
-    @NotNull(groups = update.class,message = "储位id不能为空")
+    @ApiModelProperty(name = "storageId",value = "库位ID")
+    @NotNull(groups = update.class,message = "库位id不能为空")
     private Long storageId;
 
     /**
-     * 储位编码
+     * 库位编码
      */
     @Column(name = "storage_code")
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30)
-    @NotBlank(message = "储位编码不能为空")
+    @ApiModelProperty(name = "storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30)
+    @NotBlank(message = "库位编码不能为空")
     private String storageCode;
 
     /**
-     * 储位名称
+     * 库位名称
      */
     @Column(name = "storage_name")
-    @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30)
-    @NotBlank(message = "储位名称不能为空")
+    @ApiModelProperty(name = "storageName",value = "库位名称")
+    @Excel(name = "库位名称", height = 20, width = 30)
     private String storageName;
 
     /**
@@ -52,11 +51,11 @@ public class BaseStorage extends ValidGroup implements Serializable {
     private String level;
 
     /**
-     * 储位描述
+     * 库位描述
      */
     @Column(name = "storage_desc")
-    @ApiModelProperty(name = "storageDesc",value = "储位描述")
-    @Excel(name = "储位描述", height = 20, width = 30)
+    @ApiModelProperty(name = "storageDesc",value = "库位描述")
+    @Excel(name = "库位描述", height = 20, width = 30)
     private String storageDesc;
 
     /**
@@ -138,6 +137,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
     @Column(name = "storage_type")
+    @NotNull(message = "库位类型不能为空")
     private Byte storageType;
 
     /**
@@ -145,6 +145,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workingAreaId",value = "工作区")
     @Column(name = "working_area_id")
+    @NotNull(message = "工作区不能为空")
     private Long workingAreaId;
 
     /**
@@ -160,6 +161,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="roadway",value = "巷道")
     @Column(name = "roadway")
+    @NotNull(message = "巷道不能为空")
     private Integer roadway;
 
     /**
@@ -167,6 +169,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="rowNo",value = "排")
     @Column(name = "row_no")
+    @NotNull(message = "排不能为空")
     private Integer rowNo;
 
     /**
@@ -174,6 +177,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="columnNo",value = "列")
     @Column(name = "column_no")
+    @NotNull(message = "列不能为空")
     private Integer columnNo;
 
     /**
@@ -181,6 +185,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="levelNo",value = "层")
     @Column(name = "level_no")
+    @NotNull(message = "层不能为空")
     private Integer levelNo;
 
     /**
@@ -188,6 +193,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="putawayMoveLineNo",value = "上架动线号")
     @Column(name = "putaway_move_line_no")
+    @NotNull(message = "上架动线号不能为空")
     private Integer putawayMoveLineNo;
 
     /**
@@ -195,6 +201,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="pickingMoveLineNo",value = "拣货动线号")
     @Column(name = "picking_move_line_no")
+    @NotNull(message = "拣货动线号不能为空")
     private Integer pickingMoveLineNo;
 
     /**
@@ -202,6 +209,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="stockMoveLineNo",value = "盘点动线号")
     @Column(name = "stock_move_line_no")
+    @NotNull(message = "盘点动线号不能为空")
     private Integer stockMoveLineNo;
 
     /**

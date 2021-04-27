@@ -42,4 +42,10 @@ public class SearchBaseOrderType extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
     private Byte status;
+
+    /**
+     * 业务类型
+     */
+    @ApiModelProperty(name="businessType",value = "业务类型")
+    private Integer businessType;
 }
