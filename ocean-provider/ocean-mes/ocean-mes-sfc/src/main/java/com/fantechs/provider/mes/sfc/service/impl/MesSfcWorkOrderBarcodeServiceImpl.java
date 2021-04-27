@@ -226,7 +226,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         for (Integer i = 0; i < record.getQty(); i++) {
             record.setWorkOrderBarcodeId(null);
             //获取生成的最大条码
-            Integer maxCode = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
+            String maxCode = mesSfcWorkOrderBarcodeMapper.findMaxCode(record.getBarcodeType(), record.getWorkOrderBarcodeId());
+            //Integer maxCode = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
             //查询条码规则集合
             LabelRuteDto labelRuteDto = record.getLabelRuteDto();
             SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
@@ -239,8 +240,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(list.size()<1){
                 throw new BizErrorException("请设置条码规则");
             }
+            //获取最大流水号
+            maxCode = baseFeignApi.generateMaxCode(list,maxCode).getData();
             //生成条码
-            ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode.toString(),record.getMaterialCode(),record.getWorkOrderId().toString());
+            ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,record.getMaterialCode(),record.getWorkOrderId().toString());
             if(rs.getCode()!=0){
                 throw new BizErrorException(rs.getMessage());
             }
