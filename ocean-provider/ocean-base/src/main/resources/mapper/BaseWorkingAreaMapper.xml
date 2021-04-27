@@ -27,6 +27,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -46,7 +47,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select<include refid="Base_Column_List"/>,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    bwas.warehouse_area_name,bw.warehouse_name
+    bwas.warehouse_area_name,bw.warehouse_name,bw.warehouse_id
     from base_working_area bwa
     left join ocean_v2.sys_user su on bwa.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on bwa.modified_user_id = sus.user_id
