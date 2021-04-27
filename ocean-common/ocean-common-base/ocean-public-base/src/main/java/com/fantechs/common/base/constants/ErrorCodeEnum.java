@@ -258,6 +258,8 @@ public enum ErrorCodeEnum {
 
     OPT20012008(20012008,"条码生成错误"),
 
+    OPT20012009(20012009,"条码产生数量超出单据数量范围"),
+
 
     /**
      * operate 30012000 error code enum.
