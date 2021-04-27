@@ -37,10 +37,10 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <sql id="BaseColumnMap">
-bbr.batch_ht_rules_id
-    bbr.batch_rules_id,
-    bbr.batch_rules_name,
-    bbr.warehouse_id,
+bbr.batch_ht_rules_id,
+bbr.batch_rules_id,
+bbr.batch_rules_name,
+bbr.warehouse_id,
 bbr.not_mixed_with,
 bbr.tail_after_batch,
 bbr.tail_after_date_in_produced,
@@ -64,7 +64,7 @@ bbr.option3
   </sql>
 
   <select id="findHtList" resultMap="BaseResultMap">
-    select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM base_batch_rules bbr
+    select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM base_ht_batch_rules bbr
     left join base_warehouse bw on bbr.warehouse_id = bw.warehouse_id
     left join base_material_owner bmo on bbr.material_owner_id = bmo.material_owner_id
     LEFT JOIN ocean_v2.sys_user su ON bbr.create_user_id = su.user_id
