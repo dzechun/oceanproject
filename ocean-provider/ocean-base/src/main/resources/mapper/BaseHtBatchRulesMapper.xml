@@ -37,7 +37,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <sql id="BaseColumnMap">
-bbr.batch_ht_rules_id,
+bbr.ht_batch_rules_id,
 bbr.batch_rules_id,
 bbr.batch_rules_name,
 bbr.warehouse_id,
