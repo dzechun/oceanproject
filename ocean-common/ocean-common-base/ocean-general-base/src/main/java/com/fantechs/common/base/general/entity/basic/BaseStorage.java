@@ -11,7 +11,6 @@ import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Table(name = "base_storage")
 @Data
@@ -94,7 +93,6 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "warehouse_area_id")
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
-    @Null(message = "仓库区域不能为空")
     private Long warehouseAreaId;
 
     /**
@@ -139,7 +137,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
     @Column(name = "storage_type")
-    @Null(message = "库位类型不能为空")
+    @NotNull(message = "库位类型不能为空")
     private Byte storageType;
 
     /**
@@ -147,7 +145,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workingAreaId",value = "工作区")
     @Column(name = "working_area_id")
-    @Null(message = "工作区不能为空")
+    @NotNull(message = "工作区不能为空")
     private Long workingAreaId;
 
     /**
@@ -163,7 +161,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="roadway",value = "巷道")
     @Column(name = "roadway")
-    @Null(message = "巷道不能为空")
+    @NotNull(message = "巷道不能为空")
     private Integer roadway;
 
     /**
@@ -171,7 +169,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="rowNo",value = "排")
     @Column(name = "row_no")
-    @Null(message = "排不能为空")
+    @NotNull(message = "排不能为空")
     private Integer rowNo;
 
     /**
@@ -179,7 +177,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="columnNo",value = "列")
     @Column(name = "column_no")
-    @Null(message = "列不能为空")
+    @NotNull(message = "列不能为空")
     private Integer columnNo;
 
     /**
@@ -187,7 +185,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="levelNo",value = "层")
     @Column(name = "level_no")
-    @Null(message = "层不能为空")
+    @NotNull(message = "层不能为空")
     private Integer levelNo;
 
     /**
@@ -195,7 +193,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="putawayMoveLineNo",value = "上架动线号")
     @Column(name = "putaway_move_line_no")
-    @Null(message = "上架动线号不能为空")
+    @NotNull(message = "上架动线号不能为空")
     private Integer putawayMoveLineNo;
 
     /**
@@ -203,7 +201,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="pickingMoveLineNo",value = "拣货动线号")
     @Column(name = "picking_move_line_no")
-    @Null(message = "拣货动线号不能为空")
+    @NotNull(message = "拣货动线号不能为空")
     private Integer pickingMoveLineNo;
 
     /**
@@ -211,7 +209,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="stockMoveLineNo",value = "盘点动线号")
     @Column(name = "stock_move_line_no")
-    @Null(message = "盘点动线号不能为空")
+    @NotNull(message = "盘点动线号不能为空")
     private Integer stockMoveLineNo;
 
     /**
