@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -36,7 +37,7 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     @ApiModelProperty(name="consigneeCode",value = "收货人编码")
     @Excel(name = "收货人编码", height = 20, width = 30)
     @Column(name = "consignee_code")
-    @NotNull(message = "收货人编码不能为空")
+    @NotBlank(message = "收货人编码不能为空")
     private String consigneeCode;
 
     /**
@@ -45,7 +46,7 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     @ApiModelProperty(name="consigneeName",value = "收货人名称")
     @Excel(name = "收货人名称", height = 20, width = 30)
     @Column(name = "consignee_name")
-    @NotNull(message = "收货人名称不能为空")
+    @NotBlank(message = "收货人名称不能为空")
     private String consigneeName;
 
     /**
@@ -62,6 +63,7 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialOwnerId",value = "货主ID")
     @Excel(name = "货主ID", height = 20, width = 30)
     @Column(name = "material_owner_id")
+    @NotNull(message = "货主ID不能为空")
     private Long materialOwnerId;
 
     /**
@@ -70,7 +72,7 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     @ApiModelProperty(name="linkManName",value = "联系人")
     @Excel(name = "联系人", height = 20, width = 30)
     @Column(name = "link_man_name")
-    @NotNull(message = "联系人不能为空")
+    @NotBlank(message = "联系人不能为空")
     private String linkManName;
 
     /**
@@ -79,7 +81,7 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     @ApiModelProperty(name="linkManPhone",value = "联系电话")
     @Excel(name = "联系电话", height = 20, width = 30)
     @Column(name = "link_man_phone")
-    @NotNull(message = "联系电话不能为空")
+    @NotBlank(message = "联系电话不能为空")
     private String linkManPhone;
 
     /**

@@ -72,9 +72,9 @@ public class BaseHtShipmentEnterprise implements Serializable {
     /**
      * 联系人
      */
-    @ApiModelProperty(name="contacts",value = "联系人")
+    @ApiModelProperty(name="linkman",value = "联系人")
     @Excel(name = "联系人", height = 20, width = 30)
-    private String contacts;
+    private String linkman;
 
     /**
      * 联系电话
