@@ -23,12 +23,5 @@ public class SearchMesPmWorkOrderMaterialReP extends BaseQuery implements Serial
     @ApiModelProperty(name="scanType",value = "扫描类别(1-物料 2-条码)")
     private Byte scanType;
 
-    /**
-     * 物料ID
-     */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    private Long materialId;
-
-
     private static final long serialVersionUID = 1L;
 }

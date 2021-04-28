@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderProcessReWoService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderProcessReWoService;
+import com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -68,9 +69,9 @@ public class MesPmWorkOrderProcessReWoController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<MesPmWorkOrderProcessReWoDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo) {
+    public ResponseEntity<List<MesPmWorkOrderProcessReWoVo>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo) {
         Page<Object> page = PageHelper.startPage(searchMesPmWorkOrderProcessReWo.getStartPage(),searchMesPmWorkOrderProcessReWo.getPageSize());
-        List<MesPmWorkOrderProcessReWoDto> list = mesPmWorkOrderProcessReWoService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
+        List<MesPmWorkOrderProcessReWoVo> list = mesPmWorkOrderProcessReWoService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -82,16 +83,16 @@ public class MesPmWorkOrderProcessReWoController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo){
-    List<MesPmWorkOrderProcessReWoDto> list = mesPmWorkOrderProcessReWoService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "MesPmWorkOrderProcessReWo信息", MesPmWorkOrderProcessReWoDto.class, "MesPmWorkOrderProcessReWo.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
-    }
+//    @PostMapping(value = "/export")
+//    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+//    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+//    @RequestBody(required = false) SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo){
+//    List<MesPmWorkOrderProcessReWoDto> list = mesPmWorkOrderProcessReWoService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
+//    try {
+//        // 导出操作
+//        EasyPoiUtils.exportExcel(list, "导出信息", "MesPmWorkOrderProcessReWo信息", MesPmWorkOrderProcessReWoDto.class, "MesPmWorkOrderProcessReWo.xls", response);
+//        } catch (Exception e) {
+//        throw new BizErrorException(e);
+//        }
+//    }
 }

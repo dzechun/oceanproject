@@ -18,12 +18,6 @@ public class SearchMesPmWorkOrderProcessReWo extends BaseQuery implements Serial
     private String workOrderCode;
 
     /**
-     * 订单号
-     */
-    @ApiModelProperty(name="orderCode",value = "订单号")
-    private String orderCode;
-
-    /**
      * 产品料号
      */
     @ApiModelProperty(name="materialCode",value = "产品料号")

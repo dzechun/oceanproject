@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.pm.MesPmHtWorkOrderProcessReWoMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.model.pm.MesPmHtWorkOrderProcessReWo">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderProcessReWoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderProcessReWo">
     <!--
       WARNING - @mbg.generated
     -->

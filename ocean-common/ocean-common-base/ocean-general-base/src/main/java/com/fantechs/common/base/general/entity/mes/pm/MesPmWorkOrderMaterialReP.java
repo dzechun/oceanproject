@@ -62,6 +62,14 @@ public class MesPmWorkOrderMaterialReP extends ValidGroup implements Serializabl
     private BigDecimal usageQty;
 
     /**
+     * 零件替代料ID
+     */
+    @ApiModelProperty(name="subMaterialId",value = "零件替代料ID")
+    @Excel(name = "零件替代料ID", height = 20, width = 30,orderNum="")
+    @Column(name = "sub_material_id")
+    private Long subMaterialId;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

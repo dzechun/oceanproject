@@ -20,7 +20,7 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
     <collection property="list" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto"
-                column="workOrderProcessReWoId=work_order_process_re_wo_id" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMaterialRePMapper.findList">
+                column="{workOrderProcessReWoId=work_order_process_re_wo_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMaterialRePMapper.findList">
 
     </collection>
   </resultMap>
@@ -40,48 +40,82 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
+  <resultMap id="BaseResultMapVo" type="com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo">
+    <result column="work_order_id" jdbcType="VARCHAR" property="workOrderId"/>
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+  </resultMap>
+
   <sql id="Base_Column_List">
-    mprw.work_order_process_re_wo_id,
-    mprw.work_order_id,
-    mprw.process_id,
-    mprw.status,
-    mprw.remark, mprw.organization_id, mprw.create_user_id, mprw.create_time, mprw.modified_user_id,
-    mprw.modified_time, mprw.is_delete
+    mpwoprw.work_order_process_re_wo_id,
+    mpwoprw.work_order_id,
+    mpwoprw.process_id,
+    mpwoprw.status,
+    mpwoprw.remark, mpwoprw.org_id, mpwoprw.create_user_id, mpwoprw.create_time, mpwoprw.modified_user_id,
+    mpwoprw.modified_time, mpwoprw.is_delete
   </sql>
 
-  <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesProcessReportWork" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,
-    swo.work_order_code,
-    sm.material_code,
-    spm.product_model_name,
-    btb.main_unit,
-    sp.process_code,sp.process_name,
-    btm.team_code, btm.team_name,
-    bs.staff_code, bs.staff_name,
-    mprws.total_quantity
+  <select id="findMaterialList" parameterType="map" resultMap="BaseResultMapVo">
+    select
+    mpwo.work_order_id,
+    mpwo.work_order_code,
+    bm.material_code,
+    bm.material_desc,
+    bm.version
     from mes_pm_work_order_process_re_wo mpwoprw
-    LEFT JOIN smt_work_order swo ON mpwoprw.work_order_id = swo.work_order_id
-    LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
-
-    LEFT JOIN base_process sp ON mpwoprw.process_id = sp.process_id
-
+    LEFT JOIN mes_pm_work_order mpwo ON mpwoprw.work_order_id = mpwo.work_order_id
+    LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
     <where>
-      <if test="workOrderId != null">
-        and swo.work_order_id = #{workOrderId}
-      </if>
       <if test="workOrderCode != null and workOrderCode != ''">
-        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>
-      <if test="processId != null">
-        and sp.process_id = #{processId}
+      <if test="materialCode != null and materialCode != ''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
-      <if test="processCode != null and processCode != ''">
-        and sp.process_code like CONCAT('%', #{processCode}, '%')
+      <if test="materialDesc != null and materialDesc != ''">
+        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
-    group by mprw.work_order_id, mprw.process_id
+    group by mpwoprw.work_order_id
+    order by mpwoprw.create_time desc
   </select>
 
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    bp.process_code,bp.process_name,bp.process_desc,bws.section_name,bpc.process_category_name
+    from mes_pm_work_order_process_re_wo mpwoprw
+    LEFT JOIN ocean_v2.sys_user su ON mpwoprw.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON mpwoprw.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON mpwoprw.org_id = bo.organization_id
+    LEFT JOIN mes_pm_work_order mpwo ON mpwoprw.work_order_id = mpwo.work_order_id
+    LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
+    LEFT JOIN base_process bp ON bp.process_id = mpwoprw.process_id
+    LEFT JOIN base_workshop_section bws ON bws.section_id = bp.section_id
+    LEFT JOIN base_process_category bpc ON bpc.process_category_id = bp.process_category_id
+    <where>
+      <if test="workOrderId != null">
+        and mpwoprw.work_order_id = #{workOrderId}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialDesc != null and materialDesc != ''">
+        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by mpwoprw.create_time desc
+  </select>
 
 
 </mapper>

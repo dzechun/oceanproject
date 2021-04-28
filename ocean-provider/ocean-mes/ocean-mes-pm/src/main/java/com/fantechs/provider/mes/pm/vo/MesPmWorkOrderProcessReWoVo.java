@@ -4,12 +4,22 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
+@Data
 public class MesPmWorkOrderProcessReWoVo implements Serializable {
+
+    /**
+     * 工单ID
+     */
+    @Transient
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    @Excel(name = "工单ID", height = 20, width = 30)
+    private Long workOrderId;
 
     /**
      * 工单号
@@ -18,14 +28,6 @@ public class MesPmWorkOrderProcessReWoVo implements Serializable {
     @ApiModelProperty(name="workOrderCode",value = "工单号")
     @Excel(name = "工单号", height = 20, width = 30)
     private String workOrderCode;
-
-    /**
-     * 订单号
-     */
-    @Transient
-    @ApiModelProperty(name="orderCode",value = "订单号")
-    @Excel(name = "订单号", height = 20, width = 30)
-    private String orderCode;
 
     /**
      * 产品料号
