@@ -94,8 +94,9 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(!StringUtils.isEmpty(baseLabel)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-        //名称+编码
+        //获取文件名
         String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().indexOf("."));
+        //标签名由文件名和标签编码组成
         record.setLabelName(fileName+record.getLabelCode());
         record.setLabelVersion("0.0.1");
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
@@ -189,6 +190,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
      */
     private String UploadFile(String labelCategoryName,MultipartFile file,String fileName){
         try {
+            //获取标签文件路径配置项
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("LabelFilePath");
             ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
@@ -196,7 +198,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
             InputStream stream = file.getInputStream();
             String path = map.get("path") +labelCategoryName+"/";
-            FileOutputStream fs=new FileOutputStream(path+fileName+".btw");
+            FileOutputStream fs = new FileOutputStream(path+fileName+".btw");
             byte[] buffer =new byte[1024*1024];
             int bytesum = 0;
             int byteread = 0;
