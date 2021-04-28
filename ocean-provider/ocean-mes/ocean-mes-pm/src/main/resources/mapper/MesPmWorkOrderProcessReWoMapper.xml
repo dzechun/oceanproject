@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderProcessReWoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_order_process_re_wo_id" jdbcType="BIGINT" property="workOrderProcessReWoId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto"
+                column="workOrderProcessReWoId=work_order_process_re_wo_id" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMaterialRePMapper.findList">
+
+    </collection>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto">
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="process_desc" jdbcType="VARCHAR" property="processDesc"/>
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
+    <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    mprw.work_order_process_re_wo_id,
+    mprw.work_order_id,
+    mprw.process_id,
+    mprw.status,
+    mprw.remark, mprw.organization_id, mprw.create_user_id, mprw.create_time, mprw.modified_user_id,
+    mprw.modified_time, mprw.is_delete
+  </sql>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesProcessReportWork" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    swo.work_order_code,
+    sm.material_code,
+    spm.product_model_name,
+    btb.main_unit,
+    sp.process_code,sp.process_name,
+    btm.team_code, btm.team_name,
+    bs.staff_code, bs.staff_name,
+    mprws.total_quantity
+    from mes_pm_work_order_process_re_wo mpwoprw
+    LEFT JOIN smt_work_order swo ON mpwoprw.work_order_id = swo.work_order_id
+    LEFT JOIN smt_material sm ON swo.material_id = sm.material_id
+
+    LEFT JOIN base_process sp ON mpwoprw.process_id = sp.process_id
+
+    <where>
+      <if test="workOrderId != null">
+        and swo.work_order_id = #{workOrderId}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="processId != null">
+        and sp.process_id = #{processId}
+      </if>
+      <if test="processCode != null and processCode != ''">
+        and sp.process_code like CONCAT('%', #{processCode}, '%')
+      </if>
+    </where>
+    group by mprw.work_order_id, mprw.process_id
+  </select>
+
+
+
+</mapper>
