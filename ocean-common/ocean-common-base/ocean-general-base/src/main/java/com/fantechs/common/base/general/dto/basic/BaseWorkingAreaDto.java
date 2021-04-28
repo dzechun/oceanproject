@@ -29,6 +29,13 @@ public class BaseWorkingAreaDto extends BaseWorkingArea implements Serializable 
     private String warehouseName;
 
     /**
+     * 仓库ID
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
+
+    /**
      * 创建用户名称
      */
     @Transient
