@@ -163,8 +163,12 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
             File file = new File(path+docName);
             if(!StringUtils.isEmpty(oldDocName)){
                 File oldFile = new File(path+oldDocName);
+                //旧文件存在则删除
                 if(oldFile.exists()){
                     isOk = oldFile.renameTo(file);
+                }else {
+                    //旧文件不存在则放行
+                    isOk = true;
                 }
             }else{
                 //label文件下的该子文件不存在则新建
