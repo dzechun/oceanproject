@@ -3,12 +3,15 @@ package com.fantechs.common.base.general.entity.om;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 销售订单明细
@@ -135,41 +138,51 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      * 计划回复日期
      */
     @ApiModelProperty(name="planRevertDate",value = "计划回复日期")
-    @Excel(name = "计划回复日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "计划回复日期", height = 20, width = 30,orderNum="")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     @Column(name = "plan_revert_date")
-    private Date planRevertDate;
+    private String planRevertDate;
 
     /**
      * 计划发货日期
      */
     @ApiModelProperty(name="planDeliverDate",value = "计划发货日期")
-    @Excel(name = "计划发货日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "计划发货日期", height = 20, width = 30,orderNum="")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     @Column(name = "plan_deliver_date")
-    private Date planDeliverDate;
+    private String planDeliverDate;
 
     /**
      * 实际发货日期
      */
     @ApiModelProperty(name="actualDeliverDate",value = "实际发货日期")
-    @Excel(name = "实际发货日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "实际发货日期", height = 20, width = 30,orderNum="")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     @Column(name = "actual_deliver_date")
-    private Date actualDeliverDate;
+    private String actualDeliverDate;
 
     /**
      * 计划交货日期
      */
     @ApiModelProperty(name="planDeliveryDate",value = "计划交货日期")
-    @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     @Column(name = "plan_delivery_date")
-    private Date planDeliveryDate;
+    private String planDeliveryDate;
 
     /**
      * 实际交货日期
      */
     @ApiModelProperty(name="actualDeliveryDate",value = "实际交货日期")
-    @Excel(name = "实际交货日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "实际交货日期", height = 20, width = 30,orderNum="")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     @Column(name = "actual_delivery_date")
-    private Date actualDeliveryDate;
+    private String actualDeliveryDate;
 
     /**
      * 送货地址
@@ -304,10 +317,11 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "create_time")
-    private Date createTime;
+    private String createTime;
 
     /**
      * 修改人ID
@@ -321,10 +335,11 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "modified_time")
-    private Date modifiedTime;
+    private String modifiedTime;
 
     private static final long serialVersionUID = 1L;
 }

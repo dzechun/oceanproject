@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -101,6 +102,38 @@ public class BaseWarehouse extends ValidGroup implements Serializable {
     private Integer mrbOperation;
 
     /**
+     * 联系人
+     */
+    @ApiModelProperty(name="linkManName",value = "联系人")
+    @Excel(name = "联系人", height = 20, width = 30)
+    @Column(name = "link_man_name")
+    private String linkManName;
+
+    /**
+     * 联系电话
+     */
+    @ApiModelProperty(name="linkManPhone",value = "联系电话")
+    @Excel(name = "联系电话", height = 20, width = 30)
+    @Column(name = "link_man_phone")
+    private String linkManPhone;
+
+    /**
+     * 传真号码
+     */
+    @ApiModelProperty(name="faxNumber",value = "传真号码")
+    @Excel(name = "传真号码", height = 20, width = 30)
+    @Column(name = "fax_number")
+    private String faxNumber;
+
+    /**
+     * 地址
+     */
+    @ApiModelProperty(name="address",value = "地址")
+    @Excel(name = "地址", height = 20, width = 30)
+    @Column(name = "address")
+    private String address;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
@@ -183,10 +216,10 @@ public class BaseWarehouse extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     /**
-     * 仓库人员关系集合
+     * 仓库货主关系集合
      */
-    @ApiModelProperty(name = "baseWarehousePersonnels",value = "仓库人员关系集合")
-    private List<BaseWarehousePersonnel> baseWarehousePersonnels = new ArrayList<>();
+    @ApiModelProperty(name = "baseMaterialOwnerReWhDtos",value = "仓库货主关系集合")
+    private List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = new ArrayList<>();
 
     /**
      * 扩展字段1

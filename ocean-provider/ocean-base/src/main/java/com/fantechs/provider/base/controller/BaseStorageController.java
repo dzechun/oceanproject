@@ -29,7 +29,7 @@ import java.util.List;
  * Created by wcz on 2020/09/23.
  */
 @RestController
-@Api(tags = "储位信息管理")
+@Api(tags = "库位信息管理")
 @RequestMapping("/baseStorage")
 @Validated
 public class BaseStorageController {
@@ -42,13 +42,13 @@ public class BaseStorageController {
 
     @ApiOperation(value = "批量更新", notes = "批量更新")
     @PostMapping("/batchUpdate")
-    public ResponseEntity batchUpdate(@ApiParam(value = "储位集合", required = true) @RequestBody List<BaseStorage> baseStorages) {
+    public ResponseEntity batchUpdate(@ApiParam(value = "库位集合", required = true) @RequestBody List<BaseStorage> baseStorages) {
         return ControllerUtil.returnCRUD(baseStorageService.batchUpdate(baseStorages));
     }
 
     @ApiOperation(value = "批量新增", notes = "批量新增")
     @PostMapping("/batchSave")
-    public ResponseEntity batchAdd(@ApiParam(value = "储位集合", required = true) @RequestBody List<BaseStorage> baseStorages) {
+    public ResponseEntity batchAdd(@ApiParam(value = "库位集合", required = true) @RequestBody List<BaseStorage> baseStorages) {
         return ControllerUtil.returnCRUD(baseStorageService.batchSave(baseStorages));
     }
 
@@ -101,13 +101,13 @@ public class BaseStorageController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出储位信息excel", notes = "导出储位信息excel", produces = "application/octet-stream")
+    @ApiOperation(value = "导出库位信息excel", notes = "导出库位信息excel", produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseStorage searchBaseStorage) {
         List<BaseStorage> list = baseStorageService.findList(searchBaseStorage);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出储位信息", "储位信息", BaseStorage.class, "储位信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "导出库位信息", "库位信息", BaseStorage.class, "库位信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

@@ -20,7 +20,7 @@ import java.util.Date;
  * qms_ht_inspection_type
  */
 @Data
-@Table(name = "qms_ht_inspection_type")
+@Table(name = "base_ht_inspection_type")
 public class BaseHtInspectionType implements Serializable {
     /**
      * 检验类型历史ID

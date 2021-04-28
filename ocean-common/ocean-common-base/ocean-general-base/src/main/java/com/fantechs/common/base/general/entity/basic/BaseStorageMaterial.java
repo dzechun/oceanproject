@@ -20,7 +20,6 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
     @Id
     @Column(name = "storage_material_id")
     @ApiModelProperty(name = "storageMaterialId",value = "储位物料ID")
-    @NotNull(groups = update.class,message = "储位物料id不能为空")
     private Long storageMaterialId;
 
     /**
@@ -28,7 +27,6 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
      */
     @Column(name = "storage_id")
     @ApiModelProperty(name = "storageId",value = "储位ID")
-    @NotNull(message = "储位id不能为空")
     private Long storageId;
 
     /**
@@ -64,6 +62,34 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 货主ID
+     */
+    @ApiModelProperty(name = "materialOwnerId",value = "货主ID")
+    @Column(name = "material_owner_id")
+    private Long materialOwnerId;
+
+    /**
+     * 货主名称
+     */
+    @Transient
+    @ApiModelProperty(name = "materialOwnerName",value = "货主ID")
+    private String materialOwnerName;
+
+    /**
+     * 上架策略
+     */
+    @Column(name = "putaway_tactics")
+    @ApiModelProperty(name = "putawayTactics",value = "上架策略")
+    private Byte putawayTactics;
+
+    /**
+     * 补货策略
+     */
+    @Column(name = "replenish_tactics")
+    @ApiModelProperty(name = "replenishTactics",value = "补货策略")
+    private Byte replenishTactics;
+
+    /**
      * 物料编码
      */
     @Transient
@@ -95,27 +121,12 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
     private String materialDesc;
 
     /**
-     * 仓库ID
-     */
-    @Column(name = "warehouse_id")
-    @ApiModelProperty(name = "warehouseId",value = "仓库ID")
-    private Long warehouseId;
-
-    /**
      * 仓库名称
      */
     @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30)
     private String warehouseName;
-
-    /**
-     * 仓库区域ID
-     */
-    @Column(name = "warehouse_area_id")
-    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域ID")
-    //@NotNull(message = "仓库区域ID不能为空")
-    private Long warehouseAreaId;
 
     /**
      * 仓库区域名称

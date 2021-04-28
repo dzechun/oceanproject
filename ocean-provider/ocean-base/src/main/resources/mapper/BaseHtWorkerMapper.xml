@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtWorkerMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtWorker">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_worker_id" jdbcType="BIGINT" property="htWorkerId" />
+        <result column="worker_id" jdbcType="BIGINT" property="workerId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode" />
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        bhw.ht_worker_id, bhw.user_id, bhw.warehouse_id, bhw.status,
+        bhw.remark, bhw.org_id, bhw.create_user_id, bhw.create_time, bhw.modified_user_id,
+        bhw.modified_time, bhw.is_delete, bhw.option1, bhw.option2, bhw.option3
+    </sql>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        su.user_name, su.nick_name, su.user_code,
+        bw.warehouse_name,
+        suc.user_name AS create_user_name,
+        sumod.user_name AS modified_user_name,
+        bo.organization_name
+        FROM base_ht_worker bhw
+        LEFT JOIN ocean_v2.sys_user su ON bhw.user_id = su.user_id
+        LEFT JOIN base_warehouse bw ON bhw.warehouse_id = bw.warehouse_id
+        LEFT JOIN ocean_v2.sys_user suc ON bhw.create_user_id = suc.user_id
+        LEFT JOIN ocean_v2.sys_user sumod ON bhw.modified_user_id = sumod.user_id
+        LEFT JOIN base_organization bo ON bhw.org_id = bo.organization_id
+
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        ORDER BY bhw.modified_time DESC
+    </select>
+</mapper>

@@ -5,6 +5,7 @@
         <id column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId" />
         <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
         <result column="customer_order_line_number" jdbcType="VARCHAR" property="customerOrderLineNumber" />
+        <result column="source_line_number" jdbcType="VARCHAR" property="sourceLineNumber" />
         <result column="project_code" jdbcType="VARCHAR" property="projectCode" />
         <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber" />
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
@@ -42,8 +43,19 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     </resultMap>
 
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
-        sod.sales_order_det_id, sod.sales_order_id, sod.customer_order_line_number, sod.project_code,
+        sod.sales_order_det_id, sod.sales_order_id, sod.customer_order_line_number, sod.source_line_number, sod.project_code,
         sod.inner_batch_number, sod.contract_code, sod.material_id, sod.type, sod.if_free_gift, sod.unit_name,
         sod.order_qty, sod.actual_qty, sod.warehouse_id, sod.plan_revert_date, sod.plan_deliver_date,
         sod.actual_deliver_date, sod.plan_delivery_date, sod.actual_delivery_date, sod.delivery_address,
@@ -54,9 +66,18 @@
         sod.modified_user_id, sod.modified_time
     </sql>
 
-    <select id="findList" parameterType="map" resultMap="BaseResultMap">
-        select<include refid="Base_Column_List"/>
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select<include refid="Base_Column_List"/>, bm.material_code, bm.material_name, bm.version,
+        bm.material_desc, bw.warehouse_name,
+        suc.user_name as create_user_name,
+        bo.organization_name,
+        sumod.user_name as modified_user_name
         from om_sales_order_det sod
+        left join base_material bm on sod.material_id = bm.material_id
+        left join base_warehouse bw on sod.warehouse_id = bw.warehouse_id
+        left join ocean_v2.sys_user suc on sod.create_user_id = suc.user_id
+        left join base_organization bo on sod.org_id = bo.organization_id
+        left join ocean_v2.sys_user sumod on sod.modified_user_id = sumod.user_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

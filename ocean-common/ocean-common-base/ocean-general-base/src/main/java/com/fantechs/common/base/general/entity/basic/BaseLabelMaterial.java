@@ -19,9 +19,9 @@ import lombok.Data;
 @Table(name = "base_label_material")
 public class BaseLabelMaterial extends ValidGroup implements Serializable {
     /**
-     * 产品关联标签id
+     * 物料关联标签id
      */
-    @ApiModelProperty(name="labelMaterialId",value = "产品关联标签id")
+    @ApiModelProperty(name="labelMaterialId",value = "物料关联标签id")
     @Id
     @Column(name = "label_material_id")
     private Long labelMaterialId;

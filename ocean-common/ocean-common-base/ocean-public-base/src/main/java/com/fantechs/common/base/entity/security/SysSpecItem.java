@@ -70,6 +70,13 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     private String paraValue;
 
     /**
+     * 参数类型
+     */
+    @Column(name = "param_type")
+    @ApiModelProperty(name="paramType" ,value="参数类型")
+    private Byte paramType;
+
+    /**
      * 配置类别（0-系统配置，1-模块配置）默认0
      */
     @Column(name = "category")

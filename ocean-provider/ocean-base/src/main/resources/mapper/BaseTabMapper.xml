@@ -54,6 +54,7 @@
       <result column="wet_sensitive_level" jdbcType="VARCHAR" property="wetSensitiveLevel" />
       <result column="voltage" jdbcType="VARCHAR" property="voltage" />
       <result column="expiration_date" jdbcType="DECIMAL" property="expirationDate" />
+      <result column="map_number" jdbcType="VARCHAR" property="mapNumber" />
       <result column="min_storage_temperature" jdbcType="VARCHAR" property="minStorageTemperature" />
       <result column="max_storage_temperature" jdbcType="VARCHAR" property="maxStorageTemperature" />
       <result column="min_storage_humidity" jdbcType="VARCHAR" property="minStorageHumidity" />
@@ -130,9 +131,10 @@
 	bmt.packing_method,
 	bmt.is_wet_sensitive,
 	bmt.wet_sensitive_level,
-	bmt.material_quality,
+    bmt.material_quality,
     bmt.voltage,
     bmt.expiration_date,
+    bmt.map_number,
     bmt.min_storage_temperature,
     bmt.max_storage_temperature,
     bmt.min_storage_humidity,

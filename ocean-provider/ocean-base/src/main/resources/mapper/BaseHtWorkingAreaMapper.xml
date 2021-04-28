@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtWorkingAreaMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtWorkingArea">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_working_area_id" jdbcType="BIGINT" property="htWorkingAreaId" />
+    <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
+    <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode" />
+    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhwa.ht_working_area_id,
+    bhwa.working_area_id,
+	bhwa.working_area_code,
+	bhwa.warehouse_area_id,
+	bhwa.org_id,
+	bhwa.remark,
+	bhwa.`status`,
+	bhwa.create_user_id,
+	bhwa.create_time,
+	bhwa.modified_user_id,
+	bhwa.modified_time,
+	bhwa.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    bwas.warehouse_area_name
+    from base_ht_working_area bhwa
+    left join ocean_v2.sys_user su on bhwa.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on bhwa.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON bhwa.org_id = bo.organization_id
+    LEFT JOIN base_warehouse_area bwas ON bwas.warehouse_area_id = bhwa.warehouse_area_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhwa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="workingAreaCode != null and workingAreaCode != ''">
+        and bhwa.working_area_code like CONCAT('%',#{workingAreaCode},'%')
+      </if>
+      <if test="warehouseAreaName != null and warehouseAreaName != ''">
+        and bwas.warehouse_area_name like CONCAT('%',#{warehouseAreaName},'%')
+      </if>
+    </where>
+    order by modified_time desc
+  </select>
+
+</mapper>

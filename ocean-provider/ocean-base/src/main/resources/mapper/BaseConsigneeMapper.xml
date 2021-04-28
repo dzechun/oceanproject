@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseConsigneeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseConsignee">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
+    <result column="consignee_code" jdbcType="VARCHAR" property="consigneeCode" />
+    <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="material_owner_desc" jdbcType="VARCHAR" property="materialOwnerDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseConsigneeDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bc.consignee_id,
+    bc.consignee_code,
+    bc.consignee_name,
+    bc.company_name,
+    bc.material_owner_id,
+    bc.link_man_name,
+    bc.link_man_phone,
+    bc.fax_number,
+    bc.e_mail_address,
+    bc.address,
+    bc.material_owner_desc,
+    bc.`status`,
+    bc.remark,
+    bc.org_id,
+    bc.create_user_id,
+    bc.create_time,
+    bc.modified_user_id,
+    bc.modified_time,
+    bc.is_delete,
+    bc.option1,
+    bc.option2,
+    bc.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name,bmo.material_owner_name
+    from fantech_imes_v2.base_consignee bc
+    left join fantech_imes_v2.base_material_owner bmo on bc.material_owner_id=bmo.material_owner_id
+    left join ocean_v2.sys_user u on bc.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bc.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON bc.org_id = bo.organization_id
+    <where>
+      <if test="consigneeCode != null and consigneeCode!=''">
+        and bc.consignee_code like CONCAT('%', #{consigneeCode}, '%')
+      </if>
+      <if test="consigneeName != null and consigneeName!=''">
+        and bc.consignee_name like CONCAT('%', #{consigneeName}, '%')
+      </if>
+      <if test="companyName != null and companyName!=''">
+        and bc.company_name like CONCAT('%', #{companyName}, '%')
+      </if>
+      <if test="linkManName != null and linkManName!=''">
+        and bc.link_man_name like CONCAT('%', #{linkManName}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialOwnerId != null and materialOwnerId!=''">
+        and bc.material_owner_id = #{materialOwnerId}
+      </if>
+      <if test="status!=null and status!=''">
+        and bc.status = #{status}
+      </if>
+    </where>
+    order by bc.create_time desc
+  </select>
+</mapper>

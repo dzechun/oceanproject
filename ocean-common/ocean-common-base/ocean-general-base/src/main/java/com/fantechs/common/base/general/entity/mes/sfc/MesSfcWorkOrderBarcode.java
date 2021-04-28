@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -154,6 +156,13 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "workOrderQty",value = "工单数量")
     private BigDecimal workOrderQty;
+
+    /**
+     * 产品料号
+     */
+    @Transient
+    @ApiModelProperty(name= "materialCode", value = "产品料号")
+    private String materialCode;
 
     private static final long serialVersionUID = 1L;
 }

@@ -10,7 +10,7 @@
         <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName"/>
         <result column="shipment_enterprise_desc" jdbcType="VARCHAR" property="shipmentEnterpriseDesc"/>
         <result column="transport_category_id" jdbcType="BIGINT" property="transportCategoryId"/>
-        <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
+        <result column="linkman" jdbcType="VARCHAR" property="linkman"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -35,7 +35,7 @@
 	bse.shipment_enterprise_name,
 	bse.shipment_enterprise_desc,
 	bse.transport_category_id,
-	bse.contacts,
+	bse.linkman,
 	bse.phone,
 	bse.org_id,
 	bse.remark,

@@ -6,8 +6,10 @@
     <result column="storage_material_id" jdbcType="BIGINT" property="storageMaterialId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="putaway_tactics" jdbcType="TINYINT" property="putawayTactics"/>
+    <result column="replenish_tactics" jdbcType="TINYINT" property="replenishTactics"/>
     <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -28,8 +30,9 @@
 	shsm.storage_material_id,
 	shsm.storage_id,
 	shsm.material_id,
-	shsm.warehouse_id,
-	shsm.warehouse_area_id,
+	shsm.material_owner_id,
+    shsm.putaway_tactics,
+    shsm.replenish_tactics,
 	shsm.`status`,
 	shsm.remark,
 	shsm.org_id,
@@ -51,27 +54,31 @@
            sw.warehouse_name as warehouseName,
            swa.warehouse_area_name as warehouseAreaName,
            u.user_name as createUserName,s.user_name as modifiedUserName,
-           bo.organization_name
+           bo.organization_name,bmo.material_owner_name
     from fantech_imes_v2.base_ht_storage_material shsm
     left join fantech_imes_v2.base_storage ss on shsm.storage_id=ss.storage_id
     left join fantech_imes_v2.base_material sm on shsm.material_id=sm.material_id
-    left join fantech_imes_v2.base_warehouse sw on shsm.warehouse_id=sw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area swa on shsm.warehouse_area_id=swa.warehouse_area_id
+    left join fantech_imes_v2.base_warehouse sw on ss.warehouse_id=sw.warehouse_id
+    left join fantech_imes_v2.base_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
     left join ocean_v2.sys_user u on shsm.create_user_id=u.user_id
     left join ocean_v2.sys_user s on shsm.modified_user_id=s.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON shsm.org_id = bo.organization_id
+    LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = shsm.material_owner_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shsm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="warehouseId!=null and warehouseId!=''">
-        and shsm.warehouse_id=#{warehouseId}
+        and sw.warehouse_id=#{warehouseId}
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
         and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
       </if>
+      <if test="materialOwnerName!=null and materialOwnerName!=''">
+        and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
+      </if>
       <if test="warehouseAreaId!=null and warehouseAreaId!=''">
-        and shsm.warehouse_area_id=#{warehouseAreaId}
+        and ss.warehouse_area_id=#{warehouseAreaId}
       </if>
       <if test="warehouseAreaName!=null and warehouseAreaName!=''">
         and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')

@@ -2,10 +2,13 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.general.entity.basic.BaseWarehousePersonnel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehousePersonnel;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -13,10 +16,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtWarehouseMapper;
-import com.fantechs.provider.base.mapper.BaseWarehouseAreaMapper;
-import com.fantechs.provider.base.mapper.BaseWarehouseMapper;
-import com.fantechs.provider.base.mapper.BaseWarehousePersonnelMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseWarehouseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     private BaseWarehouseAreaMapper baseWarehouseAreaMapper;
 
     @Resource
-    private BaseWarehousePersonnelMapper baseWarehousePersonnelMapper;
+    private BaseMaterialOwnerReWhMapper baseMaterialOwnerReWhMapper;
 
 
     @Override
@@ -71,20 +71,20 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
         baseWarehouseMapper.insertUseGeneratedKeys(baseWarehouse);
 
+        //新增货主和仓库关系
+        List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = baseWarehouse.getBaseMaterialOwnerReWhDtos();
+        if(StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
+            for (BaseMaterialOwnerReWhDto baseMaterialOwnerReWhDto : baseMaterialOwnerReWhDtos) {
+                baseMaterialOwnerReWhDto.setWarehouseId(baseWarehouse.getWarehouseId());
+                baseMaterialOwnerReWhDto.setOrgId(currentUser.getOrganizationId());
+            }
+            baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhDtos);
+        }
+
         //新增仓库历史信息
         BaseHtWarehouse baseHtWarehouse = new BaseHtWarehouse();
         BeanUtils.copyProperties(baseWarehouse, baseHtWarehouse);
         int i = baseHtWarehouseMapper.insertSelective(baseHtWarehouse);
-
-        //新增仓库人员关系
-        List<BaseWarehousePersonnel> baseWarehousePersonnels = baseWarehouse.getBaseWarehousePersonnels();
-        if (StringUtils.isNotEmpty(baseWarehousePersonnels)){
-            for (BaseWarehousePersonnel baseWarehousePersonnel : baseWarehousePersonnels) {
-                baseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
-                baseWarehousePersonnel.setOrganizationId(currentUser.getOrganizationId());
-            }
-            baseWarehousePersonnelMapper.insertList(baseWarehousePersonnels);
-        }
 
         return i;
     }
@@ -106,7 +106,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
-            //被仓库区域引用
+            //被库区引用
             Example example = new Example(BaseWarehouseArea.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("warehouseId",warehouseId);
@@ -122,11 +122,11 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
             baseHtWarehouse.setModifiedTime(new Date());
             list.add(baseHtWarehouse);
 
-            //删除仓库人员关系
-            Example example1 = new Example(BaseWarehousePersonnel.class);
+            //删除原有绑定关系
+            Example example1 = new Example(BaseMaterialOwnerReWh.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("warehouseId",warehouseId);
-            baseWarehousePersonnelMapper.deleteByExample(example1);
+            criteria1.andEqualTo("warehouseId", baseWarehouse.getWarehouseId());
+            baseMaterialOwnerReWhMapper.deleteByExample(example1);
         }
         baseHtWarehouseMapper.insertList(list);
 
@@ -156,19 +156,19 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         int i= baseWarehouseMapper.updateByPrimaryKeySelective(baseWarehouse);
 
         //删除原有绑定关系
-        Example example1 = new Example(BaseWarehousePersonnel.class);
+        Example example1 = new Example(BaseMaterialOwnerReWh.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("warehouseId", baseWarehouse.getWarehouseId());
-        baseWarehousePersonnelMapper.deleteByExample(example1);
+        baseMaterialOwnerReWhMapper.deleteByExample(example1);
 
-        //新增绑定关系
-        List<BaseWarehousePersonnel> baseWarehousePersonnels = baseWarehouse.getBaseWarehousePersonnels();
-        if (StringUtils.isNotEmpty(baseWarehousePersonnels)){
-            for (BaseWarehousePersonnel baseWarehousePersonnel : baseWarehousePersonnels) {
-                baseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
-                baseWarehousePersonnel.setOrganizationId(currentUser.getOrganizationId());
+        //新增货主和仓库关系
+        List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = baseWarehouse.getBaseMaterialOwnerReWhDtos();
+        if(StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
+            for (BaseMaterialOwnerReWhDto baseMaterialOwnerReWhDto : baseMaterialOwnerReWhDtos) {
+                baseMaterialOwnerReWhDto.setWarehouseId(baseWarehouse.getWarehouseId());
+                baseMaterialOwnerReWhDto.setOrgId(currentUser.getOrganizationId());
             }
-            baseWarehousePersonnelMapper.insertList(baseWarehousePersonnels);
+            baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhDtos);
         }
 
         //新增仓库历史信息
@@ -183,13 +183,13 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     public List<BaseWarehouse> findList(SearchBaseWarehouse searchBaseWarehouse) {
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(searchBaseWarehouse);
         if (StringUtils.isNotEmpty(baseWarehouses)){
-            SearchBaseWarehousePersonnel searchBaseWarehousePersonnel = new SearchBaseWarehousePersonnel();
+            SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh = new SearchBaseMaterialOwnerReWh();
 
             for (BaseWarehouse baseWarehouse : baseWarehouses) {
-                searchBaseWarehousePersonnel.setWarehouseId(baseWarehouse.getWarehouseId());
-                List<BaseWarehousePersonnel> list = baseWarehousePersonnelMapper.findList(searchBaseWarehousePersonnel);
+                searchBaseMaterialOwnerReWh.setWarehouseId(baseWarehouse.getWarehouseId());
+                List<BaseMaterialOwnerReWhDto> list = baseMaterialOwnerReWhMapper.findList(searchBaseMaterialOwnerReWh);
                 if (StringUtils.isNotEmpty(list)){
-                    baseWarehouse.setBaseWarehousePersonnels(list);
+                    baseWarehouse.setBaseMaterialOwnerReWhDtos(list);
                 }
             }
         }
@@ -209,4 +209,5 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     public int insertList(List<BaseWarehouse> baseWarehouses) {
         return baseWarehouseMapper.insertList(baseWarehouses);
     }
+
 }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseMaterialOwnerMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseMaterialOwner">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="material_owner_code" jdbcType="VARCHAR" property="materialOwnerCode"/>
+        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+        <result column="material_owner_short_name" jdbcType="VARCHAR" property="materialOwnerShortName"/>
+        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+        <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="material_owner_desc" jdbcType="VARCHAR" property="materialOwnerDesc"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        bmo.material_owner_id,
+        bmo.material_owner_code,
+        bmo.material_owner_name,
+        bmo.material_owner_short_name,
+        bmo.link_man_name,
+        bmo.link_man_phone,
+        bmo.fax_number,
+        bmo.e_mail_address,
+        bmo.address,
+        bmo.material_owner_desc,
+        bmo.`status`,
+        bmo.remark,
+        bmo.org_id,
+        bmo.create_user_id,
+        bmo.create_time,
+        bmo.modified_user_id,
+        bmo.modified_time,
+        bmo.is_delete,
+        bmo.option1,
+        bmo.option2,
+        bmo.option3
+    </sql>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>,
+        u.user_name as create_user_name, s.user_name as modified_user_name,
+        bo.organization_name
+        from fantech_imes_v2.base_material_owner bmo
+        left join ocean_v2.sys_user u on bmo.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on bmo.modified_user_id=s.user_id
+        left join fantech_imes_v2.base_organization bo ON bmo.org_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bmo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialOwnerCode!=null and materialOwnerCode!=''">
+                and bmo.material_owner_code like CONCAT('%', #{materialOwnerCode}, '%')
+            </if>
+            <if test="materialOwnerName!=null and materialOwnerName!=''">
+                and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
+            </if>
+            <if test="status!=null and status!=''">
+                and bmo.status = #{status}
+            </if>
+        </where>
+        order by bmo.create_time desc
+    </select>
+
+</mapper>

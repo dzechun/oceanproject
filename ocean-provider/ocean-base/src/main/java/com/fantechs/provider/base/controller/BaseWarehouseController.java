@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;

@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2020/09/23.
  */
 @RestController
-@Api(tags = "仓库区域信息管理")
+@Api(tags = "库区信息管理")
 @RequestMapping("/baseWarehouseArea")
 @Validated
 public class BaseWarehouseAreaController {
@@ -87,12 +87,12 @@ public class BaseWarehouseAreaController {
      * @throws
      */
     @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出仓库区域excel",produces = "application/octet-stream")
+    @ApiOperation(value = "导出excel",notes = "导出库区excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchBaseWarehouseArea searchBaseWarehouseArea){
         List<BaseWarehouseAreaDto> list = baseWarehouseAreaService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWarehouseArea));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出仓库区域", "仓库区域信息", BaseWarehouseAreaDto.class, "仓库区域信息.xls", response);
+            EasyPoiUtils.exportExcel(list, "导出库区", "库区信息", BaseWarehouseAreaDto.class, "库区信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

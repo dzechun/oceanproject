@@ -9,10 +9,22 @@
         <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId"/>
+        <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId"/>
         <result column="capacity" jdbcType="DECIMAL" property="capacity"/>
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
-        <result column="warehouse_state" jdbcType="TINYINT" property="warehouseState"/>
+        <result column="storage_type" jdbcType="TINYINT" property="storageType"/>
+        <result column="roadway" jdbcType="INTEGER" property="roadway"/>
+        <result column="row_no" jdbcType="INTEGER" property="rowNo"/>
+        <result column="column_no" jdbcType="INTEGER" property="columnNo"/>
+        <result column="level_no" jdbcType="INTEGER" property="levelNo"/>
+        <result column="putaway_move_line_no" jdbcType="INTEGER" property="putawayMoveLineNo"/>
+        <result column="picking_move_line_no" jdbcType="INTEGER" property="pickingMoveLineNo"/>
+        <result column="stock_move_line_no" jdbcType="INTEGER" property="stockMoveLineNo"/>
+        <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
+        <result column="surplus_load" jdbcType="DECIMAL" property="surplusLoad"/>
+        <result column="surplus_volume" jdbcType="DECIMAL" property="surplusVolume"/>
+        <result column="surplus_can_put_salver" jdbcType="INTEGER" property="surplusCanPutSalver"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -25,6 +37,7 @@
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
+        <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
@@ -42,9 +55,21 @@
         ss.capacity,
         ss.temperature,
         ss.unit,
-        ss.warehouse_state,
+        ss.storage_type,
         ss.warehouse_id,
         ss.warehouse_area_id,
+        ss.working_area_id,
+        ss.roadway,
+        ss.row_no,
+        ss.column_no,
+        ss.level_no,
+        ss.putaway_move_line_no,
+        ss.picking_move_line_no,
+        ss.stock_move_line_no,
+        ss.if_stock_lock,
+        ss.surplus_load,
+        ss.surplus_volume,
+        ss.surplus_can_put_salver,
         ss.`status`,
         ss.remark,
         ss.org_id,
@@ -61,13 +86,14 @@
     <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage"
             resultMap="BaseResultMap">
         select <include refid="Base_Cloumn_List"></include>,
-        sw.warehouse_name as warehouseName, sw.warehouse_code, sw.warehouse_name, sw.warehouse_category,
+        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,
         u.user_name as createUserName, s.user_name as modifiedUserName,
-        swa.warehouse_area_code, swa.warehouse_area_name, swa.warehouse_area_name as warehouseAreaName,
+        swa.warehouse_area_code, swa.warehouse_area_name,
         bo.organization_name
         from fantech_imes_v2.base_storage ss
-        left join fantech_imes_v2.base_warehouse sw on ss.warehouse_id=sw.warehouse_id
-        left join fantech_imes_v2.base_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
+        left join fantech_imes_v2.base_working_area bwa on ss.working_area_id=bwa.working_area_id
+        left join fantech_imes_v2.base_warehouse_area swa on bwa.warehouse_area_id=swa.warehouse_area_id
+        left join fantech_imes_v2.base_warehouse sw on swa.warehouse_id=sw.warehouse_id
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
@@ -77,6 +103,9 @@
             </if>
             <if test="storageId!=null and storageId!=''">
                 and ss.storage_id = #{storageId}
+            </if>
+            <if test="storageType!=null and storageType!=''">
+                and ss.storage_type like CONCAT('%', #{storageType}, '%')
             </if>
             <if test="storageCode!=null and storageCode!='' and codeQueryMark==1">
                 and ss.storage_code = #{storageCode}
@@ -120,9 +149,20 @@
                 capacity =#{capacity},
                 temperature =#{temperature},
                 unit =#{unit},
-                warehouse_state =#{warehouseState}
+                roadway =#{roadway},
+                row_no =#{rowNo},
+                column_no =#{columnNo},
+                level_no =#{levelNo},
+                putaway_move_line_no =#{putawayMoveLineNo},
+                picking_move_line_no =#{pickingMoveLineNo},
+                stock_move_line_no =#{stockMoveLineNo},
+                if_stock_lock =#{ifStockLock},
+                surplus_load =#{surplusLoad},
+                surplus_volume =#{surplusVolume},
+                surplus_can_put_salver =#{surplusCanPutSalver},
                 warehouse_id =#{item.warehouseId},
                 warehouse_area_id =#{item.warehouseAreaId},
+                working_area_id =#{item.workingAreaId},
                 status =#{item.status},
                 create_user_id =#{item.createUserId},
                 create_time =#{item.createTime},

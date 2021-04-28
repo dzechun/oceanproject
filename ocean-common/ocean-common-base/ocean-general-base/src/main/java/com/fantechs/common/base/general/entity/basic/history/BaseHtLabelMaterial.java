@@ -144,32 +144,32 @@ public class BaseHtLabelMaterial extends ValidGroup implements Serializable {
     private String option3;
 
     /**
-     * 产品料号
+     * 物料编码
      */
     @Transient
-    @ApiModelProperty(name = "materialCode",value = "产品料号")
-    @Excel(name = "产品料号",height = 20,width = 30,orderNum = "6")
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
+    @Excel(name = "物料编码",height = 20,width = 30,orderNum = "6")
     private String materialCode;
     /**
-     * 产品版本
+     * 物料版本
      */
     @Transient
-    @ApiModelProperty(name = "materialVersion",value = "产品版本")
-    @Excel(name = "产品版本",height = 20,width = 30,orderNum = "6")
+    @ApiModelProperty(name = "materialVersion",value = "物料版本")
+    @Excel(name = "物料版本",height = 20,width = 30,orderNum = "6")
     private String materialVersion;
     /**
-     * 产品描述
+     * 物料描述
      */
     @Transient
-    @ApiModelProperty(name = "materialDesc",value = "产品描述")
-    @Excel(name = "产品版本",height = 20,width = 30,orderNum = "6")
+    @ApiModelProperty(name = "materialDesc",value = "物料描述")
+    @Excel(name = "物料描述",height = 20,width = 30,orderNum = "6")
     private String materialDesc;
     /**
      * 标签编码
      */
     @Transient
     @ApiModelProperty(name = "labelCode",value = "标签编码")
-    @Excel(name = "标签编码",height = 20,width = 30,orderNum = "4")
+    @Excel(name = "标签编码",height = 20,width = 30,orderNum = "6")
     private String labelCode;
     /**
      * 标签名称

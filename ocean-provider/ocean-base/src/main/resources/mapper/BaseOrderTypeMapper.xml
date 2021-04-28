@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseOrderTypeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseOrderType">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
+    <result column="order_type_code" jdbcType="VARCHAR" property="orderTypeCode" />
+    <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName" />
+    <result column="business_type" jdbcType="INTEGER" property="businessType" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto" extends="BaseResultMap">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="material_owner_code" jdbcType="VARCHAR" property="materialOwnerCode"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="material_owner_short_name" jdbcType="VARCHAR" property="materialOwnerShortName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bot.order_type_id,
+    bot.order_type_code,
+    bot.order_type_name,
+    bot.business_type,
+    bot.warehouse_id,
+    bot.material_owner_id,
+    bot.`status`,
+    bot.remark,
+    bot.org_id,
+    bot.create_user_id,
+    bot.create_time,
+    bot.modified_user_id,
+    bot.modified_time,
+    bot.is_delete,
+    bot.option1,
+    bot.option2,
+    bot.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT<include refid="Base_Column_List"/>,
+           su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    bw.warehouse_code,bw.warehouse_name,bmo.material_owner_code,bmo.material_owner_name,bmo.material_owner_short_name
+    FROM base_order_type bot
+    LEFT JOIN base_warehouse bw ON bw.warehouse_id = bot.warehouse_id
+    LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = bot.material_owner_id
+    LEFT JOIN ocean.sys_user su ON bot.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON bot.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON bot.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bot.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orderTypeCode!=null and orderTypeCode!=''">
+        and bot.order_type_code LIKE CONCAT('%',#{orderTypeCode},'%')
+      </if>
+      <if test="orderTypeName!=null and orderTypeName!=''">
+        and bot.order_type_name LIKE CONCAT('%',#{orderTypeName},'%')
+      </if>
+      <if test="materialOwnerName!=null and materialOwnerName!=''">
+        and bmo.material_owner_name LIKE CONCAT('%',#{materialOwnerName},'%')
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name LIKE CONCAT('%',#{warehouseName},'%')
+      </if>
+      <if test="status!=null">
+        and bot.status=#{status}
+      </if>
+      <if test="businessType!=null">
+        and bot.business_type=#{businessType}
+      </if>
+    </where>
+  </select>
+</mapper>

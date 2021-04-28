@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseWorkerMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseWorker">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="worker_id" jdbcType="BIGINT" property="workerId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseWorkerDto">
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        bw.worker_id, bw.user_id, bw.warehouse_id, bw.status,
+        bw.remark, bw.org_id, bw.create_user_id, bw.create_time, bw.modified_user_id,
+        bw.modified_time, bw.is_delete, bw.option1, bw.option2, bw.option3
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        su.user_name, su.nick_name, su.user_code, bwh.warehouse_name, bo.organization_name,
+        suc.user_name AS create_user_name,
+        sumod.user_name AS modified_user_name
+        FROM base_worker bw
+        LEFT JOIN base_warehouse bwh ON bw.warehouse_id = bwh.warehouse_id
+        LEFT JOIN base_organization bo ON bw.org_id = bo.organization_id
+        LEFT JOIN ocean_v2.sys_user su ON bw.user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user suc ON bw.create_user_id = suc.user_id
+        LEFT JOIN ocean_v2.sys_user sumod ON bw.modified_user_id = sumod.user_id
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND date_format(bw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND su.user_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="workerCode != null and workerCode != ''">
+                AND bw.worker_code LIKE CONCAT('%', #{workerCode}, '%')
+            </if>
+            <if test="warehouseName != null and warehouseName != ''">
+                AND bwh.warehouse_name LIKE CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="status != null">
+                AND bw.status = #{status}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND date_format(bw.create_time, '%Y-%m-%d') LIKE #{createTime}
+            </if>
+            <if test="createUserName != null and createUserName != ''">
+                AND suc.user_name LIKE CONCAT('%', #{createUserName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDtoByKey" parameterType="Long" resultMap="BaseResultMapDto">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        su.user_name, su.nick_name, su.user_code, bwh.warehouse_name, bo.organization_name,
+        suc.user_name AS create_user_name,
+        sumod.user_name AS modified_user_name
+        FROM base_worker bw
+        LEFT JOIN base_warehouse bwh ON bw.warehouse_id = bwh.warehouse_id
+        LEFT JOIN base_organization bo ON bw.org_id = bo.organization_id
+        LEFT JOIN ocean_v2.sys_user su ON bw.user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user suc ON bw.create_user_id = suc.user_id
+        LEFT JOIN ocean_v2.sys_user sumod ON bw.modified_user_id = sumod.user_id
+        <where>
+            <if test="_parameter != null">
+                AND bw.worker_id = #{_parameter}
+            </if>
+        </where>
+    </select>
+</mapper>

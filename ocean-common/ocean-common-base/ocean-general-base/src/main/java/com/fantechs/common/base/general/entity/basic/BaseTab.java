@@ -1,14 +1,11 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import javax.persistence.*;
-import javax.validation.Validation;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -408,6 +405,14 @@ public class BaseTab extends ValidGroup implements Serializable {
     @Excel(name = "保质期（天）", height = 20, width = 30)
     @Column(name = "expiration_date")
     private Integer expirationDate;
+
+    /**
+     * 图号
+     */
+    @ApiModelProperty(name="mapNumber",value = "图号")
+    @Excel(name = "图号", height = 20, width = 30)
+    @Column(name = "map_number")
+    private String mapNumber;
 
     /**
      * 最小存储温度

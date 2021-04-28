@@ -4,12 +4,12 @@ import com.fantechs.service.CodeGeneratorManager;
 
 class CodeGeneratorMain {
 
-    private static final String TABLE = "mes_pm_matching_order";
+    private static final String TABLE = "om_sales_order_det";
 
     private static final String MODEL_NAME = "ITest";
 
     private static final String[] TABLES = {
-            "wms_inner_ht_stocktaking", "wms_inner_ht_stocktaking_det"
+            "om_ht_sales_order", "om_ht_sales_order_det"
     };
 
     /**

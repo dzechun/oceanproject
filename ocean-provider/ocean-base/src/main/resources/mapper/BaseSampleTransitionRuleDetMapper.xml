@@ -53,7 +53,7 @@
           and bstrd.sample_transition_rule_id like CONCAT('%', #{sampleTransitionRuleId}, '%')
         </if>
       </where>
-    order by create_time desc
+    order by bstrd.create_time desc
   </select>
 
 </mapper>
