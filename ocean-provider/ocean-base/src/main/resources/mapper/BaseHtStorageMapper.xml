@@ -37,7 +37,13 @@
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
 
+        <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
+        <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -81,8 +87,8 @@
     <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage"
             resultMap="BaseResultMap">
         select  <include refid="Base_Column_List"></include>,
-        sw.warehouse_name as warehouseName,shw.warehouse_category,bhwa.working_area_code,
-        swa.warehouse_area_name as warehouseAreaName,
+        shw.warehouse_name,shw.warehouse_category,bhwa.working_area_code,
+        shwa.warehouse_area_name,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
         from fantech_imes_v2.base_ht_storage shs
