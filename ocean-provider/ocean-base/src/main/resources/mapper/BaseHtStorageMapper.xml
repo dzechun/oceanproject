@@ -105,6 +105,9 @@
             <if test="storageCode!=null and storageCode!=''">
                 and shs.storage_code like CONCAT('%', #{storageCode}, '%')
             </if>
+            <if test="storageType!=null">
+                and shs.storage_type = #{storageType}
+            </if>
             <if test="storageName!=null and storageName!=''">
                 and shs.storage_name like CONCAT('%', #{storageName}, '%')
             </if>
@@ -122,6 +125,12 @@
             </if>
             <if test="warehouseAreaName!=null and warehouseAreaName!=''">
                 and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+            </if>
+            <if test="status!=null">
+                and shs.status=#{status}
+            </if>
+            <if test="workingAreaCode!=null and workingAreaCode!=''">
+                and bhwa.working_area_code like CONCAT('%', #{workingAreaCode}, '%')
             </if>
         </where>
         order by shs.modified_time desc

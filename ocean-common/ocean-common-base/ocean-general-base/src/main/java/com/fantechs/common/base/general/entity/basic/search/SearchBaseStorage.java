@@ -15,7 +15,7 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
      * 储位类型
      */
     @ApiModelProperty(name = "storageType",value = "储位类型")
-    private String storageType;
+    private Byte storageType;
 
     /**
      * 储位编码
