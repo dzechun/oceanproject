@@ -45,7 +45,7 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="version" jdbcType="VARCHAR" property="materialVersion"/>
   </resultMap>
 
   <sql id="Base_Column_List">
