@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int add(BaseLabel record, MultipartFile file) {
+    public int add(BaseLabel baseLabel, MultipartFile file) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -77,10 +78,10 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(!matcher.find()){
             throw new BizErrorException("标签模版文件格式不正确");
         }
-        if(record.getIsDefaultLabel() != null && record.getIsDefaultLabel()==(byte)1){
+        if(baseLabel.getIsDefaultLabel() != null && baseLabel.getIsDefaultLabel()==(byte)1){
             Example example = new Example(BaseLabel.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("labelCategoryId",record.getLabelCategoryId());
+            criteria.andEqualTo("labelCategoryId",baseLabel.getLabelCategoryId());
             List<BaseLabel> baseLabels = baseLabelMapper.selectByExample(example);
             if(baseLabels.size()>0){
                 throw new BizErrorException("此类别已经有默认模版");
@@ -88,38 +89,42 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         }
         Example example = new Example(BaseLabel.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("labelCode",record.getLabelCode());
-        criteria.andNotEqualTo("labelId",record.getLabelId());
-        BaseLabel baseLabel = baseLabelMapper.selectOneByExample(example);
-        if(!StringUtils.isEmpty(baseLabel)){
+        criteria.andEqualTo("labelCode",baseLabel.getLabelCode());
+        criteria.andNotEqualTo("labelId",baseLabel.getLabelId());
+        BaseLabel baseLabel1 = baseLabelMapper.selectOneByExample(example);
+        if(!StringUtils.isEmpty(baseLabel1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-        //名称+编码
+        //获取文件名
         String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().indexOf("."));
-        record.setLabelName(fileName+record.getLabelCode());
-        record.setLabelVersion("0.0.1");
-        BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(record.getLabelCategoryId());
-        //文件上传
-        String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,record.getLabelName());
+        //标签名由文件名和标签编码组成
+        baseLabel.setLabelName(fileName+baseLabel.getLabelCode());
+        baseLabel.setLabelVersion("0.0.1");
+        BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(baseLabel.getLabelCategoryId());
 
-        record.setSavePath(path);
-        record.setCreateTime(new Date());
-        record.setCreateUserId(currentUserInfo.getUserId());
-        record.setModifiedTime(new Date());
-        record.setModifiedUserId(currentUserInfo.getUserId());
-        record.setIsDelete((byte) 0);
-        record.setOrgId(currentUserInfo.getOrganizationId());
-        int num = baseLabelMapper.insertUseGeneratedKeys(record);
+        //以标签的版本号生成文件夹
+        this.MkdirDocByVersion(baseLabel.getLabelVersion(),baseLabelCategory.getLabelCategoryName());
+        //文件上传
+        String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,baseLabel.getLabelName(),baseLabel.getLabelVersion());
+
+        baseLabel.setSavePath(path);
+        baseLabel.setCreateTime(new Date());
+        baseLabel.setCreateUserId(currentUserInfo.getUserId());
+        baseLabel.setModifiedTime(new Date());
+        baseLabel.setModifiedUserId(currentUserInfo.getUserId());
+        baseLabel.setIsDelete((byte) 0);
+        baseLabel.setOrgId(currentUserInfo.getOrganizationId());
+        int num = baseLabelMapper.insertUseGeneratedKeys(baseLabel);
 
         BaseHtLabel baseHtLabel = new BaseHtLabel();
-        BeanUtils.copyProperties(record, baseHtLabel);
+        BeanUtils.copyProperties(baseLabel, baseHtLabel);
         baseHtLabelMapper.insertSelective(baseHtLabel);
         return num;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(BaseLabel entity, MultipartFile file) {
+    public int update(BaseLabel baseLabel, MultipartFile file) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -130,34 +135,34 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         }
         Example example = new Example(BaseLabel.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("labelCode",entity.getLabelCode());
-        criteria.andNotEqualTo("labelId",entity.getLabelId());
-        BaseLabel baseLabel = baseLabelMapper.selectOneByExample(example);
-        if(!StringUtils.isEmpty(baseLabel)){
+        criteria.andEqualTo("labelCode",baseLabel.getLabelCode());
+        criteria.andNotEqualTo("labelId",baseLabel.getLabelId());
+        BaseLabel baseLabel1 = baseLabelMapper.selectOneByExample(example);
+        if(!StringUtils.isEmpty(baseLabel1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(entity.getLabelCategoryId());
-        if(file!=null){
-            //文件上传
-            entity.setLabelName(file.getOriginalFilename());
-            String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,entity.getLabelName());
+        BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(baseLabel.getLabelCategoryId());
 
-            entity.setSavePath(path);
+        if(file!=null){
+            //有新的标签模板则更新标签模板版本，并新建一个新的
+            baseLabel.setLabelVersion(this.generationVersion(baseLabel.getLabelVersion()));
+            this.MkdirDocByVersion(baseLabel.getLabelVersion(),baseLabelCategory.getLabelCategoryName());
+            //文件上传
+            baseLabel.setLabelName(file.getOriginalFilename());
+            String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,baseLabel.getLabelName(),baseLabel.getLabelVersion());
+            baseLabel.setSavePath(path);
         }
 
-        //update version number
-        entity.setLabelVersion(this.generationVersion(entity.getLabelVersion()));
-
-        entity.setModifiedUserId(currentUserInfo.getUserId());
-        entity.setModifiedTime(new Date());
-        entity.setOrgId(currentUserInfo.getOrganizationId());
+        baseLabel.setModifiedUserId(currentUserInfo.getUserId());
+        baseLabel.setModifiedTime(new Date());
+        baseLabel.setOrgId(currentUserInfo.getOrganizationId());
 
         BaseHtLabel baseHtLabel = new BaseHtLabel();
-        BeanUtils.copyProperties(entity, baseHtLabel);
+        BeanUtils.copyProperties(baseLabel, baseHtLabel);
         baseHtLabelMapper.insertSelective(baseHtLabel);
 
-        return baseLabelMapper.updateByPrimaryKeySelective(entity);
+        return baseLabelMapper.updateByPrimaryKeySelective(baseLabel);
     }
 
     @Override
@@ -187,16 +192,17 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
      * Upload the tag template to the server
      * @param file
      */
-    private String UploadFile(String labelCategoryName,MultipartFile file,String fileName){
+    private String UploadFile(String labelCategoryName,MultipartFile file,String fileName,String labelVersion){
         try {
+            //获取标签文件路径配置项
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("LabelFilePath");
             ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
             List<SysSpecItem> sysSpecItemList = itemList.getData();
             Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
             InputStream stream = file.getInputStream();
-            String path = map.get("path") +labelCategoryName+"/";
-            FileOutputStream fs=new FileOutputStream(path+fileName+".btw");
+            String path = map.get("path") +labelCategoryName+"/"+labelVersion+"/";
+            FileOutputStream fs = new FileOutputStream(path+fileName+".btw");
             byte[] buffer =new byte[1024*1024];
             int bytesum = 0;
             int byteread = 0;
@@ -239,5 +245,23 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             }
         }
         return sbs.toString();
+    }
+
+    /**
+     * 按版本创建文件夹
+     * @param labelVersion
+     * @param categoryName
+     * @return
+     */
+    private void MkdirDocByVersion(String labelVersion,String categoryName){
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("LabelFilePath");
+        ResponseEntity<List<SysSpecItem>> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
+        List<SysSpecItem> sysSpecItemList = itemList.getData();
+        Map map = (Map) JSON.parse(sysSpecItemList.get(0).getParaValue());
+        String path = map.get("path").toString();
+        File file = new File(path+categoryName+"/"+labelVersion);
+        //label文件下的该子文件不存在则新建
+        file.mkdirs();
     }
 }
