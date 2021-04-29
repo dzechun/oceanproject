@@ -66,6 +66,12 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
     private Long storageId;
 
     /**
+     * 工作区编码
+     */
+    @ApiModelProperty(name = "workingAreaCode",value = "工作区编码")
+    private String workingAreaCode;
+
+    /**
      * 根据编码查询方式标记（传1则为等值查询）
      */
     @ApiModelProperty(name = "queryMark",value = "查询方式标记")
