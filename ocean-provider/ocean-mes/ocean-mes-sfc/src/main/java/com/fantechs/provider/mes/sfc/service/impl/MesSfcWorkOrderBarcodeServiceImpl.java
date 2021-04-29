@@ -127,7 +127,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
                     throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
                 }
-
                 mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
                 this.update(mesSfcWorkOrderBarcode);
             }

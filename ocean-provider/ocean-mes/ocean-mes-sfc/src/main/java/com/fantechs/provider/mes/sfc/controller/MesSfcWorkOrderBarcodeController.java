@@ -65,8 +65,8 @@ public class MesSfcWorkOrderBarcodeController {
     }
 
     @ApiOperation("其他打印接口")
-    @PostMapping("/anthenPrint")
-    public ResponseEntity print(@ApiParam(value = "Id",required = true)@RequestParam Long Id,@ApiParam("条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")@RequestParam Byte barcodeType){
+    @PostMapping("/restPrint")
+    public ResponseEntity restPrint(@ApiParam(value = "Id",required = true)@RequestParam Long Id,@ApiParam("条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")@RequestParam Byte barcodeType){
         return ControllerUtil.returnSuccess();
     }
 
