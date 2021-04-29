@@ -58,6 +58,16 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
     }
 
     @Override
+    public int batchSave(List<MesPmWorkOrderProcessReWo> list) {
+        if (StringUtils.isNotEmpty(list)){
+            for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
+                this.save(mesPmWorkOrderProcessReWo);
+            }
+        }
+        return 1;
+    }
+
+    @Override
     public int save(MesPmWorkOrderProcessReWo record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
