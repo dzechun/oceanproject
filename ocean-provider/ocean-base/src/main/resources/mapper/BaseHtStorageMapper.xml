@@ -52,6 +52,7 @@
         shs.unit,
         shs.warehouse_id,
         shs.warehouse_area_id,
+        shs.working_area_id,
         shs.storage_type,
         shs.roadway,
         shs.row_no,
@@ -80,13 +81,14 @@
     <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage"
             resultMap="BaseResultMap">
         select  <include refid="Base_Column_List"></include>,
-        sw.warehouse_name as warehouseName,
+        sw.warehouse_name as warehouseName,shw.warehouse_category,bhwa.working_area_code,
         swa.warehouse_area_name as warehouseAreaName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
         from fantech_imes_v2.base_ht_storage shs
-        left join fantech_imes_v2.base_warehouse sw on shs.warehouse_id=sw.warehouse_id
-        left join fantech_imes_v2.base_warehouse_area swa on shs.warehouse_area_id=swa.warehouse_area_id
+        left join fantech_imes_v2.base_ht_working_area bhwa on shs.working_area_id=bhwa.working_area_id
+        left join fantech_imes_v2.base_ht_warehouse_area shwa on bhwa.warehouse_area_id=shwa.warehouse_area_id
+        left join fantech_imes_v2.base_ht_warehouse shw on shwa.warehouse_id=shw.warehouse_id
         left join ocean_v2.sys_user u on shs.create_user_id=u.user_id
         left join ocean_v2.sys_user s on shs.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON shs.org_id = bo.organization_id
