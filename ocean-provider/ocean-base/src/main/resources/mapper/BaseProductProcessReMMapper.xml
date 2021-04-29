@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProductProcessReMMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductProcessReM">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="product_process_re_m_id" jdbcType="BIGINT" property="productProcessReMId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="process_code" jdbcType="VARCHAR" property="processCode" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="process_desc" jdbcType="VARCHAR" property="processDesc" />
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
+    <result column="process_category_name" jdbcType="VARCHAR" property="processCategoryName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapVo" type="com.fantechs.provider.base.vo.BaseProductProcessReMVo">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bpprm.product_process_re_m_id,
+    bpprm.material_id,
+    bpprm.process_id,
+    bpprm.`status`,
+    bpprm.remark,
+    bpprm.org_id,
+    bpprm.create_user_id,
+    bpprm.create_time,
+    bpprm.modified_user_id,
+    bpprm.modified_time,
+    bpprm.is_delete,
+    bpprm.option1,
+    bpprm.option2,
+    bpprm.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bp.process_code,bp.process_name,bp.process_desc,
+    bws.section_name,bpc.process_category_name,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_product_process_re_m bpprm
+    left join fantech_imes_v2.base_process bp on bpprm.process_id=bp.process_id
+    left join fantech_imes_v2.base_workshop_section bws on bws.section_id=bp.section_id
+    left join fantech_imes_v2.base_process_category bpc on bpc.process_category_id=bp.process_category_id
+    left join ocean_v2.sys_user u on bpprm.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bpprm.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bpprm.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpprm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and bpprm.material_id=#{materialId}
+      </if>
+      <if test="status!=null">
+        and bpprm.status=#{status}
+      </if>
+    </where>
+    order by bpprm.create_time desc
+  </select>
+
+  <select id="findMaterialList" parameterType="map" resultMap="BaseResultMapVo">
+    select bm.material_id,bm.material_code,bm.material_desc,bm.version,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_product_process_re_m bpprm
+    left join fantech_imes_v2.base_material bm on bpprm.material_id=bm.material_id
+    left join ocean_v2.sys_user u on bpprm.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bpprm.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bpprm.org_id = bo.organization_id
+    GROUP BY bpprm.material_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpprm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code=#{materialCode}
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and bm.material_desc=#{materialDesc}
+      </if>
+      <if test="status!=null">
+        and bpprm.status=#{status}
+      </if>
+    </where>
+    order by bpprm.create_time desc
+  </select>
+
+</mapper>
