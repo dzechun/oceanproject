@@ -77,6 +77,9 @@
       <if test="materialDesc != null and materialDesc != ''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="status != null">
+        and mpwoprw.status = #{status}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
@@ -109,6 +112,9 @@
       </if>
       <if test="materialDesc != null and materialDesc != ''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="status != null">
+        and mpwoprw.status = #{status}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

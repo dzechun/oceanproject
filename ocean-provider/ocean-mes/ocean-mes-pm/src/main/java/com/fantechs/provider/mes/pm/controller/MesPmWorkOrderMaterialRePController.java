@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/28.
  */
 @RestController
-@Api(tags = "mesPmWorkOrderMaterialReP控制器")
+@Api(tags = "关键物料工单零件料")
 @RequestMapping("/mesPmWorkOrderMaterialReP")
 @Validated
 public class MesPmWorkOrderMaterialRePController {

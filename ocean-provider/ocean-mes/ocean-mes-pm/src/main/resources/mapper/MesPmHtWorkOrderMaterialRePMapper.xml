@@ -22,5 +22,53 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
+
+  <sql id="Base_Column_List">
+    mphwomrp.ht_work_order_material_re_p_id,
+    mphwomrp.work_order_material_re_p_id,
+    mphwomrp.work_order_process_re_wo_id,
+    mphwomrp.scan_type,
+    mphwomrp.material_id,
+    mphwomrp.usage_qty,
+    mphwomrp.sub_material_id,
+    mphwomrp.status,
+    mphwomrp.remark, mphwomrp.org_id, mphwomrp.create_user_id, mphwomrp.create_time, mphwomrp.modified_user_id,
+    mphwomrp.modified_time, mphwomrp.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.version,sbm.material_code AS 'sub_material_code'
+    from mes_pm_work_order_material_re_p mphwomrp
+    LEFT JOIN ocean_v2.sys_user su ON mphwomrp.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON mphwomrp.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON mphwomrp.org_id = bo.organization_id
+    LEFT JOIN base_material bm ON bm.material_id = bm.material_id
+    LEFT JOIN base_material sbm ON sbm.material_id = mphwomrp.sub_material_id
+    <where>
+      <if test="workOrderProcessReWoId != null">
+        and mphwomrp.work_order_process_re_wo_id = #{workOrderProcessReWoId}
+      </if>
+      <if test="scanType != null and scanType != ''">
+        and mphwomrp.scan_type = #{scanType}
+      </if>
+      <if test="status != null">
+        and mpwoprw.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(mphwomrp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by mphwomrp.create_time desc
+  </select>
+
+
 </mapper>
