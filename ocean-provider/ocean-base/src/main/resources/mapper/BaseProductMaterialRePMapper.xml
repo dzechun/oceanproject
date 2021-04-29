@@ -21,6 +21,10 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -44,9 +48,11 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
+    bm.material_code,bm.material_desc,bm.version,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_product_material_re_p bpmrp
+    left join fantech_imes_v2.base_material bm on bpmrp.material_id=bm.material_id
     left join ocean_v2.sys_user u on bpmrp.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bpmrp.modified_user_id=s.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON bpmrp.org_id = bo.organization_id

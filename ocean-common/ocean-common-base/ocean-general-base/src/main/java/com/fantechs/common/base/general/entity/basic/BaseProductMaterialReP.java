@@ -53,6 +53,27 @@ public class BaseProductMaterialReP extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(value = "物料编码",example = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(value = "物料描述",example = "物料描述")
+    private String materialDesc;
+
+    /**
+     * 物料版本
+     */
+    @Transient
+    @ApiModelProperty(value = "物料版本",example = "物料版本")
+    private String version;
+
+    /**
      * 单个用量
      */
     @ApiModelProperty(name="usageQty",value = "单个用量")

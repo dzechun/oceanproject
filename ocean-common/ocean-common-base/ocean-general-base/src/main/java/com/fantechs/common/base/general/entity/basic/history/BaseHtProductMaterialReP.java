@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -65,6 +66,27 @@ public class BaseHtProductMaterialReP extends ValidGroup implements Serializable
     @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
+
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(value = "物料编码",example = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(value = "物料描述",example = "物料描述")
+    private String materialDesc;
+
+    /**
+     * 物料版本
+     */
+    @Transient
+    @ApiModelProperty(value = "物料版本",example = "物料版本")
+    private String version;
 
     /**
      * 单个用量

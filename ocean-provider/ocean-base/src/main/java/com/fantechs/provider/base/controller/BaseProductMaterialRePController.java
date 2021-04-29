@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/28.
  */
 @RestController
-@Api(tags = "工序物料清单控制器")
+@Api(tags = "产品关键物料清单零件料")
 @RequestMapping("/baseProductMaterialReP")
 @Validated
 public class BaseProductMaterialRePController {
@@ -84,7 +84,7 @@ public class BaseProductMaterialRePController {
     List<BaseProductMaterialReP> list = baseProductMaterialRePService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductMaterialReP));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseProductMaterialReP信息", BaseProductMaterialReP.class, "BaseProductMaterialReP.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "产品关键物料清单零件料", BaseProductMaterialReP.class, "产品关键物料清单零件料.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

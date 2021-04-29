@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseProductProcessReMDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessReM;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -29,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/28.
  */
 @RestController
-@Api(tags = "物料工序关系控制器")
+@Api(tags = "产品关键物料清单")
 @RequestMapping("/baseProductProcessReM")
 @Validated
 public class BaseProductProcessReMController {
@@ -85,7 +84,7 @@ public class BaseProductProcessReMController {
     List<BaseProductProcessReMVo> list = baseProductProcessReMService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseProductProcessReM信息", BaseProductProcessReMDto.class, "BaseProductProcessReM.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "产品关键物料清单信息", BaseProductProcessReMVo.class, "产品关键物料清单信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

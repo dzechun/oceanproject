@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.service;
 
 
-import com.fantechs.common.base.general.dto.basic.BaseProductProcessReMDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.support.IService;
 import com.fantechs.provider.base.vo.BaseProductProcessReMVo;
