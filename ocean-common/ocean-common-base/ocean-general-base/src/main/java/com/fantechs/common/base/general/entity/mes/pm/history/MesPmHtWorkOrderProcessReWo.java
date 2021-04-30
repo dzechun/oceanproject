@@ -217,9 +217,9 @@ public class MesPmHtWorkOrderProcessReWo extends ValidGroup implements Serializa
     private String organizationName;
 
     /**
-     * 工单集合
+     * 工单物料集合
      */
-    private List<MesPmHtWorkOrderProcessReWo> list;
+    private List<MesPmHtWorkOrderMaterialReP> list;
 
     private static final long serialVersionUID = 1L;
 }

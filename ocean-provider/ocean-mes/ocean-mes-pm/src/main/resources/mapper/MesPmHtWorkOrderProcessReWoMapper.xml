@@ -33,13 +33,13 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <collection property="list" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto"
-                column="{workOrderProcessReWoId=work_order_process_re_wo_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMaterialRePMapper.findList">
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderMaterialReP"
+                column="{workOrderProcessReWoId=ht_work_order_process_re_wo_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMaterialRePMapper.findList">
 
     </collection>
   </resultMap>
 
-  <resultMap id="BaseResultMapVo" type="com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo">
+  <resultMap id="BaseResultMapVo" type="com.fantechs.provider.mes.pm.vo.MesPmHtWorkOrderProcessReWoVo">
     <result column="work_order_id" jdbcType="VARCHAR" property="workOrderId"/>
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
