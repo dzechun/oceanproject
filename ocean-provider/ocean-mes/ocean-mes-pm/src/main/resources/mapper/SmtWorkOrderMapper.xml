@@ -27,6 +27,7 @@
         <result column="put_into_process_id" jdbcType="BIGINT" property="putIntoProcessId"/>
         <result column="output_process_id" jdbcType="BIGINT" property="outputProcessId"/>
         <result column="scrap_qty" jdbcType="DECIMAL" property="scrapQty"/>
+        <result column="inventory_qty" jdbcType="DECIMAL" property="inventoryQty"/>
 
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -108,6 +109,7 @@
         swo.put_into_process_id,
         swo.output_process_id,
         swo.scrap_qty,
+        swo.inventory_qty,
         swo.remark,
         swo.contract_no,
         sm.material_code AS 'materialCode',
@@ -188,6 +190,7 @@
                swo.is_delete,
                swo.work_order_qty,
                swo.production_qty,
+               swo.inventory_qty,
                swo.output_qty,
                swo.scheduled_qty,
                swo.put_into_process_id,

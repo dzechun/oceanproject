@@ -30,10 +30,10 @@ public class BasePackageSpecificationDto extends BasePackageSpecification implem
     /**
      * 版本
      */
-    @ApiModelProperty(name="version" ,value="版本")
+    @ApiModelProperty(name="materialVersion" ,value="版本")
     @Transient
     @Excel(name = "版本", height = 20, width = 30,orderNum="7")
-    private String version;
+    private String materialVersion;
 
 //    /**
 //     * 条码规则

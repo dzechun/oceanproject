@@ -94,7 +94,10 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     public int batchDelete(String ids) {
         SysUser currentUserInfo = this.getCurrentUserInfo();
         for(String id : ids.split(",")) {
-            BaseWorker baseWorker = baseWorkerMapper.selectByPrimaryKey(id);
+            BaseWorker baseWorker = baseWorkerMapper.selectByPrimaryKey(Long.parseLong(id));
+            if(StringUtils.isEmpty(baseWorker)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
             baseWorker.setModifiedUserId(currentUserInfo.getUserId());
             baseWorker.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 

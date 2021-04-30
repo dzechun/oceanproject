@@ -71,6 +71,20 @@ public class BaseHtStorage implements Serializable {
     private String warehouseName;
 
     /**
+     * 仓库编码
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
+    private String warehouseCode;
+
+    /**
+     * 仓库类型
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseCategory",value = "仓库类型")
+    private Long warehouseCategory;
+
+    /**
      * 仓库区域ID
      */
     @Column(name = "warehouse_area_id")
@@ -83,6 +97,13 @@ public class BaseHtStorage implements Serializable {
     @Transient
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
     private String warehouseAreaName;
+
+    /**
+     * 仓库区域编码
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")
+    private String warehouseAreaCode;
 
     /**
      * 容量
@@ -118,6 +139,13 @@ public class BaseHtStorage implements Serializable {
     @ApiModelProperty(name="workingAreaId",value = "工作区")
     @Column(name = "working_area_id")
     private Long workingAreaId;
+
+    /**
+     * 工作区编码
+     */
+    @Transient
+    @ApiModelProperty(name="workingAreaCode" ,value="工作区编码")
+    private String workingAreaCode;
 
     /**
      * 巷道

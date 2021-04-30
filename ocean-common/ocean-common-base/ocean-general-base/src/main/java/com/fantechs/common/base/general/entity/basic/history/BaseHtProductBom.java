@@ -61,8 +61,8 @@ public class BaseHtProductBom implements Serializable {
      * 版本
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
-    private String version;
+    @ApiModelProperty(name="materialVersion" ,value="版本")
+    private String materialVersion;
 
     /**
      * 物料描述

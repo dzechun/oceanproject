@@ -4,6 +4,8 @@ import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderPr
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderProcessReWoMapper;
 import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderProcessReWoService;
+import com.fantechs.provider.mes.pm.vo.MesPmHtWorkOrderProcessReWoVo;
+import com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,7 +23,12 @@ public class MesPmHtWorkOrderProcessReWoServiceImpl extends BaseService<MesPmHtW
     private MesPmHtWorkOrderProcessReWoMapper mesPmHtWorkOrderProcessReWoMapper;
 
     @Override
-    public List<MesPmHtWorkOrderProcessReWo> findList(Map<String, Object> map) {
-        return mesPmHtWorkOrderProcessReWoMapper.findList(map);
+    public List<MesPmHtWorkOrderProcessReWoVo> findList(Map<String, Object> map) {
+        List<MesPmHtWorkOrderProcessReWoVo> list = mesPmHtWorkOrderProcessReWoMapper.findMaterialList(map);
+        for (MesPmHtWorkOrderProcessReWoVo mesPmHtWorkOrderProcessReWoVo : list) {
+            map.put("workOrderId",mesPmHtWorkOrderProcessReWoVo.getWorkOrderId());
+            mesPmHtWorkOrderProcessReWoVo.setList(mesPmHtWorkOrderProcessReWoMapper.findList(map));
+        }
+        return list;
     }
 }

@@ -61,6 +61,9 @@
       <if test="scanType != null and scanType != ''">
         and mpwomrp.scan_type = #{scanType}
       </if>
+      <if test="status != null">
+        and mpwoprw.status = #{status}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mpwomrp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

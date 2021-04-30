@@ -45,7 +45,7 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="version" jdbcType="VARCHAR" property="materialVersion"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -76,6 +76,9 @@
       </if>
       <if test="materialDesc != null and materialDesc != ''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="status != null">
+        and mpwoprw.status = #{status}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -109,6 +112,9 @@
       </if>
       <if test="materialDesc != null and materialDesc != ''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="status != null">
+        and mpwoprw.status = #{status}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

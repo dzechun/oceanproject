@@ -58,6 +58,16 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
     }
 
     @Override
+    public int batchSave(List<MesPmWorkOrderProcessReWo> list) {
+        if (StringUtils.isNotEmpty(list)){
+            for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
+                this.save(mesPmWorkOrderProcessReWo);
+            }
+        }
+        return 1;
+    }
+
+    @Override
     public int save(MesPmWorkOrderProcessReWo record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -71,18 +81,23 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
         record.setOrgId(user.getOrganizationId());
 
         int i = mesPmWorkOrderProcessReWoMapper.insertUseGeneratedKeys(record);
+
+        MesPmHtWorkOrderProcessReWo mesPmHtWorkOrderProcessReWo = new MesPmHtWorkOrderProcessReWo();
+        BeanUtils.copyProperties(record,mesPmHtWorkOrderProcessReWo);
+        mesPmHtWorkOrderProcessReWoMapper.insert(mesPmHtWorkOrderProcessReWo);
+
         MesPmHtWorkOrderMaterialReP mesPmHtWorkOrderMaterialReP = new MesPmHtWorkOrderMaterialReP();
         List<MesPmHtWorkOrderMaterialReP> htList = new ArrayList<>();
         for (MesPmWorkOrderMaterialRePDto mesPmWorkOrderMaterialRePDto : record.getList()) {
             mesPmWorkOrderMaterialRePDto.setWorkOrderProcessReWoId(record.getWorkOrderProcessReWoId());
 
             BeanUtils.copyProperties(mesPmWorkOrderMaterialRePDto,mesPmHtWorkOrderMaterialReP);
+            mesPmHtWorkOrderMaterialReP.setWorkOrderProcessReWoId(mesPmHtWorkOrderProcessReWo.getHtWorkOrderProcessReWoId());
+            htList.add(mesPmHtWorkOrderMaterialReP);
         }
-        mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
-
-        MesPmHtWorkOrderProcessReWo mesPmHtWorkOrderProcessReWo = new MesPmHtWorkOrderProcessReWo();
-        BeanUtils.copyProperties(record,mesPmHtWorkOrderProcessReWo);
-        mesPmHtWorkOrderProcessReWoMapper.insert(mesPmHtWorkOrderProcessReWo);
+        if (StringUtils.isNotEmpty(htList)){
+            mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
+        }
 
         return i;
     }
@@ -122,8 +137,12 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
         mesPmWorkOrderMaterialRePS.addAll(addList);
         for (MesPmWorkOrderMaterialReP mesPmWorkOrderMaterialReP : mesPmWorkOrderMaterialRePS) {
             BeanUtils.copyProperties(mesPmWorkOrderMaterialReP,mesPmHtWorkOrderMaterialReP);
+            mesPmHtWorkOrderMaterialReP.setWorkOrderProcessReWoId(mesPmHtWorkOrderProcessReWo.getHtWorkOrderProcessReWoId());
+            htList.add(mesPmHtWorkOrderMaterialReP);
         }
-        mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
+        if (StringUtils.isNotEmpty(htList)){
+            mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
+        }
 
         example.clear();
         example.createCriteria().andEqualTo("workOrderProcessReWoId",entity.getWorkOrderProcessReWoId());
@@ -164,11 +183,15 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
                     rePId+=mesPmWorkOrderMaterialRePDto.getWorkOrderProcessReWoId()+",";
 
                     BeanUtils.copyProperties(mesPmWorkOrderMaterialRePDto,mesPmHtWorkOrderMaterialReP);
+                    mesPmHtWorkOrderMaterialReP.setWorkOrderProcessReWoId(mesPmHtWorkOrderProcessReWo.getHtWorkOrderProcessReWoId());
+                    htList.add(mesPmHtWorkOrderMaterialReP);
                 }
                 mesPmWorkOrderMaterialRePMapper.deleteByIds(rePId.substring(0, rePId.length() - 1));
             }
         }
-        mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
+        if (StringUtils.isNotEmpty(htList)){
+            mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
+        }
 
         mesPmHtWorkOrderProcessReWoMapper.insertList(list);
         return mesPmWorkOrderProcessReWoMapper.deleteByIds(ids);

@@ -119,8 +119,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode", baseMaterial.getMaterialCode());
-        if (StringUtils.isNotEmpty(baseMaterial.getVersion())) {
-            criteria.andEqualTo("version", baseMaterial.getVersion());
+        if (StringUtils.isNotEmpty(baseMaterial.getMaterialVersion())) {
+            criteria.andEqualTo("materialVersion", baseMaterial.getMaterialVersion());
         }
         List<BaseMaterial> baseMaterials = baseMaterialMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseMaterials)) {
@@ -158,8 +158,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialCode", baseMaterial.getMaterialCode());
-        if (StringUtils.isNotEmpty(baseMaterial.getVersion())) {
-            criteria.andEqualTo("version", baseMaterial.getVersion());
+        if (StringUtils.isNotEmpty(baseMaterial.getMaterialVersion())) {
+            criteria.andEqualTo("materialVersion", baseMaterial.getMaterialVersion());
         }
         BaseMaterial material = baseMaterialMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(material) && !material.getMaterialId().equals(baseMaterial.getMaterialId())) {

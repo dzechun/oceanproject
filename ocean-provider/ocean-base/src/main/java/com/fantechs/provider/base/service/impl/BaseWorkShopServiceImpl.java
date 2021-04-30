@@ -42,7 +42,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
     @Resource
     private BaseFactoryMapper baseFactoryMapper;
     @Resource
-    private BaseTabMapper baseTabMapper;
+    private BaseTeamMapper baseTeamMapper;
 
     @Override
     public List<BaseWorkShopDto> findList(Map<String, Object> map) {
@@ -105,7 +105,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
             //被班组引用
             SearchBaseTeam searchBaseTeam = new SearchBaseTeam();
             searchBaseTeam.setWorkShopId(Long.valueOf(id));
-            List<BaseTabDto> baseTeamDtos = baseTabMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTeam));
+            List<BaseTeamDto> baseTeamDtos = baseTeamMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTeam));
             if (StringUtils.isNotEmpty(baseTeamDtos)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }

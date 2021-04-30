@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.pm.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,6 +29,12 @@ public class SearchMesPmWorkOrderProcessReWo extends BaseQuery implements Serial
      */
     @ApiModelProperty(name="materialDesc",value = "产品料号描述")
     private String materialDesc;
+
+    /**
+     * 状态(0无效，1有效)
+     */
+    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
+    private Byte status;
 
 
     private static final long serialVersionUID = 1L;

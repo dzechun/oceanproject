@@ -15,7 +15,7 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
      * 储位类型
      */
     @ApiModelProperty(name = "storageType",value = "储位类型")
-    private String storageType;
+    private Byte storageType;
 
     /**
      * 储位编码
@@ -64,6 +64,12 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "storageId",value = "储位ID")
     private Long storageId;
+
+    /**
+     * 工作区编码
+     */
+    @ApiModelProperty(name = "workingAreaCode",value = "工作区编码")
+    private String workingAreaCode;
 
     /**
      * 根据编码查询方式标记（传1则为等值查询）

@@ -204,6 +204,13 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "scrap_qty")
     private BigDecimal scrapQty;
 
+    /**
+     *  入库数量
+     */
+    @ApiModelProperty(name="inventoryQty",value = "入库数量")
+    @Column(name = "inventory_qty")
+    private BigDecimal inventoryQty;
+
     private String remark;
 
     /**

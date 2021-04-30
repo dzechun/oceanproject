@@ -54,9 +54,10 @@ public class BaseMaterial extends ValidGroup implements Serializable {
     /**
      * 版本
      */
-    @ApiModelProperty(name="version" ,value="版本")
+    @ApiModelProperty(name="materialVersion" ,value="版本")
     @Excel(name = "版本", height = 20, width = 30)
-    private String version;
+    @Column(name = "material_version")
+    private String materialVersion;
 
     /**
      * 基数
