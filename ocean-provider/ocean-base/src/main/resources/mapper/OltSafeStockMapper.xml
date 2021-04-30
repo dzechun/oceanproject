@@ -45,7 +45,7 @@ os.option1,os.option2,os.option3
 </sql>
 <select id="findList" resultMap="BaseColumnMap" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock">
 SELECT <include refid="SqlColumn"/>,sw.warehouse_name as 'warehouseName',smc.material_category_name as 'materialCategoryName',sm.material_code as 'materialCode',
-sm.material_name as 'materialName',sm.material_desc as 'materialDesc',sm.version,
+sm.material_name as 'materialName',sm.material_desc as 'materialDesc',sm.material_version as 'materialVersion',
 su.user_name
 create_user_name,sus.user_name as modified_user_name, bo.organization_name
 FROM olt_safe_stock os

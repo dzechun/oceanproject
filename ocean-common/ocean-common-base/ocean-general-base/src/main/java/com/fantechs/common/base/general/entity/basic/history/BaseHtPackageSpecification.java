@@ -98,9 +98,9 @@ public class BaseHtPackageSpecification implements Serializable {
 //    *
 //     * 版本
 //
-//    @ApiModelProperty(name="version" ,value="版本")
+//    @ApiModelProperty(name="materialVersion" ,value="版本")
 //    @Transient
-//    private String version;
+//    private String materialVersion;
 //
 //    *
 //     * 条码规则集合ID

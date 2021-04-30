@@ -25,7 +25,7 @@
         <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
         <result column="process_name" jdbcType="VARCHAR" property="processName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -58,7 +58,7 @@
     <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
-        sm.material_code as part_material_code, sm.material_name, sm.version, sm.material_desc,
+        sm.material_code as part_material_code, sm.material_name, sm.material_version, sm.material_desc,
         sml.material_code as sub_material_code, sp.process_name,
         u.user_name as create_user_name, s.user_name as modified_user_name,
         bo.organization_name

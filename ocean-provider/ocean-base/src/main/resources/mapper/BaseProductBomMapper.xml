@@ -39,6 +39,7 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
         <result column="sub_material_name" jdbcType="VARCHAR" property="subMaterialName"/>
         <result column="sub_material_desc" jdbcType="VARCHAR" property="subMaterialDesc"/>
@@ -86,8 +87,8 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select <include refid="Base_Column_List"></include>,
-        sm.material_code,sm.material_name,sm.version,sm.material_desc,
-        sms.material_code AS sub_material_code,sms.material_name AS sub_material_name,sms.version AS sub_version,
+        sm.material_code,sm.material_name,sm.material_version,sm.material_desc,
+        sms.material_code AS sub_material_code,sms.material_name AS sub_material_name,sms.material_version AS sub_version,
         sms.material_desc AS sub_material_desc,
         sp.process_code, sp.process_name, sp.process_desc,
         spl.pro_code,spl.pro_name,spl.pro_desc,

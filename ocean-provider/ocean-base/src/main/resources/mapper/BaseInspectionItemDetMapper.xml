@@ -31,7 +31,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
@@ -44,7 +44,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-    sm.material_code,sm.material_name,sm.version,qii.inspection_item_code, bo.organization_name
+    sm.material_code,sm.material_name,sm.material_version,qii.inspection_item_code, bo.organization_name
     from fantech_imes.base_inspection_item_det qiid
     LEFT JOIN ocean.sys_user su ON qiid.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON qiid.modified_user_id = sus.user_id

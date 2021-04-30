@@ -35,8 +35,8 @@ public class BaseMaterialPackageDto extends BaseMaterialPackage implements Seria
      * 版本
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
-    private String version;
+    @ApiModelProperty(name="materialVersion" ,value="版本")
+    private String materialVersion;
 
     /**
      * 工序名称
