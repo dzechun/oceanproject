@@ -22,7 +22,13 @@ public class FileCheckUtil {
 		FILE_TYPE_MAP.put("jpg", "ffd8ffe0"); // JPEG (jpg)
 		FILE_TYPE_MAP.put("png", "89504e47"); // PNG (png)
 		FILE_TYPE_MAP.put("gif", "47494638"); // GIF (gif)
-		FILE_TYPE_MAP.put("html", "3c21444f"); // HTML (html)
+		FILE_TYPE_MAP.put("bmp", "ffd8ffe1"); // BMP (jpg)
+		FILE_TYPE_MAP.put("tif", "ffd8ffe2"); // TIF (tif)
+		FILE_TYPE_MAP.put("pcx", "ffd8ffe3"); // PCX (pcx)
+		FILE_TYPE_MAP.put("psd", "ffd8ffe4"); // PSD (psd)
+		FILE_TYPE_MAP.put("jpeg", "ffd8ffe5"); // JPEG (jpeg)
+		FILE_TYPE_MAP.put("ico", "41564921"); // ICO (ico)
+		FILE_TYPE_MAP.put("html", "3c21444f"); // html (html)
 		FILE_TYPE_MAP.put("css", "48544d4c"); // css
 		FILE_TYPE_MAP.put("js", "696b2e71"); // js
 		FILE_TYPE_MAP.put("doc", "d0cf11e0"); //
@@ -37,6 +43,7 @@ public class FileCheckUtil {
 		FILE_TYPE_MAP.put("rar", "52617221");
 		FILE_TYPE_MAP.put("wav", "57415645");
 		FILE_TYPE_MAP.put("avi", "41564920");
+
 	}
 
 	static {
@@ -55,8 +62,9 @@ public class FileCheckUtil {
 		if (null == fileName || fileName.equals("")) {
 			return false;
 		}
-		// 文件后缀
-		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+		// 文件后缀,统一转换小写
+		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
 		String realCode = FILE_TYPE_MAP.get(suffix);
 		if (StringUtils.isNotEmpty(realCode)) {
 			return true;
@@ -65,6 +73,4 @@ public class FileCheckUtil {
 		// 全都不匹配，校验不通过
 		return false;
 	}
-
-
 }

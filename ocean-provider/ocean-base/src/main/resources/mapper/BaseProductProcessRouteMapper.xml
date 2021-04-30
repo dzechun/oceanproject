@@ -26,7 +26,7 @@
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
-    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
     <result column="route_name" jdbcType="VARCHAR" property="routeName" />
     <result column="route_code" jdbcType="VARCHAR" property="routeCode" />
     <result column="route_desc" jdbcType="VARCHAR" property="routeDesc" />
@@ -59,7 +59,7 @@
     select <include refid="Base_Column_List"></include>,
     spl.pro_name, spl.pro_code,
     spm.product_model_code, spm.product_model_name,
-    sm.material_code,sm.material_desc,sm.version,
+    sm.material_code,sm.material_desc,sm.material_version,
     sppr.route_id,
     bo.organization_name,
     sr.route_name, sr.route_code, sr.route_desc,

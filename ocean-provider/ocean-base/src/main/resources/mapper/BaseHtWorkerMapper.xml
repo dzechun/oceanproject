@@ -56,6 +56,15 @@
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 AND date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="userName != null and userName != ''">
+                AND su.user_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userCode != null and userCode != ''">
+                AND su.user_code LIKE CONCAT('%', #{userCode}, '%')
+            </if>
+            <if test="warehouseName != null and warehouseName != ''">
+                AND bw.warehouse_name LIKE CONCAT('%', #{warehouseName}, '%')
+            </if>
         </where>
         ORDER BY bhw.modified_time DESC
     </select>

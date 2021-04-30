@@ -1,8 +1,11 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShopImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtStation;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -10,18 +13,15 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtStorageMapper;
-import com.fantechs.provider.base.mapper.BaseStorageMapper;
-import com.fantechs.provider.base.mapper.BaseStorageMaterialMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStorageService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by wcz on 2020/09/23.
@@ -35,6 +35,10 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     private BaseHtStorageMapper baseHtStorageMapper;
     @Resource
     private BaseStorageMaterialMapper baseStorageMaterialMapper;
+    @Resource
+    private BaseWarehouseAreaMapper baseWarehouseAreaMapper;
+    @Resource
+    private BaseWorkingAreaMapper baseWorkingAreaMapper;
 
     @Override
     public int batchUpdate(List<BaseStorage> baseStorages) {
@@ -153,5 +157,95 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         return baseStorageMapper.findList(searchBaseStorage);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseStorageImport> baseStorageImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseStorage> list = new LinkedList<>();
+        LinkedList<BaseHtStorage> htList = new LinkedList<>();
+        ArrayList<BaseStorageImport> baseStorageImportArrayList = new ArrayList<>();
+        for (int i = 0; i < baseStorageImports.size(); i++) {
+            BaseStorageImport baseStorageImport = baseStorageImports.get(i);
+            String storageCode = baseStorageImport.getStorageCode();
+            String warehouseAreaCode = baseStorageImport.getWarehouseAreaCode();
+            Byte storageType = baseStorageImport.getStorageType();
+            String workingAreaCode = baseStorageImport.getWorkingAreaCode();
+            Integer roadway = baseStorageImport.getRoadway();
+            Integer rowNo = baseStorageImport.getRowNo();
+            Integer columnNo= baseStorageImport.getColumnNo();
+            Integer levelNo = baseStorageImport.getLevelNo();
+            Integer pickingMoveLineNo = baseStorageImport.getPickingMoveLineNo();
+            Integer putawayMoveLineNo = baseStorageImport.getPutawayMoveLineNo();
+            Integer stockMoveLineNo = baseStorageImport.getStockMoveLineNo();
+
+            if (StringUtils.isEmpty(
+                    storageCode,warehouseAreaCode,storageType,workingAreaCode,roadway,rowNo,
+                    columnNo,levelNo,pickingMoveLineNo,putawayMoveLineNo,stockMoveLineNo
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断仓库区域是否存在
+            Example example1 = new Example(BaseWarehouseArea.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("warehouseAreaCode",warehouseAreaCode);
+            BaseWarehouseArea baseWarehouseArea = baseWarehouseAreaMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(baseWarehouseArea)){
+                fail.add(i+4);
+                continue;
+            }
+            baseStorageImport.setWarehouseAreaId(baseWarehouseArea.getWarehouseAreaId());
+
+            //判断工作区是否存在
+            Example example2 = new Example(BaseWarehouseArea.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("workingAreaCode",workingAreaCode);
+            BaseWorkingArea baseWorkingArea = baseWorkingAreaMapper.selectOneByExample(example2);
+            if (StringUtils.isEmpty(baseWorkingArea)){
+                fail.add(i+4);
+                continue;
+            }
+            baseStorageImport.setWorkingAreaId(baseWorkingArea.getWorkingAreaId());
+
+            baseStorageImportArrayList.add(baseStorageImport);
+        }
+
+        for (BaseStorageImport baseStorageImport : baseStorageImportArrayList) {
+            BaseStorage baseStorage = new BaseStorage();
+            BeanUtils.copyProperties(baseStorageImport, baseStorage);
+            baseStorage.setStatus(1);
+            baseStorage.setCreateTime(new Date());
+            baseStorage.setCreateUserId(currentUser.getUserId());
+            baseStorage.setModifiedTime(new Date());
+            baseStorage.setModifiedUserId(currentUser.getUserId());
+            baseStorage.setOrganizationId(currentUser.getOrganizationId());
+            list.add(baseStorage);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = baseStorageMapper.insertList(list);
+        }
+
+        for (BaseStorage baseStorage : list) {
+            BaseHtStorage baseHtStorage = new BaseHtStorage();
+            BeanUtils.copyProperties(baseStorage, baseHtStorage);
+            htList.add(baseHtStorage);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            baseHtStorageMapper.insertList(htList);
+        }
+
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
+    }
 
 }

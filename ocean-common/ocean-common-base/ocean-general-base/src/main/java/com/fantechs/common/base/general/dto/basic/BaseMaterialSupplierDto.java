@@ -26,7 +26,7 @@ public class BaseMaterialSupplierDto extends BaseMaterialSupplier implements Ser
      */
     @Transient
     @Excel(name = "物料版本", height = 20, width = 30,orderNum = "2")
-    private String version;
+    private String materialVersion;
     /**
      * 物料描述
      */

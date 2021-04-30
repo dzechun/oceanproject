@@ -104,9 +104,9 @@ public class BaseProductProcessRoute extends ValidGroup implements Serializable 
      * 产品料号版本
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
+    @ApiModelProperty(name="materialVersion" ,value="版本")
     @Excel(name = "产品料号版本", height = 20, width = 30)
-    private String version;
+    private String materialVersion;
 
     /**
      * 产品料号描述

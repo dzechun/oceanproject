@@ -1,11 +1,14 @@
 package com.fantechs.provider.base.service;
 
 
+import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  *
  * Created by wcz on 2020/09/23.
@@ -14,6 +17,8 @@ import java.util.List;
 public interface BaseStorageService extends IService<BaseStorage> {
 
     List<BaseStorage> findList(SearchBaseStorage searchBaseStorage);
+
+    Map<String, Object> importExcel(List<BaseStorageImport> baseStorageImports);
 
     //根据编码进行批量更新
     int batchUpdate(List<BaseStorage> baseStorages);

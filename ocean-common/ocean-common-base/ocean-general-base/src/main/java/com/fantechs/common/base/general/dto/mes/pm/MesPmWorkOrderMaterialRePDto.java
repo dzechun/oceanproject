@@ -39,9 +39,9 @@ public class MesPmWorkOrderMaterialRePDto extends MesPmWorkOrderMaterialReP impl
      * 零件替代料号
      */
     @Transient
-    @ApiModelProperty(name="replaceCode",value = "零件替代料号")
+    @ApiModelProperty(name="subMaterialCode",value = "零件替代料号")
     @Excel(name = "零件替代料号", height = 20, width = 30,orderNum="")
-    private String replaceCode;
+    private String subMaterialCode;
 
     /**
      * 创建用户名称
