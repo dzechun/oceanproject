@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtInventoryStatusMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtInventoryStatus">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_inventory_status_id" jdbcType="BIGINT" property="htInventoryStatusId" />
+    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
+    <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhis.ht_inventory_status_id,
+    bhis.inventory_status_id,
+    bhis.inventory_status_name,
+    bhis.warehouse_id,
+    bhis.material_owner_id,
+    bhis.`status`,
+    bhis.remark,
+    bhis.org_id,
+    bhis.create_user_id,
+    bhis.create_time,
+    bhis.modified_user_id,
+    bhis.modified_time,
+    bhis.is_delete,
+    bhis.option1,
+    bhis.option2,
+    bhis.option3
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bmo.material_owner_name,bw.warehouse_name,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_ht_inventory_status bhis
+    left join fantech_imes_v2.base_material_owner bmo on bhis.material_owner_id=bmo.material_owner_id
+    left join fantech_imes_v2.base_warehouse bw on bhis.warehouse_id=bw.warehouse_id
+    left join ocean_v2.sys_user u on bhis.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bhis.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bhis.org_id = bo.organization_id
+    <where>
+      <if test="warehouseId!=null">
+        and bhis.warehouse_id = #{warehouseId}
+      </if>
+      <if test="materialOwnerId!=null">
+        and bhis.material_owner_id = #{materialOwnerId}
+      </if>
+      <if test="inventoryStatusName!=null and inventoryStatusName!=''">
+        and bhis.inventory_status_name like CONCAT('%', #{inventoryStatusName}, '%')
+      </if>
+      <if test="status!=null">
+        and bhis.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bhis.create_time desc
+  </select>
+</mapper>
