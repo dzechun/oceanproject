@@ -39,9 +39,9 @@ public class BaseInspectionItemDetDto extends BaseInspectionItemDet implements S
      * 物料版本
      */
     @Transient
-    @ApiModelProperty(name = "version",value = "物料版本")
+    @ApiModelProperty(name = "materialVersion",value = "物料版本")
     @Excel(name = "物料版本", height = 20, width = 30,orderNum="4")
-    private String version;
+    private String materialVersion;
 
     /**
      * 创建用户名称

@@ -108,9 +108,9 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
      * 版本
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
+    @ApiModelProperty(name="materialVersion" ,value="版本")
     @Excel(name = "物料版本", height = 20, width = 30)
-    private String version;
+    private String materialVersion;
 
     /**
      * 物料描述

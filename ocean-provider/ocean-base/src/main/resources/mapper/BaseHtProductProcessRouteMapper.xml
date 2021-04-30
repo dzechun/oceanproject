@@ -26,7 +26,7 @@
         <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="route_code" jdbcType="VARCHAR" property="routeCode"/>
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
         <result column="route_desc" jdbcType="VARCHAR" property="routeDesc"/>
@@ -60,7 +60,7 @@
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         spm.product_model_code, spm.product_model_name,
-        sm.material_code,sm.material_desc,sm.version,
+        sm.material_code,sm.material_desc,sm.material_version,
         u.user_name as create_user_name, s.user_name as modified_user_name,
         sr.route_name, sr.route_code, sr.route_desc, bo.organization_name
         from fantech_imes_v2.base_ht_product_process_route shppr
