@@ -51,7 +51,7 @@
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
-        u.user_name as createUserName, s.user_name as modifiedUserName,
+        u.user_name as create_user_name, s.user_name as modified_user_name,
         bo.organization_name
         from fantech_imes_v2.base_product_model spm
         left join ocean_v2.sys_user u on spm.create_user_id=u.user_id
