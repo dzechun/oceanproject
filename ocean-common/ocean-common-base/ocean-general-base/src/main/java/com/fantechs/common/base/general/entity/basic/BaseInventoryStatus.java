@@ -43,6 +43,14 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
     private String inventoryStatusName;
 
     /**
+     * 是否可发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifCanStoreIssue",value = "是否可发(0-否 1-是)")
+    @Excel(name = "是否可发(0-否 1-是)", height = 20, width = 30,orderNum="4")
+    @Column(name = "if_can_store_issue")
+    private Byte ifCanStoreIssue;
+
+    /**
      * 仓库ID
      */
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
@@ -62,14 +70,14 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="6")
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="4")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="5")
     private String remark;
 
     /**
@@ -92,7 +100,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -109,7 +117,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -133,7 +141,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedUserName" ,value="修改人名称")
     @Transient
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
     /**
@@ -141,7 +149,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createUserName" ,value="创建人名称")
     @Transient
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**

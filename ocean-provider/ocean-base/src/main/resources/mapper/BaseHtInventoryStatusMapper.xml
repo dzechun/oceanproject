@@ -10,6 +10,7 @@
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="if_can_store_issue" jdbcType="TINYINT" property="ifCanStoreIssue" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -35,6 +36,7 @@
     bhis.inventory_status_name,
     bhis.warehouse_id,
     bhis.material_owner_id,
+    bhis.if_can_store_issue,
     bhis.`status`,
     bhis.remark,
     bhis.org_id,
