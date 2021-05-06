@@ -230,7 +230,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             }
 
             //判断编码是否重复
-            Example example = new Example(BaseSignature.class);
+            Example example = new Example(BasePackageSpecification.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("packageSpecificationCode",packageSpecificationCode);
             if (StringUtils.isNotEmpty(basePackageSpecificationMapper.selectOneByExample(example))){
@@ -316,6 +316,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
                 for (BasePackageSpecificationImport basePackageSpecificationImport : PackageSpecificationImports1) {
                     BaseMaterialPackage baseMaterialPackage = new BaseMaterialPackage();
                     BeanUtils.copyProperties(basePackageSpecificationImport, baseMaterialPackage);
+                    baseMaterialPackage.setPackageSpecificationId(basePackageSpecification.getPackageSpecificationId());
                     baseMaterialPackage.setStatus((byte) 1);
                     baseMaterialPackages.add(baseMaterialPackage);
                 }
