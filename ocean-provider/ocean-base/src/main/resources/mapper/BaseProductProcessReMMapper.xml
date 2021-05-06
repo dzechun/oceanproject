@@ -37,7 +37,7 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -85,7 +85,7 @@
   </select>
 
   <select id="findMaterialList" parameterType="map" resultMap="BaseResultMapVo">
-    select bm.material_id,bm.material_code,bm.material_desc,bm.version,
+    select bm.material_id,bm.material_code,bm.material_desc,bm.material_version,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_product_process_re_m bpprm

@@ -86,7 +86,7 @@ public class BaseHtProductMaterialReP extends ValidGroup implements Serializable
      */
     @Transient
     @ApiModelProperty(value = "物料版本",example = "物料版本")
-    private String version;
+    private String materialVersion;
 
     /**
      * 单个用量
