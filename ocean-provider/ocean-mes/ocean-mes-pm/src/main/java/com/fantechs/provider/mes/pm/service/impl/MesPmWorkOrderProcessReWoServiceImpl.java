@@ -75,8 +75,7 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
                 }else {
                     boolean b = ClassCompareUtil.compareObject(pmWorkOrderProcessReWo, mesPmWorkOrderProcessReWo);
                     if (b){
-                        this.batchDelete(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId()+"");
-                        this.save(mesPmWorkOrderProcessReWo);
+                        this.update(mesPmWorkOrderProcessReWo);
                     }
                 }
 
