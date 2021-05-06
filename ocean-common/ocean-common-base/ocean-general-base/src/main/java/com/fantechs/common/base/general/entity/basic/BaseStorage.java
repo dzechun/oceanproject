@@ -162,6 +162,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="roadway",value = "巷道")
     @Column(name = "roadway")
     @NotNull(message = "巷道不能为空")
+    @Excel(name = "巷道", height = 20, width = 30)
     private Integer roadway;
 
     /**
@@ -170,6 +171,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="rowNo",value = "排")
     @Column(name = "row_no")
     @NotNull(message = "排不能为空")
+    @Excel(name = "排", height = 20, width = 30)
     private Integer rowNo;
 
     /**
@@ -178,6 +180,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="columnNo",value = "列")
     @Column(name = "column_no")
     @NotNull(message = "列不能为空")
+    @Excel(name = "列", height = 20, width = 30)
     private Integer columnNo;
 
     /**
@@ -186,6 +189,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="levelNo",value = "层")
     @Column(name = "level_no")
     @NotNull(message = "层不能为空")
+    @Excel(name = "层", height = 20, width = 30)
     private Integer levelNo;
 
     /**
@@ -194,6 +198,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="putawayMoveLineNo",value = "上架动线号")
     @Column(name = "putaway_move_line_no")
     @NotNull(message = "上架动线号不能为空")
+    @Excel(name = "上架动线号", height = 20, width = 30)
     private Integer putawayMoveLineNo;
 
     /**
@@ -202,6 +207,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="pickingMoveLineNo",value = "拣货动线号")
     @Column(name = "picking_move_line_no")
     @NotNull(message = "拣货动线号不能为空")
+    @Excel(name = "拣货动线号", height = 20, width = 30)
     private Integer pickingMoveLineNo;
 
     /**
@@ -210,6 +216,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="stockMoveLineNo",value = "盘点动线号")
     @Column(name = "stock_move_line_no")
     @NotNull(message = "盘点动线号不能为空")
+    @Excel(name = "盘点动线号", height = 20, width = 30)
     private Integer stockMoveLineNo;
 
     /**
@@ -217,6 +224,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="ifStockLock",value = "盘点锁(0-否 1-是)")
     @Column(name = "if_stock_lock")
+    @Excel(name = "盘点锁(0-否 1-是)", height = 20, width = 30)
     private Byte ifStockLock;
 
     /**
@@ -224,6 +232,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="surplusLoad",value = "剩余载重")
     @Column(name = "surplus_load")
+    @Excel(name = "剩余载重", height = 20, width = 30)
     private BigDecimal surplusLoad;
 
     /**
@@ -231,6 +240,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="surplusVolume",value = "剩余容积")
     @Column(name = "surplus_volume")
+    @Excel(name = "剩余容积", height = 20, width = 30)
     private BigDecimal surplusVolume;
 
     /**
@@ -238,6 +248,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="surplusCanPutSalver",value = "剩余可放托盘数")
     @Column(name = "surplus_can_put_salver")
+    @Excel(name = "剩余可放托盘数", height = 20, width = 30)
     private Integer surplusCanPutSalver;
 
     /**
