@@ -1,0 +1,115 @@
+package com.fantechs.provider.base.service.impl;
+
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.BaseFactory;
+import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwner;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtFactory;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialOwner;
+import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.mapper.BaseHtInventoryStatusMapper;
+import com.fantechs.provider.base.mapper.BaseInventoryStatusMapper;
+import com.fantechs.provider.base.service.BaseInventoryStatusService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * Created by leifengzhi on 2021/04/25.
+ */
+@Service
+public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventoryStatus> implements BaseInventoryStatusService {
+
+    @Resource
+    private BaseInventoryStatusMapper baseInventoryStatusMapper;
+    @Resource
+    private BaseHtInventoryStatusMapper baseHtInventoryStatusMapper;
+
+    @Override
+    public List<BaseInventoryStatus> findList(Map<String, Object> map) {
+        return baseInventoryStatusMapper.findList(map);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int save(BaseInventoryStatus baseInventoryStatus) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        baseInventoryStatus.setCreateUserId(user.getUserId());
+        baseInventoryStatus.setCreateTime(new Date());
+        baseInventoryStatus.setModifiedUserId(user.getUserId());
+        baseInventoryStatus.setModifiedTime(new Date());
+        baseInventoryStatus.setStatus(StringUtils.isEmpty(baseInventoryStatus.getStatus())?1: baseInventoryStatus.getStatus());
+        baseInventoryStatus.setOrgId(user.getOrganizationId());
+        int i = baseInventoryStatusMapper.insertUseGeneratedKeys(baseInventoryStatus);
+
+        BaseHtInventoryStatus baseHtInventoryStatus = new BaseHtInventoryStatus();
+        BeanUtils.copyProperties(baseInventoryStatus, baseHtInventoryStatus);
+        baseHtInventoryStatusMapper.insert(baseHtInventoryStatus);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int update(BaseInventoryStatus baseInventoryStatus) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        baseInventoryStatus.setModifiedTime(new Date());
+        baseInventoryStatus.setModifiedUserId(user.getUserId());
+        baseInventoryStatus.setOrgId(user.getOrganizationId());
+
+        BaseHtInventoryStatus baseHtInventoryStatus = new BaseHtInventoryStatus();
+        BeanUtils.copyProperties(baseInventoryStatus, baseHtInventoryStatus);
+
+        baseHtInventoryStatusMapper.insert(baseHtInventoryStatus);
+
+        return baseInventoryStatusMapper.updateByPrimaryKeySelective(baseInventoryStatus);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchDelete(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        List<BaseHtInventoryStatus> list = new ArrayList<>();
+        String[] idArry = ids.split(",");
+        for (String id : idArry) {
+            BaseInventoryStatus baseInventoryStatus = baseInventoryStatusMapper.selectByPrimaryKey(id);
+            if(StringUtils.isEmpty(baseInventoryStatus)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            BaseHtInventoryStatus baseHtInventoryStatus = new BaseHtInventoryStatus();
+            BeanUtils.copyProperties(baseInventoryStatus, baseHtInventoryStatus);
+            list.add(baseHtInventoryStatus);
+        }
+
+        baseHtInventoryStatusMapper.insertList(list);
+
+        return baseInventoryStatusMapper.deleteByIds(ids);
+    }
+}

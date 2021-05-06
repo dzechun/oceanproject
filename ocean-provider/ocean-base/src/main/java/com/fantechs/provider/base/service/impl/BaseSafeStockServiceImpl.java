@@ -3,17 +3,17 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.OltSafeStockDto;
-import com.fantechs.common.base.general.entity.basic.OltSafeStock;
-import com.fantechs.common.base.general.entity.basic.history.OltHtSafeStock;
+import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
+import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtSafeStock;
 import com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.base.mapper.OltHtSafeStockMapper;
-import com.fantechs.provider.base.mapper.OltSafeStockMapper;
-import com.fantechs.provider.base.service.OltSafeStockService;
+import com.fantechs.provider.base.mapper.BaseHtSafeStockMapper;
+import com.fantechs.provider.base.mapper.BaseSafeStockMapper;
+import com.fantechs.provider.base.service.BaseSafeStockService;
 import com.fantechs.provider.base.service.mail.MailService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -28,25 +28,25 @@ import java.util.*;
  * Created by mr.lei on 2021/03/04.
  */
 @Service
-public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implements OltSafeStockService {
+public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> implements BaseSafeStockService {
 
     @Resource
-    private OltSafeStockMapper oltSafeStockMapper;
+    private BaseSafeStockMapper baseSafeStockMapper;
     @Resource
-    private OltHtSafeStockMapper oltHtSafeStockMapper;
+    private BaseHtSafeStockMapper baseHtSafeStockMapper;
     @Resource
     private MailService mailService;
     @Resource
     private BaseFeignApi baseFeignApi;
 
     @Override
-    public List<OltSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock) {
-        return oltSafeStockMapper.findList(searchOltSafeStock);
+    public List<BaseSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock) {
+        return baseSafeStockMapper.findList(searchOltSafeStock);
     }
 
     @Override
-    public List<OltSafeStockDto> findHtList(SearchOltSafeStock searchOltSafeStock) {
-        return oltHtSafeStockMapper.findHtList(searchOltSafeStock);
+    public List<BaseSafeStockDto> findHtList(SearchOltSafeStock searchOltSafeStock) {
+        return baseHtSafeStockMapper.findHtList(searchOltSafeStock);
     }
 
     /**
@@ -55,14 +55,14 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
      */
     @Override
     public int inventeryWarning() {
-        List<OltSafeStockDto> list = findList(new SearchOltSafeStock());
-        List<OltSafeStockDto> oltList = new ArrayList<>();
-        for (OltSafeStockDto oltSafeStockDto : list) {
-            BigDecimal qty = oltSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());
-            if(qty.compareTo(oltSafeStockDto.getMaxQuantity())==1){
+        List<BaseSafeStockDto> list = findList(new SearchOltSafeStock());
+        List<BaseSafeStockDto> oltList = new ArrayList<>();
+        for (BaseSafeStockDto oltSafeStockDto : list) {
+            BigDecimal qty = baseSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());
+            if(qty.compareTo(oltSafeStockDto.getMaxQty())==1){
                 oltSafeStockDto.setIsMax(true);
                 oltList.add(oltSafeStockDto);
-            }else if(qty.compareTo(oltSafeStockDto.getMinQuantity())==-1){
+            }else if(qty.compareTo(oltSafeStockDto.getMinQty())==-1){
                 oltSafeStockDto.setIsMax(false);
                 oltList.add(oltSafeStockDto);
 
@@ -71,7 +71,7 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         if(oltList.size()>0){
             StringBuffer sb = new StringBuffer();
             sb.append("安全库存预警：\n");
-            for (OltSafeStockDto oltSafeStockDto : oltList) {
+            for (BaseSafeStockDto oltSafeStockDto : oltList) {
                 if(oltSafeStockDto.getIsMax()){
                     sb.append("仓库："+oltSafeStockDto.getWarehouseName()+"超出设定安全库存");
                 }else{
@@ -88,7 +88,7 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(OltSafeStock record) {
+    public int save(BaseSafeStock record) {
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(record.getWarehouseId())){
             throw new BizErrorException("仓库不能为空");
@@ -97,18 +97,18 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
-        int num = oltSafeStockMapper.insertUseGeneratedKeys(record);
+        int num = baseSafeStockMapper.insertUseGeneratedKeys(record);
         recordHistory(record);
         return num;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(OltSafeStock entity) {
+    public int update(BaseSafeStock entity) {
         SysUser sysUser = currentUser();
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
-        int num = oltSafeStockMapper.updateByPrimaryKeySelective(entity);
+        int num = baseSafeStockMapper.updateByPrimaryKeySelective(entity);
         recordHistory(entity);
         return num;
     }
@@ -119,13 +119,13 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
         SysUser sysUser = currentUser();
         String[] idArray = ids.split(",");
         for (String id : idArray) {
-            OltSafeStock oltSafeStock = oltSafeStockMapper.selectByPrimaryKey(id);
-            if(StringUtils.isEmpty(oltSafeStock)){
+            BaseSafeStock baseSafeStock = baseSafeStockMapper.selectByPrimaryKey(id);
+            if(StringUtils.isEmpty(baseSafeStock)){
                 throw new BizErrorException("删除失败");
             }
-            recordHistory(oltSafeStock);
+            recordHistory(baseSafeStock);
         }
-        return oltSafeStockMapper.deleteByIds(ids);
+        return baseSafeStockMapper.deleteByIds(ids);
     }
 
     /**
@@ -142,14 +142,14 @@ public class OltSafeStockServiceImpl extends BaseService<OltSafeStock> implement
 
     /**
      * 历史记录
-     * @param oltSafeStock
+     * @param baseSafeStock
      */
-    private void recordHistory(OltSafeStock oltSafeStock){
-        OltHtSafeStock oltHtSafeStock = new OltHtSafeStock();
-        if (StringUtils.isEmpty(oltHtSafeStock)){
+    private void recordHistory(BaseSafeStock baseSafeStock){
+        BaseHtSafeStock baseHtSafeStock = new BaseHtSafeStock();
+        if (StringUtils.isEmpty(baseHtSafeStock)){
             return;
         }
-        BeanUtils.copyProperties(oltSafeStock, oltHtSafeStock);
-        oltHtSafeStockMapper.insertSelective(oltHtSafeStock);
+        BeanUtils.copyProperties(baseSafeStock, baseHtSafeStock);
+        baseHtSafeStockMapper.insertSelective(baseHtSafeStock);
     }
 }

@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.basic.OltSafeStock;
+import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @create 2021/3/4
  */
 @Data
-public class OltSafeStockDto extends OltSafeStock implements Serializable {
+public class BaseSafeStockDto extends BaseSafeStock implements Serializable {
     /**
      * 仓库名称
      */
@@ -22,6 +22,14 @@ public class OltSafeStockDto extends OltSafeStock implements Serializable {
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum = "1")
     private String warehouseName;
+
+    /**
+     * 货主名称
+     */
+    @Column(name = "material_owner_name")
+    @ApiModelProperty(name = "materialOwnerName",value = "货主名称")
+    @Excel(name = "货主名称", height = 20, width = 30)
+    private String materialOwnerName;
 
     /**
      * 物料类别名称
