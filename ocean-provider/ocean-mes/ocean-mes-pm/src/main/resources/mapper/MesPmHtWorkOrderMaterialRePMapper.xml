@@ -25,7 +25,7 @@
 
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -46,7 +46,7 @@
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.version,sbm.material_code AS 'sub_material_code'
+    select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.material_version,sbm.material_code AS 'sub_material_code'
     from mes_pm_ht_work_order_material_re_p mphwomrp
     LEFT JOIN ocean_v2.sys_user su ON mphwomrp.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON mphwomrp.modified_user_id = sus.user_id

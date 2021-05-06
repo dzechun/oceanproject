@@ -40,9 +40,9 @@ public class MesPmWorkOrderProcessReWoDto extends MesPmWorkOrderProcessReWo impl
      * 产品版本
      */
     @Transient
-    @ApiModelProperty(name="version",value = "产品版本")
+    @ApiModelProperty(name="materialVersion",value = "产品版本")
     @Excel(name = "产品版本", height = 20, width = 30)
-    private String version;
+    private String materialVersion;
 
     /**
      * 工序编码

@@ -152,9 +152,9 @@ public class MesPmHtWorkOrderMaterialReP extends ValidGroup implements Serializa
      * 零件料号版本
      */
     @Transient
-    @ApiModelProperty(name="version",value = "零件料号版本")
+    @ApiModelProperty(name="materialVersion",value = "零件料号版本")
     @Excel(name = "零件料号版本", height = 20, width = 30,orderNum="")
-    private String version;
+    private String materialVersion;
 
     /**
      * 零件料号描述

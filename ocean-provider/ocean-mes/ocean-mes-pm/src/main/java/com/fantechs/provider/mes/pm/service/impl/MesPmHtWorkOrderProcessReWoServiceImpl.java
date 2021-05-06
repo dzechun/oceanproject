@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.pm.service.impl;
 
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderProcessReWo;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderProcessReWoMapper;
 import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderProcessReWoService;
 import com.fantechs.provider.mes.pm.vo.MesPmHtWorkOrderProcessReWoVo;
@@ -26,8 +27,10 @@ public class MesPmHtWorkOrderProcessReWoServiceImpl extends BaseService<MesPmHtW
     public List<MesPmHtWorkOrderProcessReWoVo> findList(Map<String, Object> map) {
         List<MesPmHtWorkOrderProcessReWoVo> list = mesPmHtWorkOrderProcessReWoMapper.findMaterialList(map);
         for (MesPmHtWorkOrderProcessReWoVo mesPmHtWorkOrderProcessReWoVo : list) {
-            map.put("workOrderId",mesPmHtWorkOrderProcessReWoVo.getWorkOrderId());
-            mesPmHtWorkOrderProcessReWoVo.setList(mesPmHtWorkOrderProcessReWoMapper.findList(map));
+            if (StringUtils.isNotEmpty(mesPmHtWorkOrderProcessReWoVo)){
+                map.put("workOrderId",mesPmHtWorkOrderProcessReWoVo.getWorkOrderId());
+                mesPmHtWorkOrderProcessReWoVo.setList(mesPmHtWorkOrderProcessReWoMapper.findList(map));
+            }
         }
         return list;
     }

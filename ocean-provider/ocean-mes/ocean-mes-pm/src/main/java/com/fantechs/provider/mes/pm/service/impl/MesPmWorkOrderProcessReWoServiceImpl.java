@@ -20,6 +20,7 @@ import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMaterialRePMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderProcessReWoMapper;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderMaterialRePService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderProcessReWoService;
+import com.fantechs.provider.mes.pm.vo.MesPmHtWorkOrderProcessReWoVo;
 import com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -51,8 +52,10 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
     public List<MesPmWorkOrderProcessReWoVo> findList(Map<String, Object> map) {
         List<MesPmWorkOrderProcessReWoVo> list = mesPmWorkOrderProcessReWoMapper.findMaterialList(map);
         for (MesPmWorkOrderProcessReWoVo mesPmWorkOrderProcessReWoVo : list) {
-            map.put("workOrderId",mesPmWorkOrderProcessReWoVo.getWorkOrderId());
-            mesPmWorkOrderProcessReWoVo.setList(mesPmWorkOrderProcessReWoMapper.findList(map));
+            if (StringUtils.isNotEmpty(mesPmWorkOrderProcessReWoVo)){
+                map.put("workOrderId",mesPmWorkOrderProcessReWoVo.getWorkOrderId());
+                mesPmWorkOrderProcessReWoVo.setList(mesPmWorkOrderProcessReWoMapper.findList(map));
+            }
         }
         return list;
     }
@@ -61,6 +64,9 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
     public int batchSave(List<MesPmWorkOrderProcessReWo> list) {
         if (StringUtils.isNotEmpty(list)){
             for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
+                if (StringUtils.isNotEmpty(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId())){
+                    this.batchDelete(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId()+"");
+                }
                 this.save(mesPmWorkOrderProcessReWo);
             }
         }

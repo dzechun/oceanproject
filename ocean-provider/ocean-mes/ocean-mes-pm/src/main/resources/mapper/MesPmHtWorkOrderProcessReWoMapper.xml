@@ -24,7 +24,7 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="process_desc" jdbcType="VARCHAR" property="processDesc"/>
@@ -44,7 +44,7 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -63,7 +63,7 @@
     mpwo.work_order_code,
     bm.material_code,
     bm.material_desc,
-    bm.version
+    bm.material_version
     from mes_pm_ht_work_order_process_re_wo mphwoprw
     LEFT JOIN mes_pm_work_order mpwo ON mphwoprw.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
@@ -87,7 +87,8 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    bp.process_code,bp.process_name,bp.process_desc,bws.section_name,bpc.process_category_name
+    bp.process_code,bp.process_name,bp.process_desc,bws.section_name,bpc.process_category_name,mpwo.work_order_code,
+    bm.material_code,bm.material_desc,bm.material_version
     from mes_pm_ht_work_order_process_re_wo mphwoprw
     LEFT JOIN ocean_v2.sys_user su ON mphwoprw.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON mphwoprw.modified_user_id = sus.user_id
