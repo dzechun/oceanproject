@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
+import cn.hutool.core.comparator.CompareUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderMaterialReP;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderProcessReWo;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMaterialRePMapper;
@@ -22,6 +24,7 @@ import com.fantechs.provider.mes.pm.service.MesPmWorkOrderMaterialRePService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderProcessReWoService;
 import com.fantechs.provider.mes.pm.vo.MesPmHtWorkOrderProcessReWoVo;
 import com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo;
+import jdk.nashorn.internal.codegen.CompileUnit;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -63,11 +66,20 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
     @Override
     public int batchSave(List<MesPmWorkOrderProcessReWo> list) {
         if (StringUtils.isNotEmpty(list)){
+            Example example = new Example(MesPmWorkOrderProcessReWo.class);
             for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
-                if (StringUtils.isNotEmpty(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId())){
-                    this.batchDelete(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId()+"");
+                example.createCriteria().andEqualTo("workOrderProcessReWoId",mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId());
+                MesPmWorkOrderProcessReWo pmWorkOrderProcessReWo = mesPmWorkOrderProcessReWoMapper.selectOneByExample(example);
+                if (StringUtils.isEmpty(pmWorkOrderProcessReWo)){
+                    this.save(mesPmWorkOrderProcessReWo);
+                }else {
+                    boolean b = ClassCompareUtil.compareObject(pmWorkOrderProcessReWo, mesPmWorkOrderProcessReWo);
+                    if (b){
+                        this.batchDelete(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId()+"");
+                        this.save(mesPmWorkOrderProcessReWo);
+                    }
                 }
-                this.save(mesPmWorkOrderProcessReWo);
+
             }
         }
         return 1;
