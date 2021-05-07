@@ -1,6 +1,5 @@
 package com.fantechs.provider.wms.out.service.impl;
 
-
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.support.BaseService;
@@ -14,10 +13,10 @@ import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2021/01/09.
+ * Created by leifengzhi on 2021/05/07.
  */
 @Service
-public class WmsOutDeliveryOrderDetServiceImpl  extends BaseService<WmsOutDeliveryOrderDet> implements WmsOutDeliveryOrderDetService {
+public class WmsOutDeliveryOrderDetServiceImpl extends BaseService<WmsOutDeliveryOrderDet> implements WmsOutDeliveryOrderDetService {
 
     @Resource
     private WmsOutDeliveryOrderDetMapper wmsOutDeliveryOrderDetMapper;

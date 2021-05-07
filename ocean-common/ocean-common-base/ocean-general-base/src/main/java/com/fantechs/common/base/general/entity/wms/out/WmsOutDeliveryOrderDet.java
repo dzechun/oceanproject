@@ -9,19 +9,18 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
+;
 ;
 
 /**
  * 出库单明细
  * wms_out_delivery_order_det
- * @author hyc
- * @date 2021-01-09 20:01:33
+ * @author admin
+ * @date 2021-05-07 16:44:16
  */
 @Data
 @Table(name = "wms_out_delivery_order_det")
@@ -30,7 +29,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
      * 出库单明细ID
      */
     @ApiModelProperty(name="deliveryOrderDetId",value = "出库单明细ID")
-    @NotNull(groups = update.class,message = "出库单明细ID不能为空")
+    @Excel(name = "出库单明细ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "delivery_order_det_id")
     private Long deliveryOrderDetId;
@@ -44,10 +43,10 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private Long deliveryOrderId;
 
     /**
-     * 出货通知单明细ID
+     * 出库通知单明细ID
      */
-    @ApiModelProperty(name="shippingNoteDetId",value = "出货通知单明细ID")
-    @Excel(name = "出货通知单明细ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="shippingNoteDetId",value = "出库通知单明细ID")
+    @Excel(name = "出库通知单明细ID", height = 20, width = 30,orderNum="") 
     @Column(name = "shipping_note_det_id")
     private Long shippingNoteDetId;
 
@@ -55,7 +54,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -95,7 +94,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
-    @Column(name = "org_id")
+    @Column(name = "organization_id")
     private Long organizationId;
 
     /**
@@ -139,10 +138,6 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
-
-
-    @ApiModelProperty(name="outPalletList",value = "已出库栈板集合")
-    private List<String> outPalletList;
 
     private static final long serialVersionUID = 1L;
 }

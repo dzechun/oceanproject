@@ -9,10 +9,9 @@ import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2021/01/09.
+ * Created by leifengzhi on 2021/05/07.
  */
 
 public interface WmsOutDeliveryOrderDetService extends IService<WmsOutDeliveryOrderDet> {
-
-    List<WmsOutDeliveryOrderDetDto> findList(Map<String, Object> dynamicConditionByEntity);
+    List<WmsOutDeliveryOrderDetDto> findList(Map<String, Object> map);
 }

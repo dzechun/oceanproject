@@ -14,7 +14,6 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +25,10 @@ import java.util.List;
 
 /**
  *
- * Created by leifengzhi on 2021/01/09.
+ * Created by leifengzhi on 2021/05/07.
  */
 @RestController
-@Api(tags = "出库单控制器")
+@Api(tags = "wmsOutDeliveryOrder控制器")
 @RequestMapping("/wmsOutDeliveryOrder")
 @Validated
 public class WmsOutDeliveryOrderController {
@@ -70,13 +69,13 @@ public class WmsOutDeliveryOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("历史列表")
+    /*@ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsOutDeliveryOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
+    public ResponseEntity<List<WmsOutDeliveryOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
         Page<Object> page = PageHelper.startPage(searchWmsOutDeliveryOrder.getStartPage(),searchWmsOutDeliveryOrder.getPageSize());
-        List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
+        List<WmsOutDeliveryOrder> list = wmsOutDeliveryOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
+    }*/
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
@@ -85,17 +84,9 @@ public class WmsOutDeliveryOrderController {
     List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "出库单信息", WmsOutDeliveryOrderDto.class, "出库单.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutDeliveryOrder信息", WmsOutDeliveryOrderDto.class, "WmsOutDeliveryOrder.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
     }
-
-    @ApiOperation("PDA扫码判断栈板是否重复出库")
-    @PostMapping("/checkPallet")
-    public ResponseEntity<String> checkPallet(@ApiParam(value = "palletCode:栈板编码 \b 返回值：true 可出库，false 重复出库",required = true)@RequestParam String palletCode) {
-        return ControllerUtil.returnDataSuccess(wmsOutDeliveryOrderService.checkPallet(palletCode),0);
-    }
-
-
 }
