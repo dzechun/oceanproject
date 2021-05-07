@@ -65,10 +65,14 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
 
     @Override
     public int batchSave(List<MesPmWorkOrderProcessReWo> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(MesPmWorkOrderProcessReWo.class);
             for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
-                example.createCriteria().andEqualTo("workOrderProcessReWoId",mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId());
+                example.createCriteria().andEqualTo("workOrderProcessReWoId",mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId() == null ? -1 : mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId());
                 MesPmWorkOrderProcessReWo pmWorkOrderProcessReWo = mesPmWorkOrderProcessReWoMapper.selectOneByExample(example);
                 if (StringUtils.isEmpty(pmWorkOrderProcessReWo)){
                     this.save(mesPmWorkOrderProcessReWo);
