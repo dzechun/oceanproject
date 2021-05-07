@@ -7,6 +7,7 @@
         -->
         <id column="ht_sales_order_det_id" jdbcType="BIGINT" property="htSalesOrderDetId" />
         <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId" />
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
         <result column="customer_order_line_number" jdbcType="BIGINT" property="customerOrderLineNumber" />
         <result column="project_code" jdbcType="VARCHAR" property="projectCode" />
         <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber" />
@@ -46,7 +47,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        hsod.sales_order_det_id, hsod.sales_order_id, hsod.customer_order_line_number, hsod.source_line_number, hsod.project_code,
+        hsod.ht_sales_order_det_id,hsod.sales_order_det_id, hsod.sales_order_id, hsod.customer_order_line_number, hsod.source_line_number, hsod.project_code,
         hsod.inner_batch_number, hsod.contract_code, hsod.material_id, hsod.type, hsod.if_free_gift, hsod.unit_name,
         hsod.order_qty, hsod.actual_qty, hsod.warehouse_id, hsod.plan_revert_date, hsod.plan_deliver_date,
         hsod.actual_deliver_date, hsod.plan_delivery_date, hsod.actual_delivery_date, hsod.delivery_address,

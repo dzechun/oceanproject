@@ -35,12 +35,20 @@ public class OmHtSalesOrderDet extends ValidGroup implements Serializable {
     private Long htSalesOrderDetId;
 
     /**
-     * 销售订单ID
+     * 销售订单明细ID
      */
-    @ApiModelProperty(name="salesOrderDetId",value = "销售订单ID")
-//    @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="salesOrderDetId",value = "销售订单明细ID")
+//    @Excel(name = "销售订单明细ID", height = 20, width = 30,orderNum="")
     @Column(name = "sales_order_det_id")
     private Long salesOrderDetId;
+
+    /**
+     * 销售订单ID
+     */
+    @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
+//    @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "sales_order_id")
+    private Long salesOrderId;
 
     /**
      * 客户订单行号
