@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSamplePlanAqlDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderMaterialReP;
@@ -52,15 +53,8 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
     private MesPmHtWorkOrderMaterialRePMapper mesPmHtWorkOrderMaterialRePMapper;
 
     @Override
-    public List<MesPmWorkOrderProcessReWoVo> findList(Map<String, Object> map) {
-        List<MesPmWorkOrderProcessReWoVo> list = mesPmWorkOrderProcessReWoMapper.findMaterialList(map);
-        for (MesPmWorkOrderProcessReWoVo mesPmWorkOrderProcessReWoVo : list) {
-            if (StringUtils.isNotEmpty(mesPmWorkOrderProcessReWoVo)){
-                map.put("workOrderId",mesPmWorkOrderProcessReWoVo.getWorkOrderId());
-                mesPmWorkOrderProcessReWoVo.setList(mesPmWorkOrderProcessReWoMapper.findList(map));
-            }
-        }
-        return list;
+    public List<MesPmWorkOrderProcessReWoDto> findList(Map<String, Object> map) {
+        return mesPmWorkOrderProcessReWoMapper.findList(map);
     }
 
     @Override

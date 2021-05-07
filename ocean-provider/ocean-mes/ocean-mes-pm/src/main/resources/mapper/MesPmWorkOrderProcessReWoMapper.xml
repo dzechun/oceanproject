@@ -40,14 +40,6 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
-  <resultMap id="BaseResultMapVo" type="com.fantechs.provider.mes.pm.vo.MesPmWorkOrderProcessReWoVo">
-    <result column="work_order_id" jdbcType="VARCHAR" property="workOrderId"/>
-    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
-  </resultMap>
-
   <sql id="Base_Column_List">
     mpwoprw.work_order_process_re_wo_id,
     mpwoprw.work_order_id,
@@ -56,37 +48,6 @@
     mpwoprw.remark, mpwoprw.org_id, mpwoprw.create_user_id, mpwoprw.create_time, mpwoprw.modified_user_id,
     mpwoprw.modified_time, mpwoprw.is_delete
   </sql>
-
-  <select id="findMaterialList" parameterType="map" resultMap="BaseResultMapVo">
-    select
-    mpwo.work_order_id,
-    mpwo.work_order_code,
-    bm.material_code,
-    bm.material_desc,
-    bm.material_version
-    from mes_pm_work_order_process_re_wo mpwoprw
-    LEFT JOIN mes_pm_work_order mpwo ON mpwoprw.work_order_id = mpwo.work_order_id
-    LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
-    <where>
-      <if test="workOrderCode != null and workOrderCode != ''">
-        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
-      </if>
-      <if test="materialCode != null and materialCode != ''">
-        and bm.material_code like CONCAT('%', #{materialCode}, '%')
-      </if>
-      <if test="materialDesc != null and materialDesc != ''">
-        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
-      </if>
-      <if test="status != null">
-        and mpwoprw.status = #{status}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-    </where>
-    group by mpwoprw.work_order_id
-    order by mpwoprw.create_time desc
-  </select>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,

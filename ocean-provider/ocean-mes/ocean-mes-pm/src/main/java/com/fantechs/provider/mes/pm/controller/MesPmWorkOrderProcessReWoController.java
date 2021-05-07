@@ -76,9 +76,9 @@ public class MesPmWorkOrderProcessReWoController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<MesPmWorkOrderProcessReWoVo>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo) {
+    public ResponseEntity<List<MesPmWorkOrderProcessReWoDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo) {
         Page<Object> page = PageHelper.startPage(searchMesPmWorkOrderProcessReWo.getStartPage(),searchMesPmWorkOrderProcessReWo.getPageSize());
-        List<MesPmWorkOrderProcessReWoVo> list = mesPmWorkOrderProcessReWoService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
+        List<MesPmWorkOrderProcessReWoDto> list = mesPmWorkOrderProcessReWoService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
