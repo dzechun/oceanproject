@@ -25,7 +25,7 @@
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
     <result column="inventory_total_qty" jdbcType="DECIMAL" property="inventoryTotalQty" />
-    <result column="package_specification_name" jdbcType="VARCHAR" property="packageSpecificationName" />
+    <result column="package_specification_quantity" jdbcType="VARCHAR" property="packageSpecificationQuantity" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate" />
     <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate" />
@@ -44,5 +44,117 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+    whii.ht_inventory_id,
+    whii.inventory_id,
+    whii.parent_inventory_id,
+    whii.sales_code,
+    whii.make_code,
+    whii.material_owner_name,
+    whii.warehouse_name,
+    whii.storage_name,
+    whii.job_status,
+    whii.material_id,
+    whii.material_code,
+    whii.material_name,
+    whii.relevance_order_code,
+    whii.inventory_status_id,
+    whii.lock_status,
+    whii.stock_lock,
+    whii.qc_lock,
+    whii.packing_unit_name,
+    whii.packing_qty,
+    whii.inventory_total_qty,
+    whii.package_specification_quantity,
+    whii.pallet_code,
+    whii.receiving_date,
+    whii.qc_date,
+    whii.production_date,
+    whii.expired_date,
+    whii.batch_code,
+    whii.po_code,
+    whii.work_order_code,
+    whii.sales_order_code,
+    whii.supplier_name,
+	whii.`status`,
+	whii.remark,
+	whii.org_id,
+	whii.create_user_id,
+	whii.create_time,
+	whii.modified_user_id,
+	whii.modified_time,
+	whii.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from wms_ht_inner_inventory whii
+    LEFT JOIN ocean.sys_user su  ON whii.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON whii.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON whii.org_id = bo.organization_id
+    <where>
+      <if test="salesCode!=null and salesCode != ''">
+        and whii.sales_code like CONCAT("%",#{salesCode},"%")
+      </if>
+      <if test="makeCode!=null and makeCode != ''">
+        and whii.make_code like CONCAT("%",#{makeCode},"%")
+      </if>
+      <if test="materialOwnerName!=null and materialOwnerName != ''">
+        and whii.material_owner_name like CONCAT("%",#{materialOwnerName},"%")
+      </if>
+      <if test="warehouseName!=null and warehouseName != ''">
+        and whii.warehouse_name like CONCAT("%",#{warehouseName},"%")
+      </if>
+      <if test="storageName!=null and storageName != ''">
+        and whii.storage_name like CONCAT("%",#{storageName},"%")
+      </if>
+      <if test="materialId!=null and materialId != ''">
+        and whii.material_id = #{materialId}
+      </if>
+      <if test="materialCode!=null and materialCode != ''">
+        and whii.material_code like CONCAT("%",#{materialCode},"%")
+      </if>
+      <if test="materialName!=null and materialName != ''">
+        and whii.material_name like CONCAT("%",#{materialName},"%")
+      </if>
+      <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
+        and whii.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")
+      </if>
+      <if test="palletCode!=null and palletCode != ''">
+        and whii.pallet_code like CONCAT("%",#{palletCode},"%")
+      </if>
+      <if test="receivingDate!=null and receivingDate != ''">
+        and whii.receiving_date like CONCAT("%",#{receivingDate},"%")
+      </if>
+      <if test="batchCode!=null and batchCode != ''">
+        and whii.batch_code like CONCAT("%",#{batchCode},"%")
+      </if>
+      <if test="poCode!=null and poCode != ''">
+        and whii.po_code like CONCAT("%",#{poCode},"%")
+      </if>
+      <if test="workOrderCode!=null and workOrderCode != ''">
+        and whii.work_order_code like CONCAT("%",#{workOrderCode},"%")
+      </if>
+      <if test="salesOrderCode!=null and salesOrderCode != ''">
+        and whii.sales_order_code like CONCAT("%",#{salesOrderCode},"%")
+      </if>
+      <if test="supplierName!=null and supplierName != ''">
+        and whii.supplier_name like CONCAT("%",#{supplierName},"%")
+      </if>
+      <if test="status!=null">
+        and whii.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(whii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by whii.create_time desc
+  </select>
+
+
 </mapper>

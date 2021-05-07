@@ -166,10 +166,10 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     private BigDecimal inventoryTotalQty;
 
     /**
-     * 包装规格名称
+     * 包装规格
      */
-    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格名称")
-    @Excel(name = "包装规格名称", height = 20, width = 30,orderNum="17")
+    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格")
+    @Excel(name = "包装规格", height = 20, width = 30,orderNum="17")
     @Column(name = "package_specification_quantity")
     private BigDecimal packageSpecificationQuantity;
 
