@@ -146,4 +146,11 @@ public class BaseStorageController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+    @ApiOperation("减可放托盘数")
+    @PostMapping("/minusSurplusCanPutSalver")
+    public ResponseEntity minusSurplusCanPutSalver(@ApiParam(value = "库位id", required = true) @RequestParam @NotNull(message = "库位id")Long storageId,
+                                                            @ApiParam(value = "待减可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num) {
+        return ControllerUtil.returnCRUD(baseStorageService.minusSurplusCanPutSalver(storageId,num));
+    }
 }

@@ -22,4 +22,7 @@ public interface BaseStorageService extends IService<BaseStorage> {
 
     //根据编码进行批量更新
     int batchUpdate(List<BaseStorage> baseStorages);
+
+    //减可放托盘数
+    int minusSurplusCanPutSalver(Long storageId,Integer num);
 }

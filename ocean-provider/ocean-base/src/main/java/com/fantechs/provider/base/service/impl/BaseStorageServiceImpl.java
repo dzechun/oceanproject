@@ -249,4 +249,13 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         return resutlMap;
     }
 
+    @Override
+    public int minusSurplusCanPutSalver(Long storageId,Integer num) {
+        BaseStorage baseStorage = baseStorageMapper.selectByPrimaryKey(storageId);
+        if (StringUtils.isEmpty(baseStorage)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        baseStorage.setSurplusCanPutSalver(baseStorage.getSurplusCanPutSalver()-num);
+        return baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
+    }
 }
