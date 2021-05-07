@@ -66,6 +66,12 @@
       <if test="materialOwnerId!=null">
         and bis.material_owner_id = #{materialOwnerId}
       </if>
+      <if test="materialOwnerName!=null and materialOwnerName!=''">
+        and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
       <if test="inventoryStatusName!=null and inventoryStatusName!=''">
         and bis.inventory_status_name like CONCAT('%', #{inventoryStatusName}, '%')
       </if>
