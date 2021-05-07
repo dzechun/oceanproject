@@ -1,11 +1,17 @@
 package com.fanctechs.provider.api.wms.inner;
 
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
+import com.fantechs.common.base.response.ControllerUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -56,5 +62,17 @@ public interface InnerFeignApi {
     @ApiOperation("储位库存明细删除")
     @PostMapping("/wmsInnerStorageInventoryDet/delete")
     ResponseEntity deleteStorageInventoryDet(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
+
+    @ApiOperation("库存查询")
+    @PostMapping("/wmsInnerInventory/findList")
+    ResponseEntity<List<WmsInnerInventoryDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerInventory searchWmsInnerInventory);
+
+    @ApiOperation(value = "库存新增",notes = "新增")
+    @PostMapping("/wmsInnerInventory/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerInventory wmsInnerInventory);
+
+    @ApiOperation("库存修改")
+    @PostMapping("/wmsInnerInventory/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInnerInventory.update.class) WmsInnerInventory wmsInnerInventory);
 
 }

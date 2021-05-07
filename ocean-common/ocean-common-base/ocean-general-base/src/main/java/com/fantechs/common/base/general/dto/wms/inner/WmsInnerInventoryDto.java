@@ -21,7 +21,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30)
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "28")
     @Transient
     private String organizationName;
 
@@ -29,7 +29,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 创建人名称
      */
     @ApiModelProperty(name="createUserName",value = "创建人名称")
-    @Excel(name = "盘存转报废单号", height = 20, width = 30)
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum = "29")
     @Transient
     private String createUserName;
 
@@ -37,7 +37,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 修改人名称
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人名称")
-    @Excel(name = "盘存转报废单号", height = 20, width = 30)
+    @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "31")
     @Transient
     private String modifiedUserName;
 

@@ -35,7 +35,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 销售编码
      */
     @ApiModelProperty(name="salesCode",value = "销售编码")
-    @Excel(name = "销售编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="1")
     @Column(name = "sales_code")
     private String salesCode;
 
@@ -43,7 +43,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 制造编码
      */
     @ApiModelProperty(name="makeCode",value = "制造编码")
-    @Excel(name = "制造编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "制造编码", height = 20, width = 30,orderNum="2")
     @Column(name = "make_code")
     private String makeCode;
 
@@ -51,7 +51,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 货主名称
      */
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    @Excel(name = "货主名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
     @Column(name = "material_owner_name")
     private String materialOwnerName;
 
@@ -59,7 +59,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 仓库名称
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
     @Column(name = "warehouse_name")
     private String warehouseName;
 
@@ -67,7 +67,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 库位名称
      */
     @ApiModelProperty(name="storageName",value = "库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "库位名称", height = 20, width = 30,orderNum="5")
     @Column(name = "storage_name")
     private String storageName;
 
@@ -75,7 +75,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 作业状态(1-待入 2-正常 3-待出)
      */
     @ApiModelProperty(name="jobStatus",value = "作业状态(1-待入 2-正常 3-待出)")
-    @Excel(name = "作业状态(1-待入 2-正常 3-待出)", height = 20, width = 30,orderNum="")
+    @Excel(name = "作业状态", height = 20, width = 30,orderNum="6",replace = {"待入_1","正常_2","待出_3"})
     @Column(name = "job_status")
     private Byte jobStatus;
 
@@ -83,7 +83,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -91,7 +90,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="7")
     @Column(name = "material_code")
     private String materialCode;
 
@@ -99,7 +98,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 物料名称
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="8")
     @Column(name = "material_name")
     private String materialName;
 
@@ -107,7 +106,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 相关单号
      */
     @ApiModelProperty(name="relevanceOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "相关单号", height = 20, width = 30,orderNum="9")
     @Column(name = "relevance_order_code")
     private String relevanceOrderCode;
 
@@ -115,7 +114,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 库存状态ID
      */
     @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
-    @Excel(name = "库存状态ID", height = 20, width = 30,orderNum="")
     @Column(name = "inventory_status_id")
     private Long inventoryStatusId;
 
@@ -123,7 +121,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 锁定状态(0-否 1-是)
      */
     @ApiModelProperty(name="lockStatus",value = "锁定状态(0-否 1-是)")
-    @Excel(name = "锁定状态(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Excel(name = "锁定状态", height = 20, width = 30,orderNum="11",replace = {"否_1","是_1"})
     @Column(name = "lock_status")
     private Byte lockStatus;
 
@@ -131,7 +129,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 盘点锁(0-否 1-是)
      */
     @ApiModelProperty(name="stockLock",value = "盘点锁(0-否 1-是)")
-    @Excel(name = "盘点锁(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Excel(name = "盘点锁", height = 20, width = 30,orderNum="12",replace = {"否_1","是_1"})
     @Column(name = "stock_lock")
     private Byte stockLock;
 
@@ -139,7 +137,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 质检锁(0-否 1-是)
      */
     @ApiModelProperty(name="qcLock",value = "质检锁(0-否 1-是)")
-    @Excel(name = "质检锁(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Excel(name = "质检锁", height = 20, width = 30,orderNum="13",replace = {"否_1","是_1"})
     @Column(name = "qc_lock")
     private Byte qcLock;
 
@@ -147,7 +145,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 包装单位名称
      */
     @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
-    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="14")
     @Column(name = "packing_unit_name")
     private String packingUnitName;
 
@@ -155,7 +153,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 包装数量
      */
     @ApiModelProperty(name="packingQty",value = "包装数量")
-    @Excel(name = "包装数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "包装数量", height = 20, width = 30,orderNum="15")
     @Column(name = "packing_qty")
     private BigDecimal packingQty;
 
@@ -163,23 +161,23 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 库存总数
      */
     @ApiModelProperty(name="inventoryTotalQty",value = "库存总数")
-    @Excel(name = "库存总数", height = 20, width = 30,orderNum="")
+    @Excel(name = "库存总数", height = 20, width = 30,orderNum="16")
     @Column(name = "inventory_total_qty")
     private BigDecimal inventoryTotalQty;
 
     /**
      * 包装规格名称
      */
-    @ApiModelProperty(name="packageSpecificationName",value = "包装规格名称")
-    @Excel(name = "包装规格名称", height = 20, width = 30,orderNum="")
-    @Column(name = "package_specification_name")
-    private String packageSpecificationName;
+    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格名称")
+    @Excel(name = "包装规格名称", height = 20, width = 30,orderNum="17")
+    @Column(name = "package_specification_quantity")
+    private BigDecimal packageSpecificationQuantity;
 
     /**
      * 托盘号
      */
     @ApiModelProperty(name="palletCode",value = "托盘号")
-    @Excel(name = "托盘号", height = 20, width = 30,orderNum="")
+    @Excel(name = "托盘号", height = 20, width = 30,orderNum="18")
     @Column(name = "pallet_code")
     private String palletCode;
 
@@ -187,7 +185,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 收货日期
      */
     @ApiModelProperty(name="receivingDate",value = "收货日期")
-    @Excel(name = "收货日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "收货日期", height = 20, width = 30,orderNum="19")
     @Column(name = "receiving_date")
     private Date receivingDate;
 
@@ -195,7 +193,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 质检日期
      */
     @ApiModelProperty(name="qcDate",value = "质检日期")
-    @Excel(name = "质检日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "质检日期", height = 20, width = 30,orderNum="20")
     @Column(name = "qc_date")
     private Date qcDate;
 
@@ -203,7 +201,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "生产日期", height = 20, width = 30,orderNum="21")
     @Column(name = "production_date")
     private Date productionDate;
 
@@ -211,7 +209,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 过期日期
      */
     @ApiModelProperty(name="expiredDate",value = "过期日期")
-    @Excel(name = "过期日期", height = 20, width = 30,orderNum="")
+    @Excel(name = "过期日期", height = 20, width = 30,orderNum="22")
     @Column(name = "expired_date")
     private Date expiredDate;
 
@@ -219,7 +217,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 批次号
      */
     @ApiModelProperty(name="batchCode",value = "批次号")
-    @Excel(name = "批次号", height = 20, width = 30,orderNum="")
+    @Excel(name = "批次号", height = 20, width = 30,orderNum="23")
     @Column(name = "batch_code")
     private String batchCode;
 
@@ -227,7 +225,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 采购单号
      */
     @ApiModelProperty(name="poCode",value = "采购单号")
-    @Excel(name = "采购单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "采购单号", height = 20, width = 30,orderNum="24")
     @Column(name = "po_code")
     private String poCode;
 
@@ -235,7 +233,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 工单号
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号")
-    @Excel(name = "工单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "工单号", height = 20, width = 30,orderNum="25")
     @Column(name = "work_order_code")
     private String workOrderCode;
 
@@ -243,7 +241,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 销售单号
      */
     @ApiModelProperty(name="salesOrderCode",value = "销售单号")
-    @Excel(name = "销售单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "销售单号", height = 20, width = 30,orderNum="26")
     @Column(name = "sales_order_code")
     private String salesOrderCode;
 
@@ -251,7 +249,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 供应商名称
      */
     @ApiModelProperty(name="supplierName",value = "供应商名称")
-    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="27")
     @Column(name = "supplier_name")
     private String supplierName;
 
@@ -259,21 +257,18 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="")
     @Column(name = "org_id")
     private Long orgId;
 
@@ -281,7 +276,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -289,7 +283,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="30",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -298,7 +292,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -306,7 +299,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="32",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -315,7 +308,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
 

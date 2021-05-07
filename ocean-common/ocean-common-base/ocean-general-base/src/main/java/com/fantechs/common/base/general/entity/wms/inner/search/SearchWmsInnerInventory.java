@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -107,6 +108,12 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="supplierName",value = "供应商名称")
     private String supplierName;
+
+    /**
+     * 状态(0无效，1有效)
+     */
+    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
+    private Byte status;
 
 
     private static final long serialVersionUID = 1L;

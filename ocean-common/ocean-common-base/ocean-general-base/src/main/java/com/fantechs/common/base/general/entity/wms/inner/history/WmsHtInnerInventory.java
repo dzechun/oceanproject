@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -180,10 +181,10 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
     /**
      * 包装规格名称
      */
-    @ApiModelProperty(name="packageSpecificationName",value = "包装规格名称")
+    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格名称")
     @Excel(name = "包装规格名称", height = 20, width = 30,orderNum="")
-    @Column(name = "package_specification_name")
-    private String packageSpecificationName;
+    @Column(name = "package_specification_quantity")
+    private BigDecimal packageSpecificationQuantity;
 
     /**
      * 托盘号
@@ -328,6 +329,30 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Excel(name = "组织名称", height = 20, width = 30)
+    @Transient
+    private String organizationName;
+
+    /**
+     * 创建人名称
+     */
+    @ApiModelProperty(name="createUserName",value = "创建人名称")
+    @Excel(name = "创建人名称", height = 20, width = 30)
+    @Transient
+    private String createUserName;
+
+    /**
+     * 修改人名称
+     */
+    @ApiModelProperty(name="modifiedUserId",value = "修改人名称")
+    @Excel(name = "盘存转报废单号", height = 20, width = 30)
+    @Transient
+    private String modifiedUserName;
 
     private static final long serialVersionUID = 1L;
 }
