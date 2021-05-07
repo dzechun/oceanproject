@@ -33,4 +33,10 @@ public class SearchBaseMaterialOwner extends BaseQuery implements Serializable {
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
     private String materialOwnerName;
 
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
+
 }
