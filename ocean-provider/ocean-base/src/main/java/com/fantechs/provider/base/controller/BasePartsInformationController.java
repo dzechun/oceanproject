@@ -116,7 +116,7 @@ public class BasePartsInformationController {
             List<BasePartsInformationImport> basePartsInformationImports = EasyPoiUtils.importExcel(file, 2, 1, BasePartsInformationImport.class);
             Map<String, Object> resultMap = basePartsInformationService.importExcel(basePartsInformationImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-        }catch (NoSuchElementException e) {
+        }catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());

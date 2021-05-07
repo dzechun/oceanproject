@@ -116,7 +116,7 @@ public class BaseMaterialOwnerController {
             List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = EasyPoiUtils.importExcel(file, BaseMaterialOwnerDto.class);
             Map<String, Object> resultMap = baseMaterialOwnerService.importExcel(baseMaterialOwnerDtos);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-        } catch (NoSuchElementException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());

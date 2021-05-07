@@ -136,7 +136,7 @@ public class BaseStorageController {
             List<BaseStorageImport> baseStorageImports = EasyPoiUtils.importExcel(file, 2, 1, BaseStorageImport.class);
             Map<String, Object> resultMap = baseStorageService.importExcel(baseStorageImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-        }catch (NoSuchElementException e) {
+        }catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());

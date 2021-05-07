@@ -119,7 +119,7 @@ public class BaseProcessController {
             List<BaseProcessImport> baseProcessImports = EasyPoiUtils.importExcel(file, 2, 1, BaseProcessImport.class);
             Map<String, Object> resultMap = baseProcessService.importExcel(baseProcessImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-        }catch (NoSuchElementException e) {
+        }catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());

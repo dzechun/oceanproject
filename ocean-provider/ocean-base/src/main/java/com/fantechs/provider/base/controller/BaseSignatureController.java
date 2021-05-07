@@ -123,7 +123,7 @@ public class BaseSignatureController {
             List<BaseSignatureImport> baseSignatureImports = EasyPoiUtils.importExcel(file, 2, 1, BaseSignatureImport.class);
             Map<String, Object> resultMap = baseSignatureService.importExcel(baseSignatureImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-        }catch (NoSuchElementException e) {
+        }catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());

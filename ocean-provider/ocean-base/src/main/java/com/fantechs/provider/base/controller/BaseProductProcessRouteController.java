@@ -115,7 +115,7 @@ public class BaseProductProcessRouteController {
             List<BaseProductProcessRouteImport> baseProductProcessRouteImports = EasyPoiUtils.importExcel(file, 2, 1, BaseProductProcessRouteImport.class);
             Map<String, Object> resultMap = baseProductProcessRouteService.importExcel(baseProductProcessRouteImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
-        }catch (NoSuchElementException e) {
+        }catch (RuntimeException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
