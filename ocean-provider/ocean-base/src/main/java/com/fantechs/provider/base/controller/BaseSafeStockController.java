@@ -3,7 +3,7 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
 import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
-import com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -63,25 +63,25 @@ public class BaseSafeStockController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<BaseSafeStockDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOltSafeStock searchOltSafeStock) {
-        Page<Object> page = PageHelper.startPage(searchOltSafeStock.getStartPage(),searchOltSafeStock.getPageSize());
-        List<BaseSafeStockDto> list = baseSafeStockService.findList(searchOltSafeStock);
+    public ResponseEntity<List<BaseSafeStockDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSafeStock searchBaseSafeStock) {
+        Page<Object> page = PageHelper.startPage(searchBaseSafeStock.getStartPage(), searchBaseSafeStock.getPageSize());
+        List<BaseSafeStockDto> list = baseSafeStockService.findList(searchBaseSafeStock);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BaseSafeStockDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOltSafeStock searchOltSafeStock) {
-        Page<Object> page = PageHelper.startPage(searchOltSafeStock.getStartPage(),searchOltSafeStock.getPageSize());
-        List<BaseSafeStockDto> list = baseSafeStockService.findHtList(searchOltSafeStock);
+    public ResponseEntity<List<BaseSafeStockDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSafeStock searchBaseSafeStock) {
+        Page<Object> page = PageHelper.startPage(searchBaseSafeStock.getStartPage(), searchBaseSafeStock.getPageSize());
+        List<BaseSafeStockDto> list = baseSafeStockService.findHtList(searchBaseSafeStock);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchOltSafeStock searchOltSafeStock){
-    List<BaseSafeStockDto> list = baseSafeStockService.findList(searchOltSafeStock);
+    @RequestBody(required = false) SearchBaseSafeStock searchBaseSafeStock){
+    List<BaseSafeStockDto> list = baseSafeStockService.findList(searchBaseSafeStock);
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "安全库存信息", BaseSafeStockDto.class, "安全库存信息.xls", response);

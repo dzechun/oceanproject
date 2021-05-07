@@ -2,7 +2,7 @@ package com.fantechs.provider.base.service;
 
 import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
 import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
-import com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public interface BaseSafeStockService extends IService<BaseSafeStock> {
-    List<BaseSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock);
-    List<BaseSafeStockDto> findHtList(SearchOltSafeStock searchOltSafeStock);
+    List<BaseSafeStockDto> findList(SearchBaseSafeStock searchBaseSafeStock);
+    List<BaseSafeStockDto> findHtList(SearchBaseSafeStock searchBaseSafeStock);
     int  inventeryWarning();
 }

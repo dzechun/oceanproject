@@ -6,7 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
 import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtSafeStock;
-import com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -40,13 +40,13 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     private BaseFeignApi baseFeignApi;
 
     @Override
-    public List<BaseSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock) {
-        return baseSafeStockMapper.findList(searchOltSafeStock);
+    public List<BaseSafeStockDto> findList(SearchBaseSafeStock searchBaseSafeStock) {
+        return baseSafeStockMapper.findList(searchBaseSafeStock);
     }
 
     @Override
-    public List<BaseSafeStockDto> findHtList(SearchOltSafeStock searchOltSafeStock) {
-        return baseHtSafeStockMapper.findHtList(searchOltSafeStock);
+    public List<BaseSafeStockDto> findHtList(SearchBaseSafeStock searchBaseSafeStock) {
+        return baseHtSafeStockMapper.findHtList(searchBaseSafeStock);
     }
 
     /**
@@ -55,7 +55,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
      */
     @Override
     public int inventeryWarning() {
-        List<BaseSafeStockDto> list = findList(new SearchOltSafeStock());
+        List<BaseSafeStockDto> list = findList(new SearchBaseSafeStock());
         List<BaseSafeStockDto> oltList = new ArrayList<>();
         for (BaseSafeStockDto oltSafeStockDto : list) {
             BigDecimal qty = baseSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());

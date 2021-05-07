@@ -2,7 +2,7 @@ package com.fantechs.provider.base.mapper;
 
 import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
 import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
-import com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Mapper
 public interface BaseSafeStockMapper extends MyMapper<BaseSafeStock> {
-    List<BaseSafeStockDto> findList(SearchOltSafeStock searchOltSafeStock);
+    List<BaseSafeStockDto> findList(SearchBaseSafeStock searchBaseSafeStock);
 
     /**
      * 根据仓库查询总数

@@ -1,76 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.base.mapper.BaseHtSafeStockMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtSafeStock">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="base_ht_safe_stock_id" jdbcType="BIGINT" property="oltHtSafeStockId" />
-    <result column="safe_stock_id" jdbcType="BIGINT" property="safeStockId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="material_category_id" jdbcType="BIGINT" property="materialCategoryId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
-    <result column="min_quantity" jdbcType="DECIMAL" property="minQty" />
-    <result column="max_quantity" jdbcType="DECIMAL" property="maxQty"/>
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseColumnMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseSafeStockDto">
-<result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtSafeStock">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="base_ht_safe_stock_id" jdbcType="BIGINT" property="oltHtSafeStockId"/>
+        <result column="safe_stock_id" jdbcType="BIGINT" property="safeStockId"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="material_category_id" jdbcType="BIGINT" property="materialCategoryId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="min_quantity" jdbcType="DECIMAL" property="minQty"/>
+        <result column="max_quantity" jdbcType="DECIMAL" property="maxQty"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+    <resultMap id="BaseColumnMap" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.basic.BaseSafeStockDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-</resultMap>
-<sql id="SqlColumn">
-os.safe_ht_stock_id,
-os.safe_stock_id,
-os.warehouse_id,
-os.material_category_id,
-os.material_id,
-os.material_owner_id,
-os.min_qty,
-os.max_qty,
-os.status,
-os.org_id,
-os.create_user_id,
-os.create_time,
-os.modified_user_id,
-os.modified_time,
-os.is_delete,
-os.option1,os.option2,os.option3
-</sql>
-<select id="findHtList" resultMap="BaseColumnMap" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchOltSafeStock">
-SELECT <include refid="SqlColumn"/>,sw.warehouse_name as 'warehouseName',smc.material_category_name as 'materialCategoryName',sm.material_code as 'materialCode',
-sm.material_name as 'materialName',sm.material_desc as 'materialDesc',sm.material_version as 'materialVersion',bmo.material_owner_name as 'materialOwnerName',
-su.user_name
-create_user_name,sus.user_name as modified_user_name, bo.organization_name
-FROM fantech_imes_v2.base_ht_safe_stock os
-LEFT JOIN fantech_imes_v2.base_material_owner bmo ON os.material_owner_id=bmo.material_owner_id
-LEFT JOIN fantech_imes_v2.base_warehouse sw ON os.warehouse_id=sw.warehouse_id
-LEFT JOIN fantech_imes_v2.base_material_category smc ON os.material_category_id = smc.material_category_id
-LEFT JOIN fantech_imes_v2.base_material sm ON os.material_id = sm.material_id
-LEFT JOIN ocean_v2.sys_user su ON os.create_user_id = su.user_id
-LEFT JOIN ocean_v2.sys_user sus ON os.modified_user_id = sus.user_id
-LEFT JOIN fantech_imes_v2.base_organization bo ON os.org_id = bo.organization_id
-<where>
-<if test="warehouseId != null">
-and sw.warehouse_id = #{warehouseId}
-</if>
-<if test="materialId != null">
-and sm.material_id = #{materialId}
-</if>
-<if test="materialDesc != null and materialDesc != ''">
-and sm.material_desc like CONCAT('%',#{materialDesc},'%')
-</if>
-</where>
-order by os.create_time desc
-</select>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="SqlColumn">
+        os.safe_ht_stock_id,
+        os.safe_stock_id,
+        os.warehouse_id,
+        os.material_category_id,
+        os.material_id,
+        os.material_owner_id,
+        os.min_qty,
+        os.max_qty,
+        os.`status`,
+        os.org_id,
+        os.create_user_id,
+        os.create_time,
+        os.modified_user_id,
+        os.modified_time,
+        os.is_delete,
+        os.option1,
+        os.option2,
+        os.option3
+    </sql>
+    <select id="findHtList" resultMap="BaseColumnMap"
+            parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock">
+        SELECT<include refid="SqlColumn"/>,sw.warehouse_name as 'warehouseName',smc.material_category_name as
+        'materialCategoryName',sm.material_code as 'materialCode',
+        sm.material_name as 'materialName',sm.material_desc as 'materialDesc',sm.material_version as
+        'materialVersion',bmo.material_owner_name as 'materialOwnerName',
+        su.user_name
+        create_user_name,sus.user_name as modified_user_name, bo.organization_name
+        FROM fantech_imes_v2.base_ht_safe_stock os
+        LEFT JOIN fantech_imes_v2.base_material_owner bmo ON os.material_owner_id=bmo.material_owner_id
+        LEFT JOIN fantech_imes_v2.base_warehouse sw ON os.warehouse_id=sw.warehouse_id
+        LEFT JOIN fantech_imes_v2.base_material_category smc ON os.material_category_id = smc.material_category_id
+        LEFT JOIN fantech_imes_v2.base_material sm ON os.material_id = sm.material_id
+        LEFT JOIN ocean_v2.sys_user su ON os.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON os.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON os.org_id = bo.organization_id
+        <where>
+            <if test="warehouseId != null">
+                and sw.warehouse_id = #{warehouseId}
+            </if>
+            <if test="warehouseName != null and warehouseName != ''">
+                and sw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="materialOwnerId != null">
+                and bmo.material_owner_id = #{materialOwnerId}
+            </if>
+            <if test="materialOwnerName != null and materialOwnerName != ''">
+                and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+            </if>
+            <if test="materialId != null">
+                and sm.material_id = #{materialId}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and sm.material_code like CONCAT('%',#{materialCode},'%')
+            </if>
+            <if test="materialName != null and materialName != ''">
+                and sm.material_name like CONCAT('%',#{materialName},'%')
+            </if>
+            <if test="materialDesc != null and materialDesc != ''">
+                and sm.material_desc like CONCAT('%',#{materialDesc},'%')
+            </if>
+            <if test="status!=null">
+                and os.status=#{status}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(os.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by os.create_time desc
+    </select>
 </mapper>
