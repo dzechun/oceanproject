@@ -90,7 +90,7 @@ public class BaseStorageImport implements Serializable {
      */
     @ApiModelProperty(name="storageType",value = "库位类型(1-存货 2-收货 3-发货)")
     @Excel(name = "库位类型(1-存货 2-收货 3-发货)(必填)", height = 20, width = 30)
-    private Byte storageType;
+    private Integer storageType;
 
     /**
      * 工作区
@@ -154,10 +154,4 @@ public class BaseStorageImport implements Serializable {
     @Excel(name = "盘点动线号(必填)", height = 20, width = 30)
     private Integer stockMoveLineNo;
 
-    /**
-     * 盘点锁(0-否 1-是)
-     */
-    @ApiModelProperty(name="ifStockLock",value = "盘点锁(0-否 1-是)")
-    @Excel(name = "盘点锁(0-否 1-是)", height = 20, width = 30)
-    private Byte ifStockLock;
 }

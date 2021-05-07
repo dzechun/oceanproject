@@ -174,7 +174,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             BaseStorageImport baseStorageImport = baseStorageImports.get(i);
             String storageCode = baseStorageImport.getStorageCode();
             String warehouseAreaCode = baseStorageImport.getWarehouseAreaCode();
-            Byte storageType = baseStorageImport.getStorageType();
+            Integer storageType = baseStorageImport.getStorageType();
             String workingAreaCode = baseStorageImport.getWorkingAreaCode();
             Integer roadway = baseStorageImport.getRoadway();
             Integer rowNo = baseStorageImport.getRowNo();
@@ -204,7 +204,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             baseStorageImport.setWarehouseAreaId(baseWarehouseArea.getWarehouseAreaId());
 
             //判断工作区是否存在
-            Example example2 = new Example(BaseWarehouseArea.class);
+            Example example2 = new Example(BaseWorkingArea.class);
             Example.Criteria criteria2 = example2.createCriteria();
             criteria2.andEqualTo("workingAreaCode",workingAreaCode);
             BaseWorkingArea baseWorkingArea = baseWorkingAreaMapper.selectOneByExample(example2);
@@ -226,6 +226,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             baseStorage.setModifiedTime(new Date());
             baseStorage.setModifiedUserId(currentUser.getUserId());
             baseStorage.setOrganizationId(currentUser.getOrganizationId());
+            baseStorage.setStorageType(baseStorageImport.getStorageType().byteValue());
             list.add(baseStorage);
         }
 
