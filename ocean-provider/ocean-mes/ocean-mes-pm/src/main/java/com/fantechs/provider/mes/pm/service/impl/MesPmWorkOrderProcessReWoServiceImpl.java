@@ -65,19 +65,34 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
         }
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(MesPmWorkOrderProcessReWo.class);
-            for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
-                example.createCriteria().andEqualTo("workOrderProcessReWoId",mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId() == null ? -1 : mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId());
-                MesPmWorkOrderProcessReWo pmWorkOrderProcessReWo = mesPmWorkOrderProcessReWoMapper.selectOneByExample(example);
-                if (StringUtils.isEmpty(pmWorkOrderProcessReWo)){
-                    this.save(mesPmWorkOrderProcessReWo);
-                }else {
-                    boolean b = ClassCompareUtil.compareObject(pmWorkOrderProcessReWo, mesPmWorkOrderProcessReWo);
-                    if (b){
-                        this.update(mesPmWorkOrderProcessReWo);
-                    }
+            if (StringUtils.isEmpty(list.get(0).getProcessId()) || list.get(0).getProcessId() == 0){
+                String ids = "";
+                example.createCriteria().andEqualTo("workOrderId",list.get(0).getWorkOrderId());
+                List<MesPmWorkOrderProcessReWo> mesPmWorkOrderProcessReWos = mesPmWorkOrderProcessReWoMapper.selectByExample(example);
+                for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : mesPmWorkOrderProcessReWos) {
+                    ids += mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId() +",";
                 }
-
+                this.batchDelete(ids.substring(0, ids.length() - 1));
+            }else {
+                List ids = new ArrayList();
+                for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {
+                    example.createCriteria().andEqualTo("workOrderProcessReWoId",mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId() == null ? -1 : mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId());
+                    MesPmWorkOrderProcessReWo pmWorkOrderProcessReWo = mesPmWorkOrderProcessReWoMapper.selectOneByExample(example);
+                    if (StringUtils.isEmpty(pmWorkOrderProcessReWo)){
+                        this.save(mesPmWorkOrderProcessReWo);
+                    }else {
+//                        boolean b = ClassCompareUtil.compareObject(pmWorkOrderProcessReWo, mesPmWorkOrderProcessReWo);
+//                        if (b){
+                        this.update(mesPmWorkOrderProcessReWo);
+//                        }
+                    }
+                    ids.add(mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId());
+                    example.clear();
+                }
+                example.createCriteria().andEqualTo("workOrderId",list.get(0).getWorkOrderId()).andNotIn("workOrderProcessReWoId",ids);
+                mesPmWorkOrderProcessReWoMapper.deleteByExample(example);
             }
+
         }
         return 1;
     }
@@ -127,13 +142,17 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
         entity.setOrgId(user.getOrganizationId());
-
+        Example example = new Example(MesPmWorkOrderProcessReWo.class);
+        example.createCriteria().andEqualTo("workOrderProcessReWoId",entity.getWorkOrderProcessReWoId());
+        MesPmWorkOrderProcessReWo pmWorkOrderProcessReWo = mesPmWorkOrderProcessReWoMapper.selectOneByExample(example);
+        boolean b = ClassCompareUtil.compareObject(pmWorkOrderProcessReWo, entity);
         MesPmHtWorkOrderProcessReWo mesPmHtWorkOrderProcessReWo = new MesPmHtWorkOrderProcessReWo();
-        BeanUtils.copyProperties(entity,mesPmHtWorkOrderProcessReWo);
-        mesPmHtWorkOrderProcessReWoMapper.insert(mesPmHtWorkOrderProcessReWo);
+        if (b){
+            BeanUtils.copyProperties(entity,mesPmHtWorkOrderProcessReWo);
+            mesPmHtWorkOrderProcessReWoMapper.insertUseGeneratedKeys(mesPmHtWorkOrderProcessReWo);
+        }
 
-
-        Example example = new Example(MesPmWorkOrderMaterialReP.class);
+        example = new Example(MesPmWorkOrderMaterialReP.class);
         List<Long> dList = new ArrayList();
         List<MesPmWorkOrderMaterialReP> addList = new ArrayList<>();
         for (MesPmWorkOrderMaterialRePDto mesPmWorkOrderMaterialRePDto : entity.getList()) {
@@ -144,9 +163,12 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
 
             dList.add(mesPmWorkOrderMaterialRePDto.getWorkOrderMaterialRePId());
         }
-        example.createCriteria().andNotIn("workOrderMaterialRePId",dList);
+        List<MesPmWorkOrderMaterialReP> mesPmWorkOrderMaterialRePS = new ArrayList<>();
         //获取删除的物料清单
-        List<MesPmWorkOrderMaterialReP> mesPmWorkOrderMaterialRePS = mesPmWorkOrderMaterialRePMapper.selectByExample(example);
+        if (addList.size() >0){
+            example.createCriteria().andNotIn("workOrderMaterialRePId",dList);
+            mesPmWorkOrderMaterialRePS = mesPmWorkOrderMaterialRePMapper.selectByExample(example);
+        }
         List<MesPmHtWorkOrderMaterialReP> htList = new ArrayList<>();
         MesPmHtWorkOrderMaterialReP mesPmHtWorkOrderMaterialReP = new MesPmHtWorkOrderMaterialReP();
         mesPmWorkOrderMaterialRePS.addAll(addList);
@@ -163,7 +185,10 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
         example.createCriteria().andEqualTo("workOrderProcessReWoId",entity.getWorkOrderProcessReWoId());
         mesPmWorkOrderMaterialRePMapper.deleteByExample(example);
 
-        mesPmWorkOrderMaterialRePMapper.insertList(entity.getList());
+        if (StringUtils.isNotEmpty(entity.getList())){
+            mesPmWorkOrderMaterialRePMapper.insertList(entity.getList());
+        }
+
 
         return mesPmWorkOrderProcessReWoMapper.updateByPrimaryKeySelective(entity);
     }
