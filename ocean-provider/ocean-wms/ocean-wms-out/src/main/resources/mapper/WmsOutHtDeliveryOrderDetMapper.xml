@@ -69,7 +69,7 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.wms_out_delivery_order_det wohdod
+    from fantech_imes_v2.wms_out_ht_delivery_order_det wohdod
     LEFT JOIN ocean_v2.sys_user su ON wohdod.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wohdod.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wohdod.org_id = bo.organization_id

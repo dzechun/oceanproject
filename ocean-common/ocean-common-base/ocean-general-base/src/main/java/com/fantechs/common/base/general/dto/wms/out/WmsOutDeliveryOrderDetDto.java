@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements Serializable {
@@ -25,6 +26,7 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     /**
      * 组织名称
      */
+    @Transient
     @ApiModelProperty(name="organizationName",value = "组织名称")
     @Excel(name = "组织名称", height = 20, width = 30)
     private String organizationName;
@@ -36,34 +38,32 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
 
     @Transient
     @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30)
     private String materialName;
 
     @Transient
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30)
-    private String materialDesc;
+    @ApiModelProperty(name="storageName" ,value="库位名称")
+    @Excel(name = "库位名称", height = 20, width = 30)
+    private String storageName;
 
-    @ApiModelProperty(name="supplierName" ,value="客户名称")
-    private String supplierName;
-
-    @ApiModelProperty(name="orderCode" ,value="订单号")
-    private String orderCode;
-
-    @ApiModelProperty(name="contractCode" ,value="合同号")
-    private String contractCode;
-
+    @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
     private String warehouseName;
 
-    @ApiModelProperty(name="productModelName" ,value="产品型号")
-    private String productModelName;
+    @Transient
+    @ApiModelProperty(name="volume" ,value="体积")
+    @Excel(name = "体积", height = 20, width = 30)
+    private BigDecimal volume;
 
-    @ApiModelProperty(name="realityCartonQty" ,value="出货箱数")
-    private String realityCartonQty;
+    @Transient
+    @ApiModelProperty(name="netWeight" ,value="净重")
+    @Excel(name = "净重", height = 20, width = 30)
+    private BigDecimal netWeight;
 
-
-
-
-
+    @Transient
+    @ApiModelProperty(name="grossWeight" ,value="毛重")
+    @Excel(name = "毛重", height = 20, width = 30)
+    private BigDecimal grossWeight;
 
 }

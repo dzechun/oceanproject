@@ -98,21 +98,22 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //出库单
         wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
         wmsOutDeliveryOrder.setCreateTime(new Date());
         wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
         wmsOutDeliveryOrder.setModifiedTime(new Date());
         wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
         wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
-
         int i = wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
-        //履历
+        //出库单履历
         WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
         BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
         wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
 
         //出库单明细
+        List<WmsOutHtDeliveryOrderDet> wmsOutHtDeliveryOrderDetList = new ArrayList<>();
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
             for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
@@ -122,8 +123,13 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setModifiedTime(new Date());
                 wmsOutDeliveryOrderDet.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
+                //出库单明细履历
+                WmsOutHtDeliveryOrderDet wmsOutHtDeliveryOrderDet = new WmsOutHtDeliveryOrderDet();
+                BeanUtils.copyProperties(wmsOutDeliveryOrderDet,wmsOutHtDeliveryOrderDet);
+                wmsOutHtDeliveryOrderDetList.add(wmsOutHtDeliveryOrderDet);
             }
             wmsOutDeliveryOrderDetMapper.insertList(wmsOutDeliveryOrderDetList);
+            wmsOutHtDeliveryOrderDetMapper.insertList(wmsOutHtDeliveryOrderDetList);
         }
 
         return i;
@@ -137,18 +143,20 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //出库单
         wmsOutDeliveryOrder.setModifiedTime(new Date());
         wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
         wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
-
         int i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
 
-        //履历
+        //出库单履历
         WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
         BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
         wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
 
         //出库单明细
+        List<WmsOutHtDeliveryOrderDet> wmsOutHtDeliveryOrderDetList = new ArrayList<>();
+
         Example example = new Example(WmsOutDeliveryOrder.class);
         example.createCriteria().andEqualTo("deliveryOrderId", wmsOutDeliveryOrder.getDeliveryOrderId());
         wmsOutDeliveryOrderDetMapper.deleteByExample(example);
@@ -159,8 +167,14 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setModifiedTime(new Date());
                 wmsOutDeliveryOrderDet.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
+
+                //出库单明细履历
+                WmsOutHtDeliveryOrderDet wmsOutHtDeliveryOrderDet = new WmsOutHtDeliveryOrderDet();
+                BeanUtils.copyProperties(wmsOutDeliveryOrderDet,wmsOutHtDeliveryOrderDet);
+                wmsOutHtDeliveryOrderDetList.add(wmsOutHtDeliveryOrderDet);
             }
             wmsOutDeliveryOrderDetMapper.insertList(wmsOutDeliveryOrderDetList);
+            wmsOutHtDeliveryOrderDetMapper.insertList(wmsOutHtDeliveryOrderDetList);
         }
 
         return i;
@@ -181,12 +195,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             if (StringUtils.isEmpty(wmsOutDeliveryOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            //履历
+            //出库单履历
             WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
             BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
             wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
 
-            //删除明细表
+            //删除相应的出库单明细
             Example example = new Example(WmsOutDeliveryOrderDet.class);
             example.createCriteria().andEqualTo("deliveryOrderId", id);
             wmsOutDeliveryOrderDetMapper.deleteByExample(example);
