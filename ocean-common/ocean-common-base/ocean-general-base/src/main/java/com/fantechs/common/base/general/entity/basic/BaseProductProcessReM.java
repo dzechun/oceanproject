@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.basic;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -180,4 +181,9 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     @Excel(name = "组织名称", height = 20, width = 30)
     private String organizationName;
+
+    /**
+     * 物料清单集合
+     */
+    private List<BaseProductMaterialReP> list;
 }
