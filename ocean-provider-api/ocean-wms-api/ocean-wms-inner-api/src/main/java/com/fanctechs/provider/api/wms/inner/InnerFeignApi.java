@@ -9,13 +9,10 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventor
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
-import com.fantechs.common.base.response.ControllerUtil;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Map;
 
 @FeignClient(name = "ocean-wms-inner")
 public interface InnerFeignApi {
@@ -74,5 +72,15 @@ public interface InnerFeignApi {
     @ApiOperation("库存修改")
     @PostMapping("/wmsInnerInventory/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInnerInventory.update.class) WmsInnerInventory wmsInnerInventory);
+
+
+    @PostMapping("/wmsInnerInventory/selectOneByExample")
+    ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestParam Map<String,Object> map);
+    @PostMapping("/wmsInnerInventory/updateByPrimaryKeySelective")
+    ResponseEntity updateByPrimaryKeySelective(@RequestParam WmsInnerInventory wmsInnerInventory);
+    @PostMapping("/wmsInnerInventory/updateByExampleSelective")
+    ResponseEntity updateByExampleSelective(@RequestParam WmsInnerInventory wmsInnerInventory, Map<String,Object> map);
+    @PostMapping("/wmsInnerInventory/insertSelective")
+    ResponseEntity insertSelective(@RequestParam WmsInnerInventory wmsInnerInventory);
 
 }
