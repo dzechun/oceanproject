@@ -81,7 +81,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="deliveryOrderCode",value = "出库单编码")
     @Excel(name = "出库单编码", height = 20, width = 30,orderNum="") 
     @Column(name = "delivery_order_code")
-    @NotBlank(message = "出库单编码不能为空")
+    //@NotBlank(message = "出库单编码不能为空")
     private String deliveryOrderCode;
 
     /**
