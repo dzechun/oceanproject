@@ -177,7 +177,7 @@
         SELECT swo.work_order_id,
                swo.work_order_code,
                swo.parent_id,
-               swo.order_id,
+               swo.sales_order_id,
                swo.material_id,
                swo.barcode_rule_set_id,
                swo.work_order_type,
