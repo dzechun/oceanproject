@@ -2,13 +2,13 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessReM;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessReM;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseProductProcessReMService;
-import com.fantechs.provider.base.vo.BaseProductProcessReMVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
@@ -63,17 +63,17 @@ public class BaseProductProcessReMController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<BaseProductProcessReMVo>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM) {
+    public ResponseEntity<List<BaseProductProcessReM>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM) {
         Page<Object> page = PageHelper.startPage(searchBaseProductProcessReM.getStartPage(),searchBaseProductProcessReM.getPageSize());
-        List<BaseProductProcessReMVo> list = baseProductProcessReMService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
+        List<BaseProductProcessReM> list = baseProductProcessReMService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BaseProductProcessReMVo>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM) {
+    public ResponseEntity<List<BaseHtProductProcessReM>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM) {
         Page<Object> page = PageHelper.startPage(searchBaseProductProcessReM.getStartPage(),searchBaseProductProcessReM.getPageSize());
-        List<BaseProductProcessReMVo> list = baseProductProcessReMService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
+        List<BaseHtProductProcessReM> list = baseProductProcessReMService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -81,10 +81,10 @@ public class BaseProductProcessReMController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseProductProcessReM searchBaseProductProcessReM){
-    List<BaseProductProcessReMVo> list = baseProductProcessReMService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
+    List<BaseProductProcessReM> list = baseProductProcessReMService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "产品关键物料清单信息", BaseProductProcessReMVo.class, "产品关键物料清单信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "产品关键物料清单信息", BaseProductProcessReM.class, "产品关键物料清单信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
