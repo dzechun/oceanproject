@@ -13,8 +13,6 @@ import java.util.List;
 public interface MesPmWorkOrderMapper extends MyMapper<MesPmWorkOrder> {
     List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 
-    List<BaseProductBomDet> selectProductBomDet(@Param(value = "materialId")Long materialId);
-
     MesPmWorkOrderDto selectByWorkOrderId(@Param(value = "workOrderId")Long workOrderId);
 
     List<BaseRouteProcess> selectRouteProcessByRouteId(@Param(value = "routeId")Long routeId);

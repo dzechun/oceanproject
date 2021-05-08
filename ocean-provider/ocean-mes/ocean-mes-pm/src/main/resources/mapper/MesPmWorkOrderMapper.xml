@@ -5,7 +5,7 @@
         <id column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
         <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
-        <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty"/>
         <result column="production_qty" jdbcType="DECIMAL" property="productionQty"/>
@@ -129,7 +129,8 @@
         spm.product_model_name AS 'productModelName',
         sps.package_specification_quantity AS 'packageSpecificationQuantity',
         putbp.process_name AS 'putIntoProcessName',
-        outbp.process_name AS 'outputProcessName'
+        outbp.process_name AS 'outputProcessName',
+        oso.sales_order_code AS 'salesOrderCode'
         FROM
         mes_pm_work_order swo
         left join base_material sm on swo.material_id=sm.material_id
@@ -144,6 +145,7 @@
         LEFT JOIN base_organization bo ON swo.org_id = bo.organization_id
         left join base_process putbp ON putbp.process_id = swo.put_into_process_id
         left join base_process outbp ON outbp.process_id = swo.output_process_id
+        left join om_sales_order oso ON oso.sales_order_id = swo.sales_order_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
