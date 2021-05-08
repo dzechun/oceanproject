@@ -4,16 +4,20 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcessRecord;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
@@ -57,6 +61,8 @@ public class BarcodeUtils {
     private BaseFeignApi baseFeignApi;
     @Resource
     private RabbitProducer rabbitProducer;
+    @Resource
+    private RedisUtil redisUtil;
 
     // endregion
 
@@ -72,6 +78,7 @@ public class BarcodeUtils {
         barcodeUtils.pmFeignApi = this.pmFeignApi;
         barcodeUtils.baseFeignApi = this.baseFeignApi;
         barcodeUtils.rabbitProducer = this.rabbitProducer;
+        barcodeUtils.redisUtil = this.redisUtil;
     }
 
 
@@ -173,58 +180,65 @@ public class BarcodeUtils {
         return barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
     }
 
+
     /**
-     * 获取当前工序条码生成规则
-     * 一般情况下每个工序、工位下需要生成条码只有一个，现保留获取多个条码规则情况
-     * 在调用方法处做处理，需要哪个规则用哪个
-     *
-     * @param materialId       产品物料ID
-     * @param barcodeRuleSetId 工单规则集合ID
-     * @param processId        工序ID
+     * 生成包箱码
+     * @param materialId 产品物料ID
+     * @param barcodeRuleSetId 产品规则集合ID
+     * @param processId 工序ID
+     * @param materialCode 产品物料编码
+     * @param workOrderId 工单ID
+     * @param categoryCode 条码规则类别编号
      * @return
      * @throws Exception
      */
-    public static List<BaseBarcodeRuleDto> getBarcodeRuleList(String materialId, Long barcodeRuleSetId, String processId) throws Exception {
-        SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();
-        searchBaseLabelMaterial.setMaterialId(materialId);
-        searchBaseLabelMaterial.setProcessId(processId);
-        ResponseEntity<List<BaseLabelMaterialDto>> materialResult = barcodeUtils.baseFeignApi.findLabelMaterialList(searchBaseLabelMaterial);
-        if (materialResult.getCode() != 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012014, materialId, processId);
+    public static String generatorCartonCode(String materialId, Long barcodeRuleSetId, String processId, String materialCode, String workOrderId, String categoryCode) throws Exception{
+        List<BaseBarcodeRuleDto> ruleList = getBarcodeRuleList(materialId, barcodeRuleSetId, processId);
+        SearchBaseLabelCategory category = new SearchBaseLabelCategory();
+        category.setLabelCategoryCode(categoryCode);
+        ResponseEntity<List<BaseLabelCategoryDto>> categoryListResponseEntity = barcodeUtils.baseFeignApi.findLabelCategoryList(category);
+        if (categoryListResponseEntity.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012021);
         }
-        // 1、通过物料以及工序查询标签
-        List<BaseLabelMaterialDto> labelMaterialDtos = materialResult.getData();
-        // 2、通过标签获取标签类型
-        ResponseEntity<List<BaseLabel>> labelResult = barcodeUtils.baseFeignApi.findListByIDs(labelMaterialDtos.stream()
-                .map(BaseLabelMaterial::getLabelId)
-                .collect(Collectors.toList()));
-        if (labelResult.getCode() != 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012015, materialId, processId);
+        // 包箱条码规则类别有且只有一条
+        List<BaseLabelCategoryDto> categoryDtoList = categoryListResponseEntity.getData();
+        if (categoryDtoList.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012021);
         }
-        List<BaseLabel> baseLabels = labelResult.getData();
-        // 3、通过标签类型获取所有条码规则
-        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRuleResult = barcodeUtils.baseFeignApi.findListByBarcodeRuleCategoryIds(baseLabels.stream()
-                .map(BaseLabel::getLabelCategoryId)
-                .collect(Collectors.toList()));
-        if (barcodeRuleResult.getCode() != 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012016);
+        BaseLabelCategoryDto labelCategoryDto = categoryDtoList.get(0);
+        BaseBarcodeRuleDto barcodeRuleDto = ruleList.stream()
+                .filter(item -> item.getBarcodeRuleCategoryId().equals(labelCategoryDto.getLabelCategoryId()))
+                .findFirst()
+                .orElseThrow(() -> new BizErrorException(ErrorCodeEnum.PDA40012020));
+        // 获取规则配置列表
+        SearchBaseBarcodeRuleSpec baseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+        baseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleDto.getBarcodeRuleId());
+        ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecResponseEntity = barcodeUtils.baseFeignApi.findSpec(baseBarcodeRuleSpec);
+        if (barcodeRuleSpecResponseEntity.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012022);
         }
-        List<BaseBarcodeRuleDto> barcodeRuleDtos = barcodeRuleResult.getData();
-        // 4、通过工单规则集合获取所有条码规则
-        SearchBaseBarcodeRuleSetDet barcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
-        barcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
-        ResponseEntity<List<BaseBarcodeRuleSetDetDto>> ruleSetDetResult = barcodeUtils.baseFeignApi.findBarcodeRuleSetDetList(barcodeRuleSetDet);
-        if (ruleSetDetResult.getCode() != 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012017, barcodeRuleSetId);
+        List<BaseBarcodeRuleSpec> barcodeRuleSpecList = barcodeRuleSpecResponseEntity.getData();
+        if (barcodeRuleSpecList.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012023);
         }
-        List<BaseBarcodeRuleSetDetDto> ruleSetDetDtos = ruleSetDetResult.getData();
-        // 5、取34交集
-        List<Long> ruleCategoryIDs1 = barcodeRuleDtos.stream().map(BaseBarcodeRule::getBarcodeRuleCategoryId).collect(Collectors.toList());
-        List<Long> ruleCategoryIDs2 = ruleSetDetDtos.stream().map(BaseBarcodeRuleSetDetDto::getBarcodeRuleCategoryId).collect(Collectors.toList());
-        // 取两个分类集合交集
-        ruleCategoryIDs1.retainAll(ruleCategoryIDs2);
-        // 获取交集中的条码规则
-        return barcodeRuleDtos.stream().filter(item -> ruleCategoryIDs1.contains(item.getBarcodeRuleCategoryId())).collect(Collectors.toList());
+
+        String lastBarCode = null;
+        boolean hasKey = barcodeUtils.redisUtil.hasKey(barcodeRuleDto.getBarcodeRuleId().toString());
+        if(hasKey){
+            // 从redis获取上次生成条码
+            Object redisRuleData = barcodeUtils.redisUtil.get(barcodeRuleDto.getBarcodeRuleId().toString());
+            lastBarCode = String.valueOf(redisRuleData);
+        }
+        //获取最大流水号
+        String maxCode = barcodeUtils.baseFeignApi.generateMaxCode(barcodeRuleSpecList, lastBarCode).getData();
+        //生成条码
+        ResponseEntity<String> rs = barcodeUtils.baseFeignApi.generateCode(barcodeRuleSpecList, maxCode, materialCode, workOrderId);
+        if (rs.getCode() != 0) {
+            throw new BizErrorException(rs.getMessage());
+        }
+        // 更新redis最新包箱号
+        barcodeUtils.redisUtil.set(barcodeRuleDto.getBarcodeRuleId().toString(), rs.getData());
+        return rs.getData();
     }
 
     /**
@@ -310,6 +324,64 @@ public class BarcodeUtils {
         if (mesPmWorkOrder.getProductionQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) > -1) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012007, mesPmWorkOrder.getWorkOrderCode());
         }
+    }
+
+    // endregion
+
+    // region 获取当前工序条码生成规则
+
+    /**
+     * 获取当前工序条码生成规则
+     * 一般情况下每个工序、工位下需要生成条码只有一个，现保留获取多个条码规则情况
+     * 在调用方法处做处理，需要哪个规则用哪个
+     *
+     * @param materialId       产品物料ID
+     * @param barcodeRuleSetId 工单规则集合ID
+     * @param processId        工序ID
+     * @return
+     * @throws Exception
+     */
+    private static List<BaseBarcodeRuleDto> getBarcodeRuleList(String materialId, Long barcodeRuleSetId, String processId) throws Exception {
+        SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();
+        searchBaseLabelMaterial.setMaterialId(materialId);
+        searchBaseLabelMaterial.setProcessId(processId);
+        ResponseEntity<List<BaseLabelMaterialDto>> materialResult = barcodeUtils.baseFeignApi.findLabelMaterialList(searchBaseLabelMaterial);
+        if (materialResult.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012014, materialId, processId);
+        }
+        // 1、通过物料以及工序查询标签
+        List<BaseLabelMaterialDto> labelMaterialDtos = materialResult.getData();
+        // 2、通过标签获取标签类型
+        ResponseEntity<List<BaseLabel>> labelResult = barcodeUtils.baseFeignApi.findListByIDs(labelMaterialDtos.stream()
+                .map(BaseLabelMaterial::getLabelId)
+                .collect(Collectors.toList()));
+        if (labelResult.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012015, materialId, processId);
+        }
+        List<BaseLabel> baseLabels = labelResult.getData();
+        // 3、通过标签类型获取所有条码规则
+        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRuleResult = barcodeUtils.baseFeignApi.findListByBarcodeRuleCategoryIds(baseLabels.stream()
+                .map(BaseLabel::getLabelCategoryId)
+                .collect(Collectors.toList()));
+        if (barcodeRuleResult.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012016);
+        }
+        List<BaseBarcodeRuleDto> barcodeRuleDtos = barcodeRuleResult.getData();
+        // 4、通过工单规则集合获取所有条码规则
+        SearchBaseBarcodeRuleSetDet barcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+        barcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
+        ResponseEntity<List<BaseBarcodeRuleSetDetDto>> ruleSetDetResult = barcodeUtils.baseFeignApi.findBarcodeRuleSetDetList(barcodeRuleSetDet);
+        if (ruleSetDetResult.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012017, barcodeRuleSetId);
+        }
+        List<BaseBarcodeRuleSetDetDto> ruleSetDetDtos = ruleSetDetResult.getData();
+        // 5、取34交集
+        List<Long> ruleCategoryIDs1 = barcodeRuleDtos.stream().map(BaseBarcodeRule::getBarcodeRuleCategoryId).collect(Collectors.toList());
+        List<Long> ruleCategoryIDs2 = ruleSetDetDtos.stream().map(BaseBarcodeRuleSetDetDto::getBarcodeRuleCategoryId).collect(Collectors.toList());
+        // 取两个分类集合交集
+        ruleCategoryIDs1.retainAll(ruleCategoryIDs2);
+        // 获取交集中的条码规则
+        return barcodeRuleDtos.stream().filter(item -> ruleCategoryIDs1.contains(item.getBarcodeRuleCategoryId())).collect(Collectors.toList());
     }
 
     // endregion

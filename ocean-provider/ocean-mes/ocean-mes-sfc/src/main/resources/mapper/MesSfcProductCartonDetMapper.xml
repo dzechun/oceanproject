@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCartonDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="product_carton_det_id" jdbcType="BIGINT" property="productCartonDetId" />
+    <result column="product_carton_id" jdbcType="BIGINT" property="productCartonId" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductCartonDetDto">
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    mspcd.product_carton_det_id,
+    mspcd.product_carton_id,
+    mspcd.work_order_barcode_id,
+    mspcd.remark,
+    mspcd.org_id,
+    mspcd.create_user_id,
+    mspcd.create_time,
+    mspcd.modified_user_id,
+    mspcd.modified_time,
+    mspcd.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultDtoMap">
+    select <include refid="BaseColumnList"/>
+    FROM mes_sfc_product_carton_det mspcd
+    <where>
+      <if test="productCartonId != null">
+        and mspcd.product_carton_id = #{productCartonId}
+      </if>
+      <if test="workOrderBarcodeId != null">
+        and mspcd.work_order_barcode_id = #{workOrderBarcodeId}
+      </if>
+    </where>
+  </select>
+
+</mapper>

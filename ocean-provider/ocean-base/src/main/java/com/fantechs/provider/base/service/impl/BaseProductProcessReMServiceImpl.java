@@ -4,17 +4,22 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.BaseProductMaterialReP;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProductMaterialReP;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessReM;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductMaterialReP;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderMaterialReP;
+import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderMaterialReP;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.mapper.BaseHtProductMaterialRePMapper;
 import com.fantechs.provider.base.mapper.BaseHtProductProcessReMMapper;
+import com.fantechs.provider.base.mapper.BaseProductMaterialRePMapper;
 import com.fantechs.provider.base.mapper.BaseProductProcessReMMapper;
 import com.fantechs.provider.base.service.BaseProductProcessReMService;
-import com.fantechs.provider.base.vo.BaseProductProcessReMVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,37 +42,43 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     private BaseProductProcessReMMapper baseProductProcessReMMapper;
 
     @Resource
+    private BaseProductMaterialRePMapper baseProductMaterialRePMapper;
+
+    @Resource
     private BaseHtProductProcessReMMapper baseHtProductProcessReMMapper;
+
+    @Resource
+    private BaseHtProductMaterialRePMapper baseHtProductMaterialRePMapper;
 
 
     @Override
-    public List<BaseProductProcessReMVo> findList(Map<String, Object> map) {
-        List<BaseProductProcessReMVo> baseProductProcessReMVos = baseProductProcessReMMapper.findMaterialList(map);
-        SearchBaseProductProcessReM searchBaseProductProcessReM = new SearchBaseProductProcessReM();
+    public List<BaseProductProcessReM> findList(Map<String, Object> map) {
+        List<BaseProductProcessReM> baseProductProcessReMS = baseProductProcessReMMapper.findList(map);
+        SearchBaseProductMaterialReP searchBaseProductMaterialReP = new SearchBaseProductMaterialReP();
 
-        for (BaseProductProcessReMVo baseProductProcessReMVo : baseProductProcessReMVos) {
-            searchBaseProductProcessReM.setMaterialId(baseProductProcessReMVo.getMaterialId());
-            List<BaseProductProcessReM> baseProductProcessReMS = baseProductProcessReMMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
-            if (StringUtils.isNotEmpty(baseProductProcessReMS)){
-                baseProductProcessReMVo.setBaseProductProcessReMS(baseProductProcessReMS);
+        for (BaseProductProcessReM baseProductProcessReM : baseProductProcessReMS) {
+            searchBaseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
+            List<BaseProductMaterialReP> list = baseProductMaterialRePMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductMaterialReP));
+            if (StringUtils.isNotEmpty(list)){
+                baseProductProcessReM.setList(list);
             }
         }
-        return baseProductProcessReMVos;
+        return baseProductProcessReMS;
     }
 
     @Override
-    public List<BaseProductProcessReMVo> findHtList(Map<String, Object> map) {
-        List<BaseProductProcessReMVo> baseProductProcessReMVos = baseHtProductProcessReMMapper.findHtMaterialList(map);
-        SearchBaseProductProcessReM searchBaseProductProcessReM = new SearchBaseProductProcessReM();
+    public List<BaseHtProductProcessReM> findHtList(Map<String, Object> map) {
+        List<BaseHtProductProcessReM> baseHtProductProcessReMS = baseHtProductProcessReMMapper.findHtList(map);
+        SearchBaseProductMaterialReP searchBaseProductMaterialReP = new SearchBaseProductMaterialReP();
 
-        for (BaseProductProcessReMVo baseProductProcessReMVo : baseProductProcessReMVos) {
-            searchBaseProductProcessReM.setMaterialId(baseProductProcessReMVo.getMaterialId());
-            List<BaseProductProcessReM> baseProductProcessReMS = baseHtProductProcessReMMapper.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessReM));
-            if (StringUtils.isNotEmpty(baseProductProcessReMS)){
-                baseProductProcessReMVo.setBaseProductProcessReMS(baseProductProcessReMS);
+        for (BaseHtProductProcessReM baseHtProductProcessReM : baseHtProductProcessReMS) {
+            searchBaseProductMaterialReP.setProductProcessReMId(baseHtProductProcessReM.getProductProcessReMId());
+            List<BaseHtProductMaterialReP> htList = baseHtProductMaterialRePMapper.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseProductMaterialReP));
+            if (StringUtils.isNotEmpty(htList)){
+                baseHtProductProcessReM.setHtList(htList);
             }
         }
-        return baseProductProcessReMVos;
+        return baseHtProductProcessReMS;
     }
 
     @Override
@@ -78,6 +89,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //物料工序关系表
         Example example = new Example(BaseProductProcessReM.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", baseProductProcessReM.getMaterialId())
@@ -95,9 +107,25 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         baseProductProcessReM.setOrgId(user.getOrganizationId());
         int i = baseProductProcessReMMapper.insertUseGeneratedKeys(baseProductProcessReM);
 
+        //履历
         BaseHtProductProcessReM baseHtProductProcessReM = new BaseHtProductProcessReM();
         BeanUtils.copyProperties(baseProductProcessReM, baseHtProductProcessReM);
         baseHtProductProcessReMMapper.insert(baseHtProductProcessReM);
+
+        //工序物料清单表
+        List<BaseProductMaterialReP> baseProductMaterialRePS = baseProductProcessReM.getList();
+        if(StringUtils.isNotEmpty(baseProductMaterialRePS)){
+            baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
+        }
+
+        //履历
+        BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
+        List<BaseHtProductMaterialReP> htList = new ArrayList<>();
+        for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
+            BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
+            htList.add(baseHtProductMaterialReP);
+        }
+        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
 
         return i;
     }
@@ -110,6 +138,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //物料工序关系表
         Example example = new Example(BaseProductProcessReM.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", baseProductProcessReM.getMaterialId())
@@ -129,6 +158,25 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         BeanUtils.copyProperties(baseProductProcessReM, baseHtProductProcessReM);
         baseHtProductProcessReMMapper.insert(baseHtProductProcessReM);
 
+        //工序物料清单表
+        Example example1 = new Example(BaseProductMaterialReP.class);
+        example1.createCriteria().andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId());
+        baseProductMaterialRePMapper.deleteByExample(example1);
+
+        List<BaseProductMaterialReP> baseProductMaterialRePS = baseProductProcessReM.getList();
+        if(StringUtils.isNotEmpty(baseProductMaterialRePS)){
+            baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
+        }
+
+        //履历
+        BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
+        List<BaseHtProductMaterialReP> htList = new ArrayList<>();
+        for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
+            BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
+            htList.add(baseHtProductMaterialReP);
+        }
+        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
+
         return i;
     }
 
@@ -147,6 +195,11 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
             if(StringUtils.isEmpty(baseProductProcessReM)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Example example1 = new Example(BaseProductMaterialReP.class);
+            example1.createCriteria().andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId());
+            baseProductMaterialRePMapper.deleteByExample(example1);
+
             BaseHtProductProcessReM baseHtProductProcessReM = new BaseHtProductProcessReM();
             BeanUtils.copyProperties(baseProductProcessReM, baseHtProductProcessReM);
             list.add(baseHtProductProcessReM);
