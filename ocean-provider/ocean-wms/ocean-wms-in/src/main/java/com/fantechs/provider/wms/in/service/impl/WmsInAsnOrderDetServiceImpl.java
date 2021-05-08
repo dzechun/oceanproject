@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
-import com.fantechs.common.base.general.entity.wms.WmsInAsnOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -24,6 +23,6 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
 
     @Override
     public List<WmsInAsnOrderDetDto> findList(SearchWmsInAsnOrderDet searchWmsInAsnOrderDet) {
-        return null;
+        return wmsInAsnOrderDetMapper.findList(searchWmsInAsnOrderDet);
     }
 }

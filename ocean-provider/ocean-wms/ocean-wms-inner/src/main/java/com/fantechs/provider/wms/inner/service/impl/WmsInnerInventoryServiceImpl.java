@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -108,6 +109,39 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
             throw new BizErrorException("当前库存未进行锁定");
         }
         return 1;
+    }
+
+    @Override
+    public WmsInnerInventory selectOneByExample(Map<String,Object> map) {
+        Example example = new Example(WmsInnerInventory.class);
+        example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
+        return wmsInnerInventorys;
+    }
+
+    @Override
+    public int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory) {
+        return wmsInnerInventoryMapper.updateByPrimaryKeySelective(WmsInnerInventory.builder()
+                .inventoryId(wmsInnerInventory.getInventoryId())
+                .jobStatus((byte)2)
+                .build());
+    }
+
+    @Override
+    public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
+        Example example = new Example(WmsInnerInventory.class);
+        example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        int num = wmsInnerInventoryMapper.updateByExample(WmsInnerInventory.builder()
+                .packingQty(new BigDecimal(
+                        Double.parseDouble(map.get("actualQty").toString())-wmsInnerInventory.getPackingQty().doubleValue()
+                ))
+                .build(), example);
+        return num;
+    }
+
+    @Override
+    public int insertSelective(WmsInnerInventory wmsInnerInventory) {
+        return wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
     }
 
     @Override

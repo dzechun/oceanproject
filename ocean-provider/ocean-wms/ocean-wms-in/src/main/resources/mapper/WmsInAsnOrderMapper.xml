@@ -9,9 +9,7 @@
     <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
-    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
@@ -41,8 +39,6 @@
   <resultMap id="BaseResultDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
     <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -54,12 +50,10 @@
   </resultMap>
   <sql id="BaseColumn">
     wiao.asn_order_id,
-      wiao.order_id,
+      wiao.source_order_id,
   wiao.material_owner_id,
   wiao.supplier_id,
-  wiao.warehouse_id,
   wiao.order_type_id,
-  wiao.storage_id,
   wiao.asn_code,
   wiao.customer_order_code,
   wiao.related_order_code_1,
@@ -91,21 +85,22 @@
       (select SUM(wiaod.packing_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as packing_qty,
       (select SUM(wiaod.actual_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as actual_qty,
       (select SUM(wiaod.putaway_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as putaway_qty,
-    material_owner_name,bs.supplier_name,bw.warehouse_name,bws.storage_name,boy.order_type_name,su.user_name AS create_user_name,
+    material_owner_name,bs.supplier_name,boy.order_type_name,su.user_name AS create_user_name,
       sus.user_name AS modified_user_name,
       bo.organization_name AS organization_Name
       FROM wms_in_asn_order wiao
       left join base_material_owner bmo ON wiao.material_owner_id=bmo.material_owner_id
       LEFT JOIN base_supplier bs ON bs.supplier_id=wiao.supplier_id
-      LEFT JOIN base_warehouse bw ON wiao.warehouse_id = bw.warehouse_id
-      LEFT JOIN base_storage bws ON wiao.storage_id = bws.storage_id
         LEFT join base_order_type boy on wiao.order_type_id = boy.order_type_id
       LEFT JOIN ocean.sys_user su ON wiao.create_user_id = su.user_id
       LEFT JOIN ocean.sys_user sus ON wiao.modified_user_id = sus.user_id
       LEFT JOIN base_organization bo ON wiao.org_id = bo.organization_id
 <where>
+          <if test="asnOrderId !=null and asnOrderId !=''">
+            and wiao.asn_order_id = #{asnOrderId}
+          </if>
       <if test="asnCode!=null and asnCode!=''">
-        and wiao.asnCode like CONCAT('%',#{ansCode},'%')
+        and wiao.asn_code like CONCAT('%',#{ansCode},'%')
       </if>
     <if test="materialOwnerName!=null and materialOwnerName!=''">
       and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')

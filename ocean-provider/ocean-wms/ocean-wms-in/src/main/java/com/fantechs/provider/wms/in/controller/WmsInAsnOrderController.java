@@ -2,7 +2,7 @@ package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
-import com.fantechs.common.base.general.entity.wms.WmsInAsnOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
@@ -55,6 +55,11 @@ public class WmsInAsnOrderController {
         return ControllerUtil.returnCRUD(wmsInAsnOrderService.update(wmsInAsnOrder));
     }
 
+    @PostMapping("/writeQty")
+    public ResponseEntity writeQty(@RequestBody WmsInAsnOrderDet wmsInAsnOrderDet){
+        return ControllerUtil.returnCRUD(wmsInAsnOrderService.writeQty(wmsInAsnOrderDet));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<WmsInAsnOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
@@ -73,8 +78,9 @@ public class WmsInAsnOrderController {
     @ApiOperation("整单收货")
     @PostMapping("/allReceiving")
     public ResponseEntity allReceiving(@ApiParam(value = "对象ID列表，多个逗号分隔")@RequestParam @NotNull(message = "id不能为空")String ids,
-                                       @ApiParam(value = "库存状态id") @NotNull(message = "库存状态不能为空") Long inventoryStatusId){
-        return ControllerUtil.returnCRUD(wmsInAsnOrderService.allReceiving(ids,inventoryStatusId));
+                                       @ApiParam(value = "库位Id")@RequestParam @NotNull(message = "库位id不能为空")Long storageId,
+                                       @ApiParam(value = "库存状态id")@RequestParam @NotNull(message = "库存状态不能为空") Long inventoryStatusId){
+        return ControllerUtil.returnCRUD(wmsInAsnOrderService.allReceiving(ids,storageId,inventoryStatusId));
     }
 
     @ApiOperation("单一收货")

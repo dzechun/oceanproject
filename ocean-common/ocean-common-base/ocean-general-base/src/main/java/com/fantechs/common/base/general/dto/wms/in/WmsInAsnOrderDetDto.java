@@ -1,11 +1,8 @@
 package com.fantechs.common.base.general.dto.wms.in;
 
-import com.fantechs.common.base.general.entity.wms.WmsInAsnOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -31,6 +28,20 @@ public class WmsInAsnOrderDetDto extends WmsInAsnOrderDet implements Serializabl
     @Transient
     @ApiModelProperty(name="materialName",value = "物料名称")
     private String materialName;
+
+    /**
+     * 仓库
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseName",value = "仓库")
+    private String warehouseName;
+
+    /**
+     * 库位
+     */
+    @Transient
+    @ApiModelProperty(name="storageName",value = "库位")
+    private String storageName;
 
     /**
      * 库存状态
