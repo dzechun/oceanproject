@@ -74,6 +74,9 @@
     LEFT JOIN ocean_v2.sys_user sus ON wohdod.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wohdod.org_id = bo.organization_id
     <where>
+      <if test="deliveryOrderId != null">
+        and wohdod.delivery_order_id = #{deliveryOrderId}
+      </if>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(wohdod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
