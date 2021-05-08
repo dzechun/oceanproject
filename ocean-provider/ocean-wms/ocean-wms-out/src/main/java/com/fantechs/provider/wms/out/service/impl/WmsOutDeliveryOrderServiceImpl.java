@@ -7,11 +7,15 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
+import com.fantechs.common.base.general.entity.basic.BaseBarCode;
 import com.fantechs.common.base.general.entity.basic.BasePlatePartsDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturnDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrderDet;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutOtheroutDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -21,12 +25,17 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryOrderDetMapper;
+import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryOrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +51,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private WmsOutDeliveryOrderMapper wmsOutDeliveryOrderMapper;
     @Resource
     private WmsOutDeliveryOrderDetMapper wmsOutDeliveryOrderDetMapper;
+    @Resource
+    private WmsOutHtDeliveryOrderMapper wmsOutHtDeliveryOrderMapper;
+    @Resource
+    private WmsOutHtDeliveryOrderDetMapper wmsOutHtDeliveryOrderDetMapper;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -52,9 +65,29 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             searchWmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
             List<WmsOutDeliveryOrderDetDto> list = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
             wmsOutDeliveryOrderDto.setWmsOutDeliveryOrderDetList(list);
+            //计算总数量
+            BigDecimal sum = list.stream().map(WmsOutDeliveryOrderDetDto::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutDeliveryOrderDto.setTotalQty(sum);
         }
 
         return wmsOutDeliveryOrderDtos;
+    }
+
+    @Override
+    public List<WmsOutHtDeliveryOrder> findHtList(Map<String, Object> map) {
+        List<WmsOutHtDeliveryOrder> wmsOutHtDeliveryOrders = wmsOutHtDeliveryOrderMapper.findHtList(map);
+
+        for (WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder : wmsOutHtDeliveryOrders) {
+            SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder = new SearchWmsOutDeliveryOrder();
+            searchWmsOutDeliveryOrder.setDeliveryOrderId(wmsOutHtDeliveryOrder.getDeliveryOrderId());
+            List<WmsOutHtDeliveryOrderDet> list = wmsOutHtDeliveryOrderDetMapper.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
+            wmsOutHtDeliveryOrder.setWmsOutHtDeliveryOrderDets(list);
+            //计算总数量
+            BigDecimal sum = list.stream().map(WmsOutHtDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutHtDeliveryOrder.setTotalQty(sum);
+        }
+
+        return wmsOutHtDeliveryOrders;
     }
 
     @Override
@@ -73,6 +106,11 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
 
         int i = wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
+
+        //履历
+        WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
+        BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
+        wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
 
         //出库单明细
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
@@ -103,11 +141,18 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
         wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
 
+        int i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+
+        //履历
+        WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
+        BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
+        wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
+
+        //出库单明细
         Example example = new Example(WmsOutDeliveryOrder.class);
         example.createCriteria().andEqualTo("deliveryOrderId", wmsOutDeliveryOrder.getDeliveryOrderId());
         wmsOutDeliveryOrderDetMapper.deleteByExample(example);
 
-        //出库单明细
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
             for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
@@ -118,7 +163,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrderDetMapper.insertList(wmsOutDeliveryOrderDetList);
         }
 
-        return wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+        return i;
     }
 
     @Override
@@ -136,6 +181,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             if (StringUtils.isEmpty(wmsOutDeliveryOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            //履历
+            WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
+            BeanUtils.copyProperties(wmsOutDeliveryOrder,wmsOutHtDeliveryOrder);
+            wmsOutHtDeliveryOrderMapper.insertSelective(wmsOutHtDeliveryOrder);
 
             //删除明细表
             Example example = new Example(WmsOutDeliveryOrderDet.class);

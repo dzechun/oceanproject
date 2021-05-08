@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.out.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -69,13 +70,13 @@ public class WmsOutDeliveryOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    /*@ApiOperation("历史列表")
+    @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsOutDeliveryOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
+    public ResponseEntity<List<WmsOutHtDeliveryOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
         Page<Object> page = PageHelper.startPage(searchWmsOutDeliveryOrder.getStartPage(),searchWmsOutDeliveryOrder.getPageSize());
-        List<WmsOutDeliveryOrder> list = wmsOutDeliveryOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
+        List<WmsOutHtDeliveryOrder> list = wmsOutDeliveryOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }*/
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

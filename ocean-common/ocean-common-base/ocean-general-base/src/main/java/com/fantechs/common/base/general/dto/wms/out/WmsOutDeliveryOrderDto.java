@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Serializable {
@@ -17,6 +18,13 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
     @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
     private String materialOwnerName;
+
+    /**
+     * 总数量
+     */
+    @ApiModelProperty(name="totalQty",value = "总数量")
+    @Excel(name = "总数量", height = 20, width = 30,orderNum="4")
+    private BigDecimal totalQty;
 
     /**
      * 组织代码
