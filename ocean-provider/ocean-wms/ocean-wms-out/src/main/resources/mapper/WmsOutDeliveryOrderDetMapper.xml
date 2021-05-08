@@ -7,13 +7,23 @@
     -->
     <id column="delivery_order_det_id" jdbcType="BIGINT" property="deliveryOrderDetId" />
     <result column="delivery_order_id" jdbcType="BIGINT" property="deliveryOrderId" />
-    <result column="shipping_note_det_id" jdbcType="BIGINT" property="shippingNoteDetId" />
+    <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
+    <result column="order_det_id" jdbcType="BIGINT" property="orderDetId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
+    <result column="line_number" jdbcType="INTEGER" property="lineNumber" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="reality_total_qty" jdbcType="DECIMAL" property="realityTotalQty" />
-    <result column="out_total_qty" jdbcType="DECIMAL" property="outTotalQty" />
-    <result column="out_status" jdbcType="TINYINT" property="outStatus" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+    <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
+    <result column="picking_qty" jdbcType="DECIMAL" property="pickingQty" />
+    <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="source_line_number" jdbcType="VARCHAR" property="sourceLineNumber" />
+    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -34,6 +44,8 @@
     wodod.delivery_order_id,
     wodod.source_order_id,
     wodod.order_det_id,
+    wodod.warehouse_id,
+    wodod.storage_id,
     wodod.inventory_status_id,
     wodod.line_number,
     wodod.material_id,

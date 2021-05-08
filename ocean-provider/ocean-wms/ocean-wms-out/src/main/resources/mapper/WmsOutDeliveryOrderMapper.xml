@@ -6,14 +6,31 @@
       WARNING - @mbg.generated
     -->
     <id column="delivery_order_id" jdbcType="BIGINT" property="deliveryOrderId" />
+    <result column="source_order_id" jdbcType="BIGINT" property="deliveryOrderCode" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId" />
+    <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
     <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode" />
-    <result column="shipping_note_code" jdbcType="VARCHAR" property="shippingNoteCode" />
-    <result column="processor_user_id" jdbcType="BIGINT" property="processorUserId" />
-    <result column="out_time" jdbcType="TIMESTAMP" property="outTime" />
-    <result column="out_status" jdbcType="TINYINT" property="outStatus" />
+    <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
+    <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
+    <result column="related_order_code_2" jdbcType="VARCHAR" property="relatedOrderCode2" />
+    <result column="related_order_code_3" jdbcType="VARCHAR" property="relatedOrderCode3" />
+    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+    <result column="plan_despatch_date" jdbcType="TIMESTAMP" property="planDespatchDate" />
+    <result column="actual_despatch_date" jdbcType="TIMESTAMP" property="actualDespatchDate" />
+    <result column="demand_arrive_date" jdbcType="TIMESTAMP" property="demandArriveDate" />
+    <result column="consignee" jdbcType="VARCHAR" property="consignee" />
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
+    <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -35,9 +52,7 @@
     wodo.material_owner_id,
     wodo.supplier_id,
     wodo.shipment_enterprise_id,
-    wodo.warehouse_id,
     wodo.order_type_id,
-    wodo.storage_id,
     wodo.delivery_order_code,
     wodo.customer_order_code,
     wodo.related_order_code_1,

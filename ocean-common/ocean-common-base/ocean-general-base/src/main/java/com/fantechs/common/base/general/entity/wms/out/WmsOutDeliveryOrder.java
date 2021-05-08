@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -68,25 +69,11 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private Long shipmentEnterpriseId;
 
     /**
-     * 仓库ID
-     */
-    @ApiModelProperty(name="warehouseId",value = "仓库ID")
-    @Column(name = "warehouse_id")
-    private Long warehouseId;
-
-    /**
      * 单据类型ID
      */
     @ApiModelProperty(name="orderTypeId",value = "单据类型ID")
     @Column(name = "order_type_id")
     private Long orderTypeId;
-
-    /**
-     * 库位ID
-     */
-    @ApiModelProperty(name="storageId",value = "库位ID")
-    @Column(name = "storage_id")
-    private Long storageId;
 
     /**
      * 出库单编码
@@ -293,5 +280,5 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     @ApiModelProperty(name="wmsOutDeliveryOrderDetList",value = "出库单明细")
-    private List<WmsOutDeliveryOrderDet> wmsOutDeliveryOrderDetList;
+    private List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList;
 }

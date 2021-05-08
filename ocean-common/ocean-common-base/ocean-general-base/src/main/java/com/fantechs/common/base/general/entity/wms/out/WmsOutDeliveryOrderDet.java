@@ -61,6 +61,20 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private Long orderDetId;
 
     /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    /**
+     * 库位ID
+     */
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    @Column(name = "storage_id")
+    private Long storageId;
+
+    /**
      * 库存状态ID
      */
     @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")

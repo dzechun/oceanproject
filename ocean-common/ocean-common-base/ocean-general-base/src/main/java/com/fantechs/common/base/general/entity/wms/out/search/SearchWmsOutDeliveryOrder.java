@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable {
 
     /**
+     * 出库单ID
+     */
+    @ApiModelProperty(name="deliveryOrderId",value = "出库单ID")
+    private Long deliveryOrderId;
+
+    /**
      * 销售出库单号
      */
     @ApiModelProperty(name="deliveryOrderCode",value = "销售出库单号")
