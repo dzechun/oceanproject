@@ -331,7 +331,14 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
     /**
      * 总数量
      */
-    @ApiModelProperty(name="totalQty",value = "总数量")
+    @ApiModelProperty(name="totalPackingQty",value = "总数量")
     @Excel(name = "总数量", height = 20, width = 30,orderNum="")
-    private BigDecimal totalQty;
+    private BigDecimal totalPackingQty;
+
+    /**
+     * 拣货数量
+     */
+    @ApiModelProperty(name="totalPickingQty",value = "拣货数量")
+    @Excel(name = "拣货数量", height = 20, width = 30,orderNum="5")
+    private BigDecimal totalPickingQty;
 }

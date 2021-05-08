@@ -22,22 +22,27 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
     /**
      * 总数量
      */
-    @ApiModelProperty(name="totalQty",value = "总数量")
+    @ApiModelProperty(name="totalPackingQty",value = "总数量")
     @Excel(name = "总数量", height = 20, width = 30,orderNum="4")
-    private BigDecimal totalQty;
+    private BigDecimal totalPackingQty;
+
+    /**
+     * 拣货数量
+     */
+    @ApiModelProperty(name="totalPickingQty",value = "拣货数量")
+    @Excel(name = "拣货数量", height = 20, width = 30,orderNum="5")
+    private BigDecimal totalPickingQty;
 
     /**
      * 组织代码
      */
     @ApiModelProperty(name="organizationCode",value = "组织代码")
-    @Excel(name = "组织代码", height = 20, width = 30,orderNum="10")
     private String organizationCode;
 
     /**
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum="6")
     private String organizationName;
 
     /**
@@ -45,7 +50,7 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="18")
     private String createUserName;
 
     /**
@@ -53,6 +58,7 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="20")
     private String modifiedUserName;
 
 
