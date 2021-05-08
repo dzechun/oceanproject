@@ -11,8 +11,8 @@
         <result column="material_category_id" jdbcType="BIGINT" property="materialCategoryId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
-        <result column="min_quantity" jdbcType="DECIMAL" property="minQty"/>
-        <result column="max_quantity" jdbcType="DECIMAL" property="maxQty"/>
+        <result column="min_qty" jdbcType="DECIMAL" property="minQty"/>
+        <result column="max_qty" jdbcType="DECIMAL" property="maxQty"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
