@@ -26,4 +26,6 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
     void checkOutLabel(String labelName, HttpServletRequest request, HttpServletResponse response);
 
     List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record);
+
+    MesSfcWorkOrderBarcode findBarcode(String barcode);
 }

@@ -7,4 +7,19 @@ import java.io.Serializable;
 
 @Data
 public class SearchMesSfcBarcodeProcess extends BaseQuery implements Serializable {
+
+    /**
+     * 产品条码
+     */
+    private String barCode;
+
+    /**
+     * 包箱号
+     */
+    private String cartonCode;
+
+    /**
+     * 栈板号
+     */
+    private String palletCode;
 }
