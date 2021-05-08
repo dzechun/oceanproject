@@ -74,6 +74,13 @@ public class BaseLabelCategoryController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("标签类别列表")
+    @PostMapping("/findListByIds")
+    public ResponseEntity<List<BaseLabelCategory>> findListByIds(@ApiParam(value = "查询对象")@RequestBody List<Long> ids) {
+        List<BaseLabelCategory> baseLabelCategoryList = baseLabelCategoryService.findListByIDs(ids);
+        return ControllerUtil.returnDataSuccess(baseLabelCategoryList, baseLabelCategoryList.size());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtLabelCategory>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelCategory searchBaseLabelCategory) {

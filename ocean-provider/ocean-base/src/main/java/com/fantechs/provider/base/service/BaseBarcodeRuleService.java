@@ -17,4 +17,11 @@ public interface BaseBarcodeRuleService extends IService<BaseBarcodeRule> {
     List<BaseBarcodeRuleDto> findList(SearchBaseBarcodeRule searchBaseBarcodeRule);
 
     int preserve(BaseBarcodeRule baseBarcodeRule);
+
+    /**
+     * 根据标签类别ID集合获取规则列表
+     * @param ids
+     * @return
+     */
+    List<BaseBarcodeRule> findListByBarcodeRuleCategoryIds(List<Long> ids);
 }

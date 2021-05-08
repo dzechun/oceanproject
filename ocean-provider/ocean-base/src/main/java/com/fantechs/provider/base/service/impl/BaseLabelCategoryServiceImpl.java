@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
+import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabelCategory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
@@ -47,6 +48,14 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
     @Override
     public List<BaseLabelCategoryDto> findList(SearchBaseLabelCategory searchBaseLabelCategory) {
         return baseLabelCategoryMapper.findList(searchBaseLabelCategory);
+    }
+
+    @Override
+    public List<BaseLabelCategory> findListByIDs(List<Long> ids) {
+        Example example = new Example(BaseLabel.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("labelCategoryId", ids);
+        return baseLabelCategoryMapper.selectByExample(example);
     }
 
     @Override

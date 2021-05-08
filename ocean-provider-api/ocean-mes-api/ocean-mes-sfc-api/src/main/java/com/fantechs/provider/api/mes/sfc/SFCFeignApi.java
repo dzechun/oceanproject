@@ -1,9 +1,9 @@
 package com.fantechs.provider.api.mes.sfc;
 
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCarton;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -37,4 +37,12 @@ public interface SFCFeignApi {
     @ApiOperation("条码查询")
     @PostMapping("/mesSfcWorkOrderBarcode/findBarcode")
     public ResponseEntity<MesSfcWorkOrderBarcode> findBarcode(@RequestParam String barcode);
+
+    @ApiOperation("查询产品栈板列表")
+    @PostMapping("/mesSfcProductPallet/findList")
+    ResponseEntity<List<MesSfcProductPalletDto>> findProductPalletList(@RequestBody SearchMesSfcProductPallet searchMesSfcProductPallet);
+
+    @ApiOperation("查询产品包箱列表")
+    @PostMapping("/mesSfcProductCarton/findList")
+    ResponseEntity<List<MesSfcProductCartonDto>> findProductCartonList(@RequestBody SearchMesSfcProductCarton searchMesSfcProductCarton);
 }
