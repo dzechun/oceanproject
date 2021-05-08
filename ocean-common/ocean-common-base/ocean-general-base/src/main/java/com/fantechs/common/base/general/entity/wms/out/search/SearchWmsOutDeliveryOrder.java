@@ -1,63 +1,60 @@
 package com.fantechs.common.base.general.entity.wms.out.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
 public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable {
 
     /**
-     * 出库单编码
+     * 销售出库单号
      */
-    @ApiModelProperty(name="deliveryOrderCode",value = "出库单号")
+    @ApiModelProperty(name="deliveryOrderCode",value = "销售出库单号")
     private String deliveryOrderCode;
 
     /**
-     * 出货通知单
+     * 货主名称
      */
-    @ApiModelProperty(name="shippingNoteCode",value = "出货通知单")
-    private String shippingNoteCode;
+    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
+    private String materialOwnerName;
 
     /**
-     * 处理人
+     * 相关单号1
      */
-    @ApiModelProperty(name="processorUserName",value = "处理人")
-    private String processorUserName;
-
-
-    @ApiModelProperty(name="supplierName" ,value="客户名称")
-    private String supplierName;
-
-    @ApiModelProperty(name="contractCode" ,value="合同号")
-    private String contractCode;
-
-    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
-    private String warehouseName;
-
-    @ApiModelProperty(name="productModelName" ,value="产品型号")
-    private String productModelName;
-
-    @ApiModelProperty(name="materialCode" ,value="产品料号")
-    private String materialCode;
-
-    @ApiModelProperty(name="modifiedUserId" ,value="操作人")
-    private String modifiedUserId;
-    /**
-     * 开始时间
-     */
-    @ApiModelProperty(name="modifiedStartTime" ,value="操作日期开始时间(YYYY-MM-DD)")
-    private String modifiedStartTime;
+    @ApiModelProperty(name="relatedOrderCode1",value = "相关单号1")
+    private String relatedOrderCode1;
 
     /**
-     * 结束时间
+     * 收货人
      */
-    @ApiModelProperty(name="modifiedEndTime" ,value="操作日期结束时间(YYYY-MM-DD)")
-    private String modifiedEndTime;
+    @ApiModelProperty(name="consignee" ,value="收货人")
+    private String consignee;
 
+    /**
+     * 联系人
+     */
+    @ApiModelProperty(name="linkManName" ,value="联系人")
+    private String linkManName;
+
+    /**
+     * 联系方式
+     */
+    @ApiModelProperty(name="linkManPhone" ,value="联系方式")
+    private String linkManPhone;
+
+    /**
+     * 传真
+     */
+    @ApiModelProperty(name="faxNumber" ,value="传真")
+    private String faxNumber;
+
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty(name="emailAddress" ,value="邮箱")
+    private String emailAddress;
 
 }

@@ -12,18 +12,25 @@ import java.io.Serializable;
 public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Serializable {
 
     /**
-     * 处理人
+     * 货主名称
      */
-    @ApiModelProperty(name="processorUserName",value = "处理人")
-    @Excel(name = "处理人", height = 20, width = 30,orderNum="3")
-    private String processorUserName;
+    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
+    @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
+    private String materialOwnerName;
 
     /**
      * 组织代码
      */
     @ApiModelProperty(name="organizationCode",value = "组织代码")
-    @Excel(name = "组织代码", height = 20, width = 30,orderNum="6")
+    @Excel(name = "组织代码", height = 20, width = 30,orderNum="10")
     private String organizationCode;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="6")
+    private String organizationName;
 
     /**
      * 创建用户名称

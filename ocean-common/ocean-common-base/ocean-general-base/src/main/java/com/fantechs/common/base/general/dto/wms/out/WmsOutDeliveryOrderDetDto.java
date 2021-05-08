@@ -22,6 +22,13 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName",value = "组织名称")
+    @Excel(name = "组织名称", height = 20, width = 30)
+    private String organizationName;
+
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     @Excel(name = "物料编码", height = 20, width = 30)

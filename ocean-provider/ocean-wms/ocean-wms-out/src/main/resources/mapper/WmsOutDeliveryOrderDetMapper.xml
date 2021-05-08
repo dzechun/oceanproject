@@ -21,9 +21,55 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
+  <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+
   <sql id="Base_Column_List">
+    wodod.delivery_order_det_id,
+    wodod.delivery_order_id,
+    wodod.source_order_id,
+    wodod.order_det_id,
+    wodod.inventory_status_id,
+    wodod.line_number,
+    wodod.material_id,
+    wodod.packing_unit_name,
+    wodod.packing_qty,
+    wodod.picking_qty,
+    wodod.dispatch_qty,
+    wodod.batch_code,
+    wodod.source_order_code,
+    wodod.source_line_number,
+    wodod.`status`,
+    wodod.org_id,
+    wodod.remark,
+    wodod.create_user_id,
+    wodod.create_time,
+    wodod.modified_user_id,
+    wodod.modified_time,
+    wodod.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+  <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
+    select<include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.wms_out_delivery_order_det wodod
+    LEFT JOIN ocean_v2.sys_user su ON wodod.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wodod.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON wodod.organization_id = bo.organization_id
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(wodod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and wodod.status=#{status}
+      </if>
+    </where>
   </select>
 </mapper>
