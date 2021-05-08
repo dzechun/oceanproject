@@ -178,6 +178,30 @@ public class MesSfcBarcodeProcess extends ValidGroup implements Serializable {
     private String sectionName;
 
     /**
+     * 工位ID
+     */
+    @ApiModelProperty(name="stationId",value = "工位ID")
+    @Excel(name = "工位ID", height = 20, width = 30,orderNum="")
+    @Column(name = "station_id")
+    private Long stationId;
+
+    /**
+     * 工位编码
+     */
+    @ApiModelProperty(name="stationCode",value = "工位编码")
+    @Excel(name = "工位编码", height = 20, width = 30,orderNum="")
+    @Column(name = "station_code")
+    private String stationCode;
+
+    /**
+     * 工位名称
+     */
+    @ApiModelProperty(name="stationName",value = "工位名称")
+    @Excel(name = "工位名称", height = 20, width = 30,orderNum="")
+    @Column(name = "station_name")
+    private String stationName;
+
+    /**
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")

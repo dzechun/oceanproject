@@ -71,6 +71,13 @@ public class MesSfcBarcodeProcessController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("查询条码")
+    @PostMapping("/findBarcode")
+    public ResponseEntity<List<MesSfcBarcodeProcess>> findBarcode(@RequestBody  SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess){
+        List<MesSfcBarcodeProcess> list = mesSfcBarcodeProcessService.findBarcode(searchMesSfcBarcodeProcess);
+        return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
+    }
+
 //    @ApiOperation("历史列表")
 //    @PostMapping("/findHtList")
 //    public ResponseEntity<List<MesSfcBarcodeProcess>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess) {

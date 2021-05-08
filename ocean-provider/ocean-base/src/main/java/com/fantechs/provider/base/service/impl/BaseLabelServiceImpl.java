@@ -166,6 +166,15 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     }
 
     @Override
+    public List<BaseLabel> findListByIDs(List<Long> ids) {
+        Example example = new Example(BaseLabel.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("labelId", ids);
+        List<BaseLabel> labelList = baseLabelMapper.selectByExample(example);
+        return labelList;
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();

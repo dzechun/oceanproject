@@ -77,6 +77,13 @@ public class MesSfcWorkOrderBarcodeController {
         return ControllerUtil.returnSuccess();
     }
 
+    @ApiOperation("条码查询")
+    @PostMapping("/findBarcode")
+    public ResponseEntity<MesSfcWorkOrderBarcode> findBarcode(@RequestParam String barcode){
+        MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeService.findBarcode(barcode);
+        return ControllerUtil.returnDataSuccess(mesSfcWorkOrderBarcode,StringUtils.isEmpty(mesSfcWorkOrderBarcode)?0:1);
+    }
+
 //    @PostMapping(value = "/export")
 //    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
 //    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
