@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.WmsInAsnOrderDet">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet">
     <!--
       WARNING - @mbg.generated
     -->
@@ -12,6 +12,8 @@
     <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
     <result column="line_number" jdbcType="INTEGER" property="lineNumber" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
@@ -35,6 +37,8 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -43,11 +47,13 @@
   <sql id="BaseColumnList">
 wiaod.asn_order_det_id,
 wiaod.asn_order_id,
-wiaod.order_id,
+wiaod.source_order_id,
 wiaod.order_det_id,
 wiaod.inventory_status_id,
 wiaod.line_number,
 wiaod.material_id,
+wiaod.warehouse_id,
+wiaod.storage_id,
 wiaod.packing_unit_name,
 wiaod.packing_qty,
 wiaod.actual_qty,
@@ -68,20 +74,25 @@ wiaod.modified_time,
 wiaod.is_delete
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="BaseColumnList"/>,mpwo.work_order_code,bm.material_code,bm.material_name,bis.inventory_status_name,su.user_name AS create_user_name,
+    select <include refid="BaseColumnList"/>,mpwo.work_order_code,bm.material_code,bm.material_name,bw.warehouse_name,bws.storage_name,bis.inventory_status_name,su.user_name AS create_user_name,
            sus.user_name AS modified_user_name,
            bo.organization_name AS organization_Name
            FROM wms_in_asn_order_det wiaod
-           LEFT JOIN mes_pm_work_order mpwo ON wiaod.order_id = mpwo.work_order_id
+           LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id
            LEFT JOIN base_material bm ON wiaod.material_id = bm.material_id
+    LEFT JOIN base_warehouse bw ON wiao.warehouse_id = bw.warehouse_id
+    LEFT JOIN base_storage bws ON wiao.storage_id = bws.storage_id
            LEFT JOIN base_inventory_status bis ON wiaod.inventory_status_id = bis.inventory_status_id
            LEFT JOIN ocean.sys_user su ON wiaod.create_user_id = su.user_id
            LEFT JOIN ocean.sys_user sus ON wiaod.modified_user_id = sus.user_id
            LEFT JOIN base_organization bo ON wiaod.org_id = bo.organization_id
     <where>
-      <if test="asnOrderId!=null and asnOrderId!=''">
+      <if test="asnOrderId !=null and asnOrderId !=''">
         and wiaod.asn_order_id=#{asnOrderId}
       </if>
+<if test="asnOrderDetId !=null and asnOrderDetId!=''">
+  and wiaod.asn_order_det_id = #{asnOrderDetId}
+</if>
     </where>
   </select>
 

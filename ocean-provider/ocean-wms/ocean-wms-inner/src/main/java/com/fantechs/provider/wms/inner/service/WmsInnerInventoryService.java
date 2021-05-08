@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.IService;
 
 import java.math.BigDecimal;
@@ -19,4 +20,12 @@ public interface WmsInnerInventoryService extends IService<WmsInnerInventory> {
     int lock(Long id, BigDecimal quantity);
 
     int unlock(Long id, BigDecimal quantity);
+
+    WmsInnerInventory selectOneByExample(Map<String,Object> map);
+
+    int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory);
+
+    int updateByExampleSelective(WmsInnerInventory wmsInnerInventory,Map<String,Object> map);
+
+    int insertSelective(WmsInnerInventory wmsInnerInventory);
 }

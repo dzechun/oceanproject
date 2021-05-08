@@ -23,8 +23,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -52,18 +52,6 @@ public class WmsInnerInventoryController {
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.batchDelete(ids));
-    }
-
-    @ApiOperation("锁定")
-    @PostMapping("/lock")
-    public ResponseEntity lock(@ApiParam(value = "锁定的库存ID",required = true) @RequestParam Long id,@ApiParam(value = "锁定的库存数量",required = true) @RequestParam BigDecimal quantity) {
-        return ControllerUtil.returnCRUD(wmsInnerInventoryService.lock(id,quantity));
-    }
-
-    @ApiOperation("解锁")
-    @PostMapping("/unlock")
-    public ResponseEntity unlock(@ApiParam(value = "解锁的库存ID",required = true) @RequestParam Long id,@ApiParam(value = "解锁数量",required = true) @RequestParam BigDecimal quantity) {
-        return ControllerUtil.returnCRUD(wmsInnerInventoryService.unlock(id,quantity));
     }
 
     @ApiOperation("修改")
@@ -95,6 +83,23 @@ public class WmsInnerInventoryController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @PostMapping("/selectOneByExample")
+    public ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestParam Map<String,Object> map){
+        return ControllerUtil.returnDataSuccess(wmsInnerInventoryService.selectOneByExample(map),1);
+    }
+    @PostMapping("/updateByPrimaryKeySelective")
+    public ResponseEntity updateByPrimaryKeySelective(@RequestParam WmsInnerInventory wmsInnerInventory){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory));
+    }
+    @PostMapping("/updateByExampleSelective")
+    public ResponseEntity updateByExampleSelective(@RequestParam WmsInnerInventory wmsInnerInventory, Map<String,Object> map){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.updateByExampleSelective(wmsInnerInventory,map));
+    }
+    @PostMapping("/insertSelective")
+    public ResponseEntity insertSelective(@RequestParam WmsInnerInventory wmsInnerInventory){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.insertSelective(wmsInnerInventory));
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
@@ -102,7 +107,7 @@ public class WmsInnerInventoryController {
     List<WmsInnerInventoryDto> list = wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "库存导出信息", "库存信息", WmsInnerInventoryDto.class, "库存查询.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInnerInventory信息", WmsInnerInventoryDto.class, "WmsInnerInventory.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

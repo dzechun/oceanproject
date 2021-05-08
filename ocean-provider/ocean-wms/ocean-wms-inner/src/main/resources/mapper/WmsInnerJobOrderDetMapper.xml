@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId" />
+    <result column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+    <result column="source_det_id" jdbcType="BIGINT" property="sourceDetId"/>
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId" />
+    <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId" />
+    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="distribution_qty" jdbcType="DECIMAL" property="distributionQty"/>
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
+    <result column="work_start_time" jdbcType="TIMESTAMP" property="workStartTime" />
+    <result column="work_end_time" jdbcType="TIMESTAMP" property="workEndTime" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+  </resultMap>
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto">
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
+    <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+  <sql id="BaseColumnList">
+    wipod.job_order_det_id,
+    wipod.job_order_id,
+wipod.source_det_id,
+wipod.material_owner_id,
+wipod.material_owner_id,
+wipod.warehouse_id,
+wipod.in_storage_id,
+wipod.out_storage_id,
+wipod.inventory_status_id,
+wipod.material_id,
+wipod.packing_unit_name,
+wipod.plan_qty,
+wipod.distribution_qty,
+wipod.actual_qty,
+wipod.pallet_code,
+wipod.receiving_date,
+wipod.production_date,
+wipod.expired_date,
+wipod.work_start_time,
+wipod.work_end_time,
+wipod.batch_code,
+wipod.status,
+wipod.remark,
+wipod.org_id,
+wipod.create_user_id,
+wipod.create_time,
+wipod.modified_user_id,
+wipod.modified_time,
+wipod.is_delete,
+wipod.option1,
+wipod.option2,
+wipod.option3,
+wipod.order_status,
+  </sql>
+    <select id="findList" resultMap="BaseResultMapDto">
+      SELECT bmo.material_owner_name,bw.warehouse_name,bso.storage_name as out_storage_name,bsi.storage_name as in_storage_name,bm.material_code,bm.material_name,
+             bsi.inventory_status_name,su.user_name AS create_user_name,
+             sus.user_name AS modified_user_name,
+             bo.organization_name AS organization_Name
+      FROM wms_inner_job_order_det wipod
+             LEFT JOIN base_material_owner bmo ON wipod.material_owner_id = bmo.material_owner_id
+             LEFT JOIN base_warehouse bw ON wipod.warehouse_id = bw.warehouse_id
+             LEFT JOIN base_storage bso ON wipod.out_storage_id = bso.storage_id
+             LEFT JOIN base_storage bsi ON wipod.in_storage_id = bsi.storage_id
+             LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bsi.inventory_status_id
+             LEFT JOIN base_material bm ON wipod.material_id = bm.material_id
+             LEFT JOIN ocean.sys_user su ON wipod.create_user_id = su.user_id
+             LEFT JOIN ocean.sys_user sus ON wipod.modified_user_id = sus.user_id
+             LEFT JOIN base_organization bo ON wipod.org_id = bo.organization_id
+<where>
+  <if test="jobOrderId!=null and jobOrderId!=''">
+    and wipod.job_order_id = #{jobOrderId}
+  </if>
+<if test="jobOrderDetId !=null and jobOrderDetId !=''">
+  and wipod.job_order_det_id = #{jobOrderDetId}
+</if>
+  <if test="orderStatusList !=null and orderStatusList.size()!=0">
+    and wipod.order_status in
+    <foreach item="orderStatus" collection="list" open="(" separator="," close=")">
+      #{orderStatus}
+    </foreach>
+  </if>
+</where>
+    </select>
+</mapper>
