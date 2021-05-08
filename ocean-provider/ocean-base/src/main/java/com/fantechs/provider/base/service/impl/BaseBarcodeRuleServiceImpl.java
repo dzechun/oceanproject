@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -220,6 +221,14 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
             baseBarcodeRuleSpecMapper.insertList(list);
         }
         return i;
+    }
+
+    @Override
+    public List<BaseBarcodeRule> findListByBarcodeRuleCategoryIds(List<Long> ids) {
+        Example example = new Example(BaseBarcodeRule.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("barcodeRuleCategoryId", ids);
+        return baseBarcodeRuleMapper.selectByExample(example);
     }
 
 

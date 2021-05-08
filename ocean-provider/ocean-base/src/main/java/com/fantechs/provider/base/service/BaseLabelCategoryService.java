@@ -14,4 +14,11 @@ import java.util.List;
 */
 public interface BaseLabelCategoryService extends IService<BaseLabelCategory> {
     List<BaseLabelCategoryDto> findList(SearchBaseLabelCategory searchBaseLabelCategory);
+
+    /**
+     * 根据ID集合获取标签类型列表
+     * @param ids
+     * @return
+     */
+    List<BaseLabelCategory> findListByIDs(List<Long> ids);
 }

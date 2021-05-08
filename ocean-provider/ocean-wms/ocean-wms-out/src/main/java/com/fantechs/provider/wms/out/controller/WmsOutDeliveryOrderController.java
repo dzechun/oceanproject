@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/05/07.
  */
 @RestController
-@Api(tags = "wmsOutDeliveryOrder控制器")
+@Api(tags = "销售出库控制器")
 @RequestMapping("/wmsOutDeliveryOrder")
 @Validated
 public class WmsOutDeliveryOrderController {
@@ -84,7 +84,7 @@ public class WmsOutDeliveryOrderController {
     List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutDeliveryOrder信息", WmsOutDeliveryOrderDto.class, "WmsOutDeliveryOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "出库单信息", WmsOutDeliveryOrderDto.class, "出库单信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

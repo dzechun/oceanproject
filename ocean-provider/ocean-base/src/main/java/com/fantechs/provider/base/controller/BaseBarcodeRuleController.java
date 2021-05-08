@@ -75,6 +75,13 @@ public class BaseBarcodeRuleController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("条码规则列表")
+    @PostMapping("/findListByBarcodeRuleCategoryIds")
+    public ResponseEntity<List<BaseBarcodeRule>> findListByBarcodeRuleCategoryIds(@ApiParam(value = "查询对象")@RequestBody List<Long> ids) {
+        List<BaseBarcodeRule> list = baseBarcodeRuleService.findListByBarcodeRuleCategoryIds(ids);
+        return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
     @ApiOperation("条码规则历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtBarcodeRule>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRule searchBaseBarcodeRule) {

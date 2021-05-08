@@ -25,4 +25,19 @@ public class WmsOutDeliveryOrderDetServiceImpl extends BaseService<WmsOutDeliver
     public List<WmsOutDeliveryOrderDetDto> findList(Map<String, Object> map) {
         return wmsOutDeliveryOrderDetMapper.findList(map);
     }
+
+    @Override
+    public int save(WmsOutDeliveryOrderDet record) {
+        return super.save(record);
+    }
+
+    @Override
+    public int update(WmsOutDeliveryOrderDet entity) {
+        return super.update(entity);
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        return super.batchDelete(ids);
+    }
 }

@@ -18,4 +18,11 @@ public interface BaseLabelService extends IService<BaseLabel> {
     int add(BaseLabel baseLabel, MultipartFile file);
 
     int update(BaseLabel baseLabel, MultipartFile file);
+
+    /**
+     * 根据ID集合获取标签列表
+     * @param ids
+     * @return
+     */
+    List<BaseLabel> findListByIDs(List<Long> ids);
 }

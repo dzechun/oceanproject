@@ -25,6 +25,8 @@ import java.util.Date;
 @Data
 @Table(name = "wms_out_delivery_order_det")
 public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
+
+    private static final long serialVersionUID = -2599212486675580628L;
     /**
      * 出库单明细ID
      */
@@ -43,12 +45,50 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private Long deliveryOrderId;
 
     /**
-     * 出库通知单明细ID
+     * 订单ID
      */
-    @ApiModelProperty(name="shippingNoteDetId",value = "出库通知单明细ID")
-    @Excel(name = "出库通知单明细ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "shipping_note_det_id")
-    private Long shippingNoteDetId;
+    @ApiModelProperty(name="sourceOrderId",value = "订单ID")
+    @Excel(name = "订单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "source_order_id")
+    private Long sourceOrderId;
+
+    /**
+     * 订单明细ID
+     */
+    @ApiModelProperty(name="orderDetId",value = "订单明细ID")
+    @Excel(name = "订单明细ID", height = 20, width = 30,orderNum="")
+    @Column(name = "order_det_id")
+    private Long orderDetId;
+
+    /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    /**
+     * 库位ID
+     */
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    @Column(name = "storage_id")
+    private Long storageId;
+
+    /**
+     * 库存状态ID
+     */
+    @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
+    @Excel(name = "库存状态ID", height = 20, width = 30,orderNum="")
+    @Column(name = "inventory_status_id")
+    private Long inventoryStatusId;
+
+    /**
+     * 行号
+     */
+    @ApiModelProperty(name="lineNumber",value = "行号")
+    @Excel(name = "行号", height = 20, width = 30,orderNum="")
+    @Column(name = "line_number")
+    private Integer lineNumber;
 
     /**
      * 物料ID
@@ -59,28 +99,68 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 备料总数
+     * 包装单位名称
      */
-    @ApiModelProperty(name="realityTotalQty",value = "备料总数")
-    @Excel(name = "备料总数", height = 20, width = 30,orderNum="") 
-    @Column(name = "reality_total_qty")
-    private BigDecimal realityTotalQty;
+    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
+    @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="")
+    @Column(name = "packing_unit_name")
+    private String packingUnitName;
 
     /**
-     * 出库总数
+     * 包装数量
      */
-    @ApiModelProperty(name="outTotalQty",value = "出库总数")
-    @Excel(name = "出库总数", height = 20, width = 30,orderNum="") 
-    @Column(name = "out_total_qty")
-    private BigDecimal outTotalQty;
+    @ApiModelProperty(name="packingQty",value = "包装数量")
+    @Excel(name = "包装数量", height = 20, width = 30,orderNum="")
+    @Column(name = "packing_qty")
+    private BigDecimal packingQty;
 
     /**
-     * 单据状态（0-待出库 1-出库中 2-出库完成）
+     * 拣货数量
      */
-    @ApiModelProperty(name="outStatus",value = "单据状态（0-待出库 1-出库中 2-出库完成）")
-    @Excel(name = "单据状态（0-待出库 1-出库中 2-出库完成）", height = 20, width = 30,orderNum="") 
-    @Column(name = "out_status")
-    private Byte outStatus;
+    @ApiModelProperty(name="pickingQty",value = "拣货数量")
+    @Excel(name = "拣货数量", height = 20, width = 30,orderNum="")
+    @Column(name = "picking_qty")
+    private BigDecimal pickingQty;
+
+    /**
+     * 发货数量
+     */
+    @ApiModelProperty(name="dispatchQty",value = "发货数量")
+    @Excel(name = "发货数量", height = 20, width = 30,orderNum="")
+    @Column(name = "dispatch_qty")
+    private BigDecimal dispatchQty;
+
+    /**
+     * 批次号
+     */
+    @ApiModelProperty(name="batchCode",value = "批次号")
+    @Excel(name = "批次号", height = 20, width = 30,orderNum="")
+    @Column(name = "batch_code")
+    private String batchCode;
+
+    /**
+     * 来源系统单号
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "来源系统单号")
+    @Excel(name = "来源系统单号", height = 20, width = 30,orderNum="")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 来源系统行号
+     */
+    @ApiModelProperty(name="sourceLineNumber",value = "来源系统行号")
+    @Excel(name = "来源系统行号", height = 20, width = 30,orderNum="")
+    @Column(name = "source_line_number")
+    private String sourceLineNumber;
+
+    /**
+     * 状态(0无效，1有效)
+     */
+    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
+    @Column(name = "status")
+    private Byte status;
 
     /**
      * 备注
@@ -92,10 +172,10 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
+    @ApiModelProperty(name="orgId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 创建人ID
@@ -139,5 +219,4 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    private static final long serialVersionUID = 1L;
 }
