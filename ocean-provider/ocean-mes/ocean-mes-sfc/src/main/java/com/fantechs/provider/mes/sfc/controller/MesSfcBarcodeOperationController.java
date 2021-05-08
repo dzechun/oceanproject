@@ -6,11 +6,13 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCarton;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -20,6 +22,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessService;
+import com.fantechs.provider.mes.sfc.service.MesSfcProductCartonService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import io.swagger.annotations.Api;
@@ -50,11 +53,13 @@ public class MesSfcBarcodeOperationController {
     @Resource
     private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
     @Resource
+    private MesSfcProductCartonService mesSfcProductCartonService;
+    @Resource
     private PMFeignApi pmFeignApi;
-    @Resource
-    private BaseFeignApi baseFeignApi;
-    @Resource
-    private RedisUtil redisUtil;
+//    @Resource
+//    private BaseFeignApi baseFeignApi;
+//    @Resource
+//    private RedisUtil redisUtil;
 
     @ApiOperation("PDA投产作业")
     @PostMapping("/pdaPutIntoProduction")
@@ -144,66 +149,44 @@ public class MesSfcBarcodeOperationController {
                 }
             }
 
+
+
             // 条码对应工序
             MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                     .workOrderCode(vo.getBarCode())
                     .build());
             // 3、判断是否已有箱码，生成箱码
             if (StringUtils.isEmpty(vo.getCartonCode())) {
-                List<BaseBarcodeRuleDto> ruleList = BarcodeUtils.getBarcodeRuleList(mesPmWorkOrderByBarCode.getMaterialId().toString(), mesPmWorkOrderByBarCode.getBarcodeRuleSetId(), mesSfcBarcodeProcess.getProcessId().toString());
-                SearchBaseLabelCategory category = new SearchBaseLabelCategory();
-                category.setLabelCategoryCode("09");
-                ResponseEntity<List<BaseLabelCategoryDto>> categoryListResponseEntity = baseFeignApi.findLabelCategoryList(category);
-                if (categoryListResponseEntity.getCode() != 0) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012021);
+                String cartonCode = BarcodeUtils.generatorCartonCode(mesPmWorkOrderByBarCode.getMaterialId().toString(),
+                        mesPmWorkOrderByBarCode.getBarcodeRuleSetId(),
+                        mesSfcBarcodeProcess.getProcessId().toString(),
+                        mesSfcBarcodeProcess.getMaterialCode(),
+                        mesPmWorkOrderByBarCode.getWorkOrderId().toString(),
+                        "09");
+                vo.setCartonCode(cartonCode);
+            } else {
+                // 4、包箱是否已满，包箱是否已关闭
+                MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectByKey(vo.getProductCartonId());
+//                if(mesSfcProductCarton)
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(searchMesSfcBarcodeProcess);
+                if(mesSfcBarcodeProcessList.size() >= vo.getCartonNum()){
+                    String cartonCode = BarcodeUtils.generatorCartonCode(mesPmWorkOrderByBarCode.getMaterialId().toString(),
+                            mesPmWorkOrderByBarCode.getBarcodeRuleSetId(),
+                            mesSfcBarcodeProcess.getProcessId().toString(),
+                            mesSfcBarcodeProcess.getMaterialCode(),
+                            mesPmWorkOrderByBarCode.getWorkOrderId().toString(),
+                            "09");
+                    vo.setCartonCode(cartonCode);
                 }
-                // 有且只有一条
-                List<BaseLabelCategoryDto> categoryDtoList = categoryListResponseEntity.getData();
-                if (categoryDtoList.isEmpty()) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012021);
-                }
-                BaseLabelCategoryDto labelCategoryDto = categoryDtoList.get(0);
-                BaseBarcodeRuleDto barcodeRuleDto = ruleList.stream()
-                        .filter(item -> item.getBarcodeRuleCategoryId().equals(labelCategoryDto.getLabelCategoryId()))
-                        .findFirst()
-                        .orElseThrow(() -> new BizErrorException(ErrorCodeEnum.PDA40012020));
-                // 获取规则配置列表
-                SearchBaseBarcodeRuleSpec baseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-                baseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleDto.getBarcodeRuleId());
-                ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecResponseEntity = baseFeignApi.findSpec(baseBarcodeRuleSpec);
-                if (barcodeRuleSpecResponseEntity.getCode() != 0) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012022);
-                }
-                List<BaseBarcodeRuleSpec> barcodeRuleSpecList = barcodeRuleSpecResponseEntity.getData();
-                if (barcodeRuleSpecList.isEmpty()) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012023);
-                }
-
-                String lastBarCode = null;
-                boolean hasKey = redisUtil.hasKey(barcodeRuleDto.getBarcodeRuleId().toString());
-                if(hasKey){
-                    // 从redis获取上次生成条码
-                    Object redisRuleData = redisUtil.get(barcodeRuleDto.getBarcodeRuleId().toString());
-                    lastBarCode = String.valueOf(redisRuleData);
-                }
-                //获取最大流水号
-                String maxCode = baseFeignApi.generateMaxCode(barcodeRuleSpecList, lastBarCode).getData();
-                //生成条码
-                ResponseEntity<String> rs = baseFeignApi.generateCode(barcodeRuleSpecList, maxCode, mesSfcBarcodeProcess.getMaterialCode(), mesPmWorkOrderByBarCode.getWorkOrderId().toString());
-                if (rs.getCode() != 0) {
-                    throw new BizErrorException(rs.getMessage());
-                }
-                // 更新redis最新包箱号
-                redisUtil.set(barcodeRuleDto.getBarcodeRuleId().toString(), rs.getData());
-                vo.setCartonCode(rs.getData());
-                mesSfcBarcodeProcess.setCartonCode(rs.getData());
-                // 更新包箱号至过站表
-                mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
             }
-            // 4、判断规格
 
+            // 5、判断工单数跟已包箱数
 
-            // 6、判断工单数跟已包箱数
+            // 6、更新包箱号至过站表
+            mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
+            mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
 
             // 7、是否扫附件码，若不则检查ok直接过站
             if (!vo.getAnnex()) {
@@ -227,7 +210,6 @@ public class MesSfcBarcodeOperationController {
                 } else {
                     updateProcessDto.setNextProcessId(mesSfcBarcodeProcess.getNextProcessId());
                 }
-
                 // 更新下一工序，增加工序记录
                 return ControllerUtil.returnCRUD(BarcodeUtils.updateProcess(updateProcessDto));
             } else {
@@ -254,5 +236,7 @@ public class MesSfcBarcodeOperationController {
             throw new BizErrorException(ex);
         }
     }
+
+
 
 }

@@ -24,10 +24,12 @@ public class PdaPackingVo implements Serializable {
     private Boolean print;
     @ApiModelProperty(name = "packType", value = "包箱类型(1：工单包箱，2：料号包箱)", required = true)
     private String packType;
-    @ApiModelProperty(name = "num", value = "包箱规格", required = true)
-    private Integer num;
+    @ApiModelProperty(name = "cartonNum", value = "包箱规格", required = true)
+    private Integer cartonNum;
     @ApiModelProperty(name = "workOrderId", value = "工单ID(若有则必填)")
     private Long workOrderId;
     @ApiModelProperty(name = "cartonCode", value = "包箱号(若有则必填)")
     private String cartonCode;
+    @ApiModelProperty(name = "productCartonId", value = "包箱状态表ID(若有则必填)")
+    private Long productCartonId;
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.sfc.MesSfcProductPalletMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="product_pallet_id" jdbcType="BIGINT" property="productPalletId" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="close_status" jdbcType="TINYINT" property="closeStatus" />
+    <result column="close_pallet_user_id" jdbcType="BIGINT" property="closePalletUserId" />
+    <result column="close_pallet_time" jdbcType="TIMESTAMP" property="closePalletTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto">
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    mspp.product_pallet_id,
+    mspp.pallet_code,
+    mspp.work_order_id,
+    mspp.material_id,
+    mspp.station_id,
+    mspp.close_status,
+    mspp.close_pallet_user_id,
+    mspp.close_pallet_time,
+    mspp.remark,
+    mspp.org_id,
+    mspp.create_user_id,
+    mspp.create_time,
+    mspp.modified_user_id,
+    mspp.modified_time,
+    mspp.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultDtoMap">
+    select <include refid="BaseColumnList"/>
+    FROM mes_sfc_product_pallet mspp
+    <where>
+      <if test="workOrderId != null">
+        and mspp.work_order_id = #{workOrderId}
+      </if>
+      <if test="materialId != null">
+        and mspp.material_id = #{materialId}
+      </if>
+      <if test="stationId != null">
+        and mspp.station_id = #{stationId}
+      </if>
+      <if test="palletCode != null and palletCode != ''">
+        and mspp.pallet_code like CONCAT('%',#{palletCode},'%')
+      </if>
+    </where>
+  </select>
+
+</mapper>

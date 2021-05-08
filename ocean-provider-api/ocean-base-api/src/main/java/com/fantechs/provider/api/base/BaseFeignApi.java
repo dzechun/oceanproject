@@ -225,9 +225,17 @@ public interface BaseFeignApi {
     @PostMapping("/baseLabel/findList")
     ResponseEntity<List<BaseLabelDto>> findLabelList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabel searchBaseLabel);
 
+    @ApiOperation("根据ID集合获取标签信息列表")
+    @PostMapping("/baseLabel/findListByIDs")
+    ResponseEntity<List<BaseLabel>> findListByIDs(@ApiParam(value = "查询对象")@RequestBody List<Long> ids);
+
     @ApiOperation("获取标签类别信息列表")
     @PostMapping("/baseLabelCategory/findList")
     ResponseEntity<List<BaseLabelCategoryDto>> findLabelCategoryList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelCategory searchBaseLabelCategory);
+
+    @ApiOperation("根据ID集合获取标签类别列表")
+    @PostMapping("/baseLabelCategory/findListByIds")
+    ResponseEntity<List<BaseLabelCategory>> findLabelCategoryListByIds(@ApiParam(value = "查询对象")@RequestBody List<Long> ids);
 
     @ApiOperation("打印")
     @PostMapping("/rabbit/print")
@@ -247,9 +255,17 @@ public interface BaseFeignApi {
     @PostMapping("/baseBarcodeRule/findList")
     ResponseEntity<List<BaseBarcodeRuleDto>> findBarcodeRulList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRule searchBaseBarcodeRule);
 
+    @ApiOperation("标签分类ID集合查询条码规则列表")
+    @PostMapping("/baseBarcodeRule/findListByBarcodeRuleCategoryIds")
+    ResponseEntity<List<BaseBarcodeRuleDto>> findListByBarcodeRuleCategoryIds(@ApiParam(value = "标签分类ID集合")@RequestBody List<Long> ids);
+
     @ApiOperation("条码规则集合列表")
     @PostMapping("/baseBarcodeRuleSet/findList")
     ResponseEntity<List<BaseBarcodeRuleSetDto>> findBarcodeRuleSetList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet);
+
+    @ApiOperation("条码规则关联集合列表")
+    @PostMapping("/baseBarcodeRuleSetDet/findList")
+    public ResponseEntity<List<BaseBarcodeRuleSetDetDto>> findBarcodeRuleSetDetList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet);
 
     @ApiOperation("生成条码")
     @PostMapping("/baseBarcodeRule/generateCode")

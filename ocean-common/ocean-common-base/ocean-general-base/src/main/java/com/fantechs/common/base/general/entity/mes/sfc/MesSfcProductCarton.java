@@ -36,11 +36,12 @@ public class MesSfcProductCarton extends ValidGroup implements Serializable {
     private String cartonCode;
 
     /**
-     * 产品条码
+     * 工单ID
      */
-    @ApiModelProperty(name="barcode",value = "产品条码")
-    @Excel(name = "产品条码", height = 20, width = 30,orderNum="") 
-    private String barcode;
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "work_order_id")
+    private Long workOrderId;
 
     /**
      * 产品ID
@@ -51,53 +52,37 @@ public class MesSfcProductCarton extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 产品编码
+     * 工位ID
      */
-    @ApiModelProperty(name="materialCode",value = "产品编码")
-    @Excel(name = "产品编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "material_code")
-    private String materialCode;
+    @ApiModelProperty(name="stationId",value = "工位ID")
+    @Excel(name = "工位ID", height = 20, width = 30,orderNum="")
+    @Column(name = "station_id")
+    private Long stationId;
 
     /**
-     * 产品名称
+     * 关箱状态(0-未关闭 1-已关闭)
      */
-    @ApiModelProperty(name="materialName",value = "产品名称")
-    @Excel(name = "产品名称", height = 20, width = 30,orderNum="") 
-    @Column(name = "material_name")
-    private String materialName;
+    @ApiModelProperty(name="closeStatus",value = "关箱状态(0-未关闭 1-已关闭)")
+    @Excel(name = "关箱状态(0-未关闭 1-已关闭)", height = 20, width = 30,orderNum="")
+    @Column(name = "close_status")
+    private Byte closeStatus;
 
     /**
-     * 产品编码版本
+     * 关箱人员ID
      */
-    @ApiModelProperty(name="materialVer",value = "产品编码版本")
-    @Excel(name = "产品编码版本", height = 20, width = 30,orderNum="") 
-    @Column(name = "material_ver")
-    private String materialVer;
+    @ApiModelProperty(name="closeCartonUserId",value = "关箱人员ID")
+    @Excel(name = "关箱人员ID", height = 20, width = 30,orderNum="")
+    @Column(name = "close_carton_user_id")
+    private Long closeCartonUserId;
 
     /**
-     * 条码类别（1.工序流转卡、2.产品条码）
+     * 关箱人员时间
      */
-    @ApiModelProperty(name="barcodeType",value = "条码类别（1.工序流转卡、2.产品条码）")
-    @Excel(name = "条码类别（1.工序流转卡、2.产品条码）", height = 20, width = 30,orderNum="") 
-    @Column(name = "barcode_type")
-    private Byte barcodeType;
-
-    /**
-     * 作业员ID
-     */
-    @ApiModelProperty(name="operatorUserId",value = "作业员ID")
-    @Excel(name = "作业员ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "operator_user_id")
-    private Long operatorUserId;
-
-    /**
-     * 作业时间
-     */
-    @ApiModelProperty(name="operatorTime",value = "作业时间")
-    @Excel(name = "作业时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @ApiModelProperty(name="closeCartonTime",value = "关箱人员时间")
+    @Excel(name = "关箱人员时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "operator_time")
-    private Date operatorTime;
+    @Column(name = "close_carton_time")
+    private Date closeCartonTime;
 
     /**
      * 备注
