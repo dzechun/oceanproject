@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcKeyPartRelevanceMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcKeyPartRelevance">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="key_part_relevance_id" jdbcType="BIGINT" property="keyPartRelevanceId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="barcode_code" jdbcType="VARCHAR" property="barcodeCode" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
+    <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="process_code" jdbcType="VARCHAR" property="processCode" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_ver" jdbcType="VARCHAR" property="materialVer" />
+    <result column="work_order_part_barcode_id" jdbcType="BIGINT" property="workOrderPartBarcodeId" />
+    <result column="part_barcode" jdbcType="VARCHAR" property="partBarcode" />
+    <result column="part_customer_barcode" jdbcType="VARCHAR" property="partCustomerBarcode" />
+    <result column="m_a_c_barcode" jdbcType="VARCHAR" property="mACBarcode" />
+    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="operator_time" jdbcType="TIMESTAMP" property="operatorTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto">
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    mskpr.key_part_relevance_id,
+    mskpr.work_order_id,
+    mskpr.work_order_code,
+    mskpr.work_order_barcode_id,
+    mskpr.barcode_code,
+    mskpr.pro_line_id,
+    mskpr.pro_code,
+    mskpr.pro_name,
+    mskpr.process_id,
+    mskpr.process_code,
+    mskpr.process_name,
+    mskpr.station_id,
+    mskpr.station_code,
+    mskpr.station_name,
+    mskpr.material_id,
+    mskpr.material_code,
+    mskpr.material_name,
+    mskpr.material_ver,
+    mskpr.work_order_part_barcode_id,
+    mskpr.part_barcode,
+    mskpr.part_customer_barcode,
+    mskpr.m_a_c_barcode,
+    mskpr.operator_user_id,
+    mskpr.operator_time,
+    mskpr.remark,
+    mskpr.org_id,
+    mskpr.create_user_id,
+    mskpr.create_time,
+    mskpr.modified_user_id,
+    mskpr.modified_time,
+    mskpr.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultDtoMap">
+    select <include refid="BaseColumnList"/>
+    FROM mes_sfc_key_part_relevance mskpr
+    <where>
+      <if test="keyPartRelevanceId != null">
+        and mskpr.key_part_relevance_id = #{keyPartRelevanceId}
+      </if>
+      <if test="workOrderId != null">
+        and mskpr.work_order_id = #{workOrderId}
+      </if>
+      <if test="workOrderBarcodeId != null">
+        and mskpr.work_order_barcode_id = #{workOrderBarcodeId}
+      </if>
+      <if test="processId != null">
+        and mskpr.process_id = #{processId}
+      </if>
+      <if test="stationId != null">
+        and mskpr.station_id = #{stationId}
+      </if>
+    </where>
+  </select>
+  
+</mapper>

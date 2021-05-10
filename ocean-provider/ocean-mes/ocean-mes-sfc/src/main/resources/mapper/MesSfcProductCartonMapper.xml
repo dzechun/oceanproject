@@ -7,6 +7,7 @@
     -->
     <id column="product_carton_id" jdbcType="BIGINT" property="productCartonId" />
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
+    <result column="now_package_spec_qty" jdbcType="DECIMAL" property="nowPackageSpecQty" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="station_id" jdbcType="BIGINT" property="stationId" />

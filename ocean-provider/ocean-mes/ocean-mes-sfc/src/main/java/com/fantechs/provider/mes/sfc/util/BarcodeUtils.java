@@ -92,7 +92,7 @@ public class BarcodeUtils {
      *
      * @return
      */
-    public static Boolean checkSN(CheckProductionVo record) throws Exception {
+    public static Boolean checkSN(CheckProductionDto record) throws Exception {
 
         // 1、判断条码是否正确（是否存在）
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode());

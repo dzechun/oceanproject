@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PdaPackingAnnexVo implements Serializable {
+public class PdaCartonAnnexDto implements Serializable {
 
     @ApiModelProperty(name = "barCode", value = "附件码", required = true)
     private String barCode;
