@@ -101,6 +101,18 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="materialName != null and materialName != ''">
+        and sm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="materialVersion != null and materialVersion != ''">
+        and sm.material_version like CONCAT('%', #{materialVersion}, '%')
+      </if>
+      <if test="putawayTactics != null and putawayTactics != ''">
+        and shsm.putaway_tactics = #{putawayTactics}
+      </if>
+      <if test="replenishTactics != null and replenishTactics != ''">
+        and shsm.replenish_tactics = #{replenishTactics}
+      </if>
     </where>
     order by shsm.modified_time desc
   </select>
