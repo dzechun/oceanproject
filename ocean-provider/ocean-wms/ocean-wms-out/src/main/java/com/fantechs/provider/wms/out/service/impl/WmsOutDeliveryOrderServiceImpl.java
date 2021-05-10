@@ -69,7 +69,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             //计算总数量
             BigDecimal packingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPackingQty(packingSum);
-            BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPickingQty(pickingSum);
         }
 
@@ -88,7 +88,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             //计算总数量
             BigDecimal packingSum = list.stream().map(WmsOutHtDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutHtDeliveryOrder.setTotalPackingQty(packingSum);
-            BigDecimal pickingSum = list.stream().map(WmsOutHtDeliveryOrderDet::getPickingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal pickingSum = list.stream().map(WmsOutHtDeliveryOrderDet::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutHtDeliveryOrder.setTotalPickingQty(pickingSum);
         }
 

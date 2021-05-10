@@ -134,11 +134,11 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     private String analysisCode;
 
     /**
-     * 订单号
+     * 销售订单号
      */
     @Transient
-    @ApiModelProperty(name="omSalesOrder" ,value="订单号")
-    private String omSalesOrder;
+    @ApiModelProperty(name="salesOrderCode" ,value="销售订单号")
+    private String salesOrderCode;
 
     /**
      * 组织名称

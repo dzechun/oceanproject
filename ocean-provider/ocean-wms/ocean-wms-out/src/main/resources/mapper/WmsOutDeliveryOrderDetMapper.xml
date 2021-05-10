@@ -39,7 +39,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
     <result column="volume" jdbcType="DECIMAL" property="volume"/>
     <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
     <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight" />
@@ -75,7 +75,7 @@
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
     select<include refid="Base_Column_List"/>,
-    bm.material_code,bm.material_name,bw.warehouse_name,bs.storage_name,
+    bm.material_code,bm.material_name,bw.warehouse_name,bs.storage_code,
     bmt.volume,bmt.net_weight,bmt.gross_weight,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,

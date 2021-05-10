@@ -9,8 +9,7 @@ import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductMaterialReP;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessReM;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductMaterialReP;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderMaterialReP;
-import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderMaterialReP;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -83,6 +82,40 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    public int batchSave(List<BaseProductProcessReM> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            Example example = new Example(BaseProductProcessReM.class);
+            if (StringUtils.isEmpty(list.get(0).getProcessId()) || list.get(0).getProcessId() == 0){
+                String ids = "";
+                example.createCriteria().andEqualTo("materialId",list.get(0).getMaterialId());
+                List<BaseProductProcessReM> baseProductProcessReMS = baseProductProcessReMMapper.selectByExample(example);
+                for (BaseProductProcessReM baseProductProcessReM : baseProductProcessReMS) {
+                    ids += baseProductProcessReM.getProductProcessReMId() + ",";
+                }
+                this.batchDelete(ids.substring(0, ids.length() - 1));
+            }else{
+                for (BaseProductProcessReM baseProductProcessReM : list) {
+                    example.createCriteria().andEqualTo("materialId",baseProductProcessReM.getMaterialId())
+                            .andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId() == null ? -1 : baseProductProcessReM.getProductProcessReMId());
+                    BaseProductProcessReM baseProductProcessReM1 = baseProductProcessReMMapper.selectOneByExample(example);
+                    if(StringUtils.isEmpty(baseProductProcessReM1)){
+                        this.save(baseProductProcessReM);
+                    }else {
+                        this.update(baseProductProcessReM);
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseProductProcessReM baseProductProcessReM) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -114,7 +147,16 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
 
         //工序物料清单表
         List<BaseProductMaterialReP> baseProductMaterialRePS = baseProductProcessReM.getList();
-        if(StringUtils.isNotEmpty(baseProductMaterialRePS)){
+        if (StringUtils.isNotEmpty(baseProductMaterialRePS)) {
+            for (BaseProductMaterialReP baseProductMaterialReP : baseProductMaterialRePS) {
+                baseProductMaterialReP.setCreateUserId(user.getUserId());
+                baseProductMaterialReP.setCreateTime(new Date());
+                baseProductMaterialReP.setModifiedUserId(user.getUserId());
+                baseProductMaterialReP.setModifiedTime(new Date());
+                baseProductMaterialReP.setStatus(StringUtils.isEmpty(baseProductMaterialReP.getStatus())?1:baseProductMaterialReP.getStatus());
+                baseProductMaterialReP.setOrgId(user.getOrganizationId());
+                baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
+            }
             baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
         }
 
@@ -143,7 +185,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", baseProductProcessReM.getMaterialId())
                 .andEqualTo("processId", baseProductProcessReM.getProcessId())
-                .andNotEqualTo("product_process_re_m_id",baseProductProcessReM.getProductProcessReMId());
+                .andNotEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId());
         BaseProductProcessReM baseProductProcessReM1 = baseProductProcessReMMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductProcessReM1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -165,6 +207,11 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
 
         List<BaseProductMaterialReP> baseProductMaterialRePS = baseProductProcessReM.getList();
         if(StringUtils.isNotEmpty(baseProductMaterialRePS)){
+            for (BaseProductMaterialReP baseProductMaterialReP : baseProductMaterialRePS) {
+                baseProductMaterialReP.setModifiedUserId(user.getUserId());
+                baseProductMaterialReP.setModifiedTime(new Date());
+                baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
+            }
             baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
         }
 
