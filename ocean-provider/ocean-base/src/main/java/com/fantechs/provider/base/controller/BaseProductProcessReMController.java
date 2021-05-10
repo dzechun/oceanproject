@@ -36,6 +36,12 @@ public class BaseProductProcessReMController {
     @Resource
     private BaseProductProcessReMService baseProductProcessReMService;
 
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<BaseProductProcessReM> list) {
+        return ControllerUtil.returnCRUD(baseProductProcessReMService.batchSave(list));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProductProcessReM baseProductProcessReM) {
