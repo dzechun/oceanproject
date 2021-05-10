@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckProductionVo implements Serializable {
+public class CheckProductionDto implements Serializable {
 
     // 条码，有且只有一条
     private String barCode;

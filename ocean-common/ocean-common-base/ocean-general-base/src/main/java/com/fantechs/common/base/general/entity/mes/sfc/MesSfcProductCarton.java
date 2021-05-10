@@ -5,9 +5,14 @@ import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 生产管理-产品包箱表
@@ -16,6 +21,9 @@ import lombok.Data;
  * @date 2021-05-08 09:44:47
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "mes_sfc_product_carton")
 public class MesSfcProductCarton extends ValidGroup implements Serializable {
     /**
@@ -34,6 +42,14 @@ public class MesSfcProductCarton extends ValidGroup implements Serializable {
     @Excel(name = "包箱号", height = 20, width = 30,orderNum="") 
     @Column(name = "carton_code")
     private String cartonCode;
+
+    /**
+     * 当前包装规格数量
+     */
+    @ApiModelProperty(name="cartonCode",value = "当前包装规格数量")
+    @Excel(name = "当前包装规格数量", height = 20, width = 30,orderNum="")
+    @Column(name = "now_package_spec_qty")
+    private BigDecimal nowPackageSpecQty;
 
     /**
      * 工单ID

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutDespatchOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="despatch_order_id" jdbcType="BIGINT" property="despatchOrderId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId" />
+    <result column="despatch_order_code" jdbcType="VARCHAR" property="despatchOrderCode" />
+    <result column="car_type" jdbcType="VARCHAR" property="carType" />
+    <result column="car_number" jdbcType="VARCHAR" property="carNumber" />
+    <result column="driver_name" jdbcType="VARCHAR" property="driverName" />
+    <result column="container_number" jdbcType="VARCHAR" property="containerNumber" />
+    <result column="seal_number" jdbcType="VARCHAR" property="sealNumber" />
+    <result column="plan_despatch_time" jdbcType="TIMESTAMP" property="planDespatchTime" />
+    <result column="actual_despatch_time" jdbcType="TIMESTAMP" property="actualDespatchTime" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto">
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    wodo.despatch_order_id,
+    wodo.warehouse_id,
+wodo.shipment_enterprise_id,
+wodo.despatch_order_code,
+wodo.car_type,
+wodo.car_number,
+wodo.driver_name,
+wodo.container_number,
+wodo.seal_number,
+wodo.plan_despatch_time,
+wodo.actual_despatch_time,
+wodo.order_status,
+wodo.status,
+wodo.remark,
+wodo.org_id,
+wodo.create_user_id,
+wodo.create_time,
+wodo.modified_user_id,
+wodo.modified_time,
+wodo.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT <include refid="Base_Column_List"/>,bw.warehouse_name,bse.shipment_enterprise_name,su.user_name AS create_user_name,
+           sus.user_name AS modified_user_name,
+           bo.organization_name AS organization_Name
+    FROM wms_out_despatch_order wodo
+           LEFT JOIN base_warehouse bw ON wodo.warehouse_id = bw.warehouse_id
+           LEFT JOIN base_shipment_enterprise bse ON wodo.shipment_enterprise_id = bse.shipment_enterprise_id
+           LEFT JOIN ocean.sys_user su ON wodo.create_user_id = su.user_id
+           LEFT JOIN ocean.sys_user sus ON wodo.modified_user_id = sus.user_id
+           LEFT JOIN base_organization bo ON wodo.org_id = bo.organization_id
+<where>
+  <if test="despatchOrderCode !=null and despatchOrderCode!=''">
+    and despatch_order_code like CONCAT('%',#{despatchOrderCode},'%')
+  </if>
+<if test="containerNumber !=null and containerNumber!=''">
+  and container_number like CONCAT('%',#{containerNumber},'%')
+</if>
+<if test="sealNumber !=null and sealNumber !=''">
+  and seal_number like CONCAT('%',#{sealNumber},'%')
+</if>
+</where>
+  </select>
+</mapper>
