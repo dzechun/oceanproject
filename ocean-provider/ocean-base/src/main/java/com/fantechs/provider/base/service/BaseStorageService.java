@@ -25,4 +25,6 @@ public interface BaseStorageService extends IService<BaseStorage> {
 
     //减可放托盘数
     int minusSurplusCanPutSalver(Long storageId,Integer num);
+
+    int plusSurplusCanPutSalver(Long storageId, Integer num);
 }

@@ -41,8 +41,8 @@
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
 
     <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
@@ -104,9 +104,6 @@
       </if>
     <if test="materialOwnerName!=null and materialOwnerName!=''">
       and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
-    </if>
-    <if test="warehouseName!=null and warehouseName!=''">
-      and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
     </if>
   <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
     and date_format(wiao.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

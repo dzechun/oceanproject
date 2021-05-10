@@ -4,6 +4,7 @@ import com.fantechs.common.base.dto.storage.MesPackageManagerDTO;
 import com.fantechs.common.base.dto.storage.SearchMesPackageManagerListDTO;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
@@ -42,4 +43,8 @@ public interface InFeignApi {
     @ApiOperation("列表")
     @PostMapping("/wmsInAsnOrderDet/findList")
     ResponseEntity<List<WmsInAsnOrderDetDto>> findDetList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInAsnOrderDet searchWmsInAsnOrderDet);
+
+    @ApiOperation(value = "展板作业新增完工入库-上架作业",notes = "新增")
+    @PostMapping("/wmsInAsnOrder/packageAutoAdd")
+    ResponseEntity<WmsInAsnOrder> packageAutoAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrder wmsInAsnOrder);
 }

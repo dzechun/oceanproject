@@ -1,9 +1,10 @@
-package com.fanctechs.provider.api.wms.inner;
+package com.fantechs.provider.api.wms.inner;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
@@ -75,12 +76,21 @@ public interface InnerFeignApi {
 
 
     @PostMapping("/wmsInnerInventory/selectOneByExample")
-    ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestParam Map<String,Object> map);
+    ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestBody Map<String,Object> map);
     @PostMapping("/wmsInnerInventory/updateByPrimaryKeySelective")
-    ResponseEntity updateByPrimaryKeySelective(@RequestParam WmsInnerInventory wmsInnerInventory);
+    ResponseEntity updateByPrimaryKeySelective(@RequestBody WmsInnerInventory wmsInnerInventory);
     @PostMapping("/wmsInnerInventory/updateByExampleSelective")
-    ResponseEntity updateByExampleSelective(@RequestParam WmsInnerInventory wmsInnerInventory, Map<String,Object> map);
+    ResponseEntity updateByExampleSelective(@RequestBody WmsInnerInventory wmsInnerInventory,@RequestParam Map<String,Object> map);
     @PostMapping("/wmsInnerInventory/insertSelective")
-    ResponseEntity insertSelective(@RequestParam WmsInnerInventory wmsInnerInventory);
+    ResponseEntity insertSelective(@RequestBody WmsInnerInventory wmsInnerInventory);
+
+
+    @ApiOperation(value = "栈板新增上架作业",notes = "栈板新增上架作业")
+    @PostMapping("/wmsInnerJobOrder/packageAutoAdd")
+    ResponseEntity<WmsInnerJobOrder> packageAutoAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInnerJobOrder);
+
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/wmsInnerJobOrder/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInPutawayOrder);
 
 }

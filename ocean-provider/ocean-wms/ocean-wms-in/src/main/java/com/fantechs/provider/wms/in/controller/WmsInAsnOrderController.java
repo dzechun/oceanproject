@@ -43,6 +43,12 @@ public class WmsInAsnOrderController {
         return ControllerUtil.returnCRUD(wmsInAsnOrderService.save(wmsInAsnOrder));
     }
 
+    @ApiOperation(value = "展板作业新增完工入库-上架作业",notes = "新增")
+    @PostMapping("/packageAutoAdd")
+    public ResponseEntity<WmsInAsnOrder> packageAutoAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrder wmsInAsnOrder) {
+        return ControllerUtil.returnDataSuccess(wmsInAsnOrderService.packageAutoAdd(wmsInAsnOrder),1);
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
@@ -100,5 +106,11 @@ public class WmsInAsnOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("创建作业单")
+    @PostMapping("/createInnerJobOrder")
+    public ResponseEntity createInnerJobOrder(@ApiParam(value = "完工入库id")@RequestParam Long asnOrderId){
+        return ControllerUtil.returnCRUD(wmsInAsnOrderService.createInnerJobOrder(asnOrderId));
     }
 }

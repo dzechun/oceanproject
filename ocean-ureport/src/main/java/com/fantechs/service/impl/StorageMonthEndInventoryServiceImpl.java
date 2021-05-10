@@ -1,6 +1,6 @@
 package com.fantechs.service.impl;
 
-import com.fanctechs.provider.api.wms.inner.InnerFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.support.BaseService;

@@ -65,7 +65,7 @@ public class WmsInnerJobOrderDetController {
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerJobOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerJobOrderDet searchWmsInPutawayOrderDet) {
         Page<Object> page = PageHelper.startPage(searchWmsInPutawayOrderDet.getStartPage(),searchWmsInPutawayOrderDet.getPageSize());
-        List<WmsInnerJobOrderDetDto> list = wmsInPutawayOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInPutawayOrderDet));
+        List<WmsInnerJobOrderDetDto> list = wmsInPutawayOrderDetService.findList(searchWmsInPutawayOrderDet);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -73,7 +73,7 @@ public class WmsInnerJobOrderDetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInnerJobOrderDet searchWmsInPutawayOrderDet){
-    List<WmsInnerJobOrderDetDto> list = wmsInPutawayOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInPutawayOrderDet));
+    List<WmsInnerJobOrderDetDto> list = wmsInPutawayOrderDetService.findList(searchWmsInPutawayOrderDet);
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "WmsInPutawayOrderDet信息", WmsInnerJobOrderDetDto.class, "WmsInPutawayOrderDet.xls", response);

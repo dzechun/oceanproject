@@ -17,9 +17,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "wms_inner_inventory")
 public class WmsInnerInventory extends ValidGroup implements Serializable {
     /**

@@ -153,4 +153,11 @@ public class BaseStorageController {
                                                             @ApiParam(value = "待减可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num) {
         return ControllerUtil.returnCRUD(baseStorageService.minusSurplusCanPutSalver(storageId,num));
     }
+
+    @ApiOperation("加可放托盘数")
+    @PostMapping("/plusSurplusCanPutSalver")
+    public ResponseEntity plusSurplusCanPutSalver(@ApiParam(value = "库位id", required = true) @RequestParam @NotNull(message = "库位id")Long storageId,
+                                                   @ApiParam(value = "待加可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num) {
+        return ControllerUtil.returnCRUD(baseStorageService.plusSurplusCanPutSalver(storageId,num));
+    }
 }

@@ -38,7 +38,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
   </resultMap>
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
@@ -47,8 +47,8 @@
     <result column="material_name" jdbcType="VARCHAR" property="materialCode"/>
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>
   <sql id="BaseColumnList">
     wipod.job_order_det_id,
@@ -83,11 +83,11 @@ wipod.is_delete,
 wipod.option1,
 wipod.option2,
 wipod.option3,
-wipod.order_status,
+wipod.order_status
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-      SELECT bmo.material_owner_name,bw.warehouse_name,bso.storage_name as out_storage_name,bsi.storage_name as in_storage_name,bm.material_code,bm.material_name,
-             bsi.inventory_status_name,su.user_name AS create_user_name,
+      SELECT <include refid="BaseColumnList"/>,bmo.material_owner_name,bw.warehouse_name,bso.storage_name as out_storage_name,bsi.storage_name as in_storage_name,bm.material_code,bm.material_name,
+             bis.inventory_status_name,su.user_name AS create_user_name,
              sus.user_name AS modified_user_name,
              bo.organization_name AS organization_Name
       FROM wms_inner_job_order_det wipod
@@ -95,7 +95,7 @@ wipod.order_status,
              LEFT JOIN base_warehouse bw ON wipod.warehouse_id = bw.warehouse_id
              LEFT JOIN base_storage bso ON wipod.out_storage_id = bso.storage_id
              LEFT JOIN base_storage bsi ON wipod.in_storage_id = bsi.storage_id
-             LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bsi.inventory_status_id
+             LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bis.inventory_status_id
              LEFT JOIN base_material bm ON wipod.material_id = bm.material_id
              LEFT JOIN ocean.sys_user su ON wipod.create_user_id = su.user_id
              LEFT JOIN ocean.sys_user sus ON wipod.modified_user_id = sus.user_id
@@ -109,7 +109,7 @@ wipod.order_status,
 </if>
   <if test="orderStatusList !=null and orderStatusList.size()!=0">
     and wipod.order_status in
-    <foreach item="orderStatus" collection="list" open="(" separator="," close=")">
+    <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">
       #{orderStatus}
     </foreach>
   </if>

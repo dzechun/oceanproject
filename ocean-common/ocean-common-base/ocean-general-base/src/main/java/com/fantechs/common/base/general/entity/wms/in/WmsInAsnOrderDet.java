@@ -84,6 +84,22 @@ public class WmsInAsnOrderDet extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    /**
+     * 库位ID
+     */
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    @Excel(name = "库位ID", height = 20, width = 30,orderNum="")
+    @Column(name = "storage_id")
+    private Long storageId;
+
+    /**
      * 包装单位名称
      */
     @ApiModelProperty(name="packingUnitName",value = "包装单位名称")

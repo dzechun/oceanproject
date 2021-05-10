@@ -340,6 +340,12 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorage/minusSurplusCanPutSalver")
     ResponseEntity minusSurplusCanPutSalver(@ApiParam(value = "库位id", required = true) @RequestParam @NotNull(message = "库位id")Long storageId,
                                             @ApiParam(value = "待减可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num);
+
+    @ApiOperation("加可放托盘数")
+    @PostMapping("/plusSurplusCanPutSalver")
+    ResponseEntity plusSurplusCanPutSalver(@ApiParam(value = "库位id", required = true) @RequestParam @NotNull(message = "库位id")Long storageId,
+                                                  @ApiParam(value = "待加可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num);
+
     @ApiOperation("物料关联标签信息")
     @PostMapping("/baseLabelMaterial/findList")
     ResponseEntity<List<BaseLabelMaterialDto>> findLabelMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial);

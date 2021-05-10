@@ -99,6 +99,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getLabelName())){
                         //获取默认模版
                         labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
+                        if(StringUtils.isEmpty(labelRuteDto)){
+                            throw new BizErrorException("未匹配到默认模版");
+                        }
                     }
                     break;
             }
@@ -219,7 +222,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
         if(record.getBarcodeType()==(byte)4){
             MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
-            record.setWorkOrderId(mesPmWorkOrder.getOrderId());
+            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
         }
         //判断条码产生数量不能大于工单数量
         Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());

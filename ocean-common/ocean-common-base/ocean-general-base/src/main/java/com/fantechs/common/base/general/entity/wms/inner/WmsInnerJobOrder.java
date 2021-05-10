@@ -87,17 +87,17 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     /**
      * 作业单号
      */
-    @ApiModelProperty(name="putawayOrderCode",value = "作业单号")
+    @ApiModelProperty(name="jobOrderCode",value = "作业单号")
     @Excel(name = "作业单号", height = 20, width = 30,orderNum="") 
-    @Column(name = "putaway_order_code")
+    @Column(name = "job_order_code")
     private String jobOrderCode;
 
     /**
      * 作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)
      */
-    @ApiModelProperty(name="putawayOrderType",value = "作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)")
+    @ApiModelProperty(name="jobOrderType",value = "作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)")
     @Excel(name = "作业类型", height = 20, width = 30,orderNum="") 
-    @Column(name = "putaway_order_type")
+    @Column(name = "job_order_type")
     private String jobOrderType;
 
     /**

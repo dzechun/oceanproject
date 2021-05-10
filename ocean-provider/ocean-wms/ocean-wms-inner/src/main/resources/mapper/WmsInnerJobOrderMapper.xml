@@ -32,14 +32,14 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
     <result column="work_name" jdbcType="VARCHAR" property="workName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>
   <sql id="BaseColumnList">
     wipo.job_order_id,
@@ -106,7 +106,7 @@ wipo.option3
 </if>
       <if test="orderStatusList !=null and orderStatusList.size()!=0">
         and wipo.order_status in
-        <foreach item="orderStatus" collection="list" open="(" separator="," close=")">
+        <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">
         #{orderStatus}
       </foreach>
       </if>

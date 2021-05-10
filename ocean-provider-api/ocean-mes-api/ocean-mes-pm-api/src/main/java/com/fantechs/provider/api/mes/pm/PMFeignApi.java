@@ -93,7 +93,7 @@ public interface PMFeignApi {
     ResponseEntity<List<SmtProcessListProcessDto>> findSmtProcessListProcessList(@ApiParam(value = "查询对象") @RequestBody SearchSmtProcessListProcess searchSmtProcessListProcess);
 
     @ApiOperation("获取工单的详情")
-    @PostMapping("/smtWorkOrder/detail")
+    @PostMapping("/mesPmWorkOrder/detail")
     ResponseEntity<MesPmWorkOrder> workOrderDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("修改")

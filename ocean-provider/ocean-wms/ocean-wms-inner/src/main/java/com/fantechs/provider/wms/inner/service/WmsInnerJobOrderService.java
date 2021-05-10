@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.inner.service;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 
 public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
-    List<WmsInnerJobOrderDto> findList(Map<String, Object> map);
+    List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder);
 
     /**
      * 自动分配
@@ -50,4 +51,8 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
     String checkBarcode(String barCode);
+
+    WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId);
+
+    WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
 }

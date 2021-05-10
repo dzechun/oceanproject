@@ -15,8 +15,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,28 +38,37 @@ public class PDAWmsInnerJobOrderController {
 
     @ApiOperation("/PDA上架作业单列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<WmsInnerJobOrderDto>> findList(@RequestBody SearchWmsInnerJobOrder searchWmsInnerJobOrder){
+    public ResponseEntity<List<WmsInnerJobOrderDto>> findList(@RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInnerJobOrder){
         List<Byte> bytes= new ArrayList<>();
         bytes.add((byte)2);
         bytes.add((byte)3);
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
         searchWmsInnerJobOrder.setJobOrderType((byte)3);
-        List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(ControllerUtil.dynamicCondition(searchWmsInnerJobOrder));
+        List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
     }
 
     @ApiOperation("/PDA上架作业明细列表")
     @PostMapping("/findDetList")
-    public ResponseEntity<List<WmsInnerJobOrderDetDto>> findDetList(@RequestBody SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet){
+    public ResponseEntity<List<WmsInnerJobOrderDetDto>> findDetList(@RequestBody(required = false) SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet){
         List<Byte> bytes= new ArrayList<>();
         bytes.add((byte)3);
         bytes.add((byte)4);
         searchWmsInnerJobOrderDet.setOrderStatusList(bytes);
-        List<WmsInnerJobOrderDetDto> list = wmsInnerJobOrderDetService.findList(ControllerUtil.dynamicCondition(searchWmsInnerJobOrderDet));
+        List<WmsInnerJobOrderDetDto> list = wmsInnerJobOrderDetService.findList(searchWmsInnerJobOrderDet);
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
+    @ApiOperation("PDA扫码库位返回数量")
+    @PostMapping("/scanStorageBackQty")
+    public ResponseEntity<WmsInnerJobOrderDet> scanStorageBackQty(@ApiParam(value = "库位编码")@RequestParam @NotNull(message = "库位编码不能为空") String storageCode,
+                                                                  @ApiParam(value = "明细id")@RequestParam @NotNull(message = "明细唯一标识不能为空") Long jobOrderDetId){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
+    }
+
     @ApiOperation("标签校验")
+    @ApiIgnore
     @PostMapping("/checkBarcode")
     public ResponseEntity<String> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode){
         String id = wmsInnerJobOrderService.checkBarcode(barCode);
@@ -65,6 +76,7 @@ public class PDAWmsInnerJobOrderController {
     }
 
     @ApiOperation("单一确认")
+    @ApiIgnore
     @PostMapping("/singleReceiving")
     public ResponseEntity singleReceiving(@RequestBody(required = true) List<WmsInnerJobOrderDet> wmsInPutawayOrderDets){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.singleReceiving(wmsInPutawayOrderDets));

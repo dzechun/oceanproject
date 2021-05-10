@@ -73,6 +73,12 @@ public class WmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.save(wmsInPutawayOrder));
     }
 
+    @ApiOperation(value = "栈板作业新增上架作业",notes = "栈板作业新增上架作业")
+    @PostMapping("/packageAutoAdd")
+    public ResponseEntity<WmsInnerJobOrder> packageAutoAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInnerJobOrder) {
+        return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.packageAutoAdd(wmsInnerJobOrder),1);
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
@@ -96,7 +102,7 @@ public class WmsInnerJobOrderController {
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerJobOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerJobOrder searchWmsInPutawayOrder) {
         Page<Object> page = PageHelper.startPage(searchWmsInPutawayOrder.getStartPage(),searchWmsInPutawayOrder.getPageSize());
-        List<WmsInnerJobOrderDto> list = wmsInPutawayOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInPutawayOrder));
+        List<WmsInnerJobOrderDto> list = wmsInPutawayOrderService.findList(searchWmsInPutawayOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -104,7 +110,7 @@ public class WmsInnerJobOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInPutawayOrder){
-    List<WmsInnerJobOrderDto> list = wmsInPutawayOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInPutawayOrder));
+    List<WmsInnerJobOrderDto> list = wmsInPutawayOrderService.findList(searchWmsInPutawayOrder);
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "WmsInPutawayOrder信息", WmsInnerJobOrderDto.class, "WmsInPutawayOrder.xls", response);

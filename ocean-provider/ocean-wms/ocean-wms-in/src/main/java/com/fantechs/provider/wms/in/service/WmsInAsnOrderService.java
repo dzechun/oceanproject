@@ -33,4 +33,8 @@ public interface WmsInAsnOrderService extends IService<WmsInAsnOrder> {
     int singleReceiving(WmsInAsnOrderDet wmsInAsnOrderDet);
 
     int writeQty(WmsInAsnOrderDet wmsInAsnOrderDet);
+
+    WmsInAsnOrder packageAutoAdd(WmsInAsnOrder wmsInAsnOrder);
+
+    int createInnerJobOrder(Long asnOrderId);
 }

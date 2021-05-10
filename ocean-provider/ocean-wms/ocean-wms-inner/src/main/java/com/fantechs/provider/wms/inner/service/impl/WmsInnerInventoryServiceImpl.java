@@ -121,21 +121,17 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     public int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory) {
-        return wmsInnerInventoryMapper.updateByPrimaryKeySelective(WmsInnerInventory.builder()
-                .inventoryId(wmsInnerInventory.getInventoryId())
-                .jobStatus((byte)2)
-                .build());
+        wmsInnerInventory.setJobStatus((byte)2);
+        return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
     }
 
     @Override
     public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
         example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
-        int num = wmsInnerInventoryMapper.updateByExample(WmsInnerInventory.builder()
-                .packingQty(new BigDecimal(
-                        Double.parseDouble(map.get("actualQty").toString())-wmsInnerInventory.getPackingQty().doubleValue()
-                ))
-                .build(), example);
+        wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
+        ));
+        int num = wmsInnerInventoryMapper.updateByExampleSelective(wmsInnerInventory, example);
         return num;
     }
 

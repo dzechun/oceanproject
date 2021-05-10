@@ -84,19 +84,19 @@ public class WmsInnerInventoryController {
     }
 
     @PostMapping("/selectOneByExample")
-    public ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestParam Map<String,Object> map){
+    public ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestBody Map<String,Object> map){
         return ControllerUtil.returnDataSuccess(wmsInnerInventoryService.selectOneByExample(map),1);
     }
     @PostMapping("/updateByPrimaryKeySelective")
-    public ResponseEntity updateByPrimaryKeySelective(@RequestParam WmsInnerInventory wmsInnerInventory){
+    public ResponseEntity updateByPrimaryKeySelective(@RequestBody WmsInnerInventory wmsInnerInventory){
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory));
     }
     @PostMapping("/updateByExampleSelective")
-    public ResponseEntity updateByExampleSelective(@RequestParam WmsInnerInventory wmsInnerInventory, Map<String,Object> map){
+    public ResponseEntity updateByExampleSelective(@RequestBody WmsInnerInventory wmsInnerInventory,@RequestParam Map<String,Object> map){
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.updateByExampleSelective(wmsInnerInventory,map));
     }
     @PostMapping("/insertSelective")
-    public ResponseEntity insertSelective(@RequestParam WmsInnerInventory wmsInnerInventory){
+    public ResponseEntity insertSelective(@RequestBody WmsInnerInventory wmsInnerInventory){
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.insertSelective(wmsInnerInventory));
     }
 
