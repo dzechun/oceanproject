@@ -9,6 +9,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -65,6 +67,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
     @Column(name = "warehouse_id")
+    @NotNull(message = "仓库不能为空")
     private Long warehouseId;
 
     /**
@@ -72,6 +75,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="storageId",value = "库位ID")
     @Column(name = "storage_id")
+    @NotNull(message = "库位不能为空")
     private Long storageId;
 
     /**
@@ -96,6 +100,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
+    @NotNull(message = "物料不能为空")
     private Long materialId;
 
     /**
@@ -104,6 +109,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
     @Excel(name = "包装单位名称", height = 20, width = 30,orderNum="")
     @Column(name = "packing_unit_name")
+    @NotBlank(message = "包装单位名称不能为空")
     private String packingUnitName;
 
     /**
@@ -112,6 +118,7 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="packingQty",value = "包装数量")
     @Excel(name = "包装数量", height = 20, width = 30,orderNum="")
     @Column(name = "packing_qty")
+    @NotNull(message = "包装数量不能为空")
     private BigDecimal packingQty;
 
     /**
