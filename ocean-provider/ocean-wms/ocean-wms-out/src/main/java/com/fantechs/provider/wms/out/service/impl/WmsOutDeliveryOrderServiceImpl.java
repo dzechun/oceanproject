@@ -71,6 +71,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrderDto.setTotalPackingQty(packingSum);
             BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPickingQty(pickingSum);
+            //修改单据状态
+            this.updateOrderStatus(wmsOutDeliveryOrderDto);
         }
 
         return wmsOutDeliveryOrderDtos;
@@ -212,5 +214,22 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         return wmsOutDeliveryOrderMapper.deleteByIds(ids);
+    }
+
+    public int updateOrderStatus(WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto){
+        WmsOutDeliveryOrderDto wmsOutDeliveryOrder = new WmsOutDeliveryOrderDto();
+
+        if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(new BigDecimal("0")) == 0){
+            wmsOutDeliveryOrder.setOrderStatus((byte)1);
+        }else if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(new BigDecimal("0")) == 1
+                && wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == -1){
+            wmsOutDeliveryOrder.setOrderStatus((byte)2);
+        }else if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == 0
+                || wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == 1){
+            wmsOutDeliveryOrder.setOrderStatus((byte)3);
+        }
+
+        wmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
+        return wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
     }
 }
