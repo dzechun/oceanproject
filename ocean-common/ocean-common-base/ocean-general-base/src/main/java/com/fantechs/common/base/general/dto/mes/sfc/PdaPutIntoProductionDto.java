@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PdaPutIntoProductionVo implements Serializable {
+public class PdaPutIntoProductionDto implements Serializable {
 
     @ApiModelProperty(name = "barCode", value = "条码", required = true)
     private String barCode;

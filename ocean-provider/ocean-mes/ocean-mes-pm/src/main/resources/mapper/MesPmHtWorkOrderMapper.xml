@@ -6,7 +6,7 @@
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
         <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
         <result column="parent_id" jdbcType="BIGINT" property="parentId" />
-        <result column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
         <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty" />
         <result column="production_qty" jdbcType="DECIMAL" property="productionQty" />
@@ -48,7 +48,7 @@
     <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder"
             resultMap="BaseResultMap">
         select
-        shwo.ht_work_order_id,shwo.work_order_id,shwo.work_order_code,shwo.order_id,shwo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
+        shwo.ht_work_order_id,shwo.work_order_id,shwo.work_order_code,shwo.sales_order_id,shwo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
         shwo.work_order_quantity,shwo.production_quantity,shwo.output_quantity,shwo.scheduled_quantity,shwo.work_order_status,shwo.pro_line_id,spl.pro_name,shwo.route_id,sr.route_name,shwo.barcode_rule_set_id,
         shwo.work_order_type,shwo.planned_start_time,shwo.planned_end_time,shwo.actual_start_time,shwo.actual_end_time,shwo.create_user_id,
         u.user_name as create_user_name,shwo.create_time,shwo.modified_user_id,s.user_name as
