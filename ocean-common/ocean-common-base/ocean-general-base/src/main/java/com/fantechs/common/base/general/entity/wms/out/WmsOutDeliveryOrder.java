@@ -119,8 +119,9 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="6")
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "订单日期不能为空")
     private Date orderDate;
 
@@ -128,8 +129,9 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 预计发运日期
      */
     @ApiModelProperty(name="planDespatchDate",value = "预计发运日期")
-    @Excel(name = "预计发运日期", height = 20, width = 30,orderNum="8")
+    @Excel(name = "预计发运日期", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_despatch_date")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "预计发运日期不能为空")
     private Date planDespatchDate;
 
@@ -137,16 +139,18 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 实际发运日期
      */
     @ApiModelProperty(name="actualDespatchDate",value = "实际发运日期")
-    @Excel(name = "实际发运日期", height = 20, width = 30,orderNum="9")
+    @Excel(name = "实际发运日期", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_despatch_date")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date actualDespatchDate;
 
     /**
      * 要求到达日期
      */
     @ApiModelProperty(name="demandArriveDate",value = "要求到达日期")
-    @Excel(name = "要求到达日期", height = 20, width = 30,orderNum="7")
+    @Excel(name = "要求到达日期", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "demand_arrive_date")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "要求到达日期不能为空")
     private Date demandArriveDate;
 
