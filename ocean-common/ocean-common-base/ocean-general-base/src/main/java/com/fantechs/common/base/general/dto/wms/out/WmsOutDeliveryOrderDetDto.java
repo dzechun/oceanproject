@@ -42,9 +42,9 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     private String materialName;
 
     @Transient
-    @ApiModelProperty(name="storageName" ,value="库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30)
-    private String storageName;
+    @ApiModelProperty(name="storageCode" ,value="库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30)
+    private String storageCode;
 
     @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
