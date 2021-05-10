@@ -100,8 +100,8 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 this.batchDelete(ids.substring(0, ids.length() - 1));
             }else{
                 for (BaseProductProcessReM baseProductProcessReM : list) {
-                    example.createCriteria().andEqualTo("materialId",baseProductProcessReM.getMaterialId())
-                            .andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId() == null ? -1 : baseProductProcessReM.getProductProcessReMId());
+                    example.clear();
+                    example.createCriteria().andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId() == null ? -1 : baseProductProcessReM.getProductProcessReMId() );
                     BaseProductProcessReM baseProductProcessReM1 = baseProductProcessReMMapper.selectOneByExample(example);
                     if(StringUtils.isEmpty(baseProductProcessReM1)){
                         this.save(baseProductProcessReM);
@@ -158,16 +158,15 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
             }
             baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
+            //履历
+            BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
+            List<BaseHtProductMaterialReP> htList = new ArrayList<>();
+            for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
+                BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
+                htList.add(baseHtProductMaterialReP);
+            }
+            baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
         }
-
-        //履历
-        BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
-        List<BaseHtProductMaterialReP> htList = new ArrayList<>();
-        for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
-            BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
-            htList.add(baseHtProductMaterialReP);
-        }
-        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
 
         return i;
     }
@@ -213,16 +212,15 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
             }
             baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
+            //履历
+            BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
+            List<BaseHtProductMaterialReP> htList = new ArrayList<>();
+            for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
+                BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
+                htList.add(baseHtProductMaterialReP);
+            }
+            baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
         }
-
-        //履历
-        BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
-        List<BaseHtProductMaterialReP> htList = new ArrayList<>();
-        for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
-            BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
-            htList.add(baseHtProductMaterialReP);
-        }
-        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
 
         return i;
     }
