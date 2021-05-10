@@ -57,12 +57,12 @@ public class MesPmHtWorkOrder extends ValidGroup implements Serializable {
     private Long parentId;
 
     /**
-     * 订单ID
+     * 销售订单ID
      */
-    @ApiModelProperty(name="orderId",value = "订单ID")
-    @Excel(name = "订单ID", height = 20, width = 30,orderNum="")
-    @Column(name = "order_id")
-    private Long orderId;
+    @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
+    @Excel(name = "销售订单ID", height = 20, width = 30)
+    @Column(name = "sales_order_id")
+    private Long salesOrderId;
 
     /**
      * 产品料号ID
