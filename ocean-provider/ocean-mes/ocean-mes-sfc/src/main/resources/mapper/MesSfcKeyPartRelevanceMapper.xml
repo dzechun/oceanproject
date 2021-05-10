@@ -78,7 +78,7 @@
     mskpr.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultDtoMap">
+  <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
     select <include refid="BaseColumnList"/>
     FROM mes_sfc_key_part_relevance mskpr
     <where>
@@ -96,6 +96,9 @@
       </if>
       <if test="stationId != null">
         and mskpr.station_id = #{stationId}
+      </if>
+      <if test="partBarcode != null and partBarcode != ''">
+        and mskpr.part_barcode = #{partBarcode}
       </if>
     </where>
   </select>

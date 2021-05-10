@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.sfc.MesSfcProductPalletMapper">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcProductPalletMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet">
     <!--
       WARNING - @mbg.generated
@@ -47,7 +47,7 @@
     mspp.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultDtoMap">
+  <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
     select <include refid="BaseColumnList"/>
     FROM mes_sfc_product_pallet mspp
     <where>
@@ -62,6 +62,9 @@
       </if>
       <if test="palletCode != null and palletCode != ''">
         and mspp.pallet_code like CONCAT('%',#{palletCode},'%')
+      </if>
+      <if test="closeStatus != null">
+        and mspp.close_status = #{closeStatus}
       </if>
     </where>
   </select>

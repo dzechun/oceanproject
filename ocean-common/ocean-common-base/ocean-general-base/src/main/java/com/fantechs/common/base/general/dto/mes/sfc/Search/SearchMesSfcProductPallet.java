@@ -20,4 +20,7 @@ public class SearchMesSfcProductPallet extends BaseQuery implements Serializable
 
     @ApiModelProperty(name="palletCode",value = "栈板号")
     private String palletCode;
+
+    @ApiModelProperty(name="closeStatus",value = "关闭状态(0-未关闭 1-已关闭)")
+    private Byte closeStatus;
 }

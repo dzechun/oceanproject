@@ -39,7 +39,7 @@ public class MesSfcProductPallet extends ValidGroup implements Serializable {
     /**
      * 当前包装规格数量
      */
-    @ApiModelProperty(name="cartonCode",value = "当前包装规格数量")
+    @ApiModelProperty(name="nowPackageSpecQty",value = "当前包装规格数量")
     @Excel(name = "当前包装规格数量", height = 20, width = 30,orderNum="")
     @Column(name = "now_package_spec_qty")
     private BigDecimal nowPackageSpecQty;

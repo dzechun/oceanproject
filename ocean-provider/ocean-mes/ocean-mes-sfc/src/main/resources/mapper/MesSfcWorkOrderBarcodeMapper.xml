@@ -46,7 +46,7 @@
   mswob.modified_time,
   mswob.is_delete
 </sql>
- <select id="findList" resultMap="BaseResultDtoMap">
+ <select id="findList" resultMap="BaseResultDtoMap" parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
   select <include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
   FROM mes_sfc_work_order_barcode mswob
    LEFT JOIN ocean.sys_user su ON mswob.create_user_id = su.user_id
