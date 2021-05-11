@@ -185,5 +185,5 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
     /**
      * 物料清单集合
      */
-    private List<BaseProductMaterialReP> list;
+    private List<BaseProductMaterialReP> list = new ArrayList<>();
 }
