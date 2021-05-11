@@ -103,7 +103,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
         if(!StringUtils.isEmpty(maxCode)){
             maxCode = BarcodeRuleUtils.getMaxSerialNumber(baseBarcodeRuleSpecs, maxCode);
         }
-        String code = BarcodeRuleUtils.analysisCode(baseBarcodeRuleSpecs,maxCode, baseBarCodeWorkDto.getMaterialCode(),null);
+        String code = BarcodeRuleUtils.analysisCode(baseBarcodeRuleSpecs,maxCode, baseBarCodeWorkDto.getMaterialCode(),null,null);
         baseBarCodeWorkDto.setBarcode(code);
         return baseBarCodeWorkDto;
     }
@@ -284,7 +284,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
             String maxCode = BarcodeRuleUtils.getMaxSerialNumber(list, max);
             //String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode());
             //生成流水号
-            String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode(),null);
+            String code = BarcodeRuleUtils.analysisCode(list,maxCode,record.getMaterialCode(),null,null);
             baseBarCodeDet.setBarCodeContent(code);
             baseBarCodeDet.setCreateTime(new Date());
             baseBarCodeDet.setCreateUserId(currentUserInfo.getUserId());
