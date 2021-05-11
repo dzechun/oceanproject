@@ -16,7 +16,6 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
@@ -30,10 +29,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -231,16 +227,22 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int createJobOrder(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
-        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
-        for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto:wmsOutDeliveryOrderDetList){
-            WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-            wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrder.getMaterialOwnerId());
-            wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrder.getOrderTypeId());
-            wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrder.getDeliveryOrderCode());
-            wmsInnerJobOrder.setWarehouseId(wmsOutDeliveryOrderDetDto.getWarehouseId());
-            wmsInnerJobOrder.setPlanQty(wmsOutDeliveryOrderDetDto.getPackingQty());
-            innerFeignApi.add(wmsInnerJobOrder);
+    public int createJobOrder(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("deliveryOrderId",id);
+        List<WmsOutDeliveryOrderDto> list = this.findList(map);
+        if(StringUtils.isNotEmpty(list)) {
+            WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
+            List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDto.getWmsOutDeliveryOrderDetList();
+            for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : wmsOutDeliveryOrderDetList) {
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrderDto.getMaterialOwnerId());
+                wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrderDto.getOrderTypeId());
+                wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
+                wmsInnerJobOrder.setWarehouseId(wmsOutDeliveryOrderDetDto.getWarehouseId());
+                wmsInnerJobOrder.setPlanQty(wmsOutDeliveryOrderDetDto.getPackingQty());
+                innerFeignApi.add(wmsInnerJobOrder);
+            }
         }
         return 1;
     }
