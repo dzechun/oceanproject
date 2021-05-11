@@ -66,6 +66,13 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     private Integer quantity;
 
     /**
+     * 线别编码
+     */
+    @Transient
+    @ApiModelProperty(name="proName" ,value="线别编码")
+    private String proCode;
+
+    /**
      * 线别名称
      */
     @Transient

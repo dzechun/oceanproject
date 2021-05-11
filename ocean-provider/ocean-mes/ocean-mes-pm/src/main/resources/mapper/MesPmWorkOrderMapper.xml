@@ -118,6 +118,7 @@
         sm.material_desc AS 'materialDesc',
         bt.main_unit AS 'mainUnit',
         bt.transfer_quantity AS 'transferQuantity',
+        spl.pro_code AS 'proCode',
         spl.pro_name AS 'proName',
         sr.route_name AS 'routeName',
         sr.route_code AS 'routeCode',
@@ -161,6 +162,9 @@
             </if>
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}
+            </if>
+            <if test="workOrderStatus!=null">
+                and swo.work_order_status =#{workOrderStatus}
             </if>
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')

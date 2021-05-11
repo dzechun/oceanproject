@@ -142,6 +142,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseProLine/findList")
     ResponseEntity<List<BaseProLine>> selectProLines(@RequestBody(required = false) SearchBaseProLine searchBaseProLine);
 
+    @ApiOperation("查询线别详情")
+    @PostMapping("/baseProLine/detail")
+    ResponseEntity<BaseProLine> selectProLinesDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
     @ApiOperation("根据ID获取储位物料")
     @PostMapping("/baseStorageMaterial/detail")
     ResponseEntity<BaseStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
@@ -252,6 +256,10 @@ public interface BaseFeignApi {
             @ApiParam(value = "条码规则集合")@RequestBody List<BaseBarcodeRuleSpec> list,
             @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode);
 
+    @ApiOperation("查询条码规则详情")
+    @PostMapping("/baseBarcodeRule/detail")
+    ResponseEntity<BaseBarcodeRule> baseBarcodeRuleDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
     @ApiOperation("查询条码规则列表")
     @PostMapping("/baseBarcodeRule/findList")
     ResponseEntity<List<BaseBarcodeRuleDto>> findBarcodeRulList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRule searchBaseBarcodeRule);
@@ -351,6 +359,14 @@ public interface BaseFeignApi {
     @PostMapping("/baseLabelMaterial/findList")
     ResponseEntity<List<BaseLabelMaterialDto>> findLabelMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial);
 
+    @ApiOperation("获取包装规格信息列表")
+    @PostMapping("/basePackageSpecification/findList")
+    ResponseEntity<List<BasePackageSpecificationDto>> findBasePackageSpecificationList(@ApiParam(value = "查询对象")@RequestBody SearchBasePackageSpecification searchBasePackageSpecification);
+
+    @ApiOperation("获取工位详情")
+    @PostMapping("/baseStation/detail")
+    ResponseEntity<BaseStation> findStationDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
     @ApiOperation(value = "生成条码-Map")
     @PostMapping("/baseBarcodeRule/newGenerateCode")
     ResponseEntity<String> newGenerateCode(
@@ -358,4 +374,8 @@ public interface BaseFeignApi {
             @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false) Map<String,Object> map,
             @ApiParam(value = "执行函数参数")@RequestParam (required = false)String params);
+
+    @ApiOperation("物料编码关联客户料号列表")
+    @PostMapping("/baseMaterialSupplier/findList")
+    ResponseEntity<List<BaseMaterialSupplierDto>> findBaseMaterialSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterialSupplier searchBaseMaterialSupplier);
 }

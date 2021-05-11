@@ -74,6 +74,21 @@ public class BaseProductMaterialReP extends ValidGroup implements Serializable {
     private String materialVersion;
 
     /**
+     * 替代料ID
+     */
+    @ApiModelProperty(name="subMaterialId",value = "替代料ID")
+    @Excel(name = "替代料ID", height = 20, width = 30,orderNum="")
+    @Column(name = "sub_material_id")
+    private Long subMaterialId;
+
+    /**
+     * 替代料编码
+     */
+    @Transient
+    @ApiModelProperty(value = "替代料编码",example = "替代料编码")
+    private String subMaterialCode;
+
+    /**
      * 单个用量
      */
     @ApiModelProperty(name="usageQty",value = "单个用量")

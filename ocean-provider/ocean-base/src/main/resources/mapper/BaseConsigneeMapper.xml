@@ -89,7 +89,7 @@
       <if test="materialOwnerName != null and materialOwnerName!=''">
         and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
       </if>
-      <if test="status!=null and status!=''">
+      <if test="status!=null">
         and bc.status = #{status}
       </if>
     </where>

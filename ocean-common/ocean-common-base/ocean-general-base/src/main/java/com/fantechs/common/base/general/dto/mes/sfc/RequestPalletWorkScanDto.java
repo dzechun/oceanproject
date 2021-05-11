@@ -6,6 +6,15 @@ import lombok.Data;
 @Data
 public class RequestPalletWorkScanDto {
 
+    @ApiModelProperty(name="proLineId",value = "产线ID")
+    private Long proLineId;
+
+    @ApiModelProperty(name="processId",value = "工序ID")
+    private Long processId;
+
+    @ApiModelProperty(name="stationId",value = "工位ID")
+    private Long stationId;
+
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
 

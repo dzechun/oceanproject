@@ -26,9 +26,9 @@ public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="parentId" ,value="父工单ID")
     private Long parentId;
     /**
-     * 工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起 6、待首检及生产中)
+     * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
      */
-    @ApiModelProperty(name="workOrderCode" ,value="工单状态(0、待生产 1、待首检 2、生产中 3、暂停生产 4、生产完成 5、工单挂起 6、待首检及生产中)")
+    @ApiModelProperty(name="workOrderStatus" ,value="工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
     private String workOrderStatus;
 
     /**

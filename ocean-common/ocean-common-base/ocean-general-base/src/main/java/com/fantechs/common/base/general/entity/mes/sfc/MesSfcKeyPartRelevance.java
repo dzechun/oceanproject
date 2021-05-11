@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 生产管理-关键部件关联表
@@ -16,6 +20,9 @@ import lombok.Data;
  * @date 2021-05-08 20:38:48
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "mes_sfc_key_part_relevance")
 public class MesSfcKeyPartRelevance extends ValidGroup implements Serializable {
     /**

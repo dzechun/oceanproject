@@ -128,6 +128,7 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
                 htList.add(mesPmHtWorkOrderMaterialReP);
             }
         }
+        mesPmWorkOrderMaterialRePMapper.insertList(record.getList());
         if (StringUtils.isNotEmpty(htList)){
             mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
         }
