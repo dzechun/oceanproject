@@ -88,7 +88,8 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
 
         Example example = new Example(BaseConsignee.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("consigneeCode", baseConsignee.getConsigneeCode());
+        criteria.andEqualTo("consigneeCode", baseConsignee.getConsigneeCode())
+                .andNotEqualTo("consigneeId",baseConsignee.getConsigneeId());
         BaseConsignee baseConsignee1 = baseConsigneeMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseConsignee1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
