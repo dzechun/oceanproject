@@ -63,6 +63,9 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         int num = 0;
         for (String s : arrId) {
             WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(s);
+            if(wmsInAsnOrder.getOrderStatus()==(byte)3){
+                throw new BizErrorException("单据已经收货");
+            }
             if(StringUtils.isEmpty(wmsInAsnOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
@@ -114,7 +117,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrder.setEndReceivingDate(new Date());
             wmsInAsnOrder.setModifiedTime(new Date());
             wmsInAsnOrder.setModifiedUserId(sysUser.getUserId());
-            wmsInAsnOrder.setOrderStatus((byte)2);
+            wmsInAsnOrder.setOrderStatus((byte)3);
             num+=wmsInAsnOrderMapper.updateByPrimaryKeySelective(wmsInAsnOrder);
         }
         return num;
@@ -129,6 +132,12 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public int singleReceiving(WmsInAsnOrderDet wmsInAsnOrderDet) {
         SysUser sysUser = currentUser();
+
+        WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(wmsInAsnOrderDet.getAsnOrderId());
+        if(wmsInAsnOrder.getOrderStatus()==(byte)3){
+            throw new BizErrorException("单据已经收货");
+        }
+
         if(StringUtils.isEmpty(wmsInAsnOrderDet.getAsnOrderDetId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数错误");
         }
@@ -153,6 +162,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .modifiedTime(new Date())
                     .modifiedUserId(sysUser.getUserId())
                     .build());
+            wmsInAsnOrderDet.setReceivingDate(new Date());
         }
         wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
         wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
@@ -171,7 +181,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wmsInAsnOrderMapper.updateByPrimaryKeySelective(WmsInAsnOrder.builder()
                         .asnOrderId(wms.getAsnOrderId())
                         .endReceivingDate(new Date())
-                        .orderStatus((byte)2)
+                        .orderStatus((byte)3)
                         .modifiedTime(new Date())
                         .modifiedUserId(sysUser.getUserId())
                         .build());
@@ -268,8 +278,9 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         example.createCriteria().andEqualTo("asnOrderId",asnOrderId);
         List<WmsInAsnOrderDet> list = wmsInAsnOrderDetMapper.selectByExample(example);
         List<WmsInnerJobOrderDet> jobOrderDets = new ArrayList<>();
-        BigDecimal bigDecimal = new BigDecimal("0");
+        double total = 0.00;
         for (WmsInAsnOrderDet wms : list) {
+            total+=wms.getActualQty().doubleValue();
             jobOrderDets.add(WmsInnerJobOrderDet.builder()
                     .sourceDetId(wms.getAsnOrderDetId())
                     .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
@@ -282,7 +293,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .planQty(wms.getActualQty())
                     .palletCode(wms.getPalletCode())
                     .build());
-            bigDecimal.add(wms.getActualQty());
         }
         WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
                 .sourceOrderId(wmsInAsnOrder.getAsnOrderId())
@@ -291,7 +301,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .jobOrderType("3")
                 .relatedOrderCode(wmsInAsnOrder.getAsnCode())
                 .wmsInPutawayOrderDets(jobOrderDets)
-                .planQty(bigDecimal)
+                .planQty(new BigDecimal(total))
+                .orderStatus((byte)1)
+                .orderTypeId(wmsInAsnOrder.getOrderTypeId())
+                .actualQty(new BigDecimal("0"))
                 .build();
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
         if(responseEntity.getCode()!=0){

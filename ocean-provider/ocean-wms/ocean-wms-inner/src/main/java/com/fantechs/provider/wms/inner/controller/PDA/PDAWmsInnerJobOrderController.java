@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
 import io.swagger.annotations.Api;
@@ -35,6 +36,8 @@ public class PDAWmsInnerJobOrderController {
     private WmsInnerJobOrderService wmsInnerJobOrderService;
     @Resource
     private WmsInnerJobOrderDetService wmsInnerJobOrderDetService;
+    @Resource
+    private PickingOrderService pickingOrderService;
 
     @ApiOperation("/PDA上架作业单列表")
     @PostMapping("/findList")
@@ -80,5 +83,11 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/singleReceiving")
     public ResponseEntity singleReceiving(@RequestBody(required = true) List<WmsInnerJobOrderDet> wmsInPutawayOrderDets){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.singleReceiving(wmsInPutawayOrderDets));
+    }
+
+    @ApiOperation("PDA拣货确认")
+    @PostMapping("/pickingOrder")
+    public ResponseEntity pickingOrder(@RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId,String barCode){
+        return ControllerUtil.returnCRUD(pickingOrderService.scanAffirmQty(jobOrderDetId,barCode));
     }
 }

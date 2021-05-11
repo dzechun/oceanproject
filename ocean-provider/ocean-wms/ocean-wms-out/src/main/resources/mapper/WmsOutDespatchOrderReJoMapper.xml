@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutDespatchOrderReJoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="despatch_order_re_jo_id" jdbcType="BIGINT" property="despatchOrderReJoId" />
+    <result column="despatch_order_id" jdbcType="BIGINT" property="despatchOrderId" />
+    <result column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="shipper_name" jdbcType="VARCHAR" property="shipperName" />
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
+    <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoDto">
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode" />
+    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+  </resultMap>
+  <sql id="Base_Column_list">
+    wodor.despatch_order_re_jo_id,
+    wodor.despatch_order_id,
+wodor.job_order_id,
+wodor.status,
+wodor.remark,
+wodor.org_id,
+wodor.create_user_id,
+wodor.create_time,
+wodor.modified_user_id,
+wodor.modified_time,
+wodor.is_delete,
+wodor.shipper_name,
+wodor.link_man_name,
+wodor.link_man_phone,
+wodor.fax_number,
+wodor.e_mail_address,
+wodor.detailed_address,
+wodor.order_status
+  </sql>
+    <select id="findList" resultMap="BaseResultMapDto">
+      SELECT <include refid="Base_Column_list"/>,wijo.order_status,bmo.material_owner_name,bw.warehouse_name,wijo.job_order_code,wijo.related_order_code,wijo.actual_qty,su.user_name AS create_user_name,
+             sus.user_name AS modified_user_name,
+             bo.organization_name AS organization_Name
+      FROM wms_out_despatch_order_re_jo wodor
+             LEFT JOIN wms_inner_job_order wijo ON wodor.job_order_id = wijo.job_order_id
+             LEFT JOIN base_material_owner bmo ON wijo.material_owner_id=bmo.material_owner_id
+             LEFT JOIN base_warehouse bw ON wijo.warehouse_id = bw.warehouse_id
+             LEFT JOIN ocean.sys_user su ON wodor.create_user_id = su.user_id
+             LEFT JOIN ocean.sys_user sus ON wodor.modified_user_id = sus.user_id
+             LEFT JOIN base_organization bo ON wodor.org_id = bo.organization_id
+<where>
+  <if test="despatchOrderId !=null and despatchOrderId!=''">
+and wodor.despatch_order_id = #{despatchOrderId}
+  </if>
+</where>
+    </select>
+</mapper>

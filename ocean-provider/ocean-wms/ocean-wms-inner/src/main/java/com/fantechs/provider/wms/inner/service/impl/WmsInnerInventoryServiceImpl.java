@@ -115,6 +115,10 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     public WmsInnerInventory selectOneByExample(Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
         example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        if(StringUtils.isEmpty(map.get("storageName")) && StringUtils.isEmpty(map.get("warehouseName"))){
+            example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("warehouseName",map.get("warehouseNmae")).andEqualTo("storageName",map.get("storageName"))
+                    .andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        }
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
     }

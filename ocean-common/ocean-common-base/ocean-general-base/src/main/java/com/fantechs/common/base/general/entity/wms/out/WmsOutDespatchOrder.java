@@ -6,6 +6,7 @@ import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
@@ -180,6 +181,9 @@ public class WmsOutDespatchOrder extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty("装车单明细")
+    private List<WmsOutDespatchOrderReJo> list;
 
     private static final long serialVersionUID = 1L;
 }

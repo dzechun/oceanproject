@@ -1,0 +1,159 @@
+package com.fantechs.common.base.general.entity.wms.out;
+
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.*;
+import lombok.Data;
+
+/**
+ * 装车单拣货单关系表
+ * wms_out_despatch_order_re_jo
+ * @author mr.lei
+ * @date 2021-05-10 16:21:54
+ */
+@Data
+@Table(name = "wms_out_despatch_order_re_jo")
+public class WmsOutDespatchOrderReJo extends ValidGroup implements Serializable {
+    /**
+     * 装车单拣货单关系表ID
+     */
+    @ApiModelProperty(name="despatchOrderReJoId",value = "装车单拣货单关系表ID")
+    @Excel(name = "装车单拣货单关系表ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "despatch_order_re_jo_id")
+    private Long despatchOrderReJoId;
+
+    /**
+     * 装车单ID
+     */
+    @ApiModelProperty(name="despatchOrderId",value = "装车单ID")
+    @Excel(name = "装车单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "despatch_order_id")
+    private Long despatchOrderId;
+
+    /**
+     * 拣货单ID
+     */
+    @ApiModelProperty(name="jobOrderId",value = "拣货单ID")
+    @Excel(name = "拣货单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "job_order_id")
+    private Long jobOrderId;
+
+    /**
+     * 状态(0无效，1有效)
+     */
+    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    private Byte status;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    private String remark;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
+    @Column(name = "org_id")
+    private Long orgId;
+
+    /**
+     * 创建人ID
+     */
+    @ApiModelProperty(name="createUserId",value = "创建人ID")
+    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "create_user_id")
+    private Long createUserId;
+
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty(name="createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_time")
+    private Date createTime;
+
+    /**
+     * 修改人ID
+     */
+    @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
+    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "modified_user_id")
+    private Long modifiedUserId;
+
+    /**
+     * 修改时间
+     */
+    @ApiModelProperty(name="modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "modified_time")
+    private Date modifiedTime;
+
+    /**
+     * 逻辑删除（0、删除 1、正常）
+     */
+    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
+    @Column(name = "is_delete")
+    private Byte isDelete;
+
+    /**
+     * 发货人名称
+     */
+    @ApiModelProperty(name="shipperName",value = "发货人名称")
+    @Excel(name = "发货人名称", height = 20, width = 30,orderNum="")
+    @Column(name = "shipper_name")
+    private String shipperName;
+
+    /**
+     * 联系人名称
+     */
+    @ApiModelProperty(name="linkManName",value = "联系人名称")
+    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="")
+    @Column(name = "link_man_name")
+    private String linkManName;
+
+    /**
+     * 联系人电话
+     */
+    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
+    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="")
+    @Column(name = "link_man_phone")
+    private String linkManPhone;
+
+    /**
+     * 传真号码
+     */
+    @ApiModelProperty(name="faxNumber",value = "传真号码")
+    @Excel(name = "传真号码", height = 20, width = 30,orderNum="")
+    @Column(name = "fax_number")
+    private String faxNumber;
+
+    /**
+     * 邮箱地址
+     */
+    @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
+    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="")
+    @Column(name = "e_mail_address")
+    private String eMailAddress;
+
+    /**
+     * 详细地址
+     */
+    @ApiModelProperty(name="detailedAddress",value = "详细地址")
+    @Excel(name = "详细地址", height = 20, width = 30,orderNum="")
+    @Column(name = "detailed_address")
+    private String detailedAddress;
+
+    private static final long serialVersionUID = 1L;
+}
