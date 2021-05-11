@@ -120,12 +120,13 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
 
         MesPmHtWorkOrderMaterialReP mesPmHtWorkOrderMaterialReP = new MesPmHtWorkOrderMaterialReP();
         List<MesPmHtWorkOrderMaterialReP> htList = new ArrayList<>();
-        for (MesPmWorkOrderMaterialRePDto mesPmWorkOrderMaterialRePDto : record.getList()) {
-            mesPmWorkOrderMaterialRePDto.setWorkOrderProcessReWoId(record.getWorkOrderProcessReWoId());
-
-            BeanUtils.copyProperties(mesPmWorkOrderMaterialRePDto,mesPmHtWorkOrderMaterialReP);
-            mesPmHtWorkOrderMaterialReP.setWorkOrderProcessReWoId(mesPmHtWorkOrderProcessReWo.getHtWorkOrderProcessReWoId());
-            htList.add(mesPmHtWorkOrderMaterialReP);
+        if (StringUtils.isNotEmpty(record.getList())){
+            for (MesPmWorkOrderMaterialRePDto mesPmWorkOrderMaterialRePDto : record.getList()) {
+                mesPmWorkOrderMaterialRePDto.setWorkOrderProcessReWoId(record.getWorkOrderProcessReWoId());
+                BeanUtils.copyProperties(mesPmWorkOrderMaterialRePDto,mesPmHtWorkOrderMaterialReP);
+                mesPmHtWorkOrderMaterialReP.setWorkOrderProcessReWoId(mesPmHtWorkOrderProcessReWo.getHtWorkOrderProcessReWoId());
+                htList.add(mesPmHtWorkOrderMaterialReP);
+            }
         }
         if (StringUtils.isNotEmpty(htList)){
             mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
