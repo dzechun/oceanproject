@@ -105,7 +105,12 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
                 wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
             }
-
+            this.update(wmsInnerInventory);
+            example.clear();
+            example.createCriteria().andEqualTo("inventoryId",wmsInnerInventory.getParentInventoryId());
+            wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(quantity));
+            wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().add(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity())));
             this.update(wmsInnerInventory);
         } else {
             throw new BizErrorException("当前库存未进行锁定");
