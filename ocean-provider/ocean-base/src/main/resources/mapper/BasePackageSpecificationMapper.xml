@@ -108,6 +108,12 @@
 <!--            <if test="materialDesc != null and materialDesc != ''">-->
 <!--                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')-->
 <!--            </if>-->
+            <if test="material_id != null">
+                and smp.material_id=#{materialId}
+            </if>
+            <if test="process_id != null">
+                and smp.process_id=#{processId}
+            </if>
             <if test="status!=null">
                 and sps.status=#{status}
             </if>
