@@ -15,5 +15,5 @@ public interface MesSfcPalletWorkService {
 
     int submitNoFullPallet(List<String> palletCodeList) throws Exception;
 
-    Boolean updatePalletType(Long ProLineId, Long stationId);
+    Boolean updatePalletType(Long stationId);
 }

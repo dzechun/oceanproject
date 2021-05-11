@@ -3,8 +3,10 @@ package com.fantechs.provider.mes.sfc.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.provider.mes.sfc.service.MesSfcKeyPartRelevanceService;
 import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
@@ -89,8 +91,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     }
 
     @Override
-    public Boolean updatePalletType(Long ProLineId, Long stationId) {
-
-        return false;
+    public Boolean updatePalletType(Long stationId) {
+        List<MesSfcProductPalletDto> list = mesSfcProductPalletService.findList(ControllerUtil.dynamicConditionByEntity(SearchMesSfcProductPallet.builder()
+                .stationId(stationId)
+                .build()));
+        if(list.size()>0){
+            return false;
+        }
+        return true;
     }
 }
