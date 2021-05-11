@@ -12,6 +12,6 @@ import java.io.Serializable;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 public class MesSfcKeyPartRelevanceDto extends MesSfcKeyPartRelevance implements Serializable {
 }

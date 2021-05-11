@@ -68,7 +68,7 @@ public class MesSfcPalletWorkController {
     }
 
     @GetMapping("/updatePalletType")
-    @ApiOperation("判断是否可以修改栈板作业配置（同一工单改为同一料号）")
+    @ApiOperation("判断是否可以修改栈板作业配置（同一料号改为同一工单）")
     public ResponseEntity<Boolean> updatePalletType(
             @ApiParam(value = "产线Id", required = true) @RequestParam Long proLineId,
             @ApiParam(value = "工位Id", required = true) @RequestParam Long stationId) {

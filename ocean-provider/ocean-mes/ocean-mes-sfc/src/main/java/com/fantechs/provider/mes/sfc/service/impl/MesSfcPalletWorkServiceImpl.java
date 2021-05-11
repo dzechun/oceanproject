@@ -9,6 +9,7 @@ import com.fantechs.provider.mes.sfc.service.MesSfcKeyPartRelevanceService;
 import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Resource

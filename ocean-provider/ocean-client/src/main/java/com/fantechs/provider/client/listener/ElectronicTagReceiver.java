@@ -110,7 +110,7 @@ public class ElectronicTagReceiver {
                     searchWmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
                     searchWmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
                     searchWmsInnerStorageInventory.setStatus((byte) 1);
-                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getBody();
+                    List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getData();
                     if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
 //                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
                         // 允许负库存
