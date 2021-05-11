@@ -119,10 +119,10 @@
             <if test="materialVersion != null and materialVersion != ''">
                 and sm.material_version like CONCAT('%', #{materialVersion}, '%')
             </if>
-            <if test="putawayTactics != null and putawayTactics != ''">
+            <if test="putawayTactics != null ">
                 and ssm.putaway_tactics = #{putawayTactics}
             </if>
-            <if test="replenishTactics != null and replenishTactics != ''">
+            <if test="replenishTactics != null ">
                 and ssm.replenish_tactics = #{replenishTactics}
             </if>
 
