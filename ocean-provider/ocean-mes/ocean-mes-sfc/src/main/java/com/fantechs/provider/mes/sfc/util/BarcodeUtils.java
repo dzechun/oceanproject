@@ -129,9 +129,6 @@ public class BarcodeUtils {
             throw new BizErrorException(ErrorCodeEnum.PDA40012008);
         }
         List<BaseRouteProcess> routeProcessList = responseEntity.getData();
-        Long nowProcessId = new Long(0);
-        String nowProcessCode = "";
-        String nowProcessName = "";
         // 判断是否第一道工序未过
         if (mesSfcBarcodeProcess.getProcessId() == 0 && mesSfcBarcodeProcess.getProcessId() != null) {
             List<BaseRouteProcess> collect = routeProcessList.stream()
@@ -139,16 +136,8 @@ public class BarcodeUtils {
             if (!collect.get(0).getProcessId().equals(dto.getNowProcessId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012010, mesSfcBarcodeProcess.getNextProcessId());
             }
-            ResponseEntity<BaseProcess> processResponseEntity = barcodeUtils.baseFeignApi.processDetail(dto.getNowProcessId());
-            if (processResponseEntity.getCode() != 0) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012012, dto.getNowProcessId());
-            }
-            BaseProcess baseProcess = processResponseEntity.getData();
-            nowProcessId = dto.getNowProcessId();
-            nowProcessCode = baseProcess.getProcessCode();
-            nowProcessName = baseProcess.getProcessName();
         } else {
-            // 若入参下一工序ID跟过站表下一工序ID不一致
+            // 若入参当前扫码工序ID跟过站表下一工序ID不一致
             // 则判断过站表下一工序是否必过工序
             if (!dto.getNowProcessId().equals(mesSfcBarcodeProcess.getNextProcessId())) {
                 Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
@@ -162,14 +151,28 @@ public class BarcodeUtils {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012010, mesSfcBarcodeProcess.getNextProcessId());
                 }
             }
-            nowProcessId = mesSfcBarcodeProcess.getNextProcessId();
-            nowProcessCode = mesSfcBarcodeProcess.getProcessCode();
-            nowProcessName = mesSfcBarcodeProcess.getProcessName();
         }
+        ResponseEntity<BaseProcess> processResponseEntity = barcodeUtils.baseFeignApi.processDetail(dto.getNowProcessId());
+        if (processResponseEntity.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012012, dto.getNowProcessId());
+        }
+        BaseProcess baseProcess = processResponseEntity.getData();
         // 更新当前工序
-        mesSfcBarcodeProcess.setProcessId(nowProcessId);
-        mesSfcBarcodeProcess.setProcessCode(nowProcessCode);
-        mesSfcBarcodeProcess.setProcessName(nowProcessName);
+        mesSfcBarcodeProcess.setProcessId(dto.getNowProcessId());
+        mesSfcBarcodeProcess.setProcessCode(baseProcess.getProcessCode());
+        mesSfcBarcodeProcess.setProcessName(baseProcess.getProcessName());
+        // 更新工位和工段
+        ResponseEntity<BaseStation> stationResponseEntity = barcodeUtils.baseFeignApi.findStationDetail(dto.getNowStationId());
+        if (stationResponseEntity.getCode() != 0) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "没有找到对对应的工位");
+        }
+        BaseStation baseStation = stationResponseEntity.getData();
+        mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
+        mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
+        mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
+        mesSfcBarcodeProcess.setSectionId(baseProcess.getSectionId());
+        mesSfcBarcodeProcess.setSectionCode(baseProcess.getSectionCode());
+        mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());
         Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
                 .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
                 .findFirst();
@@ -177,16 +180,21 @@ public class BarcodeUtils {
             throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
         }
         BaseRouteProcess routeProcess = routeProcessOptional.get();
-        ResponseEntity<BaseProcess> processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
+        processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
         if (processResponseEntity.getCode() != 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
         }
-        BaseProcess baseProcess = processResponseEntity.getData();
+        baseProcess = processResponseEntity.getData();
         // 设置下一工序
         mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
         mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
         mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() + 1);
+        mesSfcBarcodeProcess.setInProcessTime(new Date());
+        mesSfcBarcodeProcess.setOutProcessTime(new Date());
+        mesSfcBarcodeProcess.setOperatorUserId(dto.getOperatorUserId());
+        mesSfcBarcodeProcess.setModifiedUserId(dto.getOperatorUserId());
+        mesSfcBarcodeProcess.setModifiedTime(new Date());
         int update = barcodeUtils.mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         if (update < 1) {
             throw new RuntimeException("更新过站表下一工序失败！");

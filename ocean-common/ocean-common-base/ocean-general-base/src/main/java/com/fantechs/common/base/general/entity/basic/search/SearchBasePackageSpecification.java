@@ -64,4 +64,10 @@ public class SearchBasePackageSpecification extends BaseQuery implements Seriali
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 工序Id
+     */
+    @ApiModelProperty(name="processId" ,value="工序Id")
+    private Long processId;
 }
