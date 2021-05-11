@@ -77,6 +77,18 @@
       <if test="consigneeName != null and consigneeName!=''">
         and bhc.consignee_name like CONCAT('%', #{consigneeName}, '%')
       </if>
+      <if test="companyName != null and companyName!=''">
+        and bhc.company_name like CONCAT('%', #{companyName}, '%')
+      </if>
+      <if test="linkManName != null and linkManName!=''">
+        and bhc.link_man_name like CONCAT('%', #{linkManName}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialOwnerName != null and materialOwnerName!=''">
+        and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
+      </if>
       <if test="status!=null and status!=''">
         and bc.status = #{status}
       </if>
