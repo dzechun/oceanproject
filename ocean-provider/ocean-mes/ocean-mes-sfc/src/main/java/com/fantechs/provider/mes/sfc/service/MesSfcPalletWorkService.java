@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MesSfcPalletWorkService {
 
-    int palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception;
+    String palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception;
 
     List<PalletWorkScanDto> palletWorkScan();
 

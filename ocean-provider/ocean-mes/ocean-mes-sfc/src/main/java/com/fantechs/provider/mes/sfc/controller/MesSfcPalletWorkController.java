@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -28,11 +29,11 @@ public class MesSfcPalletWorkController {
             @ApiParam(value = "条码", required = true) @RequestBody RequestPalletWorkScanDto requestPalletWorkScanDto) {
 
         try {
-            int i = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
-            return ControllerUtil.returnCRUD(i);
+            String palletCode = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
+            return ControllerUtil.returnDataSuccess(palletCode, 1);
         } catch (Exception e) {
             e.printStackTrace();
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+            throw new BizErrorException(e);
         }
     }
 
@@ -63,7 +64,7 @@ public class MesSfcPalletWorkController {
             return ControllerUtil.returnCRUD(i);
         } catch (Exception e) {
             e.printStackTrace();
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+            throw new BizErrorException(e);
         }
     }
 

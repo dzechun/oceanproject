@@ -27,6 +27,7 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
 </resultMap>
 <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
 </resultMap>
@@ -47,11 +48,12 @@
   mswob.is_delete
 </sql>
  <select id="findList" resultMap="BaseResultDtoMap" parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
-  select <include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+  select <include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,mpwo.material_id
   FROM mes_sfc_work_order_barcode mswob
    LEFT JOIN ocean.sys_user su ON mswob.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON mswob.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON mswob.org_id = bo.organization_id
+        LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         <where>
         <if test="workOrderId != null">
             and mswob.work_order_id = #{workOrderId}

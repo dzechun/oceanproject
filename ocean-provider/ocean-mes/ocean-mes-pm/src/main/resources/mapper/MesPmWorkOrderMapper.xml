@@ -118,6 +118,7 @@
         sm.material_desc AS 'materialDesc',
         bt.main_unit AS 'mainUnit',
         bt.transfer_quantity AS 'transferQuantity',
+        spl.pro_code AS 'proCode',
         spl.pro_name AS 'proName',
         sr.route_name AS 'routeName',
         sr.route_code AS 'routeCode',
