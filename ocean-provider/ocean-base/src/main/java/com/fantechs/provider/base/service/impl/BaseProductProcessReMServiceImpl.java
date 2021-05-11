@@ -99,16 +99,20 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 }
                 this.batchDelete(ids.substring(0, ids.length() - 1));
             }else{
+                List ids = new ArrayList();
                 for (BaseProductProcessReM baseProductProcessReM : list) {
-                    example.createCriteria().andEqualTo("materialId",baseProductProcessReM.getMaterialId())
-                            .andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId() == null ? -1 : baseProductProcessReM.getProductProcessReMId());
+                    example.createCriteria().andEqualTo("productProcessReMId",baseProductProcessReM.getProductProcessReMId() == null ? -1 : baseProductProcessReM.getProductProcessReMId() );
                     BaseProductProcessReM baseProductProcessReM1 = baseProductProcessReMMapper.selectOneByExample(example);
                     if(StringUtils.isEmpty(baseProductProcessReM1)){
                         this.save(baseProductProcessReM);
                     }else {
                         this.update(baseProductProcessReM);
                     }
+                    ids.add(baseProductProcessReM.getProductProcessReMId());
+                    example.clear();
                 }
+                example.createCriteria().andEqualTo("materialId",list.get(0).getMaterialId()).andNotIn("productProcessReMId",ids);
+                baseProductProcessReMMapper.deleteByExample(example);
             }
         }
         return 1;
@@ -123,14 +127,14 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         }
 
         //物料工序关系表
-        Example example = new Example(BaseProductProcessReM.class);
+        /*Example example = new Example(BaseProductProcessReM.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", baseProductProcessReM.getMaterialId())
                 .andEqualTo("processId", baseProductProcessReM.getProcessId());
         BaseProductProcessReM baseProductProcessReM1 = baseProductProcessReMMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductProcessReM1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        }*/
 
         baseProductProcessReM.setCreateUserId(user.getUserId());
         baseProductProcessReM.setCreateTime(new Date());
@@ -158,16 +162,15 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
             }
             baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
+            //履历
+            BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
+            List<BaseHtProductMaterialReP> htList = new ArrayList<>();
+            for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
+                BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
+                htList.add(baseHtProductMaterialReP);
+            }
+            baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
         }
-
-        //履历
-        BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
-        List<BaseHtProductMaterialReP> htList = new ArrayList<>();
-        for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
-            BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
-            htList.add(baseHtProductMaterialReP);
-        }
-        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
 
         return i;
     }
@@ -181,7 +184,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         }
 
         //物料工序关系表
-        Example example = new Example(BaseProductProcessReM.class);
+       /* Example example = new Example(BaseProductProcessReM.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", baseProductProcessReM.getMaterialId())
                 .andEqualTo("processId", baseProductProcessReM.getProcessId())
@@ -189,7 +192,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         BaseProductProcessReM baseProductProcessReM1 = baseProductProcessReMMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductProcessReM1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        }*/
 
         baseProductProcessReM.setModifiedUserId(user.getUserId());
         baseProductProcessReM.setModifiedTime(new Date());
@@ -213,16 +216,15 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
             }
             baseProductMaterialRePMapper.insertList(baseProductMaterialRePS);
+            //履历
+            BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
+            List<BaseHtProductMaterialReP> htList = new ArrayList<>();
+            for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
+                BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
+                htList.add(baseHtProductMaterialReP);
+            }
+            baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
         }
-
-        //履历
-        BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
-        List<BaseHtProductMaterialReP> htList = new ArrayList<>();
-        for (BaseProductMaterialReP baseProductMaterialReP:baseProductMaterialRePS) {
-            BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
-            htList.add(baseHtProductMaterialReP);
-        }
-        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
 
         return i;
     }

@@ -34,7 +34,7 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
             searchWmsInnerStorageInventoryDet.setIsBinding((byte)2);
             searchWmsInnerStorageInventoryDet.setMaterialId(storageMonthEndInventoryDto.getMaterialId());
 
-            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = innerFeignAip.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getBody();
+            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = innerFeignAip.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
 
             storageMonthEndInventoryDto.setList(wmsInnerStorageInventoryDetDtos);
         }

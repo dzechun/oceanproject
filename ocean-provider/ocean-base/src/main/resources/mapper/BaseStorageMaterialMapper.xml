@@ -113,6 +113,19 @@
             <if test="status != null and status != ''">
                 and ssm.status = #{status}
             </if>
+            <if test="materialName != null and materialName != ''">
+                and sm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="materialVersion != null and materialVersion != ''">
+                and sm.material_version like CONCAT('%', #{materialVersion}, '%')
+            </if>
+            <if test="putawayTactics != null ">
+                and ssm.putaway_tactics = #{putawayTactics}
+            </if>
+            <if test="replenishTactics != null ">
+                and ssm.replenish_tactics = #{replenishTactics}
+            </if>
+
         </where>
         order by ssm.create_time desc
     </select>

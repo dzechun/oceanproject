@@ -47,7 +47,7 @@
     mspc.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultDtoMap">
+  <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
     select <include refid="BaseColumnList"/>
     FROM mes_sfc_product_carton mspc
     <where>

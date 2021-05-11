@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class PdaCartonDto implements Serializable {
 
-    @ApiModelProperty(name = "barCode", value = "附件码", required = true)
+    @ApiModelProperty(name = "barCode", value = "条码", required = true)
     private String barCode;
     @ApiModelProperty(name = "stationId", value = "工位ID", required = true)
     private Long stationId;

@@ -65,14 +65,16 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
         }
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(MesPmWorkOrderProcessReWo.class);
-            if (StringUtils.isEmpty(list.get(0).getProcessId()) || list.get(0).getProcessId() == 0){
+            if (StringUtils.isEmpty(list.get(0).getProcessId()) || list.get(0).getProcessId() == 0 ){
                 String ids = "";
                 example.createCriteria().andEqualTo("workOrderId",list.get(0).getWorkOrderId());
                 List<MesPmWorkOrderProcessReWo> mesPmWorkOrderProcessReWos = mesPmWorkOrderProcessReWoMapper.selectByExample(example);
-                for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : mesPmWorkOrderProcessReWos) {
-                    ids += mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId() +",";
+                if(StringUtils.isNotEmpty(mesPmWorkOrderProcessReWos)) {
+                    for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : mesPmWorkOrderProcessReWos) {
+                        ids += mesPmWorkOrderProcessReWo.getWorkOrderProcessReWoId() + ",";
+                    }
+                    this.batchDelete(ids.substring(0, ids.length() - 1));
                 }
-                this.batchDelete(ids.substring(0, ids.length() - 1));
             }else {
                 List ids = new ArrayList();
                 for (MesPmWorkOrderProcessReWo mesPmWorkOrderProcessReWo : list) {

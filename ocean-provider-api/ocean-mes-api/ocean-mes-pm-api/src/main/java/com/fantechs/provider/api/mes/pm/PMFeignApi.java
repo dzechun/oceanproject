@@ -140,4 +140,8 @@ public interface PMFeignApi {
     @PostMapping("/mesPmMatchingOrder/findMinMatchingQuantity")
     ResponseEntity<MesPmMatchingDto> findMinMatchingQuantity(@ApiParam(value = "工单流转卡号")@RequestParam String workOrderCardId, @ApiParam(value = "工段ID")@RequestParam long sectionId,@ApiParam(value = "数量")@RequestParam BigDecimal qualityQuantity,@ApiParam(value = "流转卡ID") @RequestParam(required = false) Long workOrderCardPoolId);
 
+    @ApiOperation("获取工单工序关系列表")
+    @PostMapping("/mesPmWorkOrderProcessReWo/findList")
+    ResponseEntity<List<MesPmWorkOrderProcessReWoDto>> findPmWorkOrderProcessReWoList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo);
+
 }

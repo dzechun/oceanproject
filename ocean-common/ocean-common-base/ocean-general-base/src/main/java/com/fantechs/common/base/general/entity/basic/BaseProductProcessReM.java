@@ -27,7 +27,7 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
      * 物料工序关系表ID
      */
     @ApiModelProperty(name="productProcessReMId",value = "物料工序关系表ID")
-    @Excel(name = "物料工序关系表ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物料工序关系表ID", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "product_process_re_m_id")
     private Long productProcessReMId;
@@ -36,7 +36,7 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
      * 产品ID(即物料ID)
      */
     @ApiModelProperty(name="materialId",value = "产品ID(即物料ID)")
-    @Excel(name = "产品ID(即物料ID)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "产品ID(即物料ID)", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -44,7 +44,7 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")
-    @Excel(name = "工序ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工序ID", height = 20, width = 30,orderNum="")
     @Column(name = "process_id")
     private Long processId;
 
@@ -52,7 +52,7 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
@@ -185,5 +185,5 @@ public class BaseProductProcessReM extends ValidGroup implements Serializable {
     /**
      * 物料清单集合
      */
-    private List<BaseProductMaterialReP> list;
+    private List<BaseProductMaterialReP> list = new ArrayList<>();
 }

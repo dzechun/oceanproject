@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.sfc;
 
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -46,6 +48,9 @@ public class PdaCartonRecordDto implements Serializable {
     private Integer scansNum;
 
     @ApiModelProperty(name = "cartonNum", value = "包箱规格", required = true)
-    private Integer cartonNum;
+    private BigDecimal cartonNum;
+
+    @ApiModelProperty(name = "barcodeProcessList", value = "条码列表", required = true)
+    private List<MesSfcBarcodeProcessDto> barcodeProcessList;
 
 }

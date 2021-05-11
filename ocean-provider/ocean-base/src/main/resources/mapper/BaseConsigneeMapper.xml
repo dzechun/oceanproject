@@ -86,8 +86,8 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="materialOwnerId != null and materialOwnerId!=''">
-        and bc.material_owner_id = #{materialOwnerId}
+      <if test="materialOwnerName != null and materialOwnerName!=''">
+        and bmo.material_owner_name like CONCAT('%', #{materialOwnerName}, '%')
       </if>
       <if test="status!=null and status!=''">
         and bc.status = #{status}

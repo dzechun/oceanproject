@@ -218,7 +218,7 @@ public class MesScheduleServiceImpl extends BaseService<MesSchedule>  implements
             smtOrderService.orderMaterialSchedule(mesOrderMaterialDTO.getOrderMaterialId());
             //根据产品信息生成工单
             MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
-            mesPmWorkOrder.setOrderId(smtOrder.getOrderId());
+            mesPmWorkOrder.setWorkOrderId(smtOrder.getOrderId());
             mesPmWorkOrder.setProLineId(proLineId);
             mesPmWorkOrder.setMaterialId(mesOrderMaterialDTO.getMaterialId());
             //mesPmWorkOrder.setWorkOrderQuantity(mesOrderMaterialDTO.getTotal());

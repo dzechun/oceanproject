@@ -479,7 +479,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             searchWmsInnerStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
             searchWmsInnerStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
             searchWmsInnerStorageInventory.setStatus((byte) 1);
-            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getBody();
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getData();
 
             List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtoList = new LinkedList<>();
             // 更新物料库存信息
@@ -488,7 +488,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             wmsInnerStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
             if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
                 wmsInnerStorageInventory.setQuantity(smtLoadingDetDto.getActualQty());
-                wmsInnerStorageInventory = innerFeignApi.add(wmsInnerStorageInventory).getBody();
+                wmsInnerStorageInventory = innerFeignApi.add(wmsInnerStorageInventory).getData();
             } else {
                 wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
                 wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().add(smtLoadingDetDto.getActualQty()));
@@ -499,7 +499,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 searchWmsInnerStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
                 searchWmsInnerStorageInventoryDet.setGodownEntry(smtLoadingDetDto.getLoadingCode());
                 searchWmsInnerStorageInventoryDet.setStatus((byte) 1);
-                wmsInnerStorageInventoryDetDtoList = innerFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getBody();
+                wmsInnerStorageInventoryDetDtoList = innerFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
             }
 
             // 更新物料入库明细
@@ -719,7 +719,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             searchWmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
             searchWmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
             searchWmsInnerStorageInventory.setStatus((byte) 1);
-            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getBody();
+            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getData();
             if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
 //                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
                 // 允许负库存

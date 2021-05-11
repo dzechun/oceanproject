@@ -10,10 +10,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PdaCartonAnnexDto implements Serializable {
+public class PdaCartonAnnexDto extends PdaCartonDto implements Serializable {
 
-    @ApiModelProperty(name = "barCode", value = "附件码", required = true)
-    private String barCode;
-    @ApiModelProperty(name = "stationId", value = "工位ID", required = true)
-    private Long stationId;
+    @ApiModelProperty(name = "barAnnexCode", value = "附件码", required = true)
+    private String barAnnexCode;
 }
