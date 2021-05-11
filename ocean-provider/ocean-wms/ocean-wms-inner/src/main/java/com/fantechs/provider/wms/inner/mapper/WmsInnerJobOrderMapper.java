@@ -17,4 +17,6 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     Long findStorage(@Param("materialId")Long materialId);
 
     Long SelectStorage();
+
+    String findStorageName(@Param("storageId")Long storageId);
 }

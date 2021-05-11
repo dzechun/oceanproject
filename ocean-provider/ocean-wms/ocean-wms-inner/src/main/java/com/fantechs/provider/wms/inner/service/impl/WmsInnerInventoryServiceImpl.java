@@ -57,7 +57,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if (wmsInnerInventory.getLockStatus() == 0){
             if (StringUtils.isNotEmpty(wmsInnerInventory) && wmsInnerInventory.getPackingQty().compareTo(quantity) != -1){
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
-                BeanUtils.copyProperties(innerInventory, wmsInnerInventory);
+                BeanUtils.copyProperties(wmsInnerInventory, innerInventory);
                 innerInventory.setPackingQty(quantity);
                 innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
                 innerInventory.setParentInventoryId(id);
@@ -91,19 +91,21 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 throw new BizErrorException("数量超出锁定的数量");
             } else if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 0){
                 wmsInnerInventory.setLockStatus((byte) 0);
+                wmsInnerInventory.setPackingQty(new BigDecimal(0));
+                wmsInnerInventory.setInventoryTotalQty(new BigDecimal(0));
             } else {
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
-                BeanUtils.copyProperties(innerInventory, wmsInnerInventory);
+                BeanUtils.copyProperties(wmsInnerInventory,innerInventory);
                 innerInventory.setPackingQty(quantity);
                 innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
                 innerInventory.setParentInventoryId(id);
                 innerInventory.setInventoryId(null);
                 innerInventory.setLockStatus((byte) 0);
                 this.save(innerInventory);
-
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
                 wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
             }
+
             this.update(wmsInnerInventory);
         } else {
             throw new BizErrorException("当前库存未进行锁定");
@@ -115,6 +117,10 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     public WmsInnerInventory selectOneByExample(Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
         example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        if(StringUtils.isEmpty(map.get("storageName")) && StringUtils.isEmpty(map.get("warehouseName"))){
+            example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("warehouseName",map.get("warehouseNmae")).andEqualTo("storageName",map.get("storageName"))
+                    .andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        }
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
     }

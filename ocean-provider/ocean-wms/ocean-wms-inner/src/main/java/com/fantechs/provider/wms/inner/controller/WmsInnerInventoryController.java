@@ -18,11 +18,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -42,18 +44,21 @@ public class WmsInnerInventoryController {
     @Resource
     private WmsHtInnerInventoryService wmsHtInnerInventoryService;
 
+    @ApiIgnore
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerInventory wmsInnerInventory) {
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.save(wmsInnerInventory));
     }
 
+    @ApiIgnore
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.batchDelete(ids));
     }
 
+    @ApiIgnore
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInnerInventory.update.class) WmsInnerInventory wmsInnerInventory) {
@@ -75,6 +80,18 @@ public class WmsInnerInventoryController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("锁定")
+    @PostMapping("/lock")
+    public ResponseEntity lock(@ApiParam(value = "锁定的库存ID",required = true) @RequestParam Long id,@ApiParam(value = "锁定的库存数量",required = true) @RequestParam BigDecimal quantity) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.lock(id,quantity));
+    }
+
+    @ApiOperation("解锁")
+    @PostMapping("/unlock")
+    public ResponseEntity unlock(@ApiParam(value = "解锁的库存ID",required = true) @RequestParam Long id,@ApiParam(value = "解锁数量",required = true) @RequestParam BigDecimal quantity) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.unlock(id,quantity));
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<WmsHtInnerInventory>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerInventory searchWmsInnerInventory) {
@@ -84,17 +101,21 @@ public class WmsInnerInventoryController {
     }
 
     @PostMapping("/selectOneByExample")
+    @ApiIgnore
     public ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestBody Map<String,Object> map){
         return ControllerUtil.returnDataSuccess(wmsInnerInventoryService.selectOneByExample(map),1);
     }
     @PostMapping("/updateByPrimaryKeySelective")
+    @ApiIgnore
     public ResponseEntity updateByPrimaryKeySelective(@RequestBody WmsInnerInventory wmsInnerInventory){
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory));
     }
     @PostMapping("/updateByExampleSelective")
+    @ApiIgnore
     public ResponseEntity updateByExampleSelective(@RequestBody WmsInnerInventory wmsInnerInventory,@RequestParam Map<String,Object> map){
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.updateByExampleSelective(wmsInnerInventory,map));
     }
+    @ApiIgnore
     @PostMapping("/insertSelective")
     public ResponseEntity insertSelective(@RequestBody WmsInnerInventory wmsInnerInventory){
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.insertSelective(wmsInnerInventory));

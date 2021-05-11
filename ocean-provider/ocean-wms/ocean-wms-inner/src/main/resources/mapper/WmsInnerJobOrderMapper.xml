@@ -70,7 +70,7 @@ wipo.option2,
 wipo.option3
   </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
-      SELECT <include refid="BaseColumnList"/>,material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,su.user_name AS create_user_name,
+      SELECT <include refid="BaseColumnList"/>,bmo.material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,su.user_name AS create_user_name,
              sus.user_name AS modified_user_name,
              bo.organization_name AS organization_Name
       FROM wms_inner_job_order wipo
@@ -119,5 +119,9 @@ wipo.option3
   </select>
   <select id="SelectStorage" resultType="java.lang.Long">
     SELECT storage_id FROM base_storage WHERE surplus_can_put_salver>0 ORDER BY putaway_move_line_no,picking_move_line_no DESC LIMIT 1
+  </select>
+
+  <select id="findStorageName" resultType="java.lang.String">
+    select storage_name From base_storage where storage_id #{storageId}
   </select>
 </mapper>

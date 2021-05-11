@@ -19,7 +19,7 @@ public class UpdateProcessDto implements Serializable {
     // 产品条码
     private String barCode;
     // 下一工序ID
-    private Long nextProcessId;
+    private Long nowProcessId;
     // 线别ID
     private Long proLineId;
     // 设备ID（设备ID为空值时写N/A）

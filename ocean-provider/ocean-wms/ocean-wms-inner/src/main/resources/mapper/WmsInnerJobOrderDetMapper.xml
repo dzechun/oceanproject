@@ -44,7 +44,7 @@
     <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
     <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>

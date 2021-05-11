@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@Table(name = "wms_ht_inner_inventory")
+@Table(name = "wms_inner_ht_inventory")
 public class WmsHtInnerInventory extends ValidGroup implements Serializable {
     /**
      * 库存履历ID

@@ -1,15 +1,11 @@
 package com.fantechs.provider.api.wms.inner;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -93,4 +89,11 @@ public interface InnerFeignApi {
     @PostMapping("/wmsInnerJobOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInPutawayOrder);
 
+    @ApiOperation("列表")
+    @PostMapping("/wmsInnerJobOrderDet/findList")
+     ResponseEntity<List<WmsInnerJobOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerJobOrderDet searchWmsInPutawayOrderDet);
+
+    @ApiOperation("列表")
+    @PostMapping("/wmsInnerJobOrder/findList")
+    ResponseEntity<List<WmsInnerJobOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerJobOrder searchWmsInPutawayOrder);
 }

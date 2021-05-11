@@ -29,7 +29,7 @@ import java.util.List;
  * Created by Mr.Lei on 2021/05/10.
  */
 @RestController
-@Api(tags = "wmsOutDespatchOrder控制器")
+@Api(tags = "装车作业表头")
 @RequestMapping("/wmsOutDespatchOrder")
 @Validated
 public class WmsOutDespatchOrderController {
@@ -89,5 +89,17 @@ public class WmsOutDespatchOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("完成装车")
+    @PostMapping("/finishTruckloading")
+    public ResponseEntity finishTruckloading(@RequestParam @NotNull(message = "id不能为空") String ids){
+        return ControllerUtil.returnCRUD(wmsOutDespatchOrderService.finishTruckloading(ids));
+    }
+
+    @ApiOperation("发运")
+    @PostMapping("/forwarding")
+    public ResponseEntity forwarding(@ApiParam("逗号间隔") @RequestParam @NotNull(message = "id不能为空") String ids){
+        return ControllerUtil.returnCRUD(wmsOutDespatchOrderService.forwarding(ids));
     }
 }

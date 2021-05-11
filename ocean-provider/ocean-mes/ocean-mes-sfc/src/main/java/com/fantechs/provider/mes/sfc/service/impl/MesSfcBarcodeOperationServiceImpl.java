@@ -16,7 +16,6 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCarton;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -87,12 +86,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             if (mesPmWorkOrder.getWorkOrderStatus().equals("0") || mesPmWorkOrder.getWorkOrderStatus().equals("1")) {
                 mesPmWorkOrder.setWorkOrderStatus(Byte.valueOf("2"));
                 pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
-                updateProcessDto.setNextProcessId(vo.getProcessId());
+                updateProcessDto.setNowProcessId(vo.getProcessId());
             } else {
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                         .workOrderCode(vo.getBarCode())
                         .build());
-                updateProcessDto.setNextProcessId(mesSfcBarcodeProcess.getNextProcessId());
+                updateProcessDto.setNowProcessId(mesSfcBarcodeProcess.getNextProcessId());
             }
             // 4、更新下一工序，增加工序记录
             return BarcodeUtils.updateProcess(updateProcessDto);
@@ -443,9 +442,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             // 判断首条码，若是则更新工单状态
             if (mesPmWorkOrderByBarCode.getWorkOrderStatus().equals("0") || mesPmWorkOrderByBarCode.getWorkOrderStatus().equals("1")) {
                 mesPmWorkOrderByBarCode.setWorkOrderStatus(Byte.valueOf("2"));
-                updateProcessDto.setNextProcessId(mesSfcBarcodeProcess.getProcessId());
+                updateProcessDto.setNowProcessId(mesSfcBarcodeProcess.getProcessId());
             } else {
-                updateProcessDto.setNextProcessId(mesSfcBarcodeProcess.getNextProcessId());
+                updateProcessDto.setNowProcessId(mesSfcBarcodeProcess.getNextProcessId());
             }
             // 判断是否投产工序，若是则投产数量+1
             if (mesPmWorkOrderByBarCode.getPutIntoProcessId().equals(mesSfcBarcodeProcess.getProcessId())) {
