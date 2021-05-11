@@ -14,4 +14,7 @@ public class PdaCartonAnnexDto extends PdaCartonDto implements Serializable {
 
     @ApiModelProperty(name = "barAnnexCode", value = "附件码", required = true)
     private String barAnnexCode;
+
+    @ApiModelProperty(name = "proLineId", value = "产线ID", required = true)
+    private Long proLineId;
 }

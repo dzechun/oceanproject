@@ -142,6 +142,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseProLine/findList")
     ResponseEntity<List<BaseProLine>> selectProLines(@RequestBody(required = false) SearchBaseProLine searchBaseProLine);
 
+    @ApiOperation("查询线别详情")
+    @PostMapping("/baseProLine/detail")
+    ResponseEntity<BaseProLine> selectProLinesDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
     @ApiOperation("根据ID获取储位物料")
     @PostMapping("/baseStorageMaterial/detail")
     ResponseEntity<BaseStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
@@ -350,6 +354,10 @@ public interface BaseFeignApi {
     @ApiOperation("物料关联标签信息")
     @PostMapping("/baseLabelMaterial/findList")
     ResponseEntity<List<BaseLabelMaterialDto>> findLabelMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial);
+
+    @ApiOperation("获取工位详情")
+    @PostMapping("/baseStation/detail")
+    public ResponseEntity<BaseStation> findStationDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation(value = "生成条码-Map")
     @PostMapping("/baseBarcodeRule/newGenerateCode")
