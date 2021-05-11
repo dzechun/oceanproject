@@ -359,6 +359,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseLabelMaterial/findList")
     ResponseEntity<List<BaseLabelMaterialDto>> findLabelMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial);
 
+    @ApiOperation("获取包装规格信息详情")
+    @PostMapping("/basePackageSpecification/detail")
+    ResponseEntity<BasePackageSpecification> BasePackageSpecificationDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
     @ApiOperation("获取包装规格信息列表")
     @PostMapping("/basePackageSpecification/findList")
     ResponseEntity<List<BasePackageSpecificationDto>> findBasePackageSpecificationList(@ApiParam(value = "查询对象")@RequestBody SearchBasePackageSpecification searchBasePackageSpecification);
