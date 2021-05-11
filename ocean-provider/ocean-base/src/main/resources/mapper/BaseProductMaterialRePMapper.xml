@@ -9,6 +9,7 @@
     <result column="product_process_re_m_id" jdbcType="BIGINT" property="productProcessReMId" />
     <result column="scan_type" jdbcType="TINYINT" property="scanType" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
     <result column="usage_qty" jdbcType="DECIMAL" property="usageQty" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -25,6 +26,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
+    <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -32,6 +34,7 @@
     bpmrp.product_process_re_m_id,
     bpmrp.scan_type,
     bpmrp.material_id,
+    bpmrp.sub_material_id,
     bpmrp.usage_qty,
     bpmrp.`status`,
     bpmrp.remark,
@@ -48,11 +51,12 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bm.material_code,bm.material_desc,bm.material_version,
+    bm.material_code,bm.material_desc,bm.material_version,sbm.material_code as sub_material_code,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_product_material_re_p bpmrp
     left join fantech_imes_v2.base_material bm on bpmrp.material_id=bm.material_id
+    left join fantech_imes_v2.base_material sbm on bpmrp.sub_material_id=sbm.material_id
     left join ocean_v2.sys_user u on bpmrp.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bpmrp.modified_user_id=s.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON bpmrp.org_id = bo.organization_id
