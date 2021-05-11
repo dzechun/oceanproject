@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,18 @@ public class WmsInnerInventoryController {
         Page<Object> page = PageHelper.startPage(searchWmsInnerInventory.getStartPage(),searchWmsInnerInventory.getPageSize());
         List<WmsInnerInventoryDto> list = wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("锁定")
+    @PostMapping("/lock")
+    public ResponseEntity lock(@ApiParam(value = "锁定的库存ID",required = true) @RequestParam Long id,@ApiParam(value = "锁定的库存数量",required = true) @RequestParam BigDecimal quantity) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.lock(id,quantity));
+    }
+
+    @ApiOperation("解锁")
+    @PostMapping("/unlock")
+    public ResponseEntity unlock(@ApiParam(value = "解锁的库存ID",required = true) @RequestParam Long id,@ApiParam(value = "解锁数量",required = true) @RequestParam BigDecimal quantity) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.unlock(id,quantity));
     }
 
     @ApiOperation("历史列表")
