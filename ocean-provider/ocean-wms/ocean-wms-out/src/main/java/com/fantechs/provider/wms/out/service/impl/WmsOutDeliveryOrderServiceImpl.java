@@ -6,12 +6,14 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -221,8 +223,13 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrder.setOrderStatus((byte)3);
         }
 
-        wmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
-        return wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+        int i = 0;
+        if(!wmsOutDeliveryOrderDto.getOrderStatus().equals(wmsOutDeliveryOrder.getOrderStatus())){
+            wmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
+            i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+        }
+
+        return i;
     }
 
     @Override
@@ -241,7 +248,21 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
                 wmsInnerJobOrder.setWarehouseId(wmsOutDeliveryOrderDetDto.getWarehouseId());
                 wmsInnerJobOrder.setPlanQty(wmsOutDeliveryOrderDetDto.getPackingQty());
-                innerFeignApi.add(wmsInnerJobOrder);
+
+                List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
+                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                wmsInnerJobOrderDet.setInStorageId(wmsOutDeliveryOrderDetDto.getStorageId());
+                wmsInnerJobOrderDet.setInventoryStatusId(wmsOutDeliveryOrderDetDto.getInventoryStatusId());
+                wmsInnerJobOrderDet.setMaterialId(wmsOutDeliveryOrderDetDto.getMaterialId());
+                wmsInnerJobOrderDet.setPackingUnitName(wmsOutDeliveryOrderDetDto.getPackingUnitName());
+                wmsInnerJobOrderDet.setPlanQty(wmsOutDeliveryOrderDetDto.getPackingQty());
+                wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException("创建作业单失败");
+                }
             }
         }
         return 1;
