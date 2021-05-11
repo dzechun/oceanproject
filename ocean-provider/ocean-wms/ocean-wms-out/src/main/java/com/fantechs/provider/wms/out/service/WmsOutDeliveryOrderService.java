@@ -17,4 +17,6 @@ public interface WmsOutDeliveryOrderService extends IService<WmsOutDeliveryOrder
     List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map);
 
     List<WmsOutHtDeliveryOrder> findHtList(Map<String, Object> map);
+
+    int createJobOrder(WmsOutDeliveryOrder wmsOutDeliveryOrder);
 }

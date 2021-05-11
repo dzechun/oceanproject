@@ -5,25 +5,19 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDetDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutOtheroutDto;
-import com.fantechs.common.base.general.entity.basic.BaseBarCode;
-import com.fantechs.common.base.general.entity.basic.BasePlatePartsDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutPurchaseReturnDet;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutShippingNoteDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtFinishedProduct;
-import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutOtheroutDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryOrderDetMapper;
@@ -56,6 +50,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private WmsOutHtDeliveryOrderMapper wmsOutHtDeliveryOrderMapper;
     @Resource
     private WmsOutHtDeliveryOrderDetMapper wmsOutHtDeliveryOrderDetMapper;
+    @Resource
+    private InnerFeignApi innerFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -231,5 +227,21 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
         wmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
         return wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int createJobOrder(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
+        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
+        for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto:wmsOutDeliveryOrderDetList){
+            WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+            wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrder.getMaterialOwnerId());
+            wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrder.getOrderTypeId());
+            wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrder.getDeliveryOrderCode());
+            wmsInnerJobOrder.setWarehouseId(wmsOutDeliveryOrderDetDto.getWarehouseId());
+            wmsInnerJobOrder.setPlanQty(wmsOutDeliveryOrderDetDto.getPackingQty());
+            innerFeignApi.add(wmsInnerJobOrder);
+        }
+        return 1;
     }
 }
