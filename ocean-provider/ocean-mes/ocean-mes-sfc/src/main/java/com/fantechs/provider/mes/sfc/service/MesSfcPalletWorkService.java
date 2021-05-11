@@ -13,7 +13,7 @@ public interface MesSfcPalletWorkService {
 
     List<String> findPalletCarton(String palletCode);
 
-    int submitNoFullPallet(List<String> palletCodeList) throws Exception;
+    int submitNoFullPallet(List<Long> palletIdList) throws Exception;
 
     Boolean updatePalletType(Long stationId);
 }

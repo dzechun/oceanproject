@@ -125,7 +125,7 @@ public class BarcodeUtils {
     public static int updateProcess(UpdateProcessDto dto) throws Exception {
         // 获取条码
         MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
-                .workOrderCode(dto.getBarCode())
+                .barcode(dto.getBarCode())
                 .build());
         ResponseEntity<List<BaseRouteProcess>> responseEntity = barcodeUtils.baseFeignApi.findConfigureRout(dto.getRouteId());
         if (responseEntity.getCode() != 0) {

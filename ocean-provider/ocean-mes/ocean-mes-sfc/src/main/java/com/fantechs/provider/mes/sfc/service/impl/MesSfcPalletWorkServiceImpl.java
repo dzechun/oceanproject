@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialSu
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -29,6 +30,7 @@ import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -243,9 +245,21 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     }
 
     @Override
-    public int submitNoFullPallet(List<String> palletCodeList) throws Exception {
-
-        return palletCodeList.size();
+    public int submitNoFullPallet(List<Long> palletIdList) throws Exception {
+        Example example = new Example(MesSfcProductPalletDto.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("productPalletId", palletIdList);
+        criteria.andEqualTo("closeStatus", 0);
+        List<MesSfcProductPallet> productPallets = mesSfcProductPalletService.selectByExample(example);
+        try {
+            for (MesSfcProductPallet item : productPallets){
+                item.setCloseStatus((byte) 1);
+                mesSfcProductPalletService.save(item);
+            }
+        }catch (Exception e){
+            throw new BizErrorException(ErrorCodeEnum.GL99990005, e.getMessage());
+        }
+        return productPallets.size();
     }
 
     @Override
