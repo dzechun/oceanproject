@@ -43,6 +43,12 @@ public class WmsOutDeliveryOrderController {
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.save(wmsOutDeliveryOrder));
     }
 
+    @ApiOperation(value = "创建作业单",notes = "创建作业单")
+    @PostMapping("/createJobOrder")
+    public ResponseEntity createJobOrder(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id) {
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.createJobOrder(id));
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {

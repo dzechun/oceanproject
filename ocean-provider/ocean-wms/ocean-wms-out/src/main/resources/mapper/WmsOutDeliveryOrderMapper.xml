@@ -92,6 +92,9 @@
     LEFT JOIN ocean_v2.sys_user sus ON wodo.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wodo.org_id = bo.organization_id
     <where>
+      <if test="deliveryOrderId != null">
+        and wodo.delivery_order_id = #{deliveryOrderId}
+      </if>
       <if test="deliveryOrderCode != null and deliveryOrderCode != ''">
         and wodo.delivery_order_code like CONCAT('%', #{deliveryOrderCode}, '%')
       </if>

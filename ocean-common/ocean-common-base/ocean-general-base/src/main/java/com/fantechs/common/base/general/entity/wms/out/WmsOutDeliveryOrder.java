@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -277,5 +278,5 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     @ApiModelProperty(name="wmsOutDeliveryOrderDetList",value = "出库单明细")
-    private List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList;
+    private List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = new ArrayList<>();
 }
