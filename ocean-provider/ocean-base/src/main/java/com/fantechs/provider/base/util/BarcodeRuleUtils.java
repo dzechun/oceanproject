@@ -41,7 +41,7 @@ public class BarcodeRuleUtils {
      * @param params 执行函数参数
      * @return
      */
-    public static String analysisCode(List<BaseBarcodeRuleSpec> list, String maxCode, String code,String params){
+    public static String analysisCode(List<BaseBarcodeRuleSpec> list, String maxCode, String code,String params,Map<String,Object> map){
         StringBuilder sb=new StringBuilder();
         Calendar cal= Calendar.getInstance();
         if(StringUtils.isNotEmpty(list)){
@@ -86,6 +86,19 @@ public class BarcodeRuleUtils {
                         sb.append(year);
                     }
                 }else if("[P]".equals(specification)||"[L]".equals(specification)||"[C]".equals(specification)){
+                    if(!map.isEmpty()){
+                        switch (specification){
+                            case "[P]":
+                                code = map.get("[P]").toString();
+                                break;
+                            case "[L]":
+                                code = map.get("[L]").toString();
+                                break;
+                            case "[C]":
+                                code = map.get("[C]").toString();
+                                break;
+                        }
+                    }
                     //产品料号的长度
                     int length = code.length();
                     //长度不足需要补位

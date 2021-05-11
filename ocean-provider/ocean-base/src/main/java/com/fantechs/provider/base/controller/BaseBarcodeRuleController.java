@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -116,7 +117,18 @@ public class BaseBarcodeRuleController {
             @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode,
             @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)String code,
             @ApiParam(value = "执行函数参数")@RequestParam (required = false)String params){
-        String analysisCode = BarcodeRuleUtils.analysisCode(list, maxCode, code,params);
+        String analysisCode = BarcodeRuleUtils.analysisCode(list, maxCode, code,params,null);
+        return ControllerUtil.returnDataSuccess(analysisCode,1);
+    }
+
+    @ApiOperation(value = "生成条码-Map")
+    @PostMapping("/newGenerateCode")
+    public ResponseEntity<String> newGenerateCode(
+            @ApiParam(value = "条码规则集合")@RequestBody List<BaseBarcodeRuleSpec> list,
+            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode,
+            @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false)Map<String,Object> map,
+            @ApiParam(value = "执行函数参数")@RequestParam (required = false)String params){
+        String analysisCode = BarcodeRuleUtils.analysisCode(list, maxCode, null,params,map);
         return ControllerUtil.returnDataSuccess(analysisCode,1);
     }
 

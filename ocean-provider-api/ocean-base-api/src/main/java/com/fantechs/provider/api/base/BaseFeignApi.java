@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @FeignClient(name = "ocean-base")
 public interface BaseFeignApi {
@@ -349,4 +350,12 @@ public interface BaseFeignApi {
     @ApiOperation("物料关联标签信息")
     @PostMapping("/baseLabelMaterial/findList")
     ResponseEntity<List<BaseLabelMaterialDto>> findLabelMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial);
+
+    @ApiOperation(value = "生成条码-Map")
+    @PostMapping("/baseBarcodeRule/newGenerateCode")
+    ResponseEntity<String> newGenerateCode(
+            @ApiParam(value = "条码规则集合")@RequestBody List<BaseBarcodeRuleSpec> list,
+            @ApiParam(value = "最大条码数")@RequestParam(required = false) String maxCode,
+            @ApiParam(value = "产品料号、生产线别、客户料号")@RequestParam (required = false) Map<String,Object> map,
+            @ApiParam(value = "执行函数参数")@RequestParam (required = false)String params);
 }
