@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcessRecord;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -205,7 +207,30 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setOperatorUserId(dto.getOperatorUserId());
         mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
         mesSfcBarcodeProcessRecord.setModifiedUserId(dto.getOperatorUserId());
-        return barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
+        barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
+
+        // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
+        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
+        if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("workOrderBarcodeId", dto.getBarCode());
+            map.put("stationId", dto.getNowStationId());
+            map.put("processId", dto.getNowProcessId());
+            List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
+            if (mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
+                mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().add(BigDecimal.ONE));
+                if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
+                    // 产出数量等于工单数量，工单完工
+                    mesPmWorkOrder.setWorkOrderStatus((byte) 6);
+                    mesPmWorkOrder.setActualEndTime(new Date());
+                    mesPmWorkOrder.setModifiedTime(new Date());
+                    mesPmWorkOrder.setModifiedUserId(dto.getOperatorUserId());
+                }
+                barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
+            }
+        }
+
+        return 1;
     }
 
 
@@ -270,12 +295,13 @@ public class BarcodeUtils {
     }
 
     /**
-     * 打印条码
+     * 打印包箱/栈板条码
      * @param dto
      */
     public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
-        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
+//        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
+        PrintModel printModel = new PrintModel();
         printModel.setQrCode(dto.getBarcode());
         PrintDto printDto = new PrintDto();
         printDto.setLabelName(labelRuteDto.getLabelName());

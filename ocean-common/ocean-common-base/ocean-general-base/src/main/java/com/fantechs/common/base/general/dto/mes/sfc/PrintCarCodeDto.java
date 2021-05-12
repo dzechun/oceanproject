@@ -17,7 +17,7 @@ public class PrintCarCodeDto implements Serializable {
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     private Long workOrderId;
 
-    @ApiModelProperty(name="barcodeType",value = "标签类别（01 产品条码2.工单条码、3.客户条码、4-销售订单条码）")
+    @ApiModelProperty(name="barcodeType",value = "条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")
     private Byte barcodeType;
 
     /**

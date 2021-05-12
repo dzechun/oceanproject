@@ -75,4 +75,19 @@ public class MesSfcPalletWorkController {
         Boolean b = mesSfcPalletWorkService.updatePalletType(stationId);
         return ControllerUtil.returnDataSuccess(b, 1);
     }
+
+    @GetMapping("/updateNowPackageSpecQty")
+    @ApiOperation("修改栈板包装规格数量")
+    public ResponseEntity updateNowPackageSpecQty(
+            @ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId,
+            @ApiParam(value = "包装规格数量", required = true) @RequestParam Integer nowPackageSpecQty) {
+
+        try {
+            int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty);
+            return ControllerUtil.returnCRUD(i);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BizErrorException(e);
+        }
+    }
 }

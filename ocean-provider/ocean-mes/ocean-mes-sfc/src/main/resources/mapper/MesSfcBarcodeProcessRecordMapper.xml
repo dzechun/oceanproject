@@ -24,6 +24,9 @@
     <result column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="process_code" jdbcType="VARCHAR" property="processCode" />
     <result column="process_name" jdbcType="VARCHAR" property="processName" />
@@ -62,4 +65,31 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select * from mes_sfc_barcode_process_record msbpr
+    <where>
+      <if test="workOrderBarcodeId != null">
+        and msbpr.work_order_barcode_id = #{workOrderBarcodeId}
+      </if>
+      <if test="barcode != null and barcode != ''">
+        and msbpr.barcode CONCAT CONCAT('%', #{barcode}, '%')
+      </if>
+      <if test="workOrderId != null">
+        and msbpr.work_order_id = #{workOrderId}
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and msbpr.work_order_code = #{workOrderCode}
+      </if>
+      <if test="barcodeType != null">
+        and msbpr.barcode_type = #{barcodeType}
+      </if>
+      <if test="processId != null">
+        and msbpr.process_id = #{processId}
+      </if>
+      <if test="stationId != null">
+        and msbpr.station_id = #{stationId}
+      </if>
+    </where>
+  </select>
 </mapper>

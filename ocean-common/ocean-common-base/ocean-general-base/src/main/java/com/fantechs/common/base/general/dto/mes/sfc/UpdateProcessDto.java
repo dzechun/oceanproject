@@ -16,6 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UpdateProcessDto implements Serializable {
 
+    // 工单ID
+    private Long workOrderId;
     // 产品条码
     private String barCode;
     // 当前扫码工序ID

@@ -224,7 +224,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         int i = 0;
-        if(!wmsOutDeliveryOrderDto.getOrderStatus().equals(wmsOutDeliveryOrder.getOrderStatus())){
+        if(!wmsOutDeliveryOrder.getOrderStatus().equals(wmsOutDeliveryOrderDto.getOrderStatus())){
             wmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
             i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
         }
