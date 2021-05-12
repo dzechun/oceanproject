@@ -86,7 +86,7 @@ public class BarcodeRuleUtils {
                         sb.append(year);
                     }
                 }else if("[P]".equals(specification)||"[L]".equals(specification)||"[C]".equals(specification)){
-                    if(!map.isEmpty()){
+                    if(map!=null && !map.isEmpty()){
                         switch (specification){
                             case "[P]":
                                 code = map.get("[P]").toString();
