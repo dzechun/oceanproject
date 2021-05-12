@@ -93,24 +93,28 @@ public class BarcodeUtils {
      */
     public static Boolean checkSN(CheckProductionDto record) throws Exception {
 
-        // 1、判断条码是否正确（是否存在）
-        MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode());
+        try {
+            // 1、判断条码是否正确（是否存在）
+            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode());
 
-        // 2、判断条码流程是否正确（流程表）
-        if (record.getProcessId() != null) {
-            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+            // 2、判断条码流程是否正确（流程表）
+            if (record.getProcessId() != null) {
+                checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+            }
+
+            // 3、系统检查条码工单状态是否正确（工单表）
+            if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
+                checkOrder(mesSfcWorkOrderBarcodeDto);
+            }
+
+            // 4、是否检查排程
+            if (record.getCheckOrNot()) {
+
+            }
+            return true;
+        }catch (Exception ex){
+            throw new BizErrorException(ex);
         }
-
-        // 3、系统检查条码工单状态是否正确（工单表）
-        if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
-            checkOrder(mesSfcWorkOrderBarcodeDto);
-        }
-
-        // 4、是否检查排程
-        if (record.getCheckOrNot()) {
-
-        }
-        return true;
     }
 
     /**
@@ -282,10 +286,10 @@ public class BarcodeUtils {
         }
 
         String lastBarCode = null;
-        boolean hasKey = barcodeUtils.redisUtil.hasKey(barcodeRuleDto.getBarcodeRuleId().toString());
+        boolean hasKey = barcodeUtils.redisUtil.hasKey(barcodeRuleDto.getBarcodeRule());
         if(hasKey){
             // 从redis获取上次生成条码
-            Object redisRuleData = barcodeUtils.redisUtil.get(barcodeRuleDto.getBarcodeRuleId().toString());
+            Object redisRuleData = barcodeUtils.redisUtil.get(barcodeRuleDto.getBarcodeRule());
             lastBarCode = String.valueOf(redisRuleData);
         }
         //获取最大流水号
@@ -296,7 +300,7 @@ public class BarcodeUtils {
             throw new BizErrorException(rs.getMessage());
         }
         // 更新redis最新包箱号
-        barcodeUtils.redisUtil.set(barcodeRuleDto.getBarcodeRuleId().toString(), rs.getData());
+        barcodeUtils.redisUtil.set(barcodeRuleDto.getBarcodeRule(), rs.getData());
         return rs.getData();
     }
 
