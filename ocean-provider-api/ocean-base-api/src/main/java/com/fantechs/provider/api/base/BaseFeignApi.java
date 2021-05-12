@@ -382,4 +382,9 @@ public interface BaseFeignApi {
     @ApiOperation("物料编码关联客户料号列表")
     @PostMapping("/baseMaterialSupplier/findList")
     ResponseEntity<List<BaseMaterialSupplierDto>> findBaseMaterialSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterialSupplier searchBaseMaterialSupplier);
+
+    @ApiOperation("根据条件查询货主列表")
+    @PostMapping("/baseMaterialOwner/findList")
+    ResponseEntity<List<BaseMaterialOwnerDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterialOwner searchBaseMaterialOwner);
+
 }

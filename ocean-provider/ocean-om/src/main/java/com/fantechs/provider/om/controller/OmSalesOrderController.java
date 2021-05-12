@@ -48,6 +48,12 @@ public class OmSalesOrderController {
         return ControllerUtil.returnCRUD(omSalesOrderService.saveDto(omSalesOrderDto));
     }
 
+    @ApiOperation(value = "下发仓库",notes = "下发仓库")
+    @PostMapping("/issueWarehouse")
+    public ResponseEntity issueWarehouse(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+        return ControllerUtil.returnCRUD(omSalesOrderService.issueWarehouse(id));
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
