@@ -156,6 +156,9 @@ public class BarcodeRuleUtils {
                 }else if("[f]".equals(specification)){
                     //执行函数获取解析码
                     String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
+                    if(StringUtils.isEmpty(param)){
+                        throw new BizErrorException("条码规则生成错误");
+                    }
                     if(param.length()<barcodeLength){
                         while (param.length()<barcodeLength){
                             StringBuffer s = new StringBuffer();

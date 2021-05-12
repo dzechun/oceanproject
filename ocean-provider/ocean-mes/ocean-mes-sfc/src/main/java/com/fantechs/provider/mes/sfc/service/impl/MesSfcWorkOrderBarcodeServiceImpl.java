@@ -21,10 +21,12 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
@@ -61,6 +63,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private RabbitProducer rabbitProducer;
     @Resource
     private MesSfcBarcodeProcessMapper mesSfcBarcodeProcessMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -226,14 +231,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
         //判断条码产生数量不能大于工单数量
         Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
-        if(count>=record.getWorkOrderQty().doubleValue()){
+        if(count+ record.getQty()>record.getWorkOrderQty().doubleValue()){
             throw new BizErrorException(ErrorCodeEnum.OPT20012009);
         }
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
         for (Integer i = 0; i < record.getQty(); i++) {
             record.setWorkOrderBarcodeId(null);
-            //获取生成的最大条码
-            String max = mesSfcWorkOrderBarcodeMapper.findMaxCode(record.getBarcodeType(), record.getWorkOrderId());
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
             //查询条码规则集合
             LabelRuteDto labelRuteDto = record.getLabelRuteDto();
@@ -247,14 +250,25 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(list.size()<1){
                 throw new BizErrorException("请设置条码规则");
             }
+
+            String lastBarCode = null;
+            boolean hasKey = redisUtil.hasKey(this.sub(list));
+            if(hasKey){
+                // 从redis获取上次生成条码
+                Object redisRuleData = redisUtil.get(this.sub(list));
+                lastBarCode = String.valueOf(redisRuleData);
+            }
             //获取最大流水号
-            String maxCode = baseFeignApi.generateMaxCode(list,max).getData();
+            String maxCode = baseFeignApi.generateMaxCode(list, lastBarCode).getData();
             //生成条码
             ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,record.getMaterialCode(),record.getWorkOrderId().toString());
             if(rs.getCode()!=0){
                 throw new BizErrorException(rs.getMessage());
             }
             record.setBarcode(rs.getData());
+
+            // 更新redis最新包箱号
+            redisUtil.set(sub(list), rs.getData());
 
             //待打印状态
             record.setBarcodeStatus((byte)3);
@@ -290,5 +304,13 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return user;
+    }
+
+    public String sub(List<BaseBarcodeRuleSpec> list){
+        StringBuffer sb = new StringBuffer();
+        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
+            sb.append(baseBarcodeRuleSpec.getSpecification());
+        }
+        return sb.toString();
     }
 }
