@@ -20,9 +20,6 @@ public class RequestPalletWorkScanDto {
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
 
-    @ApiModelProperty(name = "closePalletNum", value = "已包栈板数量")
-    private BigDecimal closePalletNum;
-
     @ApiModelProperty(name = "checkdaliyOrder", value = "检查排程单（0-否 1-是）")
     private byte checkdaliyOrder;
 

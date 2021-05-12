@@ -24,6 +24,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
+import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.OmSalesOrderService;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -44,6 +46,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
     @Resource
     private OmSalesOrderMapper omSalesOrderMapper;
+    @Resource
+    private OmSalesOrderDetMapper omSalesOrderDetMapper;
     @Resource
     private OmSalesOrderDetService omSalesOrderDetService;
     @Resource
@@ -286,21 +290,24 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     public int issueWarehouse(Long id) {
         Map<String, Object> map = new HashMap<>();
         map.put("salesOrderId",id);
-        List<OmSalesOrderDto> list = omSalesOrderMapper.findList(map);
+        List<OmSalesOrderDto> list = this.findList(map);
         if(StringUtils.isNotEmpty(list)) {
             OmSalesOrderDto omSalesOrderDto = list.get(0);
             WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
             wmsOutDeliveryOrder.setRelatedOrderCode1(omSalesOrderDto.getSalesOrderCode());
             List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+            if(StringUtils.isEmpty(baseMaterialOwnerDtos)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"不存在货主信息");
+            }
             wmsOutDeliveryOrder.setMaterialOwnerId(baseMaterialOwnerDtos.get(0).getMaterialOwnerId());
             wmsOutDeliveryOrder.setOrderDate(new Date());
-            wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress());
+            wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().size()>0?omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress():null);
 
             //查询库位类型为发货的库位
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setStorageType((byte)3);
             List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-            if(StringUtils.isNotEmpty(baseStorages)){
+            if(StringUtils.isEmpty(baseStorages)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003,"不存在库位类型为发货的库位");
             }
 
@@ -316,6 +323,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsOutDeliveryOrderDetDto.setPackingUnitName(omSalesOrderDetDto.getUnitName());
                     wmsOutDeliveryOrderDetDto.setPackingQty(omSalesOrderDetDto.getArrangeDispatchQty());
                     wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
+
+                    //修改累计通知发货数量及安排发运数量
+                    omSalesOrderDetDto.setTotalInformDeliverQty(omSalesOrderDetDto.getTotalInformDeliverQty()==null?
+                            omSalesOrderDetDto.getArrangeDispatchQty() : omSalesOrderDetDto.getTotalInformDeliverQty().add(omSalesOrderDetDto.getArrangeDispatchQty()));
+                    omSalesOrderDetDto.setArrangeDispatchQty(new BigDecimal("0"));
+                    omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDetDto);
                 }
                 wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
             }

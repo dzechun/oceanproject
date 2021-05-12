@@ -98,7 +98,7 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="jobOrderType",value = "作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)")
     @Excel(name = "作业类型", height = 20, width = 30,orderNum="") 
     @Column(name = "job_order_type")
-    private String jobOrderType;
+    private Byte jobOrderType;
 
     /**
      * 相关单号

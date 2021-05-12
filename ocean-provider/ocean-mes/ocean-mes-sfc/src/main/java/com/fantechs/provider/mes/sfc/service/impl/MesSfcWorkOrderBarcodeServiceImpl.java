@@ -96,7 +96,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 case 4:
                     //获取销售类别模版
                     labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",mesSfcWorkOrderBarcode.getWorkOrderId());
-                    if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getLabelName())){
+                    if(StringUtils.isEmpty(labelRuteDto) ||StringUtils.isEmpty(labelRuteDto.getLabelName())){
                         //获取默认模版
                         labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
                         if(StringUtils.isEmpty(labelRuteDto)){

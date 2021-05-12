@@ -413,6 +413,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     // 关箱后台才能打印条码
                     BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
                             .barcode(vo.getCartonCode())
+                            .labelTypeCode("09")
                             .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
                             .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
                             .build());
