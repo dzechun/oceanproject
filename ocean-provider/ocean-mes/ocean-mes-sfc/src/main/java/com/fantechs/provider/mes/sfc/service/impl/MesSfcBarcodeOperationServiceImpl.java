@@ -358,7 +358,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
             // 条码对应工序
             MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
-                    .workOrderCode(vo.getBarCode())
+                    .barcode(vo.getBarCode())
                     .processId(vo.getProcessId())
                     .build());
 

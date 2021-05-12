@@ -135,27 +135,18 @@ public class BarcodeUtils {
             throw new BizErrorException(ErrorCodeEnum.PDA40012008);
         }
         List<BaseRouteProcess> routeProcessList = responseEntity.getData();
-        // 判断是否第一道工序未过
-        if (mesSfcBarcodeProcess.getProcessId() == 0 && mesSfcBarcodeProcess.getProcessId() != null) {
-            List<BaseRouteProcess> collect = routeProcessList.stream()
-                    .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum)).collect(Collectors.toList());
-            if (!collect.get(0).getProcessId().equals(dto.getNowProcessId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012010, mesSfcBarcodeProcess.getNextProcessId());
+        // 若入参当前扫码工序ID跟过站表下一工序ID不一致
+        // 则判断过站表下一工序是否必过工序
+        if (!dto.getNowProcessId().equals(mesSfcBarcodeProcess.getNextProcessId())) {
+            Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
+                    .filter(i -> mesSfcBarcodeProcess.getNextProcessId().equals(i.getProcessId()))
+                    .findFirst();
+            if (!routeProcessOptional.isPresent()) {
+                throw new BizErrorException(ErrorCodeEnum.PDA40012009, mesSfcBarcodeProcess.getNextProcessId());
             }
-        } else {
-            // 若入参当前扫码工序ID跟过站表下一工序ID不一致
-            // 则判断过站表下一工序是否必过工序
-            if (!dto.getNowProcessId().equals(mesSfcBarcodeProcess.getNextProcessId())) {
-                Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
-                        .filter(i -> mesSfcBarcodeProcess.getNextProcessId().equals(i.getProcessId()))
-                        .findFirst();
-                if (!routeProcessOptional.isPresent()) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012009, mesSfcBarcodeProcess.getNextProcessId());
-                }
-                BaseRouteProcess routeProcess = routeProcessOptional.get();
-                if (routeProcess.getIsMustPass() == 1) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012010, mesSfcBarcodeProcess.getNextProcessId());
-                }
+            BaseRouteProcess routeProcess = routeProcessOptional.get();
+            if (routeProcess.getIsMustPass() == 1) {
+                throw new BizErrorException(ErrorCodeEnum.PDA40012010, mesSfcBarcodeProcess.getNextProcessId());
             }
         }
         ResponseEntity<BaseProcess> processResponseEntity = barcodeUtils.baseFeignApi.processDetail(dto.getNowProcessId());
@@ -214,6 +205,9 @@ public class BarcodeUtils {
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
         MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
+        if(mesPmWorkOrder.getWorkOrderStatus() > 3){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012032);
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("workOrderBarcodeId", dto.getBarCode());
         map.put("stationId", dto.getNowStationId());
@@ -223,8 +217,8 @@ public class BarcodeUtils {
         if(mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()){
             mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
             // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
-            if (mesPmWorkOrder.getWorkOrderStatus().equals("0") || mesPmWorkOrder.getWorkOrderStatus().equals("1")) {
-                mesPmWorkOrder.setWorkOrderStatus(Byte.valueOf("2"));
+            if (mesPmWorkOrder.getWorkOrderStatus().equals("2")) {
+                mesPmWorkOrder.setWorkOrderStatus(Byte.valueOf("3"));
             }
             barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
         }
