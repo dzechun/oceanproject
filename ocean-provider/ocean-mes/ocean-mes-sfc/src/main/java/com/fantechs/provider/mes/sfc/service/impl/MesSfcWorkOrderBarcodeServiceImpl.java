@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
@@ -135,6 +136,14 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
                 mesSfcBarcodeProcess.setProcessId(mesPmWorkOrderDto.getPutIntoProcessId());
                 mesSfcBarcodeProcess.setProcessCode(mesPmWorkOrderDto.getPutIntoProcessName());
+
+                //查询工艺路线
+                ResponseEntity<List<BaseRouteProcess>> responseEntity = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException("工艺路线查询失败");
+                }
+                mesSfcBarcodeProcess.setNextProcessId(responseEntity.getData().get(0).getNextProcessId());
+                mesSfcBarcodeProcess.setNextProcessName(responseEntity.getData().get(0).getNextProcessName());
                 if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
                     throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
                 }
