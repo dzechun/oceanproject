@@ -274,7 +274,7 @@ public class BarcodeUtils {
      * @param dto
      */
     public static void printBarCode(PrintCarCodeDto dto) {
-        LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule("01", dto.getWorkOrderId());
+        LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
         PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
         printModel.setQrCode(dto.getBarcode());
         PrintDto printDto = new PrintDto();
