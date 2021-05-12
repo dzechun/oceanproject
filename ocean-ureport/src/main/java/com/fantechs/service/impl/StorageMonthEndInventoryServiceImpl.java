@@ -1,12 +1,12 @@
 package com.fantechs.service.impl;
 
-import com.fanctechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.dto.StorageMonthEndInventoryDto;
 import com.fantechs.entity.StorageMonthEndInventory;
 import com.fantechs.mapper.StorageMonthEndInventoryMapper;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.service.StorageMonthEndInventoryService;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
             searchWmsInnerStorageInventoryDet.setIsBinding((byte)2);
             searchWmsInnerStorageInventoryDet.setMaterialId(storageMonthEndInventoryDto.getMaterialId());
 
-            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = innerFeignAip.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getBody();
+            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = innerFeignAip.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
 
             storageMonthEndInventoryDto.setList(wmsInnerStorageInventoryDetDtos);
         }

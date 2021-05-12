@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.sfc.service;
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface MesSfcPalletWorkService {
@@ -16,4 +17,6 @@ public interface MesSfcPalletWorkService {
     int submitNoFullPallet(List<Long> palletIdList) throws Exception;
 
     Boolean updatePalletType(Long stationId);
+
+    int updateNowPackageSpecQty(Long productPalletId, Integer nowPackageSpecQty) throws Exception;
 }

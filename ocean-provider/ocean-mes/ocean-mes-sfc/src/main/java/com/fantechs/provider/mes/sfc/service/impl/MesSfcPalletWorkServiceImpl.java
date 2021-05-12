@@ -163,6 +163,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         String palletCode = "";
         BigDecimal nowPackageSpecQty = BigDecimal.ZERO;
         Boolean isPallet = true;
+        // 栈板已绑定的包装数量
+        int palletCartons = 0;
         for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
             if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId() == mesSfcProductPalletDto.getWorkOrderId())
             || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId() == mesSfcProductPalletDto.getMaterialId())) {
@@ -170,6 +172,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
                 isPallet = false;
                 mesSfcProductPallet = mesSfcProductPalletDto;
+                palletCartons = findPalletCarton(mesSfcProductPallet.getProductPalletId()).size();
                 break;
             }
         }
@@ -264,6 +267,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcBarcodeProcessRecordService.update(mesSfcBarcodeProcessRecord);
         }
 
+        // 当前工单已关闭栈板
+        Map<String, Object> map = new HashMap<>();
+        map.put("workOrderId", workOrderId);
+        map.put("closeStatus", 1);
+        List<MesSfcProductPalletDto> mesSfcProductPalletDtos = mesSfcProductPalletService.findList(map);
+        int closePalletNum = mesSfcProductPalletDtos.size();
+
         // 新增产品栈板信息
         if (isPallet) {
             mesSfcProductPallet.setPalletCode(palletCode);
@@ -281,7 +291,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPallet.setCreateUserId(user.getUserId());
             mesSfcProductPallet.setCreateTime(new Date());
             mesSfcProductPalletService.save(mesSfcProductPallet);
-        } else if (requestPalletWorkScanDto.getClosePalletNum().compareTo(nowPackageSpecQty.subtract(BigDecimal.ONE)) == 0) {
+        } else if (nowPackageSpecQty.compareTo(BigDecimal.valueOf(palletCartons + 1)) == 0) {
             // 达到包装规格上限，关闭栈板
             mesSfcProductPallet.setCloseStatus((byte) 1);
             mesSfcProductPallet.setClosePalletUserId(user.getUserId());
@@ -289,6 +299,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPallet.setModifiedUserId(user.getUserId());
             mesSfcProductPallet.setModifiedTime(new Date());
             mesSfcProductPalletService.update(mesSfcProductPallet);
+
+            closePalletNum += 1;
+        }
+        // 是否打印栈板码
+        if (requestPalletWorkScanDto.getPrintBarcode() == 1) {
+            PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
+            printCarCodeDto.setWorkOrderId(workOrderId);
+            printCarCodeDto.setLabelTypeCode("10");
+            printCarCodeDto.setBarcode(palletCode);
+            BarcodeUtils.printBarCode(printCarCodeDto);
         }
         // 构建返回值
         PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
@@ -299,9 +319,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         palletWorkScanDto.setMaterialDesc(mesPmWorkOrderDto.getMaterialDesc());
         palletWorkScanDto.setWorkOrderQty(mesPmWorkOrderDto.getWorkOrderQty());
         palletWorkScanDto.setProductionQty(mesPmWorkOrderDto.getProductionQty());
-        palletWorkScanDto.setClosePalletNum(requestPalletWorkScanDto.getClosePalletNum().add(BigDecimal.ONE));
+        palletWorkScanDto.setClosePalletNum(BigDecimal.valueOf(closePalletNum));
         palletWorkScanDto.setNowPackageSpecQty(nowPackageSpecQty);
-        palletWorkScanDto.setScanCartonNum(findPalletCarton(mesSfcProductPallet.getProductPalletId()).size());
+        palletWorkScanDto.setScanCartonNum(palletCartons + 1);
 
         return palletWorkScanDto;
     }
@@ -348,7 +368,12 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int submitNoFullPallet(List<Long> palletIdList) throws Exception {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(MesSfcProductPalletDto.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("productPalletId", palletIdList);
@@ -357,6 +382,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         try {
             for (MesSfcProductPallet item : productPallets){
                 item.setCloseStatus((byte) 1);
+                item.setModifiedUserId(user.getUserId());
+                item.setModifiedTime(new Date());
                 mesSfcProductPalletService.update(item);
             }
         }catch (Exception e){
@@ -375,5 +402,31 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int updateNowPackageSpecQty(Long productPalletId, Integer nowPackageSpecQty) throws Exception {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        int palletCartons = findPalletCarton(productPalletId).size();
+        if (nowPackageSpecQty < palletCartons) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990500, "修改栈板包装规格数量不能小于栈板已绑定包箱数量");
+        }
+        MesSfcProductPallet mesSfcProductPallet = new MesSfcProductPallet();
+        mesSfcProductPallet.setProductPalletId(productPalletId);
+        mesSfcProductPallet.setNowPackageSpecQty(BigDecimal.valueOf(nowPackageSpecQty));
+        if (nowPackageSpecQty == palletCartons) {
+            mesSfcProductPallet.setCloseStatus((byte) 1);
+            mesSfcProductPallet.setClosePalletUserId(user.getUserId());
+            mesSfcProductPallet.setClosePalletTime(new Date());
+        }
+        mesSfcProductPallet.setModifiedTime(new Date());
+        mesSfcProductPallet.setModifiedUserId(user.getUserId());
+        mesSfcProductPalletService.update(mesSfcProductPallet);
+
+        return 1;
     }
 }
