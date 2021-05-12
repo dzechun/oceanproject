@@ -121,10 +121,13 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Override
     public WmsInnerInventory selectOneByExample(Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
-        example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
-        if(StringUtils.isEmpty(map.get("storageName")) && StringUtils.isEmpty(map.get("warehouseName"))){
-            example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("warehouseName",map.get("warehouseNmae")).andEqualTo("storageName",map.get("storageName"))
-                    .andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        if(!StringUtils.isEmpty(map.get("relevanceOrderCode"))){
+            criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode"));
+        }
+        if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
+            criteria.andEqualTo("warehouseName",map.get("warehouseNmae"));
         }
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
@@ -143,6 +146,9 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId"));
         if(!StringUtils.isEmpty(map.get("batchCode"))){
             criteria.andEqualTo("batchCode",map.get("batchCode"));
+        }
+        if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
+            criteria.andEqualTo("storageName",map.get("storageName")).andEqualTo("warehouseName",map.get("warehouseName"));
         }
         wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
         ));

@@ -74,7 +74,7 @@ wiaod.modified_time,
 wiaod.is_delete
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="BaseColumnList"/>,mpwo.work_order_code,bm.material_code,bm.material_name,bw.warehouse_name,bws.storage_name,bis.inventory_status_name,su.user_name AS create_user_name,
+    select <include refid="BaseColumnList"/>,mpwo.work_order_code,bm.material_code,bm.material_name,bw.warehouse_name,bws.storage_code as storage_name,bis.inventory_status_name,su.user_name AS create_user_name,
            sus.user_name AS modified_user_name,
            bo.organization_name AS organization_Name
            FROM wms_in_asn_order_det wiaod
