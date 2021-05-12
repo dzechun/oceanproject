@@ -55,5 +55,7 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     @ApiModelProperty("作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)")
     private Byte jobOrderType;
 
+    private Long sourceOrderId;
+
     private List<Byte> orderStatusList;
 }
