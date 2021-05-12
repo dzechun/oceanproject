@@ -50,6 +50,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     private MesSfcProductCartonService mesSfcProductCartonService;
     @Resource
+    private MesSfcProductCartonDetService mesSfcProductCartonDetService;
+    @Resource
     private MesSfcKeyPartRelevanceService mesSfcKeyPartRelevanceService;
     @Resource
     private PMFeignApi pmFeignApi;
@@ -365,15 +367,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     mesPmWorkOrderByBarCode.getWorkOrderId().toString(),
                     "09");
             vo.setCartonCode(cartonCode);
-            // 查询包装规格
-            SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
-            searchBasePackageSpecification.setMaterialId(mesSfcBarcodeProcess.getMaterialId());
-            searchBasePackageSpecification.setProcessId(vo.getProcessId());
-            List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
-            if(packageSpecificationDtos.size() > 0){
-                BasePackageSpecificationDto packageSpecificationDto = packageSpecificationDtos.get(0);
-                vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
-            }
+            // 查询基础资料包装规格
+            BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), vo.getProcessId());
+            vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
             // 添加包箱表数据
             MesSfcProductCarton sfcProductCarton = MesSfcProductCarton.builder()
                     .cartonCode(cartonCode)
@@ -386,11 +382,19 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
                     .nowPackageSpecQty(vo.getCartonNum())
                     .build();
-
             int saveRes = mesSfcProductCartonService.save(sfcProductCarton);
-            if (saveRes >= 0) {
+            if (saveRes > 0) {
                 mesSfcProductCarton = mesSfcProductCartonService.selectOne(sfcProductCarton);
                 if (mesSfcProductCarton != null) {
+                    // 保存条码包箱关系
+                    mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
+                            .productCartonId(mesSfcProductCarton.getProductCartonId())
+                            .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+                            .orgId(user.getOrganizationId())
+                            .createTime(new Date())
+                            .createUserId(user.getUserId())
+                            .isDelete((byte) 1)
+                            .build());
                     vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
                 }
             }
@@ -405,15 +409,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         mesPmWorkOrderByBarCode.getWorkOrderId().toString(),
                         "09");
                 vo.setCartonCode(cartonCode);
-                // 查询包装规格
-                SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
-                searchBasePackageSpecification.setMaterialId(mesSfcBarcodeProcess.getMaterialId());
-                searchBasePackageSpecification.setProcessId(vo.getProcessId());
-                List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
-                if(packageSpecificationDtos.size() > 0){
-                    BasePackageSpecificationDto packageSpecificationDto = packageSpecificationDtos.get(0);
-                    vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
-                }
+                // 查询基础资料包装规格
+                BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), vo.getProcessId());
+                vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
                 // 添加包箱表数据
                 MesSfcProductCarton sfcProductCarton = MesSfcProductCarton.builder()
                         .cartonCode(cartonCode)
@@ -427,11 +425,18 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .nowPackageSpecQty(vo.getCartonNum())
                         .build();
                 int saveRes = mesSfcProductCartonService.save(sfcProductCarton);
-                MesSfcProductCartonDet.builder()
-                        .build();
-                if (saveRes >= 0) {
+                if (saveRes > 0) {
                     mesSfcProductCarton = mesSfcProductCartonService.selectOne(sfcProductCarton);
                     if (mesSfcProductCarton != null) {
+                        // 保存条码包箱关系
+                        mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
+                                .productCartonId(mesSfcProductCarton.getProductCartonId())
+                                .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+                                .orgId(user.getOrganizationId())
+                                .createTime(new Date())
+                                .createUserId(user.getUserId())
+                                .isDelete((byte) 1)
+                                .build());
                         vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
                     }
                 }
@@ -499,4 +504,21 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         List<MesSfcProductCarton> sfcProductCartonList = mesSfcProductCartonService.selectByExample(example);
         return sfcProductCartonList;
     }
+
+    /**
+     * 通过物料、工序获取包装规格
+     * 产品设计的时候当前配置在物料、工序下只能有一条包装规格
+     * @param materialId
+     * @param processId
+     * @return
+     */
+    private BasePackageSpecificationDto getPackageSpecification(Long materialId, Long processId){
+        // 查询包装规格
+        SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
+        searchBasePackageSpecification.setMaterialId(materialId);
+        searchBasePackageSpecification.setProcessId(processId);
+        List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+        return packageSpecificationDtos.get(0);
+    }
+
 }

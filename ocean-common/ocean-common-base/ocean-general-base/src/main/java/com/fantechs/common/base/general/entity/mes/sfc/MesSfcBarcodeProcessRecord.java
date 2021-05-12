@@ -8,8 +8,10 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 生产管理-产品条码过站记录表
@@ -19,6 +21,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "mes_sfc_barcode_process_record")
 public class MesSfcBarcodeProcessRecord extends ValidGroup implements Serializable {
     /**
