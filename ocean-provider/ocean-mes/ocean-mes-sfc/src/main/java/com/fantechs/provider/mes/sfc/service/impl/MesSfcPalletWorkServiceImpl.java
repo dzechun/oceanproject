@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterialPackage;
 import com.fantechs.common.base.general.entity.basic.BasePackageSpecification;
@@ -191,6 +192,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             // 获取该条码规则对应的最大条码数
             String maxCode = null;
+            String barcodeRule = "";
             // 获取条码规则配置集合
             List<BaseBarcodeRuleSpec> barcodeRuleSpecList = new LinkedList<>();
             for (BaseMaterialPackage baseMaterialPackage : basePackageSpecificationDtoList.get(0).getBaseMaterialPackages()) {
@@ -200,10 +202,12 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                         throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该产品条码没有设置在该工序的包装规格");
                     }
                     nowPackageSpecQty = basePackageSpecification.getPackageSpecificationQuantity();
-                    boolean hasKey = redisUtil.hasKey(baseMaterialPackage.getBarcodeRuleId().toString());
+                    BaseBarcodeRule baseBarcodeRule = baseFeignApi.baseBarcodeRuleDetail(baseMaterialPackage.getBarcodeRuleId()).getData();
+                    barcodeRule = baseBarcodeRule.getBarcodeRule();
+                    boolean hasKey = redisUtil.hasKey(baseBarcodeRule.getBarcodeRule());
                     if(hasKey){
                         // 从redis获取上次生成条码
-                        maxCode = redisUtil.get(baseMaterialPackage.getBarcodeRuleId().toString()).toString();
+                        maxCode = redisUtil.get(baseBarcodeRule.getBarcodeRule()).toString();
                     }
 
                     SearchBaseBarcodeRuleSpec baseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
@@ -235,6 +239,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             }
             palletCode = baseFeignApi.newGenerateCode(barcodeRuleSpecList, maxCode, baseBarcodeRuleSpecMap, workOrderId.toString()).getData();
+            redisUtil.set(barcodeRule, palletCode);
             if (StringUtils.isEmpty(palletCode)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012008);
             }

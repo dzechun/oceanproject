@@ -77,6 +77,7 @@ public class MesSfcBarcodeOperationController {
 
             return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.cartonOperation(vo));
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new BizErrorException(ex);
         }
     }
@@ -88,6 +89,7 @@ public class MesSfcBarcodeOperationController {
             // 构造返回值
             return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.cartonAnnexOperation(vo));
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new BizErrorException(ex);
         }
     }
