@@ -286,21 +286,24 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     public int issueWarehouse(Long id) {
         Map<String, Object> map = new HashMap<>();
         map.put("salesOrderId",id);
-        List<OmSalesOrderDto> list = omSalesOrderMapper.findList(map);
+        List<OmSalesOrderDto> list = this.findList(map);
         if(StringUtils.isNotEmpty(list)) {
             OmSalesOrderDto omSalesOrderDto = list.get(0);
             WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
             wmsOutDeliveryOrder.setRelatedOrderCode1(omSalesOrderDto.getSalesOrderCode());
             List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+            if(StringUtils.isEmpty(baseMaterialOwnerDtos)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"不存在货主信息");
+            }
             wmsOutDeliveryOrder.setMaterialOwnerId(baseMaterialOwnerDtos.get(0).getMaterialOwnerId());
             wmsOutDeliveryOrder.setOrderDate(new Date());
-            wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress());
+            wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().size()>0?omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress():null);
 
             //查询库位类型为发货的库位
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setStorageType((byte)3);
             List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-            if(StringUtils.isNotEmpty(baseStorages)){
+            if(StringUtils.isEmpty(baseStorages)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003,"不存在库位类型为发货的库位");
             }
 

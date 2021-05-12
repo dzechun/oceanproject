@@ -87,6 +87,10 @@
             <if test="contractCode != null and contractCode != ''">
                 and so.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
+
+            <if test="salesOrderId != null">
+                and so.sales_order_id = #{salesOrderId}
+            </if>
         </where>
         order by so.modified_time desc
     </select>
