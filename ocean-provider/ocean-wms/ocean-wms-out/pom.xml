@@ -60,18 +60,10 @@
                 <configuration>
                 <layout>ZIP</layout>
                 <includes>
-                <!--此处可以指定包含jar包-->
+                    <!--只包含自己-->
                     <include>
-                        <groupId>com.fantechs.common.base</groupId>
-                        <artifactId>ocean-public-base</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.common.config</groupId>
-                        <artifactId>ocean-imes-config</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.common.base.general</groupId>
-                        <artifactId>ocean-general-base</artifactId>
+                        <groupId>${groupId}</groupId>
+                        <artifactId>${artifactId}</artifactId>
                     </include>
                 </includes>
                 </configuration>

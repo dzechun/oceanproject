@@ -428,20 +428,17 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .routeId(mesPmWorkOrderByBarCode.getRouteId())
                     .nowProcessId(vo.getProcessId())
                     .build();
-            // 判断首条码，若是则更新工单状态
-            if (mesPmWorkOrderByBarCode.getWorkOrderStatus().equals("0") || mesPmWorkOrderByBarCode.getWorkOrderStatus().equals("1")) {
-                mesPmWorkOrderByBarCode.setWorkOrderStatus(Byte.valueOf("2"));
-            }
+
 
 //            mesSfcBarcodeProcessRecordService
 
             // 判断是否投产工序，若是则投产数量+1
             if (mesPmWorkOrderByBarCode.getPutIntoProcessId().equals(mesSfcBarcodeProcess.getProcessId()) ) {
-                mesPmWorkOrderByBarCode.setProductionQty(mesPmWorkOrderByBarCode.getProductionQty().add(new BigDecimal(1)));
+                mesPmWorkOrderByBarCode.setProductionQty(mesPmWorkOrderByBarCode.getProductionQty().add(BigDecimal.ONE));
             }
             // 判断是否产出工序，若是则产出数量+1
             if (mesPmWorkOrderByBarCode.getOutputProcessId().equals(mesSfcBarcodeProcess.getProcessId())) {
-                mesPmWorkOrderByBarCode.setOutputQty(mesPmWorkOrderByBarCode.getOutputQty().add(new BigDecimal(1)));
+                mesPmWorkOrderByBarCode.setOutputQty(mesPmWorkOrderByBarCode.getOutputQty().add(BigDecimal.ONE));
                 // 判断产出数量是否等于工单数量，若是关闭工单
                 if (mesPmWorkOrderByBarCode.getOutputQty().equals(mesPmWorkOrderByBarCode.getWorkOrderQty())) {
                     mesPmWorkOrderByBarCode.setWorkOrderStatus((byte) 6);

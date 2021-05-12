@@ -71,28 +71,11 @@
                 <configuration>
                 <layout>ZIP</layout>
                 <includes>
-                <!--此处可以指定包含jar包-->
+                    <!--只包含自己-->
                     <include>
-                        <groupId>com.fantechs.common.config</groupId>
-                        <artifactId>ocean-imes-config</artifactId>
+                        <groupId>${groupId}</groupId>
+                        <artifactId>${artifactId}</artifactId>
                     </include>
-                    <include>
-                        <groupId>com.fantechs.common</groupId>
-                        <artifactId>ocean-common-config</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.common.base</groupId>
-                        <artifactId>ocean-public-base</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.common.base.general</groupId>
-                        <artifactId>ocean-general-base</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.common</groupId>
-                        <artifactId>ocean-common-base</artifactId>
-                    </include>
-
                 </includes>
                 </configuration>
             </plugin>

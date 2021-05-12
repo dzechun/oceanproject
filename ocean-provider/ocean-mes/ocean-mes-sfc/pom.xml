@@ -70,17 +70,12 @@
                 <configuration>
                     <layout>ZIP</layout>
                     <includes>
-                        <!--此处可以指定包含jar包-->
+                        <!--只包含自己-->
                         <include>
-                            <groupId>com.fantechs.common.base</groupId>
-                            <artifactId>ocean-imes-base</artifactId>
-                        </include>
-                        <include>
-                            <groupId>com.fantechs.common.config</groupId>
-                            <artifactId>ocean-imes-config</artifactId>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${artifactId}</artifactId>
                         </include>
                     </includes>
-                    <mainClass>com.fantechs.provider.mes.sfc.OceanMesSfcApplication</mainClass>
                 </configuration>
             </plugin>
             <!--拷贝第三方依赖文件到指定目录-->

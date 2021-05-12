@@ -209,27 +209,33 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setModifiedUserId(dto.getOperatorUserId());
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
-        // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
         MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
-        if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("workOrderBarcodeId", dto.getBarCode());
-            map.put("stationId", dto.getNowStationId());
-            map.put("processId", dto.getNowProcessId());
-            List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
-            if (mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
-                mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().add(BigDecimal.ONE));
-                if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
-                    // 产出数量等于工单数量，工单完工
-                    mesPmWorkOrder.setWorkOrderStatus((byte) 6);
-                    mesPmWorkOrder.setActualEndTime(new Date());
-                    mesPmWorkOrder.setModifiedTime(new Date());
-                    mesPmWorkOrder.setModifiedUserId(dto.getOperatorUserId());
-                }
-                barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
+        Map<String, Object> map = new HashMap<>();
+        map.put("workOrderBarcodeId", dto.getBarCode());
+        map.put("stationId", dto.getNowStationId());
+        map.put("processId", dto.getNowProcessId());
+        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
+        // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1
+        if(mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()){
+            mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
+            // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
+            if (mesPmWorkOrder.getWorkOrderStatus().equals("0") || mesPmWorkOrder.getWorkOrderStatus().equals("1")) {
+                mesPmWorkOrder.setWorkOrderStatus(Byte.valueOf("2"));
             }
+            barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
         }
-
+        // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
+        if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
+            mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().add(BigDecimal.ONE));
+            if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
+                // 产出数量等于工单数量，工单完工
+                mesPmWorkOrder.setWorkOrderStatus((byte) 6);
+                mesPmWorkOrder.setActualEndTime(new Date());
+                mesPmWorkOrder.setModifiedTime(new Date());
+                mesPmWorkOrder.setModifiedUserId(dto.getOperatorUserId());
+            }
+            barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
+        }
         return 1;
     }
 

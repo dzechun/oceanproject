@@ -211,22 +211,21 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     }
 
     public int updateOrderStatus(WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto){
-        WmsOutDeliveryOrderDto wmsOutDeliveryOrder = new WmsOutDeliveryOrderDto();
+        Byte orderStatus = wmsOutDeliveryOrderDto.getOrderStatus();
 
         if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(new BigDecimal("0")) == 0){
-            wmsOutDeliveryOrder.setOrderStatus((byte)1);
+            wmsOutDeliveryOrderDto.setOrderStatus((byte)1);
         }else if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(new BigDecimal("0")) == 1
                 && wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == -1){
-            wmsOutDeliveryOrder.setOrderStatus((byte)2);
+            wmsOutDeliveryOrderDto.setOrderStatus((byte)2);
         }else if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == 0
                 || wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == 1){
-            wmsOutDeliveryOrder.setOrderStatus((byte)3);
+            wmsOutDeliveryOrderDto.setOrderStatus((byte)3);
         }
 
         int i = 0;
-        if(!wmsOutDeliveryOrder.getOrderStatus().equals(wmsOutDeliveryOrderDto.getOrderStatus())){
-            wmsOutDeliveryOrder.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
-            i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+        if(!wmsOutDeliveryOrderDto.getOrderStatus().equals(orderStatus)){
+            i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDto);
         }
 
         return i;
@@ -261,6 +260,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrderDto.getMaterialOwnerId());
                     wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrderDto.getOrderTypeId());
                     wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
+                    wmsInnerJobOrder.setJobOrderType((byte)4);
                     wmsInnerJobOrder.setWarehouseId(dtoList.get(0).getWarehouseId());
                     //计算总数量
                     BigDecimal packingSum = dtoList.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);

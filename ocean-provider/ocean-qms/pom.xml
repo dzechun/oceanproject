@@ -69,37 +69,13 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                 <layout>ZIP</layout>
-                <includes>
-                <!--此处可以指定包含jar包-->
-                    <include>
-                        <groupId>com.fantechs.common.config</groupId>
-                        <artifactId>ocean-imes-config</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.provider.api.wms.in</groupId>
-                        <artifactId>ocean-wms-in-api</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.provider.api.security</groupId>
-                        <artifactId>ocean-security-api</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.common.base</groupId>
-                        <artifactId>ocean-imes-base</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.provider.api.mes.pm</groupId>
-                        <artifactId>ocean-mes-pm-api</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.provider.api.wms.out</groupId>
-                        <artifactId>ocean-wms-out-api</artifactId>
-                    </include>
-                    <include>
-                        <groupId>com.fantechs.provider.api.base</groupId>
-                        <artifactId>ocean-base-api</artifactId>
-                    </include>
-                </includes>
+                    <includes>
+                        <!--只包含自己-->
+                        <include>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${artifactId}</artifactId>
+                        </include>
+                    </includes>
                 </configuration>
             </plugin>
             <!--拷贝第三方依赖文件到指定目录-->
