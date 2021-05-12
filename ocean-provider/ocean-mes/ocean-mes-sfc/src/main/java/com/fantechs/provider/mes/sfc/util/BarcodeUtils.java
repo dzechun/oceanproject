@@ -270,12 +270,13 @@ public class BarcodeUtils {
     }
 
     /**
-     * 打印条码
+     * 打印包箱/栈板条码
      * @param dto
      */
     public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
-        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
+//        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
+        PrintModel printModel = new PrintModel();
         printModel.setQrCode(dto.getBarcode());
         PrintDto printDto = new PrintDto();
         printDto.setLabelName(labelRuteDto.getLabelName());
