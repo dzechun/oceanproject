@@ -155,7 +155,15 @@ public class BarcodeRuleUtils {
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else if("[f]".equals(specification)){
                     //执行函数获取解析码
-                    sb.append(barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params));
+                    String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
+                    if(param.length()<barcodeLength){
+                        while (param.length()<barcodeLength){
+                            StringBuffer s = new StringBuffer();
+                            s.append(param).append("0");
+                            param = s.toString();
+                        }
+                    }
+                    sb.append(param);
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
                     String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
                     sb.append(typeCode);
