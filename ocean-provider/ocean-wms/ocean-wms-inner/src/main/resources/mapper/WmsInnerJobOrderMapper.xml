@@ -13,7 +13,7 @@
     <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
     <result column="worker_id" jdbcType="BIGINT" property="workerId" />
     <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode" />
-    <result column="job_order_type" jdbcType="VARCHAR" property="jobOrderType" />
+    <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType" />
     <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
     <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
@@ -104,6 +104,9 @@ wipo.option3
 <if test="jobOrderType !=null and jobOrderType!= ''">
   and wipo.job_order_type =#{jobOrderType}
 </if>
+                 <if test="jobOrderId !=null and jobOrderId !=''">
+                   and wipo.job_order_id = #{jobOrderId}
+                 </if>
                  <if test="sourceOrderId!=null and sourceOrderId!=''">
                    and wipo.source_order_id =#{sourceOrderId}
                  </if>

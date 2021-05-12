@@ -39,6 +39,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,6 +79,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (String id : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(id);
+            if(wmsInnerJobOrder.getOrderStatus()==(byte)3){
+                throw new BizErrorException("单据已分配完成");
+            }
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
             List<WmsInnerJobOrderDet> list = wmsInPutawayOrderDetMapper.selectByExample(example);
@@ -97,10 +101,21 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .distributionQty(wms.getPlanQty())
                         .modifiedUserId(sysUser.getUserId())
                         .modifiedTime(new Date())
+                        .orderStatus((byte)3)
                         .build());
                 //库位容量减1
                 baseFeignApi.minusSurplusCanPutSalver(wms.getInStorageId(),1);
+
+                //拣货单分配库存
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)4){
+                    DistributionInventory(wmsInnerJobOrder,wms);
+                }
             }
+
+            wmsInnerJobOrder.setOrderStatus((byte)3);
+            wmsInnerJobOrder.setModifiedTime(new Date());
+            wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
+            wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
         }
         return num;
     }
@@ -116,18 +131,26 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SysUser sysUser = currentUser();
         int num=0;
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : list) {
+            WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInPutawayOrderDet.getJobOrderId());
             if(!StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) && wmsInPutawayOrderDet.getDistributionQty().doubleValue()>wmsInPutawayOrderDet.getPlanQty().doubleValue()){
                 throw new BizErrorException("分配数量不能大于计划数量");
             }
-            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) &&wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty())==-1){
+            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) || wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty())==-1){
                 //分配中
                 WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
                 BeanUtil.copyProperties(wmsInPutawayOrderDet,wms);
                 wms.setJobOrderDetId(null);
-                wms.setDistributionQty(new BigDecimal("0"));
+                wms.setDistributionQty(wmsInPutawayOrderDet.getDistributionQty());
                 wms.setPlanQty(new BigDecimal(wmsInPutawayOrderDet.getPlanQty().doubleValue()-wmsInPutawayOrderDet.getDistributionQty().doubleValue()));
                 wms.setOrderStatus((byte)2);
-                wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wms);
+                num+=wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wms);
+
+                wmsInPutawayOrderDet.setOrderStatus((byte)3);
+                wmsInPutawayOrderDet.setPlanQty(wms.getPlanQty());
+                wmsInPutawayOrderDet.setDistributionQty(wms.getPlanQty());
+                wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
+                wmsInPutawayOrderDet.setModifiedTime(new Date());
+                num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
             }else if(wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty())==0){
                 //分配完成
                 wmsInPutawayOrderDet.setOrderStatus((byte)3);
@@ -136,7 +159,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
             }
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
-            searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderId());
+            searchWmsInnerJobOrderDet.setJobOrderId(wmsInPutawayOrderDet.getJobOrderId());
             List<WmsInnerJobOrderDetDto> dto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
 
             if(StringUtils.isEmpty(dto)){
@@ -153,6 +176,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
                         .orderStatus((byte)2)
                         .build());
+            }
+
+            //拣货单分配库存
+            if(wmsInnerJobOrder.getJobOrderType()==(byte)4){
+                DistributionInventory(wmsInnerJobOrder,wmsInPutawayOrderDet);
             }
         }
         return num;
@@ -192,6 +220,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (String id : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(id);
+            BigDecimal total = new BigDecimal("0.00");
             if(wmsInnerJobOrder.getOrderStatus()==(byte)5){
                 throw new BizErrorException("单据确认已完成");
             }
@@ -202,6 +231,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(id)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
+                total.add(wmsInnerJobOrderDet.getDistributionQty());
                 num+=wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
                         .jobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId())
                         .orderStatus((byte)5)
@@ -210,12 +240,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .modifiedTime(new Date())
                         .build());
 
-                //更改表头为作业完成状态
-                wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
-                        .orderStatus((byte)5)
-                        .jobOrderId(wmsInnerJobOrderDet.getJobOrderId())
-                        .actualQty(wmsInnerJobOrderDet.getDistributionQty())
-                        .build());
                 //更改库存为正常状态
                 SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
                 searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
@@ -224,8 +248,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
                 WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
 
-                //更改库存
-                num = this.updateInventory(wmsInnerJobOrderDto,wmsInnerJobOrderDetDto);
+                //上架作业更改库存
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)3){
+                    num = this.updateInventory(wmsInnerJobOrderDto,wmsInnerJobOrderDetDto);
+                }
+
+                //拣货作业
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)4){
+
+                }
 
                 //反写完工入库单
                 inFeignApi.writeQty(WmsInAsnOrderDet.builder()
@@ -233,8 +264,21 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
                         .build());
             }
+            //更改表头为作业完成状态
+            wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
+                    .orderStatus((byte)5)
+                    .jobOrderId(wmsInnerJobOrder.getJobOrderId())
+                    .actualQty(total)
+                    .workStartTime(new Date())
+                    .workEndtTime(new Date())
+                    .build());
         }
         return num;
+    }
+
+    private int ReceivingInventory(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet){
+
+        return 1;
     }
 
     @Override
@@ -441,19 +485,23 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderDetMapper.insert(wmsInPutawayOrderDet);
 
-            WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()
-                    .asnOrderId(record.getSourceOrderId())
-                    .build()).getData().get(0);
-            Example example = new Example(WmsInnerInventory.class);
-            example.createCriteria().andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInPutawayOrderDet.getMaterialId()).andEqualTo("batchCode",wmsInPutawayOrderDet.getBatchCode());
-            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
-            if(StringUtils.isEmpty(wmsInnerInventory)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            if(record.getJobOrderType()==(byte)3) {
+                WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()
+                        .asnOrderId(record.getSourceOrderId())
+                        .build()).getData().get(0);
+                Example example = new Example(WmsInnerInventory.class);
+                example.createCriteria().andEqualTo("relevanceOrderCode", wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId", wmsInPutawayOrderDet.getMaterialId()).andEqualTo("batchCode", wmsInPutawayOrderDet.getBatchCode());
+                WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+                if (StringUtils.isEmpty(wmsInnerInventory)) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                }
+                WmsInnerInventory wmsInnerInventorys = new WmsInnerInventory();
+                wmsInnerInventorys.setInventoryId(wmsInnerInventory.getInventoryId());
+                wmsInnerInventorys.setJobStatus((byte) 2);
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
+            }else if(record.getJobOrderType()==(byte)4){
+                //拣货作业创建分配库存
             }
-            WmsInnerInventory wmsInnerInventorys = new WmsInnerInventory();
-            wmsInnerInventorys.setInventoryId(wmsInnerInventory.getInventoryId());
-            wmsInnerInventorys.setJobStatus((byte)2);
-            wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
         return num;
     }
@@ -493,7 +541,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //旧
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId());
+        criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseName",wmsInAsnOrderDetDto.getWarehouseName()).andEqualTo("storageName",wmsInAsnOrderDetDto.getStorageName());
         if(!StringUtils.isEmpty(wmsInAsnOrderDetDto.getBatchCode())){
             criteria.andEqualTo("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         }
@@ -507,7 +555,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
         example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("relevanceOrderCode",wmsInnerJobOrderDto.getJobOrderCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId());
+        criteria1.andEqualTo("relevanceOrderCode",wmsInnerJobOrderDto.getJobOrderCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseName",wmsInnerJobOrderDetDto.getWarehouseName()).andEqualTo("storageName",wmsInnerJobOrderDetDto.getInStorageName());
         if(!StringUtils.isEmpty(wmsInAsnOrderDetDto.getBatchCode())){
             criteria1.andEqualTo("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         }
@@ -523,6 +571,69 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsIn = new WmsInnerInventory();
             wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInnerJobOrderDetDto.getActualQty()));
             return wmsInnerInventoryMapper.updateByExampleSelective(wmsIn,example);
+        }
+    }
+
+    private void DistributionInventory(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet){
+        SysUser sysUser = currentUser();
+        //获取分配库存库存
+        SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+        searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+        List<WmsInnerJobOrderDetDto> list = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
+        if(list.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        Example example = new Example(WmsInnerInventory.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialId",list.get(0).getMaterialId());
+        if(StringUtils.isNotEmpty(list.get(0).getDistributionQty())){
+            criteria.andEqualTo("batchCode",list.get(0).getBatchCode());
+        }
+        criteria.andEqualTo("storageName",list.get(0).getOutStorageName()).andEqualTo("warehouseName",list.get(0).getWarehouseName());
+        WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsInnerInventory)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        if(StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) || wmsInnerInventory.getPackingQty().subtract(wmsInnerJobOrderDet.getDistributionQty()).compareTo(new BigDecimal("0.00"))<1){
+            throw new BizErrorException("库存不足");
+        }
+        wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerJobOrderDet.getDistributionQty()));
+        wmsInnerInventory.setModifiedTime(new Date());
+        wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
+        //扣库存
+        int num =wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+        if(num<1){
+            throw new BizErrorException("库存分配失败");
+        }
+        example.clear();
+        criteria.andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode()).andEqualTo("materialId",list.get(0).getMaterialId());
+        if(StringUtils.isNotEmpty(list.get(0).getDistributionQty())){
+            criteria.andEqualTo("batchCode",list.get(0).getBatchCode());
+        }
+        criteria.andEqualTo("storageName",list.get(0).getInStorageName()).andEqualTo("warehouseName",list.get(0).getWarehouseName());
+        WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsInnerInventorys)){
+            //新增一条分配库存
+            wmsInnerInventorys.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+            wmsInnerInventorys.setPackingQty(wmsInnerJobOrderDet.getDistributionQty());
+            wmsInnerInventorys.setJobStatus((byte)2);
+            wmsInnerInventorys.setInventoryId(null);
+            wmsInnerInventorys.setCreateTime(new Date());
+            wmsInnerInventorys.setCreateUserId(sysUser.getUserId());
+            wmsInnerInventorys.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInventorys.setModifiedTime(new Date());
+            num = wmsInnerInventoryMapper.insertSelective(wmsInnerInventorys);
+            if(num<1){
+                throw new BizErrorException("库存分配失败");
+            }
+        }else{
+            wmsInnerInventorys.setPackingQty(wmsInnerJobOrderDet.getDistributionQty());
+            wmsInnerInventorys.setModifiedTime(new Date());
+            wmsInnerInventorys.setModifiedUserId(sysUser.getUserId());
+            num = wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
+            if(num<1){
+                throw new BizErrorException("库存分配失败");
+            }
         }
     }
 

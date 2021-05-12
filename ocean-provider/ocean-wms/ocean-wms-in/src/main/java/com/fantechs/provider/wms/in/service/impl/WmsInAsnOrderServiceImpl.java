@@ -175,7 +175,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrderDet.getAsnOrderId());
         List<WmsInAsnOrderDet> list = wmsInAsnOrderDetMapper.selectByExample(example);
         int size = list.size();
-        list = list.stream().filter(li->li.getPackingQty().compareTo(li.getActualQty())==0).collect(Collectors.toList());
+        list = list.stream().filter(li->!StringUtils.isEmpty(li.getActualQty()) && li.getPackingQty().compareTo(li.getActualQty())==0).collect(Collectors.toList());
         if(list.size()==size){
             //收货结束时间及收货状态
             if(countQty.compareTo(wmsInAsnOrderDet.getPackingQty())==0){
@@ -283,7 +283,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setSourceOrderId(asnOrderId);
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
-        if(wmsInnerJobOrderDtos.size()<0) {
+        if(wmsInnerJobOrderDtos.size()<1) {
             List<WmsInnerJobOrderDet> jobOrderDets = new ArrayList<>();
             double total = 0.00;
             for (WmsInAsnOrderDet wms : list) {
@@ -299,6 +299,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                         .packingUnitName(wms.getPackingUnitName())
                         .planQty(wms.getActualQty())
                         .palletCode(wms.getPalletCode())
+                        .orderStatus((byte)1)
                         .build());
             }
             WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
@@ -322,7 +323,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             //作业单
             BigDecimal result1 = wmsInnerJobOrderDtos.stream()
                     // 将user对象的age取出来map为Bigdecimal
-                    .map(WmsInnerJobOrderDto::getActualQty)
+                    .map(WmsInnerJobOrderDto::getPlanQty)
                     // 使用reduce()聚合函数,实现累加器
                     .reduce(BigDecimal.ZERO,BigDecimal::add);
             //完工入库
@@ -342,7 +343,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                         searchWmsInnerJobOrderDet.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
                         List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDtoList = innerFeignApi.findList(searchWmsInnerJobOrderDet).getData();
                         for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : wmsInnerJobOrderDetDtoList) {
-                            if(wmsInnerJobOrderDetDto.getMaterialId()==wms.getMaterialId()){
+                            if(wmsInnerJobOrderDetDto.getMaterialId().equals(wms.getMaterialId())){
                                 wms.setActualQty(wms.getActualQty().subtract(wmsInnerJobOrderDetDto.getPlanQty()));
                             }
                         }
@@ -362,6 +363,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                                 .distributionQty(new BigDecimal("0.00"))
                                 .actualQty(new BigDecimal("0.00"))
                                 .palletCode(wms.getPalletCode())
+                                .orderStatus((byte)1)
                                 .build());
                     }
                 }
@@ -411,7 +413,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setInventoryStatusId(wmsInAsnOrderDetDto.getInventoryStatusId());
             wmsInnerInventory.setReceivingDate(wmsInAsnOrderDto.getEndReceivingDate());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
-            wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getPackingQty());
+            wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
             wmsInnerInventory.setMaterialOwnerName(wmsInAsnOrderDto.getMaterialOwnerName());
             wmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
@@ -432,7 +434,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             return 1;
         }else{
             wmsInnerInventory = new WmsInnerInventory();
-            wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getPackingQty());
+            wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
             ResponseEntity responseEntity =  innerFeignApi.updateByExampleSelective(wmsInnerInventory,map);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("确认失败");
