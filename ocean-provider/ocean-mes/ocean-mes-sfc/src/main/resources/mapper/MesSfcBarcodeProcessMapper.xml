@@ -62,4 +62,8 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+
+  </select>
 </mapper>

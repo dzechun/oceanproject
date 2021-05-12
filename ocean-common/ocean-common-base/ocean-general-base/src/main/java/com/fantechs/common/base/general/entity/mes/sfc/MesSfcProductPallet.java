@@ -25,6 +25,7 @@ public class MesSfcProductPallet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="productPalletId",value = "产品栈板表ID")
     @Excel(name = "产品栈板表ID", height = 20, width = 30,orderNum="") 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     @Column(name = "product_pallet_id")
     private Long productPalletId;
 

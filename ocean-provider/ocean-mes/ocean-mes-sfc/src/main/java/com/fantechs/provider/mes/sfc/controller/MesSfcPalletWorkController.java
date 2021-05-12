@@ -25,12 +25,12 @@ public class MesSfcPalletWorkController {
 
     @PostMapping("/palletWorkScanBarcode")
     @ApiOperation("栈板作业扫码")
-    public ResponseEntity palletWorkScanBarcode(
+    public ResponseEntity<PalletWorkScanDto> palletWorkScanBarcode(
             @ApiParam(value = "条码", required = true) @RequestBody RequestPalletWorkScanDto requestPalletWorkScanDto) {
 
         try {
-            String palletCode = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
-            return ControllerUtil.returnDataSuccess(palletCode, 1);
+            PalletWorkScanDto palletWorkScanDto = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
+            return ControllerUtil.returnDataSuccess(palletWorkScanDto, 1);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BizErrorException(e);
@@ -38,29 +38,29 @@ public class MesSfcPalletWorkController {
     }
 
     @GetMapping("/palletWorkScan")
-    @ApiOperation("栈板作业扫码列表")
-    public ResponseEntity<List<PalletWorkScanDto>> palletWorkScan() {
+    @ApiOperation("栈板作业未关闭栈板信息列表")
+    public ResponseEntity<List<PalletWorkScanDto>> palletWorkScan(@ApiParam(value = "工位Id", required = true) @RequestParam Long stationId) {
 
-        List<PalletWorkScanDto> palletWorkScanDtoList = mesSfcPalletWorkService.palletWorkScan();
+        List<PalletWorkScanDto> palletWorkScanDtoList = mesSfcPalletWorkService.palletWorkScan(stationId);
         return ControllerUtil.returnDataSuccess(palletWorkScanDtoList, palletWorkScanDtoList.size());
     }
 
     @GetMapping("/findPalletCarton")
-    @ApiOperation("获取栈板码绑定的箱码")
+    @ApiOperation("获取栈板绑定的箱码列表")
     public ResponseEntity<List<String>> findPalletCarton(
-            @ApiParam(value = "栈板码", required = true) @RequestParam String palletCode) {
+            @ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId) {
 
-        List<String> cartonCodeList = mesSfcPalletWorkService.findPalletCarton(palletCode);
+        List<String> cartonCodeList = mesSfcPalletWorkService.findPalletCarton(productPalletId);
         return ControllerUtil.returnDataSuccess(cartonCodeList, cartonCodeList.size());
     }
 
     @PostMapping("/submitNoFullPallet")
     @ApiOperation("未满栈板提交")
     public ResponseEntity submitNoFullPallet(
-            @ApiParam(value = "栈板码列表", required = true) @RequestBody List<String> palletCodeList) {
+            @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList) {
 
         try {
-            int i = mesSfcPalletWorkService.submitNoFullPallet(palletCodeList);
+            int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList);
             return ControllerUtil.returnCRUD(i);
         } catch (Exception e) {
             e.printStackTrace();

@@ -133,7 +133,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @Excel(name = "预计发运日期", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_despatch_date")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @NotNull(message = "预计发运日期不能为空")
+    //@NotNull(message = "预计发运日期不能为空")
     private Date planDespatchDate;
 
     /**
@@ -152,7 +152,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @Excel(name = "要求到达日期", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "demand_arrive_date")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @NotNull(message = "要求到达日期不能为空")
+    //@NotNull(message = "要求到达日期不能为空")
     private Date demandArriveDate;
 
     /**

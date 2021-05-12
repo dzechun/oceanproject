@@ -2,6 +2,7 @@ package com.fantechs.provider.api.wms.out;
 
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterialdDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutProductionMaterial;
@@ -37,5 +38,9 @@ public interface OutFeignApi {
     @ApiOperation("发料计划列表")
     @PostMapping("/wmsOutProductionMaterial/findList")
     ResponseEntity<List<WmsOutProductionMaterialDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutProductionMaterial searchWmsOutProductionMaterial);
+
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/wmsOutDeliveryOrder/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder);
 
 }

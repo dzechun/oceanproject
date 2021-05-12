@@ -5,15 +5,25 @@ import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.OmSalesOrderService;
@@ -38,6 +48,10 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     private OmSalesOrderDetService omSalesOrderDetService;
     @Resource
     private OmHtSalesOrderService omHtSalesOrderService;
+    @Resource
+    private OutFeignApi outFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public int saveDto(OmSalesOrderDto omSalesOrderDto) {
@@ -266,4 +280,57 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
         return idsString.toString();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int issueWarehouse(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("salesOrderId",id);
+        List<OmSalesOrderDto> list = this.findList(map);
+        if(StringUtils.isNotEmpty(list)) {
+            OmSalesOrderDto omSalesOrderDto = list.get(0);
+            WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
+            wmsOutDeliveryOrder.setRelatedOrderCode1(omSalesOrderDto.getSalesOrderCode());
+            List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+            if(StringUtils.isEmpty(baseMaterialOwnerDtos)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"不存在货主信息");
+            }
+            wmsOutDeliveryOrder.setMaterialOwnerId(baseMaterialOwnerDtos.get(0).getMaterialOwnerId());
+            wmsOutDeliveryOrder.setOrderDate(new Date());
+            wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().size()>0?omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress():null);
+
+            //查询库位类型为发货的库位
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setStorageType((byte)3);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+            if(StringUtils.isEmpty(baseStorages)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"不存在库位类型为发货的库位");
+            }
+
+            //明细
+            List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
+            if(StringUtils.isNotEmpty(omSalesOrderDetDtoList)){
+                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
+                for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList) {
+                    WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
+                    wmsOutDeliveryOrderDetDto.setWarehouseId(omSalesOrderDetDto.getWarehouseId());
+                    wmsOutDeliveryOrderDetDto.setStorageId(baseStorages.get(0).getStorageId());
+                    wmsOutDeliveryOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());
+                    wmsOutDeliveryOrderDetDto.setPackingUnitName(omSalesOrderDetDto.getUnitName());
+                    wmsOutDeliveryOrderDetDto.setPackingQty(omSalesOrderDetDto.getArrangeDispatchQty());
+                    wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
+                }
+                wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
+            }
+
+            //下发仓库
+            ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
+            if (responseEntity.getCode() != 0) {
+                throw new BizErrorException("下发仓库失败");
+            }
+        }
+
+        return 1;
+    }
+
 }

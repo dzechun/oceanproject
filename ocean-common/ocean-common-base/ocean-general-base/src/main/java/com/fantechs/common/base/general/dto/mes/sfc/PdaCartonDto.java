@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -27,7 +28,7 @@ public class PdaCartonDto implements Serializable {
     @ApiModelProperty(name = "packType", value = "包箱类型(1：工单包箱，2：料号包箱)", required = true)
     private String packType;
     @ApiModelProperty(name = "cartonNum", value = "包箱规格", required = true)
-    private Integer cartonNum;
+    private BigDecimal cartonNum;
     @ApiModelProperty(name = "closeOrNot", value = "是否关箱")
     private Boolean closeOrNot;
     @ApiModelProperty(name = "workOrderId", value = "工单ID(若有则必填)")

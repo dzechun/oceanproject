@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 车间管理-产品包箱明细表
@@ -16,6 +20,9 @@ import lombok.Data;
  * @date 2021-05-08 09:35:04
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "mes_sfc_product_carton_det")
 public class MesSfcProductCartonDet extends ValidGroup implements Serializable {
     /**
