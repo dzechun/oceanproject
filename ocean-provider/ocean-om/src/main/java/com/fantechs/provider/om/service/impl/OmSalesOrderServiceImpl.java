@@ -24,6 +24,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
+import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.OmSalesOrderService;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -44,6 +46,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
     @Resource
     private OmSalesOrderMapper omSalesOrderMapper;
+    @Resource
+    private OmSalesOrderDetMapper omSalesOrderDetMapper;
     @Resource
     private OmSalesOrderDetService omSalesOrderDetService;
     @Resource
@@ -319,6 +323,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsOutDeliveryOrderDetDto.setPackingUnitName(omSalesOrderDetDto.getUnitName());
                     wmsOutDeliveryOrderDetDto.setPackingQty(omSalesOrderDetDto.getArrangeDispatchQty());
                     wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
+
+                    //修改累计通知发货数量及安排发运数量
+                    omSalesOrderDetDto.setTotalInformDeliverQty(omSalesOrderDetDto.getTotalInformDeliverQty()==null?
+                            omSalesOrderDetDto.getArrangeDispatchQty() : omSalesOrderDetDto.getTotalInformDeliverQty().add(omSalesOrderDetDto.getArrangeDispatchQty()));
+                    omSalesOrderDetDto.setArrangeDispatchQty(new BigDecimal("0"));
+                    omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDetDto);
                 }
                 wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
             }
