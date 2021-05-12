@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -16,16 +18,17 @@ import lombok.Data;
  * @date 2021-04-09 15:29:27
  */
 @Data
+@Builder
 @Table(name = "mes_sfc_barcode_process_record")
 public class MesSfcBarcodeProcessRecord extends ValidGroup implements Serializable {
     /**
      * 条码过站表ID
      */
-    @ApiModelProperty(name="barcodeProcessId",value = "条码过站表ID")
+    @ApiModelProperty(name="barcodeProcessRecordId",value = "条码过站表ID")
     @Excel(name = "条码过站表ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "barcode_process_id")
-    private Long barcodeProcessId;
+    @Column(name = "barcode_process_record_id")
+    private Long barcodeProcessRecordId;
 
     /**
      * 工单条码表ID

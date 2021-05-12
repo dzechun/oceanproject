@@ -5,7 +5,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="barcode_process_id" jdbcType="BIGINT" property="barcodeProcessId" />
+    <id column="barcode_process_record_id" jdbcType="BIGINT" property="barcodeProcessRecordId" />
     <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
