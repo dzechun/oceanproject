@@ -9,4 +9,7 @@ import java.io.Serializable;
 
 @Data
 public class MesSfcProductPalletDetDto extends MesSfcProductPalletDet implements Serializable {
+
+    @ApiModelProperty(name="cartonCode",value = "包箱号")
+    private String cartonCode;
 }

@@ -37,8 +37,10 @@
   </sql>
 
   <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
-    select <include refid="BaseColumnList"/>
+    select <include refid="BaseColumnList"/>, mspc.carton_code as cartonCode
     FROM mes_sfc_product_pallet_det msppd
+    LEFT JOIN mes_sfc_product_carton_det mspcd ON msppd.work_order_barcode_id = mspcd.work_order_barcode_id
+    LEFT JOIN mes_sfc_product_carton mspc ON mspcd.product_carton_id = mspc.product_carton_id
     <where>
       <if test="productPalletId != null">
         and msppd.product_pallet_id = #{productPalletId}
@@ -47,6 +49,9 @@
         and msppd.work_order_barcode_id = #{workOrderBarcodeId}
       </if>
     </where>
+    <if test="groupBy != null and groupBy != ''">
+      group by #{groupBy}
+    </if>
   </select>
 
 </mapper>

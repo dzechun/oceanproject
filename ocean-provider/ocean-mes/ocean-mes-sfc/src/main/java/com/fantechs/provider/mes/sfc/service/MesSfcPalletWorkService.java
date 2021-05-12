@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface MesSfcPalletWorkService {
 
-    String palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception;
+    PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception;
 
-    List<PalletWorkScanDto> palletWorkScan();
+    List<PalletWorkScanDto> palletWorkScan(Long stationId);
 
-    List<String> findPalletCarton(String palletCode);
+    List<String> findPalletCarton(Long productPalletId);
 
     int submitNoFullPallet(List<Long> palletIdList) throws Exception;
 

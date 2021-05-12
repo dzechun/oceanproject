@@ -1,20 +1,23 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialSupplierDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterialPackage;
+import com.fantechs.common.base.general.entity.basic.BasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -28,11 +31,13 @@ import com.fantechs.provider.mes.sfc.service.MesSfcKeyPartRelevanceService;
 import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -48,6 +53,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     MesSfcProductPalletService mesSfcProductPalletService;
 
     @Resource
+    MesSfcProductPalletDetService mesSfcProductPalletDetService;
+
+    @Resource
     MesSfcProductCartonService mesSfcProductCartonService;
 
     @Resource
@@ -55,6 +63,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Resource
     MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
+
+    @Resource
+    MesSfcBarcodeProcessRecordService mesSfcBarcodeProcessRecordService;
 
     @Resource
     PMFeignApi pmFeignApi;
@@ -67,12 +78,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
+    public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
 
         String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
-        // 获取该条码对应的工单信息
         Long workOrderId = null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(requestPalletWorkScanDto.getBarcode());
@@ -129,6 +144,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             }
         }
+
+        // 获取该条码对应的工单信息
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderId(workOrderId);
         List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -142,17 +159,17 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         productPalletMap.put("closeStatus", 0);
         List<MesSfcProductPalletDto> mesSfcProductPalletDtoList = mesSfcProductPalletService.findList(productPalletMap);
         // 获取当前对应的栈板，判断是否需要新开一个栈板
+        MesSfcProductPallet mesSfcProductPallet = new MesSfcProductPallet();
         String palletCode = "";
+        BigDecimal nowPackageSpecQty = BigDecimal.ZERO;
         Boolean isPallet = true;
         for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
-            if (requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId() == mesSfcProductPalletDto.getWorkOrderId()) {
+            if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId() == mesSfcProductPalletDto.getWorkOrderId())
+            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId() == mesSfcProductPalletDto.getMaterialId())) {
                 palletCode = mesSfcProductPalletDto.getPalletCode();
+                nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
                 isPallet = false;
-                break;
-            }
-            if (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId() == mesSfcProductPalletDto.getMaterialId()) {
-                palletCode = mesSfcProductPalletDto.getPalletCode();
-                isPallet = false;
+                mesSfcProductPallet = mesSfcProductPalletDto;
                 break;
             }
         }
@@ -164,6 +181,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
             SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
             searchBasePackageSpecification.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+            searchBasePackageSpecification.setProcessId(requestPalletWorkScanDto.getProcessId());
             List<BasePackageSpecificationDto> basePackageSpecificationDtoList = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
             if (basePackageSpecificationDtoList.isEmpty() || basePackageSpecificationDtoList.get(0).getBaseMaterialPackages().isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该产品条码没有设置在该工序的包装规格");
@@ -174,6 +192,11 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             List<BaseBarcodeRuleSpec> barcodeRuleSpecList = new LinkedList<>();
             for (BaseMaterialPackage baseMaterialPackage : basePackageSpecificationDtoList.get(0).getBaseMaterialPackages()) {
                 if (requestPalletWorkScanDto.getProcessId() == baseMaterialPackage.getProcessId()) {
+                    BasePackageSpecification basePackageSpecification = baseFeignApi.BasePackageSpecificationDetail(baseMaterialPackage.getPackageSpecificationId()).getData();
+                    if (StringUtils.isEmpty(basePackageSpecification)) {
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该产品条码没有设置在该工序的包装规格");
+                    }
+                    nowPackageSpecQty = basePackageSpecification.getPackageSpecificationQuantity();
                     boolean hasKey = redisUtil.hasKey(baseMaterialPackage.getBarcodeRuleId().toString());
                     if(hasKey){
                         // 从redis获取上次生成条码
@@ -213,33 +236,113 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012008);
             }
         }
-        // 记录过站信息
+        if (nowPackageSpecQty.compareTo(BigDecimal.ZERO) == 0) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该工序包装规格设置有误，包装数量不能为0");
+        }
+        // 更新过站/过站记录信息
         for (MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode : mesSfcWorkOrderBarcodeList) {
-            // 判断该产品条码是否有过站记录
-            SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
-            searchMesSfcBarcodeProcess.setBarCode(mesSfcWorkOrderBarcode.getBarcode());
-            searchMesSfcBarcodeProcess.setPalletCode(palletCode);
-            List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(searchMesSfcBarcodeProcess);
-            if (mesSfcBarcodeProcessList.isEmpty()) {
+            // 更新当前工序，工位，工段，下一工序
+            UpdateProcessDto updateProcessDto = new UpdateProcessDto();
+            updateProcessDto.setBarCode(mesSfcWorkOrderBarcode.getBarcode());
+            updateProcessDto.setNowProcessId(requestPalletWorkScanDto.getProcessId());
+            updateProcessDto.setProLineId(requestPalletWorkScanDto.getProLineId());
+            updateProcessDto.setRouteId(mesPmWorkOrderDto.getRouteId());
+            updateProcessDto.setOperatorUserId(user.getUserId());
+            BarcodeUtils.updateProcess(updateProcessDto);
 
-            }
+            // 获取条码对应的过站信息
+            MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
+                    .barcode(mesSfcWorkOrderBarcode.getBarcode())
+                    .build());
+            mesSfcBarcodeProcess.setPalletCode(palletCode);
+            mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
+            // 获取条码对应的过站记录信息
+            MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = mesSfcBarcodeProcessRecordService.selectOne(MesSfcBarcodeProcessRecord.builder()
+                    .barcode(mesSfcWorkOrderBarcode.getBarcode())
+                    .build());
+            mesSfcBarcodeProcessRecord.setPalletCode(palletCode);
+            mesSfcBarcodeProcessRecordService.update(mesSfcBarcodeProcessRecord);
         }
 
-        return palletCode;
+        // 新增产品栈板信息
+        if (isPallet) {
+            mesSfcProductPallet.setPalletCode(palletCode);
+            mesSfcProductPallet.setNowPackageSpecQty(nowPackageSpecQty);
+            mesSfcProductPallet.setWorkOrderId(workOrderId);
+            mesSfcProductPallet.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+            mesSfcProductPallet.setStationId(requestPalletWorkScanDto.getStationId());
+            mesSfcProductPallet.setCloseStatus((byte) 0);
+            if (nowPackageSpecQty.compareTo(BigDecimal.ONE) == 0) {
+                mesSfcProductPallet.setCloseStatus((byte) 1);
+                mesSfcProductPallet.setClosePalletUserId(user.getUserId());
+                mesSfcProductPallet.setClosePalletTime(new Date());
+            }
+            mesSfcProductPallet.setOrgId(user.getOrganizationId());
+            mesSfcProductPallet.setCreateUserId(user.getUserId());
+            mesSfcProductPallet.setCreateTime(new Date());
+            mesSfcProductPalletService.save(mesSfcProductPallet);
+        } else if (requestPalletWorkScanDto.getClosePalletNum().compareTo(nowPackageSpecQty.subtract(BigDecimal.ONE)) == 0) {
+            // 达到包装规格上限，关闭栈板
+            mesSfcProductPallet.setCloseStatus((byte) 1);
+            mesSfcProductPallet.setClosePalletUserId(user.getUserId());
+            mesSfcProductPallet.setClosePalletTime(new Date());
+            mesSfcProductPallet.setModifiedUserId(user.getUserId());
+            mesSfcProductPallet.setModifiedTime(new Date());
+            mesSfcProductPalletService.update(mesSfcProductPallet);
+        }
+        // 构建返回值
+        PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
+        palletWorkScanDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
+        palletWorkScanDto.setPalletCode(palletCode);
+        palletWorkScanDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+        palletWorkScanDto.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+        palletWorkScanDto.setMaterialDesc(mesPmWorkOrderDto.getMaterialDesc());
+        palletWorkScanDto.setWorkOrderQty(mesPmWorkOrderDto.getWorkOrderQty());
+        palletWorkScanDto.setProductionQty(mesPmWorkOrderDto.getProductionQty());
+        palletWorkScanDto.setClosePalletNum(requestPalletWorkScanDto.getClosePalletNum().add(BigDecimal.ONE));
+        palletWorkScanDto.setNowPackageSpecQty(nowPackageSpecQty);
+        palletWorkScanDto.setScanCartonNum(findPalletCarton(mesSfcProductPallet.getProductPalletId()).size());
+
+        return palletWorkScanDto;
     }
 
     @Override
-    public List<PalletWorkScanDto> palletWorkScan() {
+    public List<PalletWorkScanDto> palletWorkScan(Long stationId) {
 
         List<PalletWorkScanDto> palletWorkScanDtoList = new LinkedList<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("stationId", stationId);
+        map.put("closeStatus", 0);
+        List<MesSfcProductPalletDto> mesSfcProductPalletDtoList = mesSfcProductPalletService.findList(map);
+        for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
+            PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
+            BeanUtils.autoFillEqFields(mesSfcProductPalletDto, palletWorkScanDto);
+            map.clear();
+            map.put("workOrderId", mesSfcProductPalletDto.getWorkOrderId());
+            map.put("closeStatus", 1);
+            List<MesSfcProductPalletDto> mesSfcProductPalletDtos = mesSfcProductPalletService.findList(map);
+            palletWorkScanDto.setClosePalletNum(BigDecimal.valueOf(mesSfcProductPalletDtos.size()));
+            map.clear();
+            map.put("workOrderId", mesSfcProductPalletDto.getWorkOrderId());
+            List<MesSfcProductCartonDto> mesSfcProductCartonDtoList = mesSfcProductCartonService.findList(map);
+            palletWorkScanDto.setScanCartonNum(mesSfcProductCartonDtoList.size());
+            palletWorkScanDtoList.add(palletWorkScanDto);
+        }
 
         return palletWorkScanDtoList;
     }
 
     @Override
-    public List<String> findPalletCarton(String palletCode) {
+    public List<String> findPalletCarton(Long productPalletId) {
 
         List<String> cartonCodeList = new LinkedList<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("productPalletId", productPalletId);
+        map.put("groupBy", "cartonCode");
+        List<MesSfcProductPalletDetDto> mesSfcProductPalletDetDtoList = mesSfcProductPalletDetService.findList(map);
+        for (MesSfcProductPalletDetDto mesSfcProductPalletDetDto : mesSfcProductPalletDetDtoList) {
+            cartonCodeList.add(mesSfcProductPalletDetDto.getCartonCode());
+        }
 
         return cartonCodeList;
     }
@@ -254,7 +357,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         try {
             for (MesSfcProductPallet item : productPallets){
                 item.setCloseStatus((byte) 1);
-                mesSfcProductPalletService.save(item);
+                mesSfcProductPalletService.update(item);
             }
         }catch (Exception e){
             throw new BizErrorException(ErrorCodeEnum.GL99990005, e.getMessage());
@@ -266,6 +369,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     public Boolean updatePalletType(Long stationId) {
         List<MesSfcProductPalletDto> list = mesSfcProductPalletService.findList(ControllerUtil.dynamicConditionByEntity(SearchMesSfcProductPallet.builder()
                 .stationId(stationId)
+                .closeStatus((byte) 0)
                 .build()));
         if(list.size()>0){
             return false;

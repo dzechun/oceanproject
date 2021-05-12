@@ -14,4 +14,7 @@ public class SearchMesSfcProductPalletDet extends BaseQuery implements Serializa
 
     @ApiModelProperty(name="workOrderBarcodeId",value = "工单条码ID")
     private Long workOrderBarcodeId;
+
+    @ApiModelProperty(name="groupBy",value = "分组参数")
+    private String groupBy;
 }

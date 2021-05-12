@@ -3,6 +3,8 @@ package com.fantechs.common.base.general.dto.mes.sfc;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class RequestPalletWorkScanDto {
 
@@ -17,6 +19,9 @@ public class RequestPalletWorkScanDto {
 
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
+
+    @ApiModelProperty(name = "closePalletNum", value = "已包栈板数量")
+    private BigDecimal closePalletNum;
 
     @ApiModelProperty(name = "checkdaliyOrder", value = "检查排程单（0-否 1-是）")
     private byte checkdaliyOrder;

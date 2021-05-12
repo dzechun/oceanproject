@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 @Data
 public class PalletWorkScanDto {
 
+    @ApiModelProperty(name="productPalletId",value = "产品栈板表ID")
+    private Long productPalletId;
+
     @ApiModelProperty(name="palletCode",value = "栈板码")
     private String palletCode;
 
@@ -27,8 +30,11 @@ public class PalletWorkScanDto {
     private BigDecimal productionQty;
 
     @ApiModelProperty(name="finishPalletQty",value = "已包栈板数量")
-    private BigDecimal finishPalletQty;
+    private BigDecimal closePalletNum;
 
     @ApiModelProperty(name="nowPackageSpecQty",value = "当前包装规格数量")
     private BigDecimal nowPackageSpecQty;
+
+    @ApiModelProperty(name="scanCartonNum",value = "扫描包箱数")
+    private int scanCartonNum;
 }
