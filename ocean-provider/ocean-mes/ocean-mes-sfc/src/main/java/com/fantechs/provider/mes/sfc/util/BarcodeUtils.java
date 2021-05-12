@@ -273,7 +273,7 @@ public class BarcodeUtils {
      * 打印条码
      * @param dto
      */
-    public static void printBarCode(MesSfcWorkOrderBarcodeDto dto) {
+    public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule("01", dto.getWorkOrderId());
         PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
         printModel.setQrCode(dto.getBarcode());
@@ -286,6 +286,8 @@ public class BarcodeUtils {
         printDto.setPrintModelList(printModelList);
         barcodeUtils.rabbitProducer.sendPrint(printDto);
     }
+
+
 
     // region 校验工单条码
 

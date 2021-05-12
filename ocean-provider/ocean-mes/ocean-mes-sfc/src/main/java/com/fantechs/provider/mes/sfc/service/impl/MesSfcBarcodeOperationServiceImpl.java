@@ -371,33 +371,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), vo.getProcessId());
             vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
             // 添加包箱表数据
-            MesSfcProductCarton sfcProductCarton = MesSfcProductCarton.builder()
-                    .cartonCode(cartonCode)
-                    .closeStatus((byte) 0)
-                    .createTime(new Date())
-                    .createUserId(user.getUserId())
-                    .isDelete((byte) 1)
-                    .orgId(user.getOrganizationId())
-                    .stationId(vo.getStationId())
-                    .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
-                    .nowPackageSpecQty(vo.getCartonNum())
-                    .build();
-            int saveRes = mesSfcProductCartonService.save(sfcProductCarton);
-            if (saveRes > 0) {
-                mesSfcProductCarton = mesSfcProductCartonService.selectOne(sfcProductCarton);
-                if (mesSfcProductCarton != null) {
-                    // 保存条码包箱关系
-                    mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
-                            .productCartonId(mesSfcProductCarton.getProductCartonId())
-                            .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
-                            .orgId(user.getOrganizationId())
-                            .createTime(new Date())
-                            .createUserId(user.getUserId())
-                            .isDelete((byte) 1)
-                            .build());
-                    vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
-                }
-            }
+            mesSfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), vo.getStationId(), sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getCartonNum(), mesSfcProductCarton.getProductCartonId(), sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId());
+            vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
         } else {
             mesSfcProductCarton = mesSfcProductCartonService.selectByKey(vo.getProductCartonId());
             // 4、包箱已关闭，生成箱码并添加新的箱码状态数据
@@ -413,33 +388,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), vo.getProcessId());
                 vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
                 // 添加包箱表数据
-                MesSfcProductCarton sfcProductCarton = MesSfcProductCarton.builder()
-                        .cartonCode(cartonCode)
-                        .closeStatus((byte) 0)
-                        .createTime(new Date())
-                        .createUserId(user.getUserId())
-                        .isDelete((byte) 1)
-                        .orgId(user.getOrganizationId())
-                        .stationId(vo.getStationId())
-                        .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
-                        .nowPackageSpecQty(vo.getCartonNum())
-                        .build();
-                int saveRes = mesSfcProductCartonService.save(sfcProductCarton);
-                if (saveRes > 0) {
-                    mesSfcProductCarton = mesSfcProductCartonService.selectOne(sfcProductCarton);
-                    if (mesSfcProductCarton != null) {
-                        // 保存条码包箱关系
-                        mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
-                                .productCartonId(mesSfcProductCarton.getProductCartonId())
-                                .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
-                                .orgId(user.getOrganizationId())
-                                .createTime(new Date())
-                                .createUserId(user.getUserId())
-                                .isDelete((byte) 1)
-                                .build());
-                        vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
-                    }
-                }
+                mesSfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), vo.getStationId(), sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getCartonNum(), mesSfcProductCarton.getProductCartonId(), sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId());
+                vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
             }
         }
 
@@ -461,7 +411,11 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 mesSfcProductCartonService.update(mesSfcProductCarton);
                 if (vo.getPrint()) {
                     // 关箱后台才能打印条码
-                    BarcodeUtils.printBarCode(sfcWorkOrderBarcodeDto);
+                    BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
+                            .barcode(vo.getCartonCode())
+                            .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
+                            .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
+                            .build());
                 }
             }
             UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
@@ -518,7 +472,56 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         searchBasePackageSpecification.setMaterialId(materialId);
         searchBasePackageSpecification.setProcessId(processId);
         List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+        if(packageSpecificationDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
         return packageSpecificationDtos.get(0);
+    }
+
+    /**
+     * 保存包箱数据以及包箱条码关系
+     * @param cartonCode
+     * @param userId
+     * @param orgId
+     * @param stationId
+     * @param workOrderId
+     * @param cartonNum
+     * @param productCartonId
+     * @param workOrderBarcodeId
+     * @return
+     */
+    private MesSfcProductCarton saveCarton(String cartonCode, Long userId, Long orgId, Long stationId, Long workOrderId, BigDecimal cartonNum, Long productCartonId, Long workOrderBarcodeId){
+        // 添加包箱表数据
+        MesSfcProductCarton sfcProductCarton = MesSfcProductCarton.builder()
+                .cartonCode(cartonCode)
+                .closeStatus((byte) 0)
+                .createTime(new Date())
+                .createUserId(userId)
+                .isDelete((byte) 1)
+                .orgId(orgId)
+                .stationId(stationId)
+                .workOrderId(workOrderId)
+                .nowPackageSpecQty(cartonNum)
+                .build();
+        int saveRes = mesSfcProductCartonService.save(sfcProductCarton);
+        if (saveRes > 0) {
+            MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectOne(sfcProductCarton);
+            if (mesSfcProductCarton == null) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            // 保存条码包箱关系
+            mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
+                    .productCartonId(productCartonId)
+                    .workOrderBarcodeId(workOrderBarcodeId)
+                    .orgId(orgId)
+                    .createTime(new Date())
+                    .createUserId(userId)
+                    .isDelete((byte) 1)
+                    .build());
+            return mesSfcProductCarton;
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
     }
 
 }
