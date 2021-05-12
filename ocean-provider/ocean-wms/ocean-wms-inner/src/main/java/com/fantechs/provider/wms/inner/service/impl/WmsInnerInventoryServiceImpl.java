@@ -139,7 +139,11 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Override
     public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
-        example.createCriteria().andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId"));
+        if(!StringUtils.isEmpty(map.get("batchCode"))){
+            criteria.andEqualTo("batchCode",map.get("batchCode"));
+        }
         wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
         ));
         int num = wmsInnerInventoryMapper.updateByExampleSelective(wmsInnerInventory, example);

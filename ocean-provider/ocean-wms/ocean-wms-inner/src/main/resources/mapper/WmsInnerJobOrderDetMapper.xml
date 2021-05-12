@@ -86,7 +86,7 @@ wipod.option3,
 wipod.order_status
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-      SELECT <include refid="BaseColumnList"/>,bmo.material_owner_name,bw.warehouse_name,bso.storage_name as out_storage_name,bsi.storage_name as in_storage_name,bm.material_code,bm.material_name,
+      SELECT <include refid="BaseColumnList"/>,bmo.material_owner_name,bw.warehouse_name,bso.storage_code as out_storage_name,bsi.storage_code as in_storage_name,bm.material_code,bm.material_name,
              bis.inventory_status_name,su.user_name AS create_user_name,
              sus.user_name AS modified_user_name,
              bo.organization_name AS organization_Name
