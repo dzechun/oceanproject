@@ -21,4 +21,5 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
 
     int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom);
 
+    int updateInventoryQty(MesPmWorkOrder mesPmWorkOrder);
 }

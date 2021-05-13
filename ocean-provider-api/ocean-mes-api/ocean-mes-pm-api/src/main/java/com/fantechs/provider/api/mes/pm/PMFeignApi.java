@@ -144,4 +144,7 @@ public interface PMFeignApi {
     @PostMapping("/mesPmWorkOrderProcessReWo/findList")
     ResponseEntity<List<MesPmWorkOrderProcessReWoDto>> findPmWorkOrderProcessReWoList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo);
 
+    @ApiOperation("修改工单入库数量")
+    @PostMapping("/mesPmWorkOrder/updateInventory")
+    ResponseEntity updateInventory(@RequestBody MesPmWorkOrder mesPmWorkOrder);
 }
