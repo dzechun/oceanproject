@@ -143,6 +143,12 @@ public class BarcodeUtils {
         if (processResponseEntity.getCode() != 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012012, dto.getNowProcessId());
         }
+        // 获取当前工单信息
+        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
+        if (mesPmWorkOrder.getWorkOrderStatus() > 3) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012032);
+        }
+
         BaseProcess baseProcess = processResponseEntity.getData();
         // 更新当前工序
         mesSfcBarcodeProcess.setProcessId(dto.getNowProcessId());
@@ -177,6 +183,12 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
         mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() + 1);
+        if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
+            mesSfcBarcodeProcess.setDevoteTime(new Date());
+        }
+        if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
+            mesSfcBarcodeProcess.setProductionTime(new Date());
+        }
         mesSfcBarcodeProcess.setInProcessTime(new Date());
         mesSfcBarcodeProcess.setOutProcessTime(new Date());
         mesSfcBarcodeProcess.setOperatorUserId(dto.getOperatorUserId());
@@ -194,10 +206,6 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setModifiedUserId(dto.getOperatorUserId());
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
-        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
-        if (mesPmWorkOrder.getWorkOrderStatus() > 3) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012032);
-        }
         Map<String, Object> map = new HashMap<>();
         map.put("workOrderBarcodeId", dto.getBarCode());
         map.put("stationId", dto.getNowStationId());
