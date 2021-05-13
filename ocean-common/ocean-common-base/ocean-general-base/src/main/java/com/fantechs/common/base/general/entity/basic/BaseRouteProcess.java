@@ -43,6 +43,13 @@ public class BaseRouteProcess extends ValidGroup implements Serializable {
     private String routeName;
 
     /**
+     * 工序类别编码
+     */
+    @Transient
+    @ApiModelProperty(name="processCategoryCode" ,value="工序类别编码")
+    private String processCategoryCode;
+
+    /**
      * 工段ID
      */
     @Column(name = "section_id")
