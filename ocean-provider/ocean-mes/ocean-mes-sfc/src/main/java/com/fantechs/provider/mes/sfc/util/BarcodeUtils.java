@@ -243,15 +243,19 @@ public class BarcodeUtils {
      * @param processId        工序ID
      * @param materialCode     产品物料编码
      * @param workOrderId      工单ID
-     * @param categoryCode     条码规则类别编号
+     * @param categoryCode 条码规则类别编号
      * @return
      * @throws Exception
      */
     public static String generatorCartonCode(Long materialId, Long processId, String materialCode, Long workOrderId, String categoryCode) throws Exception {
-        BaseBarcodeRuleDto barcodeRuleDto = getBarcodeRuleList(materialId, processId);
+        BaseBarcodeRule barcodeRule = getBarcodeRule(materialId, processId);
+        BaseLabelCategory labelCategory = barcodeUtils.baseFeignApi.findLabelCategoryDetail(barcodeRule.getBarcodeRuleCategoryId()).getData();
+        if(!labelCategory.getLabelCategoryCode().equals(categoryCode)){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012021);
+        }
         // 获取规则配置列表
         SearchBaseBarcodeRuleSpec baseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-        baseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleDto.getBarcodeRuleId());
+        baseBarcodeRuleSpec.setBarcodeRuleId(barcodeRule.getBarcodeRuleId());
         ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecResponseEntity = barcodeUtils.baseFeignApi.findSpec(baseBarcodeRuleSpec);
         if (barcodeRuleSpecResponseEntity.getCode() != 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012022);
@@ -262,10 +266,10 @@ public class BarcodeUtils {
         }
 
         String lastBarCode = null;
-        boolean hasKey = barcodeUtils.redisUtil.hasKey(barcodeRuleDto.getBarcodeRule());
+        boolean hasKey = barcodeUtils.redisUtil.hasKey(barcodeRule.getBarcodeRule());
         if (hasKey) {
             // 从redis获取上次生成条码
-            Object redisRuleData = barcodeUtils.redisUtil.get(barcodeRuleDto.getBarcodeRule());
+            Object redisRuleData = barcodeUtils.redisUtil.get(barcodeRule.getBarcodeRule());
             lastBarCode = String.valueOf(redisRuleData);
         }
         //获取最大流水号
@@ -276,7 +280,7 @@ public class BarcodeUtils {
             throw new BizErrorException(rs.getMessage());
         }
         // 更新redis最新包箱号
-        barcodeUtils.redisUtil.set(barcodeRuleDto.getBarcodeRule(), rs.getData());
+        barcodeUtils.redisUtil.set(barcodeRule.getBarcodeRule(), rs.getData());
         return rs.getData();
     }
 
@@ -381,7 +385,7 @@ public class BarcodeUtils {
      * @return
      * @throws Exception
      */
-    private static BaseBarcodeRuleDto getBarcodeRuleList(Long materialId, Long processId) throws Exception {
+    private static BaseBarcodeRule getBarcodeRule(Long materialId, Long processId) throws Exception {
         // 查询包装规格
         SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
         searchBasePackageSpecification.setMaterialId(materialId);
@@ -394,8 +398,9 @@ public class BarcodeUtils {
         if(baseMaterialPackageDtos.size() <= 0){
             throw new BizErrorException();
         }
-        baseMaterialPackageDtos.get(0).getBarcodeRuleId();
-        return null;
+        BaseBarcodeRule baseBarcodeRule = barcodeUtils.baseFeignApi.baseBarcodeRuleDetail(baseMaterialPackageDtos.get(0).getBarcodeRuleId()).getData();
+
+        return baseBarcodeRule;
     }
 
     // endregion
