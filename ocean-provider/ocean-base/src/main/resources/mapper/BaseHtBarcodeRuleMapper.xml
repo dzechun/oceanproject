@@ -28,11 +28,11 @@
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule" resultMap="BaseResultMap">
-    select shbr.ht_barcode_rule_id,shbr.barcode_rule_id,shbr.barcode_rule_code,shbr.barcode_rule_name,shbr.barcode_rule_desc,shbr.barcode_rule_category_id,ssi.spec_name as barcode_rule_category_name,
+    select shbr.ht_barcode_rule_id,shbr.barcode_rule_id,shbr.barcode_rule_code,shbr.barcode_rule_name,shbr.barcode_rule_desc,shbr.barcode_rule_category_id,blc.label_category_name as barcode_rule_category_name,
     shbr.barcode_rule,shbr.status,shbr.create_user_id, u.user_name as create_user_name,shbr.create_time,shbr.modified_user_id,s.user_name as modified_user_name,shbr.modified_time,
     shbr.is_delete, shbr.org_id, shbr.remark, bo.organization_name
     from fantech_imes_v2.base_ht_barcode_rule shbr
-    left join ocean_v2.sys_spec_item ssi on shbr.barcode_rule_desc=ssi.spec_id
+    left join fantech_imes_v2.base_label_category blc on shbr.barcode_rule_category_id=blc.label_category_id
     left join ocean_v2.sys_user u on shbr.create_user_id=u.user_id
     left join ocean_v2.sys_user s on shbr.modified_user_id=s.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON shbr.org_id = bo.organization_id

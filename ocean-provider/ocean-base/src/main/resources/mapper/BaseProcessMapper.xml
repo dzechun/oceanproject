@@ -59,7 +59,7 @@
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         sws.section_name as sectionName,
-        spc.process_category_name as processCategoryName,
+        spc.process_category_name as processCategoryName,spc.process_category_code as processCategoryCode,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
         from fantech_imes_v2.base_process sp

@@ -78,6 +78,13 @@ public class BaseHtProcess implements Serializable {
     private String processCategoryName;
 
     /**
+     * 工序类别编码
+     */
+    @Transient
+    @ApiModelProperty(name="processCategoryCode" ,value="工序类别编码")
+    private String processCategoryCode;
+
+    /**
      * 是否报工扫描（0、否 1、是）
      */
     @Column(name = "is_job_scan")
