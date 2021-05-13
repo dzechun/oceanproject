@@ -16,7 +16,7 @@ public interface MesSfcBarcodeOperationService {
      * @param vo
      * @return
      */
-    int pdaPutIntoProduction(PdaPutIntoProductionDto vo);
+    int pdaPutIntoProduction(PdaPutIntoProductionDto vo) throws Exception;
 
 
     PdaCartonRecordDto findLastCarton(Long processId, Long stationId);

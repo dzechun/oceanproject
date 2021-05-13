@@ -256,6 +256,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             updateProcessDto.setProLineId(requestPalletWorkScanDto.getProLineId());
             updateProcessDto.setRouteId(mesPmWorkOrderDto.getRouteId());
             updateProcessDto.setOperatorUserId(user.getUserId());
+            updateProcessDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+            updateProcessDto.setNowStationId(requestPalletWorkScanDto.getStationId());
             BarcodeUtils.updateProcess(updateProcessDto);
 
             // 获取条码对应的过站信息
