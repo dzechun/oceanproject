@@ -116,22 +116,21 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             return null;
         }
         // 组装
-        return buildCartonData(sfcProductCartonList, processId, stationId);
+        return buildCartonData(sfcProductCartonList.get(0), processId, stationId);
     }
 
     @Override
-    public PdaCartonRecordDto cartonOperation(PdaCartonDto vo) throws Exception {
+    public int cartonOperation(PdaCartonDto vo) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        List<MesSfcProductCarton> sfcProductCartonList = barCodeOperation(vo, user);
-        return buildCartonData(sfcProductCartonList, vo.getProcessId(), vo.getStationId());
+        return barCodeOperation(vo, user);
     }
 
     @Override
-    public PdaCartonRecordDto cartonAnnexOperation(PdaCartonAnnexDto vo) throws Exception {
+    public int cartonAnnexOperation(PdaCartonAnnexDto vo) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -229,8 +228,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .isDelete((byte) 1)
                 .build());
         // 走条码过站流程
-        List<MesSfcProductCarton> sfcProductCartonList = barCodeOperation(vo, user);
-        return buildCartonData(sfcProductCartonList, vo.getProcessId(), vo.getStationId());
+        return barCodeOperation(vo, user);
     }
 
     @Override
@@ -255,14 +253,13 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     /**
      * 组装包箱数据
      *
-     * @param sfcProductCartonList
+     * @param mesSfcProductCarton
      * @param processId
      * @param stationId
      * @return
      */
-    private PdaCartonRecordDto buildCartonData(List<MesSfcProductCarton> sfcProductCartonList, Long processId, Long stationId) {
+    private PdaCartonRecordDto buildCartonData(MesSfcProductCarton mesSfcProductCarton, Long processId, Long stationId) {
 
-        MesSfcProductCarton mesSfcProductCarton = sfcProductCartonList.get(0);
         ResponseEntity<MesPmWorkOrder> pmWorkOrderResponseEntityByBarCode = pmFeignApi.workOrderDetail(mesSfcProductCarton.getWorkOrderId());
         // 条码所属工单
         MesPmWorkOrder mesPmWorkOrderByBarCode = pmWorkOrderResponseEntityByBarCode.getData();
@@ -319,7 +316,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
      * @return
      * @throws Exception
      */
-    private List<MesSfcProductCarton> barCodeOperation(PdaCartonDto vo, SysUser user) throws Exception {
+    private int barCodeOperation(PdaCartonDto vo, SysUser user) throws Exception {
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
                         .barcode(vo.getBarCode())
@@ -393,10 +390,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
         }
 
-        // 5、更新包箱号至过站表
-        mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
-        mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
-
         // 6、是否扫附件码，若不则检查ok直接过站
         if (!vo.getAnnex()) {
             // 6.1、判断是否包箱已满，关箱
@@ -433,13 +426,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             // 更新下一工序，增加工序记录
             BarcodeUtils.updateProcess(updateProcessDto);
         }
-        // 构造返回值
-        Example example = new Example(MesSfcProductCarton.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("stationId", vo.getStationId());
-        criteria.andEqualTo("closeStatus", 0);
-        List<MesSfcProductCarton> sfcProductCartonList = mesSfcProductCartonService.selectByExample(example);
-        return sfcProductCartonList;
+        // 5、更新包箱号至过站表
+        mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
+        return mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
     }
 
     /**

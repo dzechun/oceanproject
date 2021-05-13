@@ -26,14 +26,14 @@ public interface MesSfcBarcodeOperationService {
      * @param vo
      * @return
      */
-    PdaCartonRecordDto cartonOperation(PdaCartonDto vo) throws Exception;
+    int cartonOperation(PdaCartonDto vo) throws Exception;
 
     /**
      * 包箱作业-扫附件码
      * @param vo
      * @return
      */
-    PdaCartonRecordDto cartonAnnexOperation(PdaCartonAnnexDto vo) throws Exception;
+    int cartonAnnexOperation(PdaCartonAnnexDto vo) throws Exception;
 
     /**
      * 包箱作业-修改包箱规格数量

@@ -74,7 +74,7 @@ public class MesSfcBarcodeOperationController {
             return ControllerUtil.returnCRUD(mesSfcProductCartonService.update(mesSfcProductCarton));
         }
 
-        return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.cartonOperation(vo));
+        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.cartonOperation(vo));
 
     }
 
@@ -82,7 +82,7 @@ public class MesSfcBarcodeOperationController {
     @PostMapping("/cartonAnnexOperation")
     public ResponseEntity<PdaCartonRecordDto> cartonAnnexOperation(@ApiParam(value = "包箱扫附件条码", required = true) @RequestBody PdaCartonAnnexDto vo) throws Exception {
         // 构造返回值
-        return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.cartonAnnexOperation(vo));
+        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.cartonAnnexOperation(vo));
     }
 
     @ApiOperation("PDA包箱作业-修改包箱规格数量")

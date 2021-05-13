@@ -182,7 +182,7 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
         mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
-        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() + 1);
+        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() != null ? mesSfcBarcodeProcess.getPassStationCount() + 1 : 1);
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
