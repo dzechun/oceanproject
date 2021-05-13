@@ -261,6 +261,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrderDto.getOrderTypeId());
                     wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
                     wmsInnerJobOrder.setJobOrderType((byte)4);
+                    wmsInnerJobOrder.setOrderStatus((byte)1);
                     wmsInnerJobOrder.setWarehouseId(dtoList.get(0).getWarehouseId());
                     //计算总数量
                     BigDecimal packingSum = dtoList.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -275,6 +276,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                         wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
                         wmsInnerJobOrderDet.setPackingUnitName(dto.getPackingUnitName());
                         wmsInnerJobOrderDet.setPlanQty(dto.getPackingQty());
+                        wmsInnerJobOrderDet.setOrderStatus((byte)1);
                         wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                     }
                     wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);

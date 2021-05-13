@@ -26,15 +26,10 @@ public class MesSfcPalletWorkController {
     @PostMapping("/palletWorkScanBarcode")
     @ApiOperation("栈板作业扫码")
     public ResponseEntity<PalletWorkScanDto> palletWorkScanBarcode(
-            @ApiParam(value = "条码", required = true) @RequestBody RequestPalletWorkScanDto requestPalletWorkScanDto) {
+            @ApiParam(value = "条码", required = true) @RequestBody RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
 
-        try {
-            PalletWorkScanDto palletWorkScanDto = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
-            return ControllerUtil.returnDataSuccess(palletWorkScanDto, 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BizErrorException(e);
-        }
+        PalletWorkScanDto palletWorkScanDto = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
+        return ControllerUtil.returnDataSuccess(palletWorkScanDto, 1);
     }
 
     @GetMapping("/palletWorkScan")
@@ -57,15 +52,11 @@ public class MesSfcPalletWorkController {
     @PostMapping("/submitNoFullPallet")
     @ApiOperation("未满栈板提交")
     public ResponseEntity submitNoFullPallet(
-            @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList) {
+            @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList) throws Exception {
 
-        try {
-            int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList);
-            return ControllerUtil.returnCRUD(i);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BizErrorException(e);
-        }
+
+        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList);
+        return ControllerUtil.returnCRUD(i);
     }
 
     @GetMapping("/updatePalletType")
@@ -80,14 +71,10 @@ public class MesSfcPalletWorkController {
     @ApiOperation("修改栈板包装规格数量")
     public ResponseEntity updateNowPackageSpecQty(
             @ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId,
-            @ApiParam(value = "包装规格数量", required = true) @RequestParam Integer nowPackageSpecQty) {
+            @ApiParam(value = "包装规格数量", required = true) @RequestParam Integer nowPackageSpecQty) throws Exception {
 
-        try {
-            int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty);
-            return ControllerUtil.returnCRUD(i);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BizErrorException(e);
-        }
+
+        int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty);
+        return ControllerUtil.returnCRUD(i);
     }
 }
