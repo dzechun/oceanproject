@@ -63,16 +63,16 @@ public class BaseHtBarcodeRule implements Serializable {
     /**
      * 条码规则类别ID
      */
-    @ApiModelProperty(name="barcodeRuleCategoryId",value = "条码规则类别ID")
+    @ApiModelProperty(name="labelCategoryId",value = "条码规则类别ID")
     @Column(name = "barcode_rule_category_id")
-    private Long barcodeRuleCategoryId;
+    private Long labelCategoryId;
 
     /**
      * 条码规则类别名称
      */
     @Transient
-    @ApiModelProperty(name = "barcodeRuleCategoryName",value = "条码规则类别名称")
-    private String barcodeRuleCategoryName;
+    @ApiModelProperty(name = "labelCategoryName",value = "条码规则类别名称")
+    private String labelCategoryName;
 
     /**
      * 条码规则

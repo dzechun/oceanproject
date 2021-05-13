@@ -182,7 +182,7 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
         mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
-        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() + 1);
+        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() != null ? mesSfcBarcodeProcess.getPassStationCount() + 1 : 1);
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
@@ -249,7 +249,7 @@ public class BarcodeUtils {
      */
     public static String generatorCartonCode(Long materialId, Long processId, String materialCode, Long workOrderId, String categoryCode) throws Exception {
         BaseBarcodeRule barcodeRule = getBarcodeRule(materialId, processId);
-        BaseLabelCategory labelCategory = barcodeUtils.baseFeignApi.findLabelCategoryDetail(barcodeRule.getBarcodeRuleCategoryId()).getData();
+        BaseLabelCategory labelCategory = barcodeUtils.baseFeignApi.findLabelCategoryDetail(barcodeRule.getLabelCategoryId()).getData();
         if(!labelCategory.getLabelCategoryCode().equals(categoryCode)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012021);
         }

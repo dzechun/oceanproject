@@ -66,10 +66,10 @@ public class BaseBarcodeRule extends ValidGroup implements Serializable {
     /**
      * 条码规则类别ID
      */
-    @ApiModelProperty(name="barcodeRuleCategoryId",value = "条码规则类别ID")
+    @ApiModelProperty(name="labelCategoryId",value = "条码规则类别ID")
     @Column(name = "barcode_rule_category_id")
     @NotNull(message = "条码规则类别ID不能为空")
-    private Long barcodeRuleCategoryId;
+    private Long labelCategoryId;
 
     /**
      * 条码规则
