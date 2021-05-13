@@ -6,7 +6,7 @@
     <result column="barcode_rule_code" jdbcType="VARCHAR" property="barcodeRuleCode" />
     <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleName" />
     <result column="barcode_rule_desc" jdbcType="VARCHAR" property="barcodeRuleDesc" />
-    <result column="barcode_rule_category_id" jdbcType="BIGINT" property="barcodeRuleCategoryId" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -23,14 +23,14 @@
 
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto">
-    <result column="barcode_rule_category_name" jdbcType="VARCHAR" property="barcodeRuleCategoryName" />
+    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule" resultMap="BaseResultMapDto">
-    select sbr.barcode_rule_id,sbr.barcode_rule_code,sbr.barcode_rule_name,sbr.barcode_rule_desc,sbr.barcode_rule_category_id,blc.label_category_name as barcode_rule_category_name,
+    select sbr.barcode_rule_id,sbr.barcode_rule_code,sbr.barcode_rule_name,sbr.barcode_rule_desc,sbr.barcode_rule_category_id as label_category_id,blc.label_category_name,
     sbr.barcode_rule, sbr.org_id, sbr.remark,sbr.status,sbr.create_user_id, u.user_name as create_user_name,sbr.create_time,sbr.modified_user_id,s.user_name as modified_user_name,sbr.modified_time,
     sbr.is_delete
     from fantech_imes_v2.base_barcode_rule sbr

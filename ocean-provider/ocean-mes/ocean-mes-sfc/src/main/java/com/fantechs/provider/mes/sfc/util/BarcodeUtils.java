@@ -249,7 +249,7 @@ public class BarcodeUtils {
      */
     public static String generatorCartonCode(Long materialId, Long processId, String materialCode, Long workOrderId, String categoryCode) throws Exception {
         BaseBarcodeRule barcodeRule = getBarcodeRule(materialId, processId);
-        BaseLabelCategory labelCategory = barcodeUtils.baseFeignApi.findLabelCategoryDetail(barcodeRule.getBarcodeRuleCategoryId()).getData();
+        BaseLabelCategory labelCategory = barcodeUtils.baseFeignApi.findLabelCategoryDetail(barcodeRule.getLabelCategoryId()).getData();
         if(!labelCategory.getLabelCategoryCode().equals(categoryCode)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012021);
         }

@@ -17,9 +17,9 @@ public class BaseBarcodeRuleDto extends BaseBarcodeRule implements Serializable 
      * 条码规则类别名称
      */
     @Transient
-    @ApiModelProperty(name = "barcodeRuleCategoryName",value = "条码规则类别名称")
+    @ApiModelProperty(name = "labelCategoryName",value = "条码规则类别名称")
     @Excel(name = "条码规则类别", height = 20, width = 30,orderNum="4")
-    private String barcodeRuleCategoryName;
+    private String labelCategoryName;
 
     /**
      * 创建用户名称
