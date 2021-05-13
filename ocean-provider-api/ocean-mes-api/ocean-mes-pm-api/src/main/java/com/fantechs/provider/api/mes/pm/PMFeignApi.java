@@ -32,25 +32,25 @@ import java.util.List;
 public interface PMFeignApi {
 
     @ApiOperation("工单列表")
-    @PostMapping("//mesPmWorkOrder/findList")
+    @PostMapping("/mesPmWorkOrder/findList")
     ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     @ApiOperation("修改工单")
-    @PostMapping("/smtWorkOrder/update")
+    @PostMapping("/mesPmWorkOrder/update")
     ResponseEntity updateSmtWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder);
 
     @ApiOperation("更新工单状态")
-    @PostMapping("/smtWorkOrder/updateStatus")
+    @PostMapping("/mesPmWorkOrder/updateStatus")
     ResponseEntity updateStatus(
             @ApiParam(value = "工单ID", required = true) @RequestParam Long workOrderID,
             @ApiParam(value = "工单状态", required = true) @RequestParam Integer status);
 
     @ApiOperation(value = "新增工单", notes = "新增工单")
-    @PostMapping("/smtWorkOrder/add")
+    @PostMapping("/mesPmWorkOrder/add")
     ResponseEntity addWorkOrder(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId、proLineId", required = true) @RequestBody MesPmWorkOrder mesPmWorkOrder);
 
     @ApiOperation(value = "新增及更新工单及BOM",notes = "新增及更新工单及BOM")
-    @PostMapping("/smtWorkOrder/save")
+    @PostMapping("/mesPmWorkOrder/save")
     ResponseEntity saveWorkOrder(@ApiParam(value = "保存工单及工单BOM",required = true)@RequestBody SaveWorkOrderAndBom saveWorkOrderAndBom);
 
     @ApiOperation(value = "产生工单流转卡", notes = "产生工单流转卡")
@@ -58,7 +58,7 @@ public interface PMFeignApi {
     ResponseEntity generateWorkOrderCardCollocation(@ApiParam(value = "必传：", required = true) @RequestBody @Validated SmtWorkOrderCardCollocation smtWorkOrderCardCollocation);
 
     @ApiOperation("工单记录完工数量")
-    @GetMapping("/smtWorkOrder/finishedProduct")
+    @GetMapping("/mesPmWorkOrder/finishedProduct")
     ResponseEntity<Integer> finishedProduct(
             @ApiParam(value = "工单ID") @RequestParam Long workOrderId,
             @ApiParam(value = "完工数量") @RequestParam Double count
