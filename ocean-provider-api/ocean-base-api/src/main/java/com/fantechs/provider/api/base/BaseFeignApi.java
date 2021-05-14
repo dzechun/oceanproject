@@ -169,7 +169,7 @@ public interface BaseFeignApi {
 
     @PostMapping(value = "/baseMaterial/detail")
     @ApiOperation(value = "获取物料详情信息", notes = "获取物料详情信息")
-    ResponseEntity<BaseMaterial> materialDetail(@ApiParam(value = "物料ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
+    ResponseEntity<BaseMaterial> materialDetail(@ApiParam(value = "物料ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long materialId);
 
     @ApiOperation("批量更新物料信息")
     @PostMapping("/baseMaterial/batchUpdate")

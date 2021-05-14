@@ -54,7 +54,7 @@ public class MesSfcBarcodeOperationController {
 
     @ApiOperation("PDA包箱作业-条码提交")
     @PostMapping("/cartonOperation")
-    public ResponseEntity<PdaCartonRecordDto> cartonOperation(@ApiParam(value = "包箱扫条码", required = true) @RequestBody PdaCartonDto vo) throws Exception {
+    public ResponseEntity cartonOperation(@ApiParam(value = "包箱扫条码", required = true) @RequestBody PdaCartonDto vo) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -80,7 +80,7 @@ public class MesSfcBarcodeOperationController {
 
     @ApiOperation("PDA包箱作业-附件码提交")
     @PostMapping("/cartonAnnexOperation")
-    public ResponseEntity<PdaCartonRecordDto> cartonAnnexOperation(@ApiParam(value = "包箱扫附件条码", required = true) @RequestBody PdaCartonAnnexDto vo) throws Exception {
+    public ResponseEntity cartonAnnexOperation(@ApiParam(value = "包箱扫附件条码", required = true) @RequestBody PdaCartonAnnexDto vo) throws Exception {
         // 构造返回值
         return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.cartonAnnexOperation(vo));
     }

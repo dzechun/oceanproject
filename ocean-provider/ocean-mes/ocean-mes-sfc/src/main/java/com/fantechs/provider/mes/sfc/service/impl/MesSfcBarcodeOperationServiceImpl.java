@@ -218,7 +218,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .materialCode(mesSfcBarcodeProcess.getMaterialCode())
                 .materialName(mesSfcBarcodeProcess.getMaterialName())
                 .materialVer(mesSfcBarcodeProcess.getMaterialVer())
-                .workOrderPartBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+//                .workOrderPartBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
                 .partBarcode(vo.getBarAnnexCode())
                 .operatorUserId(user.getUserId())
                 .operatorTime(new Date())
@@ -284,7 +284,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         Example example = new Example(MesSfcKeyPartRelevance.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("workOrderBarcodeId", barcodeProcessList.stream().map(MesSfcBarcodeProcess::getWorkOrderBarcodeId).collect(Collectors.toList()));
-        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(criteria);
+        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(example);
         List<MesSfcBarcodeProcessDto> dtos = new ArrayList<>();
         for (MesSfcBarcodeProcess mesSfcBarcodeProcess1 : barcodeProcessList) {
             MesSfcBarcodeProcessDto dto = new MesSfcBarcodeProcessDto();
@@ -391,7 +391,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
 
         // 6、是否扫附件码，若不则检查ok直接过站
-        if (!vo.getAnnex()) {
+        if (vo.getAnnex()) {
             // 6.1、判断是否包箱已满，关箱
             List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder().cartonCode(vo.getCartonCode()).build());
             if (mesSfcBarcodeProcessList.size() >= vo.getCartonNum().intValue()) {
