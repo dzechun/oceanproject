@@ -298,6 +298,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     }
                 }
             }
+        }else {
+            throw new BizErrorException("拣货作业单已存在");
         }
         return 1;
     }
