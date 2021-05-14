@@ -167,8 +167,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         // 栈板已绑定的包装数量
         int palletCartons = 0;
         for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
-            if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId() == mesSfcProductPalletDto.getWorkOrderId())
-            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId() == mesSfcProductPalletDto.getMaterialId())) {
+            if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId().equals(mesSfcProductPalletDto.getWorkOrderId()))
+            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId().equals(mesSfcProductPalletDto.getMaterialId()))) {
                 palletCode = mesSfcProductPalletDto.getPalletCode();
                 nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
                 isPallet = false;
@@ -196,7 +196,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             // 获取条码规则配置集合
             List<BaseBarcodeRuleSpec> barcodeRuleSpecList = new LinkedList<>();
             for (BaseMaterialPackage baseMaterialPackage : basePackageSpecificationDtoList.get(0).getBaseMaterialPackages()) {
-                if (requestPalletWorkScanDto.getProcessId() == baseMaterialPackage.getProcessId()) {
+                if (requestPalletWorkScanDto.getProcessId().equals(baseMaterialPackage.getProcessId())) {
                     BasePackageSpecification basePackageSpecification = baseFeignApi.BasePackageSpecificationDetail(baseMaterialPackage.getPackageSpecificationId()).getData();
                     if (StringUtils.isEmpty(basePackageSpecification)) {
                         throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该产品条码没有设置在该工序的包装规格");
