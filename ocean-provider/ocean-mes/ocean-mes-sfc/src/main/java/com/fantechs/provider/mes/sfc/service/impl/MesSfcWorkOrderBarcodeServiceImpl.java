@@ -241,10 +241,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(record.getWorkOrderId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"绑定单据唯一码不能为空");
         }
-        if(record.getBarcodeType()==(byte)4){
-            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
-            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
-        }
+//        if(record.getBarcodeType()==(byte)4){
+//            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
+//            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
+//        }
         //判断条码产生数量不能大于工单数量
         Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
         if(count+ record.getQty()>record.getWorkOrderQty().doubleValue()){
