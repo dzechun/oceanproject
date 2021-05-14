@@ -48,8 +48,8 @@
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,su.user_name as create_user_name,sus.user_name as modified_user_name, bo.organization_name
     FROM base_label_category blc
-    LEFT JOIN ocean.sys_user su ON blc.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON blc.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user su ON blc.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON blc.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON blc.org_id = bo.organization_id
     <where>
       <if test="labelCategoryCode!=null and labelCategoryCode!='' and codeQueryMark == 1">
