@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtInAndOutRuleDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRuleDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_in_and_out_rule_det_id" jdbcType="BIGINT" property="htInAndOutRuleDetId" />
+    <result column="in_and_out_rule_det_id" jdbcType="BIGINT" property="inAndOutRuleDetId" />
+    <result column="in_and_out_rule_id" jdbcType="BIGINT" property="inAndOutRuleId" />
+    <result column="in_and_out_rule_type_id" jdbcType="BIGINT" property="inAndOutRuleTypeId" />
+    <result column="priority" jdbcType="INTEGER" property="priority" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="in_and_out_rule_type_name" jdbcType="VARCHAR" property="inAndOutRuleTypeName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhiaord.ht_in_and_out_rule_det_id,
+    bhiaord.in_and_out_rule_det_id,
+    bhiaord.in_and_out_rule_id,
+    bhiaord.in_and_out_rule_type_id,
+    bhiaord.priority,
+    bhiaord.`status`,
+    bhiaord.remark,
+    bhiaord.org_id,
+    bhiaord.create_user_id,
+    bhiaord.create_time,
+    bhiaord.modified_user_id,
+    bhiaord.modified_time,
+    bhiaord.is_delete,
+    bhiaord.option1,
+    bhiaord.option2,
+    bhiaord.option3
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    SELECT<include refid="Base_Column_List"/>,
+    biaort.in_and_out_rule_type_name,
+    su.user_name as create_user_name,
+    sus.user_name as modified_user_name,
+    bo.organization_name FROM fantech_imes_v2.base_ht_in_and_out_rule_det bhiaord
+    LEFT JOIN fantech_imes_v2.base_in_and_out_rule_type biaort ON bhiaord.in_and_out_rule_type_id= biaort.in_and_out_rule_type_id
+    LEFT JOIN ocean_v2.sys_user su ON bhiaord.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON bhiaord.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhiaord.org_id = bo.organization_id
+    <where>
+      <if test="inAndOutRuleId!=null">
+        and bhiaord.in_and_out_rule_id = #{inAndOutRuleId}
+      </if>
+      <if test="status!=null">
+        and bhiaord.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhiaord.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+  </select>
+</mapper>
