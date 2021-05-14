@@ -173,10 +173,10 @@ public class MesSfcKeyPartRelevance extends ValidGroup implements Serializable {
     /**
      * 部件条码ID
      */
-    @ApiModelProperty(name="workOrderPartBarcodeId",value = "部件条码ID")
-    @Excel(name = "部件条码ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_part_barcode_id")
-    private Long workOrderPartBarcodeId;
+//    @ApiModelProperty(name="workOrderPartBarcodeId",value = "部件条码ID")
+//    @Excel(name = "部件条码ID", height = 20, width = 30,orderNum="")
+//    @Column(name = "work_order_part_barcode_id")
+//    private Long workOrderPartBarcodeId;
 
     /**
      * 部件条码

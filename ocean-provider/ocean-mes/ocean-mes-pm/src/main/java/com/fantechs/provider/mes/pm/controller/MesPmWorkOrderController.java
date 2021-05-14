@@ -111,5 +111,10 @@ public class MesPmWorkOrderController {
         throw new BizErrorException(e);
         }
     }
+
+    @PostMapping("/updateInventory")
+    public ResponseEntity updateInventory(@RequestBody MesPmWorkOrder mesPmWorkOrder){
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.updateInventoryQty(mesPmWorkOrder));
+    }
     /*原内容*/
 }

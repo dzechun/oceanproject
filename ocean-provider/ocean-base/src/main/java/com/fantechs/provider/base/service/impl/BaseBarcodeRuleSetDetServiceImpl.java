@@ -67,7 +67,7 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
                                 List<BaseBarcodeRuleDto> baseBarcodeRuleDtoList = baseBarcodeRuleMapper.findList(searchBaseBarcodeRule);
                                 if (StringUtils.isEmpty(baseBarcodeRuleDtoList))
                                         throw new BizErrorException("条码规则不存在");
-                                if (baseBarcodeRuleDtos.get(0).getBarcodeRuleCategoryId() == baseBarcodeRuleDtoList.get(0).getBarcodeRuleCategoryId())
+                                if (baseBarcodeRuleDtos.get(0).getLabelCategoryId() == baseBarcodeRuleDtoList.get(0).getLabelCategoryId())
                                         throw new BizErrorException("重复的条码规则类型");
                         }
 

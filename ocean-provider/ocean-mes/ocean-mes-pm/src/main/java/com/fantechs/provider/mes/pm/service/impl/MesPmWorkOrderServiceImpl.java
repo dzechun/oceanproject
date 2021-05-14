@@ -67,6 +67,12 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         return 1;
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int updateInventoryQty(MesPmWorkOrder mesPmWorkOrder){
+       return mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
+    }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -36,10 +36,12 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getBarCode())){
             criteria.andEqualTo("barcode",searchMesSfcBarcodeProcess.getBarCode());
-        }else if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getPalletCode())){
+        }else if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getCartonCode())){
             criteria.andEqualTo("cartonCode",searchMesSfcBarcodeProcess.getCartonCode());
         }else if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getPalletCode())){
             criteria.andEqualTo("palletCode",searchMesSfcBarcodeProcess.getPalletCode());
+        }else if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getWorkOrderId())){
+            criteria.andEqualTo("workOrderId",searchMesSfcBarcodeProcess.getWorkOrderId());
         }
        List<MesSfcBarcodeProcess> list = mesSfcBarcodeProcessMapper.selectByExample(example);
         return list;

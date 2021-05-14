@@ -23,7 +23,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_ver" jdbcType="VARCHAR" property="materialVer" />
-    <result column="work_order_part_barcode_id" jdbcType="BIGINT" property="workOrderPartBarcodeId" />
+<!--    <result column="work_order_part_barcode_id" jdbcType="BIGINT" property="workOrderPartBarcodeId" />-->
     <result column="part_barcode" jdbcType="VARCHAR" property="partBarcode" />
     <result column="part_customer_barcode" jdbcType="VARCHAR" property="partCustomerBarcode" />
     <result column="m_a_c_barcode" jdbcType="VARCHAR" property="mACBarcode" />
@@ -63,7 +63,7 @@
     mskpr.material_code,
     mskpr.material_name,
     mskpr.material_ver,
-    mskpr.work_order_part_barcode_id,
+--     mskpr.work_order_part_barcode_id,
     mskpr.part_barcode,
     mskpr.part_customer_barcode,
     mskpr.m_a_c_barcode,
