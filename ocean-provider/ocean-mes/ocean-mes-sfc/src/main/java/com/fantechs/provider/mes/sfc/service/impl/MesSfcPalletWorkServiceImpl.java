@@ -273,14 +273,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                     .barcode(mesSfcWorkOrderBarcode.getBarcode())
                     .build());
-            mesSfcBarcodeProcess.setPalletCode(palletCode);
-            mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
+            MesSfcBarcodeProcess updateMesSfcBarcodeProcess = new MesSfcBarcodeProcess();
+            updateMesSfcBarcodeProcess.setBarcodeProcessId(mesSfcBarcodeProcess.getBarcodeProcessId());
+            updateMesSfcBarcodeProcess.setPalletCode(palletCode);
+            mesSfcBarcodeProcessService.update(updateMesSfcBarcodeProcess);
             // 获取条码对应的过站记录信息
             MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = mesSfcBarcodeProcessRecordService.selectOne(MesSfcBarcodeProcessRecord.builder()
                     .barcode(mesSfcWorkOrderBarcode.getBarcode())
                     .build());
-            mesSfcBarcodeProcessRecord.setPalletCode(palletCode);
-            mesSfcBarcodeProcessRecordService.update(mesSfcBarcodeProcessRecord);
+            MesSfcBarcodeProcessRecord updateMesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
+            updateMesSfcBarcodeProcessRecord.setBarcodeProcessRecordId(mesSfcBarcodeProcessRecord.getBarcodeProcessRecordId());
+            updateMesSfcBarcodeProcessRecord.setPalletCode(palletCode);
+            mesSfcBarcodeProcessRecordService.update(updateMesSfcBarcodeProcessRecord);
         }
 
         // 当前工单已关闭栈板
