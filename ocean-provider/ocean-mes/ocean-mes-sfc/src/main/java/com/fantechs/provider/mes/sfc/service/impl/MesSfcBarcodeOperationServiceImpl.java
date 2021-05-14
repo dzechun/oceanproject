@@ -126,7 +126,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        return barCodeOperation(vo, user);
+        return barCodeOperation(vo, user, false);
     }
 
     @Override
@@ -157,12 +157,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         ResponseEntity<List<MesPmWorkOrderProcessReWoDto>> pmWorkOrderProcessReWoResponseEntity = pmFeignApi.findPmWorkOrderProcessReWoList(searchMesPmWorkOrderProcessReWo);
         List<MesPmWorkOrderProcessReWoDto> pmWorkOrderProcessReWoDtoList = pmWorkOrderProcessReWoResponseEntity.getData();
         Byte barcodeType = null;
-        BigDecimal usageQty = null;
+        BigDecimal usageQty = BigDecimal.ZERO;
         for (MesPmWorkOrderProcessReWoDto pmWorkOrderProcessReWoDto : pmWorkOrderProcessReWoDtoList) {
             if (pmWorkOrderProcessReWoDto.getProcessId().equals(vo.getProcessId())) {
                 List<MesPmWorkOrderMaterialRePDto> pmWorkOrderMaterialRePDtoList = pmWorkOrderProcessReWoDto.getList();
                 MesPmWorkOrderMaterialRePDto pmWorkOrderMaterialRePDto = pmWorkOrderMaterialRePDtoList.get(0);
-                if (pmWorkOrderMaterialRePDto.getScanType().equals(2)) {
+                if (pmWorkOrderMaterialRePDto.getScanType() == 2) {
                     usageQty = pmWorkOrderMaterialRePDto.getUsageQty();
 //                        materialTypeCode = ;
                     break;
@@ -183,19 +183,19 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             // 提示找不到对应的附件码
             throw new BizErrorException(ErrorCodeEnum.PDA40012031);
         }
-        MesSfcWorkOrderBarcodeDto sfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
+//        MesSfcWorkOrderBarcodeDto sfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
         // 判断附件码数目是否满足
         Example example1 = new Example(MesSfcKeyPartRelevance.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("workOrderBarcodeId", vo.getWorkOrderId());
-        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(example1);
-        if (usageQty.compareTo(new BigDecimal(sfcKeyPartRelevanceList.size())) != 1) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012029);
-        }
         MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(vo.getBarCode())
                 .processId(vo.getProcessId())
                 .build());
+        criteria1.andEqualTo("workOrderBarcodeId", mesSfcBarcodeProcess.getWorkOrderBarcodeId());
+        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(example1);
+        if (usageQty.compareTo(BigDecimal.valueOf(sfcKeyPartRelevanceList.size())) != 1) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012029);
+        }
         BaseProLine proLine = baseFeignApi.selectProLinesDetail(vo.getProLineId()).getData();
         BaseProcess baseProcess = baseFeignApi.processDetail(vo.getProcessId()).getData();
         BaseStation baseStation = baseFeignApi.findStationDetail(vo.getStationId()).getData();
@@ -204,7 +204,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .barcodeCode(vo.getBarCode())
                 .workOrderId(vo.getWorkOrderId())
                 .workOrderCode(mesPmWorkOrderByBarCode.getWorkOrderCode())
-                .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+                .workOrderBarcodeId(mesSfcBarcodeProcess.getWorkOrderBarcodeId())
                 .proLineId(vo.getProLineId())
                 .proCode(proLine.getProCode())
                 .proName(proLine.getProName())
@@ -228,7 +228,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .isDelete((byte) 1)
                 .build());
         // 走条码过站流程
-        return barCodeOperation(vo, user);
+        return barCodeOperation(vo, user, true);
     }
 
     @Override
@@ -238,9 +238,15 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectByKey(productCartonId);
-        if (mesSfcProductCarton.getNowPackageSpecQty().compareTo(cartonDescNum) < 0) {
+        List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
+                .cartonCode(mesSfcProductCarton.getCartonCode())
+                .workOrderId(mesSfcProductCarton.getWorkOrderId())
+                .build());
+        if (cartonDescNum.compareTo(new BigDecimal(mesSfcBarcodeProcessList.size())) == -1) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012015);
-        } else if (mesSfcProductCarton.getNowPackageSpecQty().compareTo(cartonDescNum) == 0) {
+        }
+        int compare = new BigDecimal(mesSfcBarcodeProcessList.size()).compareTo(cartonDescNum);
+        if (compare == 0) {
             // 包箱已满，关箱
             mesSfcProductCarton.setNowPackageSpecQty(cartonDescNum);
             mesSfcProductCarton.setCloseStatus((byte) 1);
@@ -323,7 +329,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
      * @return
      * @throws Exception
      */
-    private int barCodeOperation(PdaCartonDto vo, SysUser user) throws Exception {
+    private int barCodeOperation(PdaCartonDto vo, SysUser user, Boolean source) throws Exception {
 
         // 1、检查条码、工单状态、排程
         BarcodeUtils.checkSN(CheckProductionDto.builder()
@@ -416,6 +422,33 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .passCodeType((byte) 1)
                     .build();
 
+            // 保存条码包箱关系
+            mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
+                    .productCartonId(mesSfcProductCarton.getProductCartonId())
+                    .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+                    .orgId(user.getOrganizationId())
+                    .createTime(new Date())
+                    .createUserId(user.getUserId())
+                    .isDelete((byte) 1)
+                    .build());
+            // 更新下一工序，增加工序记录
+            BarcodeUtils.updateProcess(updateProcessDto);
+        }
+
+        if(source && vo.getAnnex()){
+            UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
+                    .badnessPhenotypeCode("N/A")
+                    .barCode(vo.getBarCode())
+                    .equipmentId("N/A")
+                    .operatorUserId(user.getUserId())
+                    .proLineId(mesPmWorkOrderByBarCode.getProLineId())
+                    .routeId(mesPmWorkOrderByBarCode.getRouteId())
+                    .nowProcessId(vo.getProcessId())
+                    .nowStationId(vo.getStationId())
+                    .workOrderId(mesPmWorkOrderByBarCode.getWorkOrderId())
+                    .passCode(vo.getCartonCode())
+                    .passCodeType((byte) 1)
+                    .build();
 
             // 保存条码包箱关系
             mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
@@ -449,12 +482,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             mesSfcProductCarton.setModifiedUserId(user.getUserId());
             mesSfcProductCarton.setModifiedTime(new Date());
             return mesSfcProductCartonService.update(mesSfcProductCarton);
-        }
-
-        if (vo.getAnnex()) {
-            mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
-            mesSfcBarcodeProcess.setStationId(vo.getStationId());
-            return mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         }
         return 1;
     }

@@ -351,9 +351,9 @@ public class BarcodeUtils {
             if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, mesSfcBarcodeProcess.getBarcode(), mesSfcBarcodeProcess.getNextProcessCode());
             }
-            if (!stationId.equals(mesSfcBarcodeProcess.getStationId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012013, mesSfcBarcodeProcess.getProcessCode(), mesSfcBarcodeProcess.getStationId(), stationId);
-            }
+//            if (!stationId.equals(mesSfcBarcodeProcess.getStationId())) {
+//                throw new BizErrorException(ErrorCodeEnum.PDA40012013, mesSfcBarcodeProcess.getProcessCode(), mesSfcBarcodeProcess.getStationId(), stationId);
+//            }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
         }

@@ -123,7 +123,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 2) {
                 workOrderBarcodeId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId();
                 // 客户条码
-            } else if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 3) {
+            } else if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 4) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("partBarcode", requestPalletWorkScanDto.getBarcode());
                 List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
@@ -202,6 +202,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             // 获取该条码规则对应的最大条码数
             String maxCode = null;
+            String lastBarCode = null;
             String barcodeRule = "";
             // 获取条码规则配置集合
             List<BaseBarcodeRuleSpec> barcodeRuleSpecList = new LinkedList<>();
@@ -217,7 +218,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     boolean hasKey = redisUtil.hasKey(baseBarcodeRule.getBarcodeRule());
                     if(hasKey){
                         // 从redis获取上次生成条码
-                        maxCode = redisUtil.get(baseBarcodeRule.getBarcodeRule()).toString();
+                        lastBarCode = redisUtil.get(baseBarcodeRule.getBarcodeRule()).toString();
                     }
 
                     SearchBaseBarcodeRuleSpec baseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
@@ -248,6 +249,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     baseBarcodeRuleSpecMap.put("[C]", baseMaterialSupplierDtoList.get(0).getMaterialSupplierCode());
                 }
             }
+            //获取最大流水号
+            maxCode = baseFeignApi.generateMaxCode(barcodeRuleSpecList, lastBarCode).getData();
             palletCode = baseFeignApi.newGenerateCode(barcodeRuleSpecList, maxCode, baseBarcodeRuleSpecMap, workOrderId.toString()).getData();
             redisUtil.set(barcodeRule, palletCode);
             if (StringUtils.isEmpty(palletCode)) {
@@ -388,7 +391,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        Example example = new Example(MesSfcProductPalletDto.class);
+        Example example = new Example(MesSfcProductPallet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("productPalletId", palletIdList);
         criteria.andEqualTo("closeStatus", 0);
