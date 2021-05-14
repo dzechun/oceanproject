@@ -143,7 +143,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         Example example = new Example(MesSfcKeyPartRelevance.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("stationCode", vo.getBarAnnexCode());
-        int countByExample = mesSfcKeyPartRelevanceService.selectCountByExample(criteria);
+        int countByExample = mesSfcKeyPartRelevanceService.selectCountByExample(example);
         if (countByExample > 0) {
             // 提示该附件码已绑定
             throw new BizErrorException(ErrorCodeEnum.PDA40012028);
@@ -169,10 +169,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 }
             }
         }
-        if (barcodeType == null) {
-            // 提示该条码对应条码类别找不到
-            throw new BizErrorException(ErrorCodeEnum.PDA40012030);
-        }
+//        if (barcodeType == null) {
+//            // 提示该条码对应条码类别找不到
+//            throw new BizErrorException(ErrorCodeEnum.PDA40012030);
+//        }
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
                         .barcode(vo.getBarAnnexCode())
@@ -188,7 +188,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         Example example1 = new Example(MesSfcKeyPartRelevance.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("workOrderBarcodeId", vo.getWorkOrderId());
-        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(criteria1);
+        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(example1);
         if (usageQty.compareTo(new BigDecimal(sfcKeyPartRelevanceList.size())) != 1) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012029);
         }
@@ -233,10 +233,26 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
     @Override
     public int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum) {
-        return mesSfcProductCartonService.update(MesSfcProductCarton.builder()
-                .productCartonId(productCartonId)
-                .nowPackageSpecQty(cartonDescNum)
-                .build());
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectByKey(productCartonId);
+        if (mesSfcProductCarton.getNowPackageSpecQty().compareTo(cartonDescNum) < 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012015);
+        } else if (mesSfcProductCarton.getNowPackageSpecQty().compareTo(cartonDescNum) == 0) {
+            // 包箱已满，关箱
+            mesSfcProductCarton.setNowPackageSpecQty(cartonDescNum);
+            mesSfcProductCarton.setCloseStatus((byte) 1);
+            mesSfcProductCarton.setCloseCartonUserId(user.getUserId());
+            mesSfcProductCarton.setCloseCartonTime(new Date());
+            mesSfcProductCarton.setModifiedUserId(user.getUserId());
+            mesSfcProductCarton.setModifiedTime(new Date());
+            return mesSfcProductCartonService.update(mesSfcProductCarton);
+        } else {
+            mesSfcProductCarton.setNowPackageSpecQty(cartonDescNum);
+            return mesSfcProductCartonService.update(mesSfcProductCarton);
+        }
     }
 
     @Override
@@ -267,19 +283,21 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         BaseMaterial baseMaterial = materialResponseEntity.getData();
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder().workOrderId(mesPmWorkOrderByBarCode.getWorkOrderId()).build());
         // 已扫包箱
-        Map<String, List<MesSfcBarcodeProcess>> barcodeProcessGroup = mesSfcBarcodeProcessList.stream().filter(item->StringUtils.isNotEmpty(item.getCartonCode())).collect(Collectors.groupingBy(MesSfcBarcodeProcess::getCartonCode));
+        Map<String, List<MesSfcBarcodeProcess>> barcodeProcessGroup = mesSfcBarcodeProcessList.stream().filter(item -> StringUtils.isNotEmpty(item.getCartonCode())).collect(Collectors.groupingBy(MesSfcBarcodeProcess::getCartonCode));
         // 扫描数量
-        List<MesSfcBarcodeProcess> barcodeProcessList = barcodeProcessGroup.get(mesSfcProductCarton.getCartonCode());
-        Example example = new Example(MesSfcKeyPartRelevance.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andIn("workOrderBarcodeId", barcodeProcessList.stream().map(MesSfcBarcodeProcess::getWorkOrderBarcodeId).collect(Collectors.toList()));
-        List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(example);
         List<MesSfcBarcodeProcessDto> dtos = new ArrayList<>();
-        for (MesSfcBarcodeProcess mesSfcBarcodeProcess1 : barcodeProcessList) {
-            MesSfcBarcodeProcessDto dto = new MesSfcBarcodeProcessDto();
-            BeanUtils.copyProperties(mesSfcBarcodeProcess1, dto);
-            dto.setSfcKeyPartRelevanceList(sfcKeyPartRelevanceList.stream().filter(item -> item.getWorkOrderBarcodeId().equals(dto.getWorkOrderBarcodeId())).collect(Collectors.toList()));
-            dtos.add(dto);
+        List<MesSfcBarcodeProcess> barcodeProcessList = barcodeProcessGroup.get(mesSfcProductCarton.getCartonCode());
+        if (barcodeProcessList != null && barcodeProcessList.size() > 0) {
+            Example example = new Example(MesSfcKeyPartRelevance.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andIn("workOrderBarcodeId", barcodeProcessList.stream().map(MesSfcBarcodeProcess::getWorkOrderBarcodeId).collect(Collectors.toList()));
+            List<MesSfcKeyPartRelevance> sfcKeyPartRelevanceList = mesSfcKeyPartRelevanceService.selectByExample(example);
+            for (MesSfcBarcodeProcess mesSfcBarcodeProcess1 : barcodeProcessList) {
+                MesSfcBarcodeProcessDto dto = new MesSfcBarcodeProcessDto();
+                BeanUtils.copyProperties(mesSfcBarcodeProcess1, dto);
+                dto.setSfcKeyPartRelevanceList(sfcKeyPartRelevanceList.stream().filter(item -> item.getWorkOrderBarcodeId().equals(dto.getWorkOrderBarcodeId())).collect(Collectors.toList()));
+                dtos.add(dto);
+            }
         }
         return PdaCartonRecordDto.builder()
                 .workOrderId(mesPmWorkOrderByBarCode.getWorkOrderId())
@@ -292,7 +310,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .materialCode(baseMaterial.getMaterialCode())
                 .materialDesc(baseMaterial.getMaterialDesc())
                 .packedNum(barcodeProcessGroup.size())
-                .scansNum(barcodeProcessList.size())
+                .scansNum(barcodeProcessList != null ? barcodeProcessList.size() : 0)
                 .barcodeProcessList(dtos)
                 .build();
     }
@@ -306,6 +324,15 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
      * @throws Exception
      */
     private int barCodeOperation(PdaCartonDto vo, SysUser user) throws Exception {
+
+        // 1、检查条码、工单状态、排程
+        BarcodeUtils.checkSN(CheckProductionDto.builder()
+                .barCode(vo.getBarCode())
+                .stationId(vo.getStationId())
+                .processId(vo.getProcessId())
+                .checkOrNot(vo.getCheckOrNot())
+                .build());
+
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
                         .barcode(vo.getBarCode())
@@ -314,13 +341,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         ResponseEntity<MesPmWorkOrder> pmWorkOrderResponseEntityByBarCode = pmFeignApi.workOrderDetail(sfcWorkOrderBarcodeDto.getWorkOrderId());
         // 条码所属工单
         MesPmWorkOrder mesPmWorkOrderByBarCode = pmWorkOrderResponseEntityByBarCode.getData();
-
-        // 1、检查条码、工单状态、排程
-        BarcodeUtils.checkSN(CheckProductionDto.builder()
-                .barCode(vo.getBarCode())
-                .stationId(vo.getStationId())
-                .checkOrNot(vo.getCheckOrNot())
-                .build());
 
         // 箱码对应状态表
         MesSfcProductCarton mesSfcProductCarton = null;
@@ -358,10 +378,11 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), vo.getProcessId());
             vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
             // 添加包箱表数据
-            mesSfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), vo.getStationId(), sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getCartonNum(), sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId(), mesPmWorkOrderByBarCode.getMaterialId());
+            mesSfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), vo.getStationId(), sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getCartonNum(), mesPmWorkOrderByBarCode.getMaterialId());
             vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
         } else {
             mesSfcProductCarton = mesSfcProductCartonService.selectByKey(vo.getProductCartonId());
+
             // 4、包箱已关闭，生成箱码并添加新的箱码状态数据
             if (mesSfcProductCarton.getCloseStatus().equals(1)) {
                 String cartonCode = BarcodeUtils.generatorCartonCode(mesPmWorkOrderByBarCode.getMaterialId(),
@@ -374,7 +395,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), vo.getProcessId());
                 vo.setCartonNum(packageSpecificationDto.getPackageSpecificationQuantity());
                 // 添加包箱表数据
-                mesSfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), vo.getStationId(), sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getCartonNum(), sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId(), mesPmWorkOrderByBarCode.getMaterialId());
+                mesSfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), vo.getStationId(), sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getCartonNum(), mesPmWorkOrderByBarCode.getMaterialId());
                 vo.setProductCartonId(mesSfcProductCarton.getProductCartonId());
             }
         }
@@ -394,6 +415,17 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .passCode(vo.getCartonCode())
                     .passCodeType((byte) 1)
                     .build();
+
+
+            // 保存条码包箱关系
+            mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
+                    .productCartonId(mesSfcProductCarton.getProductCartonId())
+                    .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+                    .orgId(user.getOrganizationId())
+                    .createTime(new Date())
+                    .createUserId(user.getUserId())
+                    .isDelete((byte) 1)
+                    .build());
             // 更新下一工序，增加工序记录
             BarcodeUtils.updateProcess(updateProcessDto);
         }
@@ -417,6 +449,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             mesSfcProductCarton.setModifiedUserId(user.getUserId());
             mesSfcProductCarton.setModifiedTime(new Date());
             return mesSfcProductCartonService.update(mesSfcProductCarton);
+        }
+
+        if (vo.getAnnex()) {
+            mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
+            mesSfcBarcodeProcess.setStationId(vo.getStationId());
+            return mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         }
         return 1;
     }
@@ -450,11 +488,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
      * @param stationId
      * @param workOrderId
      * @param cartonNum
-     * @param workOrderBarcodeId
      * @param materialId
      * @return
      */
-    private MesSfcProductCarton saveCarton(String cartonCode, Long userId, Long orgId, Long stationId, Long workOrderId, BigDecimal cartonNum, Long workOrderBarcodeId, Long materialId) {
+    private MesSfcProductCarton saveCarton(String cartonCode, Long userId, Long orgId, Long stationId, Long workOrderId, BigDecimal cartonNum, Long materialId) {
         // 添加包箱表数据
         MesSfcProductCarton sfcProductCarton = MesSfcProductCarton.builder()
                 .cartonCode(cartonCode)
@@ -472,15 +509,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .build();
         int saveRes = mesSfcProductCartonMapper.insertUseGeneratedKeys(sfcProductCarton);
         if (saveRes > 0) {
-            // 保存条码包箱关系
-            mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
-                    .productCartonId(sfcProductCarton.getProductCartonId())
-                    .workOrderBarcodeId(workOrderBarcodeId)
-                    .orgId(orgId)
-                    .createTime(new Date())
-                    .createUserId(userId)
-                    .isDelete((byte) 1)
-                    .build());
             return sfcProductCarton;
         } else {
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
