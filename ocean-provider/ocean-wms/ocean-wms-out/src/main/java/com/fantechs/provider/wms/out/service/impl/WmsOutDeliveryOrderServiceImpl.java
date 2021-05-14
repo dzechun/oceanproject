@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -237,68 +238,70 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Transactional(rollbackFor = Exception.class)
     public int createJobOrder(Long id) {
         Map<String, Object> map = new HashMap<>();
-        map.put("deliveryOrderId",id);
+        map.put("deliveryOrderId", id);
         List<WmsOutDeliveryOrderDto> list = this.findList(map);
+        if (StringUtils.isEmpty(list)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
+        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDto.getWmsOutDeliveryOrderDetList();
+        if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
+            throw new BizErrorException("销售出库单明细为空时无法创建作业单");
+        }
 
         //查询是否创建作业单
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setSourceOrderId(id);
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         //未创建过作业单则新建
-        if(StringUtils.isEmpty(wmsInnerJobOrderDtos)) {
-            if (StringUtils.isNotEmpty(list)) {
-                WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
-                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDto.getWmsOutDeliveryOrderDetList();
-                if (StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)) {
-                    Map<Long, List<WmsOutDeliveryOrderDetDto>> listMap = new HashMap<>();
-                    //根据仓库id分组(一个仓库对应一个作业单)
-                    for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : wmsOutDeliveryOrderDetList) {
-                        if (listMap.containsKey(wmsOutDeliveryOrderDetDto.getWarehouseId())) {
-                            listMap.get(wmsOutDeliveryOrderDetDto.getWarehouseId()).add(wmsOutDeliveryOrderDetDto);
-                        } else {
-                            List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
-                            wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
-                            listMap.put(wmsOutDeliveryOrderDetDto.getWarehouseId(), wmsOutDeliveryOrderDetDtos);
-                        }
-                    }
-
-                    //遍历map
-                    for (List<WmsOutDeliveryOrderDetDto> dtoList : listMap.values()) {
-                        WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-                        wmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
-                        wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrderDto.getMaterialOwnerId());
-                        wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrderDto.getOrderTypeId());
-                        wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
-                        wmsInnerJobOrder.setJobOrderType((byte) 4);
-                        wmsInnerJobOrder.setOrderStatus((byte) 1);
-                        wmsInnerJobOrder.setWarehouseId(dtoList.get(0).getWarehouseId());
-                        //计算总数量
-                        BigDecimal packingSum = dtoList.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);
-                        wmsInnerJobOrder.setPlanQty(packingSum);
-
-                        //作业单明细
-                        List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
-                        for (WmsOutDeliveryOrderDetDto dto : dtoList) {
-                            WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                            wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
-                            wmsInnerJobOrderDet.setInventoryStatusId(dto.getInventoryStatusId());
-                            wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
-                            wmsInnerJobOrderDet.setPackingUnitName(dto.getPackingUnitName());
-                            wmsInnerJobOrderDet.setPlanQty(dto.getPackingQty());
-                            wmsInnerJobOrderDet.setOrderStatus((byte) 1);
-                            wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
-                        }
-                        wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
-
-                        //创建作业单
-                        ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-                        if (responseEntity.getCode() != 0) {
-                            throw new BizErrorException("创建作业单失败");
-                        }
-                    }
+        if (StringUtils.isEmpty(wmsInnerJobOrderDtos)) {
+            Map<Long, List<WmsOutDeliveryOrderDetDto>> listMap = new HashMap<>();
+            //根据仓库id分组(一个仓库对应一个作业单)
+            for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : wmsOutDeliveryOrderDetList) {
+                if (listMap.containsKey(wmsOutDeliveryOrderDetDto.getWarehouseId())) {
+                    listMap.get(wmsOutDeliveryOrderDetDto.getWarehouseId()).add(wmsOutDeliveryOrderDetDto);
+                } else {
+                    List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
+                    wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
+                    listMap.put(wmsOutDeliveryOrderDetDto.getWarehouseId(), wmsOutDeliveryOrderDetDtos);
                 }
             }
-        }else {
+
+            //遍历map
+            for (List<WmsOutDeliveryOrderDetDto> dtoList : listMap.values()) {
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
+                wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrderDto.getMaterialOwnerId());
+                wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrderDto.getOrderTypeId());
+                wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
+                wmsInnerJobOrder.setJobOrderType((byte) 4);
+                wmsInnerJobOrder.setOrderStatus((byte) 1);
+                wmsInnerJobOrder.setWarehouseId(dtoList.get(0).getWarehouseId());
+                //计算总数量
+                BigDecimal packingSum = dtoList.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                wmsInnerJobOrder.setPlanQty(packingSum);
+
+                //作业单明细
+                List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
+                for (WmsOutDeliveryOrderDetDto dto : dtoList) {
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
+                    wmsInnerJobOrderDet.setInventoryStatusId(dto.getInventoryStatusId());
+                    wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
+                    wmsInnerJobOrderDet.setPackingUnitName(dto.getPackingUnitName());
+                    wmsInnerJobOrderDet.setPlanQty(dto.getPackingQty());
+                    wmsInnerJobOrderDet.setOrderStatus((byte) 1);
+                    wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+                }
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+
+                //创建作业单
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("创建拣货作业单失败");
+                }
+            }
+        } else {
             throw new BizErrorException("拣货作业单已存在");
         }
         return 1;
