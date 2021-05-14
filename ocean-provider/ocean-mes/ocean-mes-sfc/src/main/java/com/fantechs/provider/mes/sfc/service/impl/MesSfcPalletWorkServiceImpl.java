@@ -89,7 +89,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
-        List<String> workOrderBarcodeIdList = new LinkedList<>();
         Long workOrderId = null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(requestPalletWorkScanDto.getBarcode());
@@ -154,14 +153,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     }
                 }
             }
-        }
-        // 判断扫码的条码是否已过站
-        Example example = new Example(MesSfcBarcodeProcess.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andIn("workOrderBarcodeId", workOrderBarcodeIdList);
-        List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.selectByExample(example);
-        if (!mesSfcBarcodeProcessList.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码已过站，不可重复过站");
         }
 
         // 获取该条码对应的工单信息
