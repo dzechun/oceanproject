@@ -128,6 +128,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 searchMesPmWorkOrder.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
                 MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
 
+                mesSfcBarcodeProcess.setProLineId(mesPmWorkOrderDto.getProLineId());
+                mesSfcBarcodeProcess.setProcessCode(mesPmWorkOrderDto.getProCode());
                 mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
                 mesSfcBarcodeProcess.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
                 mesSfcBarcodeProcess.setMaterialName(mesPmWorkOrderDto.getMaterialName());
