@@ -290,7 +290,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         List<MesSfcProductPalletDto> mesSfcProductPalletDtos = mesSfcProductPalletService.findList(map);
         int closePalletNum = mesSfcProductPalletDtos.size();
 
-        // 新增产品栈板信息
+        // 新增产品栈板信息，产品栈板和产品条码明细表
         if (isPallet) {
             mesSfcProductPallet.setPalletCode(palletCode);
             mesSfcProductPallet.setNowPackageSpecQty(nowPackageSpecQty);
@@ -307,6 +307,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPallet.setCreateUserId(user.getUserId());
             mesSfcProductPallet.setCreateTime(new Date());
             mesSfcProductPalletService.save(mesSfcProductPallet);
+
+            for (MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode : mesSfcWorkOrderBarcodeList) {
+                MesSfcProductPalletDet mesSfcProductPalletDet = new MesSfcProductPalletDet();
+                mesSfcProductPalletDet.setProductPalletId(mesSfcProductPallet.getProductPalletId());
+                mesSfcProductPalletDet.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                mesSfcProductPalletDet.setOrgId(user.getOrganizationId());
+                mesSfcProductPalletDet.setCreateUserId(user.getUserId());
+                mesSfcProductPalletDet.setCreateTime(new Date());
+                mesSfcProductPalletDetService.save(mesSfcProductPalletDet);
+            }
         } else if (nowPackageSpecQty.compareTo(BigDecimal.valueOf(palletCartons + 1)) == 0) {
             // 达到包装规格上限，关闭栈板
             mesSfcProductPallet.setCloseStatus((byte) 1);
