@@ -52,9 +52,9 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         }
         Example example = new Example(BaseLabelMaterial.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("processId",record.getProcessId());
+        criteria.andEqualTo("labelId",record.getLabelId());
         criteria.andEqualTo("materialId",record.getMaterialId());
-        criteria.andNotEqualTo("labelMaterialId",record.getLabelMaterialId());
+
         BaseLabelMaterial baseLabelMaterial = baseLabelMaterialMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(baseLabelMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -78,7 +78,7 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         Example example = new Example(BaseLabelMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",entity.getMaterialId());
-        criteria.andEqualTo("processId",entity.getProcessId());
+        criteria.andEqualTo("labelId",entity.getLabelId());
         criteria.andNotEqualTo("labelMaterialId",entity.getLabelMaterialId());
         BaseLabelMaterial baseLabelMaterial = baseLabelMaterialMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(baseLabelMaterial)){

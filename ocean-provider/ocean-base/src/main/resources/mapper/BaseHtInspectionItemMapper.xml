@@ -42,8 +42,8 @@
 
   <select id="findHtList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>, bo.organization_name
-    from fantech_imes.base_ht_inspection_item qhii
-    LEFT JOIN fantech_imes.base_organization bo ON qhii.organization_id = bo.organization_id
+    from fantech_imes_v2.base_ht_inspection_item qhii
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qhii.organization_id = bo.organization_id
     <where>
       <if test="inspectionItemCode != null and inspectionItemCode != ''">
         and qhii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')

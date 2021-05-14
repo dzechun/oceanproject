@@ -51,14 +51,14 @@
   </sql>
     <select id="findList" resultMap="BaseResultMap">
         SELECT<include refid="Base_Column_List"/>,sm.material_code,sm.material_version,sm.material_desc,bl.label_code,bl.label_name,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,
-        sus.user_name as modified_user_name, bo.organization_name FROM base_ht_label_material bcm
-        LEFT JOIN base_material sm ON bcm.material_id = sm.material_id
-        LEFT JOIN base_label bl ON bl.label_id = bcm.label_id
-        LEFT JOIN base_label_category blc ON blc.`label_category_id`=bl.label_category_id
-        LEFT JOIN base_process sp ON sp.process_id = bcm.process_id
-        LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
-        LEFT JOIN base_organization bo ON bcm.org_id = bo.organization_id
+        sus.user_name as modified_user_name, bo.organization_name FROM fantech_imes_v2.base_ht_label_material bcm
+        LEFT JOIN fantech_imes_v2.base_material sm ON bcm.material_id = sm.material_id
+        LEFT JOIN fantech_imes_v2.base_label bl ON bl.label_id = bcm.label_id
+        LEFT JOIN fantech_imes_v2.base_label_category blc ON blc.`label_category_id`=bl.label_category_id
+        LEFT JOIN fantech_imes_v2.base_process sp ON sp.process_id = bcm.process_id
+        LEFT JOIN ocean_v2.sys_user su ON bl.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON bl.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON bcm.org_id = bo.organization_id
         <where>
             <if test="materialId!=null and materialId!=''">
                 and bcm.material_id = #{materialId}
