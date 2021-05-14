@@ -2,11 +2,15 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleType;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRuleType;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInAndOutRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInAndOutRuleType;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.service.BaseHtInAndOutRuleTypeService;
 import com.fantechs.provider.base.service.BaseInAndOutRuleTypeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -34,6 +38,8 @@ public class BaseInAndOutRuleTypeController {
 
     @Resource
     private BaseInAndOutRuleTypeService baseInAndOutRuleTypeService;
+    @Resource
+    private BaseHtInAndOutRuleTypeService baseHtInAndOutRuleTypeService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -68,6 +74,13 @@ public class BaseInAndOutRuleTypeController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<BaseHtInAndOutRuleType>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInAndOutRuleType searchBaseInAndOutRuleType) {
+        Page<Object> page = PageHelper.startPage(searchBaseInAndOutRuleType.getStartPage(),searchBaseInAndOutRuleType.getPageSize());
+        List<BaseHtInAndOutRuleType> list = baseHtInAndOutRuleTypeService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRuleType));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
