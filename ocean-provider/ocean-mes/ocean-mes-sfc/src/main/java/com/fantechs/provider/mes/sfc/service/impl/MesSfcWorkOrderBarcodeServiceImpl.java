@@ -147,6 +147,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setProcessName(responseEntity.getData().get(0).getProcessName());
                 mesSfcBarcodeProcess.setNextProcessId(responseEntity.getData().get(0).getProcessId());
                 mesSfcBarcodeProcess.setNextProcessName(responseEntity.getData().get(0).getProcessName());
+                mesSfcBarcodeProcess.setSectionId(responseEntity.getData().get(0).getSectionId());
+                mesSfcBarcodeProcess.setSectionName(responseEntity.getData().get(0).getSectionName());
                 if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
                     throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
                 }
