@@ -56,4 +56,10 @@ public class LabelRuteDto implements Serializable {
     @Transient
     @ApiModelProperty(name = "printMode",value = "打印方式")
     private String printMode;
+
+    /**
+     * 打印数量
+     */
+    @ApiModelProperty(name = "oncePrintQty",value = "打印数量")
+    private int oncePrintQty;
 }

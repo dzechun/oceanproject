@@ -112,6 +112,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     break;
             }
             PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getBarcodeType(),mesSfcWorkOrderBarcode.getWorkOrderId());
+            printModel.setSize(labelRuteDto.getOncePrintQty());
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
