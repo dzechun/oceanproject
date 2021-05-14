@@ -55,11 +55,11 @@
   </sql>
 
     <select id="findList" resultMap="BaseResultMap">
-        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM base_ht_label bl
-        LEFT JOIN base_label_category blc ON blc.`label_category_id`= bl.label_category_id
-        LEFT JOIN ocean.sys_user su ON bl.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON bl.modified_user_id = sus.user_id
-        LEFT JOIN base_organization bo ON bl.org_id = bo.organization_id
+        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM fantech_imes_v2.base_ht_label bl
+        LEFT JOIN fantech_imes_v2.base_label_category blc ON blc.`label_category_id`= bl.label_category_id
+        LEFT JOIN fantech_imes_v2.ocean_v2.sys_user su ON bl.create_user_id = su.user_id
+        LEFT JOIN fantech_imes_v2.ocean_v2.sys_user sus ON bl.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON bl.org_id = bo.organization_id
         <where>
             <if test="labelCode!=null and labelCode!='' and codeQueryMark == null">
                 and bl.label_code LIKE CONCAT('%',#{labelCode},'%')

@@ -45,12 +45,12 @@
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     sm.material_code,sm.material_name,sm.material_version,qii.inspection_item_code, bo.organization_name
-    from fantech_imes.base_inspection_item_det qiid
+    from fantech_imes_v2.base_inspection_item_det qiid
     LEFT JOIN ocean_v2.sys_user su ON qiid.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON qiid.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.smt_material sm ON qiid.material_id = sm.material_id
-    LEFT JOIN fantech_imes.base_inspection_item qii ON qiid.inspection_item_id = qii.inspection_item_id
-    LEFT JOIN fantech_imes.base_organization bo ON qiid.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_material sm ON qiid.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.base_inspection_item qii ON qiid.inspection_item_id = qii.inspection_item_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qiid.organization_id = bo.organization_id
     <where>
       <if test="specialSort != null and specialSort != ''">
         and qiid.special_sort like CONCAT('%', #{specialSort}, '%')
