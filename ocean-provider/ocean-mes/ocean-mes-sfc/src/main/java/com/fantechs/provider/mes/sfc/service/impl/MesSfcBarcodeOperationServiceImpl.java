@@ -113,7 +113,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         criteria.andEqualTo("closeStatus", 0);
         List<MesSfcProductCarton> sfcProductCartonList = mesSfcProductCartonService.selectByExample(example);
         if (sfcProductCartonList.isEmpty()) {
-            return null;
+            return new PdaCartonRecordDto();
         }
         // 组装
         return buildCartonData(sfcProductCartonList.get(0));
