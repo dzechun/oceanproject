@@ -194,6 +194,11 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setOperatorUserId(dto.getOperatorUserId());
         mesSfcBarcodeProcess.setModifiedUserId(dto.getOperatorUserId());
         mesSfcBarcodeProcess.setModifiedTime(new Date());
+        if(dto.getPassCodeType() == 1){
+            mesSfcBarcodeProcess.setCartonCode(dto.getPassCode());
+        }else if (dto.getPassCodeType() == 2){
+            mesSfcBarcodeProcess.setPalletCode(dto.getPassCode());
+        }
         int update = barcodeUtils.mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         if (update < 1) {
             throw new RuntimeException("更新过站表下一工序失败！");
@@ -343,14 +348,15 @@ public class BarcodeUtils {
                 .workOrderBarcodeId(mesSfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
                 .build());
         if (mesSfcBarcodeProcess != null) {
-            if (!processId.equals(mesSfcBarcodeProcess.getProcessId())) {
+            if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, mesSfcBarcodeProcess.getBarcode(), mesSfcBarcodeProcess.getNextProcessCode());
             }
             if (!stationId.equals(mesSfcBarcodeProcess.getStationId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012013, mesSfcBarcodeProcess.getProcessCode(), mesSfcBarcodeProcess.getStationId(), stationId);
             }
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
         }
-        throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
     }
 
     /**

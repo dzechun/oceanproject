@@ -18,5 +18,5 @@ public interface MesSfcPalletWorkService {
 
     Boolean updatePalletType(Long stationId);
 
-    int updateNowPackageSpecQty(Long productPalletId, Integer nowPackageSpecQty) throws Exception;
+    int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty) throws Exception;
 }

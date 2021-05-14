@@ -71,7 +71,7 @@ public class MesSfcPalletWorkController {
     @ApiOperation("修改栈板包装规格数量")
     public ResponseEntity updateNowPackageSpecQty(
             @ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId,
-            @ApiParam(value = "包装规格数量", required = true) @RequestParam Integer nowPackageSpecQty) throws Exception {
+            @ApiParam(value = "包装规格数量", required = true) @RequestParam Double nowPackageSpecQty) throws Exception {
 
 
         int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty);

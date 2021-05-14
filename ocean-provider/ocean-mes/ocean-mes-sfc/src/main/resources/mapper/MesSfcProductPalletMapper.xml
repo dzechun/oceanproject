@@ -32,6 +32,7 @@
   <sql id="BaseColumnList">
     mspp.product_pallet_id,
     mspp.pallet_code,
+    mspp.now_package_spec_qty,
     mspp.work_order_id,
     mspp.material_id,
     mspp.station_id,
