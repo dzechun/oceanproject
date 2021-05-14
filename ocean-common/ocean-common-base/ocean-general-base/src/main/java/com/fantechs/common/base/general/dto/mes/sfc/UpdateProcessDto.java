@@ -34,5 +34,11 @@ public class UpdateProcessDto implements Serializable {
     private String badnessPhenotypeCode;
     // 作业人员ID
     private Long operatorUserId;
+    // 过站码
+    private String passCode;
+    /**
+     * 过站码类型：1包箱码，2栈板码
+     */
+    private byte passCodeType;
 
 }

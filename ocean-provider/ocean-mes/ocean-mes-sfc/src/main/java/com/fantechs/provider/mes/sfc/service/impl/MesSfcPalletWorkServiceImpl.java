@@ -267,24 +267,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             updateProcessDto.setOperatorUserId(user.getUserId());
             updateProcessDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
             updateProcessDto.setNowStationId(requestPalletWorkScanDto.getStationId());
+            updateProcessDto.setPassCode(palletCode);
+            updateProcessDto.setPassCodeType((byte) 2);
             BarcodeUtils.updateProcess(updateProcessDto);
-
-            // 获取条码对应的过站信息
-            MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
-                    .barcode(mesSfcWorkOrderBarcode.getBarcode())
-                    .build());
-            MesSfcBarcodeProcess updateMesSfcBarcodeProcess = new MesSfcBarcodeProcess();
-            updateMesSfcBarcodeProcess.setBarcodeProcessId(mesSfcBarcodeProcess.getBarcodeProcessId());
-            updateMesSfcBarcodeProcess.setPalletCode(palletCode);
-            mesSfcBarcodeProcessService.update(updateMesSfcBarcodeProcess);
-            // 获取条码对应的过站记录信息
-            MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = mesSfcBarcodeProcessRecordService.selectOne(MesSfcBarcodeProcessRecord.builder()
-                    .barcode(mesSfcWorkOrderBarcode.getBarcode())
-                    .build());
-            MesSfcBarcodeProcessRecord updateMesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
-            updateMesSfcBarcodeProcessRecord.setBarcodeProcessRecordId(mesSfcBarcodeProcessRecord.getBarcodeProcessRecordId());
-            updateMesSfcBarcodeProcessRecord.setPalletCode(palletCode);
-            mesSfcBarcodeProcessRecordService.update(updateMesSfcBarcodeProcessRecord);
         }
 
         // 当前工单已关闭栈板
