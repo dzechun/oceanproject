@@ -101,6 +101,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if (mesSfcProductCartonDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012000);
             }
+            // 判断对应的包箱是否已关闭
+            if (mesSfcProductCartonDtoList.get(0).getCloseStatus() == 0) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
+            }
             workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
             // 获取箱号绑定产品条码
             cartonCode = requestPalletWorkScanDto.getBarcode();
@@ -135,6 +139,11 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
                     // 获取产品条码关联箱号绑定的所有产品条码
                 } else {
+                    // 判断对应的包箱是否已关闭
+                    MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectByKey(mesSfcProductCartonDetDtoList.get(0).getProductCartonId());
+                    if (mesSfcProductCarton.getCloseStatus() == 0) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
+                    }
                     productCartonDetMap.clear();
                     productCartonDetMap.put("productCartonId", mesSfcProductCartonDetDtoList.get(0).getProductCartonId());
                     mesSfcProductCartonDetDtoList = mesSfcProductCartonDetService.findList(productCartonDetMap);
@@ -167,8 +176,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         // 栈板已绑定的包装数量
         int palletCartons = 0;
         for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
-            if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId() == mesSfcProductPalletDto.getWorkOrderId())
-            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId() == mesSfcProductPalletDto.getMaterialId())) {
+            if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId().equals(mesSfcProductPalletDto.getWorkOrderId()))
+            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId().equals(mesSfcProductPalletDto.getMaterialId()))) {
                 palletCode = mesSfcProductPalletDto.getPalletCode();
                 nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
                 isPallet = false;
@@ -196,7 +205,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             // 获取条码规则配置集合
             List<BaseBarcodeRuleSpec> barcodeRuleSpecList = new LinkedList<>();
             for (BaseMaterialPackage baseMaterialPackage : basePackageSpecificationDtoList.get(0).getBaseMaterialPackages()) {
-                if (requestPalletWorkScanDto.getProcessId() == baseMaterialPackage.getProcessId()) {
+                if (requestPalletWorkScanDto.getProcessId().equals(baseMaterialPackage.getProcessId())) {
                     BasePackageSpecification basePackageSpecification = baseFeignApi.BasePackageSpecificationDetail(baseMaterialPackage.getPackageSpecificationId()).getData();
                     if (StringUtils.isEmpty(basePackageSpecification)) {
                         throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该产品条码没有设置在该工序的包装规格");
@@ -349,10 +358,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             map.put("closeStatus", 1);
             List<MesSfcProductPalletDto> mesSfcProductPalletDtos = mesSfcProductPalletService.findList(map);
             palletWorkScanDto.setClosePalletNum(BigDecimal.valueOf(mesSfcProductPalletDtos.size()));
-            map.clear();
-            map.put("workOrderId", mesSfcProductPalletDto.getWorkOrderId());
-            List<MesSfcProductCartonDto> mesSfcProductCartonDtoList = mesSfcProductCartonService.findList(map);
-            palletWorkScanDto.setScanCartonNum(mesSfcProductCartonDtoList.size());
+            int palletCartons = findPalletCarton(mesSfcProductPalletDto.getProductPalletId()).size();
+            palletWorkScanDto.setScanCartonNum(palletCartons);
             palletWorkScanDtoList.add(palletWorkScanDto);
         }
 
