@@ -89,6 +89,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
+        List<String> workOrderBarcodeIdList = new LinkedList<>();
         Long workOrderId = null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(requestPalletWorkScanDto.getBarcode());
@@ -100,6 +101,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             List<MesSfcProductCartonDto> mesSfcProductCartonDtoList = mesSfcProductCartonService.findList(map);
             if (mesSfcProductCartonDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012000);
+            }
+            // 判断对应的包箱是否已关闭
+            if (mesSfcProductCartonDtoList.get(0).getCloseStatus() == 0) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
             }
             workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
             // 获取箱号绑定产品条码
@@ -135,6 +140,11 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
                     // 获取产品条码关联箱号绑定的所有产品条码
                 } else {
+                    // 判断对应的包箱是否已关闭
+                    MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectByKey(mesSfcProductCartonDetDtoList.get(0).getProductCartonId());
+                    if (mesSfcProductCarton.getCloseStatus() == 0) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
+                    }
                     productCartonDetMap.clear();
                     productCartonDetMap.put("productCartonId", mesSfcProductCartonDetDtoList.get(0).getProductCartonId());
                     mesSfcProductCartonDetDtoList = mesSfcProductCartonDetService.findList(productCartonDetMap);
@@ -144,6 +154,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     }
                 }
             }
+        }
+        // 判断扫码的条码是否已过站
+        Example example = new Example(MesSfcBarcodeProcess.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("workOrderBarcodeId", workOrderBarcodeIdList);
+        List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.selectByExample(example);
+        if (!mesSfcBarcodeProcessList.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码已过站，不可重复过站");
         }
 
         // 获取该条码对应的工单信息
@@ -349,10 +367,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             map.put("closeStatus", 1);
             List<MesSfcProductPalletDto> mesSfcProductPalletDtos = mesSfcProductPalletService.findList(map);
             palletWorkScanDto.setClosePalletNum(BigDecimal.valueOf(mesSfcProductPalletDtos.size()));
-            map.clear();
-            map.put("workOrderId", mesSfcProductPalletDto.getWorkOrderId());
-            List<MesSfcProductCartonDto> mesSfcProductCartonDtoList = mesSfcProductCartonService.findList(map);
-            palletWorkScanDto.setScanCartonNum(mesSfcProductCartonDtoList.size());
+            int palletCartons = findPalletCarton(mesSfcProductPalletDto.getProductPalletId()).size();
+            palletWorkScanDto.setScanCartonNum(palletCartons);
             palletWorkScanDtoList.add(palletWorkScanDto);
         }
 
