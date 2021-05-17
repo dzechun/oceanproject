@@ -33,4 +33,9 @@ public class SearchMesSfcBarcodeProcess extends BaseQuery implements Serializabl
      * 工单ID
      */
     private Long workOrderId;
+
+    /**
+     * 产品物料ID
+     */
+    private Long materialId;
 }
