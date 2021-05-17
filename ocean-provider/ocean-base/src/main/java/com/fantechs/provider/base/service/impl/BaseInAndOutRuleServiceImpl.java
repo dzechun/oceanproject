@@ -72,11 +72,20 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         }
 
         Example example = new Example(BaseInAndOutRule.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName());
+        example.createCriteria()
+                .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName());
         BaseInAndOutRule baseInAndOutRule1 = baseInAndOutRuleMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInAndOutRule1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        example.createCriteria()
+                .andEqualTo("warehouseId",baseInAndOutRule.getWarehouseId())
+                .andEqualTo("category",baseInAndOutRule.getCategory());
+        BaseInAndOutRule baseInAndOutRule2 = baseInAndOutRuleMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(baseInAndOutRule2)){
+            throw new BizErrorException("该仓库已存在此类型的规则");
         }
 
         baseInAndOutRule.setCreateUserId(user.getUserId());
@@ -121,12 +130,22 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         }
 
         Example example = new Example(BaseInAndOutRule.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName())
+        example.createCriteria()
+                .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName())
                 .andNotEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());
         BaseInAndOutRule baseInAndOutRule1 = baseInAndOutRuleMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInAndOutRule1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        example.createCriteria()
+                .andEqualTo("warehouseId",baseInAndOutRule.getWarehouseId())
+                .andEqualTo("category",baseInAndOutRule.getCategory())
+                .andNotEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());
+        BaseInAndOutRule baseInAndOutRule2 = baseInAndOutRuleMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(baseInAndOutRule2)){
+            throw new BizErrorException("该仓库已存在此类型的规则");
         }
 
         baseInAndOutRule.setModifiedUserId(user.getUserId());
