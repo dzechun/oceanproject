@@ -402,8 +402,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
         }
 
-        // 6、是否扫附件码，若不则直接过站
-        if (!vo.getAnnex()) {
+        // 6、不扫附件码则直接过站
+        if (!vo.getAnnex() || source) {
             UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
                     .badnessPhenotypeCode("N/A")
                     .barCode(vo.getBarCode())
@@ -429,23 +429,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .build());
             // 更新下一工序，增加工序记录
             BarcodeUtils.updateProcess(updateProcessDto);
-        }
-
-        if(source && vo.getAnnex()){
-            UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
-                    .badnessPhenotypeCode("N/A")
-                    .barCode(vo.getBarCode())
-                    .equipmentId("N/A")
-                    .operatorUserId(user.getUserId())
-                    .proLineId(mesPmWorkOrderByBarCode.getProLineId())
-                    .routeId(mesPmWorkOrderByBarCode.getRouteId())
-                    .nowProcessId(vo.getProcessId())
-                    .nowStationId(vo.getStationId())
-                    .workOrderId(mesPmWorkOrderByBarCode.getWorkOrderId())
-                    .passCode(vo.getCartonCode())
-                    .passCodeType((byte) 1)
-                    .build();
-
+        }else {
             // 保存条码包箱关系
             mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
                     .productCartonId(mesSfcProductCarton.getProductCartonId())
@@ -455,8 +439,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .createUserId(user.getUserId())
                     .isDelete((byte) 1)
                     .build());
-            // 更新下一工序，增加工序记录
-            BarcodeUtils.updateProcess(updateProcessDto);
+            // 保存包箱号
+            mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
+            mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         }
 
         // 6.1、判断是否包箱已满，关箱
