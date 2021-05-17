@@ -62,6 +62,9 @@
       <if test="inAndOutRuleName!=null and inAndOutRuleName!=''">
         and biaor.in_and_out_rule_name LIKE CONCAT('%',#{inAndOutRuleName},'%')
       </if>
+      <if test="createUserName!=null and createUserName!=''">
+        and su.user_name LIKE CONCAT('%',#{createUserName},'%')
+      </if>
       <if test="category!=null">
         and biaor.category = #{category}
       </if>
