@@ -75,6 +75,6 @@
         and date_format(biaor.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
-    order by biaor.modified_time desc
+    order by biaor.create_time desc
   </select>
 </mapper>

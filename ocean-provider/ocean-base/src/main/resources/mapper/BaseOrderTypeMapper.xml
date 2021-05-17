@@ -88,5 +88,6 @@
         and bot.business_type=#{businessType}
       </if>
     </where>
+    order by bot.create_time desc
   </select>
 </mapper>
