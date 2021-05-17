@@ -63,12 +63,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     MesSfcProductCartonDetService mesSfcProductCartonDetService;
 
     @Resource
-    MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
-
-    @Resource
-    MesSfcBarcodeProcessRecordService mesSfcBarcodeProcessRecordService;
-
-    @Resource
     PMFeignApi pmFeignApi;
 
     @Resource
@@ -76,7 +70,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Resource
     private RedisUtil redisUtil;
-    private RedisUtil redisUtil1;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

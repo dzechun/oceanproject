@@ -45,8 +45,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     private MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
     @Resource
-    private MesSfcBarcodeProcessRecordService mesSfcBarcodeProcessRecordService;
-    @Resource
     private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
     @Resource
     private MesSfcProductCartonService mesSfcProductCartonService;
@@ -337,6 +335,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .stationId(vo.getStationId())
                 .processId(vo.getProcessId())
                 .checkOrNot(vo.getCheckOrNot())
+                .workOrderId(vo.getWorkOrderId())
+                .packType(vo.getPackType())
                 .build());
 
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
@@ -350,21 +350,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         // 箱码对应状态表
         MesSfcProductCarton mesSfcProductCarton = null;
-        // 2、判断是否已有工单，若有则校验配置
-        if (StringUtils.isNotEmpty(vo.getWorkOrderId())) {
-            // 2.1、判断是否同一工单
-            if (vo.getPackType().equals(1) && !sfcWorkOrderBarcodeDto.getWorkOrderId().equals(vo.getWorkOrderId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012018, sfcWorkOrderBarcodeDto.getWorkOrderId(), vo.getWorkOrderId());
-            }
-            // 2.2、判断是否同一料号
-            ResponseEntity<MesPmWorkOrder> pmWorkOrderResponseEntityById = pmFeignApi.workOrderDetail(vo.getWorkOrderId());
-            // PDA当前作业工单
-            MesPmWorkOrder mesPmWorkOrderById = pmWorkOrderResponseEntityById.getData();
-            if (vo.getPackType().equals(2) && !mesPmWorkOrderByBarCode.getMaterialId().equals(mesPmWorkOrderById.getMaterialId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrderByBarCode.getMaterialId(), mesPmWorkOrderById.getMaterialId());
-            }
-        }
-
         // 条码对应工序
         MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(vo.getBarCode())

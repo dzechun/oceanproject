@@ -284,7 +284,7 @@ public enum ErrorCodeEnum {
     PDA40012010(40012010, "工序processId=%s是必过工序，不可跳过！"),
     PDA40012011(40012011, "工艺路线中工序processId=%s不存在！"),
     PDA40012012(40012012, "工序processId=%s不存在！"),
-    PDA40012013(40012013, "工序编码processCode=%s的工位stationId=%s与PDA工位stationId=%s不匹配！"),
+    PDA40012013(40012013, "当前作业工单与条码工单不匹配！"),
     PDA40012014(40012014, "生成包箱码失败！产品料号materialId=%s与流程processId=%s关联的标签信息不存在"),
     PDA40012015(40012015, "包箱规格数量不能小于已扫条码数量"),
     PDA40012016(40012016, "产品料号materialId=%s没有对应的关联标签信息"),

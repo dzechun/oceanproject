@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcessRecor
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
@@ -26,7 +27,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static javax.swing.UIManager.get;
 
 /**
  * 条码工具类
@@ -94,13 +94,28 @@ public class BarcodeUtils {
         if (record.getProcessId() != null) {
             checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
         }
+        // 3、判断是否已有工单，若有则校验配置
+        if (StringUtils.isNotEmpty(record.getWorkOrderId())) {
+            // 2.1、判断是否同一工单
+            if ("1".equals(record.getPackType()) && !mesSfcWorkOrderBarcodeDto.getWorkOrderId().equals(record.getWorkOrderId())) {
+                throw new BizErrorException(ErrorCodeEnum.PDA40012018, mesSfcWorkOrderBarcodeDto.getWorkOrderId(), record.getWorkOrderId());
+            }
+            // 2.2、判断是否同一料号
+            // PDA当前作业工单
+            MesPmWorkOrder mesPmWorkOrderById = barcodeUtils.pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
+            // 条码对应
+            MesPmWorkOrder mesPmWorkOrderByCode = barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDto.getWorkOrderId()).getData();
+            if ("2".equals(record.getPackType()) && !mesPmWorkOrderByCode.getMaterialId().equals(mesPmWorkOrderById.getMaterialId())) {
+                throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrderByCode.getMaterialId(), mesPmWorkOrderById.getMaterialId());
+            }
+        }
 
-        // 3、系统检查条码工单状态是否正确（工单表）
+        // 4、系统检查条码工单状态是否正确（工单表）
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
             checkOrder(mesSfcWorkOrderBarcodeDto);
         }
 
-        // 4、是否检查排程
+        // 5、是否检查排程
         if (record.getCheckOrNot()) {
 
         }
