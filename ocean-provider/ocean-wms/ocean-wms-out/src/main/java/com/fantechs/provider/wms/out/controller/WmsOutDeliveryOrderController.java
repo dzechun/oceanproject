@@ -51,13 +51,6 @@ public class WmsOutDeliveryOrderController {
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.createJobOrder(id));
     }
 
-    @ApiOperation(value = "返写销售订单累计出库数量",notes = "返写销售订单累计出库数量")
-    @PostMapping("/writeBackTotalOutboundQty")
-    public ResponseEntity writeBackTotalOutboundQty(@ApiParam(value = "出库单明细ID",required = true)@RequestParam  @NotNull(message="出库单明细ID不能为空") Long deliveryOrderDetId,
-                                                    @ApiParam(value = "返写数量",required = true)@RequestParam  @NotNull(message="返写数量不能为空") BigDecimal totalOutboundQty) {
-        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeBackTotalOutboundQty(deliveryOrderDetId,totalOutboundQty));
-    }
-
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {

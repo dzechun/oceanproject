@@ -47,9 +47,8 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder);
 
-    @ApiOperation(value = "返写销售订单累计出库数量",notes = "返写销售订单累计出库数量")
-    @PostMapping("/wmsOutDeliveryOrder/writeBackTotalOutboundQty")
-    ResponseEntity writeBackTotalOutboundQty(@ApiParam(value = "出库单明细ID",required = true)@RequestParam @NotNull(message="出库单明细ID不能为空") Long deliveryOrderDetId,
-                                                    @ApiParam(value = "返写数量",required = true)@RequestParam  @NotNull(message="返写数量不能为空") BigDecimal totalOutboundQty);
+    @ApiOperation("修改销售出库明细")
+    @PostMapping("/wmsOutDeliveryOrderDet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutDeliveryOrderDet.update.class) WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet);
 
 }

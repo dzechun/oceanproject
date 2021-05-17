@@ -312,20 +312,4 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
         return 1;
     }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int writeBackTotalOutboundQty(Long deliveryOrderDetId, BigDecimal totalOutboundQty) {
-        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(deliveryOrderDetId);
-        if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getOrderDetId())){
-            OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
-            omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
-            omSalesOrderDet.setTotalOutboundQty(totalOutboundQty);
-            ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
-            if(responseEntity.getCode()!=0){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404);
-            }
-        }
-        return 1;
-    }
 }
