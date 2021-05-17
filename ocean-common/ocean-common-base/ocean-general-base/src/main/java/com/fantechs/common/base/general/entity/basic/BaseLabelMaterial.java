@@ -136,7 +136,7 @@ public class BaseLabelMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name = "oncePrintQty",value = "打印数量")
     @Column(name = "once_print_qty")
-    private int oncePrintQty;
+    private Integer oncePrintQty;
 
     private static final long serialVersionUID = 1L;
 }

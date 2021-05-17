@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.out.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
@@ -21,6 +22,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
@@ -53,6 +55,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private WmsOutHtDeliveryOrderDetMapper wmsOutHtDeliveryOrderDetMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private OMFeignApi omFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -285,6 +289,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
                 for (WmsOutDeliveryOrderDetDto dto : dtoList) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setSourceDetId(dto.getDeliveryOrderDetId());
                     wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
                     wmsInnerJobOrderDet.setInventoryStatusId(dto.getInventoryStatusId());
                     wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
@@ -306,4 +311,24 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
         return 1;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int writeBackTotalOutboundQty(Long deliveryOrderDetId, BigDecimal totalOutboundQty) {
+        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(deliveryOrderDetId);
+        if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getOrderDetId())){
+            ResponseEntity responseEntity = omFeignApi.writeBackTotalOutboundQty(wmsOutDeliveryOrderDet.getOrderDetId(), totalOutboundQty);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404);
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int writeBackQty(WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet) {
+        return wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+    }
+
 }
