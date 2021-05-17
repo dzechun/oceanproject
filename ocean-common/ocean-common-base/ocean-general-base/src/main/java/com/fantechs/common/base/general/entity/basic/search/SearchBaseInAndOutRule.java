@@ -12,17 +12,24 @@ import java.io.Serializable;
 public class SearchBaseInAndOutRule extends BaseQuery implements Serializable {
 
     private static final long serialVersionUID = -3896088051789821762L;
-    /**
-     * 出入库规则类型编码
-     */
-    @ApiModelProperty(name="inAndOutRuleTypeCode" ,value="出入库规则类型编码")
-    private String inAndOutRuleTypeCode;
 
     /**
-     * 出入库规则类型名称
+     * 仓库名称
      */
-    @ApiModelProperty(name="inAndOutRuleTypeName" ,value="出入库规则类型名称")
-    private String inAndOutRuleTypeName;
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    private String warehouseName;
+
+    /**
+     * 出入库规则名称
+     */
+    @ApiModelProperty(name="inAndOutRuleName" ,value="出入库规则名称")
+    private String inAndOutRuleName;
+
+    /**
+     * 创建账号
+     */
+    @ApiModelProperty(name="createUserName" ,value="创建账号")
+    private String createUserName;
 
     /**
      * 类型(1-入库 2-出库)

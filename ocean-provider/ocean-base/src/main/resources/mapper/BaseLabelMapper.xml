@@ -81,5 +81,6 @@
                 and date_format(bl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>
+        order by bl.create_time desc
     </select>
 </mapper>
