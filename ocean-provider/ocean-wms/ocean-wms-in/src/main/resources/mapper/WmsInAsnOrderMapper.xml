@@ -100,7 +100,7 @@
             and wiao.asn_order_id = #{asnOrderId}
           </if>
       <if test="asnCode!=null and asnCode!=''">
-        and wiao.asn_code like CONCAT('%',#{ansCode},'%')
+        and wiao.asn_code like CONCAT('%',#{asnCode},'%')
       </if>
     <if test="materialOwnerName!=null and materialOwnerName!=''">
       and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')

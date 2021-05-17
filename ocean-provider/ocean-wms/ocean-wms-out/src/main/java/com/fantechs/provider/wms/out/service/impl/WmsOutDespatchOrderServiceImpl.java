@@ -15,18 +15,18 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
-import com.fantechs.provider.wms.out.mapper.WmsOutDespatchOrderMapper;
-import com.fantechs.provider.wms.out.mapper.WmsOutDespatchOrderReJoMapper;
-import com.fantechs.provider.wms.out.mapper.WmsOutDespatchOrderReJoReDetMapper;
+import com.fantechs.provider.wms.out.mapper.*;
 import com.fantechs.provider.wms.out.service.WmsOutDespatchOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +54,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     private WmsOutDespatchOrderReJoMapper wmsOutDespatchOrderReJoMapper;
     @Resource
     private WmsOutDespatchOrderReJoReDetMapper wmsOutDespatchOrderReJoReDetMapper;
+    @Resource
+    private WmsOutDeliveryOrderDetMapper wmsOutDeliveryOrderDetMapper;
 
     @Override
     public List<WmsOutDespatchOrderDto> findList(SearchWmsOutDespatchOrder searchWmsOutDespatchOrder) {
@@ -90,7 +92,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = innerFeignApi.findList(searchWmsInnerJobOrderDet).getData().get(0);
                     Map<String,Object> map = new HashMap<>();
                     map.put("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
-                    map.put("warehouseName",wmsInnerJobOrderDetDto.getWarehouseName());
+                    map.put("warehouseName",wmsInnerJobOrder.getWarehouseName());
                     map.put("storageName",wmsInnerJobOrderDetDto.getInStorageName());
                     map.put("materialId",wmsInnerJobOrderDetDto.getMaterialId());
                     map.put("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
@@ -110,9 +112,10 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException(rs.getMessage());
                     }
-
-
                     //数量反写销售订单
+                    int i = this.writeDeliveryOrderQty(wmsInnerJobOrder,wmsInnerJobOrderDetDto);
+                    //反写拣货单状态
+                    i = this.retrographyStatus(wmsInnerJobOrderDetDto);
                 }
             }
             wmsOutDespatchOrder.setOrderStatus((byte)4);
@@ -146,25 +149,14 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsOutDespatchOrder record) {
         SysUser sysUser = currentUser();
+        record.setDespatchOrderCode(CodeUtils.getId("TRUCK"));
+        record.setOrderStatus((byte)1);
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
-        return super.save(record);
-    }
-
-    @Override
-    public int update(WmsOutDespatchOrder entity) {
-        SysUser sysUser = currentUser();
-        entity.setModifiedTime(new Date());
-        entity.setModifiedUserId(sysUser.getUserId());
-
-        int num = 0;
-
-        Example example = new Example(WmsOutDespatchOrderReJo.class);
-        example.createCriteria().andEqualTo("despatchOrderId",entity.getDespatchOrderId());
-        wmsOutDespatchOrderReJoMapper.deleteByExample(example);
-        for (WmsOutDespatchOrderReJo wms : entity.getList()) {
+        int num = wmsOutDespatchOrderMapper.insertUseGeneratedKeys(record);
+        for (WmsOutDespatchOrderReJo wms : record.getWmsOutDespatchOrderReJo()) {
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
             searchWmsInnerJobOrderDet.setJobOrderId(wms.getJobOrderId());
             ResponseEntity<List<WmsInnerJobOrderDetDto>> responseEntity = innerFeignApi.findList(searchWmsInnerJobOrderDet);
@@ -172,6 +164,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
             List<WmsInnerJobOrderDetDto> list = responseEntity.getData();
+            wms.setDespatchOrderId(record.getDespatchOrderId());
             wms.setCreateTime(new Date());
             wms.setCreateUserId(sysUser.getUserId());
             wms.setModifiedTime(new Date());
@@ -190,6 +183,50 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 num +=wmsOutDespatchOrderReJoReDetMapper.insertSelective(wmsOutDespatchOrderReJoReDet);
             }
         }
+
+        return num;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int update(WmsOutDespatchOrder entity) {
+        SysUser sysUser = currentUser();
+
+        int num = 0;
+
+        Example example = new Example(WmsOutDespatchOrderReJo.class);
+        example.createCriteria().andEqualTo("despatchOrderId",entity.getDespatchOrderId());
+        wmsOutDespatchOrderReJoMapper.deleteByExample(example);
+        for (WmsOutDespatchOrderReJo wms : entity.getWmsOutDespatchOrderReJo()) {
+            SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+            searchWmsInnerJobOrderDet.setJobOrderId(wms.getJobOrderId());
+            ResponseEntity<List<WmsInnerJobOrderDetDto>> responseEntity = innerFeignApi.findList(searchWmsInnerJobOrderDet);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404);
+            }
+            List<WmsInnerJobOrderDetDto> list = responseEntity.getData();
+            wms.setDespatchOrderId(entity.getDespatchOrderId());
+            wms.setCreateTime(new Date());
+            wms.setCreateUserId(sysUser.getUserId());
+            wms.setModifiedTime(new Date());
+            wms.setModifiedUserId(sysUser.getUserId());
+            wms.setOrgId(sysUser.getOrganizationId());
+            wmsOutDespatchOrderReJoMapper.insertUseGeneratedKeys(wms);
+            for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : list) {
+                WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet = new WmsOutDespatchOrderReJoReDetDto();
+                wmsOutDespatchOrderReJoReDet.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
+                wmsOutDespatchOrderReJoReDet.setDespatchOrderReJoId(wms.getDespatchOrderReJoId());
+                wmsOutDespatchOrderReJoReDet.setCreateTime(new Date());
+                wmsOutDespatchOrderReJoReDet.setCreateUserId(sysUser.getUserId());
+                wmsOutDespatchOrderReJoReDet.setModifiedTime(new Date());
+                wmsOutDespatchOrderReJoReDet.setModifiedUserId(sysUser.getUserId());
+                wmsOutDespatchOrderReJoReDet.setOrgId(sysUser.getOrganizationId());
+                num +=wmsOutDespatchOrderReJoReDetMapper.insertSelective(wmsOutDespatchOrderReJoReDet);
+            }
+        }
+        entity.setOrderStatus((byte)2);
+        entity.setModifiedTime(new Date());
+        entity.setModifiedUserId(sysUser.getUserId());
         num+=wmsOutDespatchOrderMapper.updateByPrimaryKeySelective(entity);
         return num;
     }
@@ -200,11 +237,54 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         String[] arrIds = ids.split(",");
         for (String id : arrIds) {
             WmsOutDespatchOrder wmsOutDespatchOrder = wmsOutDespatchOrderMapper.selectByPrimaryKey(id);
+            if(wmsOutDespatchOrder.getOrderStatus()==(4)){
+                throw new BizErrorException("单据已完成，无法删除");
+            }
             if(StringUtils.isEmpty(wmsOutDespatchOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
         }
         return super.batchDelete(ids);
+    }
+
+    /**
+     * 反写销售出库单拣货数量
+     * @param wmsInnerJobOrderDto
+     * @param wmsInnerJobOrderDetDto
+     * @return
+     */
+    private int writeDeliveryOrderQty(WmsInnerJobOrderDto wmsInnerJobOrderDto,WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
+        Example example = new Example(WmsOutDeliveryOrderDet.class);
+        example.createCriteria().andEqualTo("deliveryOrderId",wmsInnerJobOrderDto.getSourceOrderId())
+                .andEqualTo("materialId",wmsInnerJobOrderDetDto.getMaterialId())
+                .andEqualTo("storageId",wmsInnerJobOrderDetDto.getInStorageId())
+                .andEqualTo("warehouseId",wmsInnerJobOrderDto.getWarehouseId())
+                .andEqualTo("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
+        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
+            throw new BizErrorException("未匹配到关联的出库单");
+        }
+        wmsOutDeliveryOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
+
+        //反写销售订单出库数量
+        return wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+    }
+
+    /**
+     * 更新拣货单状态
+     * @param wmsInnerJobOrderDetDto
+     * @return
+     */
+    private int retrographyStatus(WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
+        ResponseEntity responseEntity = innerFeignApi.retrographyStatus(WmsInnerJobOrderDet.builder()
+                .jobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId())
+                .jobOrderId(wmsInnerJobOrderDetDto.getJobOrderId())
+                .orderStatus((byte)6)
+                .build());
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+        }
+        return 1;
     }
 
     /**

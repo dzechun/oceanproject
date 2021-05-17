@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -95,5 +96,10 @@ public class WmsOutDeliveryOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @PostMapping("/writeDeliveryOrderQty")
+    public ResponseEntity writeDeliveryOrderQty(@RequestParam Map<String,Object> map){
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeDeliveryOrderQty(map));
     }
 }

@@ -14,8 +14,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Data 2021-01-19 10:31
@@ -42,5 +44,8 @@ public interface OutFeignApi {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/wmsOutDeliveryOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder);
+
+    @PostMapping("/wmsOutDeliveryOrder/writeDeliveryOrderQty")
+    ResponseEntity writeDeliveryOrderQty(@RequestParam Map<String,Object> map);
 
 }

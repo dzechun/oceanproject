@@ -182,8 +182,9 @@ public class WmsOutDespatchOrder extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    @Transient
     @ApiModelProperty("装车单明细")
-    private List<WmsOutDespatchOrderReJo> list;
+    private List<WmsOutDespatchOrderReJo> wmsOutDespatchOrderReJo;
 
     private static final long serialVersionUID = 1L;
 }

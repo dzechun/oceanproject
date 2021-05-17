@@ -107,53 +107,5 @@ public class WmsOutDespatchOrderReJo extends ValidGroup implements Serializable 
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    /**
-     * 发货人名称
-     */
-    @ApiModelProperty(name="shipperName",value = "发货人名称")
-    @Excel(name = "发货人名称", height = 20, width = 30,orderNum="")
-    @Column(name = "shipper_name")
-    private String shipperName;
-
-    /**
-     * 联系人名称
-     */
-    @ApiModelProperty(name="linkManName",value = "联系人名称")
-    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="")
-    @Column(name = "link_man_name")
-    private String linkManName;
-
-    /**
-     * 联系人电话
-     */
-    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
-    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="")
-    @Column(name = "link_man_phone")
-    private String linkManPhone;
-
-    /**
-     * 传真号码
-     */
-    @ApiModelProperty(name="faxNumber",value = "传真号码")
-    @Excel(name = "传真号码", height = 20, width = 30,orderNum="")
-    @Column(name = "fax_number")
-    private String faxNumber;
-
-    /**
-     * 邮箱地址
-     */
-    @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
-    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="")
-    @Column(name = "e_mail_address")
-    private String eMailAddress;
-
-    /**
-     * 详细地址
-     */
-    @ApiModelProperty(name="detailedAddress",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30,orderNum="")
-    @Column(name = "detailed_address")
-    private String detailedAddress;
-
     private static final long serialVersionUID = 1L;
 }

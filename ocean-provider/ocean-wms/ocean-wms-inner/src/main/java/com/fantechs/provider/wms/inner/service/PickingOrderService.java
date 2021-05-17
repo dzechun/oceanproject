@@ -1,6 +1,8 @@
 package com.fantechs.provider.wms.inner.service;
 
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 
 import java.util.List;
 
@@ -46,4 +48,8 @@ public interface PickingOrderService {
      * @return
      */
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
+
+    List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder);
+
+    int retrographyStatus(WmsInnerJobOrderDet wmsInnerJobOrderDet);
 }

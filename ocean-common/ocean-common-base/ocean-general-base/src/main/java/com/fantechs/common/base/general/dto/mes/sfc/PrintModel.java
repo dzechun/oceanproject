@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -62,6 +63,9 @@ public class PrintModel implements Serializable {
     @Column(name = "option15")
     @ApiModelProperty(name = "option15",value = "打印字段15")
     private String option15;
+    @Transient
+    @ApiModelProperty(name = "size",value = "打印数量")
+    private int size;
 
     //二维码内容
     private String qrCode;

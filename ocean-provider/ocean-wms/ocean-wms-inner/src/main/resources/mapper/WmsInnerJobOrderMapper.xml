@@ -86,20 +86,20 @@ wipo.option3
   <if test="jobOrderCode!=null and jobOrderCode!=''">
     and wipo.job_order_code like CONCAT('%',#{jobOrderCode},'%')
   </if>
-<if test="materialOwnerId!=null and materialOwnerId!=''">
-  and wipo.material_owner_id =#{materialOwnerId}
+<if test="materialOwnerName!=null and materialOwnerName!=''">
+  and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
 </if>
-<if test="warehouseId!=null and warehouseId!=''">
-  and wipo.warehouse_id =#{warehouseId}
+<if test="warehouseName!=null and warehouseName!=''">
+  and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
 </if>
 <if test="relatedOrderCode!=null and relatedOrderCode!=''">
   and wipo.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
 </if>
-<if test="orderTypeId!=null and orderTypeId!=''">
-  and wipo.order_type_id =#{orderTypeId}
+<if test="orderTypeName!=null and orderTypeName!=''">
+  and boy.order_type_name =#{orderTypeName}
 </if>
-<if test="workerId!=null and workerId!=''">
-  and wipo.worker_id =#{workerId}
+<if test="workerName!=null and workerName!=''">
+  and bwr.worker_name =#{workerName}
 </if>
 <if test="jobOrderType !=null and jobOrderType!= ''">
   and wipo.job_order_type =#{jobOrderType}
@@ -109,6 +109,9 @@ wipo.option3
                  </if>
                  <if test="sourceOrderId!=null and sourceOrderId!=''">
                    and wipo.source_order_id =#{sourceOrderId}
+                 </if>
+                 <if test="isPick==true">
+                     and wipo.job_order_type =4 and wipo.order_status = 5
                  </if>
       <if test="orderStatusList !=null and orderStatusList.size()!=0">
         and wipo.order_status in
@@ -121,13 +124,16 @@ wipo.option3
     </select>
   
   <select id="findStorage" resultType="java.lang.Long">
-    SELECT storage_id FROM base_storage_material WHERE material_id =#{materialId}
+    SELECT storage_id FROM base_storage_material WHERE material_id =#{materialId} and warehouse_id = #{warehouseId}
   </select>
   <select id="SelectStorage" resultType="java.lang.Long">
     SELECT storage_id FROM base_storage WHERE surplus_can_put_salver>0 ORDER BY putaway_move_line_no,picking_move_line_no DESC LIMIT 1
   </select>
 
   <select id="findStorageName" resultType="java.lang.String">
-    select storage_name From base_storage where storage_id #{storageId}
+    select storage_name From base_storage where storage_id = #{storageId}
   </select>
+    <select id="findWarehouseName" resultType="java.lang.String">
+        select warehouse_name FROM base_warehouse where warehouse_id = #{warehouseId}
+    </select>
 </mapper>

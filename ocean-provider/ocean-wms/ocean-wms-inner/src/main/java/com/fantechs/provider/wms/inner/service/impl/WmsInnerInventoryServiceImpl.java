@@ -127,7 +127,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
             criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode"));
         }
         if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
-            criteria.andEqualTo("warehouseName",map.get("warehouseNmae"));
+            criteria.andEqualTo("warehouseName",map.get("warehouseName")).andEqualTo("storageName",map.get("storageName"));
         }
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;

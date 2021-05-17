@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,8 +52,8 @@ public class WmsInnerJobOrderController {
 
     @ApiOperation("取消分配")
     @PostMapping("/cancelDistribution")
-    public ResponseEntity cancelDistribution(@RequestBody List<WmsInnerJobOrderDet> list){
-        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.cancelDistribution(list));
+    public ResponseEntity cancelDistribution(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.cancelDistribution(ids));
     }
 
     @ApiOperation("整单确认")
@@ -63,8 +64,10 @@ public class WmsInnerJobOrderController {
 
     @ApiOperation("单一确认")
     @PostMapping("/singleReceiving")
-    public ResponseEntity singleReceiving(@RequestBody(required = true) List<WmsInnerJobOrderDet> wmsInPutawayOrderDets){
-        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceiving(wmsInPutawayOrderDets));
+    public ResponseEntity singleReceiving(@RequestBody(required = true) WmsInnerJobOrderDet wmsInnerJobOrderDet){
+        List<WmsInnerJobOrderDet> list = new ArrayList<>();
+        list.add(wmsInnerJobOrderDet);
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceiving(list));
     }
 
     @ApiOperation(value = "新增",notes = "新增")

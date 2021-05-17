@@ -32,10 +32,9 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
 
     /**
      * 取消分配
-     * @param list
      * @return
      */
-    int cancelDistribution(List<WmsInnerJobOrderDet> list);
+    int cancelDistribution(String ids);
 
     /**
      * 整单确认

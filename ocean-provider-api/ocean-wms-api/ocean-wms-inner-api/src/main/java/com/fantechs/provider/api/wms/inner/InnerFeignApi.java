@@ -1,10 +1,7 @@
 package com.fantechs.provider.api.wms.inner;
 
 import com.fantechs.common.base.general.dto.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStorageInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -97,4 +94,7 @@ public interface InnerFeignApi {
     @ApiOperation("列表")
     @PostMapping("/wmsInnerJobOrder/findList")
     ResponseEntity<List<WmsInnerJobOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerJobOrder searchWmsInPutawayOrder);
+
+    @PostMapping("/pickingOrder/retrographyStatus")
+    ResponseEntity retrographyStatus(@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet);
 }

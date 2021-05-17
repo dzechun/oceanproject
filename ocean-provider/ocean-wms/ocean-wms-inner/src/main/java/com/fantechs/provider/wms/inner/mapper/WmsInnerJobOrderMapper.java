@@ -14,9 +14,11 @@ import java.util.Map;
 public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder);
 
-    Long findStorage(@Param("materialId")Long materialId);
+    Long findStorage(@Param("materialId")Long materialId,@Param("warehouseId")Long warehouseId);
 
     Long SelectStorage();
 
     String findStorageName(@Param("storageId")Long storageId);
+
+    String findWarehouseName(@Param("warehouseId")Long warehouseId);
 }
