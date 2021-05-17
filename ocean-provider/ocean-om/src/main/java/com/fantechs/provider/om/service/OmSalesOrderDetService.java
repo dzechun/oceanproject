@@ -19,6 +19,4 @@ public interface OmSalesOrderDetService extends IService<OmSalesOrderDet> {
     int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, Integer lineNumber, SysUser currentUserInfo);
 
     int updateDto(OmSalesOrderDetDto omSalesOrderDetDto, SysUser currentUserInfo);
-
-    int writeBackTotalOutboundQty(Long orderDetId, BigDecimal totalOutboundQty);
 }

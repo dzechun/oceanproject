@@ -2,12 +2,14 @@ package com.fantechs.provider.api.qms;
 
 import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,8 +39,7 @@ public interface OMFeignApi {
     @PostMapping("/smtOrder/detail")
     ResponseEntity<SmtOrder> detailSmtOrder(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id);
 
-    @ApiOperation("返写销售订单累计出库数量")
-    @PostMapping("/writeBackTotalOutboundQty")
-    ResponseEntity writeBackTotalOutboundQty(@ApiParam(value = "销售订单明细ID",required = true)@RequestParam  @NotNull(message="销售订单明细ID不能为空") Long orderDetId,
-                                                    @ApiParam(value = "返写数量",required = true)@RequestParam  @NotNull(message="返写数量不能为空") BigDecimal totalOutboundQty);
+    @ApiOperation("修改订单明细")
+    @PostMapping("/omSalesOrderDet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet);
 }
