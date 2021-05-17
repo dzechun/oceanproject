@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.sfc;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +29,9 @@ public class CheckProductionDto implements Serializable {
     private Long stationId;
     // 是否检查排程
     private Boolean checkOrNot;
+    // 正作业工单ID
+    private Long workOrderId;
+    // 包箱类型(1：工单包箱，2：料号包箱)
+    private String packType;
 
 }

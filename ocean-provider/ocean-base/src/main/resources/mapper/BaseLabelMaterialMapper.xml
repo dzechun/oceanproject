@@ -21,7 +21,7 @@
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
         <result column="is_process" jdbcType="TINYINT" property="isProcess"/>
-        <result column="once_print_qty" jdbcType="INT" property="oncePrintQty"/>
+        <result column="once_print_qty" jdbcType="INTEGER" property="oncePrintQty"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -53,7 +53,7 @@
         bcm.modified_time,
         bcm.is_delete,
         bcm.is_process,
-bcm.once_print_qty
+        bcm.once_print_qty
     </sql>
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,sm.material_code,sm.material_version ,sm.material_desc,bl.label_code,bl.label_name,bl.label_version,blc.label_category_name,sp.process_name,su.user_name as create_user_name,

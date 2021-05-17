@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -48,11 +49,11 @@ public class OmSalesOrderDetController {
 //        return ControllerUtil.returnCRUD(omSalesOrderDetService.batchDelete(ids));
 //    }
 //
-//    @ApiOperation("修改")
-//    @PostMapping("/update")
-//    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet) {
-//        return ControllerUtil.returnCRUD(omSalesOrderDetService.update(omSalesOrderDet));
-//    }
+    @ApiOperation("修改")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet) {
+        return ControllerUtil.returnCRUD(omSalesOrderDetService.update(omSalesOrderDet));
+    }
 //
 //    @ApiOperation("获取详情")
 //    @PostMapping("/detail")

@@ -68,5 +68,6 @@
         and date_format(bhiaord.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
+    order by bhiaord.modified_time desc
   </select>
 </mapper>

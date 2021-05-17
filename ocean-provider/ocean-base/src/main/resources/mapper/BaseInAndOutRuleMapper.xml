@@ -62,6 +62,9 @@
       <if test="inAndOutRuleName!=null and inAndOutRuleName!=''">
         and biaor.in_and_out_rule_name LIKE CONCAT('%',#{inAndOutRuleName},'%')
       </if>
+      <if test="createUserName!=null and createUserName!=''">
+        and su.user_name LIKE CONCAT('%',#{createUserName},'%')
+      </if>
       <if test="category!=null">
         and biaor.category = #{category}
       </if>
@@ -72,5 +75,6 @@
         and date_format(biaor.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
+    order by biaor.create_time desc
   </select>
 </mapper>

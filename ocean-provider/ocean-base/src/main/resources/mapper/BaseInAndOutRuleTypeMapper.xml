@@ -69,5 +69,6 @@
         and date_format(biaort.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
+    order by biaort.create_time desc
   </select>
 </mapper>

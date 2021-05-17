@@ -3,6 +3,7 @@ package com.fantechs.provider.api.wms.out;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutProductionMaterialDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterial;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutProductionMaterialdDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutProductionMaterial;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -47,5 +50,9 @@ public interface OutFeignApi {
 
     @PostMapping("/wmsOutDeliveryOrder/writeDeliveryOrderQty")
     ResponseEntity writeDeliveryOrderQty(@RequestParam Map<String,Object> map);
+
+    @ApiOperation("修改销售出库明细")
+    @PostMapping("/wmsOutDeliveryOrderDet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutDeliveryOrderDet.update.class) WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet);
 
 }

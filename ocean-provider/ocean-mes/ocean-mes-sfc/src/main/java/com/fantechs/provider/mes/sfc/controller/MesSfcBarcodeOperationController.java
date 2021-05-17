@@ -46,10 +46,11 @@ public class MesSfcBarcodeOperationController {
 
 
     @ApiOperation("PDA包箱作业-查询上次作业数据")
-    @PostMapping("/findLastCarton")
-    public ResponseEntity<PdaCartonRecordDto> findLastCarton(@ApiParam(value = "processId", required = true) @RequestParam @NotNull(message = "processId不能为空") Long processId,
-                                                             @ApiParam(value = "stationId", required = true) @RequestParam @NotNull(message = "stationId不能为空") Long stationId) {
-        return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.findLastCarton(processId, stationId));
+        @PostMapping("/findLastCarton")
+    public ResponseEntity<PdaCartonRecordDto> findLastCarton(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "processId不能为空") Long processId,
+                                                             @ApiParam(value = "工位ID", required = true) @RequestParam @NotNull(message = "stationId不能为空") Long stationId,
+                                                             @ApiParam(value = "包箱类型(1：工单包箱，2：料号包箱)", required = true) @RequestParam @NotNull(message = "packType不能为空") String packType) {
+        return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.findLastCarton(processId, stationId, packType));
     }
 
     @ApiOperation("PDA包箱作业-条码提交")
@@ -88,8 +89,9 @@ public class MesSfcBarcodeOperationController {
     @ApiOperation("PDA包箱作业-修改包箱规格数量")
     @PostMapping("/updateCartonDescNum")
     public ResponseEntity updateCartonDescNum(@ApiParam(value = "包箱ID", required = true) @RequestParam @NotNull(message = "productCartonId不能为空") Long productCartonId,
-                                              @ApiParam(value = "包箱规格数量", required = true) @RequestParam @NotNull(message = "cartonDescNum不能为空") BigDecimal cartonDescNum) {
-        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.updateCartonDescNum(productCartonId, cartonDescNum));
+                                              @ApiParam(value = "包箱规格数量", required = true) @RequestParam @NotNull(message = "cartonDescNum不能为空") BigDecimal cartonDescNum,
+                                              @ApiParam(value = "包箱类型(1：工单包箱，2：料号包箱)", required = true) @RequestParam @NotNull(message = "packType不能为空") String packType) {
+        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.updateCartonDescNum(productCartonId, cartonDescNum, packType));
     }
 
     @ApiOperation("PDA包箱作业-修改同一工单同一个料号配置")

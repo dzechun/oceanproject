@@ -19,7 +19,7 @@ public interface MesSfcBarcodeOperationService {
     int pdaPutIntoProduction(PdaPutIntoProductionDto vo) throws Exception;
 
 
-    PdaCartonRecordDto findLastCarton(Long processId, Long stationId);
+    PdaCartonRecordDto findLastCarton(Long processId, Long stationId, String packType);
 
     /**
      * 包箱作业-扫条码
@@ -41,7 +41,7 @@ public interface MesSfcBarcodeOperationService {
      * @param cartonDescNum
      * @return
      */
-    int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum);
+    int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType);
 
     /**
      * 包箱作业-检查是否有未关闭包箱
