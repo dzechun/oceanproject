@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -18,4 +19,6 @@ public interface OmSalesOrderDetService extends IService<OmSalesOrderDet> {
     int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, Integer lineNumber, SysUser currentUserInfo);
 
     int updateDto(OmSalesOrderDetDto omSalesOrderDetDto, SysUser currentUserInfo);
+
+    int writeBackTotalOutboundQty(Long orderDetId, BigDecimal totalOutboundQty);
 }

@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.out.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -47,6 +49,19 @@ public class WmsOutDeliveryOrderController {
     @PostMapping("/createJobOrder")
     public ResponseEntity createJobOrder(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id) {
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.createJobOrder(id));
+    }
+
+    @ApiOperation(value = "返写销售订单累计出库数量",notes = "返写销售订单累计出库数量")
+    @PostMapping("/writeBackTotalOutboundQty")
+    public ResponseEntity writeBackTotalOutboundQty(@ApiParam(value = "出库单明细ID",required = true)@RequestParam  @NotNull(message="出库单明细ID不能为空") Long deliveryOrderDetId,
+                                                    @ApiParam(value = "返写数量",required = true)@RequestParam  @NotNull(message="返写数量不能为空") BigDecimal totalOutboundQty) {
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeBackTotalOutboundQty(deliveryOrderDetId,totalOutboundQty));
+    }
+
+    @ApiOperation(value = "返写出库单数量",notes = "返写出库单数量")
+    @PostMapping("/writeBackQty")
+    public ResponseEntity writeBackQty(@ApiParam(value = "必传：deliveryOrderDetId",required = true)@RequestBody @Validated WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet) {
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeBackQty(wmsOutDeliveryOrderDet));
     }
 
     @ApiOperation("删除")
