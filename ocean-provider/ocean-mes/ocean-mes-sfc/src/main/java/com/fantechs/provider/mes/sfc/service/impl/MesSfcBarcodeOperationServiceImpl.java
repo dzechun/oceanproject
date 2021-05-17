@@ -440,6 +440,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .isDelete((byte) 1)
                     .build());
             // 保存包箱号
+            mesSfcBarcodeProcess.setStationId(vo.getStationId());
             mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());
             mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         }
