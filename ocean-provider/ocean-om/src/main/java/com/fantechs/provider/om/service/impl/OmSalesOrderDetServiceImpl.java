@@ -149,13 +149,4 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         omHtSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
 //        omHtSalesOrderDetService.save(omHtSalesOrderDet);
     }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int writeBackTotalOutboundQty(Long orderDetId, BigDecimal totalOutboundQty) {
-        OmSalesOrderDetDto omSalesOrderDetDto = new OmSalesOrderDetDto();
-        omSalesOrderDetDto.setSalesOrderDetId(orderDetId);
-        omSalesOrderDetDto.setTotalOutboundQty(totalOutboundQty);
-        return omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDetDto);
-    }
 }

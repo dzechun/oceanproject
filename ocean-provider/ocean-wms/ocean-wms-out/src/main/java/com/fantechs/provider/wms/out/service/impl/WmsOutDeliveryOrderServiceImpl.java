@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -317,18 +318,14 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     public int writeBackTotalOutboundQty(Long deliveryOrderDetId, BigDecimal totalOutboundQty) {
         WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(deliveryOrderDetId);
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getOrderDetId())){
-            ResponseEntity responseEntity = omFeignApi.writeBackTotalOutboundQty(wmsOutDeliveryOrderDet.getOrderDetId(), totalOutboundQty);
+            OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
+            omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
+            omSalesOrderDet.setTotalOutboundQty(totalOutboundQty);
+            ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
         }
         return 1;
     }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int writeBackQty(WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet) {
-        return wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
-    }
-
 }

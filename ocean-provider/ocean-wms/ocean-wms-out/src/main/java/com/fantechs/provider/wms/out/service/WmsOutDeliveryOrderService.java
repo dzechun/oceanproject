@@ -23,6 +23,4 @@ public interface WmsOutDeliveryOrderService extends IService<WmsOutDeliveryOrder
     int createJobOrder(Long id);
 
     int writeBackTotalOutboundQty(Long deliveryOrderDetId, BigDecimal totalOutboundQty);
-
-    int writeBackQty(WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet);
 }

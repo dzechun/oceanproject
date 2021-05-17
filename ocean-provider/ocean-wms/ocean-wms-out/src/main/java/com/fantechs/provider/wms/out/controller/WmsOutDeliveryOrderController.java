@@ -58,12 +58,6 @@ public class WmsOutDeliveryOrderController {
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeBackTotalOutboundQty(deliveryOrderDetId,totalOutboundQty));
     }
 
-    @ApiOperation(value = "返写出库单数量",notes = "返写出库单数量")
-    @PostMapping("/writeBackQty")
-    public ResponseEntity writeBackQty(@ApiParam(value = "必传：deliveryOrderDetId",required = true)@RequestBody @Validated WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet) {
-        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeBackQty(wmsOutDeliveryOrderDet));
-    }
-
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {

@@ -49,11 +49,11 @@ public class OmSalesOrderDetController {
 //        return ControllerUtil.returnCRUD(omSalesOrderDetService.batchDelete(ids));
 //    }
 //
-//    @ApiOperation("修改")
-//    @PostMapping("/update")
-//    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet) {
-//        return ControllerUtil.returnCRUD(omSalesOrderDetService.update(omSalesOrderDet));
-//    }
+    @ApiOperation("修改")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet) {
+        return ControllerUtil.returnCRUD(omSalesOrderDetService.update(omSalesOrderDet));
+    }
 //
 //    @ApiOperation("获取详情")
 //    @PostMapping("/detail")
@@ -61,13 +61,6 @@ public class OmSalesOrderDetController {
 //        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetService.selectByKey(id);
 //        return  ControllerUtil.returnDataSuccess(omSalesOrderDet,StringUtils.isEmpty(omSalesOrderDet)?0:1);
 //    }
-
-    @ApiOperation("返写销售订单累计出库数量")
-    @PostMapping("/writeBackTotalOutboundQty")
-    public ResponseEntity writeBackTotalOutboundQty(@ApiParam(value = "销售订单明细ID",required = true)@RequestParam  @NotNull(message="销售订单明细ID不能为空") Long orderDetId,
-                                                    @ApiParam(value = "返写数量",required = true)@RequestParam  @NotNull(message="返写数量不能为空") BigDecimal totalOutboundQty) {
-        return ControllerUtil.returnCRUD(omSalesOrderDetService.writeBackTotalOutboundQty(orderDetId,totalOutboundQty));
-    }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
