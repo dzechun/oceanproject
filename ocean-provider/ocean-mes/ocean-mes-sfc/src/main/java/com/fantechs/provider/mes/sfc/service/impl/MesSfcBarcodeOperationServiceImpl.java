@@ -429,6 +429,27 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .build());
             // 更新下一工序，增加工序记录
             BarcodeUtils.updateProcess(updateProcessDto);
+
+            // 6.1、判断是否包箱已满，关箱
+            List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder().cartonCode(vo.getCartonCode()).build());
+            if (mesSfcBarcodeProcessList.size() >= vo.getCartonNum().intValue()) {
+                if (vo.getPrint()) {
+                    // 关箱后台才能打印条码
+                    BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
+                            .barcode(vo.getCartonCode())
+                            .labelTypeCode("09")
+                            .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
+                            .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
+                            .build());
+                }
+                // 包箱已满，关箱
+                mesSfcProductCarton.setCloseStatus((byte) 1);
+                mesSfcProductCarton.setCloseCartonUserId(user.getUserId());
+                mesSfcProductCarton.setCloseCartonTime(new Date());
+                mesSfcProductCarton.setModifiedUserId(user.getUserId());
+                mesSfcProductCarton.setModifiedTime(new Date());
+                return mesSfcProductCartonService.update(mesSfcProductCarton);
+            }
         }else {
             // 保存条码包箱关系
             mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
@@ -445,26 +466,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
         }
 
-        // 6.1、判断是否包箱已满，关箱
-        List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder().cartonCode(vo.getCartonCode()).build());
-        if (mesSfcBarcodeProcessList.size() >= vo.getCartonNum().intValue()) {
-            if (vo.getPrint()) {
-                // 关箱后台才能打印条码
-                BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
-                        .barcode(vo.getCartonCode())
-                        .labelTypeCode("09")
-                        .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
-                        .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
-                        .build());
-            }
-            // 包箱已满，关箱
-            mesSfcProductCarton.setCloseStatus((byte) 1);
-            mesSfcProductCarton.setCloseCartonUserId(user.getUserId());
-            mesSfcProductCarton.setCloseCartonTime(new Date());
-            mesSfcProductCarton.setModifiedUserId(user.getUserId());
-            mesSfcProductCarton.setModifiedTime(new Date());
-            return mesSfcProductCartonService.update(mesSfcProductCarton);
-        }
         return 1;
     }
 
