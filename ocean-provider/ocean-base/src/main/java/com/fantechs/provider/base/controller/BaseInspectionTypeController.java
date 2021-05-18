@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "检验类型")
-@RequestMapping("/qmsInspectionType")
+@RequestMapping("/baseInspectionType")
 @Validated
 public class BaseInspectionTypeController {
 

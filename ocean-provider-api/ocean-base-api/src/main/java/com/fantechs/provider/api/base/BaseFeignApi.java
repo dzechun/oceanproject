@@ -290,11 +290,11 @@ public interface BaseFeignApi {
             @ApiParam(value = "执行函数参数") @RequestParam(required = false) String params);
 
     @ApiOperation("获取检验项目列表")
-    @PostMapping("/qmsInspectionItem/findList")
+    @PostMapping("/baseInspectionItem/findList")
     ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionItem searchQmsInspectionItem);
 
     @ApiOperation("获取检验类型列表")
-    @PostMapping("/qmsInspectionType/findList")
+    @PostMapping("/baseInspectionType/findList")
     ResponseEntity<List<BaseInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
 
 
@@ -356,7 +356,7 @@ public interface BaseFeignApi {
                                             @ApiParam(value = "待减可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num);
 
     @ApiOperation("加可放托盘数")
-    @PostMapping("/plusSurplusCanPutSalver")
+    @PostMapping("/baseStorage/plusSurplusCanPutSalver")
     ResponseEntity plusSurplusCanPutSalver(@ApiParam(value = "库位id", required = true) @RequestParam @NotNull(message = "库位id") Long storageId,
                                            @ApiParam(value = "待加可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num);
 

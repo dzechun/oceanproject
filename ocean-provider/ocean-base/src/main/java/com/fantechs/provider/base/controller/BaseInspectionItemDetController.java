@@ -29,7 +29,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "检验项目明细")
-@RequestMapping("/qmsInspectionItemDet")
+@RequestMapping("/baseInspectionItemDet")
 @Validated
 public class BaseInspectionItemDetController {
 

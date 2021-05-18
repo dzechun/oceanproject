@@ -132,11 +132,11 @@ public class BaseLabelMaterial extends ValidGroup implements Serializable {
     private Byte isProcess;
 
     /**
-     * 打印数量
+     * 一次打印数量
      */
-    @ApiModelProperty(name = "oncePrintQty",value = "打印数量")
-    @Column(name = "once_print_qty")
-    private Integer oncePrintQty;
+    @ApiModelProperty(name = "oncePrintCount",value = "一次打印数量")
+    @Column(name = "once_print_count")
+    private Integer oncePrintCount;
 
     private static final long serialVersionUID = 1L;
 }
