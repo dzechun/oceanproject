@@ -1,8 +1,15 @@
 package com.fantechs.provider.mes.sfc.controller;
 
+import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeReprintService;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 生产管理-包箱栈板条码补打控制器
@@ -14,5 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "生产管理-PDA包箱栈板条码补打作业")
 @RequestMapping("/mesSfcBarcodeReprint")
 public class MesSfcBarcodeReprintController {
+
+    @Autowired
+    MesSfcBarcodeReprintService mesSfcBarcodeReprintService;
+
+    @ApiOperation("查询条码（模糊匹配）")
+    @GetMapping("/findBarcode")
+    public ResponseEntity<String> findBarcode(@ApiParam(value = "号码", required = true) @RequestParam @NotNull(message = "keyword不能为空") String keyword,
+                                              @ApiParam(value = "号码类型，1:包箱，2:栈板", required = true) @RequestParam @NotNull(message = "codeType不能为空") String codeType){
+        String barCode = mesSfcBarcodeReprintService.findCode(keyword, codeType);
+        return ControllerUtil.returnDataSuccess(barCode, 1);
+    }
+
+    @ApiOperation("补打条码")
+    @PostMapping("/reprintBarcode")
+    public ResponseEntity reprintBarcode(String barCode, String codeType){
+        return ControllerUtil.returnCRUD(mesSfcBarcodeReprintService.reprintBarcode(barCode, codeType));
+    }
 
 }
