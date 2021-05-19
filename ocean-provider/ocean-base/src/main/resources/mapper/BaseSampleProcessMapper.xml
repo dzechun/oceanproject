@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseSampleProcessMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseSampleProcess">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
+    <result column="sample_process_code" jdbcType="VARCHAR" property="sampleProcessCode" />
+    <result column="sample_process_desc" jdbcType="VARCHAR" property="sampleProcessDesc" />
+    <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType" />
+    <result column="sample_plan_id" jdbcType="BIGINT" property="samplePlanId" />
+    <result column="inspection_rigor_level" jdbcType="TINYINT" property="inspectionRigorLevel" />
+    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue" />
+    <result column="sample_transition_rule_id" jdbcType="BIGINT" property="sampleTransitionRuleId" />
+    <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty" />
+    <result column="sample_percent" jdbcType="DECIMAL" property="samplePercent" />
+    <result column="ac_value" jdbcType="INTEGER" property="acValue" />
+    <result column="re_value" jdbcType="INTEGER" property="reValue" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="sample_plan_code" jdbcType="VARCHAR" property="samplePlanCode" />
+    <result column="sample_transition_rule_code" jdbcType="VARCHAR" property="sampleTransitionRuleCode" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bsp.sample_process_id,
+    bsp.sample_process_code,
+    bsp.sample_process_desc,
+    bsp.sample_process_type,
+    bsp.sample_plan_id,
+    bsp.inspection_rigor_level,
+    bsp.aql_value,
+    bsp.sample_transition_rule_id,
+    bsp.sample_qty,
+    bsp.sample_percent,
+    bsp.ac_value,
+    bsp.re_value,
+    bsp.`status`,
+    bsp.remark,
+    bsp.org_id,
+    bsp.create_user_id,
+    bsp.create_time,
+    bsp.modified_user_id,
+    bsp.modified_time,
+    bsp.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    sp.sample_plan_code,bstr.sample_transition_rule_code,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_sample_process bsp
+    left join fantech_imes_v2.base_sample_plan sp on bsp.sample_plan_id=sp.sample_plan_id
+    left join fantech_imes_v2.base_sample_transition_rule bstr on bsp.sample_transition_rule_id=bstr.sample_transition_rule_id
+    left join ocean_v2.sys_user u on bsp.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bsp.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bsp.org_id = bo.organization_id
+    <where>
+      <if test="sampleProcessCode!=null and sampleProcessCode!=''">
+        and bsp.sample_process_code like CONCAT('%', #{sampleProcessCode}, '%')
+      </if>
+      <if test="sampleProcessDesc!=null and sampleProcessDesc!=''">
+        and bsp.sample_process_desc like CONCAT('%', #{sampleProcessDesc}, '%')
+      </if>
+      <if test="sampleProcessType!=null">
+        and bsp.sample_process_type = #{sampleProcessCode}
+      </if>
+      <if test="status!=null">
+        and bsp.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bsp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bsp.create_time desc
+  </select>
+</mapper>
