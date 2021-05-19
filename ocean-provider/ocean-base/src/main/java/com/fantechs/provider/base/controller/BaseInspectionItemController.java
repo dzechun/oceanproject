@@ -31,7 +31,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "检验项目")
-@RequestMapping("/qmsInspectionItem")
+@RequestMapping("/baseInspectionItem")
 @Validated
 public class BaseInspectionItemController {
 

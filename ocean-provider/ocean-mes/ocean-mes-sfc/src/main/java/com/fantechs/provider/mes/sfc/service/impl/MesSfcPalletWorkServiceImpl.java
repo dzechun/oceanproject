@@ -115,7 +115,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             // 产品条码
             if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 2) {
                 workOrderBarcodeId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId();
-                // 客户条码
+                // 销售订单条码
             } else if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 4) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("partBarcode", requestPalletWorkScanDto.getBarcode());
