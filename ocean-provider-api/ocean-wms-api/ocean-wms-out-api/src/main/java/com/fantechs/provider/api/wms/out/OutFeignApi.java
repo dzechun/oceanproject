@@ -48,9 +48,6 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder);
 
-    @PostMapping("/wmsOutDeliveryOrder/writeDeliveryOrderQty")
-    ResponseEntity writeDeliveryOrderQty(@RequestParam Map<String,Object> map);
-
     @ApiOperation("修改销售出库明细")
     @PostMapping("/wmsOutDeliveryOrderDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutDeliveryOrderDet.update.class) WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet);

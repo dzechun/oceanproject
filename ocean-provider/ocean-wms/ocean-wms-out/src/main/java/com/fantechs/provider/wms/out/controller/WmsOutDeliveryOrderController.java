@@ -99,9 +99,4 @@ public class WmsOutDeliveryOrderController {
         throw new BizErrorException(e);
         }
     }
-
-    @PostMapping("/writeDeliveryOrderQty")
-    public ResponseEntity writeDeliveryOrderQty(@RequestParam Map<String,Object> map){
-        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.writeDeliveryOrderQty(map));
-    }
 }

@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -36,6 +37,9 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +58,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     private InnerFeignApi innerFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
@@ -330,87 +336,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             num++;
         }
         return num;
-//        if(wmsInnerJobOrderDtos.size()<1) {
-//            List<WmsInnerJobOrderDet> jobOrderDets = new ArrayList<>();
-//            double total = 0.00;
-//            for (WmsInAsnOrderDet wms : list) {
-//
-//
-//
-//                innerJobOrders.add(wmsInnerJobOrder);
-//            }
-//
-//        }else {
-//            //作业单
-//            BigDecimal result1 = wmsInnerJobOrderDtos.stream()
-//                    // 将user对象的age取出来map为Bigdecimal
-//                    .map(WmsInnerJobOrderDto::getPlanQty)
-//                    // 使用reduce()聚合函数,实现累加器
-//                    .reduce(BigDecimal.ZERO,BigDecimal::add);
-//            //完工入库
-//            BigDecimal result2 = list.stream()
-//                    .map(WmsInAsnOrderDet::getActualQty)
-//                    .reduce(BigDecimal.ZERO,BigDecimal::add);
-//
-//            //已有数量减去作业单数量
-//            if((result2.subtract(result1)).compareTo(BigDecimal.ZERO)==0){
-//                throw new BizErrorException("已有上架作业单");
-//            }else {
-//                List<WmsInnerJobOrderDet> jobOrderDets = new ArrayList<>();
-//                double total = 0.00;
-//                for (WmsInAsnOrderDet wms : list) {
-//                    for (WmsInnerJobOrderDto wmsInnerJobOrderDto : wmsInnerJobOrderDtos) {
-//                        SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
-//                        searchWmsInnerJobOrderDet.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
-//                        List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDtoList = innerFeignApi.findList(searchWmsInnerJobOrderDet).getData();
-//                        for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : wmsInnerJobOrderDetDtoList) {
-//                            if(wmsInnerJobOrderDetDto.getMaterialId().equals(wms.getMaterialId())){
-//                                wms.setActualQty(wms.getActualQty().subtract(wmsInnerJobOrderDetDto.getPlanQty()));
-//                            }
-//                        }
-//                    }
-//                    if(wms.getActualQty().compareTo(new BigDecimal("0.00"))==1){
-//                        total += wms.getActualQty().doubleValue();
-//                        jobOrderDets.add(WmsInnerJobOrderDet.builder()
-//                                .sourceDetId(wms.getAsnOrderDetId())
-//                                .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
-//                                .warehouseId(wms.getWarehouseId())
-//                                .outStorageId(wms.getStorageId())
-//                                .inventoryStatusId(wms.getInventoryStatusId())
-//                                .materialId(wms.getMaterialId())
-//                                .batchCode(wms.getBatchCode())
-//                                .packingUnitName(wms.getPackingUnitName())
-//                                .planQty(wms.getActualQty())
-//                                .distributionQty(new BigDecimal("0.00"))
-//                                .actualQty(new BigDecimal("0.00"))
-//                                .palletCode(wms.getPalletCode())
-//                                .orderStatus((byte)1)
-//                                .build());
-//                    }
-//                }
-//                if(jobOrderDets.size()<1){
-//                    throw new BizErrorException("上架作业单据已存在");
-//                }
-//                WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
-//                        .sourceOrderId(wmsInAsnOrder.getAsnOrderId())
-//                        .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
-//                        .orderTypeId(wmsInAsnOrder.getOrderTypeId())
-//                        .warehouseId(jobOrderDets.get(0).getWarehouseId())
-//                        .jobOrderType((byte)3)
-//                        .relatedOrderCode(wmsInAsnOrder.getAsnCode())
-//                        .wmsInPutawayOrderDets(jobOrderDets)
-//                        .planQty(new BigDecimal(total))
-//                        .orderStatus((byte) 1)
-//                        .orderTypeId(wmsInAsnOrder.getOrderTypeId())
-//                        .actualQty(new BigDecimal("0.00"))
-//                        .build();
-//                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-//                if (responseEntity.getCode() != 0) {
-//                    throw new BizErrorException("创建作业单失败");
-//                }
-//                return 1;
-//            }
-//        }
     }
 
     private int addInventory(Long asnOrderId,Long asnOrderDetId){
@@ -573,7 +498,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             throw new BizErrorException("未查询到工单信息");
         }
         MesPmWorkOrder mesPmWorkOrder = responseEntity.getData();
-        if(PackingQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 || resultQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1){
+        if(PackingQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 || resultQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 ||mesPmWorkOrder.getInventoryQty().add(PackingQty).compareTo(mesPmWorkOrder.getWorkOrderQty())==1){
             throw new BizErrorException("超出工单数量范围");
         }
         return mesPmWorkOrder;
@@ -597,6 +522,77 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         }
         return wmsInAsnOrderMapper.deleteByIds(ids);
     }
+
+    /**
+     * 栈板作业生成完工入库单
+     * @param wmsInAsnOrderDet
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int palletAutoAsnOrder(WmsInAsnOrderDet wmsInAsnOrderDet) {
+        SysUser sysUser = currentUser();
+        //查询redis是否存储今日入库单号
+        Boolean hasKey = redisUtil.hasKey("pallet_id");
+        //true
+        if(hasKey){
+            Long asnOrderId = Long.parseLong(redisUtil.get("pallet_id").toString());
+            WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
+            if(StringUtils.isEmpty(wmsInAsnOrder)){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404);
+            }
+            Example example = new Example(WmsInAsnOrderDet.class);
+            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",wmsInAsnOrderDet.getMaterialId()).andEqualTo("batchCode",wmsInAsnOrderDet.getBatchCode());
+            WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectOneByExample(example);
+            if(StringUtils.isNotEmpty(wms)){
+                wms.setPackingQty(wms.getPackingQty().add(wmsInAsnOrderDet.getPackingQty()));
+                wms.setPutawayQty(wms.getActualQty().add(wmsInAsnOrderDet.getPackingQty()));
+            }
+        }else{
+            //生成完工入库单单号
+            WmsInAsnOrder wmsInAsnOrder = WmsInAsnOrder.builder()
+                    .asnCode(CodeUtils.getId("ASN-"))
+                    .orderDate(new Date())
+                    .modifiedUserId(sysUser.getUserId())
+                    .modifiedTime(new Date())
+                    .createTime(new Date())
+                    .createUserId(sysUser.getUserId())
+                    .orderStatus((byte)3)
+                    .build();
+            int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
+            if(num<1){
+                throw new BizErrorException("完工入库单生成失败");
+            }
+            wmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrder.getAsnOrderId());
+            wmsInAsnOrderDet.setCreateTime(new Date());
+            wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
+            wmsInAsnOrderDet.setModifiedTime(new Date());
+            wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
+
+            //设置新redis 时效为24小时
+            redisUtil.set("pallet_id",wmsInAsnOrder.getAsnOrderId());
+            redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
+        }
+        return 0;
+    }
+
+    /**
+     * 时间戳
+     * @param currentDate
+     * @return
+     */
+    private Integer getRemainSecondsOneDay(Date currentDate) {
+        //使用plusDays加传入的时间加1天，将时分秒设置成0
+        LocalDateTime midnight = LocalDateTime.ofInstant(currentDate.toInstant(),
+                ZoneId.systemDefault()).plusDays(1).withHour(0).withMinute(0)
+                .withSecond(0).withNano(0);
+        LocalDateTime currentDateTime = LocalDateTime.ofInstant(currentDate.toInstant(),
+                ZoneId.systemDefault());
+        //使用ChronoUnit.SECONDS.between方法，传入两个LocalDateTime对象即可得到相差的秒数
+        long seconds = ChronoUnit.SECONDS.between(currentDateTime, midnight);
+        return (int) seconds;
+    }
+
     /**
      * 获取当前登录用户
      * @return

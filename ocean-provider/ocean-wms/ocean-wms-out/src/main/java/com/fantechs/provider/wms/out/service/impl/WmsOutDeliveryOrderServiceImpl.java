@@ -312,20 +312,4 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
         return 1;
     }
-
-    @Override
-    public int writeDeliveryOrderQty(Map<String,Object> map){
-        Example example = new Example(WmsOutDeliveryOrderDet.class);
-        example.createCriteria().andEqualTo("deliveryOrderId",map.get("deliveryOrderId"))
-                .andEqualTo("materialId",map.get("materialId"))
-                .andEqualTo("storageId",map.get("storageId"))
-                .andEqualTo("warehouseId",map.get("warehouseId"))
-                .andEqualTo("batchCode",StringUtils.isEmpty(map.get("batchCode"))?null:map.get("batchCode"));
-        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
-            throw new BizErrorException("未匹配到关联的出库单");
-        }
-        wmsOutDeliveryOrderDet.setPackingQty(new BigDecimal(map.get("actualQty").toString()));
-        return wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
-    }
 }

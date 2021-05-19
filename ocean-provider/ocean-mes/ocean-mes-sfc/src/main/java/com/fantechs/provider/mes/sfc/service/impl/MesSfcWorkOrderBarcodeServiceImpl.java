@@ -284,7 +284,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             }
             record.setBarcode(rs.getData());
 
-            // 更新redis最新包箱号
+            // 更新redis最新条码
             redisUtil.set(sub(list), rs.getData());
 
             //待打印状态

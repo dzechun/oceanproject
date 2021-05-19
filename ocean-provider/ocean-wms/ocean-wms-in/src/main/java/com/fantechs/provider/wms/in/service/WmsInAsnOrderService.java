@@ -37,4 +37,6 @@ public interface WmsInAsnOrderService extends IService<WmsInAsnOrder> {
     WmsInAsnOrder packageAutoAdd(WmsInAsnOrder wmsInAsnOrder);
 
     int createInnerJobOrder(Long asnOrderId);
+
+    int palletAutoAsnOrder(WmsInAsnOrderDet wmsInAsnOrderDet);
 }

@@ -26,26 +26,26 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     /**
      * 单据类型
      */
-    @ApiModelProperty(name="orderTypeName",value = "单据类型")
-    private Long orderTypeName;
+    @ApiModelProperty(name="orderTypeId",value = "单据类型")
+    private Long orderTypeId;
 
     /**
      * 货主
      */
     @ApiModelProperty(name="materialOwnerName",value = "货主")
-    private Long materialOwnerName;
+    private String materialOwnerName;
 
     /**
      * 仓库
      */
     @ApiModelProperty(name="warehouseName",value = "仓库")
-    private Long warehouseName;
+    private String warehouseName;
 
     /**
      * 工作人员
      */
     @ApiModelProperty(name="workerName",value = "工作人员")
-    private Long workerName;
+    private String workerName;
 
     private Long jobOrderId;
 

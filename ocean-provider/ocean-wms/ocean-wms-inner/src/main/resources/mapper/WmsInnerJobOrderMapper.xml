@@ -95,8 +95,8 @@ wipo.option3
 <if test="relatedOrderCode!=null and relatedOrderCode!=''">
   and wipo.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
 </if>
-<if test="orderTypeName!=null and orderTypeName!=''">
-  and boy.order_type_name =#{orderTypeName}
+<if test="orderTypeId!=null and orderTypeId!=''">
+  and wipo.order_type_id =#{orderTypeId}
 </if>
 <if test="workerName!=null and workerName!=''">
   and bwr.worker_name =#{workerName}
@@ -124,7 +124,7 @@ wipo.option3
     </select>
   
   <select id="findStorage" resultType="java.lang.Long">
-    SELECT storage_id FROM base_storage_material WHERE material_id =#{materialId} and warehouse_id = #{warehouseId}
+    SELECT storage_id FROM base_storage_material WHERE material_id =#{materialId}
   </select>
   <select id="SelectStorage" resultType="java.lang.Long">
     SELECT storage_id FROM base_storage WHERE surplus_can_put_salver>0 ORDER BY putaway_move_line_no,picking_move_line_no DESC LIMIT 1
