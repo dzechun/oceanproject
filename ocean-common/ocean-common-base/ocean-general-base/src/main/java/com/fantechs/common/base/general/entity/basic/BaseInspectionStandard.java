@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 检验标准ID
      */
     @ApiModelProperty(name="inspectionStandardId",value = "检验标准ID")
-    @Excel(name = "检验标准ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "inspection_standard_id")
     @NotNull(groups = update.class,message = "检验标准ID不能为空")
@@ -42,15 +42,16 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 检验标准编码
      */
     @ApiModelProperty(name="inspectionStandardCode",value = "检验标准编码")
-    @Excel(name = "检验标准编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "检验标准编码", height = 20, width = 30,orderNum="1")
     @Column(name = "inspection_standard_code")
+    @NotBlank(message = "检验标准编码不能为空")
     private String inspectionStandardCode;
 
     /**
      * 检验标准名称
      */
     @ApiModelProperty(name="inspectionStandardName",value = "检验标准名称")
-    @Excel(name = "检验标准名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "检验标准名称", height = 20, width = 30,orderNum="2")
     @Column(name = "inspection_standard_name")
     private String inspectionStandardName;
 
@@ -58,7 +59,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -66,7 +66,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 客户ID
      */
     @ApiModelProperty(name="supplierId",value = "客户ID")
-    @Excel(name = "客户ID", height = 20, width = 30,orderNum="") 
     @Column(name = "supplier_id")
     private Long supplierId;
 
@@ -74,7 +73,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 检验类型ID
      */
     @ApiModelProperty(name="inspectionTypeId",value = "检验类型ID")
-    @Excel(name = "检验类型ID", height = 20, width = 30,orderNum="") 
     @Column(name = "inspection_type_id")
     private Long inspectionTypeId;
 
@@ -82,21 +80,19 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="7")
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -104,7 +100,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -112,7 +107,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -121,7 +116,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -129,7 +123,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -138,7 +132,6 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -147,7 +140,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedUserName" ,value="修改人名称")
     @Transient
-    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     /**
@@ -155,7 +148,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createUserName" ,value="创建人名称")
     @Transient
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="5")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**
@@ -170,7 +163,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     @Transient
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="7")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="3")
     private String materialCode;
 
     /**
@@ -178,7 +171,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialName" ,value="物料名称")
     @Transient
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="4")
     private String materialName;
 
     /**
@@ -186,7 +179,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="supplierName" ,value="客户")
     @Transient
-    @Excel(name = "客户", height = 20, width = 30,orderNum="7")
+    @Excel(name = "客户", height = 20, width = 30,orderNum="5")
     private String supplierName;
 
     /**
@@ -194,7 +187,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="inspectionTypeName" ,value="检验类型")
     @Transient
-    @Excel(name = "检验类型", height = 20, width = 30,orderNum="7")
+    @Excel(name = "检验类型", height = 20, width = 30,orderNum="6")
     private String inspectionTypeName;
 
     /**
