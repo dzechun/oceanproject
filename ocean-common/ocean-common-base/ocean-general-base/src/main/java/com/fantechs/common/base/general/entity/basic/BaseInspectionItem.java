@@ -20,7 +20,7 @@ import java.util.Date;
  * @date 2020-12-25 13:42:51
  */
 @Data
-@Table(name = "qms_inspection_item")
+@Table(name = "base_inspection_item")
 public class BaseInspectionItem extends ValidGroup implements Serializable {
     /**
      * 检验项目ID
@@ -139,7 +139,7 @@ public class BaseInspectionItem extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "org_id")
+    @Column(name = "organization_id")
     private Long organizationId;
 
     /**

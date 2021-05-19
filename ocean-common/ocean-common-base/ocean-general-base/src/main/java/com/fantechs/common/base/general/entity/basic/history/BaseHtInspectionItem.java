@@ -150,7 +150,7 @@ public class BaseHtInspectionItem implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Column(name = "org_id")
+    @Column(name = "organization_id")
     private Long organizationId;
 
     /**
