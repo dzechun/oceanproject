@@ -29,7 +29,7 @@
   </resultMap>
 
   <select id="selectUserName" resultType="string">
-    select su.user_name from ocean.sys_user su where su.user_id = #{id}
+    select su.user_name from ocean_v2.sys_user su where su.user_id = #{id}
   </select>
   <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
     SELECT
@@ -60,12 +60,12 @@
     bo.organization_name,
     wsb.remark
     FROM
-    fantech_imes.wms_in_storage_bills AS wsb
-    LEFT JOIN fantech_imes.smt_supplier smts on smts.supplier_id = wsb.supplier_id
-    LEFT JOIN ocean.sys_user su1 on su1.user_id = wsb.accept_user_id
-    LEFT JOIN ocean.sys_user su2 on su2.user_id = wsb.create_user_id
-    LEFT JOIN ocean.sys_user su3 on su3.user_id = wsb.modified_user_id
-    LEFT JOIN fantech_imes.base_organization bo ON wsb.organization_id = bo.organization_id
+    fantech_imes_v2.wms_in_storage_bills AS wsb
+    LEFT JOIN fantech_imes_v2.smt_supplier smts on smts.supplier_id = wsb.supplier_id
+    LEFT JOIN ocean_v2.sys_user su1 on su1.user_id = wsb.accept_user_id
+    LEFT JOIN ocean_v2.sys_user su2 on su2.user_id = wsb.create_user_id
+    LEFT JOIN ocean_v2.sys_user su3 on su3.user_id = wsb.modified_user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON wsb.organization_id = bo.organization_id
     <where>
       <if test="billsType != null and billsType>0">
         AND wsb.bills_type = #{billsType}
@@ -115,8 +115,8 @@
     wsb.`status`,
     wsb.is_delete
     FROM
-    fantech_imes.wms_in_storage_bills AS wsb
-    LEFT JOIN fantech_imes.smt_supplier smts on smts.supplier_id = wsb.supplier_id
+    fantech_imes_v2.wms_in_storage_bills AS wsb
+    LEFT JOIN fantech_imes_v2.smt_supplier smts on smts.supplier_id = wsb.supplier_id
     <where>
       <if test="billsType != null and billsType>0">
         AND wsb.bills_type = #{billsType}

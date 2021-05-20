@@ -77,29 +77,29 @@
     (CASE WHEN swo.parent_id = 0 THEN ssm.material_desc WHEN swo.parent_id != 0 THEN sm.material_desc END) AS material_desc,
     (CASE WHEN swo.parent_id = 0 THEN ssm.material_code WHEN swo.parent_id != 0 THEN sm.material_code END) AS material_code,
     (CASE WHEN swo.parent_id = 0 THEN sspm.product_model_name WHEN swo.parent_id != 0 THEN spm.product_model_name END) AS product_model_name
-    from fantech_imes.qms_quality_confirmation qqc
-    LEFT JOIN ocean.sys_user su ON qqc.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qqc.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qqc.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
-    LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
-    LEFT JOIN fantech_imes.base_plate_parts_det bbppd ON bbppd.plate_parts_det_id = swo.material_id
-    LEFT JOIN fantech_imes.base_parts_information bpi ON bpi.parts_information_id = bbppd.parts_information_id
-    LEFT JOIN fantech_imes.smt_work_order_card_pool sswocp ON sswocp.work_order_card_pool_id = swocp.parent_id
-    LEFT JOIN fantech_imes.smt_work_order sswo ON sswo.work_order_id = swo.parent_id
-    LEFT JOIN fantech_imes.base_plate_parts bpp ON bpp.material_id = sswo.material_id
-    LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_id = bpp.plate_parts_id AND bppd.parts_information_id = bbppd.parts_information_id
-    LEFT JOIN fantech_imes.smt_process sp ON qqc.process_id = sp.process_id
-    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+    from fantech_imes_v2.qms_quality_confirmation qqc
+    LEFT JOIN ocean_v2.sys_user su ON qqc.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON qqc.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qqc.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.smt_work_order_card_pool swocp ON qqc.work_order_card_pool_id = swocp.work_order_card_pool_id
+    LEFT JOIN fantech_imes_v2.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
+    LEFT JOIN fantech_imes_v2.base_plate_parts_det bbppd ON bbppd.plate_parts_det_id = swo.material_id
+    LEFT JOIN fantech_imes_v2.base_parts_information bpi ON bpi.parts_information_id = bbppd.parts_information_id
+    LEFT JOIN fantech_imes_v2.smt_work_order_card_pool sswocp ON sswocp.work_order_card_pool_id = swocp.parent_id
+    LEFT JOIN fantech_imes_v2.smt_work_order sswo ON sswo.work_order_id = swo.parent_id
+    LEFT JOIN fantech_imes_v2.base_plate_parts bpp ON bpp.material_id = sswo.material_id
+    LEFT JOIN fantech_imes_v2.base_plate_parts_det bppd ON bppd.plate_parts_id = bpp.plate_parts_id AND bppd.parts_information_id = bbppd.parts_information_id
+    LEFT JOIN fantech_imes_v2.smt_process sp ON qqc.process_id = sp.process_id
+    LEFT JOIN fantech_imes_v2.smt_workshop_section sws ON sws.section_id = sp.section_id
 
-    LEFT JOIN fantech_imes.smt_material sm ON sswo.material_id = sm.material_id
-    LEFT JOIN fantech_imes.smt_material ssm ON swo.material_id = ssm.material_id
-    LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
-    LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+    LEFT JOIN fantech_imes_v2.smt_material sm ON sswo.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.smt_material ssm ON swo.material_id = ssm.material_id
+    LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
 
-    LEFT JOIN fantech_imes.base_tab sbt ON sbt.material_id = ssm.material_id
-    LEFT JOIN fantech_imes.smt_product_model sspm ON sspm.product_model_id = sbt.product_model_id
-    LEFT JOIN fantech_imes.smt_dept sd ON sd.dept_id = su.dept_id
+    LEFT JOIN fantech_imes_v2.base_tab sbt ON sbt.material_id = ssm.material_id
+    LEFT JOIN fantech_imes_v2.smt_product_model sspm ON sspm.product_model_id = sbt.product_model_id
+    LEFT JOIN fantech_imes_v2.smt_dept sd ON sd.dept_id = su.dept_id
     <where>
       <if test="qualityConfirmationId != null and qualityConfirmationId != ''">
         and qqc.quality_confirmation_id = #{qualityConfirmationId}
@@ -141,7 +141,7 @@
   <select id="updateQuantity" parameterType="map" resultType="integer">
     select (
           select splp.output_quantity
-          from fantech_imes.smt_process_list_process splp
+          from fantech_imes_v2.smt_process_list_process splp
           where splp.process_id = #{processId}
             and splp.work_order_card_pool_id = #{workOrderCardPoolId}
             and splp.process_type = 2
@@ -150,7 +150,7 @@
           <if test="qualityType != null and qualityType!= '' and qualityType == 1">
             -
             (
-            select ifnull( max(qqc.total),0) from fantech_imes.qms_quality_confirmation qqc
+            select ifnull( max(qqc.total),0) from fantech_imes_v2.qms_quality_confirmation qqc
             where qqc.process_id = #{processId} and qqc.work_order_card_pool_id = #{workOrderCardPoolId}
             and qqc.quality_type = 1 and qqc.affirm_status = 2 order by create_time desc limit 1
             )

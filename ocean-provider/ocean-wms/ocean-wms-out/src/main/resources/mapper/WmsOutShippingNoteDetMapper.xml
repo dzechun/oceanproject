@@ -77,9 +77,9 @@
     snd.pallet_code AS pallet_code
     from
     wms_out_shipping_note_det AS snd
-    LEFT JOIN ocean.sys_user su ON snd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON snd.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON snd.organization_id = bo.organization_id
+    LEFT JOIN ocean_v2.sys_user su ON snd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON snd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON snd.organization_id = bo.organization_id
     LEFT JOIN smt_storage s ON snd.storage_id = s.storage_id
     LEFT JOIN smt_warehouse w ON s.warehouse_id = w.warehouse_id
     LEFT JOIN smt_warehouse_area wa ON s.warehouse_area_id = wa.warehouse_area_id

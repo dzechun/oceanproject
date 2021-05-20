@@ -91,18 +91,18 @@
         bo.organization_name,
         spl.pro_name
         FROM
-        fantech_imes.smt_work_order_card_pool swocp
-        LEFT JOIN fantech_imes.smt_work_order swo ON swocp.work_order_id = swo.work_order_id
-        LEFT JOIN fantech_imes.smt_material sm ON swo.material_id = sm.material_id
-        LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
-        LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-        LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id =
+        fantech_imes_v2.smt_work_order_card_pool swocp
+        LEFT JOIN fantech_imes_v2.smt_work_order swo ON swocp.work_order_id = swo.work_order_id
+        LEFT JOIN fantech_imes_v2.smt_material sm ON swo.material_id = sm.material_id
+        LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        LEFT JOIN fantech_imes_v2.smt_package_specification sps ON sps.package_specification_id =
         bt.package_specification_id
-        LEFT JOIN fantech_imes.smt_route sr ON swo.route_id = sr.route_id
-        LEFT JOIN fantech_imes.smt_barcode_rule sbr ON swocp.barcode_rule_id = sbr.barcode_rule_id
-        LEFT JOIN fantech_imes.smt_order so ON swo.order_id = so.order_id
-        LEFT JOIN fantech_imes.smt_supplier sp ON so.supplier_id = sp.supplier_id
-        LEFT JOIN fantech_imes.base_organization bo ON swocp.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.smt_route sr ON swo.route_id = sr.route_id
+        LEFT JOIN fantech_imes_v2.smt_barcode_rule sbr ON swocp.barcode_rule_id = sbr.barcode_rule_id
+        LEFT JOIN fantech_imes_v2.smt_order so ON swo.order_id = so.order_id
+        LEFT JOIN fantech_imes_v2.smt_supplier sp ON so.supplier_id = sp.supplier_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON swocp.organization_id = bo.organization_id
         LEFT JOIN smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
         <where>
             <if test="workOrderId!= null and workOrderId!= ''">

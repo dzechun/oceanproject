@@ -39,7 +39,7 @@
   <select id="findList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>, bo.organization_name
     from qms_ht_rejects_mrb_review qhrmr
-    LEFT JOIN fantech_imes.base_organization bo ON qhrmr.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qhrmr.organization_id = bo.organization_id
     <where>
       <if test="mrbReviewCode != null and mrbReviewCode != ''">
         and qhrmr.mrb_review_code like CONCAT('%', #{mrbReviewCode}, '%')

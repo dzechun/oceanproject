@@ -51,11 +51,11 @@
     <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     suss.user_name AS processor_user_name,
     bo.organization_name,bo.organization_code
-    from fantech_imes.wms_inner_transfer_slip wits
-    LEFT JOIN ocean.sys_user su  ON wits.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON wits.modified_user_id = sus.user_id
-    LEFT JOIN ocean.sys_user suss ON wits.processor_user_id = suss.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON wits.organization_id = bo.organization_id
+    from fantech_imes_v2.wms_inner_transfer_slip wits
+    LEFT JOIN ocean_v2.sys_user su  ON wits.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wits.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user suss ON wits.processor_user_id = suss.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON wits.organization_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and (endTime== null or endTime== '')">
         and date_format(wits.create_time, '%Y-%m-%d') &gt;= #{startTime}

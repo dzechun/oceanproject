@@ -547,7 +547,18 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(StringUtils.isNotEmpty(wms)){
                 wms.setPackingQty(wms.getPackingQty().add(wmsInAsnOrderDet.getPackingQty()));
                 wms.setPutawayQty(wms.getActualQty().add(wmsInAsnOrderDet.getPackingQty()));
+                wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
+            }else{
+                wms = wmsInAsnOrderDet;
+                wms.setAsnOrderId(asnOrderId);
+                wms.setCreateTime(new Date());
+                wms.setCreateUserId(sysUser.getUserId());
+                wms.setModifiedTime(new Date());
+                wms.setModifiedUserId(sysUser.getUserId());
+                wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
             }
+            //更新库存
+            //新增上架作业单
         }else{
             //生成完工入库单单号
             WmsInAsnOrder wmsInAsnOrder = WmsInAsnOrder.builder()
@@ -568,7 +579,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInAsnOrderDet.setModifiedTime(new Date());
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
-
+            wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
+            //新增库存
             //设置新redis 时效为24小时
             redisUtil.set("pallet_id",wmsInAsnOrder.getAsnOrderId());
             redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));

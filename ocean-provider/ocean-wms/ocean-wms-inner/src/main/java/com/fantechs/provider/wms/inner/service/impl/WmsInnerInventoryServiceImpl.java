@@ -129,6 +129,9 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
             criteria.andEqualTo("warehouseName",map.get("warehouseName")).andEqualTo("storageName",map.get("storageName"));
         }
+        if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
+            criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
+        }
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
     }
@@ -149,6 +152,9 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         }
         if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
             criteria.andEqualTo("storageName",map.get("storageName")).andEqualTo("warehouseName",map.get("warehouseName"));
+        }
+        if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
+            criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
         }
         wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
         ));

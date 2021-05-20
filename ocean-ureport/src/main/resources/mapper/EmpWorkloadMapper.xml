@@ -5,15 +5,15 @@
     <select id="findHistogram" resultType="java.util.Map" parameterType="map">
         select
             su.user_name AS userName,(
-                (select count(*) from fantech_imes.smt_order where schedule_status = 3 and create_user_id = su.user_id and delivery_date like CONCAT((select curdate()),'%'))+
-                (select count(*) from fantech_imes.mes_schedule where status = 3 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
-                (select count(*) from fantech_imes.smt_work_order where work_order_status = 4 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
-                (select count(*) from fantech_imes.wms_in_finished_product where in_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
-                (select count(*) from fantech_imes.wms_out_shipping_note where out_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
-                (select count(*) from fantech_imes.wms_out_delivery_order where out_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
-                (select count(*) from fantech_imes.wms_out_otherout where otherout_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))
+                (select count(*) from fantech_imes_v2.smt_order where schedule_status = 3 and create_user_id = su.user_id and delivery_date like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes_v2.mes_schedule where status = 3 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes_v2.smt_work_order where work_order_status = 4 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes_v2.wms_in_finished_product where in_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes_v2.wms_out_shipping_note where out_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes_v2.wms_out_delivery_order where out_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))+
+                (select count(*) from fantech_imes_v2.wms_out_otherout where otherout_status = 2 and create_user_id = su.user_id and modified_time like CONCAT((select curdate()),'%'))
             ) workload
-        from ocean.sys_user su
+        from ocean_v2.sys_user su
     </select>
 
     <select id="findHistogramList" resultType="com.fantechs.dto.EmpWorkload"
@@ -30,50 +30,50 @@
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',wodo.delivery_order_code AS 'documentCode','出库单' AS
         'documentType',wodo.modified_time AS 'businessDate',wodo.remark
-        from fantech_imes.wms_out_delivery_order wodo
-        left join ocean.sys_user su ON su.user_id = wodo.create_user_id
+        from fantech_imes_v2.wms_out_delivery_order wodo
+        left join ocean_v2.sys_user su ON su.user_id = wodo.create_user_id
         where wodo.out_status = 2
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',swo.work_order_code AS 'documentCode','工单' AS
         'documentType',swo.modified_time AS 'businessDate',swo.remark
-        from fantech_imes.smt_work_order swo
-        left join ocean.sys_user su ON su.user_id = swo.create_user_id
+        from fantech_imes_v2.smt_work_order swo
+        left join ocean_v2.sys_user su ON su.user_id = swo.create_user_id
         where work_order_status = 4
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',so.order_code AS 'documentCode','销售订单' AS
         'documentType',so.delivery_date AS 'businessDate',so.remark
-        from fantech_imes.smt_order so
-        left join ocean.sys_user su ON su.user_id = so.create_user_id
+        from fantech_imes_v2.smt_order so
+        left join ocean_v2.sys_user su ON su.user_id = so.create_user_id
         where so.schedule_status = 3
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',ms.schedule_code AS 'documentCode','排产单' AS
         'documentType',ms.modified_time AS 'businessDate',ms.remark
-        from fantech_imes.mes_schedule ms
-        left join ocean.sys_user su ON su.user_id = ms.create_user_id
+        from fantech_imes_v2.mes_schedule ms
+        left join ocean_v2.sys_user su ON su.user_id = ms.create_user_id
         where ms.status = 3
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',wifp.finished_product_code AS 'documentCode','成品入库单' AS
         'documentType',wifp.modified_time AS 'businessDate',wifp.remark
-        from fantech_imes.wms_in_finished_product wifp
-        left join ocean.sys_user su ON su.user_id = wifp.create_user_id
+        from fantech_imes_v2.wms_in_finished_product wifp
+        left join ocean_v2.sys_user su ON su.user_id = wifp.create_user_id
         where wifp.in_status = 2
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',wosn.shipping_note_code AS 'documentCode','出货通知单' AS
         'documentType',wosn.modified_time AS 'businessDate',wosn.remark
-        from fantech_imes.wms_out_shipping_note wosn
-        left join ocean.sys_user su ON su.user_id = wosn.create_user_id
+        from fantech_imes_v2.wms_out_shipping_note wosn
+        left join ocean_v2.sys_user su ON su.user_id = wosn.create_user_id
         where wosn.out_status = 2
         UNION
         SELECT
         su.user_code AS 'empNumber',su.user_name AS 'name',woo.otherout_code AS 'documentCode','杂出单号' AS
         'documentType',woo.modified_time AS 'businessDate',woo.remark
-        from fantech_imes.wms_out_otherout woo
-        left join ocean.sys_user su ON su.user_id = woo.create_user_id
+        from fantech_imes_v2.wms_out_otherout woo
+        left join ocean_v2.sys_user su ON su.user_id = woo.create_user_id
         where woo.otherout_status = 2
         ) AS ew
         <where>

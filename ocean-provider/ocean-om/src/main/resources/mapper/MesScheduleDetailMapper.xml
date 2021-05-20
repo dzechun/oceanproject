@@ -43,12 +43,12 @@
         swo.work_order_quantity as 'workOrderQuantity',
         swo.output_quantity as 'outputQuantity'
         FROM
-        fantech_imes.mes_schedule_detail AS msd
-        LEFT JOIN fantech_imes.smt_work_order swo on swo.work_order_id = msd.work_order_id
-        LEFT JOIN fantech_imes.smt_order so on so.order_id = msd.order_id
-        LEFT JOIN fantech_imes.smt_material sm on sm.material_id = swo.material_id
-        LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
-        LEFT JOIN fantech_imes.smt_product_model spm on spm.product_model_id = bt.product_model_id
+        fantech_imes_v2.mes_schedule_detail AS msd
+        LEFT JOIN fantech_imes_v2.smt_work_order swo on swo.work_order_id = msd.work_order_id
+        LEFT JOIN fantech_imes_v2.smt_order so on so.order_id = msd.order_id
+        LEFT JOIN fantech_imes_v2.smt_material sm on sm.material_id = swo.material_id
+        LEFT JOIN fantech_imes_v2.base_tab bt on bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes_v2.smt_product_model spm on spm.product_model_id = bt.product_model_id
         <where>
             <if test="scheduleId != null and scheduleId != ''">
                 and msd.schedule_id = #{scheduleId}

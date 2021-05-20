@@ -51,7 +51,7 @@
     LEFT JOIN smt_warehouse sw ON ss .warehouse_id = sw.warehouse_id
     LEFT JOIN smt_warehouse_area swa ON sw.warehouse_id = swa.warehouse_id
     LEFT JOIN smt_electronic_tag_storage sets on sets.material_id = sm.material_id
-    LEFT JOIN fantech_imes.base_organization bo ON spm.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON spm.organization_id = bo.organization_id
     <where>
       <if test="paddingMaterialCode != null and paddingMaterialCode!=''">
         and spm.padding_material_code like CONCAT('%', #{paddingMaterialCode}, '%')

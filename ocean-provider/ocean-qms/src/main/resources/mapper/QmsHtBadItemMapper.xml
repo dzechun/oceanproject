@@ -30,9 +30,9 @@
 
   <select id="findHtList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,sp.process_name,sws.section_name
-    from fantech_imes.qms_ht_bad_item qhbi
-    LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = qhbi.process_id
-    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = sp.section_id
+    from fantech_imes_v2.qms_ht_bad_item qhbi
+    LEFT JOIN fantech_imes_v2.smt_process sp ON sp.process_id = qhbi.process_id
+    LEFT JOIN fantech_imes_v2.smt_workshop_section sws ON sws.section_id = sp.section_id
     <where>
       <if test="badItemId != null and badItemId != ''">
         and qhbi.bad_item_id = #{badItemId}

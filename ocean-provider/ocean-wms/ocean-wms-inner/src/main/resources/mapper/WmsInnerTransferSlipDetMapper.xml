@@ -76,23 +76,23 @@
     spm.product_model_code,spm.product_model_name,
     ss.storage_name AS out_storage_name,swa.warehouse_area_name AS out_warehouse_area_name,sw.warehouse_name AS out_warehouse_name,
     sss.storage_name AS in_storage_name,swas.warehouse_area_name AS in_warehouse_area_name,sws.warehouse_name AS in_warehouse_name
-    from fantech_imes.wms_inner_transfer_slip_det witsd
-    LEFT JOIN ocean.sys_user su  ON witsd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON witsd.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.smt_material sm ON witsd.material_id = sm.material_id
-    LEFT JOIN fantech_imes.base_tab bt ON sm.material_id = bt.material_id
-    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-    LEFT JOIN fantech_imes.base_organization bo ON witsd.organization_id = bo.organization_id
+    from fantech_imes_v2.wms_inner_transfer_slip_det witsd
+    LEFT JOIN ocean_v2.sys_user su  ON witsd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON witsd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.smt_material sm ON witsd.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.base_tab bt ON sm.material_id = bt.material_id
+    LEFT JOIN fantech_imes_v2.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON witsd.organization_id = bo.organization_id
 
         /*调出*/
-    LEFT JOIN fantech_imes.smt_storage ss ON witsd.out_storage_id = ss.storage_id
-    LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
-    LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
+    LEFT JOIN fantech_imes_v2.smt_storage ss ON witsd.out_storage_id = ss.storage_id
+    LEFT JOIN fantech_imes_v2.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+    LEFT JOIN fantech_imes_v2.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
 
         /*调入*/
-    LEFT JOIN fantech_imes.smt_storage sss ON witsd.in_storage_id = sss.storage_id
-    LEFT JOIN fantech_imes.smt_warehouse_area swas ON sss.warehouse_area_id = swas.warehouse_area_id
-    LEFT JOIN fantech_imes.smt_warehouse sws ON swas.warehouse_id = sws.warehouse_id
+    LEFT JOIN fantech_imes_v2.smt_storage sss ON witsd.in_storage_id = sss.storage_id
+    LEFT JOIN fantech_imes_v2.smt_warehouse_area swas ON sss.warehouse_area_id = swas.warehouse_area_id
+    LEFT JOIN fantech_imes_v2.smt_warehouse sws ON swas.warehouse_id = sws.warehouse_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(witsd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

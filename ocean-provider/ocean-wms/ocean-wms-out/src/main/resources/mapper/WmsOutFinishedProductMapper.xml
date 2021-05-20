@@ -59,11 +59,11 @@
         ss.supplier_code,
         bo.organization_name
         from
-        fantech_imes.wms_out_finished_product AS fp
-        LEFT JOIN ocean.sys_user su ON fp.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON fp.modified_user_id = sus.user_id
+        fantech_imes_v2.wms_out_finished_product AS fp
+        LEFT JOIN ocean_v2.sys_user su ON fp.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON fp.modified_user_id = sus.user_id
         LEFT JOIN smt_supplier ss ON fp.supplier_id = ss.supplier_id
-        LEFT JOIN fantech_imes.base_organization bo ON fp.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON fp.organization_id = bo.organization_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(fp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

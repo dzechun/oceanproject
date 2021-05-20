@@ -39,7 +39,7 @@ public class SmtClientManageServiceImpl extends BaseService<SmtClientManage> imp
         smtClientManage.setModifiedTime(new Date());
         smtClientManage.setSecretKey(UUIDUtils.getUUID());
         smtClientManageMapper.insertUseGeneratedKeys(smtClientManage);
-        smtClientManage.setQueueName("ocean.ablepick" + smtClientManage.getClientId());
+        smtClientManage.setQueueName("ocean_v2.ablepick" + smtClientManage.getClientId());
         return smtClientManageMapper.updateByPrimaryKeySelective(smtClientManage);
     }
 

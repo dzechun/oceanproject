@@ -49,7 +49,7 @@ public final class EasyPoiUtils {
     }
 
     private static void defaultExport(List<Map<String, Object>> dataList, String fileName, HttpServletResponse response) {
-        Workbook workbook = ExcelExportUtil.exportExcel(dataList, ExcelType.HSSF);
+        Workbook workbook = ExcelExportUtil.exportExcel(dataList, ExcelType.XSSF);
         if (workbook != null) {
             downLoadExcel(fileName, response, workbook);
         }

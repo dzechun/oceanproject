@@ -57,17 +57,17 @@
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     swo.work_order_code,spl.pro_name AS production_line,sys.user_name AS handler_name,mpm.bar_code AS pallet_code
     ,(
-      select  if(count(*)!=0,'1','0') from fantech_imes.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id and
+      select  if(count(*)!=0,'1','0') from fantech_imes_v2.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id and
       inspection_result in (0,2)
     ) AS 'qualified_state'
     from qms_pda_inspection qpi
-    LEFT JOIN ocean.sys_user su ON qpi.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qpi.feedback_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qpi.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.smt_work_order swo ON qpi.work_order_id = swo.work_order_id
-    LEFT JOIN fantech_imes.smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
-    LEFT JOIN ocean.sys_user sys ON qpi.surveyor_id = sys.user_id
-    LEFT JOIN fantech_imes.mes_package_manager mpm ON qpi.package_manager_id = mpm.package_manager_id
+    LEFT JOIN ocean_v2.sys_user su ON qpi.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON qpi.feedback_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qpi.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.smt_work_order swo ON qpi.work_order_id = swo.work_order_id
+    LEFT JOIN fantech_imes_v2.smt_pro_line spl ON swo.pro_line_id = spl.pro_line_id
+    LEFT JOIN ocean_v2.sys_user sys ON qpi.surveyor_id = sys.user_id
+    LEFT JOIN fantech_imes_v2.mes_package_manager mpm ON qpi.package_manager_id = mpm.package_manager_id
     <where>
       <if test="palletCode != null and palletCode != ''">
         and mpm.bar_code = #{palletCode}
