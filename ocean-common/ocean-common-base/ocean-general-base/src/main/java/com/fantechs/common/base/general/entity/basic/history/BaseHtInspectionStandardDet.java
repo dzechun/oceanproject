@@ -62,10 +62,10 @@ public class BaseHtInspectionStandardDet extends ValidGroup implements Serializa
     /**
      * 检验项目
      */
-    @ApiModelProperty(name="inspectionItemId",value = "检验项目")
+    @ApiModelProperty(name="inspectionItem",value = "检验项目")
     @Excel(name = "检验项目", height = 20, width = 30,orderNum="") 
-    @Column(name = "inspection_item_id")
-    private Long inspectionItemId;
+    @Column(name = "inspection_item")
+    private String inspectionItem;
 
     /**
      * 检验工具
@@ -209,14 +209,6 @@ public class BaseHtInspectionStandardDet extends ValidGroup implements Serializa
     @ApiModelProperty(name="organizationName" ,value="组织名称")
     @Transient
     private String organizationName;
-
-    /**
-     * 检验项目
-     */
-    @ApiModelProperty(name="inspectionItemName" ,value="检验项目")
-    @Transient
-    @Excel(name = "检验项目", height = 20, width = 30,orderNum="5")
-    private String inspectionItemName;
 
     /**
      * 检验方式

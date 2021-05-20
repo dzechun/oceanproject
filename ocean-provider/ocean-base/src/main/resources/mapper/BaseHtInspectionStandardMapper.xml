@@ -11,7 +11,7 @@
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="inspection_type_id" jdbcType="BIGINT" property="inspectionTypeId" />
+    <result column="inspection_type" jdbcType="TINYINT" property="inspectionType" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -27,7 +27,6 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-    <result column="inspection_type_name" jdbcType="VARCHAR" property="inspectionTypeName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -37,7 +36,7 @@
     bhis.inspection_standard_name,
     bhis.material_id,
     bhis.supplier_id,
-    bhis.inspection_type_id,
+    bhis.inspection_type,
     bhis.`status`,
     bhis.remark,
     bhis.org_id,
@@ -50,13 +49,12 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bm.material_code,bm.material_name,bs.supplier_name,it.inspection_type_name,
+    bm.material_code,bm.material_name,bs.supplier_name,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_ht_inspection_standard bhis
     left join fantech_imes_v2.base_material bm on bhis.material_id=bm.material_id
     left join fantech_imes_v2.base_supplier bs on bhis.supplier_id=bs.supplier_id
-    left join fantech_imes_v2.base_inspection_type it on bhis.inspection_type_id=it.inspection_type_id
     left join ocean_v2.sys_user u on bhis.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bhis.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo on bhis.org_id = bo.organization_id
@@ -73,8 +71,8 @@
       <if test="materialName!=null and materialName!=''">
         and bm.material_name like CONCAT('%', #{materialName}, '%')
       </if>
-      <if test="inspectionTypeName!=null and inspectionTypeName!=''">
-        and it.inspection_type_name like CONCAT('%', #{inspectionTypeName}, '%')
+      <if test="inspectionType!=null">
+        and bhis.inspection_type = #{inspectionType}
       </if>
       <if test="status!=null">
         and bhis.status=#{status}

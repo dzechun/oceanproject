@@ -10,7 +10,6 @@
     <result column="sample_process_desc" jdbcType="VARCHAR" property="sampleProcessDesc" />
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType" />
     <result column="sample_plan_id" jdbcType="BIGINT" property="samplePlanId" />
-    <result column="inspection_rigor_level" jdbcType="TINYINT" property="inspectionRigorLevel" />
     <result column="aql_value" jdbcType="DECIMAL" property="aqlValue" />
     <result column="sample_transition_rule_id" jdbcType="BIGINT" property="sampleTransitionRuleId" />
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty" />
@@ -39,7 +38,6 @@
     bsp.sample_process_desc,
     bsp.sample_process_type,
     bsp.sample_plan_id,
-    bsp.inspection_rigor_level,
     bsp.aql_value,
     bsp.sample_transition_rule_id,
     bsp.sample_qty,

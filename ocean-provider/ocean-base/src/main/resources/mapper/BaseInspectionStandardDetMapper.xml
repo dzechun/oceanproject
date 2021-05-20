@@ -8,7 +8,7 @@
     <id column="inspection_standard_det_id" jdbcType="BIGINT" property="inspectionStandardDetId" />
     <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
     <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection" />
-    <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
+    <result column="inspection_item" jdbcType="VARCHAR" property="inspectionItem" />
     <result column="inspection_tool" jdbcType="VARCHAR" property="inspectionTool" />
     <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
@@ -28,7 +28,6 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="inspection_item_name" jdbcType="VARCHAR" property="inspectionItemName"/>
     <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode"/>
     <result column="sample_process_code" jdbcType="VARCHAR" property="sampleProcessCode"/>
   </resultMap>
@@ -37,7 +36,7 @@
     bisd.inspection_standard_det_id,
     bisd.inspection_standard_id,
     bisd.if_must_inspection,
-    bisd.inspection_item_id,
+    bisd.inspection_item,
     bisd.inspection_tool,
     bisd.inspection_way_id,
     bisd.sample_process_id,
@@ -57,11 +56,10 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bii.inspection_item_name,biw.inspection_way_code,bsp.sample_process_code,
+    biw.inspection_way_code,bsp.sample_process_code,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_inspection_standard_det bisd
-    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
     left join fantech_imes_v2.base_inspection_way biw on bisd.inspection_way_id=biw.inspection_way_id
     left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
     left join ocean_v2.sys_user u on bisd.create_user_id=u.user_id
