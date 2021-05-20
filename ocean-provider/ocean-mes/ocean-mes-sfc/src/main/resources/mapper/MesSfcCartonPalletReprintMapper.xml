@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.sfc.MesSfcCartonPalletReprintMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.model.sfc.MesSfcCartonPalletReprint">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcCartonPalletReprintMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcCartonPalletReprint">
     <!--
       WARNING - @mbg.generated
     -->
