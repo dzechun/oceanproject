@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtInspectionWayMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_inspection_way_id" jdbcType="BIGINT" property="htInspectionWayId" />
+    <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
+    <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode" />
+    <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc" />
+    <result column="inspection_type_id" jdbcType="BIGINT" property="inspectionTypeId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="inspection_type_name" jdbcType="VARCHAR" property="inspectionTypeName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhiw.ht_inspection_way_id,
+    bhiw.inspection_way_id,
+    bhiw.inspection_way_code,
+    bhiw.inspection_way_desc,
+    bhiw.inspection_type_id,
+    bhiw.`status`,
+    bhiw.remark,
+    bhiw.org_id,
+    bhiw.create_user_id,
+    bhiw.create_time,
+    bhiw.modified_user_id,
+    bhiw.modified_time,
+    bhiw.is_delete
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    it.inspection_type_name,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_ht_inspection_way bhiw
+    left join fantech_imes_v2.base_inspection_type it on bhiw.inspection_type_id=it.inspection_type_id
+    left join ocean_v2.sys_user u on bhiw.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bhiw.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bhiw.org_id = bo.organization_id
+    <where>
+      <if test="inspectionWayCode!=null and inspectionWayCode!=''">
+        and bhiw.inspection_way_code like CONCAT('%', #{inspectionWayCode}, '%')
+      </if>
+      <if test="inspectionWayDesc!=null and inspectionWayDesc!=''">
+        and bhiw.inspection_way_desc like CONCAT('%', #{inspectionWayDesc}, '%')
+      </if>
+      <if test="inspectionTypeName!=null and inspectionTypeName!=''">
+        and it.inspection_type_name like CONCAT('%', #{inspectionTypeName}, '%')
+      </if>
+      <if test="status!=null">
+        and bhiw.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhiw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bhiw.modified_time desc
+  </select>
+</mapper>

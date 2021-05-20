@@ -85,6 +85,11 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
         if(StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
             for (BaseMaterialOwnerReWhDto baseMaterialOwnerReWhDto : baseMaterialOwnerReWhDtos) {
                 baseMaterialOwnerReWhDto.setMaterialOwnerId(baseMaterialOwner.getMaterialOwnerId());
+                baseMaterialOwnerReWhDto.setCreateUserId(user.getUserId());
+                baseMaterialOwnerReWhDto.setCreateTime(new Date());
+                baseMaterialOwnerReWhDto.setModifiedUserId(user.getUserId());
+                baseMaterialOwnerReWhDto.setModifiedTime(new Date());
+                baseMaterialOwnerReWhDto.setStatus(StringUtils.isEmpty(baseMaterialOwnerReWhDto.getStatus())?1:baseMaterialOwnerReWhDto.getStatus());
                 baseMaterialOwnerReWhDto.setOrgId(user.getOrganizationId());
             }
             baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhDtos);
@@ -107,9 +112,10 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
 
         Example example = new Example(BaseMaterialOwner.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialOwnerCode", baseMaterialOwner.getMaterialOwnerCode());
+        criteria.andEqualTo("materialOwnerCode", baseMaterialOwner.getMaterialOwnerCode())
+                .andNotEqualTo("materialOwnerId",baseMaterialOwner.getMaterialOwnerId());
         BaseMaterialOwner baseMaterialOwner1 = baseMaterialOwnerMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseMaterialOwner1)&&!baseMaterialOwner.getMaterialOwnerId().equals(baseMaterialOwner1.getMaterialOwnerId())){
+        if (StringUtils.isNotEmpty(baseMaterialOwner1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
@@ -129,6 +135,11 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
         if(StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
             for (BaseMaterialOwnerReWhDto baseMaterialOwnerReWhDto : baseMaterialOwnerReWhDtos) {
                 baseMaterialOwnerReWhDto.setMaterialOwnerId(baseMaterialOwner.getMaterialOwnerId());
+                baseMaterialOwnerReWhDto.setCreateUserId(user.getUserId());
+                baseMaterialOwnerReWhDto.setCreateTime(new Date());
+                baseMaterialOwnerReWhDto.setModifiedUserId(user.getUserId());
+                baseMaterialOwnerReWhDto.setModifiedTime(new Date());
+                baseMaterialOwnerReWhDto.setStatus(StringUtils.isEmpty(baseMaterialOwnerReWhDto.getStatus())?1:baseMaterialOwnerReWhDto.getStatus());
                 baseMaterialOwnerReWhDto.setOrgId(user.getOrganizationId());
             }
             baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhDtos);

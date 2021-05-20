@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseInspectionStandardDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inspection_standard_det_id" jdbcType="BIGINT" property="inspectionStandardDetId" />
+    <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
+    <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection" />
+    <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
+    <result column="inspection_tool" jdbcType="VARCHAR" property="inspectionTool" />
+    <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
+    <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
+    <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag" />
+    <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit" />
+    <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="inspection_item_name" jdbcType="VARCHAR" property="inspectionItemName"/>
+    <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode"/>
+    <result column="sample_process_code" jdbcType="VARCHAR" property="sampleProcessCode"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bisd.inspection_standard_det_id,
+    bisd.inspection_standard_id,
+    bisd.if_must_inspection,
+    bisd.inspection_item_id,
+    bisd.inspection_tool,
+    bisd.inspection_way_id,
+    bisd.sample_process_id,
+    bisd.inspection_tag,
+    bisd.specification_upper_limit,
+    bisd.specification_floor,
+    bisd.unit_name,
+    bisd.`status`,
+    bisd.remark,
+    bisd.org_id,
+    bisd.create_user_id,
+    bisd.create_time,
+    bisd.modified_user_id,
+    bisd.modified_time,
+    bisd.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bii.inspection_item_name,biw.inspection_way_code,bsp.sample_process_code,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_inspection_standard_det bisd
+    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
+    left join fantech_imes_v2.base_inspection_way biw on bisd.inspection_way_id=biw.inspection_way_id
+    left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join ocean_v2.sys_user u on bisd.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bisd.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bisd.org_id = bo.organization_id
+    <where>
+      <if test="inspectionStandardId!=null and inspectionStandardId!=''">
+        and bisd.inspection_standard_id = #{inspectionStandardId}
+      </if>
+      <if test="status!=null">
+        and bisd.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bisd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bisd.create_time desc
+  </select>
+</mapper>

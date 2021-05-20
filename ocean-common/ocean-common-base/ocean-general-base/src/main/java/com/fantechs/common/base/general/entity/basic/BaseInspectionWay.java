@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -18,65 +19,58 @@ import java.util.Date;
 ;
 
 /**
- * 库存状态
- * base_inventory_status
+ * 检验方式
+ * base_inspection_way
  * @author admin
- * @date 2021-04-25 14:57:50
+ * @date 2021-05-19 09:24:39
  */
 @Data
-@Table(name = "base_inventory_status")
-public class BaseInventoryStatus extends ValidGroup implements Serializable {
+@Table(name = "base_inspection_way")
+public class BaseInspectionWay extends ValidGroup implements Serializable {
     /**
-     * 单据类型ID
+     * 检验方式ID
      */
-    @ApiModelProperty(name="inventoryStatusId",value = "单据类型ID")
+    @ApiModelProperty(name="inspectionWayId",value = "检验方式ID")
     @Id
-    @Column(name = "inventory_status_id")
-    @NotNull(groups = update.class,message = "单据类型ID不能为空")
-    private Long inventoryStatusId;
+    @Column(name = "inspection_way_id")
+    @NotNull(groups = update.class,message = "检验方式ID不能为空")
+    private Long inspectionWayId;
 
     /**
-     * 状态名称
+     * 检验方式编码
      */
-    @ApiModelProperty(name="inventoryStatusName",value = "状态名称")
-    @Excel(name = "状态名称", height = 20, width = 30,orderNum="3")
-    @Column(name = "inventory_status_name")
-    private String inventoryStatusName;
+    @ApiModelProperty(name="inspectionWayCode",value = "检验方式编码")
+    @Excel(name = "检验方式编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "inspection_way_code")
+    @NotBlank(message = "检验方式编码不能为空")
+    private String inspectionWayCode;
 
     /**
-     * 是否可发(0-否 1-是)
+     * 检验方式描述
      */
-    @ApiModelProperty(name="ifCanStoreIssue",value = "是否可发(0-否 1-是)")
-    @Excel(name = "是否可发(0-否 1-是)", height = 20, width = 30,orderNum="4")
-    @Column(name = "if_can_store_issue")
-    private Byte ifCanStoreIssue;
+    @ApiModelProperty(name="inspectionWayDesc",value = "检验方式描述")
+    @Excel(name = "检验方式描述", height = 20, width = 30,orderNum="2")
+    @Column(name = "inspection_way_desc")
+    private String inspectionWayDesc;
 
     /**
-     * 仓库ID
+     * 检验类型ID
      */
-    @ApiModelProperty(name="warehouseId",value = "仓库ID")
-    @Column(name = "warehouse_id")
-    private Long warehouseId;
-
-    /**
-     * 货主ID
-     */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
+    @ApiModelProperty(name="inspectionTypeId",value = "检验类型ID")
+    @Column(name = "inspection_type_id")
+    private Long inspectionTypeId;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="6")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="4")
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="5")
     private String remark;
 
     /**
@@ -97,7 +91,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -113,7 +107,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -125,18 +119,12 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    private String option1;
-
-    private String option2;
-
-    private String option3;
-
     /**
      * 修改人名称
      */
     @ApiModelProperty(name="modifiedUserName" ,value="修改人名称")
     @Transient
-    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="7")
     private String modifiedUserName;
 
     /**
@@ -144,7 +132,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createUserName" ,value="创建人名称")
     @Transient
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="5")
     private String createUserName;
 
     /**
@@ -155,19 +143,12 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
     private String organizationName;
 
     /**
-     * 货主名称
+     * 检验类型
      */
-    @ApiModelProperty(name="materialOwnerName" ,value="货主名称")
+    @ApiModelProperty(name="inspectionTypeName" ,value="检验类型")
     @Transient
-    @Excel(name = "货主名称", height = 20, width = 30,orderNum="2")
-    private String materialOwnerName;
+    @Excel(name = "检验类型", height = 20, width = 30,orderNum="3")
+    private String inspectionTypeName;
 
-    /**
-     * 仓库名称
-     */
-    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
-    @Transient
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="1")
-    private String warehouseName;
-
+    private static final long serialVersionUID = 1L;
 }
