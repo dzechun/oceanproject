@@ -46,16 +46,16 @@
     swo.work_order_quantity,swo.production_quantity,swo.route_id,sr.route_name,swo.order_id, so.order_code, so.supplier_id,sp.supplier_name,swo.barcode_rule_set_id,sbr.barcode_rule,
     swo.planned_end_time,swocc.produce_quantity,swocc.generated_quantity,swocc.print_id,swocc.status,swocc.create_user_id,swocc.create_time,swocc.modified_user_id,swocc.modified_time,
     swocc.is_delete, swocc.organization_id, swocc.remark, bo.organization_name
-    from fantech_imes.smt_work_order_card_collocation swocc
-    left join fantech_imes.smt_work_order swo on swocc.work_order_id=swo.work_order_id
-    left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
+    from fantech_imes_v2.smt_work_order_card_collocation swocc
+    left join fantech_imes_v2.smt_work_order swo on swocc.work_order_id=swo.work_order_id
+    left join fantech_imes_v2.smt_material sm on swo.material_id=sm.material_id
     LEFT JOIN base_tab bt on bt.material_id = sm.material_id
-    left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
+    left join fantech_imes_v2.smt_route sr on swo.route_id=sr.route_id
     left join  smt_barcode_rule_set_det sbrsd on sbrsd.barcode_rule_set_id = swo.barcode_rule_set_id
-    left join fantech_imes.smt_barcode_rule sbr on sbr.barcode_rule_id = sbrsd.barcode_rule_id
-    left join fantech_imes.smt_order so on swo.order_id=so.order_id
-    left join fantech_imes.smt_supplier sp on so.supplier_id = sp.supplier_id
-    LEFT JOIN fantech_imes.base_organization bo ON swocc.organization_id = bo.organization_id
+    left join fantech_imes_v2.smt_barcode_rule sbr on sbr.barcode_rule_id = sbrsd.barcode_rule_id
+    left join fantech_imes_v2.smt_order so on swo.order_id=so.order_id
+    left join fantech_imes_v2.smt_supplier sp on so.supplier_id = sp.supplier_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON swocc.organization_id = bo.organization_id
     <where>
       <if test="workOrderId!= null and workOrderId!= ''">
         and swocc.work_order_id=#{workOrderId}

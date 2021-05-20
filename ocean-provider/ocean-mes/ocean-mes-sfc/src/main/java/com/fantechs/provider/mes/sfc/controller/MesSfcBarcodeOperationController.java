@@ -10,12 +10,14 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.sfc.service.*;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -37,6 +39,8 @@ public class MesSfcBarcodeOperationController {
     MesSfcBarcodeOperationService mesSfcBarcodeOperationService;
     @Autowired
     MesSfcProductCartonService mesSfcProductCartonService;
+    @Autowired
+    MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
 
     @ApiOperation("PDA投产作业")
     @PostMapping("/pdaPutIntoProduction")
@@ -72,9 +76,22 @@ public class MesSfcBarcodeOperationController {
             mesSfcProductCarton.setCloseCartonTime(new Date());
             mesSfcProductCarton.setModifiedUserId(user.getUserId());
             mesSfcProductCarton.setModifiedTime(new Date());
+            if (vo.getPrint()) {
+                List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
+                        .findList(SearchMesSfcWorkOrderBarcode.builder()
+                                .barcode(vo.getBarCode())
+                                .build());
+                MesSfcWorkOrderBarcodeDto sfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
+                // 关箱后才能打印条码
+                BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
+                        .barcode(vo.getCartonCode())
+                        .labelTypeCode("09")
+                        .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
+                        .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
+                        .build());
+            }
             return ControllerUtil.returnCRUD(mesSfcProductCartonService.update(mesSfcProductCarton));
         }
-
         return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.cartonOperation(vo));
 
     }

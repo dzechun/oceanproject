@@ -94,9 +94,9 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
     from wms_ht_inner_inventory whii
-    LEFT JOIN ocean.sys_user su  ON whii.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON whii.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON whii.org_id = bo.organization_id
+    LEFT JOIN ocean_v2.sys_user su  ON whii.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON whii.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON whii.org_id = bo.organization_id
     <where>
       <if test="salesCode!=null and salesCode != ''">
         and whii.sales_code like CONCAT("%",#{salesCode},"%")

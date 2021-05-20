@@ -63,8 +63,8 @@
     w.warehouse_name AS warehouse_name
     FROM
     wms_in_otherin_det AS oid
-    LEFT JOIN ocean.sys_user su ON oid.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON oid.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user su ON oid.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON oid.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON oid.organization_id = bo.organization_id
     LEFT JOIN smt_material sm ON oid.material_id = sm.material_id
     LEFT JOIN smt_storage s ON oid.storage_id = s.storage_id

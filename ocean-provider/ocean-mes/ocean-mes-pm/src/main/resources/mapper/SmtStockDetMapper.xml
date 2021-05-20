@@ -46,8 +46,8 @@
         FROM smt_stock_det ssd
         LEFT JOIN smt_material sm ON ssd.material_id = sm.material_id
         LEFT JOIN base_tab  bt ON bt.`material_id`  = ssd.`material_id`
-        LEFT JOIN ocean.sys_user sus ON ssd.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes.base_organization bo ON ssd.organization_id = bo.organization_id
+        LEFT JOIN ocean_v2.sys_user sus ON ssd.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON ssd.organization_id = bo.organization_id
         <where>
             1=1
             <if test="stockId!=null and stockId!=''">

@@ -6,6 +6,6 @@ import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
 
-public interface SmtHtWorkOrderMapper extends MyMapper<MesPmHtWorkOrder> {
+public interface MesPmHtWorkOrderMapper extends MyMapper<MesPmHtWorkOrder> {
     List<MesPmHtWorkOrder> findList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 }

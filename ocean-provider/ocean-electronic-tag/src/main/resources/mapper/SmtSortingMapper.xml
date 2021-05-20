@@ -74,15 +74,15 @@
         swa.warehouse_area_name,
         bo.organization_name
         FROM smt_sorting `ssl`
-        LEFT JOIN ocean.sys_user su ON ssl.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON ssl.modified_user_id = sus.user_id
+        LEFT JOIN ocean_v2.sys_user su ON ssl.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON ssl.modified_user_id = sus.user_id
         LEFT JOIN smt_material sm ON ssl.material_code= sm.material_code
         LEFT JOIN smt_storage_material ssm ON ssm.material_id = sm.material_id
         LEFT JOIN smt_storage ss ON ss.storage_id = ssm.storage_id
         LEFT JOIN smt_warehouse sw ON ss.warehouse_id = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sw.warehouse_id = swa.warehouse_id
         LEFT JOIN smt_electronic_tag_storage sets ON sets.storage_id = ss.storage_id
-        LEFT JOIN fantech_imes.base_organization bo ON `ssl`.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON `ssl`.organization_id = bo.organization_id
         <where>
             <if test="sortingCode != null and sortingCode!=''">
                 and `ssl`.sorting_code =#{sortingCode}

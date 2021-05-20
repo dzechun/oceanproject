@@ -13,7 +13,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
-import com.fantechs.provider.mes.pm.mapper.SmtHtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     @Resource
     private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
-    private SmtHtWorkOrderMapper smtHtWorkOrderMapper;
+    private MesPmHtWorkOrderMapper smtHtWorkOrderMapper;
 
 
     @Override

@@ -28,10 +28,10 @@
 
   <select id="findHtList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    from fantech_imes.qms_ht_andin_storage_quarantine qhasq
-    LEFT JOIN ocean.sys_user su ON qhasq.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qhasq.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qhasq.organization_id = bo.organization_id
+    from fantech_imes_v2.qms_ht_andin_storage_quarantine qhasq
+    LEFT JOIN ocean_v2.sys_user su ON qhasq.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON qhasq.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qhasq.organization_id = bo.organization_id
     <where>
       <if test="andinStorageQuarantineId != null and andinStorageQuarantineId != ''">
         and qhasq.andin_storage_quarantine_id = #{andinStorageQuarantineId}

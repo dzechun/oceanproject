@@ -54,9 +54,9 @@
     swo.work_order_code AS work_order_code
     FROM
     wms_in_ht_finished_product AS fp
-    LEFT JOIN ocean.sys_user su ON fp.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON fp.modified_user_id = sus.user_id
-    LEFT JOIN ocean.sys_user sy ON fp.operator_user_id = sy.user_id
+    LEFT JOIN ocean_v2.sys_user su ON fp.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON fp.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user sy ON fp.operator_user_id = sy.user_id
     LEFT JOIN base_organization bo ON fp.organization_id = bo.organization_id
     LEFT JOIN smt_work_order swo ON fp.work_order_id = swo.work_order_id
     <where>

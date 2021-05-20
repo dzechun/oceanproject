@@ -81,18 +81,18 @@
     sw.warehouse_id,sw.warehouse_code,sw.warehouse_name,
     spm.product_model_code,spm.product_model_name,
     wihs.stocktaking_code,suss.user_name AS stockist_name
-    from fantech_imes.wms_inner_ht_stocktaking_det wihsd
-    LEFT JOIN ocean.sys_user su  ON wihsd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON wihsd.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.smt_material sm ON wihsd.material_id = sm.material_id
-    LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
-    LEFT JOIN fantech_imes.smt_product_model spm ON bt.product_model_id = spm.product_model_id
-    LEFT JOIN fantech_imes.smt_storage ss ON wihsd.storage_id = ss.storage_id
-    LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
-    LEFT JOIN fantech_imes.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
-    LEFT JOIN fantech_imes.base_organization bo ON wihsd.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.wms_inner_ht_stocktaking wihs ON wihs.ht_stocktaking_id = wihsd.ht_stocktaking_id
-    LEFT JOIN ocean.sys_user suss ON wihs.stockist_id = suss.user_id
+    from fantech_imes_v2.wms_inner_ht_stocktaking_det wihsd
+    LEFT JOIN ocean_v2.sys_user su  ON wihsd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wihsd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.smt_material sm ON wihsd.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
+    LEFT JOIN fantech_imes_v2.smt_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN fantech_imes_v2.smt_storage ss ON wihsd.storage_id = ss.storage_id
+    LEFT JOIN fantech_imes_v2.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+    LEFT JOIN fantech_imes_v2.smt_warehouse sw ON swa.warehouse_id = sw.warehouse_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON wihsd.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.wms_inner_ht_stocktaking wihs ON wihs.ht_stocktaking_id = wihsd.ht_stocktaking_id
+    LEFT JOIN ocean_v2.sys_user suss ON wihs.stockist_id = suss.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wihsd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

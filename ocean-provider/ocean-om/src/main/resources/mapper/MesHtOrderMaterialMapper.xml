@@ -55,13 +55,13 @@
      sm.material_desc AS 'materialDesc',
      spu.packing_unit_name as 'packingUnitName'
    FROM
-     fantech_imes.mes_ht_order_material AS mhom
-       LEFT JOIN ocean.sys_user su1 ON su1.user_id = mhom.create_user_id
-       LEFT JOIN ocean.sys_user su2 ON su2.user_id = mhom.modified_user_id
-       LEFT JOIN fantech_imes.base_organization bo ON mhom.organization_id = bo.organization_id
-       LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = mhom.material_id
-       LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
-       LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+     fantech_imes_v2.mes_ht_order_material AS mhom
+       LEFT JOIN ocean_v2.sys_user su1 ON su1.user_id = mhom.create_user_id
+       LEFT JOIN ocean_v2.sys_user su2 ON su2.user_id = mhom.modified_user_id
+       LEFT JOIN fantech_imes_v2.base_organization bo ON mhom.organization_id = bo.organization_id
+       LEFT JOIN fantech_imes_v2.smt_material sm ON sm.material_id = mhom.material_id
+       LEFT JOIN fantech_imes_v2.base_tab bt on bt.material_id = sm.material_id
+       LEFT JOIN fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
        left join smt_package_specification sps on  mom.package_specification_id = sps.package_specification_id
         left join smt_packing_unit spu on spu.packing_unit_id=sps.packing_unit_id
    WHERE

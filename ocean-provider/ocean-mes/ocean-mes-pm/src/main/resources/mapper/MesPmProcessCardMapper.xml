@@ -46,12 +46,12 @@
         swo.barcode_rule_set_id,sbrs.barcode_rule_set_name,swo.work_order_type,swo.planned_start_time,swo.planned_end_time,swo.actual_start_time,swo.actual_end_time,so.order_code,swo.contract_no,bt.color,spm.product_model_name
         FROM smt_work_order_card_pool wocp
 		LEFT JOIN smt_work_order swo ON wocp.work_order_id = swo.work_order_id
-        left join fantech_imes.smt_material sm on swo.material_id=sm.material_id
+        left join fantech_imes_v2.smt_material sm on swo.material_id=sm.material_id
         LEFT JOIN base_tab bt on bt.material_id = sm.material_id
         left join smt_product_model spm on spm.product_model_id = bt.product_model_id
-        left join fantech_imes.smt_route sr on swo.route_id=sr.route_id
-        left join fantech_imes.smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
-        left join fantech_imes.smt_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
+        left join fantech_imes_v2.smt_route sr on swo.route_id=sr.route_id
+        left join fantech_imes_v2.smt_pro_line spl on swo.pro_line_id=spl.pro_line_id
+        left join fantech_imes_v2.smt_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
         left join smt_order so on so.order_id = swo.order_id
         <where>
         <if test="workOrderId != null">
@@ -67,8 +67,8 @@
 SELECT plp.work_order_card_pool_id,sp.process_name as 'processName',plp.inbound_time as 'inboudeTime',plp.outbound_time as 'outboundTime',u.user_name as 'modifiedUserName',plp.output_quantity as 'outputQuantity',sum(qc.unqualified_quantity) as 'unqualifiedQuantity' FROM smt_process_list_process plp
 				LEFT JOIN smt_work_order_card_pool wocp ON plp.work_order_card_pool_id= wocp.work_order_card_pool_id
 				LEFT JOIN qms_quality_confirmation qc ON plp.work_order_card_pool_id = qc.work_order_card_pool_id AND plp.process_id=qc.process_id
-				left join ocean.sys_user u on plp.modified_user_id=u.user_id
-				LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = plp.process_id
+				left join ocean_v2.sys_user u on plp.modified_user_id=u.user_id
+				LEFT JOIN fantech_imes_v2.smt_process sp ON sp.process_id = plp.process_id
 				<where>
 				<if test="workOrderCardId!=null and workOrderCardId!=''">
 				and wocp.work_order_card_id=#{workOrderCardId}

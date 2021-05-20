@@ -57,8 +57,8 @@
     sets.storage_id,sets.warehouse_id,sets.electronic_tag_id,sets.equipment_area_id,sets.warehouse_area_id,
     swa.warehouse_area_code,swa.warehouse_area_name
     from smt_loading_det sld
-    LEFT JOIN ocean.sys_user su ON sld.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON sld.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user su ON sld.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON sld.modified_user_id = sus.user_id
     LEFT JOIN smt_loading sl on sld.loading_id = sl.loading_id
     LEFT JOIN smt_material sm on sld.material_id = sm.material_id
     LEFT JOIN smt_storage_material ssm on ssm.material_id = sm.material_id
