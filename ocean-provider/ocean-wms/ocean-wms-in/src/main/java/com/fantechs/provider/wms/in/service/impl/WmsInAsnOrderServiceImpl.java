@@ -1,5 +1,7 @@
 package com.fantechs.provider.wms.in.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -10,7 +12,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -24,9 +26,6 @@ import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
-import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
@@ -525,12 +524,12 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     /**
      * 栈板作业生成完工入库单
-     * @param wmsInAsnOrderDet
+     * @param palletAutoAsnDto
      * @return
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int palletAutoAsnOrder(WmsInAsnOrderDet wmsInAsnOrderDet) {
+    public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
         //查询redis是否存储今日入库单号
         Boolean hasKey = redisUtil.hasKey("pallet_id");
@@ -542,14 +541,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
             Example example = new Example(WmsInAsnOrderDet.class);
-            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",wmsInAsnOrderDet.getMaterialId()).andEqualTo("batchCode",wmsInAsnOrderDet.getBatchCode());
+            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",palletAutoAsnDto.getMaterialId()).andEqualTo("batchCode",palletAutoAsnDto.getBatchCode());
             WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectOneByExample(example);
             if(StringUtils.isNotEmpty(wms)){
-                wms.setPackingQty(wms.getPackingQty().add(wmsInAsnOrderDet.getPackingQty()));
-                wms.setPutawayQty(wms.getActualQty().add(wmsInAsnOrderDet.getPackingQty()));
+                wms.setPackingQty(wms.getPackingQty().add(palletAutoAsnDto.getPackingQty()));
+                wms.setPutawayQty(wms.getActualQty().add(palletAutoAsnDto.getPackingQty()));
                 wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
             }else{
-                wms = wmsInAsnOrderDet;
+                wms = palletAutoAsnDto;
                 wms.setAsnOrderId(asnOrderId);
                 wms.setCreateTime(new Date());
                 wms.setCreateUserId(sysUser.getUserId());
@@ -558,7 +557,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
             }
             //更新库存
+            int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId());
             //新增上架作业单
+            res = this.createJobOrder(wmsInAsnOrder,wms);
+            return 1;
         }else{
             //生成完工入库单单号
             WmsInAsnOrder wmsInAsnOrder = WmsInAsnOrder.builder()
@@ -574,6 +576,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(num<1){
                 throw new BizErrorException("完工入库单生成失败");
             }
+            WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
+            BeanUtil.copyProperties(palletAutoAsnDto,wmsInAsnOrderDet);
             wmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrder.getAsnOrderId());
             wmsInAsnOrderDet.setCreateTime(new Date());
             wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
@@ -581,11 +585,59 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
             //新增库存
+            int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId());
+            if(res<1){
+                throw new BizErrorException("库存添加失败");
+            }
+            //新增上级作业单
+            res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
             //设置新redis 时效为24小时
             redisUtil.set("pallet_id",wmsInAsnOrder.getAsnOrderId());
             redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
+
+            return 1;
         }
-        return 0;
+    }
+
+    /**
+     * 创建作业单
+     * @param wmsInAsnOrder
+     * @param wmsInAsnOrderDet
+     * @return
+     */
+    private int createJobOrder(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
+        WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
+                .sourceOrderId(wmsInAsnOrder.getAsnOrderId())
+                .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
+                .orderTypeId(wmsInAsnOrder.getOrderTypeId())
+                .jobOrderType((byte)3)
+                .relatedOrderCode(wmsInAsnOrder.getAsnCode())
+                .warehouseId(wmsInAsnOrderDet.getWarehouseId())
+                .planQty(wmsInAsnOrderDet.getActualQty())
+                .orderStatus((byte) 1)
+                .orderTypeId(wmsInAsnOrder.getOrderTypeId())
+                .actualQty(new BigDecimal("0"))
+                .build();
+        List<WmsInnerJobOrderDet> list = new ArrayList<>();
+        list.add(WmsInnerJobOrderDet.builder()
+                .sourceDetId(wmsInAsnOrderDet.getAsnOrderDetId())
+                .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
+                .outStorageId(wmsInAsnOrderDet.getStorageId())
+                .inventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId())
+                .materialId(wmsInAsnOrderDet.getMaterialId())
+                .batchCode(wmsInAsnOrderDet.getBatchCode())
+                .warehouseId(wmsInAsnOrderDet.getWarehouseId())
+                .packingUnitName(wmsInAsnOrderDet.getPackingUnitName())
+                .planQty(wmsInAsnOrderDet.getActualQty())
+                .palletCode(wmsInAsnOrderDet.getPalletCode())
+                .orderStatus((byte)1)
+                .build());
+        wmsInnerJobOrder.setWmsInPutawayOrderDets(list);
+        ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException("上架作业单生成失败");
+        }
+        return 1;
     }
 
     /**
