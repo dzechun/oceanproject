@@ -124,25 +124,25 @@
         su1.user_name AS 'createUserName',
         su2.user_name AS 'modifiedUserName'
         FROM
-        fantech_imes.smt_process_list_process splp
-        LEFT JOIN fantech_imes.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id =
+        fantech_imes_v2.smt_process_list_process splp
+        LEFT JOIN fantech_imes_v2.smt_work_order_card_pool swocp ON swocp.work_order_card_pool_id =
         splp.work_order_card_pool_id
-        LEFT JOIN fantech_imes.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
+        LEFT JOIN fantech_imes_v2.smt_work_order_barcode_pool swobp ON swobp.work_order_barcode_pool_id =
         splp.work_order_barcode_pool_id
-        LEFT JOIN fantech_imes.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
-        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = wo.material_id
-        LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
-        LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-        LEFT JOIN fantech_imes.smt_route sr ON wo.route_id = sr.route_id
-        LEFT JOIN fantech_imes.smt_order so ON wo.order_id = so.order_id
-        LEFT JOIN fantech_imes.smt_station ss ON ss.process_id = splp.process_id
-        LEFT JOIN fantech_imes.smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
-        LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = splp.process_id
-        LEFT JOIN fantech_imes.base_organization bo ON splp.organization_id = bo.organization_id
-        LEFT JOIN ocean.sys_user su1 ON su1.user_id = splp.create_user_id
-        LEFT JOIN ocean.sys_user su2 ON su2.user_id = splp.modified_user_id
-        LEFT JOIN fantech_imes.base_staff bs ON bs.staff_id = splp.staff_id
-        LEFT JOIN fantech_imes.base_team bte ON bte.team_id = bs.team_id
+        LEFT JOIN fantech_imes_v2.smt_work_order wo ON wo.work_order_id = swocp.work_order_id
+        LEFT JOIN fantech_imes_v2.smt_material sm ON sm.material_id = wo.material_id
+        LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
+        LEFT JOIN fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+        LEFT JOIN fantech_imes_v2.smt_route sr ON wo.route_id = sr.route_id
+        LEFT JOIN fantech_imes_v2.smt_order so ON wo.order_id = so.order_id
+        LEFT JOIN fantech_imes_v2.smt_station ss ON ss.process_id = splp.process_id
+        LEFT JOIN fantech_imes_v2.smt_pro_line sml ON wo.pro_line_id = sml.pro_line_id
+        LEFT JOIN fantech_imes_v2.smt_process sp ON sp.process_id = splp.process_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON splp.organization_id = bo.organization_id
+        LEFT JOIN ocean_v2.sys_user su1 ON su1.user_id = splp.create_user_id
+        LEFT JOIN ocean_v2.sys_user su2 ON su2.user_id = splp.modified_user_id
+        LEFT JOIN fantech_imes_v2.base_staff bs ON bs.staff_id = splp.staff_id
+        LEFT JOIN fantech_imes_v2.base_team bte ON bte.team_id = bs.team_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(splp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -183,7 +183,7 @@
             parameterType="com.fantechs.common.base.general.entity.basic.BaseRouteProcess">
         select
         route_process_id,route_id,section_id,process_id,next_process_id,previous_process_id,order_num,is_pass,is_must_pass,inspection_time,qualification_id
-        from fantech_imes.smt_route_process
+        from fantech_imes_v2.smt_route_process
         <where>
             route_id = #{routeId}
         </where>
@@ -202,7 +202,7 @@
                rp.is_must_pass,
                rp.inspection_time,
                rp.qualification_id
-        FROM fantech_imes.smt_work_order wo
+        FROM fantech_imes_v2.smt_work_order wo
                  LEFT JOIN smt_route_process rp ON wo.route_id = rp.route_id
         where wo.work_order_id = #{workOrderId}
     </select>
@@ -280,15 +280,15 @@
                bt.main_unit               AS 'mainUnit',
                spm.product_model_name     AS 'productModuleName',
                bpi.parts_information_name AS 'partsInformationName'
-        FROM fantech_imes.smt_work_order_card_pool swocp
-                 LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
-                 LEFT JOIN fantech_imes.smt_work_order swo1 ON swo1.work_order_id = swo.parent_id
-                 LEFT JOIN fantech_imes.base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
-                 LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo1.material_id
-                 LEFT JOIN fantech_imes.base_parts_information bpi
+        FROM fantech_imes_v2.smt_work_order_card_pool swocp
+                 LEFT JOIN fantech_imes_v2.smt_work_order swo ON swo.work_order_id = swocp.work_order_id
+                 LEFT JOIN fantech_imes_v2.smt_work_order swo1 ON swo1.work_order_id = swo.parent_id
+                 LEFT JOIN fantech_imes_v2.base_plate_parts_det bppd ON bppd.plate_parts_det_id = swo.material_id
+                 LEFT JOIN fantech_imes_v2.smt_material sm ON sm.material_id = swo1.material_id
+                 LEFT JOIN fantech_imes_v2.base_parts_information bpi
                            ON bpi.parts_information_id = bppd.parts_information_id
-                 LEFT JOIN fantech_imes.base_tab bt ON bt.material_id = sm.material_id
-                 LEFT JOIN fantech_imes.smt_product_model spm ON spm.product_model_id = bt.product_model_id
+                 LEFT JOIN fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
+                 LEFT JOIN fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
         WHERE swocp.work_order_card_pool_id = #{workOrderCardPoolId}
     </select>
     <select id="getQuantityByWorkOrderId" resultType="java.math.BigDecimal">

@@ -33,8 +33,8 @@
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List"/>, bo.organization_name
-    from fantech_imes.qms_ht_quality_inspection qhqi
-    LEFT JOIN fantech_imes.base_organization bo ON qhqi.organization_id = bo.organization_id
+    from fantech_imes_v2.qms_ht_quality_inspection qhqi
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qhqi.organization_id = bo.organization_id
     <where>
       <if test="qualityInspectionCode != null and qualityInspectionCode != '' ">
         and qhqi.quality_inspection_code like CONCAT('%', #{qualityInspectionCode}, '%')

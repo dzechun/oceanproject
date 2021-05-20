@@ -54,13 +54,13 @@
         bo.organization_name AS 'organizationName',
         sp.process_code AS 'processCode',
         sp.process_name AS 'processName'
-        FROM fantech_imes.mes_pm_explain_process_plan AS mpepp
-        LEFT JOIN ocean.sys_user su1 ON su1.user_id = mpepp.create_user_id
-        LEFT JOIN ocean.sys_user su2 ON su2.user_id = mpepp.modified_user_id
-        LEFT JOIN fantech_imes.base_organization bo on bo.organization_id = mpepp.organization_id
-        LEFT JOIN fantech_imes.mes_pm_explain_plan mpep on mpep.explain_plan_id = mpepp.explain_plan_id
-        LEFT JOIN fantech_imes.smt_work_order swo on swo.work_order_id = mpep.work_order_id
-        LEFT JOIN fantech_imes.smt_process sp on sp.process_id = mpepp.process_id
+        FROM fantech_imes_v2.mes_pm_explain_process_plan AS mpepp
+        LEFT JOIN ocean_v2.sys_user su1 ON su1.user_id = mpepp.create_user_id
+        LEFT JOIN ocean_v2.sys_user su2 ON su2.user_id = mpepp.modified_user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo on bo.organization_id = mpepp.organization_id
+        LEFT JOIN fantech_imes_v2.mes_pm_explain_plan mpep on mpep.explain_plan_id = mpepp.explain_plan_id
+        LEFT JOIN fantech_imes_v2.smt_work_order swo on swo.work_order_id = mpep.work_order_id
+        LEFT JOIN fantech_imes_v2.smt_process sp on sp.process_id = mpepp.process_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mpepp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -89,7 +89,7 @@
     </select>
 
     <insert id="batchAdd" parameterType="java.util.List">
-        insert into fantech_imes.mes_pm_explain_process_plan
+        insert into fantech_imes_v2.mes_pm_explain_process_plan
         (explain_process_plan_code,explain_plan_id,process_id,planed_start_date,planed_end_date)
         values
         <foreach collection="list" separator="," item="item">

@@ -79,8 +79,8 @@
     d.dept_name AS dept_name
     FROM
     wms_in_finished_product_det AS fpd
-    LEFT JOIN ocean.sys_user su ON fpd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON fpd.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user su ON fpd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON fpd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON fpd.organization_id = bo.organization_id
     LEFT JOIN smt_material sm ON fpd.material_id = sm.material_id
     LEFT JOIN smt_storage s ON fpd.storage_id = s.storage_id

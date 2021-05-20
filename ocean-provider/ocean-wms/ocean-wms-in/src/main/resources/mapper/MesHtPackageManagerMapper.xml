@@ -61,18 +61,18 @@
    spl.pro_name AS 'proName',
    sps.package_specification_quantity AS 'packageSpecificationQuantity'
    FROM
-   fantech_imes.mes_ht_package_manager AS mhpm
-   LEFT JOIN ocean.sys_user su1 ON su1.user_id = mhpm.create_user_id
-   LEFT JOIN ocean.sys_user su2 ON su2.user_id = mhpm.modified_user_id
-   LEFT JOIN fantech_imes.base_organization bo ON mhpm.organization_id = bo.organization_id
-   LEFT JOIN fantech_imes.smt_work_order swo ON swo.work_order_id = mhpm.work_order_id
-   LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = mhpm.material_id
-   LEFT JOIN fantech_imes.smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
-   LEFT JOIN fantech_imes.smt_package_specification sps ON sps.package_specification_id = mhpm.package_specification_id
-   LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
-   LEFT JOIN fantech_imes.smt_product_model spm on spm.product_model_id = bt.product_model_id
-   LEFT JOIN fantech_imes.smt_storage_material ssm on ssm.material_id = sm.material_id
-   LEFT JOIN fantech_imes.smt_storage ss on ss.storage_id = ssm.storage_id
+   fantech_imes_v2.mes_ht_package_manager AS mhpm
+   LEFT JOIN ocean_v2.sys_user su1 ON su1.user_id = mhpm.create_user_id
+   LEFT JOIN ocean_v2.sys_user su2 ON su2.user_id = mhpm.modified_user_id
+   LEFT JOIN fantech_imes_v2.base_organization bo ON mhpm.organization_id = bo.organization_id
+   LEFT JOIN fantech_imes_v2.smt_work_order swo ON swo.work_order_id = mhpm.work_order_id
+   LEFT JOIN fantech_imes_v2.smt_material sm ON sm.material_id = mhpm.material_id
+   LEFT JOIN fantech_imes_v2.smt_pro_line spl ON spl.pro_line_id = swo.pro_line_id
+   LEFT JOIN fantech_imes_v2.smt_package_specification sps ON sps.package_specification_id = mhpm.package_specification_id
+   LEFT JOIN fantech_imes_v2.base_tab bt on bt.material_id = sm.material_id
+   LEFT JOIN fantech_imes_v2.smt_product_model spm on spm.product_model_id = bt.product_model_id
+   LEFT JOIN fantech_imes_v2.smt_storage_material ssm on ssm.material_id = sm.material_id
+   LEFT JOIN fantech_imes_v2.smt_storage ss on ss.storage_id = ssm.storage_id
    <where>
      <if test="workOrderCode != null and workOrderCode !=''">
        AND swo.work_order_code = #{workOrderCode}

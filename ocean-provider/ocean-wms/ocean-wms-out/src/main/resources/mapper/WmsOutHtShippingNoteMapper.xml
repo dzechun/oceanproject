@@ -65,11 +65,11 @@
     bo.organization_name AS organization_name
     from
     wms_out_ht_shipping_note AS sn
-    LEFT JOIN ocean.sys_user su ON sn.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON sn.modified_user_id = sus.user_id
-    LEFT JOIN ocean.sys_user suse ON sn.operator_user_id = suse.user_id
-    LEFT JOIN ocean.sys_user suser ON sn.processor_user_id = suser.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON sn.organization_id = bo.organization_id
+    LEFT JOIN ocean_v2.sys_user su ON sn.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON sn.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user suse ON sn.operator_user_id = suse.user_id
+    LEFT JOIN ocean_v2.sys_user suser ON sn.processor_user_id = suser.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON sn.organization_id = bo.organization_id
     <where>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(sn.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

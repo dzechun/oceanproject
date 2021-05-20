@@ -49,8 +49,8 @@ wodord.is_delete
     LEFT JOIN wms_out_despatch_order wodo ON wodor.despatch_order_id = wodo.despatch_order_id
     LEFT JOIN wms_inner_job_order_det wijod ON wodord.job_order_det_id = wijod.job_order_det_id
     LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
-    LEFT JOIN ocean.sys_user su ON wodord.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON wodord.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user su ON wodord.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wodord.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wodord.org_id = bo.organization_id
     <where>
       <if test="despatchOrderId!=null and despatchOrderId!=''">

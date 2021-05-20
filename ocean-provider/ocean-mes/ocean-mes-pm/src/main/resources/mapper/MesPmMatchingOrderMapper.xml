@@ -72,9 +72,9 @@
         suss.user_name AS matching_staff_name,
         sd.dept_name
         from mes_pm_matching_order mpmo
-        LEFT JOIN ocean.sys_user su ON mpmo.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON mpmo.modified_user_id = sus.user_id
-        LEFT JOIN ocean.sys_user suss ON mpmo.matching_staff_id = suss.user_id
+        LEFT JOIN ocean_v2.sys_user su ON mpmo.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON mpmo.modified_user_id = sus.user_id
+        LEFT JOIN ocean_v2.sys_user suss ON mpmo.matching_staff_id = suss.user_id
         LEFT JOIN smt_dept sd ON suss.dept_id = sd.dept_id
         LEFT JOIN mes_pm_matching mpm ON mpmo.matching_id = mpm.matching_id
         LEFT JOIN smt_work_order_card_pool swocp ON mpmo.work_order_card_pool_id = swocp.work_order_card_pool_id

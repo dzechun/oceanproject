@@ -141,8 +141,8 @@
         left join base_route sr on swo.route_id=sr.route_id
         left join base_pro_line spl on swo.pro_line_id=spl.pro_line_id
         left join base_barcode_rule_set sbrs on swo.barcode_rule_set_id=sbrs.barcode_rule_set_id
-        left join ocean.sys_user u on swo.create_user_id=u.user_id
-        left join ocean.sys_user s on swo.modified_user_id=s.user_id
+        left join ocean_v2.sys_user u on swo.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on swo.modified_user_id=s.user_id
         LEFT JOIN base_organization bo ON swo.org_id = bo.organization_id
         left join base_process putbp ON putbp.process_id = swo.put_into_process_id
         left join base_process outbp ON outbp.process_id = swo.output_process_id

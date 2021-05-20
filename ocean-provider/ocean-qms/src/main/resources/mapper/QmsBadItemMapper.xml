@@ -43,12 +43,12 @@
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     sp.process_code,sp.process_name,sws.section_code,sws.section_name,sws.section_id
-    from fantech_imes.qms_bad_item qbi
-    LEFT JOIN ocean.sys_user su ON qbi.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qbi.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qbi.organization_id = bo.organization_id
-    LEFT JOIN fantech_imes.smt_process sp ON sp.process_id = qbi.process_id
-    LEFT JOIN fantech_imes.smt_workshop_section sws ON sws.section_id = qbi.section_id
+    from fantech_imes_v2.qms_bad_item qbi
+    LEFT JOIN ocean_v2.sys_user su ON qbi.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON qbi.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qbi.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.smt_process sp ON sp.process_id = qbi.process_id
+    LEFT JOIN fantech_imes_v2.smt_workshop_section sws ON sws.section_id = qbi.section_id
     <where>
       <if test="badItemId != null and badItemId != ''">
         and qbi.bad_item_id = #{badItemId}
