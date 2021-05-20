@@ -43,6 +43,7 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId"/>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto" extends="BaseResultMap">
