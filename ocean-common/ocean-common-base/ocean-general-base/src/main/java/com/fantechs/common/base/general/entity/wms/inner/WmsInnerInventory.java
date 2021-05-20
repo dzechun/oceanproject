@@ -314,5 +314,12 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    /**
+     * 任务id
+     */
+    @ApiModelProperty(name = "jobOrderDetId",value = "任务id")
+    @Column(name = "job_order_det_id")
+    private Long jobOrderDetId;
+
     private static final long serialVersionUID = 1L;
 }
