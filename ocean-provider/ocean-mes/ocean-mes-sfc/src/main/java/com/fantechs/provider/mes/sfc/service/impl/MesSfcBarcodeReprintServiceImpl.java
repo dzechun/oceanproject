@@ -1,26 +1,106 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductCartonDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintCarCodeDto;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcCartonPalletReprint;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcCartonPalletReprintMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeReprintService;
+import com.fantechs.provider.mes.sfc.service.MesSfcProductCartonService;
+import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintService {
 
+    @Resource
+    MesSfcCartonPalletReprintMapper mesSfcCartonPalletReprintMapper;
+    @Resource
+    MesSfcProductCartonService mesSfcProductCartonService;
+    @Resource
+    MesSfcProductPalletService mesSfcProductPalletService;
+
     @Override
-    public String findCode(String keyword, String codeType) {
-        String barCode = null;
-        if(codeType.equals("1")){
-
-        }else if(codeType.equals("2")){
-
+    public List<String> findCode(String keyword, String barocdeType) {
+        List<String> barCodeList = null;
+        Map<String, Object> map = new HashMap<>();
+        map.put("closeStatus", 1);
+        if(barocdeType.equals("1")){
+            map.put("cartonCode", keyword);
+            List<MesSfcProductCartonDto> productCartonDtoList = mesSfcProductCartonService.findList(map);
+            for (MesSfcProductCartonDto dto : productCartonDtoList) {
+                barCodeList.add(dto.getCartonCode());
+            }
+        }else if(barocdeType.equals("2")){
+            map.put("palletCode", keyword);
+            List<MesSfcProductPalletDto> productPalletDtoList = mesSfcProductPalletService.findList(map);
+            for (MesSfcProductPalletDto dto : productPalletDtoList) {
+                barCodeList.add(dto.getPalletCode());
+            }
         }
-        return barCode;
+        return barCodeList;
     }
 
     @Override
-    public int reprintBarcode(String barCode, String codeType) {
-        // 生成补打记录
+    public int reprintBarcode(String barCode, byte barocdeType) throws Exception {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Long sourceBarcodeId = null;
+        Long workOrderId = null;
+        Map<String, Object> map = new HashMap<>();
+        map.put("closeStatus", 1);
+        if(barocdeType == 1){
+            map.put("cartonCode", barCode);
+            List<MesSfcProductCartonDto> productCartonDtoList = mesSfcProductCartonService.findList(map);
+            if(productCartonDtoList == null || productCartonDtoList.size() <= 0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003, "该包箱不存在");
+            }
+            MesSfcProductCartonDto sfcProductCartonDto = productCartonDtoList.get(0);
+            sourceBarcodeId = sfcProductCartonDto.getProductCartonId();
+            workOrderId = sfcProductCartonDto.getWorkOrderId();
+        }else if(barocdeType == 2){
+            map.put("palletCode", barCode);
+            List<MesSfcProductPalletDto> productPalletDtoList = mesSfcProductPalletService.findList(map);
+            if(productPalletDtoList == null || productPalletDtoList.size() <= 0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003, "该栈板不存在");
+            }
+            MesSfcProductPalletDto sfcProductPalletDto = productPalletDtoList.get(0);
+            sourceBarcodeId = sfcProductPalletDto.getProductPalletId();
+            workOrderId = sfcProductPalletDto.getWorkOrderId();
+        }
+
         // 调用打印机打印
-        return 0;
+        BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
+                .barcode(barCode)
+                .labelTypeCode("09")
+                .workOrderId(workOrderId)
+                .build());
+
+        // 生成补打记录
+        MesSfcCartonPalletReprint data = new MesSfcCartonPalletReprint();
+        data.setBarcode(barCode);
+        data.setBarocdeType(barocdeType);
+        data.setCreateTime(new Date());
+        data.setIsDelete((byte) 1);
+        data.setCreateUserId(user.getUserId());
+        data.setSourceBarcodeId(sourceBarcodeId);
+        data.setOrgId(user.getOrganizationId());
+        return mesSfcCartonPalletReprintMapper.insert(data);
     }
 }
