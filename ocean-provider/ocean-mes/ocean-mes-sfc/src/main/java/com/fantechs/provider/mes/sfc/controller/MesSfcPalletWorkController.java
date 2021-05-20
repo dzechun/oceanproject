@@ -52,10 +52,11 @@ public class MesSfcPalletWorkController {
     @PostMapping("/submitNoFullPallet")
     @ApiOperation("未满栈板提交")
     public ResponseEntity submitNoFullPallet(
-            @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList) throws Exception {
+            @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList,
+            @ApiParam(value = "打印条码（0-否 1-是）", required = true) @RequestParam byte printBarcode) throws Exception {
 
 
-        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList);
+        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList, printBarcode);
         return ControllerUtil.returnCRUD(i);
     }
 
