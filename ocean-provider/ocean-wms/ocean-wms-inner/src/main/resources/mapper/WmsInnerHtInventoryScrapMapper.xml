@@ -51,10 +51,10 @@
     bo.organization_code AS organization_code
     FROM
     wms_inner_ht_inventory_scrap AS iis
-    LEFT JOIN ocean.sys_user su ON iis.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON iis.modified_user_id = sus.user_id
-    LEFT JOIN ocean.sys_user suss ON iis.processor_user_id = suss.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON iis.organization_id = bo.organization_id
+    LEFT JOIN ocean_v2.sys_user su ON iis.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON iis.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user suss ON iis.processor_user_id = suss.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON iis.organization_id = bo.organization_id
     <where>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(iis.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

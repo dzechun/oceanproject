@@ -24,7 +24,7 @@
 </resultMap>
 
   <select id="selectUserName" resultType="string">
-    select su.user_name from ocean.sys_user su where su.user_id = #{id}
+    select su.user_name from ocean_v2.sys_user su where su.user_id = #{id}
   </select>
 
  <select id="selectFilterAll" resultMap="BaseResultMapDTO" parameterType="map">
@@ -58,17 +58,17 @@
          swh.warehouse_code AS warehouseCode,
          bo.organization_name
      FROM
-         fantech_imes.wms_in_ht_storage_bills_det AS whsbd
-             LEFT JOIN fantech_imes.`smt_material` sm ON whsbd.material_id = sm.material_id
-             LEFT JOIN fantech_imes.base_tab bt on bt.material_id = sm.material_id
-             LEFT JOIN fantech_imes.`smt_product_model` spm ON spm.product_model_id = bt.product_model_id
-             LEFT JOIN fantech_imes.`smt_storage_material` ssm ON ssm.material_id = sm.material_id
-             LEFT JOIN fantech_imes.`smt_storage` ss ON ss.storage_id = ssm.storage_id
-             LEFT JOIN ocean.sys_user su1 on su1.user_id = whsbd.create_user_id
-             LEFT JOIN ocean.sys_user su2 on su2.user_id = whsbd.modified_user_id
-             LEFT JOIN fantech_imes.smt_warehouse swh ON swh.warehouse_id = ss.warehouse_id
-             LEFT JOIN fantech_imes.smt_warehouse_area swha ON swha.warehouse_area_id = ss.warehouse_area_id
-             LEFT JOIN fantech_imes.base_organization bo ON whsbd.organization_id = bo.organization_id
+         fantech_imes_v2.wms_in_ht_storage_bills_det AS whsbd
+             LEFT JOIN fantech_imes_v2.`smt_material` sm ON whsbd.material_id = sm.material_id
+             LEFT JOIN fantech_imes_v2.base_tab bt on bt.material_id = sm.material_id
+             LEFT JOIN fantech_imes_v2.`smt_product_model` spm ON spm.product_model_id = bt.product_model_id
+             LEFT JOIN fantech_imes_v2.`smt_storage_material` ssm ON ssm.material_id = sm.material_id
+             LEFT JOIN fantech_imes_v2.`smt_storage` ss ON ss.storage_id = ssm.storage_id
+             LEFT JOIN ocean_v2.sys_user su1 on su1.user_id = whsbd.create_user_id
+             LEFT JOIN ocean_v2.sys_user su2 on su2.user_id = whsbd.modified_user_id
+             LEFT JOIN fantech_imes_v2.smt_warehouse swh ON swh.warehouse_id = ss.warehouse_id
+             LEFT JOIN fantech_imes_v2.smt_warehouse_area swha ON swha.warehouse_area_id = ss.warehouse_area_id
+             LEFT JOIN fantech_imes_v2.base_organization bo ON whsbd.organization_id = bo.organization_id
      WHERE
          whsbd.storage_bills_id = #{storageBillsId} AND whsbd.is_delete=1
  </select>

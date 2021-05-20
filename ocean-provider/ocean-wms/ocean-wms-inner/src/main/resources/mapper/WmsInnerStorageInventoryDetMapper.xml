@@ -55,17 +55,17 @@
         sm.material_desc,sm.material_name,sm.material_id,sm.version,sm.material_code,
         swa.warehouse_area_name,sw.warehouse_name,swa.warehouse_area_id,sw.warehouse_id,mpm.total
         FROM wms_inner_storage_inventory_det wisid
-        LEFT JOIN ocean.sys_user su ON wisid.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON wisid.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes.smt_storage_inventory ssi ON ssi.storage_inventory_id = wisid.storage_inventory_id
-        LEFT JOIN fantech_imes.smt_storage ss ON ss.storage_id = ssi.storage_id
-        LEFT JOIN fantech_imes.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
-        LEFT JOIN fantech_imes.smt_warehouse sw ON sw.warehouse_id = swa.warehouse_id
-        LEFT JOIN fantech_imes.base_organization bo ON wisid.organization_id = bo.organization_id
-        LEFT JOIN fantech_imes.smt_storage_pallet ssp ON ssp.pallet_code = wisid.material_barcode_code
+        LEFT JOIN ocean_v2.sys_user su ON wisid.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON wisid.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.smt_storage_inventory ssi ON ssi.storage_inventory_id = wisid.storage_inventory_id
+        LEFT JOIN fantech_imes_v2.smt_storage ss ON ss.storage_id = ssi.storage_id
+        LEFT JOIN fantech_imes_v2.smt_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+        LEFT JOIN fantech_imes_v2.smt_warehouse sw ON sw.warehouse_id = swa.warehouse_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON wisid.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.smt_storage_pallet ssp ON ssp.pallet_code = wisid.material_barcode_code
         LEFT JOIN mes_package_manager mpm ON mpm.bar_code = wisid.material_barcode_code
         LEFT JOIN smt_work_order swo ON swo.work_order_id = mpm.work_order_id
-        LEFT JOIN fantech_imes.smt_material sm ON sm.material_id = swo.material_id
+        LEFT JOIN fantech_imes_v2.smt_material sm ON sm.material_id = swo.material_id
         LEFT JOIN smt_order so ON so.order_id = swo.order_id
 
         <where>

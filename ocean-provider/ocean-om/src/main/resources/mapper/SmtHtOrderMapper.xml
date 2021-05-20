@@ -44,8 +44,8 @@
    ss.supplier_name, bo.organization_name,
    u.user_name as create_user_name, s.user_name as modified_user_name
    from smt_order sho
-   left join ocean.sys_user u on sho.create_user_id = u.user_id
-   left join ocean.sys_user s on sho.modified_user_id = s.user_id
+   left join ocean_v2.sys_user u on sho.create_user_id = u.user_id
+   left join ocean_v2.sys_user s on sho.modified_user_id = s.user_id
    left join smt_material sm on sho.material_id = sm.material_id
    left join smt_supplier ss on sho.supplier_id = ss.supplier_id
    LEFT JOIN base_tab bt on bt.material_id = sm.material_id

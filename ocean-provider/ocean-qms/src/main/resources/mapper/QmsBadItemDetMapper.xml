@@ -32,10 +32,10 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    from fantech_imes.qms_bad_item_det qbid
-    LEFT JOIN ocean.sys_user su ON qbid.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qbid.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qbid.organization_id = bo.organization_id
+    from fantech_imes_v2.qms_bad_item_det qbid
+    LEFT JOIN ocean_v2.sys_user su ON qbid.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON qbid.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qbid.organization_id = bo.organization_id
     <where>
       <if test="badItemId != null and badItemId != ''">
         and qbid.bad_item_id = #{badItemId}
@@ -55,10 +55,10 @@
 
   <select id="findById" parameterType="long" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>
-    from fantech_imes.qms_bad_item_det qbid
-    LEFT JOIN ocean.sys_user su ON qbid.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON qbid.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON qbid.organization_id = bo.organization_id
+    from fantech_imes_v2.qms_bad_item_det qbid
+    LEFT JOIN ocean_v2.sys_user su ON qbid.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON qbid.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qbid.organization_id = bo.organization_id
     where qbid.bad_item_id = #{badItemId}
   </select>
 

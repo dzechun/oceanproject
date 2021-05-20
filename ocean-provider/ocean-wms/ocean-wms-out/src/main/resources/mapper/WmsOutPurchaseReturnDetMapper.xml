@@ -68,13 +68,13 @@
     bo.organization_name
     FROM
     wms_out_purchase_return_det AS prt
-    LEFT JOIN ocean.sys_user su  ON prt.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON prt.modified_user_id = sus.user_id
-    LEFT JOIN ocean.sys_user suy ON prt.warehouse_user_id = suy.user_id
+    LEFT JOIN ocean_v2.sys_user su  ON prt.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON prt.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user suy ON prt.warehouse_user_id = suy.user_id
     LEFT JOIN wms_out_purchase_return pr ON prt.purchase_return_id = pr.purchase_return_id
     LEFT JOIN smt_material m ON prt.material_id = m.material_id
     LEFT JOIN smt_warehouse w ON prt.warehouse_id = w.warehouse_id
-    LEFT JOIN fantech_imes.base_organization bo ON prt.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON prt.organization_id = bo.organization_id
     <where>
         <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
             and date_format(prt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

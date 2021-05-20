@@ -39,9 +39,9 @@
                mhs.modified_time,
                su1.user_name AS createUserName,
                su2.user_name AS modifiedUserName
-        FROM fantech_imes.mes_ht_schedule AS mhs
-                 LEFT JOIN ocean.sys_user su1 ON su1.user_id = mhs.create_user_id
-                 LEFT JOIN ocean.sys_user su2 ON su2.user_id = mhs.modified_user_id
+        FROM fantech_imes_v2.mes_ht_schedule AS mhs
+                 LEFT JOIN ocean_v2.sys_user su1 ON su1.user_id = mhs.create_user_id
+                 LEFT JOIN ocean_v2.sys_user su2 ON su2.user_id = mhs.modified_user_id
         where mhs.is_delete = 1
         order by mhs.modified_time desc
     </select>

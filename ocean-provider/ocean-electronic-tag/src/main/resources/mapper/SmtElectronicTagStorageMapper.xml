@@ -93,8 +93,8 @@
         scm.queue_name,
         bo.organization_name
         FROM smt_electronic_tag_storage sets
-        LEFT JOIN ocean.sys_user su ON sets.create_user_id = su.user_id
-        LEFT JOIN ocean.sys_user sus ON sets.modified_user_id = sus.user_id
+        LEFT JOIN ocean_v2.sys_user su ON sets.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON sets.modified_user_id = sus.user_id
         LEFT JOIN smt_equipment se ON sets.equipment_id = se.equipment_id
         LEFT JOIN smt_client_manage scm ON scm.client_id = se.client_id
         LEFT JOIN smt_storage ss ON sets.storage_id = ss.storage_id
@@ -102,7 +102,7 @@
         LEFT JOIN smt_material sm ON ssm.material_id = sm.material_id
         LEFT JOIN smt_warehouse sw ON ss.warehouse_id  = sw.warehouse_id
         LEFT JOIN smt_warehouse_area swa ON sets.warehouse_area_id = swa.warehouse_area_id
-        LEFT JOIN fantech_imes.base_organization bo ON sets.organization_id = bo.organization_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sets.organization_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shets.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

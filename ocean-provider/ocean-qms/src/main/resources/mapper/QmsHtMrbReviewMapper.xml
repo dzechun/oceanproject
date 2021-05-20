@@ -36,8 +36,8 @@
 
   <select id="findHtList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>, bo.organization_name
-    from fantech_imes.qms_ht_mrb_review qhmr
-    LEFT JOIN fantech_imes.base_organization bo ON qhmr.organization_id = bo.organization_id
+    from fantech_imes_v2.qms_ht_mrb_review qhmr
+    LEFT JOIN fantech_imes_v2.base_organization bo ON qhmr.organization_id = bo.organization_id
     <where>
       <if test="mrbReviewCode != null and mrbReviewCode != ''">
         and qhmr.mrb_review_code like CONCAT('%', #{mrbReviewCode}, '%')
