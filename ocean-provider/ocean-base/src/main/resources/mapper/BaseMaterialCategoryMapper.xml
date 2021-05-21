@@ -54,7 +54,7 @@
         select <include refid="Base_Column_List"></include>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.base_ht_material_category smc
+        from fantech_imes_v2.base_material_category smc
         LEFT JOIN ocean_v2.sys_user su ON smc.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON smc.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON smc.org_id = bo.organization_id

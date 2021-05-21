@@ -26,8 +26,8 @@ public class SearchBaseInspectionWay extends BaseQuery implements Serializable {
     /**
      * 检验类型
      */
-    @ApiModelProperty(name="inspectionTypeName" ,value="检验类型")
-    private String inspectionTypeName;
+    @ApiModelProperty(name="inspectionType" ,value="检验类型")
+    private Byte inspectionType;
 
 
 }

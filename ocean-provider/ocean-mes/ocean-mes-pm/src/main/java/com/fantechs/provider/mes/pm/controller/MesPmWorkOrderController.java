@@ -1,17 +1,16 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.service.SmtHtWorkOrderService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -49,19 +48,12 @@ public class MesPmWorkOrderController {
     private MesPmWorkOrderService mesPmWorkOrderService;
 
     @Resource
-    private SmtHtWorkOrderService smtHtWorkOrderService;
+    private MesPmHtWorkOrderService mesPmHtWorkOrderService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：materialId、workOrderQuantity、proLineId、routeId",required = true)@RequestBody @Validated MesPmWorkOrder mesPmWorkOrder) {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.save(mesPmWorkOrder));
-    }
-
-    @ApiOperation(value = "新增及更新工单及BOM",notes = "新增及更新工单及BOM")
-    @PostMapping("/save")
-    public ResponseEntity save(@ApiParam(value = "保存工单及工单BOM",required = true)@RequestBody SaveWorkOrderAndBom saveWorkOrderAndBom) {
-        mesPmWorkOrderService.saveWorkOrderDTO(saveWorkOrderAndBom);
-        return ControllerUtil.returnDataSuccess(saveWorkOrderAndBom.getMesPmWorkOrder().getWorkOrderId(),1);
     }
 
     @ApiOperation("删除")
@@ -95,7 +87,7 @@ public class MesPmWorkOrderController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<MesPmHtWorkOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder) {
         Page<Object> page = PageHelper.startPage(searchMesPmWorkOrder.getStartPage(), searchMesPmWorkOrder.getPageSize());
-        List<MesPmHtWorkOrder> list = smtHtWorkOrderService.findList(searchMesPmWorkOrder);
+        List<MesPmHtWorkOrder> list = mesPmHtWorkOrderService.findList(searchMesPmWorkOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

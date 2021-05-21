@@ -2,7 +2,7 @@ package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrderMaterialReP;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderMaterialReP;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderMaterialReP;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrderMaterialReP;
 import com.fantechs.common.base.response.ControllerUtil;

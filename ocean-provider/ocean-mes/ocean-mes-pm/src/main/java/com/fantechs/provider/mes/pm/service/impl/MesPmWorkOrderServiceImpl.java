@@ -1,19 +1,19 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -159,22 +159,6 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     @Override
     public List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder) {
         return mesPmWorkOrderMapper.pdaFindList(searchMesPmWorkOrder);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int saveWorkOrderDTO(SaveWorkOrderAndBom saveWorkOrderAndBom) {
-        MesPmWorkOrder mesPmWorkOrder = saveWorkOrderAndBom.getMesPmWorkOrder();
-        if(StringUtils.isNotEmpty(mesPmWorkOrder.getWorkOrderId())){
-            if(this.update(mesPmWorkOrder)<=0){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
-            }
-        }else{
-            if(this.save(mesPmWorkOrder)<=0){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
-            }
-        }
-        return 1;
     }
 
     /**

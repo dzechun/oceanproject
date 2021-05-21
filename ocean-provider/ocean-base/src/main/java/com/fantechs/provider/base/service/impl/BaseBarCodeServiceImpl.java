@@ -11,7 +11,7 @@ import com.fantechs.common.base.general.dto.basic.BaseBarCodeWorkDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSpecDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.basic.BaseBarCode;
 import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarCode;

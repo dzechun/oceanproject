@@ -76,14 +76,6 @@ public class BaseHtSampleProcess extends ValidGroup implements Serializable {
     private Long samplePlanId;
 
     /**
-     * 检验严格度(1-放宽 2-正常 3-加严)
-     */
-    @ApiModelProperty(name="inspectionRigorLevel",value = "检验严格度(1-放宽 2-正常 3-加严)")
-    @Excel(name = "检验严格度(1-放宽 2-正常 3-加严)", height = 20, width = 30,orderNum="") 
-    @Column(name = "inspection_rigor_level")
-    private Byte inspectionRigorLevel;
-
-    /**
      * AQL值
      */
     @ApiModelProperty(name="aqlValue",value = "AQL值")
