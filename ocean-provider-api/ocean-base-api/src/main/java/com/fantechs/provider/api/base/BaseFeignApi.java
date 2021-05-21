@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtConsignee;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
@@ -357,4 +358,7 @@ public interface BaseFeignApi {
     @PostMapping("/baseMaterialOwner/findList")
     ResponseEntity<List<BaseMaterialOwnerDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterialOwner searchBaseMaterialOwner);
 
+    @ApiOperation("根据条件查询收货人信息")
+    @PostMapping("/baseConsignee/findList")
+    ResponseEntity<List<BaseConsignee>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseConsignee searchBaseConsignee);
 }

@@ -92,6 +92,9 @@
       <if test="status!=null">
         and bc.status = #{status}
       </if>
+      <if test="materialOwnerId != null and materialOwnerId!=''">
+        and bc.material_owner_id = #{materialOwnerId}
+      </if>
     </where>
     order by bc.create_time desc
   </select>

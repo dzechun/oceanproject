@@ -137,6 +137,9 @@
             <if test="workingAreaCode!=null and workingAreaCode!=''">
                 and bwa.working_area_code like CONCAT('%', #{workingAreaCode}, '%')
             </if>
+            <if test="minSurplusCanPutSalver!=null and minSurplusCanPutSalver!=''">
+                and ss.surplus_can_put_salver>#{minSurplusCanPutSalver}
+            </if>
         </where>
         order by ss.create_time desc
     </select>

@@ -82,4 +82,10 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "queryMark",value = "查询方式标记")
     private Byte codeQueryMark;
+
+    /**
+     * 查询可放托盘数XX以上的库位
+     */
+    @ApiModelProperty(name = "minSurplusCanPutSalver",value = "最小剩余可放托盘数")
+    private int minSurplusCanPutSalver;
 }
