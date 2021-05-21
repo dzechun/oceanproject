@@ -48,7 +48,6 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     SELECT<include refid="Base_Column_List"/>,
-    bw.warehouse_name,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
     bo.organization_name FROM fantech_imes_v2.base_ht_in_and_out_rule_type bhiaort

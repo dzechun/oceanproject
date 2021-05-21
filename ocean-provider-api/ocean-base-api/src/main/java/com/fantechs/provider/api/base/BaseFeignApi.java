@@ -82,6 +82,7 @@ public interface BaseFeignApi {
     @ApiOperation(value = "获取储位信息", notes = "获取电子标签控制器和储位信息")
     ResponseEntity<BaseStorage> detail(@ApiParam(value = "id", required = true) @RequestParam(value = "id") Long id);
 
+    @PostMapping(value = "/baseMaterial/findList")
     @ApiOperation(value = "获取物料信息", notes = "获取物料信息")
     ResponseEntity<List<BaseMaterial>> findSmtMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
 
