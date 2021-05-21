@@ -327,9 +327,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             searchBaseConsignee.setMaterialOwnerId(palletAutoAsnDto.getMaterialOwnerId());
             ResponseEntity<List<BaseConsignee>> baseConsignees = baseFeignApi.findList(searchBaseConsignee);
             if(StringUtils.isNotEmpty(baseConsignees.getData())){
+                System.out.println("-----baseConsignees.getData()----"+baseConsignees.getData());
                BeanUtils.autoFillEqFields(baseConsignees.getData().get(0),palletAutoAsnDto);
             }else{
-                throw new BizErrorException("未查询到货主信息");
+                throw new BizErrorException("未查询到收货人信息");
             }
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setMinSurplusCanPutSalver(0);
@@ -345,6 +346,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
             palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons));
             palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons));
+            System.out.println("-----传参----"+palletAutoAsnDto);
+
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
 
