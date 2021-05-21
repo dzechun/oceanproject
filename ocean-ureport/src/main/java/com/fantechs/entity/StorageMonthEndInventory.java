@@ -2,7 +2,6 @@ package com.fantechs.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

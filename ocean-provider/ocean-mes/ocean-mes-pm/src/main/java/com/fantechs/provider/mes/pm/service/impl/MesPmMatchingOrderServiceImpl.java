@@ -16,8 +16,6 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmMatching;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmMatchingOrder;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
-import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProduct;
-import com.fantechs.common.base.general.entity.wms.in.WmsInFinishedProductDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;

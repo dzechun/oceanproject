@@ -17,9 +17,6 @@ import java.util.Date;
  * @Date 2021/5/20
  */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
     /**
      * 货主信息

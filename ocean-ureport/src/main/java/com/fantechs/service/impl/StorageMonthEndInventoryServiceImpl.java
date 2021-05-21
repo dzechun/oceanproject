@@ -1,7 +1,5 @@
 package com.fantechs.service.impl;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStorageInventoryDetDto;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStorageInventoryDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.dto.StorageMonthEndInventoryDto;
 import com.fantechs.entity.StorageMonthEndInventory;
