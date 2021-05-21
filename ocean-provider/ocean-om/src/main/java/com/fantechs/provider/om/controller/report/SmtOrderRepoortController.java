@@ -1,9 +1,8 @@
 package com.fantechs.provider.om.controller.report;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.general.dto.om.SearchSmtOrderReportDto;
-import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.dto.om.SmtOrderReportDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.POST;
 import java.util.List;
 
 /**

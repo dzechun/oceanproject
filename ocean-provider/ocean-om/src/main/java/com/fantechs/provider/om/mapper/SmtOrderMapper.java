@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.mapper;
 
 import com.fantechs.common.base.general.dto.om.*;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.mybatis.MyMapper;

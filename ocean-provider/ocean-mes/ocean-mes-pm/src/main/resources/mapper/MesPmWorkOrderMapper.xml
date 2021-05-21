@@ -78,7 +78,7 @@
         <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     </resultMap>
 
-    <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder"
+    <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder"
             resultMap="BaseResultMapDto">
         SELECT
         swo.work_order_id,

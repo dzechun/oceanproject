@@ -1,8 +1,5 @@
 package com.fantechs.provider.api.base;
 
-import com.fantechs.common.base.dto.storage.SmtStoragePalletDto;
-import com.fantechs.common.base.entity.storage.SmtStoragePallet;
-import com.fantechs.common.base.entity.storage.search.SearchSmtStoragePallet;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -86,8 +82,6 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorage/detail")
     @ApiOperation(value = "获取储位信息", notes = "获取电子标签控制器和储位信息")
     ResponseEntity<BaseStorage> detail(@ApiParam(value = "id", required = true) @RequestParam(value = "id") Long id);
-
-    @PostMapping(value = "/baseMaterial/findList")
 
     @ApiOperation(value = "获取物料信息", notes = "获取物料信息")
     ResponseEntity<List<BaseMaterial>> findSmtMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
@@ -154,7 +148,7 @@ public interface BaseFeignApi {
     ResponseEntity<BaseProcess> processDetail(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("获取工序的详情")
-    @PostMapping("/workshopSection/detail")
+    @PostMapping("/baseWorkshopSection/detail")
     ResponseEntity<BaseWorkshopSection> sectionDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
 
@@ -274,7 +268,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("条码规则关联集合列表")
     @PostMapping("/baseBarcodeRuleSetDet/findList")
-    public ResponseEntity<List<BaseBarcodeRuleSetDetDto>> findBarcodeRuleSetDetList(@ApiParam(value = "查询对象") @RequestBody SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet);
+    ResponseEntity<List<BaseBarcodeRuleSetDetDto>> findBarcodeRuleSetDetList(@ApiParam(value = "查询对象") @RequestBody SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet);
 
     @ApiOperation("生成条码")
     @PostMapping("/baseBarcodeRule/generateCode")
@@ -291,30 +285,6 @@ public interface BaseFeignApi {
     @ApiOperation("获取检验类型列表")
     @PostMapping("/baseInspectionType/findList")
     ResponseEntity<List<BaseInspectionTypeDto>> findInspectionTypeList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionType searchQmsInspectionType);
-
-    @ApiOperation("储位库存删除")
-    @PostMapping("/smtStorageInventory/delete")
-    ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
-
-    @ApiOperation("储位库存明细删除")
-    @PostMapping("/smtStorageInventoryDet/delete")
-    ResponseEntity deleteStorageInventoryDet(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
-
-    @ApiOperation("储位栈板关系表新增")
-    @PostMapping("/smtStoragePallet/add")
-    ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);
-
-    @ApiOperation("储位与栈板列表")
-    @PostMapping("/smtStoragePallet/findList")
-    ResponseEntity<List<SmtStoragePalletDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchSmtStoragePallet searchSmtStoragePallet);
-
-    @ApiOperation("储位栈板关系表修改")
-    @PostMapping("/smtStoragePallet/update")
-    ResponseEntity update(@ApiParam(value = "必传：", required = true) @RequestBody SmtStoragePallet smtStoragePallet);
-
-    @ApiOperation("储位栈板关系表删除")
-    @PostMapping("/smtStoragePallet/delete")
-    ResponseEntity deleteSmtStoragePallet(@ApiParam(value = "对象ID列表，多个逗号分隔", required = true) @RequestParam @NotBlank(message = "ids不能为空") String ids);
 
     @ApiOperation("减可放托盘数")
     @PostMapping("/baseStorage/minusSurplusCanPutSalver")

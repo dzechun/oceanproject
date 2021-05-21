@@ -1,11 +1,17 @@
-package com.fantechs.provider.mes.pm.mapper;
+package com.fantechs.provider.mes.pm.service;
 
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.mybatis.MyMapper;
+import com.fantechs.common.base.support.IService;
 
 import java.util.List;
 
-public interface MesPmHtWorkOrderMapper extends MyMapper<MesPmHtWorkOrder> {
+/**
+ *
+ * Created by wcz on 2020/10/14.
+ */
+
+public interface MesPmHtWorkOrderService extends IService<MesPmHtWorkOrder> {
+
     List<MesPmHtWorkOrder> findList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 }
