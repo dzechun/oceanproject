@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.service;
 
 
+import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
@@ -38,5 +39,5 @@ public interface WmsInAsnOrderService extends IService<WmsInAsnOrder> {
 
     int createInnerJobOrder(Long asnOrderId);
 
-    int palletAutoAsnOrder(WmsInAsnOrderDet wmsInAsnOrderDet);
+    int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto);
 }

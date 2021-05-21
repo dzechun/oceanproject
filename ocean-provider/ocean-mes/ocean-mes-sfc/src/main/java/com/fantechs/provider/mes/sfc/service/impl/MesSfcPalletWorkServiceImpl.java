@@ -303,6 +303,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPalletService.update(mesSfcProductPallet);
 
             closePalletNum += 1;
+
+            // 是否打印栈板码
+            if (requestPalletWorkScanDto.getPrintBarcode() == 1) {
+                PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
+                printCarCodeDto.setWorkOrderId(workOrderId);
+                printCarCodeDto.setLabelTypeCode("10");
+                printCarCodeDto.setBarcode(palletCode);
+                BarcodeUtils.printBarCode(printCarCodeDto);
+            }
         }
 
         for (MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode : mesSfcWorkOrderBarcodeList) {
@@ -314,14 +323,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPalletDet.setCreateTime(new Date());
             mesSfcProductPalletDetService.save(mesSfcProductPalletDet);
         }
-        // 是否打印栈板码
-        if (requestPalletWorkScanDto.getPrintBarcode() == 1) {
-            PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
-            printCarCodeDto.setWorkOrderId(workOrderId);
-            printCarCodeDto.setLabelTypeCode("10");
-            printCarCodeDto.setBarcode(palletCode);
-            BarcodeUtils.printBarCode(printCarCodeDto);
-        }
+
         // 构建返回值
         PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
         palletWorkScanDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
@@ -379,7 +381,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int submitNoFullPallet(List<Long> palletIdList) throws Exception {
+    public int submitNoFullPallet(List<Long> palletIdList, byte printBarcode) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -395,7 +397,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 item.setModifiedUserId(user.getUserId());
                 item.setModifiedTime(new Date());
                 mesSfcProductPalletService.update(item);
+                // 是否打印栈板码
+                if (printBarcode == 1) {
+                    PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
+                    printCarCodeDto.setWorkOrderId(item.getWorkOrderId());
+                    printCarCodeDto.setLabelTypeCode("10");
+                    printCarCodeDto.setBarcode(item.getPalletCode());
+                    BarcodeUtils.printBarCode(printCarCodeDto);
+                }
             }
+
         }catch (Exception e){
             throw new BizErrorException(ErrorCodeEnum.GL99990005, e.getMessage());
         }

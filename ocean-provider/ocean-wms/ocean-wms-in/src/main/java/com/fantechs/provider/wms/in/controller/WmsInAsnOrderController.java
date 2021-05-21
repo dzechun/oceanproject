@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
@@ -17,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +46,7 @@ public class WmsInAsnOrderController {
     }
 
     @ApiOperation(value = "展板作业新增完工入库-上架作业",notes = "新增")
+    @ApiIgnore
     @PostMapping("/packageAutoAdd")
     public ResponseEntity<WmsInAsnOrder> packageAutoAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrder wmsInAsnOrder) {
         return ControllerUtil.returnDataSuccess(wmsInAsnOrderService.packageAutoAdd(wmsInAsnOrder),1);
@@ -111,5 +114,11 @@ public class WmsInAsnOrderController {
     @PostMapping("/createInnerJobOrder")
     public ResponseEntity createInnerJobOrder(@ApiParam(value = "完工入库id")@RequestParam Long asnOrderId){
         return ControllerUtil.returnCRUD(wmsInAsnOrderService.createInnerJobOrder(asnOrderId));
+    }
+
+    @ApiOperation("栈板作业生成完工入库单")
+    @PostMapping("/palletAutoAsnOrder")
+    public ResponseEntity palletAutoAsnOrder(@RequestBody PalletAutoAsnDto palletAutoAsnDto){
+        return ControllerUtil.returnCRUD(wmsInAsnOrderService.palletAutoAsnOrder(palletAutoAsnDto));
     }
 }

@@ -17,10 +17,7 @@ import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintService {
@@ -34,9 +31,12 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
 
     @Override
     public List<String> findCode(String keyword, String barocdeType) {
-        List<String> barCodeList = null;
+        List<String> barCodeList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
         map.put("closeStatus", 1);
+        if(StringUtils.isEmpty(keyword)){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012033);
+        }
         if(barocdeType.equals("1")){
             map.put("cartonCode", keyword);
             List<MesSfcProductCartonDto> productCartonDtoList = mesSfcProductCartonService.findList(map);
@@ -49,6 +49,9 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
             for (MesSfcProductPalletDto dto : productPalletDtoList) {
                 barCodeList.add(dto.getPalletCode());
             }
+        }
+        if(barCodeList.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "该条码不存在");
         }
         return barCodeList;
     }

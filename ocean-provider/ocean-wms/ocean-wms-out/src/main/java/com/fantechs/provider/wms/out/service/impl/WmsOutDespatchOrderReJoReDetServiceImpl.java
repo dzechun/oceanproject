@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsOutDespatchOrderReJoReDet;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.wms.out.mapper.WmsOutDespatchOrderReJoReDetMapper;

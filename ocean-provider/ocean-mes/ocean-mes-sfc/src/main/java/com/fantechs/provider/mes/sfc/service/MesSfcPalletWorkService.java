@@ -14,7 +14,7 @@ public interface MesSfcPalletWorkService {
 
     List<String> findPalletCarton(Long productPalletId);
 
-    int submitNoFullPallet(List<Long> palletIdList) throws Exception;
+    int submitNoFullPallet(List<Long> palletIdList, byte printBarcode) throws Exception;
 
     Boolean updatePalletType(Long stationId);
 
