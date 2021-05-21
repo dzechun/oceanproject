@@ -7,7 +7,7 @@ import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.dto.om.*;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.dto.om.imports.SmtOrderImport;
 import com.fantechs.common.base.general.entity.om.MesOrderMaterial;
 import com.fantechs.common.base.general.entity.om.SmtOrder;

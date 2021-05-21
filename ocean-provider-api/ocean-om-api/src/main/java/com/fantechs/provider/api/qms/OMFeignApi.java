@@ -1,10 +1,9 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchSmtOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**

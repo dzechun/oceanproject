@@ -45,7 +45,7 @@
     </resultMap>
 
 
-    <select id="findList" parameterType="com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder"
+    <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder"
             resultMap="BaseResultMap">
         select
         shwo.ht_work_order_id,shwo.work_order_id,shwo.work_order_code,shwo.sales_order_id,shwo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,

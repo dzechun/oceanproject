@@ -6,7 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialSupplierDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;

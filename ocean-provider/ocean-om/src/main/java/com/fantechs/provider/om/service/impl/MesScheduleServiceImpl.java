@@ -2,7 +2,7 @@ package com.fantechs.provider.om.service.impl;
 
 import com.fantechs.common.base.general.dto.mes.pm.SaveWorkOrderAndBom;
 import com.fantechs.common.base.general.dto.om.MesOrderMaterialDTO;
-import com.fantechs.common.base.general.dto.mes.pm.search.SearchMesOrderMaterialListDTO;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesOrderMaterialListDTO;
 import com.fantechs.common.base.general.entity.om.MesSchedule;
 import com.fantechs.common.base.general.dto.om.MesScheduleDTO;
 import com.fantechs.common.base.general.entity.om.MesScheduleDetail;
