@@ -73,7 +73,7 @@
         and bsp.sample_process_desc like CONCAT('%', #{sampleProcessDesc}, '%')
       </if>
       <if test="sampleProcessType!=null">
-        and bsp.sample_process_type = #{sampleProcessCode}
+        and bsp.sample_process_type = #{sampleProcessType}
       </if>
       <if test="status!=null">
         and bsp.status=#{status}
