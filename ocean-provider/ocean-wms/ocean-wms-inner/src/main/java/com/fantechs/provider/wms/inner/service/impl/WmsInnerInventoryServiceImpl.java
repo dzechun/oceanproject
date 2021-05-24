@@ -138,7 +138,6 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     public int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory) {
-        wmsInnerInventory.setJobStatus((byte)2);
         return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
     }
 
