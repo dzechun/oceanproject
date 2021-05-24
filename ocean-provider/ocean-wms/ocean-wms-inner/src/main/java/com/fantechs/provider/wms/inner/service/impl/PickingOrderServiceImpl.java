@@ -235,7 +235,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 //删除分配库存
                 Example example1 = new Example(WmsInnerInventory.class);
-                example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus",(byte)1).andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
+                example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus",(byte)2).andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
                 wmsInnerInventoryMapper.deleteByExample(example1);
             }
             wmsInnerJobOrderDetMapper.deleteByExample(example);
@@ -776,8 +776,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      * 清除redis
      */
     private void removeRedis(Long jobOrderDetId){
-        Map<Long,BigDecimal> map = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
-        if(map.containsKey(jobOrderDetId)){
+        if(redisUtil.hasKey(this.REDIS_KEY+jobOrderDetId)){
+            Map<Long,BigDecimal> map = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
             //设置10秒后失效
             redisUtil.expire(this.REDIS_KEY+jobOrderDetId,3);
         }

@@ -497,6 +497,9 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             throw new BizErrorException("未查询到工单信息");
         }
         MesPmWorkOrder mesPmWorkOrder = responseEntity.getData();
+        if(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())){
+            mesPmWorkOrder.setInventoryQty(BigDecimal.ZERO);
+        }
         if(PackingQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 || resultQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 ||mesPmWorkOrder.getInventoryQty().add(PackingQty).compareTo(mesPmWorkOrder.getWorkOrderQty())==1){
             throw new BizErrorException("超出工单数量范围");
         }

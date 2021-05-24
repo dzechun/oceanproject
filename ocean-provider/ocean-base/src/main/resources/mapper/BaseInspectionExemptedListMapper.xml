@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseInspectionExemptedListMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inspection_exempted_list_id" jdbcType="BIGINT" property="inspectionExemptedListId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="obj_type" jdbcType="TINYINT" property="objType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    biel.inspection_exempted_list_id,
+    biel.material_id,
+    biel.customer_id,
+    biel.supplier_id,
+    biel.obj_type,
+    biel.`status`,
+    biel.remark,
+    biel.org_id,
+    biel.create_user_id,
+    biel.create_time,
+    biel.modified_user_id,
+    biel.modified_time,
+    biel.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    SELECT<include refid="Base_Column_List"/>,
+    bm.material_code,bm.material_name,
+    bs.supplier_code,bs.supplier_name,
+    bc.supplier_code as customer_code,bc.supplier_name as customer_name,
+    su.user_name as create_user_name,
+    sus.user_name as modified_user_name,
+    bo.organization_name FROM fantech_imes_v2.base_inspection_exempted_list biel
+    LEFT JOIN fantech_imes_v2.base_material bm ON biel.material_id= bm.material_id
+    LEFT JOIN fantech_imes_v2.base_supplier bs ON biel.supplier_id= bs.supplier_id
+    LEFT JOIN fantech_imes_v2.base_supplier bc ON biel.customer_id= bc.supplier_id
+    LEFT JOIN ocean_v2.sys_user su ON biel.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON biel.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON biel.org_id = bo.organization_id
+    <where>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code LIKE CONCAT('%',#{materialCode},'%')
+      </if>
+      <if test="materialName!=null and materialName!=''">
+        and bm.material_name LIKE CONCAT('%',#{materialName},'%')
+      </if>
+      <if test="supplierCode!=null and supplierCode!=''">
+        and bs.supplier_code LIKE CONCAT('%',#{supplierCode},'%')
+      </if>
+      <if test="supplierName!=null and supplierName!=''">
+        and bs.supplier_name LIKE CONCAT('%',#{supplierName},'%')
+      </if>
+      <if test="customerCode!=null and customerCode!=''">
+        and bc.supplier_code LIKE CONCAT('%',#{customerCode},'%')
+      </if>
+      <if test="customerName!=null and customerName!=''">
+        and bc.supplier_name LIKE CONCAT('%',#{customerName},'%')
+      </if>
+      <if test="status!=null">
+        and biel.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(biel.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by biel.create_time desc
+  </select>
+</mapper>

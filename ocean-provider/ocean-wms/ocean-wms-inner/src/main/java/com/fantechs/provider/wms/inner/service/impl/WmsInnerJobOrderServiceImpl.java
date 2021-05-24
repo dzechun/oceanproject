@@ -238,7 +238,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 //删除分配库存
                 Example example1 = new Example(WmsInnerInventory.class);
-                example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("orderStatus",(byte)1).andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
+                example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("orderStatus",(byte)2).andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
                 wmsInnerInventoryMapper.deleteByExample(example1);
             }
             wmsInPutawayOrderDetMapper.deleteByExample(example);
@@ -253,9 +253,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     num +=wmsInPutawayOrderDetMapper.insertSelective(wmsInnerJobOrderDet);
                 }
             }
-//            for (WmsInnerJobOrderDet wmsInPutawayOrderDet : list) {
-//
-//            }
             wmsInnerJobOrder.setOrderStatus((byte)1);
             num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
         }
@@ -565,7 +562,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerJobOrder record) {
         SysUser sysUser = currentUser();
-        record.setJobOrderCode(CodeUtils.getId("WORK-"));
+        if(record.getJobOrderType()==(byte)3){
+            //上架单
+            record.setJobOrderCode(CodeUtils.getId("PUT-"));
+        }else if(record.getJobOrderType()==(byte)4){
+            //拣货单
+            record.setJobOrderCode(CodeUtils.getId("PICK-"));
+        }
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());

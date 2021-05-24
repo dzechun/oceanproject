@@ -76,7 +76,7 @@ wodo.is_delete
   and seal_number like CONCAT('%',#{sealNumber},'%')
 </if>
 <if test="isPda==true">
-  and order_status !=3
+  and order_status !=4
 </if>
 </where>
 order by wodo.create_time desc
