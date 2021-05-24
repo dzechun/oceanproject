@@ -307,13 +307,6 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         wmsOutDeliveryOrder.setOrderDate(new Date());
         wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().size() > 0 ? omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress() : null);
 
-        //查询库位类型为发货的库位
-        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-        searchBaseStorage.setStorageType((byte) 3);
-        List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-        if (StringUtils.isEmpty(baseStorages)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "不存在库位类型为发货的库位");
-        }
 
         //明细
         List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
@@ -325,7 +318,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsOutDeliveryOrderDetDto.setSourceOrderId(omSalesOrderDto.getSalesOrderId());
                     wmsOutDeliveryOrderDetDto.setOrderDetId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutDeliveryOrderDetDto.setWarehouseId(omSalesOrderDetDto.getWarehouseId());
-                    wmsOutDeliveryOrderDetDto.setStorageId(baseStorages.get(0).getStorageId());
+                    //查询指定仓库下库位类型为发货的库位
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setStorageType((byte) 3);
+                    searchBaseStorage.setWarehouseAreaId(omSalesOrderDetDto.getWarehouseId());
+                    List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                    wmsOutDeliveryOrderDetDto.setStorageId(StringUtils.isEmpty(baseStorages) ? null : baseStorages.get(0).getStorageId());
                     wmsOutDeliveryOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());
                     wmsOutDeliveryOrderDetDto.setPackingUnitName(omSalesOrderDetDto.getUnitName());
                     wmsOutDeliveryOrderDetDto.setPackingQty(omSalesOrderDetDto.getArrangeDispatchQty());
