@@ -531,7 +531,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @return
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
         //查询redis是否存储今日入库单号
@@ -557,6 +556,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wms.setCreateUserId(sysUser.getUserId());
                 wms.setModifiedTime(new Date());
                 wms.setModifiedUserId(sysUser.getUserId());
+                wms.setReceivingDate(new Date());
                 wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
             }
             //更新库存
@@ -574,6 +574,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .createTime(new Date())
                     .createUserId(sysUser.getUserId())
                     .orderStatus((byte)3)
+                    .startReceivingDate(new Date())
+                    .endReceivingDate(new Date())
                     .build();
             int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
             if(num<1){
@@ -586,6 +588,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInAsnOrderDet.setModifiedTime(new Date());
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInAsnOrderDet.setReceivingDate(new Date());
             wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
             //新增库存
             int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId());
