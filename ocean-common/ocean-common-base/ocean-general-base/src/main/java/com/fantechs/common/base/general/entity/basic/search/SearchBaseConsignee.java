@@ -43,4 +43,10 @@ public class SearchBaseConsignee extends BaseQuery implements Serializable {
     @ApiModelProperty(name="materialOwnerName" ,value="货主名称")
     private String materialOwnerName;
 
+    /**
+     * 货主ID
+     */
+    @ApiModelProperty(name="materialOwnerId" ,value="货主ID")
+    private Long materialOwnerId;
+
 }

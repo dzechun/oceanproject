@@ -1,6 +1,5 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchSmtOrder;
 import com.fantechs.common.base.general.dto.om.SmtOrderDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
@@ -25,9 +24,9 @@ import java.util.List;
 @FeignClient(name = "ocean-om")
 public interface OMFeignApi {
 
-    @ApiOperation("订单列表")
-    @PostMapping("/smtOrder/findList")
-    ResponseEntity<List<SmtOrderDto>> findOrderList(@ApiParam(value = "查询对象") @RequestBody SearchSmtOrder searchSmtOrder);
+//    @ApiOperation("订单列表")
+//    @PostMapping("/smtOrder/findList")
+//    ResponseEntity<List<SmtOrderDto>> findOrderList(@ApiParam(value = "查询对象") @RequestBody SearchSmtOrder searchSmtOrder);
 
     @ApiOperation("修改订单")
     @PostMapping("/smtOrder/update")
