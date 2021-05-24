@@ -467,9 +467,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     public String checkBarcode(String barCode) {
         //查询是否存在条码
         Map<String,Object> map = InBarcodeUtil.checkBarCode(barCode);
-        if(StringUtils.isEmpty(map)){
-            throw new BizErrorException(ErrorCodeEnum.PDA40012000);
-        }
+//        if(StringUtils.isEmpty(map)){
+//            throw new BizErrorException(ErrorCodeEnum.PDA40012000);
+//        }
         return null;
     }
 
