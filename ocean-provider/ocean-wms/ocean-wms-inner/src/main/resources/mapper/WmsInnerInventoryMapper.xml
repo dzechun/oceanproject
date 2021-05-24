@@ -50,6 +50,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -95,10 +96,12 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    ,bis.inventory_status_name
     from wms_inner_inventory wii
     LEFT JOIN ocean_v2.sys_user su  ON wii.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wii.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wii.org_id = bo.organization_id
+    LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
     <where>
       and wii.packing_qty > 0
       <if test="salesCode!=null and salesCode != ''">

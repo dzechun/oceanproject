@@ -41,5 +41,13 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
     @Transient
     private String modifiedUserName;
 
+    /**
+     * 库存状态名称
+     */
+    @ApiModelProperty(name="inventoryStatusName",value = "库存状态名称")
+    @Excel(name = "库存状态名称", height = 20, width = 30,orderNum = "31")
+    @Transient
+    private String inventoryStatusName;
+
     private static final long serialVersionUID = 1L;
 }
