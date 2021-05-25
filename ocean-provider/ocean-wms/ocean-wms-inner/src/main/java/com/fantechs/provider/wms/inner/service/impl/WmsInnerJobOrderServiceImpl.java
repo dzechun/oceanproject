@@ -28,6 +28,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
@@ -62,6 +63,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private WmsInnerInventoryMapper wmsInnerInventoryMapper;
     @Resource
     private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -607,7 +610,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException("未匹配到上架单关联栈板关系");
         }
         //更新栈板状态
-        return 0;
+        ResponseEntity responseEntity = sfcFeignApi.updateMoveStatus(wmsInnerJobOrderReMspp.getProductPalletId());
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException("激活失败");
+        }
+        return 1;
     }
 
     @Override

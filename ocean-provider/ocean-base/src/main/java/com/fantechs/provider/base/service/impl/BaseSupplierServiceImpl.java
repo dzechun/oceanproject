@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.BaseSignature;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierAddress;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.mapper.BaseInspectionExemptedListMapper;
 import com.fantechs.provider.base.mapper.BaseSignatureMapper;
 import com.fantechs.provider.base.mapper.BaseSupplierAddressMapper;
 import com.fantechs.provider.base.mapper.BaseSupplierMapper;
@@ -37,6 +39,29 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     private BaseSignatureMapper baseSignatureMapper;
     @Resource
     private BaseSupplierAddressMapper baseSupplierAddressMapper;
+    @Resource
+    private BaseInspectionExemptedListMapper baseInspectionExemptedListMapper;
+
+    @Override
+    public List<BaseSupplier> findInspectionSupplierList(Map<String, Object> map) {
+        List<BaseInspectionExemptedList> baseInspectionExemptedLists = baseInspectionExemptedListMapper.findList(map);
+
+        ArrayList<Long> idList = new ArrayList();
+        if(StringUtils.isNotEmpty(baseInspectionExemptedLists)){
+            for (BaseInspectionExemptedList baseInspectionExemptedList : baseInspectionExemptedLists){
+                if(baseInspectionExemptedList.getObjType()==1){
+                    idList.add(baseInspectionExemptedList.getSupplierId());
+                }else if(baseInspectionExemptedList.getObjType()==2){
+                    idList.add(baseInspectionExemptedList.getCustomerId());
+                }
+            }
+        }
+
+        Example example = new Example(BaseSupplier.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andNotIn("supplierId",idList);
+        return baseSupplierMapper.selectByExample(example);
+    }
 
     @Override
     public List<BaseSupplier> findList(SearchBaseSupplier searchBaseSupplier) {
