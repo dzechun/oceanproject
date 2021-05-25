@@ -95,6 +95,14 @@ public class MesSfcProductPallet extends ValidGroup implements Serializable {
     private Date closePalletTime;
 
     /**
+     * 转移状态(0-未转移 1-已转移)
+     */
+    @ApiModelProperty(name="moveStatus",value = "转移状态(0-未转移 1-已转移)")
+    @Excel(name = "转移状态(0-未转移 1-已转移)", height = 20, width = 30,orderNum="")
+    @Column(name = "moveStatus")
+    private Byte moveStatus;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

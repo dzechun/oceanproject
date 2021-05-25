@@ -78,4 +78,16 @@ public class MesSfcPalletWorkController {
         int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty);
         return ControllerUtil.returnCRUD(i);
     }
+
+    /**
+     * 修改栈板状态为已转移
+     * @param productPalletId
+     * @return
+     */
+    @PostMapping("/updateMoveStatus")
+    @ApiOperation("修改栈板状态为已转移")
+    public ResponseEntity updateMoveStatus(@ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId){
+        return ControllerUtil.returnCRUD(mesSfcPalletWorkService.updateMoveStatus(productPalletId));
+    }
+
 }

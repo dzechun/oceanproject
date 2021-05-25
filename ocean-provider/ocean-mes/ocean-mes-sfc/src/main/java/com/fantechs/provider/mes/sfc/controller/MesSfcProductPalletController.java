@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.sfc.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
@@ -68,6 +69,14 @@ public class MesSfcProductPalletController {
         Page<Object> page = PageHelper.startPage(searchMesSfcProductPallet.getStartPage(),searchMesSfcProductPallet.getPageSize());
         List<MesSfcProductPalletDto> list = mesSfcProductPalletService.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcProductPallet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("栈板看板")
+    @PostMapping("/getPalletReport")
+    public ResponseEntity<List<MesSfcPalletReportDto>> getPalletReport(){
+        List<MesSfcPalletReportDto> reportDtos = mesSfcProductPalletService.getPalletReport();
+        return ControllerUtil.returnDataSuccess(reportDtos, reportDtos.size());
+
     }
 
     @PostMapping(value = "/export")
