@@ -623,6 +623,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .orderStatus((byte) 1)
                 .orderTypeId(wmsInAsnOrder.getOrderTypeId())
                 .actualQty(new BigDecimal("0"))
+                .productPalletId(wmsInAsnOrder.getProductPalletId())
                 .build();
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
         list.add(WmsInnerJobOrderDet.builder()

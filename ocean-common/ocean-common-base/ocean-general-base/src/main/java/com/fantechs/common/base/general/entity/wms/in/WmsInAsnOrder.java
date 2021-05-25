@@ -271,5 +271,12 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "完工入库明细",value = "wmsInAsnOrderDetList")
     private List<WmsInAsnOrderDet> wmsInAsnOrderDetList;
 
+    /**
+     * 车间管理模块栈板表ID
+     */
+    @Transient
+    @ApiModelProperty(name = "productPalletId",value = "车间管理模块栈板表ID")
+    private Long productPalletId;
+
     private static final long serialVersionUID = 1L;
 }

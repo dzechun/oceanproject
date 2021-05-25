@@ -89,4 +89,10 @@ public class PDAWmsInnerJobOrderController {
     public ResponseEntity pickingOrder(@RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId,String barCode){
         return ControllerUtil.returnCRUD(pickingOrderService.scanAffirmQty(jobOrderDetId,barCode));
     }
+
+    @ApiOperation("PDA激活关闭栈板")
+    @PostMapping("/activation")
+    public ResponseEntity activation(@RequestParam Long jobOrderId){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.activation(jobOrderId));
+    }
 }
