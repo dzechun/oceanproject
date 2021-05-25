@@ -5,18 +5,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
-import com.fantechs.common.base.general.entity.basic.BaseSignature;
-import com.fantechs.common.base.general.entity.basic.BaseSupplier;
-import com.fantechs.common.base.general.entity.basic.BaseSupplierAddress;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseInspectionExemptedListMapper;
-import com.fantechs.provider.base.mapper.BaseSignatureMapper;
-import com.fantechs.provider.base.mapper.BaseSupplierAddressMapper;
-import com.fantechs.provider.base.mapper.BaseSupplierMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseSupplierService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -41,11 +37,20 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     private BaseSupplierAddressMapper baseSupplierAddressMapper;
     @Resource
     private BaseInspectionExemptedListMapper baseInspectionExemptedListMapper;
+    @Resource
+    private BaseMaterialSupplierMapper baseMaterialSupplierMapper;
+    @Resource
+    private BaseMaterialMapper baseMaterialMapper;
 
     @Override
-    public List<BaseSupplier> findInspectionSupplierList(Map<String, Object> map) {
-        List<BaseInspectionExemptedList> baseInspectionExemptedLists = baseInspectionExemptedListMapper.findList(map);
+    public List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
 
+        Example example = new Example(BaseMaterial.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialCode",searchBaseInspectionExemptedList.getMaterialCode());
+        List<BaseMaterial> baseMaterials = baseMaterialMapper.selectByExample(example);
+
+        List<BaseInspectionExemptedList> baseInspectionExemptedLists = baseInspectionExemptedListMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionExemptedList));
         ArrayList<Long> idList = new ArrayList();
         if(StringUtils.isNotEmpty(baseInspectionExemptedLists)){
             for (BaseInspectionExemptedList baseInspectionExemptedList : baseInspectionExemptedLists){
@@ -57,10 +62,22 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             }
         }
 
-        Example example = new Example(BaseSupplier.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andNotIn("supplierId",idList);
-        return baseSupplierMapper.selectByExample(example);
+        Example example1 = new Example(BaseMaterialSupplier.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("materialId",baseMaterials.get(0).getMaterialId()).andNotIn("supplierId",idList);
+        List<BaseMaterialSupplier> baseMaterialSuppliers = baseMaterialSupplierMapper.selectByExample(example1);
+
+        ArrayList<Long> ids = new ArrayList();
+        if(StringUtils.isNotEmpty(baseMaterialSuppliers)){
+            for (BaseMaterialSupplier baseMaterialSupplier: baseMaterialSuppliers){
+                ids.add(baseMaterialSupplier.getSupplierId());
+            }
+        }
+        Example example2 = new Example(BaseSupplier.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andIn("supplierId",ids);
+        List<BaseSupplier> baseSuppliers = baseSupplierMapper.selectByExample(example2);
+        return baseSuppliers;
     }
 
     @Override

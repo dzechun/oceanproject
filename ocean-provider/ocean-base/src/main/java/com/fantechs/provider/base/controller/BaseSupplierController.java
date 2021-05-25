@@ -85,8 +85,8 @@ public class BaseSupplierController {
     @PostMapping("/findInspectionSupplierList")
     public ResponseEntity<List<BaseSupplier>> findInspectionSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
         Page<Object> page = PageHelper.startPage(searchBaseInspectionExemptedList.getStartPage(), searchBaseInspectionExemptedList.getPageSize());
-        List<BaseSupplier> list = baseSupplierService.findInspectionSupplierList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionExemptedList));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        List<BaseSupplier> list = baseSupplierService.findInspectionSupplierList(searchBaseInspectionExemptedList);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @PostMapping(value = "/export")

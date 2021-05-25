@@ -78,6 +78,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         qmsInspectionOrder.setStatus(StringUtils.isEmpty(qmsInspectionOrder.getStatus())?1:qmsInspectionOrder.getStatus());
+        qmsInspectionOrder.setInspectionStatus((byte)1);
         qmsInspectionOrder.setOrgId(user.getOrganizationId());
         int i = qmsInspectionOrderMapper.insertUseGeneratedKeys(qmsInspectionOrder);
 
@@ -122,12 +123,23 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         BeanUtils.copyProperties(qmsInspectionOrder, qmsHtInspectionOrder);
         qmsHtInspectionOrderMapper.insert(qmsHtInspectionOrder);
 
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrder.getQmsInspectionOrderDets();
+        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+            if(StringUtils.isNotEmpty(qmsInspectionOrderDet.getInspectionOrderDetId())){
+                qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+                idList.add(qmsInspectionOrderDet.getInspectionOrderDetId());
+            }
+        }
+
         //删除原明细
         Example example1 = new Example(QmsInspectionOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inspectionOrderId", qmsInspectionOrder.getInspectionOrderId());
-        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example1);
-        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+        criteria1.andEqualTo("inspectionOrderId", qmsInspectionOrder.getInspectionOrderId())
+                .andNotIn("inspectionOrderDetId",idList);
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets1 = qmsInspectionOrderDetMapper.selectByExample(example1);
+        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets1){
             //删除检验单明细样本
             Example example2 = new Example(QmsInspectionOrderDetSample.class);
             Example.Criteria criteria2 = example2.createCriteria();
@@ -141,14 +153,17 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         List<QmsInspectionOrderDet> qmsInspectionOrderDetList = qmsInspectionOrder.getQmsInspectionOrderDets();
         if(StringUtils.isNotEmpty(qmsInspectionOrderDetList)){
             for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDetList) {
+                if(idList.contains(qmsInspectionOrderDet.getInspectionOrderDetId())){
+                    continue;
+                }
                 qmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
                 qmsInspectionOrderDet.setCreateUserId(user.getUserId());
                 qmsInspectionOrderDet.setCreateTime(new Date());
                 qmsInspectionOrderDet.setModifiedUserId(user.getUserId());
                 qmsInspectionOrderDet.setModifiedTime(new Date());
                 qmsInspectionOrderDet.setOrgId(user.getOrganizationId());
+                qmsInspectionOrderDetMapper.insert(qmsInspectionOrderDet);
             }
-            qmsInspectionOrderDetMapper.insertList(qmsInspectionOrderDetList);
         }
 
         return i;
