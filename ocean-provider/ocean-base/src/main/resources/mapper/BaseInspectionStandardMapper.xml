@@ -72,6 +72,12 @@
       <if test="inspectionType!=null">
         and bis.inspection_type = #{inspectionType}
       </if>
+      <if test="supplierId!=null">
+        and bs.supplier_id = #{supplierId}
+      </if>
+      <if test="inspectionStandardId!=null">
+        and bis.inspection_standard_id = #{inspectionStandardId}
+      </if>
       <if test="status!=null">
         and bis.status=#{status}
       </if>

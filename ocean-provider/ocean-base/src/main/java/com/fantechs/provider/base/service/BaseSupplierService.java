@@ -13,7 +13,7 @@ import java.util.Map;
  */
 
 public interface BaseSupplierService extends IService<BaseSupplier> {
-
+    List<BaseSupplier> findInspectionSupplierList(Map<String, Object> map);
     List<BaseSupplier> findList(SearchBaseSupplier searchBaseSupplier);
     Map<String, Object> importExcel(List<BaseSupplierImport> baseSupplierImports, Byte supplierType);
 }
