@@ -611,7 +611,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @param wmsInAsnOrderDet
      * @return
      */
-    private int createJobOrder(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
+    private int  createJobOrder(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
         WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
                 .sourceOrderId(wmsInAsnOrder.getAsnOrderId())
                 .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
