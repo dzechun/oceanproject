@@ -106,7 +106,7 @@
       and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
     </if>
   <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-    and date_format(wiao.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+    and date_format(wiao.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
   </if>
 </where>
 order by wiao.create_time desc

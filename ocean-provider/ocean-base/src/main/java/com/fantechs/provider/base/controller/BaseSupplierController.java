@@ -3,7 +3,9 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.imports.BaseCustomerImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -77,6 +79,14 @@ public class BaseSupplierController {
         Page<Object> page = PageHelper.startPage(searchBaseSupplier.getStartPage(), searchBaseSupplier.getPageSize());
         List<BaseSupplier> list = baseSupplierService.findList(searchBaseSupplier);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("非免检客户列表")
+    @PostMapping("/findInspectionSupplierList")
+    public ResponseEntity<List<BaseSupplier>> findInspectionSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
+        Page<Object> page = PageHelper.startPage(searchBaseInspectionExemptedList.getStartPage(), searchBaseInspectionExemptedList.getPageSize());
+        List<BaseSupplier> list = baseSupplierService.findInspectionSupplierList(searchBaseInspectionExemptedList);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @PostMapping(value = "/export")

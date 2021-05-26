@@ -19,4 +19,11 @@ public interface MesSfcPalletWorkService {
     Boolean updatePalletType(Long stationId);
 
     int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty) throws Exception;
+
+    /**
+     * 修改栈板状态为已转移
+     * @param productPalletId
+     * @return
+     */
+    int updateMoveStatus(Long productPalletId);
 }

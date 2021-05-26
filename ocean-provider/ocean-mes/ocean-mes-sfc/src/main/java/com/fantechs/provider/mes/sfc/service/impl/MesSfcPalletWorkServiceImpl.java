@@ -292,6 +292,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPallet.setOrgId(user.getOrganizationId());
             mesSfcProductPallet.setCreateUserId(user.getUserId());
             mesSfcProductPallet.setCreateTime(new Date());
+            mesSfcProductPallet.setMoveStatus((byte) 0);
             mesSfcProductPalletService.save(mesSfcProductPallet);
         } else if (nowPackageSpecQty.compareTo(BigDecimal.valueOf(palletCartons + 1)) == 0) {
 
@@ -343,6 +344,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
             palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons));
             palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons));
+            palletAutoAsnDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
 
@@ -525,5 +527,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         mesSfcProductPallet.setModifiedUserId(user.getUserId());
         mesSfcProductPalletService.update(mesSfcProductPallet);
         return 1;
+    }
+
+    @Override
+    public int updateMoveStatus(Long productPalletId) {
+        MesSfcProductPallet sfcProductPallet = mesSfcProductPalletService.selectByKey(productPalletId);
+        if(sfcProductPallet == null){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012030);
+        }
+        sfcProductPallet.setMoveStatus((byte) 1);
+        return mesSfcProductPalletService.update(sfcProductPallet);
     }
 }
