@@ -144,6 +144,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 throw new BizErrorException("分配数量不能大于计划数量");
             }
             Long id = null;
+            //当货品分配时未全部分配完时新增一条剩余待分配数量的记录
             if(StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) || wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty())==-1){
                 //分配中
                 WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
@@ -185,6 +186,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if(StringUtils.isEmpty(dto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            //如果货品全部分配完成更改表头状态为待作业状态
             if(dto.stream().filter(li->li.getOrderStatus()==(byte)3).collect(Collectors.toList()).size()==dto.size()){
                 //更新表头状态
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
@@ -226,6 +228,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             example.createCriteria().andEqualTo("jobOrderId",s);
             List<WmsInnerJobOrderDet> list = wmsInPutawayOrderDetMapper.selectByExample(example);
 
+            //合并同货品的记录
             Map<Long,List<WmsInnerJobOrderDet>> map = new HashMap<>();
             for (WmsInnerJobOrderDet wmsInnerJobOrderDet : list) {
                 if(wmsInnerJobOrderDet.getOrderStatus()==(byte)4){
@@ -253,6 +256,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus",(byte)2).andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
                 wmsInnerInventoryMapper.deleteByExample(example1);
             }
+            //删除全部明细数据
             wmsInPutawayOrderDetMapper.deleteByExample(example);
             for (List<WmsInnerJobOrderDet> value : map.values()) {
                 for (WmsInnerJobOrderDet wmsInnerJobOrderDet : value) {
