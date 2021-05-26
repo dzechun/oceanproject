@@ -9,6 +9,7 @@
     <result column="product_material_re_p_id" jdbcType="BIGINT" property="productMaterialRePId" />
     <result column="product_process_re_m_id" jdbcType="BIGINT" property="productProcessReMId" />
     <result column="scan_type" jdbcType="TINYINT" property="scanType" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="usage_qty" jdbcType="DECIMAL" property="usageQty" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -33,6 +34,7 @@
     bhpmrp.product_material_re_p_id,
     bhpmrp.product_process_re_m_id,
     bhpmrp.scan_type,
+    bhpmrp.label_category_id,
     bhpmrp.material_id,
     bhpmrp.usage_qty,
     bhpmrp.`status`,
