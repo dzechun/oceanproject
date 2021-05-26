@@ -96,6 +96,14 @@ public class BaseSignature extends ValidGroup implements Serializable {
     private String supplierCode;
 
     /**
+     * 特征码正则
+     */
+    @Column(name = "signature_regex")
+    @ApiModelProperty(name="signatureRegex" ,value="特征码正则")
+    @Excel(name = "特征码正则", height = 20, width = 30)
+    private String signatureRegex;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
