@@ -46,7 +46,9 @@
         and msppd.product_pallet_id = #{productPalletId}
       </if>
       <if test="productPalletIds != null">
-        and msppd.product_pallet_id in #{productPalletIds}
+        <foreach collection="productPalletIds" open="and msppd.product_pallet_id in (" separator="," close=")" item="value">
+          #{value}
+        </foreach>
       </if>
       <if test="workOrderBarcodeId != null">
         and msppd.work_order_barcode_id = #{workOrderBarcodeId}

@@ -57,6 +57,7 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
         for (MesSfcProductPalletDto dto : productPalletDtos) {
             MesSfcPalletReportDto reportDto = new MesSfcPalletReportDto();
             reportDto.setPalletCode(dto.getPalletCode());
+            reportDto.setWorkOrderCode(dto.getWorkOrderCode());
             reportDto.setMaterialCode(dto.getMaterialCode());
             reportDto.setNowPackageSpecQty(dto.getNowPackageSpecQty());
             reportDto.setScanCartonNum(dto.getNowPackageSpecQty());

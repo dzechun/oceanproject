@@ -12,6 +12,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
+import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsInspectionOrderDetSampleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,8 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
     @Resource
     private QmsInspectionOrderDetMapper qmsInspectionOrderDetMapper;
+    @Resource
+    private QmsInspectionOrderMapper qmsInspectionOrderMapper;
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -51,18 +54,28 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         }
 
         int i = 0;
-        int count = 0;//不良数量
+        int badnessQty = 0;//不良数量
         for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList){
             i = i + this.save(qmsInspectionOrderDetSample);
             if(StringUtils.isNotEmpty(qmsInspectionOrderDetSample.getBadnessPhenotypeId())){
-                count++;
+                badnessQty++;
             }
         }
 
-        QmsInspectionOrderDet qmsInspectionOrderDet = new QmsInspectionOrderDet();
-        qmsInspectionOrderDet.setInspectionOrderDetId(qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId());
-        qmsInspectionOrderDet.setBadnessQty(new BigDecimal(count));
-        qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+        Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
+        QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.selectByPrimaryKey(inspectionOrderDetId);
+        //当已检验样本数等于样本数时，才计算不良数量、检验结果
+        if(qmsInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(qmsInspectionOrderDetSampleList.size()))==0) {
+            qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));
+            if (qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getAcValue())) == -1
+                    || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getAcValue())) == 0) {
+                qmsInspectionOrderDet.setInspectionResult((byte) 1);
+            } else if (qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 0
+                    || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 1) {
+                qmsInspectionOrderDet.setInspectionResult((byte) 0);
+            }
+            qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+        }
 
         return i;
     }
