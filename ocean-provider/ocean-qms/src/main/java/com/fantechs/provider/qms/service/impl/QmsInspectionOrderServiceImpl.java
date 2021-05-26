@@ -170,28 +170,36 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
         }
 
-        //检验单状态
-        this.writeInspectionStatus(qmsInspectionOrder.getInspectionOrderId());
+        //返写检验状态与检验结果
+        this.writeBack(qmsInspectionOrder.getInspectionOrderId());
 
         return i;
     }
 
-    public int writeInspectionStatus(Long inspectionOrderId){
+    public int writeBack(Long inspectionOrderId){
         Example example = new Example(QmsInspectionOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDet> qmsInspectionOrderDetList = qmsInspectionOrderDetMapper.selectByExample(example);
-        int count = 0;
+
+        //计算明细项目合格数与不合格数
+        int qualifiedCount = 0;
+        int unqualifiedCount = 0;
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDetList){
             if(StringUtils.isNotEmpty(qmsInspectionOrderDet.getInspectionResult())){
-                count++;
+                if(qmsInspectionOrderDet.getInspectionResult()==(byte)0){
+                    unqualifiedCount++;
+                }else {
+                    qualifiedCount++;
+                }
             }
         }
 
-        if(count==qmsInspectionOrderDetList.size()){
+        if(qualifiedCount + unqualifiedCount == qmsInspectionOrderDetList.size()){
             QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
-            qmsInspectionOrder.setInspectionStatus((byte) 3);
             qmsInspectionOrder.setInspectionOrderId(inspectionOrderId);
+            qmsInspectionOrder.setInspectionStatus((byte) 3);
+            qmsInspectionOrder.setInspectionResult(qualifiedCount==qmsInspectionOrderDetList.size() ? (byte)1 : (byte)0);
             return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
         }
 
