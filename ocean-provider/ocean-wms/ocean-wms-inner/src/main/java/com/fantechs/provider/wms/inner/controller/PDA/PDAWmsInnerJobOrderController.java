@@ -43,8 +43,8 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerJobOrderDto>> findList(@RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInnerJobOrder){
         List<Byte> bytes= new ArrayList<>();
-        bytes.add((byte)2);
         bytes.add((byte)3);
+        bytes.add((byte)4);
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
         List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);

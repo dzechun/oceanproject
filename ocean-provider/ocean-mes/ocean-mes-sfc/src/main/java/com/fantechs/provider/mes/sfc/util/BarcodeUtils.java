@@ -143,7 +143,7 @@ public class BarcodeUtils {
         // 获取当前工单信息
         MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
         // 判断当前工序是否为产出工序,若是产出工序则不用判断下一工序
-        if (!dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
+        if (!mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
             // 若入参当前扫码工序ID跟过站表下一工序ID不一致
             // 则判断过站表下一工序是否必过工序
             if (!dto.getNowProcessId().equals(mesSfcBarcodeProcess.getNextProcessId())) {
@@ -189,7 +189,7 @@ public class BarcodeUtils {
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
-        if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
+        if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
             mesSfcBarcodeProcess.setProductionTime(new Date());
             mesSfcBarcodeProcess.setNextProcessId(0L);
         }else {

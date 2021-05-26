@@ -72,6 +72,13 @@ public class BaseSampleProcessController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("根据多个ID查询列表")
+    @PostMapping("/findListByIds")
+    public ResponseEntity<List<BaseSampleProcess>> findListByIds(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        List<BaseSampleProcess> list = baseSampleProcessService.findListByIds(ids);
+        return ControllerUtil.returnDataSuccess(list,list.size());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtSampleProcess>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSampleProcess searchBaseSampleProcess) {

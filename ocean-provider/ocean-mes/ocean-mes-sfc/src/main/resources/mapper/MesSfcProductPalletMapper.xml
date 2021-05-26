@@ -14,6 +14,7 @@
     <result column="close_status" jdbcType="TINYINT" property="closeStatus" />
     <result column="close_pallet_user_id" jdbcType="BIGINT" property="closePalletUserId" />
     <result column="close_pallet_time" jdbcType="TIMESTAMP" property="closePalletTime" />
+    <result column="move_status" jdbcType="TINYINT" property="moveStatus" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -39,6 +40,7 @@
     mspp.close_status,
     mspp.close_pallet_user_id,
     mspp.close_pallet_time,
+    mspp.move_status,
     mspp.remark,
     mspp.org_id,
     mspp.create_user_id,
@@ -63,6 +65,9 @@
       </if>
       <if test="stationId != null">
         and mspp.station_id = #{stationId}
+      </if>
+      <if test="moveStatus != null">
+        and mspp.move_status = #{moveStatus}
       </if>
       <if test="palletCode != null and palletCode != ''">
         and mspp.pallet_code like CONCAT('%',#{palletCode},'%')
