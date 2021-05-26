@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -39,6 +36,18 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
     @Override
     public List<BaseSampleProcess> findList(Map<String, Object> map) {
         return baseSampleProcessMapper.findList(map);
+    }
+
+    @Override
+    public List<BaseSampleProcess> findListByIds(String ids) {
+        List<BaseSampleProcess> list = new ArrayList<>();
+        String[] idarray = ids.split(",");
+        for (String id:idarray){
+            BaseSampleProcess baseSampleProcess = baseSampleProcessMapper.selectByPrimaryKey(id);
+            list.add(baseSampleProcess);
+        }
+
+        return list;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.support.BaseService;
@@ -75,6 +76,14 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                 qmsInspectionOrderDet.setInspectionResult((byte) 0);
             }
             qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+
+            //更新检验状态
+            QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
+            if(qmsInspectionOrder.getInspectionStatus()==(byte)1){
+                qmsInspectionOrder.setInspectionStatus((byte)2);
+                qmsInspectionOrder.setInspectionOrderId(qmsInspectionOrderDet.getInspectionOrderId());
+                qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
+            }
         }
 
         return i;
