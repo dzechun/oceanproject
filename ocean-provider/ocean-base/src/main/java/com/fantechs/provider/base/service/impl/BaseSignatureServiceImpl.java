@@ -25,6 +25,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -57,6 +59,13 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
         if(StringUtils.isNotEmpty(baseSignatures)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+
+        //特征码转正则表达式
+        String signatureCode = baseSignature.getSignatureCode();
+        if(!this.checkParam(signatureCode)){
+            throw new BizErrorException("输入的特征码不符合要求");
+        }
+        baseSignature.setSignatureRegex(convert(signatureCode));
 
         baseSignature.setCreateUserId(currentUser.getUserId());
         baseSignature.setCreateTime(new Date());
@@ -118,6 +127,13 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
         if(StringUtils.isNotEmpty(signature)&&!signature.getSignatureId().equals(baseSignature.getSignatureId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+
+        //特征码转正则表达式
+        String signatureCode = baseSignature.getSignatureCode();
+        if(!this.checkParam(signatureCode)){
+            throw new BizErrorException("输入的特征码不符合要求");
+        }
+        baseSignature.setSignatureRegex(convert(signatureCode));
 
         baseSignature.setModifiedUserId(currentUser.getUserId());
         baseSignature.setModifiedTime(new Date());
@@ -241,5 +257,32 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
+    }
+
+    public boolean checkParam(String str){
+        boolean bool = false;
+        //只允许字母、数字、#、*
+        String pattern = "^[a-zA-Z0-9*#]*$";
+        Pattern r = Pattern.compile(pattern);
+        Matcher matcher = r.matcher(str);
+        if(matcher.find()){
+            bool = true;
+        }
+
+        return bool;
+    }
+
+    public String convert(String signatureCode){
+        String s1 = signatureCode.replaceAll("[*]", "[a-zA-Z0-9]*");
+        String s2 = s1.replaceAll("[#]", "[a-zA-Z0-9]");
+        return s2;
+    }
+
+    public static void main(String[] args) {
+        String signatureCode = "123*ab*hh##11";
+        String s1 = signatureCode.replaceAll("[*]", "[a-zA-Z0-9]*");
+        String s2 = s1.replaceAll("[#]", "[a-zA-Z0-9]");
+
+        System.out.println(s2);
     }
 }
