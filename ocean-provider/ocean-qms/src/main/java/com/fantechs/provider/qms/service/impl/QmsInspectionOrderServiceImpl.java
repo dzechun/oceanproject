@@ -135,38 +135,36 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
         }
 
-        //删除原明细
-        Example example1 = new Example(QmsInspectionOrderDet.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inspectionOrderId", qmsInspectionOrder.getInspectionOrderId())
-                .andNotIn("inspectionOrderDetId",idList);
-        List<QmsInspectionOrderDet> qmsInspectionOrderDets1 = qmsInspectionOrderDetMapper.selectByExample(example1);
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDets1)) {
-            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets1) {
-                //删除检验单明细样本
-                Example example2 = new Example(QmsInspectionOrderDetSample.class);
-                Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("inspectionOrderDetId", qmsInspectionOrderDet.getInspectionOrderDetId());
-                qmsInspectionOrderDetSampleMapper.deleteByExample(example2);
-            }
-        }
-        //删除原检验单明细
-        qmsInspectionOrderDetMapper.deleteByExample(example1);
-
-        //新增新的检验单明细
-        List<QmsInspectionOrderDet> qmsInspectionOrderDetList = qmsInspectionOrder.getQmsInspectionOrderDets();
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDetList)){
-            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDetList) {
-                if(idList.contains(qmsInspectionOrderDet.getInspectionOrderDetId())){
-                    continue;
+        if(idList.size()==0) {
+            //删除原明细
+            Example example1 = new Example(QmsInspectionOrderDet.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("inspectionOrderId", qmsInspectionOrder.getInspectionOrderId());
+            List<QmsInspectionOrderDet> qmsInspectionOrderDets1 = qmsInspectionOrderDetMapper.selectByExample(example1);
+            if (StringUtils.isNotEmpty(qmsInspectionOrderDets1)) {
+                for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets1) {
+                    //删除检验单明细样本
+                    Example example2 = new Example(QmsInspectionOrderDetSample.class);
+                    Example.Criteria criteria2 = example2.createCriteria();
+                    criteria2.andEqualTo("inspectionOrderDetId", qmsInspectionOrderDet.getInspectionOrderDetId());
+                    qmsInspectionOrderDetSampleMapper.deleteByExample(example2);
                 }
-                qmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
-                qmsInspectionOrderDet.setCreateUserId(user.getUserId());
-                qmsInspectionOrderDet.setCreateTime(new Date());
-                qmsInspectionOrderDet.setModifiedUserId(user.getUserId());
-                qmsInspectionOrderDet.setModifiedTime(new Date());
-                qmsInspectionOrderDet.setOrgId(user.getOrganizationId());
-                qmsInspectionOrderDetMapper.insert(qmsInspectionOrderDet);
+            }
+            //删除原检验单明细
+            qmsInspectionOrderDetMapper.deleteByExample(example1);
+
+            //新增新的检验单明细
+            List<QmsInspectionOrderDet> qmsInspectionOrderDetList = qmsInspectionOrder.getQmsInspectionOrderDets();
+            if (StringUtils.isNotEmpty(qmsInspectionOrderDetList)) {
+                for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDetList) {
+                    qmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
+                    qmsInspectionOrderDet.setCreateUserId(user.getUserId());
+                    qmsInspectionOrderDet.setCreateTime(new Date());
+                    qmsInspectionOrderDet.setModifiedUserId(user.getUserId());
+                    qmsInspectionOrderDet.setModifiedTime(new Date());
+                    qmsInspectionOrderDet.setOrgId(user.getOrganizationId());
+                }
+                qmsInspectionOrderDetMapper.insertList(qmsInspectionOrderDetList);
             }
         }
 

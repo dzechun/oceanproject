@@ -72,6 +72,9 @@
       <if test="inspectionOrderId != null">
         and qiod.inspection_order_id = #{inspectionOrderId}
       </if>
+      <if test="inspectionOrderDetId != null">
+        and qiod.inspection_order_det_id = #{inspectionOrderDetId}
+      </if>
       <if test="status!=null">
         and qiod.status = #{status}
       </if>

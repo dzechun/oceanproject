@@ -16,4 +16,10 @@ public class SearchQmsInspectionOrderDet extends BaseQuery implements Serializab
     @ApiModelProperty(name="inspectionOrderId",value = "检验单ID")
     private Long inspectionOrderId;
 
+    /**
+     * 检验单明细ID
+     */
+    @ApiModelProperty(name="inspectionOrderDetId",value = "检验单明细ID")
+    private Long inspectionOrderDetId;
+
 }
