@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
@@ -30,6 +31,12 @@ public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="workOrderStatus" ,value="工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
     private String workOrderStatus;
+
+    /**
+     * 工单状态集合
+     */
+    @ApiModelProperty(name="workOrderStatusList" ,value="工单状态集合")
+    private List<String> workOrderStatusList;
 
     /**
      * 产品料号ID
