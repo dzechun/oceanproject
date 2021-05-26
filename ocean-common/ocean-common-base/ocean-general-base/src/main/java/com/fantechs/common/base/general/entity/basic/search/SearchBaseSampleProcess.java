@@ -29,5 +29,9 @@ public class SearchBaseSampleProcess extends BaseQuery implements Serializable {
     @ApiModelProperty(name="sampleProcessType" ,value="抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)")
     private Byte sampleProcessType;
 
-
+    /**
+     * 抽样过程id
+     */
+    @ApiModelProperty(name = "sampleProcessId", value = "抽样过程id")
+    private Long sampleProcessId;
 }

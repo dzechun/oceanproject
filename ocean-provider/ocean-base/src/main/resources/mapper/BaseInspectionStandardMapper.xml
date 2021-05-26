@@ -73,7 +73,10 @@
         and bis.inspection_type = #{inspectionType}
       </if>
       <if test="supplierId!=null">
-        and bs.supplier_id = #{supplierId}
+        and bis.supplier_id = #{supplierId}
+      </if>
+      <if test="materialId!=null">
+        and bis.material_id = #{materialId}
       </if>
       <if test="inspectionStandardId!=null">
         and bis.inspection_standard_id = #{inspectionStandardId}
