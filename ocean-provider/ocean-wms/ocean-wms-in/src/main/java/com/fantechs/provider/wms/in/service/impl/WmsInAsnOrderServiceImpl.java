@@ -611,7 +611,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @param wmsInAsnOrderDet
      * @return
      */
-    private int createJobOrder(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
+    private int  createJobOrder(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
         WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
                 .sourceOrderId(wmsInAsnOrder.getAsnOrderId())
                 .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
@@ -623,6 +623,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .orderStatus((byte) 1)
                 .orderTypeId(wmsInAsnOrder.getOrderTypeId())
                 .actualQty(new BigDecimal("0"))
+                .productPalletId(wmsInAsnOrder.getProductPalletId())
                 .build();
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
         list.add(WmsInnerJobOrderDet.builder()

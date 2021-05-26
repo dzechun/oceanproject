@@ -42,7 +42,16 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcProductPallet/findList")
     ResponseEntity<List<MesSfcProductPalletDto>> findProductPalletList(@RequestBody SearchMesSfcProductPallet searchMesSfcProductPallet);
 
+    @ApiOperation("查询产品栈板看板数据")
+    @PostMapping("/mesSfcProductPallet/getPalletReport")
+    ResponseEntity<List<MesSfcPalletReportDto>> getPalletReport();
+
     @ApiOperation("查询产品包箱列表")
     @PostMapping("/mesSfcProductCarton/findList")
     ResponseEntity<List<MesSfcProductCartonDto>> findProductCartonList(@RequestBody SearchMesSfcProductCarton searchMesSfcProductCarton);
+
+    @ApiOperation("修改栈板状态为已转移")
+    @PostMapping("/mesSfcPalletWork/updateMoveStatus")
+    ResponseEntity<List<MesSfcProductCartonDto>> updateMoveStatus(@ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId);
+
 }

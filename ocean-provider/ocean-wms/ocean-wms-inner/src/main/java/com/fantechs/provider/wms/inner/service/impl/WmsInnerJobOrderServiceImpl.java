@@ -17,6 +17,7 @@ import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -27,10 +28,12 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import org.springframework.stereotype.Service;
@@ -58,6 +61,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private BaseFeignApi baseFeignApi;
     @Resource
     private WmsInnerInventoryMapper wmsInnerInventoryMapper;
+    @Resource
+    private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -137,6 +144,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 throw new BizErrorException("分配数量不能大于计划数量");
             }
             Long id = null;
+            //当货品分配时未全部分配完时新增一条剩余待分配数量的记录
             if(StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) || wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty())==-1){
                 //分配中
                 WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
@@ -178,6 +186,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if(StringUtils.isEmpty(dto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            //如果货品全部分配完成更改表头状态为待作业状态
             if(dto.stream().filter(li->li.getOrderStatus()==(byte)3).collect(Collectors.toList()).size()==dto.size()){
                 //更新表头状态
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
@@ -219,6 +228,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             example.createCriteria().andEqualTo("jobOrderId",s);
             List<WmsInnerJobOrderDet> list = wmsInPutawayOrderDetMapper.selectByExample(example);
 
+            //合并同货品的记录
             Map<Long,List<WmsInnerJobOrderDet>> map = new HashMap<>();
             for (WmsInnerJobOrderDet wmsInnerJobOrderDet : list) {
                 if(wmsInnerJobOrderDet.getOrderStatus()==(byte)4){
@@ -246,6 +256,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus",(byte)2).andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
                 wmsInnerInventoryMapper.deleteByExample(example1);
             }
+            //删除全部明细数据
             wmsInPutawayOrderDetMapper.deleteByExample(example);
             for (List<WmsInnerJobOrderDet> value : map.values()) {
                 for (WmsInnerJobOrderDet wmsInnerJobOrderDet : value) {
@@ -589,6 +600,27 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         return wmsInnerJobOrder;
     }
 
+    /**
+     * PDA激活关闭栈板
+     * @param jobOrderId
+     * @return
+     */
+    @Override
+    public int activation(Long jobOrderId) {
+        Example example = new Example(WmsInnerJobOrderReMspp.class);
+        example.createCriteria().andEqualTo("jobOrderId",jobOrderId);
+        WmsInnerJobOrderReMspp wmsInnerJobOrderReMspp  = wmsInnerJobOrderReMsppMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsInnerJobOrderReMspp)){
+            throw new BizErrorException("未匹配到上架单关联栈板关系");
+        }
+        //更新栈板状态
+        ResponseEntity responseEntity = sfcFeignApi.updateMoveStatus(wmsInnerJobOrderReMspp.getProductPalletId());
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException("激活失败");
+        }
+        return 1;
+    }
+
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerJobOrder record) {
@@ -630,6 +662,21 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerInventorys.setInventoryId(wmsInnerInventory.getInventoryId());
                 wmsInnerInventorys.setJobStatus((byte) 2);
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
+            }
+        }
+        if(StringUtils.isNotEmpty(record.getProductPalletId())){
+            //生成上架单绑定栈板关联关系
+            WmsInnerJobOrderReMspp wmsInnerJobOrderReMspp = WmsInnerJobOrderReMspp.builder()
+                    .jobOrderId(record.getJobOrderId())
+                    .productPalletId(record.getProductPalletId())
+                    .createTime(new Date())
+                    .createUserId(sysUser.getUserId())
+                    .modifiedTime(new Date())
+                    .modifiedUserId(sysUser.getUserId())
+                    .build();
+            int res = wmsInnerJobOrderReMsppMapper.insertSelective(wmsInnerJobOrderReMspp);
+            if(res<=0){
+                throw new BizErrorException("上架单关联栈板失败");
             }
         }
         return num;

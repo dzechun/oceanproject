@@ -43,8 +43,8 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerJobOrderDto>> findList(@RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInnerJobOrder){
         List<Byte> bytes= new ArrayList<>();
-        bytes.add((byte)2);
         bytes.add((byte)3);
+        bytes.add((byte)4);
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
         List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
@@ -88,5 +88,11 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/pickingOrder")
     public ResponseEntity pickingOrder(@RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId,String barCode){
         return ControllerUtil.returnCRUD(pickingOrderService.scanAffirmQty(jobOrderDetId,barCode));
+    }
+
+    @ApiOperation("PDA激活关闭栈板")
+    @PostMapping("/activation")
+    public ResponseEntity activation(@RequestParam Long jobOrderId){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.activation(jobOrderId));
     }
 }

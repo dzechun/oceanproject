@@ -13,4 +13,5 @@ import java.util.Map;
 
 public interface BaseSampleProcessService extends IService<BaseSampleProcess> {
     List<BaseSampleProcess> findList(Map<String, Object> map);
+    List<BaseSampleProcess> findListByIds(String ids);
 }

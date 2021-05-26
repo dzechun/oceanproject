@@ -321,7 +321,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     //查询指定仓库下库位类型为发货的库位
                     SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                     searchBaseStorage.setStorageType((byte) 3);
-                    searchBaseStorage.setWarehouseAreaId(omSalesOrderDetDto.getWarehouseId());
+                    searchBaseStorage.setWarehouseId(omSalesOrderDetDto.getWarehouseId());
                     List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
                     wmsOutDeliveryOrderDetDto.setStorageId(StringUtils.isEmpty(baseStorages) ? null : baseStorages.get(0).getStorageId());
                     wmsOutDeliveryOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());

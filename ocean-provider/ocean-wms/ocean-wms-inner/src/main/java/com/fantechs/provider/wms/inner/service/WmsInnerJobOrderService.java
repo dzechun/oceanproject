@@ -54,4 +54,11 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId);
 
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
+
+    /**
+     * PDA激活关闭栈板
+     * @param jobOrderId
+     * @return
+     */
+    int activation(Long jobOrderId);
 }
