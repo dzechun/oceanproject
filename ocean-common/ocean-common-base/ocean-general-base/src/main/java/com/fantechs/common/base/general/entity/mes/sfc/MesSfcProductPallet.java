@@ -99,7 +99,7 @@ public class MesSfcProductPallet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="moveStatus",value = "转移状态(0-未转移 1-已转移)")
     @Excel(name = "转移状态(0-未转移 1-已转移)", height = 20, width = 30,orderNum="")
-    @Column(name = "moveStatus")
+    @Column(name = "move_status")
     private Byte moveStatus;
 
     /**
