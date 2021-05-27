@@ -8,6 +8,7 @@
     <id column="work_order_material_re_p_id" jdbcType="BIGINT" property="workOrderMaterialRePId" />
     <result column="work_order_process_re_wo_id" jdbcType="BIGINT" property="workOrderProcessReWoId" />
     <result column="scan_type" jdbcType="TINYINT" property="scanType" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="usage_qty" jdbcType="DECIMAL" property="usageQty" />
     <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
@@ -32,12 +33,14 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     mpwomrp.work_order_material_re_p_id,
     mpwomrp.work_order_process_re_wo_id,
     mpwomrp.scan_type,
+    mpwomrp.label_category_id,
     mpwomrp.material_id,
     mpwomrp.usage_qty,
     mpwomrp.sub_material_id,
@@ -54,6 +57,7 @@
     LEFT JOIN base_organization bo ON mpwomrp.org_id = bo.organization_id
     LEFT JOIN base_material bm ON bm.material_id = mpwomrp.material_id
     LEFT JOIN base_material sbm ON sbm.material_id = mpwomrp.sub_material_id
+    LEFT JOIN base_label_category blc ON blc.label_category_id = mpwomrp.label_category_id
     <where>
       <if test="workOrderProcessReWoId != null">
         and mpwomrp.work_order_process_re_wo_id = #{workOrderProcessReWoId}

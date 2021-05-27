@@ -22,10 +22,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -54,6 +51,13 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //原数据删除
+        Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
+        Example example = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("inspectionOrderDetId",inspectionOrderDetId);
+        qmsInspectionOrderDetSampleMapper.deleteByExample(example);
+
         int i = 0;
         int badnessQty = 0;//不良数量
         for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList){
@@ -63,8 +67,9 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             }
         }
 
-        Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
-        QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.selectByPrimaryKey(inspectionOrderDetId);
+        Map<String,Object> map = new HashMap();
+        map.put("inspectionOrderDetId",inspectionOrderDetId);
+        QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findList(map).get(0);
         //当已检验样本数等于样本数时，才计算不良数量、检验结果
         if(qmsInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(qmsInspectionOrderDetSampleList.size()))==0) {
             qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));

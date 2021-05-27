@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.print.DocFlavor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -30,7 +31,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 检验单明细ID
      */
     @ApiModelProperty(name="inspectionOrderDetId",value = "检验单明细ID")
-    @Excel(name = "检验单明细ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "inspection_order_det_id")
     private Long inspectionOrderDetId;
@@ -39,7 +39,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 检验单ID
      */
     @ApiModelProperty(name="inspectionOrderId",value = "检验单ID")
-    @Excel(name = "检验单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "inspection_order_id")
     private Long inspectionOrderId;
 
@@ -47,7 +46,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 检验标准明细ID
      */
     @ApiModelProperty(name="inspectionStandardDetId",value = "检验标准明细ID")
-    @Excel(name = "检验标准明细ID", height = 20, width = 30,orderNum="") 
     @Column(name = "inspection_standard_det_id")
     private Long inspectionStandardDetId;
 
@@ -55,7 +53,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 不良数量
      */
     @ApiModelProperty(name="badnessQty",value = "不良数量")
-    @Excel(name = "不良数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "不良数量", height = 20, width = 30,orderNum="10")
     @Column(name = "badness_qty")
     private BigDecimal badnessQty;
 
@@ -63,7 +61,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 检验结果(0-否 1-是)
      */
     @ApiModelProperty(name="inspectionResult",value = "检验结果(0-否 1-是)")
-    @Excel(name = "检验结果(0-否 1-是)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "检验结果(0-否 1-是)", height = 20, width = 30,orderNum="11")
     @Column(name = "inspection_result")
     private Byte inspectionResult;
 
@@ -71,21 +69,18 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -93,7 +88,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -101,7 +95,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -110,7 +103,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -118,7 +110,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -127,7 +118,6 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -159,6 +149,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionItem",value = "检验项目")
+    @Excel(name = "检验项目", height = 20, width = 30,orderNum="1")
     private String inspectionItem;
 
     /**
@@ -166,6 +157,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionTag",value = "检验标识")
+    @Excel(name = "检验标识", height = 20, width = 30,orderNum="2")
     private Byte inspectionTag;
 
     /**
@@ -173,6 +165,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "specificationUpperLimit",value = "规格上限")
+    @Excel(name = "规格上限", height = 20, width = 30,orderNum="4")
     private BigDecimal specificationUpperLimit;
 
     /**
@@ -180,6 +173,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "specificationFloor",value = "规格下限")
+    @Excel(name = "规格下限", height = 20, width = 30,orderNum="5")
     private BigDecimal specificationFloor;
 
     /**
@@ -187,6 +181,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "unitName",value = "单位名称")
+    @Excel(name = "单位名称", height = 20, width = 30,orderNum="6")
     private String unitName;
 
     /**
@@ -194,6 +189,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "aqlValue",value = "AQL值")
+    @Excel(name = "AQL值", height = 20, width = 30,orderNum="7")
     private BigDecimal aqlValue;
 
     /**
@@ -201,6 +197,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "acValue",value = "AC值")
+    @Excel(name = "AC值", height = 20, width = 30,orderNum="8")
     private Integer acValue;
 
     /**
@@ -208,6 +205,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "reValue",value = "RE值")
+    @Excel(name = "RE值", height = 20, width = 30,orderNum="9")
     private Integer reValue;
 
     /**
@@ -215,7 +213,22 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "sampleQty",value = "样本数")
+    @Excel(name = "样本数", height = 20, width = 30,orderNum="3")
     private BigDecimal sampleQty;
+
+    /**
+     * 抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)
+     */
+    @Transient
+    @ApiModelProperty(name = "sampleProcessType",value = "抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)")
+    private Byte sampleProcessType;
+
+    /**
+     * 抽样过程id
+     */
+    @Transient
+    @ApiModelProperty(name = "sampleProcessId",value = "抽样过程id")
+    private Long sampleProcessId;
 
     private String option1;
 

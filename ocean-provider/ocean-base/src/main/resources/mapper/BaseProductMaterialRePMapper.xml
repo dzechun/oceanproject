@@ -8,6 +8,7 @@
     <id column="product_material_re_p_id" jdbcType="BIGINT" property="productMaterialRePId" />
     <result column="product_process_re_m_id" jdbcType="BIGINT" property="productProcessReMId" />
     <result column="scan_type" jdbcType="TINYINT" property="scanType" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
     <result column="usage_qty" jdbcType="DECIMAL" property="usageQty" />
@@ -27,12 +28,14 @@
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
     <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode" />
+    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     bpmrp.product_material_re_p_id,
     bpmrp.product_process_re_m_id,
     bpmrp.scan_type,
+    bpmrp.label_category_id,
     bpmrp.material_id,
     bpmrp.sub_material_id,
     bpmrp.usage_qty,
@@ -51,10 +54,11 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bm.material_code,bm.material_desc,bm.material_version,sbm.material_code as sub_material_code,
+    bm.material_code,bm.material_desc,bm.material_version,sbm.material_code as sub_material_code,blc.label_category_name,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_product_material_re_p bpmrp
+    left join fantech_imes_v2.base_label_category blc on bpmrp.label_category_id=blc.label_category_id
     left join fantech_imes_v2.base_material bm on bpmrp.material_id=bm.material_id
     left join fantech_imes_v2.base_material sbm on bpmrp.sub_material_id=sbm.material_id
     left join ocean_v2.sys_user u on bpmrp.create_user_id=u.user_id

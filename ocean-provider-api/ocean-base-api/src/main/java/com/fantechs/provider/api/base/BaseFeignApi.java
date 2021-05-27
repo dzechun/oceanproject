@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtConsignee;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -332,4 +335,9 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询收货人信息")
     @PostMapping("/baseConsignee/findList")
     ResponseEntity<List<BaseConsignee>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseConsignee searchBaseConsignee);
+
+    @ApiOperation("查询对应抽样方案的AC和RE和样本数")
+    @PostMapping("/baseSampleProcess/getAcReQty")
+    ResponseEntity<BaseSampleProcess> getAcReQty(@ApiParam(value = "抽样过程id",required = true) @RequestParam @NotNull(message="抽样过程id不能为空")Long sampleProcessId,
+                                                        @ApiParam(value = "单据数量",required = true) @RequestParam @NotNull(message="单据数量不能为空") BigDecimal orderQty);
 }

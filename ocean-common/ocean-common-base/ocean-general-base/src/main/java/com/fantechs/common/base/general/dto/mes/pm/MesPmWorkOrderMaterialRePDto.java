@@ -12,6 +12,13 @@ import java.io.Serializable;
 public class MesPmWorkOrderMaterialRePDto extends MesPmWorkOrderMaterialReP implements Serializable {
 
     /**
+     * 标签类别名称
+     */
+    @Transient
+    @ApiModelProperty(value = "标签类别名称",example = "标签类别名称")
+    private String labelCategoryName;
+
+    /**
      * 零件料号
      */
     @Transient

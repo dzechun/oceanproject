@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -77,6 +78,14 @@ public class BaseSampleProcessController {
     public ResponseEntity<List<BaseSampleProcess>> findListByIds(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
         List<BaseSampleProcess> list = baseSampleProcessService.findListByIds(ids);
         return ControllerUtil.returnDataSuccess(list,list.size());
+    }
+
+    @ApiOperation("查询对应抽样方案的AC和RE和样本数")
+    @PostMapping("/getAcReQty")
+    public ResponseEntity<BaseSampleProcess> getAcReQty(@ApiParam(value = "抽样过程id",required = true) @RequestParam @NotNull(message="抽样过程id不能为空")Long sampleProcessId,
+                                                        @ApiParam(value = "单据数量",required = true) @RequestParam @NotNull(message="单据数量不能为空") BigDecimal orderQty) {
+        BaseSampleProcess baseSampleProcess = baseSampleProcessService.getAcReQty(sampleProcessId, orderQty);
+        return ControllerUtil.returnDataSuccess(baseSampleProcess,1);
     }
 
     @ApiOperation("历史列表")
