@@ -8,27 +8,26 @@ spring:
   application:
     name: @pom.artifactId@
   datasource:
-#    primary:
-#      jdbc-url: jdbc:mysql://10.182.163.191:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
-#      type: com.alibaba.druid.pool.DruidDataSource
-#      username: root
-#      password: 123456
-#      driverClassName: com.mysql.cj.jdbc.Driver
-#      initialSize: 5
-#      minIdle: 5
-#      maxActive: 20
-#      maxWait: 60000
-#      timeBetweenEvictionRunsMillis: 60000
-#      minEvictableIdleTimeMillis: 300000
-#      validationQuery: SELECT 1 FROM DUAL
-#      testWhileIdle: true
-#      testOnBorrow: false
-#      testOnReturn: false
-#      poolPreparedStatements: true
-#      maxPoolPreparedStatementPerConnectionSize: 20
-#      filters: stat,wall,logback
-#      filters: stat,wall,slf4j
-#      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    primary:
+      jdbc-url: jdbc:mysql://10.182.163.191:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      type: com.alibaba.druid.pool.DruidDataSource
+      username: root
+      password: 123456
+      driverClassName: com.mysql.cj.jdbc.Driver
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,wall,logback
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     secondary:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
       jdbc-url: jdbc:sqlserver://10.182.164.248:1433;DatabaseName=newenergy_mes
