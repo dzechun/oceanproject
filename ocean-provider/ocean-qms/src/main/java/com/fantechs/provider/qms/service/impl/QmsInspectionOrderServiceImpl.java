@@ -64,7 +64,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
                 for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
                     //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                    if(qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
+                    if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
                         BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
                         qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
                         qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());

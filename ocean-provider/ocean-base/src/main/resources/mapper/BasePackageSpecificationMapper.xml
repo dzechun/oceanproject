@@ -72,7 +72,7 @@
 #         sbr.barcode_rule,
         bo.organization_name
         from fantech_imes_v2.base_package_specification sps
-         LEFT JOIN fantech_imes_v2.base_material_package smp ON sps.package_specification_id = smp.package_specification_id
+#         LEFT JOIN fantech_imes_v2.base_material_package smp ON sps.package_specification_id = smp.package_specification_id
 #         LEFT JOIN fantech_imes_v2.base_packing_unit spu ON smp.packing_unit_id = spu.packing_unit_id
 #         LEFT JOIN fantech_imes_v2.base_material sm ON smp.material_id = sm.material_id
 #         LEFT JOIN fantech_imes_v2.base_barcode_rule sbr ON smp.barcode_rule_id = sbr.barcode_rule_id
