@@ -3,14 +3,14 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
-import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtSampleProcess;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtSampleProcessMapper;
+import com.fantechs.provider.base.mapper.BaseSamplePlanMapper;
 import com.fantechs.provider.base.mapper.BaseSampleProcessMapper;
 import com.fantechs.provider.base.service.BaseSampleProcessService;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -31,11 +32,40 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
     @Resource
     private BaseSampleProcessMapper baseSampleProcessMapper;
     @Resource
+    private BaseSamplePlanMapper baseSamplePlanMapper;
+    @Resource
     private BaseHtSampleProcessMapper baseHtSampleProcessMapper;
 
     @Override
     public List<BaseSampleProcess> findList(Map<String, Object> map) {
         return baseSampleProcessMapper.findList(map);
+    }
+
+    @Override
+    public BaseSampleProcess getAcReQty(Long sampleProcessId, BigDecimal orderQty) {
+        BaseSampleProcess baseSampleProcess = baseSampleProcessMapper.selectByPrimaryKey(sampleProcessId);
+        Map<String,Object> map = new HashMap<>();
+        map.put("samplePlanId",baseSampleProcess.getSamplePlanId());
+        BaseSamplePlan baseSamplePlan = baseSamplePlanMapper.findList(map).get(0);
+        List<BaseSamplePlanAql> baseSamplePlanAqlList = baseSamplePlan.getList();
+        if(StringUtils.isNotEmpty(baseSamplePlanAqlList)){
+            for (BaseSamplePlanAql baseSamplePlanAql : baseSamplePlanAqlList){
+                if(baseSamplePlanAql.getAqlValue().compareTo(baseSampleProcess.getAqlValue())==0){
+                    List<BaseSamplePlanAcRe> baseSamplePlanAcReList = baseSamplePlanAql.getList();
+                    for (BaseSamplePlanAcRe baseSamplePlanAcRe : baseSamplePlanAcReList){
+                        if((orderQty.compareTo(new BigDecimal(baseSamplePlanAcRe.getBatchFloor()))==1
+                                ||orderQty.compareTo(new BigDecimal(baseSamplePlanAcRe.getBatchFloor()))==0)
+                           &&(orderQty.compareTo(new BigDecimal(baseSamplePlanAcRe.getBatchUpperLimit()))==-1
+                                ||orderQty.compareTo(new BigDecimal(baseSamplePlanAcRe.getBatchUpperLimit()))==0)){
+                            baseSampleProcess.setAcValue(baseSamplePlanAcRe.getAcValue());
+                            baseSampleProcess.setReValue(baseSamplePlanAcRe.getReValue());
+                            baseSampleProcess.setSampleQty(baseSamplePlanAcRe.getSampleQty());
+                        }
+                    }
+                }
+            }
+        }
+        return baseSampleProcess;
     }
 
     @Override

@@ -34,6 +34,8 @@
     <result column="ac_value" jdbcType="INTEGER" property="acValue"/>
     <result column="re_value" jdbcType="INTEGER" property="reValue"/>
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
+    <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
+    <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -58,7 +60,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     bisd.inspection_item,bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
-    bsp.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,
+    bsp.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name

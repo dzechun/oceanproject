@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleDet;
+import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
@@ -12,10 +13,12 @@ import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
@@ -47,6 +50,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     private QmsHtInspectionOrderMapper qmsHtInspectionOrderMapper;
     @Resource
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
@@ -57,6 +62,15 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
             List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
             if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
+                for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+                    //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+                    if(qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
+                        BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
+                        qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                        qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                        qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                    }
+                }
                 qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
             }
         }

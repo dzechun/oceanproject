@@ -69,6 +69,9 @@
       <if test="testLevel != null and testLevel!=''">
         and bsp.test_level like CONCAT('%', #{testLevel}, '%')
       </if>
+      <if test="samplePlanId != null">
+        and bsp.sample_plan_id = #{samplePlanId}
+      </if>
       <if test="sampleStandardName != null and sampleStandardName!=''">
         and bss.sample_standard_name like CONCAT('%', #{sampleStandardName}, '%')
       </if>
