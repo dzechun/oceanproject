@@ -148,8 +148,10 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         //删除原有检验标准明细
         Example example1 = new Example(BaseInspectionStandardDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inspectionStandardId", baseInspectionStandard.getInspectionStandardId())
-                .andNotIn("inspectionStandardDetId",idList);
+        criteria1.andEqualTo("inspectionStandardId", baseInspectionStandard.getInspectionStandardId());
+        if(idList.size()>0){
+            criteria1.andNotIn("inspectionStandardDetId",idList);
+        }
         baseInspectionStandardDetMapper.deleteByExample(example1);
 
         //新增检验标准明细
