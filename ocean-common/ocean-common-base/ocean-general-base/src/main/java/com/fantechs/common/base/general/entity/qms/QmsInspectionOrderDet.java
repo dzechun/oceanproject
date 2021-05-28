@@ -53,7 +53,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 不良数量
      */
     @ApiModelProperty(name="badnessQty",value = "不良数量")
-    @Excel(name = "不良数量", height = 20, width = 30,orderNum="10")
+    @Excel(name = "不良数量", height = 20, width = 30,orderNum="11")
     @Column(name = "badness_qty")
     private BigDecimal badnessQty;
 
@@ -61,7 +61,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      * 检验结果(0-否 1-是)
      */
     @ApiModelProperty(name="inspectionResult",value = "检验结果(0-否 1-是)")
-    @Excel(name = "检验结果(0-否 1-是)", height = 20, width = 30,orderNum="11")
+    @Excel(name = "检验结果(0-否 1-是)", height = 20, width = 30,orderNum="12")
     @Column(name = "inspection_result")
     private Byte inspectionResult;
 
@@ -143,11 +143,19 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
     private String organizationName;
 
     /**
+     * 是否必检(0-否 1-是)
+     */
+    @Transient
+    @ApiModelProperty(name = "ifMustInspection",value = "是否必检(0-否 1-是)")
+    @Excel(name = "是否必检(0-否 1-是)", height = 20, width = 30,orderNum="1")
+    private Byte ifMustInspection;
+
+    /**
      * 检验项目
      */
     @Transient
     @ApiModelProperty(name = "inspectionItem",value = "检验项目")
-    @Excel(name = "检验项目", height = 20, width = 30,orderNum="1")
+    @Excel(name = "检验项目", height = 20, width = 30,orderNum="2")
     private String inspectionItem;
 
     /**
@@ -155,7 +163,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionTag",value = "检验标识")
-    @Excel(name = "检验标识", height = 20, width = 30,orderNum="2")
+    @Excel(name = "检验标识", height = 20, width = 30,orderNum="3")
     private Byte inspectionTag;
 
     /**
@@ -163,7 +171,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "specificationUpperLimit",value = "规格上限")
-    @Excel(name = "规格上限", height = 20, width = 30,orderNum="4")
+    @Excel(name = "规格上限", height = 20, width = 30,orderNum="5")
     private BigDecimal specificationUpperLimit;
 
     /**
@@ -171,7 +179,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "specificationFloor",value = "规格下限")
-    @Excel(name = "规格下限", height = 20, width = 30,orderNum="5")
+    @Excel(name = "规格下限", height = 20, width = 30,orderNum="6")
     private BigDecimal specificationFloor;
 
     /**
@@ -179,7 +187,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "unitName",value = "单位名称")
-    @Excel(name = "单位名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "单位名称", height = 20, width = 30,orderNum="7")
     private String unitName;
 
     /**
@@ -187,7 +195,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "aqlValue",value = "AQL值")
-    @Excel(name = "AQL值", height = 20, width = 30,orderNum="7")
+    @Excel(name = "AQL值", height = 20, width = 30,orderNum="8")
     private BigDecimal aqlValue;
 
     /**
@@ -195,7 +203,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "acValue",value = "AC值")
-    @Excel(name = "AC值", height = 20, width = 30,orderNum="8")
+    @Excel(name = "AC值", height = 20, width = 30,orderNum="9")
     private Integer acValue;
 
     /**
@@ -203,7 +211,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "reValue",value = "RE值")
-    @Excel(name = "RE值", height = 20, width = 30,orderNum="9")
+    @Excel(name = "RE值", height = 20, width = 30,orderNum="10")
     private Integer reValue;
 
     /**
@@ -211,7 +219,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "sampleQty",value = "样本数")
-    @Excel(name = "样本数", height = 20, width = 30,orderNum="3")
+    @Excel(name = "样本数", height = 20, width = 30,orderNum="4")
     private BigDecimal sampleQty;
 
     /**
