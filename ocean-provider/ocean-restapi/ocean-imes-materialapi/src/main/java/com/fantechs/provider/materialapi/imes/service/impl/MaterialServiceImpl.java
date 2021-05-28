@@ -50,8 +50,6 @@ public class MaterialServiceImpl implements MaterialService {
         if(check != "checked"){
             return check;
         }
-
-        ResponseEntity<MesPmWorkOrder> mesPmWorkOrderDate = pmFeignApi.workOrderDetail(mesPmWorkOrder.getWorkOrderId());
         pmFeignApi.updateById(mesPmWorkOrder);
         return "success";
     }
@@ -67,13 +65,12 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public String findWorkOrder(SearchMesPmWorkOrder searchMesPmWorkOrder) {
 
-
         if(StringUtils.isEmpty(searchMesPmWorkOrder)){
             return "fail";
         }
        ResponseEntity<List<MesPmWorkOrderDto>> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
         if(StringUtils.isEmpty(workOrderList.getData())){
-            return "fail222";
+            return "fail";
         }
         return "success";
     }
