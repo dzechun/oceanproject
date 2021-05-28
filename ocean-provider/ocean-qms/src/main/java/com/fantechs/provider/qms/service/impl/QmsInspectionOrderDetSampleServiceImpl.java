@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
+import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
@@ -37,6 +39,8 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     private QmsInspectionOrderDetMapper qmsInspectionOrderDetMapper;
     @Resource
     private QmsInspectionOrderMapper qmsInspectionOrderMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -70,6 +74,15 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         Map<String,Object> map = new HashMap();
         map.put("inspectionOrderDetId",inspectionOrderDetId);
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findList(map).get(0);
+        QmsInspectionOrder inspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
+        //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+        if(qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
+            BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), inspectionOrder.getOrderQty()).getData();
+            qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+            qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+            qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+        }
+
         //当已检验样本数等于样本数时，才计算不良数量、检验结果
         if(qmsInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(qmsInspectionOrderDetSampleList.size()))==0) {
             qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));

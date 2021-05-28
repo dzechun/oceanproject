@@ -56,7 +56,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     @ApiModelProperty(name="sampleValue",value = "样本值")
     @Excel(name = "样本值", height = 20, width = 30,orderNum="") 
     @Column(name = "sample_value")
-    private BigDecimal sampleValue;
+    private String sampleValue;
 
     /**
      * 不良现象ID
