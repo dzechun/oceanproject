@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInventoryVerificationDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @Date 2021/5/27
  */
 @Data
-public class WmsInventoryVerificationDetDto extends WmsInventoryVerificationDet implements Serializable {
+public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements Serializable {
     /**
      * 组织名称
      */

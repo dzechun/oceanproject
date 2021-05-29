@@ -18,7 +18,7 @@ import lombok.Data;
  */
 @Data
 @Table(name = "wms_inventory_verification_det")
-public class WmsInventoryVerificationDet extends ValidGroup implements Serializable {
+public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     @Id
     @Column(name = "inventory_verification_det_id")
     private Long inventoryVerificationDetId;

@@ -1,9 +1,11 @@
 package com.fantechs.provider.wms.inner.util;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,8 +21,8 @@ import java.util.Map;
 @Component
 public class InBarcodeUtil {
     //Feign
-//    @Resource
-//    private SFCFeignApi sfcFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -28,18 +30,16 @@ public class InBarcodeUtil {
     @PostConstruct
     public void init(){
         inBarcodeUtil = this;
-        //inBarcodeUtil.sfcFeignApi = sfcFeignApi;
+        inBarcodeUtil.sfcFeignApi = sfcFeignApi;
     }
 
     public static Map<String,Object> checkBarCode(String barCode){
         Map<String,Object> map = new HashMap<>();
-        //MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = inBarcodeUtil.sfcFeignApi.findBarcode(barCode).getData();
-        MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = null;
+        MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = inBarcodeUtil.sfcFeignApi.findBarcode(barCode).getData();
         if(StringUtils.isEmpty(mesSfcWorkOrderBarcode)){
-            //查询箱码
-        }else{
-
+           throw new BizErrorException("不存在该条码");
         }
+        //查询工单条码产生展板id
         map.put("id",mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
         map.put("barcode",mesSfcWorkOrderBarcode.getBarcode());
         return map;

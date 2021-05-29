@@ -17,8 +17,8 @@ import lombok.Data;
  * @date 2021-05-27 18:14:29
  */
 @Data
-@Table(name = "wms_inventory_verification")
-public class WmsInventoryVerification extends ValidGroup implements Serializable {
+@Table(name = "wms_inner_stock_order")
+public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     /**
      * 库存盘点ID
      */
@@ -144,7 +144,7 @@ public class WmsInventoryVerification extends ValidGroup implements Serializable
 
     @Transient
     @ApiModelProperty(name = "inventoryVerificationDets",value = "盘点类型：货品/全盘明细")
-    private List<WmsInventoryVerificationDet> inventoryVerificationDets;
+    private List<WmsInnerStockOrderDet> inventoryVerificationDets;
 
     @Transient
     @ApiModelProperty(name = "storageList",value = "储位id")

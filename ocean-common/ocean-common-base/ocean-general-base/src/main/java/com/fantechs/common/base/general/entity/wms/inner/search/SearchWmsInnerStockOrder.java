@@ -10,5 +10,5 @@ import java.io.Serializable;
  * @Date 2021/5/27
  */
 @Data
-public class SearchWmsInventoryVerification extends BaseQuery implements Serializable {
+public class SearchWmsInnerStockOrder extends BaseQuery implements Serializable {
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInventoryVerification">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder">
     <!--
       WARNING - @mbg.generated
     -->
@@ -22,7 +22,7 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInventoryVerificationDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -78,5 +78,14 @@ wiv.modified_time
     </if>
     </where>
 order by wiv.create_time desc
+  </select>
+  <select id="findStorageName" resultType="java.lang.String">
+    select storage_name From base_storage where storage_id = #{storageId}
+  </select>
+  <select id="findWarehouseName" resultType="java.lang.String">
+    select warehouse_name FROM base_warehouse where warehouse_id = #{warehouseId}
+  </select>
+  <select id="findStorageId" resultType="java.lang.Long">
+    select storage_id From base_storage where storage_name = #{storageName}
   </select>
 </mapper>
