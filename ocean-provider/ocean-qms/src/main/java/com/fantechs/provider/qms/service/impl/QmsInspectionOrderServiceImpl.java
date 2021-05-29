@@ -193,6 +193,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         return i;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int writeBack(Long inspectionOrderId){
         Example example = new Example(QmsInspectionOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
