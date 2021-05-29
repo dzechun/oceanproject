@@ -1,8 +1,13 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
 import javax.annotation.Resource;
@@ -16,7 +21,10 @@ import java.util.List;
 public class MaterialServiceImpl implements MaterialService {
 
     @Resource
+    private PMFeignApi pmFeignApi;
+    @Resource
     private BaseFeignApi baseFeignApi;
+
 
     @Override
     public String testMethod(String testName) {
@@ -35,4 +43,35 @@ public class MaterialServiceImpl implements MaterialService {
         return "success";
     }
 
+
+    @Override
+    public String saveWorkOrder(MesPmWorkOrder mesPmWorkOrder) {
+        String check = check(mesPmWorkOrder);
+        if(check != "checked"){
+            return check;
+        }
+        pmFeignApi.updateById(mesPmWorkOrder);
+        return "success";
+    }
+
+    public String check(MesPmWorkOrder mesPmWorkOrder) {
+        if(StringUtils.isEmpty(mesPmWorkOrder))
+            return "fail,参数为空";
+        if(StringUtils.isEmpty(mesPmWorkOrder.getWorkOrderId()))
+            return "fail,订单id不能为空";
+        return "checked";
+    }
+
+    @Override
+    public String findWorkOrder(SearchMesPmWorkOrder searchMesPmWorkOrder) {
+
+        if(StringUtils.isEmpty(searchMesPmWorkOrder)){
+            return "fail";
+        }
+       ResponseEntity<List<MesPmWorkOrderDto>> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
+        if(StringUtils.isEmpty(workOrderList.getData())){
+            return "fail";
+        }
+        return "success";
+    }
 }

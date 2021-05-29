@@ -451,15 +451,17 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 return mesSfcProductCartonService.update(mesSfcProductCarton);
             }
         }else {
-            // 保存条码包箱关系
-            mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
-                    .productCartonId(mesSfcProductCarton.getProductCartonId())
-                    .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
-                    .orgId(user.getOrganizationId())
-                    .createTime(new Date())
-                    .createUserId(user.getUserId())
-                    .isDelete((byte) 1)
-                    .build());
+            if(!vo.getAnnex()){
+                // 保存条码包箱关系
+                mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
+                        .productCartonId(mesSfcProductCarton.getProductCartonId())
+                        .workOrderBarcodeId(sfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
+                        .orgId(user.getOrganizationId())
+                        .createTime(new Date())
+                        .createUserId(user.getUserId())
+                        .isDelete((byte) 1)
+                        .build());
+            }
             // 保存包箱号
             mesSfcBarcodeProcess.setStationId(vo.getStationId());
             mesSfcBarcodeProcess.setCartonCode(vo.getCartonCode());

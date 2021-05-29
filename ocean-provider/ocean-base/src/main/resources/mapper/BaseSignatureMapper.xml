@@ -6,6 +6,7 @@
         <result column="signature_code" jdbcType="VARCHAR" property="signatureCode"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="signature_regex" jdbcType="VARCHAR" property="signatureRegex"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -26,6 +27,7 @@
         ss.signature_code,
         ss.material_id,
         ss.supplier_id,
+        ss.signature_regex,
         ss.`status`,
         ss.remark,
         ss.org_id,

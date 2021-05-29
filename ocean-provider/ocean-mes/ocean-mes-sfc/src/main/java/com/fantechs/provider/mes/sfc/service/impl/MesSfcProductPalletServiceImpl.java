@@ -42,7 +42,7 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
         List<MesSfcPalletReportDto> list = new ArrayList<>();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("moveStatus", 1);
+        map.put("moveStatus", 0);
         List<MesSfcProductPalletDto> productPalletDtos = mesSfcProductPalletMapper.findList(map);
         if(productPalletDtos == null || productPalletDtos.size() <= 0){
             return list;
@@ -53,6 +53,7 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
         }
         map.clear();
         map.put("productPalletIds", productPalletIds);
+        map.put("groupBy", "cartonCode");
         List<MesSfcProductPalletDetDto> palletDetServiceList = mesSfcProductPalletDetService.findList(map);
         for (MesSfcProductPalletDto dto : productPalletDtos) {
             MesSfcPalletReportDto reportDto = new MesSfcPalletReportDto();
@@ -60,7 +61,6 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
             reportDto.setWorkOrderCode(dto.getWorkOrderCode());
             reportDto.setMaterialCode(dto.getMaterialCode());
             reportDto.setNowPackageSpecQty(dto.getNowPackageSpecQty());
-            reportDto.setScanCartonNum(dto.getNowPackageSpecQty());
             int count = 0;
             for (MesSfcProductPalletDetDto detDto : palletDetServiceList){
                 if(detDto.getProductPalletId().equals(dto.getProductPalletId())){

@@ -2,6 +2,8 @@ package com.fantechs.provider.materialapi.imes.service;
 
 
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -17,4 +19,12 @@ public interface MaterialService {
 
     @WebMethod
     String syncMaterial(List<BaseMaterial> baseMaterials);
+
+    @WebMethod
+    String findWorkOrder(SearchMesPmWorkOrder searchMesPmWorkOrder);
+
+    @WebMethod
+    String saveWorkOrder(MesPmWorkOrder mesPmWorkOrder);
+
+
 }

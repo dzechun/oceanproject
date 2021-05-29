@@ -87,6 +87,12 @@
       <if test="inspectionStatus != null">
         and qio.inspection_status = #{inspectionStatus}
       </if>
+      <if test="inspectionStatusList != null and inspectionStatusList.size() > 0">
+        and qio.inspection_status
+        <foreach collection="inspectionStatusList" open="in (" close=")" item="item" separator="," index="index">
+          #{item}
+        </foreach>
+      </if>
       <if test="inspectionResult != null">
         and qio.inspection_result = #{inspectionResult}
       </if>

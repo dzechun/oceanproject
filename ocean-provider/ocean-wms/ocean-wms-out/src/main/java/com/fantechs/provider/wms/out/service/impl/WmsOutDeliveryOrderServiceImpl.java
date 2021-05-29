@@ -152,6 +152,14 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //查询是否创建作业单
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
+        List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
+        if(StringUtils.isNotEmpty(wmsInnerJobOrderDtos)){
+            throw new BizErrorException("对应的拣货作业单已存在,该销售出库单不允许修改！");
+        }
+
         //出库单
         wmsOutDeliveryOrder.setModifiedTime(new Date());
         wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());

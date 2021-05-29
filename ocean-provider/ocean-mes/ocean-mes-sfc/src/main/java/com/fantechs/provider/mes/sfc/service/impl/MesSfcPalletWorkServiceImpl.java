@@ -7,35 +7,26 @@ import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialSupplierDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
-import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.provider.mes.sfc.service.MesSfcKeyPartRelevanceService;
-import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
-import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
-import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
-import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -315,9 +306,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             //完工入库
             PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
             ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner());
+
             if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
-                palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
-                palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
+                palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(baseMaterialOwnerDtos.getData().size()-1).getMaterialOwnerId());
+                palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(baseMaterialOwnerDtos.getData().size()-1).getMaterialOwnerName());
             }else{
                 throw new BizErrorException("未查询到货主信息");
             }
@@ -334,8 +326,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             searchBaseStorage.setMinSurplusCanPutSalver(0);
             ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
             if(StringUtils.isNotEmpty(baseStorages.getData())){
-                palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
-                palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
+                palletAutoAsnDto.setStorageId(baseStorages.getData().get(baseStorages.getData().size()-1).getStorageId());
+                palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(baseStorages.getData().size()-1).getWarehouseId());
             }else{
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
@@ -454,8 +446,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
                 ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner());
                 if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
-                    palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
-                    palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
+                    palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(baseMaterialOwnerDtos.getData().size()-1).getMaterialOwnerId());
+                    palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(baseMaterialOwnerDtos.getData().size()-1).getMaterialOwnerName());
                 }else{
                     throw new BizErrorException("未查询到货主信息");
                 }
@@ -472,8 +464,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 searchBaseStorage.setMinSurplusCanPutSalver(0);
                 ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
                 if(StringUtils.isNotEmpty(baseStorages.getData())){
-                    palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
-                    palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
+                    palletAutoAsnDto.setStorageId(baseStorages.getData().get(baseStorages.getData().size()-1).getStorageId());
+                    palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(baseStorages.getData().size()-1).getWarehouseId());
                 }else{
                     throw new BizErrorException(ErrorCodeEnum.STO30012000);
                 }

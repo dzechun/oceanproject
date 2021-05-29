@@ -20,4 +20,6 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
     List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     int updateInventoryQty(MesPmWorkOrder mesPmWorkOrder);
+
+    int updateById(MesPmWorkOrder mesPmWorkOrder);
 }

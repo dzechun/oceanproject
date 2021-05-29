@@ -109,4 +109,10 @@ public class MesPmWorkOrderController {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.updateInventoryQty(mesPmWorkOrder));
     }
     /*原内容*/
+
+    @ApiOperation(value = "接口更新",notes = "接口更新")
+    @PostMapping("/updateById")
+    public ResponseEntity updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.updateById(mesPmWorkOrder));
+    }
 }

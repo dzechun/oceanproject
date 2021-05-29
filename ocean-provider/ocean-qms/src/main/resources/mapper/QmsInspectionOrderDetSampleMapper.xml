@@ -8,7 +8,7 @@
     <id column="inspection_order_det_sample_id" jdbcType="BIGINT" property="inspectionOrderDetSampleId" />
     <result column="inspection_order_det_id" jdbcType="BIGINT" property="inspectionOrderDetId" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
-    <result column="sample_value" jdbcType="DECIMAL" property="sampleValue" />
+    <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
     <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />

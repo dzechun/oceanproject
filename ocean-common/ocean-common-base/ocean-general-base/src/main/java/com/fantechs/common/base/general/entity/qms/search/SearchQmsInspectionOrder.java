@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchQmsInspectionOrder extends BaseQuery implements Serializable {
@@ -27,6 +28,12 @@ public class SearchQmsInspectionOrder extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="inspectionStatus",value = "检验状态(1-待检验 2-检验中 3-已检验)")
     private Byte inspectionStatus;
+
+    /**
+     * 检验状态集合(1-待检验 2-检验中 3-已检验)
+     */
+    @ApiModelProperty(name="inspectionStatusList",value = "检验状态集合(1-待检验 2-检验中 3-已检验)")
+    private List<Byte> inspectionStatusList;
 
     /**
      * 检验结果(0-不合格 1-合格)

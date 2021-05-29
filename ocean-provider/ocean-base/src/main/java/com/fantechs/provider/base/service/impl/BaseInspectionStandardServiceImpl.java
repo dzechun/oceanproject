@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandardDet;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -132,16 +133,34 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         baseInspectionStandard.setOrgId(user.getOrganizationId());
         int i=baseInspectionStandardMapper.updateByPrimaryKeySelective(baseInspectionStandard);
 
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<BaseInspectionStandardDet> baseInspectionStandardDetList = baseInspectionStandard.getBaseInspectionStandardDets();
+        if(StringUtils.isNotEmpty(baseInspectionStandardDetList)) {
+            for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDetList) {
+                if (StringUtils.isNotEmpty(baseInspectionStandardDet.getInspectionStandardDetId())) {
+                    baseInspectionStandardDetMapper.updateByPrimaryKeySelective(baseInspectionStandardDet);
+                    idList.add(baseInspectionStandardDet.getInspectionStandardDetId());
+                }
+            }
+        }
+
         //删除原有检验标准明细
         Example example1 = new Example(BaseInspectionStandardDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("inspectionStandardId", baseInspectionStandard.getInspectionStandardId());
+        if(idList.size()>0){
+            criteria1.andNotIn("inspectionStandardDetId",idList);
+        }
         baseInspectionStandardDetMapper.deleteByExample(example1);
 
         //新增检验标准明细
         List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandard.getBaseInspectionStandardDets();
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets) {
+                if(idList.contains(baseInspectionStandardDet.getInspectionStandardDetId())){
+                    continue;
+                }
                 baseInspectionStandardDet.setInspectionStandardId(baseInspectionStandard.getInspectionStandardId());
                 baseInspectionStandardDet.setCreateUserId(user.getUserId());
                 baseInspectionStandardDet.setCreateTime(new Date());
@@ -149,8 +168,8 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                 baseInspectionStandardDet.setModifiedTime(new Date());
                 baseInspectionStandardDet.setStatus(StringUtils.isEmpty(baseInspectionStandardDet.getStatus())?1:baseInspectionStandardDet.getStatus());
                 baseInspectionStandardDet.setOrgId(user.getOrganizationId());
+                baseInspectionStandardDetMapper.insert(baseInspectionStandardDet);
             }
-            baseInspectionStandardDetMapper.insertList(baseInspectionStandardDets);
         }
 
         //履历

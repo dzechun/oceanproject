@@ -1,21 +1,20 @@
 package com.fantechs.provider.api.mes.pm;
 
-import com.fantechs.common.base.general.dto.mes.pm.*;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.search.*;
-
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(name = "ocean-mes-pm")
@@ -56,4 +55,8 @@ public interface PMFeignApi {
     @ApiOperation("修改工单入库数量")
     @PostMapping("/mesPmWorkOrder/updateInventory")
     ResponseEntity updateInventory(@RequestBody MesPmWorkOrder mesPmWorkOrder);
+
+    @ApiOperation("接口修改或更新工单")
+    @PostMapping("/mesPmWorkOrder/updateById")
+    ResponseEntity updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder);
 }

@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleDet;
+import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
@@ -12,10 +13,12 @@ import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
@@ -47,6 +50,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     private QmsHtInspectionOrderMapper qmsHtInspectionOrderMapper;
     @Resource
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
@@ -57,6 +62,15 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
             List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
             if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
+                for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+                    //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+                    if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
+                        BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
+                        qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                        qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                        qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                    }
+                }
                 qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
             }
         }
@@ -135,13 +149,16 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
         }
 
+
         //删除原明细
         Example example1 = new Example(QmsInspectionOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inspectionOrderId", qmsInspectionOrder.getInspectionOrderId())
-                .andNotIn("inspectionOrderDetId",idList);
+        criteria1.andEqualTo("inspectionOrderId", qmsInspectionOrder.getInspectionOrderId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("inspectionOrderDetId", idList);
+        }
         List<QmsInspectionOrderDet> qmsInspectionOrderDets1 = qmsInspectionOrderDetMapper.selectByExample(example1);
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDets1)) {
+        if (StringUtils.isNotEmpty(qmsInspectionOrderDets1)) {
             for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets1) {
                 //删除检验单明细样本
                 Example example2 = new Example(QmsInspectionOrderDetSample.class);
@@ -155,9 +172,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         //新增新的检验单明细
         List<QmsInspectionOrderDet> qmsInspectionOrderDetList = qmsInspectionOrder.getQmsInspectionOrderDets();
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDetList)){
+        if (StringUtils.isNotEmpty(qmsInspectionOrderDetList)) {
             for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDetList) {
-                if(idList.contains(qmsInspectionOrderDet.getInspectionOrderDetId())){
+                if (idList.contains(qmsInspectionOrderDet.getInspectionOrderDetId())) {
                     continue;
                 }
                 qmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());

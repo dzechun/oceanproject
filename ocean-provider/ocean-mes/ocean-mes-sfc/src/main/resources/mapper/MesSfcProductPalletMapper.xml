@@ -66,6 +66,9 @@
       <if test="stationId != null">
         and mspp.station_id = #{stationId}
       </if>
+      <if test="moveStatus != null">
+        and mspp.move_status = #{moveStatus}
+      </if>
       <if test="palletCode != null and palletCode != ''">
         and mspp.pallet_code like CONCAT('%',#{palletCode},'%')
       </if>

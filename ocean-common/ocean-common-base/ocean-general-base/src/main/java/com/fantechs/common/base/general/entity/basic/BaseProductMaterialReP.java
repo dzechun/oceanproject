@@ -45,6 +45,21 @@ public class BaseProductMaterialReP extends ValidGroup implements Serializable {
     private Byte scanType;
 
     /**
+     * 标签类别ID
+     */
+    @ApiModelProperty(name="labelCategoryId",value = "标签类别ID")
+    @Excel(name = "标签类别ID", height = 20, width = 30,orderNum="")
+    @Column(name = "label_category_id")
+    private Long labelCategoryId;
+
+    /**
+     * 标签类别名称
+     */
+    @Transient
+    @ApiModelProperty(value = "标签类别名称",example = "标签类别名称")
+    private String labelCategoryName;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")

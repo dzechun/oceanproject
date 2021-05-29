@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -44,6 +45,14 @@ public class MesPmWorkOrderMaterialReP extends ValidGroup implements Serializabl
     @Excel(name = "扫描类别(1-物料 2-条码)", height = 20, width = 30,orderNum="")
     @Column(name = "scan_type")
     private Byte scanType;
+
+    /**
+     * 标签类别ID
+     */
+    @ApiModelProperty(name="labelCategoryId",value = "标签类别ID")
+    @Excel(name = "标签类别ID", height = 20, width = 30,orderNum="")
+    @Column(name = "label_category_id")
+    private Long labelCategoryId;
 
     /**
      * 物料ID
