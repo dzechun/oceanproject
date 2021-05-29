@@ -39,4 +39,9 @@ public class SearchBaseMaterialOwner extends BaseQuery implements Serializable {
     @ApiModelProperty(name="remark",value = "备注")
     private String remark;
 
+    /**
+     * 顺序
+     */
+    @ApiModelProperty(name = "asc",value = "顺序")
+    private Byte asc;
 }
