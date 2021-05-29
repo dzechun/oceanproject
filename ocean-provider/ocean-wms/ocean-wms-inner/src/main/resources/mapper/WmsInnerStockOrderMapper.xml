@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInventoryVerification">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inventory_verification_id" jdbcType="BIGINT" property="inventoryVerificationId" />
+    <result column="inventory_verification_code" jdbcType="VARCHAR" property="inventoryVerificationCode" />
+    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
+    <result column="inventory_verification_type" jdbcType="TINYINT" property="inventoryVerificationType" />
+    <result column="project_type" jdbcType="TINYINT" property="projectType" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="inventory_verification_ mode" jdbcType="TINYINT" property="inventoryVerificationMode" />
+    <result column="blind" jdbcType="VARCHAR" property="blind" />
+    <result column="max_storage_count" jdbcType="INTEGER" property="maxStorageCount" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInventoryVerificationDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    wiv.inventory_verification_id,
+    wiv.inventory_verification_code,
+wiv.related_order_code,
+wiv.inventory_verification_type,
+wiv.project_type,
+wiv.warehouse_id,
+wiv.status,
+wiv.inventory_verification_ mode,
+wiv.blind,
+wiv.max_storage_count,
+wiv.remark,
+wiv.organization_id,
+wiv.create_user_id,
+wiv.create_time,
+wiv.modified_user_id,
+wiv.modified_time
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    SELECT <include refid="Base_Column_List"/>,sw.warehouse_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM wms_inventory_verification wiv
+    LEFT JOIN smt_warehouse sw ON wiv.warehouse_id = sw.warehouse_id
+    LEFT JOIN ocean.sys_user su  ON wiv.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON wiv.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON wiv.organization_id = bo.organization_id
+    <where>
+      <if test="inventoryVerificationCode !=null and inventoryVerificationCode!=''">
+        and wiv.inventory_verification_code like CONCAT('%',#{inventoryVerificationCode},'%')
+      </if>
+    <if test="warehouseName!=null and warehouseName!=''">
+      and sw.warehouseName like CONCAT('%',#{warehouseName},'%')
+    </if>
+    <if test="relatedOrderCode!=null and relatedOrderCode!=''">
+      and wiv.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
+    </if>
+    <if test="inventoryVerificationType !=null and inventoryVerificationType!=''">
+      and wiv.inventory_verification_type = #{inventoryVerificationType}
+    </if>
+    <if test="projectType!=null and projectType!=''">
+      and wiv.project_type = #{projectType}
+    </if>
+    <if test="status!=null and status!=''">
+      and wiv.status = #{status}
+    </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(wiv.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    <if test="createUserName !=null and createUserName!=''">
+      and su.user_name like CONCAT('%',#{createUserName},'%')
+    </if>
+    </where>
+order by wiv.create_time desc
+  </select>
+</mapper>

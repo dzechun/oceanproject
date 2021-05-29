@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInventoryVerificationDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inventory_verification_det_id" jdbcType="BIGINT" property="inventoryVerificationDetId" />
+    <result column="inventory_verification_id" jdbcType="BIGINT" property="inventoryVerificationId" />
+    <result column="source_det_id" jdbcType="BIGINT" property="sourceDetId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="original_qty" jdbcType="DECIMAL" property="originalQty" />
+    <result column="inventory_qty" jdbcType="DECIMAL" property="inventoryQty" />
+    <result column="discrepancy_qty" jdbcType="DECIMAL" property="discrepancyQty" />
+    <result column="up_discrepancy_qty" jdbcType="DECIMAL" property="upDiscrepancyQty"/>
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="work_name" jdbcType="VARCHAR" property="workName" />
+    <result column="register" jdbcType="TINYINT" property="register" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInventoryVerificationDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+wivd.inventory_verification_det_id,
+wivd.inventory_verification_id,
+wivd.source_det_id,
+wivd.storage_id,
+wivd.material_id,
+wivd.original_qty,
+wivd.inventory_qty,
+wivd.discrepancy_qty,
+wivd.up_discrepancy_qty,
+wivd.batch_code,
+wivd.work_name,
+wivd.register,
+wivd.remark,
+wivd.organization_id,
+wivd.create_user_id,
+wivd.create_time,
+wivd.modified_user_id,
+wivd.modified_time
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    SELECT <include refid="Base_Column_List"/>,storage_name,sm.material_code,sm.material_name,bt.color,bt.material_quality,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    FROM wms_inventory_verification_det wivd
+    LEFT JOIN smt_storage ss ON wivd.storage_id = ss.storage_id
+    LEFT JOIN smt_material sm ON wivd.material_id = sm.material_id
+    LEFT JOIN base_tab bt ON sm.material_id = bt.material_id
+    LEFT JOIN ocean.sys_user su  ON wivd.create_user_id = su.user_id
+    LEFT JOIN ocean.sys_user sus ON wivd.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes.base_organization bo ON wivd.organization_id = bo.organization_id
+    <where>
+        <if test="inventoryVerificationId !=null and inventoryVerificationId!=''">
+          and wivd.inventory_verification_id = #{inventoryVerificationId}
+        </if>
+        <if test="storageName!=null and storageName!=''">
+          and ss.storage_name like CONCAT('%',#{storageName},'%')
+        </if>
+        <if test="materialCode!=null and materialCode!=''">
+          and sm.material_code like CONCAT('%',#{materialCode},'%')
+        </if>
+        <if test="materialName!=null and materialName!=''">
+          and sm.material_name like CONCAT('%',#{materialName},'%')
+        </if>
+    </where>
+  </select>
+</mapper>
