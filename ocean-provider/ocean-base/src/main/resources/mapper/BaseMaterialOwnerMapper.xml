@@ -83,7 +83,13 @@
                 and bmo.status = #{status}
             </if>
         </where>
-        order by bmo.create_time desc
+        <if test="asc==1">
+            order by bmo.create_time asc
+        </if>
+        <if test="asc==null or asc=='' or asc!=1">
+            order by bmo.create_time desc
+        </if>
+
     </select>
 
 </mapper>
