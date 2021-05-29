@@ -3,16 +3,22 @@ package com.fantechs.provider.qms.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
@@ -41,10 +47,36 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     private QmsInspectionOrderMapper qmsInspectionOrderMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
         return qmsInspectionOrderDetSampleMapper.findList(map);
+    }
+
+    @Override
+    public Boolean checkBarcode(String barcode,Long qmsInspectionOrderDetId){
+        Boolean bool = true;
+        QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.selectByPrimaryKey(qmsInspectionOrderDetId);
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
+
+        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
+        if(StringUtils.isNotEmpty(workOrderBarcode)){
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            if(StringUtils.isNotEmpty(workOrderList)){
+                MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
+                if(!qmsInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())){
+                    bool = false;
+                }
+            }
+        }
+
+        return bool;
     }
 
     @Override
