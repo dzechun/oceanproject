@@ -1,15 +1,13 @@
 package com.fantechs.provider.client.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
-import com.fantechs.common.base.electronic.dto.SmtLoadingDetDto;
-import com.fantechs.common.base.electronic.dto.SmtSortingDto;
-import com.fantechs.common.base.electronic.entity.SmtLoading;
-import com.fantechs.common.base.electronic.entity.SmtLoadingDet;
-import com.fantechs.common.base.electronic.entity.SmtSorting;
+import com.fantechs.common.base.electronic.dto.PtlLoadingDetDto;
+import com.fantechs.common.base.electronic.dto.PtlSortingDto;
+import com.fantechs.common.base.electronic.entity.PtlLoading;
+import com.fantechs.common.base.electronic.entity.PtlSorting;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.client.dto.PtlSortingDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -34,9 +31,9 @@ public class ElectronicTagStorageController {
      */
     @PostMapping(value = "/createSorting")
     @ApiOperation(value = "生成分拣单", notes = "生成分拣单")
-    public ResponseEntity createSorting(@RequestBody @Validated List<SmtSorting> sortingList) {
+    public ResponseEntity createSorting(@RequestBody @Validated List<PtlSortingDTO> ptlSortingDTOList) {
         try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.createSorting(sortingList));
+            return ControllerUtil.returnCRUD(electronicTagStorageService.createSorting(ptlSortingDTOList));
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
@@ -47,9 +44,9 @@ public class ElectronicTagStorageController {
      */
     @PostMapping(value = "/createLoading")
     @ApiOperation(value = "生成上料单", notes = "生成上料单")
-    public ResponseEntity createLoading(@RequestBody @Validated List<SmtLoading> smtLoadingList) {
+    public ResponseEntity createLoading(@RequestBody @Validated List<PtlLoading> ptlLoadingList) {
         try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.createLoading(smtLoadingList));
+            return ControllerUtil.returnCRUD(electronicTagStorageService.createLoading(ptlLoadingList));
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
@@ -62,29 +59,17 @@ public class ElectronicTagStorageController {
      * @throws Exception
      */
     @PostMapping(value = "/sendElectronicTagStorage")
-    @ApiOperation(value = "拣取发送亮灯", notes = "拣取发送亮灯")
-    public ResponseEntity<List<SmtSortingDto>> sendElectronicTagStorage(@RequestParam(value = "sortingCode") String sortingCode) {
+    @ApiOperation(value = "激活（拣取发送亮灯）", notes = "激活（拣取发送亮灯）")
+    public ResponseEntity<List<PtlSortingDto>> sendElectronicTagStorage(
+            @RequestParam(value = "任务号") String sortingCode,
+            @RequestParam(value = "仓库区域Id") Long warehouseAreaId) {
         try {
-            List<SmtSortingDto> smtSortingDtoList = electronicTagStorageService.sendElectronicTagStorage(sortingCode);
-            return ControllerUtil.returnDataSuccess(smtSortingDtoList, smtSortingDtoList.size());
+            List<PtlSortingDto> ptlSortingDtoList = electronicTagStorageService.sendElectronicTagStorage(sortingCode, warehouseAreaId);
+            return ControllerUtil.returnDataSuccess(ptlSortingDtoList, ptlSortingDtoList.size());
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
     }
-
-    /**
-     * 上料
-     *
-     * @param materialCode
-     * @param
-     * @return
-     */
-    @PostMapping(value="/sendPlaceMaterials")
-    @ApiOperation(value = "上料发送亮灯(作废)",notes = "上料发送亮灯(作废)")
-    public ResponseEntity<SmtElectronicTagStorageDto> sendPlaceMaterials(@RequestParam(value = "materialCode") String materialCode) {
-        SmtElectronicTagStorageDto smtElectronicTagStorageDto = electronicTagStorageService.sendPlaceMaterials(materialCode);
-        return ControllerUtil.returnDataSuccess(smtElectronicTagStorageDto, StringUtils.isEmpty(smtElectronicTagStorageDto) ? 0 : 1);
-           }
 
     /**
      * 批量删除分拣单
@@ -104,10 +89,10 @@ public class ElectronicTagStorageController {
 
     @PostMapping("/sendLoadingElectronicTagStorage")
     @ApiOperation(value = "上料发送亮灯", notes = "上料发送亮灯")
-    public ResponseEntity<List<SmtLoadingDetDto>> sendLoadingElectronicTagStorage(@RequestParam(value = "loadingCode") String loadingCode) {
+    public ResponseEntity<List<PtlLoadingDetDto>> sendLoadingElectronicTagStorage(@RequestParam(value = "loadingCode") String loadingCode) {
         try {
-            List<SmtLoadingDetDto> smtLoadingDetDtoList =electronicTagStorageService.sendLoadingElectronicTagStorage(loadingCode);
-            return ControllerUtil.returnDataSuccess(smtLoadingDetDtoList, smtLoadingDetDtoList.size());
+            List<PtlLoadingDetDto> ptlLoadingDetDtoList =electronicTagStorageService.sendLoadingElectronicTagStorage(loadingCode);
+            return ControllerUtil.returnDataSuccess(ptlLoadingDetDtoList, ptlLoadingDetDtoList.size());
         } catch (Exception e) {
             e.printStackTrace();
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
@@ -116,9 +101,9 @@ public class ElectronicTagStorageController {
 
     @PostMapping("/submitLoadingDet")
     @ApiOperation(value = "提交上料单发送灭灯", notes = "提交上料单发送灭灯")
-    public ResponseEntity submitLoadingDet(@RequestBody @Validated(value = SmtLoadingDetDto.submit.class) List<SmtLoadingDetDto> smtLoadingDetDtoList) {
+    public ResponseEntity submitLoadingDet(@RequestBody @Validated(value = PtlLoadingDetDto.submit.class) List<PtlLoadingDetDto> ptlLoadingDetDtoList) {
         try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.submitLoadingDet(smtLoadingDetDtoList));
+            return ControllerUtil.returnCRUD(electronicTagStorageService.submitLoadingDet(ptlLoadingDetDtoList));
         } catch (Exception e) {
             e.printStackTrace();
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
@@ -138,9 +123,9 @@ public class ElectronicTagStorageController {
 
     @PostMapping("/comfirmLoadingDet")
     @ApiOperation(value = "确认单个物料上料发送灭灯", notes = "确认单个物料上料发送灭灯")
-    public ResponseEntity comfirmLoadingDet(@RequestBody @Validated(value = SmtLoadingDetDto.submit.class) SmtLoadingDetDto smtLoadingDetDto) {
+    public ResponseEntity comfirmLoadingDet(@RequestBody @Validated(value = PtlLoadingDetDto.submit.class) PtlLoadingDetDto ptlLoadingDetDto) {
         try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.comfirmLoadingDet(smtLoadingDetDto));
+            return ControllerUtil.returnCRUD(electronicTagStorageService.comfirmLoadingDet(ptlLoadingDetDto));
         } catch (Exception e) {
             e.printStackTrace();
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
@@ -149,10 +134,10 @@ public class ElectronicTagStorageController {
 
     @GetMapping(value = "/sendElectronicTagStorageTest")
     @ApiOperation(value = "拣取发送灭灯测试", notes = "拣取发送灭灯测试")
-    public ResponseEntity<List<SmtSortingDto>> sendElectronicTagStorageTest(@RequestParam(value = "sortingCode") String sortingCode) {
+    public ResponseEntity<List<PtlSortingDto>> sendElectronicTagStorageTest(@RequestParam(value = "sortingCode") String sortingCode) {
         try {
-            List<SmtSortingDto> smtSortingDtoList = electronicTagStorageService.sendElectronicTagStorageTest(sortingCode);
-            return ControllerUtil.returnDataSuccess(smtSortingDtoList, smtSortingDtoList.size());
+            List<PtlSortingDto> ptlSortingDtoList = electronicTagStorageService.sendElectronicTagStorageTest(sortingCode);
+            return ControllerUtil.returnDataSuccess(ptlSortingDtoList, ptlSortingDtoList.size());
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }

@@ -1,13 +1,11 @@
 package com.fantechs.provider.client.server;
 
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
-import com.fantechs.common.base.electronic.dto.SmtLoadingDetDto;
-import com.fantechs.common.base.electronic.dto.SmtSortingDto;
-import com.fantechs.common.base.electronic.entity.SmtLoading;
-import com.fantechs.common.base.electronic.entity.SmtLoadingDet;
-import com.fantechs.common.base.electronic.entity.SmtSorting;
+import com.fantechs.common.base.electronic.dto.PtlLoadingDetDto;
+import com.fantechs.common.base.electronic.dto.PtlSortingDto;
+import com.fantechs.common.base.electronic.entity.PtlLoading;
+import com.fantechs.common.base.electronic.entity.PtlSorting;
+import com.fantechs.provider.client.dto.PtlSortingDTO;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -15,15 +13,14 @@ import java.util.List;
  */
 public interface ElectronicTagStorageService {
 
-    List<SmtSortingDto> sendElectronicTagStorage(String sortingCode) throws Exception;
-    SmtElectronicTagStorageDto sendPlaceMaterials(String materialCode);
+    List<PtlSortingDto> sendElectronicTagStorage(String sortingCode, Long warehouseAreaId) throws Exception;
     int batchSortingDelete(List<String> sortingList) throws Exception;
-    int createSorting(List<SmtSorting> sortingList) throws Exception;
-    int createLoading(List<SmtLoading> smtLoadingList)throws Exception;
-    List<SmtLoadingDetDto> sendLoadingElectronicTagStorage(String loadingCode) throws Exception;
-    int submitLoadingDet(List<SmtLoadingDetDto> smtLoadingDetDtoList) throws Exception;
+    int createSorting(List<PtlSortingDTO> ptlSortingDTOList) throws Exception;
+    int createLoading(List<PtlLoading> ptlLoadingList)throws Exception;
+    List<PtlLoadingDetDto> sendLoadingElectronicTagStorage(String loadingCode) throws Exception;
+    int submitLoadingDet(List<PtlLoadingDetDto> ptlLoadingDetDtoList) throws Exception;
     int revokeLoading(String loadingCode) throws Exception;
-    int comfirmLoadingDet(SmtLoadingDetDto smtLoadingDetDto) throws Exception;
-    List<SmtSortingDto> sendElectronicTagStorageTest(String sortingCode) throws Exception;
+    int comfirmLoadingDet(PtlLoadingDetDto ptlLoadingDetDto) throws Exception;
+    List<PtlSortingDto> sendElectronicTagStorageTest(String sortingCode) throws Exception;
     String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception;
 }

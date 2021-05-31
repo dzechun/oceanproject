@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.electronic.mapper.PtlSortingMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.PtlSorting">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sorting_id" jdbcType="BIGINT" property="sortingId" />
+        <result column="sorting_code" jdbcType="VARCHAR" property="sortingCode" />
+        <result column="source_sys" jdbcType="VARCHAR" property="sourceSys" />
+        <result column="source_sys_id" jdbcType="VARCHAR" property="sourceSysId" />
+        <result column="order_type" jdbcType="TINYINT" property="orderType" />
+        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+        <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+        <result column="sorting_qty" jdbcType="DECIMAL" property="sortingQty" />
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+        <result column="whole_or_scattered" jdbcType="TINYINT" property="wholeOrScattered" />
+        <result column="if_already_print" jdbcType="TINYINT" property="ifAlreadyPrint" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_detele" jdbcType="TINYINT" property="isDetele" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.electronic.dto.PtlSortingDto">
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="electronic_tag_id" jdbcType="VARCHAR" property="electronicTagId"/>
+        <result column="equipment_area_id" jdbcType="VARCHAR" property="equipmentAreaId"/>
+        <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_id" jdbcType="VARCHAR" property="materialId" />
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+        <result column="create_user_code" jdbcType="VARCHAR" property="createUserCode"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserCode" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    `ssl`.sorting_id,
+	`ssl`.sorting_code,
+	`ssl`.source_sys,
+	`ssl`.source_sys_id,
+	`ssl`.order_type,
+	`ssl`.related_order_code,
+	`ssl`.material_code,
+	`ssl`.warehouse_id,
+	`ssl`.storage_id,
+	`ssl`.sorting_qty,
+	`ssl`.packing_unit_name,
+	`ssl`.whole_or_scattered,
+	`ssl`.if_already_print,
+	`ssl`.status,
+	`ssl`.org_id,
+	`ssl`.remark,
+	`ssl`.create_user_id,
+	`ssl`.create_time,
+	`ssl`.modified_user_id,
+	`ssl`.modified_time,
+	`ssl`.remark
+  </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        SELECT <include refid="Base_Column_List"/>,
+        su.user_code as create_user_code,
+        sus.user_code as modified_user_code,
+        ss.storage_code,
+        ss.storage_name,
+        sw.warehouse_code,
+        sw.warehouse_name,
+        sm.material_id,
+        sm.material_desc,
+        sm.material_name,
+        sm.version,
+        sets.electronic_tag_id,
+        sets.equipment_area_id,
+        swa.warehouse_area_name,
+        bo.organization_name
+        FROM ptl_sorting `ssl`
+        LEFT JOIN ocean_v2.sys_user su ON ssl.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON ssl.modified_user_id = sus.user_id
+        LEFT JOIN base_material sm ON ssl.material_id= sm.material_id
+        LEFT JOIN base_storage ss ON ssl.storage_id = ss.storage_id
+        LEFT JOIN base_warehouse sw ON ss.warehouse_id = sw.warehouse_id
+        LEFT JOIN base_warehouse_area swa ON ss.warehouse_area_id = swa.warehouse_area_id
+        LEFT JOIN ptl_electronic_tag_storage sets ON sets.storage_id = ss.storage_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON `ssl`.org_id = bo.organization_id
+        <where>
+            <if test="sortingCode != null and sortingCode!=''">
+                and `ssl`.sorting_code like CONCAT('%', #{sortingCode}, '%')
+            </if>
+            <if test="relatedOrderCode != null and relatedOrderCode!=''">
+                and `ssl`.related_order_code like CONCAT('%', #{relatedOrderCode}, '%')
+            </if>
+            <if test="orderType!=null and orderType!=''">
+                and `ssl`.order_type=#{orderType}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and sm.material_code = #{materialCode}
+            </if>
+            <if test="materialDesc != null and materialDesc != ''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="warehouseName != null and warehouseName != ''">
+                and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="warehouseAreaId != null and warehouseAreaId!=''">
+                and swa.warehouse_area_id=#{warehouseAreaId}
+            </if>
+            <if test="storageCode != null and storageCode != ''">
+                and ss.storage_code = #{storageCode}
+            </if>
+            <if test="sortingId != null">
+                and `ssl`.sorting_id=#{sortingId}
+            </if>
+            <if test="electronicTagId != null and electronicTagId!=''">
+                and sets.electronic_tag_id=#{electronicTagId}
+            </if>
+            <if test="equipmentId != null and equipmentId!=''">
+                and sets.equipment_id=#{equipmentId}
+            </if>
+            <if test="equipmentAreaId != null and equipmentAreaId!=''">
+                and sets.equipment_area_id = #{equipmentAreaId}
+            </if>
+            <if test="status!=null and status!=''">
+                and `ssl`.status=#{status}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and `ssl`.create_time between #{startTime} and #{endTime}
+            </if>
+            <if test="workerName != null and workerName != ''">
+                and su.user_code = #{workerName}
+            </if>
+            <if test="notEqualSortingCode!=null and notEqualSortingCode!=''">
+                and `ssl`.sorting_code != #{notEqualSortingCode}
+            </if>
+            <if test="notEqualstatus != null and notEqualstatus != ''">
+                and ssl.status != #{notEqualstatus}
+            </if>
+        </where>
+        <if test="groupBySortingCode != null and groupBySortingCode!=''">
+            group by `ssl`.sorting_code
+        </if>
+        order by field(ssl.status,1,0,2),ssl.create_time desc
+    </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" open="" close="" index="index" separator=";">
+            update ptl_sorting
+            <set>
+                <if test="item.sortingCode != null and item.sortingCode!=''">
+                    sorting_code=#{item.sortingCode},
+                </if>
+                <if test="item.materialCode!=null and item.materialCode!=''">
+                    material_code=#{item.materialCode},
+                </if>
+                <if test="item.sortingQty!=null and item.sortingQty!=''">
+                    sorting_qty=#{item.sortingQty},
+                </if>
+                <if test="item.status!=null and item.status!=''">
+                    status=#{item.status},
+                </if>
+            </set>
+            where sorting_id=#{item.sortingId}
+        </foreach>
+    </update>
+
+    <delete id="delBatchBySortingCode" parameterType="list">
+        delete from ptl_sorting  where sorting_code in
+        <foreach collection="list" index="index" item="item" open="("  separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

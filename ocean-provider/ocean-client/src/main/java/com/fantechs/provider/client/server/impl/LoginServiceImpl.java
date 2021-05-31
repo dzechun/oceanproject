@@ -1,11 +1,11 @@
 package com.fantechs.provider.client.server.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.electronic.dto.SmtClientManageDto;
-import com.fantechs.common.base.electronic.dto.SmtEquipmentDto;
-import com.fantechs.common.base.electronic.entity.SmtClientManage;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtClientManage;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtEquipment;
+import com.fantechs.common.base.electronic.dto.PtlClientManageDto;
+import com.fantechs.common.base.electronic.dto.PtlEquipmentDto;
+import com.fantechs.common.base.electronic.entity.PtlClientManage;
+import com.fantechs.common.base.electronic.entity.search.SearchPtlClientManage;
+import com.fantechs.common.base.electronic.entity.search.SearchPtlEquipment;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -27,33 +27,33 @@ public class LoginServiceImpl implements LoginService {
     private ElectronicTagFeignApi electronicTagFeignApi;
 
     @Override
-    public List<SmtEquipmentDto> login(@RequestBody SmtClientManage smtClientManage, HttpServletRequest request) {
+    public List<PtlEquipmentDto> login(@RequestBody PtlClientManage ptlClientManage, HttpServletRequest request) {
 
         //通过登录密钥查询客户端信息
-        SearchSmtClientManage searchSmtClientManage = new SearchSmtClientManage();
-        searchSmtClientManage.setSecretKey(smtClientManage.getSecretKey());
-        ResponseEntity<List<SmtClientManageDto>> clientManageList = electronicTagFeignApi.findClientManageList(searchSmtClientManage);
+        SearchPtlClientManage searchPtlClientManage = new SearchPtlClientManage();
+        searchPtlClientManage.setSecretKey(ptlClientManage.getSecretKey());
+        ResponseEntity<List<PtlClientManageDto>> clientManageList = electronicTagFeignApi.findClientManageList(searchPtlClientManage);
         if(StringUtils.isEmpty(clientManageList)){
             throw  new BizErrorException(ErrorCodeEnum.GL99990100);
         }
 
-        SmtClientManageDto smtClientManageDto = clientManageList.getData().get(0);
-        List<SmtEquipmentDto> equipmentDtoList=new LinkedList<>();
+        PtlClientManageDto ptlClientManageDto = clientManageList.getData().get(0);
+        List<PtlEquipmentDto> equipmentDtoList=new LinkedList<>();
 
-        if (StringUtils.isNotEmpty(smtClientManageDto)) {
+        if (StringUtils.isNotEmpty(ptlClientManageDto)) {
             //登录成功更新客户端的登录状态和登录时间
-            smtClientManageDto.setLoginIp(TokenUtil.getIpAddress(request));
-            smtClientManageDto.setLoginTime(new Date());
-            smtClientManageDto.setOnlineStatus("1");
-            smtClientManageDto.setLoginTag((byte) 1);
-            electronicTagFeignApi.updateClientManage(smtClientManageDto);
+            ptlClientManageDto.setLoginIp(TokenUtil.getIpAddress(request));
+            ptlClientManageDto.setLoginTime(new Date());
+            ptlClientManageDto.setOnlineStatus("1");
+            ptlClientManageDto.setLoginTag((byte) 1);
+            electronicTagFeignApi.updateClientManage(ptlClientManageDto);
 
 
             //根据客户端id查询电子标签信息
-            SearchSmtEquipment searchSmtEquipment = new SearchSmtEquipment();
-            searchSmtEquipment.setEquipmentType((byte) 0);
-            searchSmtEquipment.setClientId(smtClientManageDto.getClientId());
-            equipmentDtoList = electronicTagFeignApi.findEquipmentList(searchSmtEquipment).getData();
+            SearchPtlEquipment searchPtlEquipment = new SearchPtlEquipment();
+            searchPtlEquipment.setEquipmentType((byte) 0);
+            searchPtlEquipment.setClientId(ptlClientManageDto.getClientId());
+            equipmentDtoList = electronicTagFeignApi.findEquipmentList(searchPtlEquipment).getData();
 //            //根据电子标签信息查询储位信息
 //            if (StringUtils.isNotEmpty(equipmentDtoList)){
 //                SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
