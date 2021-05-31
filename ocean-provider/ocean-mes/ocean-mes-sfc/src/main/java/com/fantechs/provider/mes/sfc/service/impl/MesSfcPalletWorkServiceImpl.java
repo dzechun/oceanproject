@@ -475,9 +475,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
                 palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
                 palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
-                palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons));
-                palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons));
-                palletAutoAsnDto.setProductPalletId(item.getProductPalletId());
+                palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
+                palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
                 inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
             }
         }catch (Exception e){
@@ -561,9 +560,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
             palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
             palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
-            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons));
-            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons));
-            palletAutoAsnDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
+            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
         mesSfcProductPallet.setModifiedTime(new Date());
