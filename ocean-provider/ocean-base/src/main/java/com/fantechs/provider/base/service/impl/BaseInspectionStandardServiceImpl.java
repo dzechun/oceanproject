@@ -90,6 +90,10 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandard.getBaseInspectionStandardDets();
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets) {
+                if(baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor())==-1
+                  ||baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor())==0){
+                    throw new BizErrorException("规格上限必须大于规格下限");
+                }
                 baseInspectionStandardDet.setInspectionStandardId(baseInspectionStandard.getInspectionStandardId());
                 baseInspectionStandardDet.setCreateUserId(user.getUserId());
                 baseInspectionStandardDet.setCreateTime(new Date());

@@ -44,6 +44,9 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
 
     @Override
     public List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
+        if(StringUtils.isEmpty(searchBaseInspectionExemptedList.getMaterialCode())){
+            throw new BizErrorException("产品料号不能为空");
+        }
 
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
@@ -64,14 +67,19 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
 
         Example example1 = new Example(BaseMaterialSupplier.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("materialId",baseMaterials.get(0).getMaterialId()).andNotIn("supplierId",idList);
+        criteria1.andEqualTo("materialId",baseMaterials.get(0).getMaterialId());
+        if(idList.size()>0){
+            criteria1.andNotIn("supplierId",idList);
+        }
         List<BaseMaterialSupplier> baseMaterialSuppliers = baseMaterialSupplierMapper.selectByExample(example1);
 
+        if(StringUtils.isEmpty(baseMaterialSuppliers)){
+            throw new BizErrorException("没有符合条件的客户");
+        }
+
         ArrayList<Long> ids = new ArrayList();
-        if(StringUtils.isNotEmpty(baseMaterialSuppliers)){
-            for (BaseMaterialSupplier baseMaterialSupplier: baseMaterialSuppliers){
-                ids.add(baseMaterialSupplier.getSupplierId());
-            }
+        for (BaseMaterialSupplier baseMaterialSupplier: baseMaterialSuppliers){
+            ids.add(baseMaterialSupplier.getSupplierId());
         }
         Example example2 = new Example(BaseSupplier.class);
         Example.Criteria criteria2 = example2.createCriteria();

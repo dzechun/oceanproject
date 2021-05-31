@@ -39,6 +39,12 @@ public class QmsInspectionOrderController {
     @Resource
     private QmsHtInspectionOrderService qmsHtInspectionOrderService;
 
+    @ApiOperation("PDA提交")
+    @PostMapping("/PDASubmit")
+    public ResponseEntity PDASubmit(@ApiParam(value = "检验单id",required = true) @RequestParam @NotNull(message="检验单id不能为空") Long inspectionOrderId) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.writeBack(inspectionOrderId));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsInspectionOrder qmsInspectionOrder) {

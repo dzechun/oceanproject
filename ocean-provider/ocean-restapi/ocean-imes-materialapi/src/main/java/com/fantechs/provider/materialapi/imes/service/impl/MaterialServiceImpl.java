@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -45,14 +46,15 @@ public class MaterialServiceImpl implements MaterialService {
 
 
     @Override
-    public String saveWorkOrder(MesPmWorkOrder mesPmWorkOrder) {
-        String check = check(mesPmWorkOrder);
+    public String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto) {
+        String check = check(restapiWorkOrderApiDto.getMesPmWorkOrder());
         if(check != "checked"){
             return check;
         }
-        pmFeignApi.updateById(mesPmWorkOrder);
+        pmFeignApi.updateById(restapiWorkOrderApiDto.getMesPmWorkOrder());
         return "success";
     }
+
 
     public String check(MesPmWorkOrder mesPmWorkOrder) {
         if(StringUtils.isEmpty(mesPmWorkOrder))
