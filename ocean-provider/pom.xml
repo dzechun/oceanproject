@@ -18,8 +18,8 @@
         <module>ocean-fileserver</module>  <!-- 文件服务 -->
         <module>ocean-security</module>    <!-- 用户认证中心 -->
         <module>ocean-quartz</module>    <!-- 定时任务调度器 -->
-        <module>ocean-electronic-tag</module> <!-- 电子标签 -->
-        <module>ocean-client</module>     <!-- 客户端服务 -->
+<!--        <module>ocean-electronic-tag</module> &lt;!&ndash; 电子标签 &ndash;&gt;-->
+<!--        <module>ocean-client</module>     &lt;!&ndash; 客户端服务 &ndash;&gt;-->
         <module>ocean-restapi</module><!-- API接口服务 -->
         <module>ocean-mes</module>    <!-- mes服务 -->
         <module>ocean-wms</module>    <!-- wms服务 -->
