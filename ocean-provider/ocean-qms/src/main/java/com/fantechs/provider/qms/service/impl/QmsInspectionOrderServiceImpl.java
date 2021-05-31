@@ -79,6 +79,28 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     @Override
+    public QmsInspectionOrder selectByKey(Object key) {
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(key);
+        SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
+        searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+        if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
+            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+                //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+                if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
+                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
+                    qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                    qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                    qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                }
+            }
+            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
+        }
+
+        return qmsInspectionOrder;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
