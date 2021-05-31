@@ -399,6 +399,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setOrderStatus((byte)1);
         record.setAsnCode(CodeUtils.getId("ASN-"));
         record.setCreateTime(new Date());
+        record.setOrderTypeId((long)1);
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
@@ -542,12 +543,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(StringUtils.isEmpty(wmsInAsnOrder)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
+            wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getProductPalletId());
             Example example = new Example(WmsInAsnOrderDet.class);
             example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",palletAutoAsnDto.getMaterialId()).andEqualTo("batchCode",palletAutoAsnDto.getBatchCode());
             WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectOneByExample(example);
             if(StringUtils.isNotEmpty(wms)){
                 wms.setPackingQty(wms.getPackingQty().add(palletAutoAsnDto.getPackingQty()));
-                wms.setPutawayQty(wms.getActualQty().add(palletAutoAsnDto.getPackingQty()));
+                wms.setActualQty(wms.getActualQty().add(palletAutoAsnDto.getPackingQty()));
                 wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
             }else{
                 wms = palletAutoAsnDto;
@@ -562,6 +564,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             //更新库存
             int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId());
             //新增上架作业单
+            wms.setActualQty(palletAutoAsnDto.getActualQty());
             res = this.createJobOrder(wmsInAsnOrder,wms);
             return 1;
         }else{
@@ -574,8 +577,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .createTime(new Date())
                     .createUserId(sysUser.getUserId())
                     .orderStatus((byte)3)
+                    .orderTypeId((long)106)
                     .startReceivingDate(new Date())
                     .endReceivingDate(new Date())
+                    .productPalletId(palletAutoAsnDto.getProductPalletId())
                     .build();
             int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
             if(num<1){

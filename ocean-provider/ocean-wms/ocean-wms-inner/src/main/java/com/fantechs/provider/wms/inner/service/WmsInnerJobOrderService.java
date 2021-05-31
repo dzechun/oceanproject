@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -49,9 +50,9 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
-    String checkBarcode(String barCode);
+    BigDecimal checkBarcode(String barCode,Long jobOrderDetId);
 
-    WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId);
+    WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty);
 
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
 

@@ -4,7 +4,9 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCarton;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @FeignClient(name = "ocean-mes-sfc")
@@ -54,4 +57,11 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcPalletWork/updateMoveStatus")
     ResponseEntity<List<MesSfcProductCartonDto>> updateMoveStatus(@ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId);
 
+    @ApiOperation("工单条码查询栈板")
+    @PostMapping("/mesSfcProductPalletDet/findList")
+    ResponseEntity<List<MesSfcProductPalletDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcProductPalletDet searchMesSfcProductPalletDet);
+
+    @ApiOperation("获取栈板详情")
+    @PostMapping("/mesSfcProductPallet/detail")
+    ResponseEntity<MesSfcProductPallet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
 }

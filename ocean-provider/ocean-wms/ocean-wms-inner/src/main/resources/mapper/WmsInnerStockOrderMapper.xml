@@ -5,15 +5,16 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="inventory_verification_id" jdbcType="BIGINT" property="inventoryVerificationId" />
-    <result column="inventory_verification_code" jdbcType="VARCHAR" property="inventoryVerificationCode" />
+    <id column="stock_order_id" jdbcType="BIGINT" property="stockOrderId" />
+    <result column="stock_order_code" jdbcType="VARCHAR" property="stockOrderCode" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
     <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
-    <result column="inventory_verification_type" jdbcType="TINYINT" property="inventoryVerificationType" />
+    <result column="stock_type" jdbcType="TINYINT" property="stockType" />
     <result column="project_type" jdbcType="TINYINT" property="projectType" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="inventory_verification_ mode" jdbcType="TINYINT" property="inventoryVerificationMode" />
-    <result column="blind" jdbcType="VARCHAR" property="blind" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="stock_mode" jdbcType="TINYINT" property="stockMode" />
+    <result column="if_blind_stock" jdbcType="TINYINT" property="ifBlindStock" />
     <result column="max_storage_count" jdbcType="INTEGER" property="maxStorageCount" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -28,15 +29,16 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
   <sql id="Base_Column_List">
-    wiv.inventory_verification_id,
-    wiv.inventory_verification_code,
+    wiv.stock_order_id,
+    wiv.stock_order_code,
+wiv.material_owner_id,
 wiv.related_order_code,
-wiv.inventory_verification_type,
+wiv.stock_type,
 wiv.project_type,
 wiv.warehouse_id,
-wiv.status,
-wiv.inventory_verification_ mode,
-wiv.blind,
+wiv.order_status,
+wiv.stock_mode,
+wiv.if_blind_stock,
 wiv.max_storage_count,
 wiv.remark,
 wiv.organization_id,
@@ -46,7 +48,8 @@ wiv.modified_user_id,
 wiv.modified_time
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    SELECT <include refid="Base_Column_List"/>,sw.warehouse_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM wms_inventory_verification wiv
+    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,sw.warehouse_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM wms_inventory_verification wiv
+    LEFT JOIN base_material_owner bmo ON wiv.material_owner_id=bmo.material_owner_id
     LEFT JOIN smt_warehouse sw ON wiv.warehouse_id = sw.warehouse_id
     LEFT JOIN ocean.sys_user su  ON wiv.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wiv.modified_user_id = sus.user_id

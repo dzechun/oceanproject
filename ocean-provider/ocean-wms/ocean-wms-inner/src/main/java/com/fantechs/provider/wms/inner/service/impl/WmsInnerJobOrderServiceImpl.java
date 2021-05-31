@@ -36,6 +36,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIXDom;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -65,6 +66,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private InBarcodeUtil inBarcodeUtil;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -84,7 +87,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (String id : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(id);
-            if(wmsInnerJobOrder.getOrderStatus()==(byte)3){
+            if(wmsInnerJobOrder.getOrderStatus()>(byte)2){
                 throw new BizErrorException("单据已分配完成");
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
@@ -120,7 +123,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //分配库存
                 num+=this.updateInventory(wmsInnerJobOrderDto,wmsInnerJobOrderDetDto);
             }
-            wmsInnerJobOrder.setOrderStatus((byte)3);
+            //待激活
+            wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
+            wmsInnerJobOrder.setOrderStatus((byte)6);
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
@@ -191,12 +196,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //更新表头状态
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
-                        .orderStatus((byte)3)
+                        //待激活
+                        .orderStatus((byte)6)
+                        .workerId(sysUser.getUserId())
                         .build());
             }else{
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
                         .orderStatus((byte)2)
+                        .workerId(sysUser.getUserId())
                         .build());
             }
         }
@@ -309,6 +317,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (String id : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(id);
+            if(wmsInnerJobOrder.getStatus()==6){
+                wmsInnerJobOrder.setStatus((byte)3);
+            }
             if(wmsInnerJobOrder.getOrderStatus()<(byte)3){
                 throw new BizErrorException("未分配完成,无法全部上架");
             }
@@ -362,6 +373,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                     .orderStatus((byte)5)
+                    .workerId(sysUser.getUserId())
                     .jobOrderId(wmsInnerJobOrder.getJobOrderId())
                     .actualQty(resultQty)
                     .workStartTime(new Date())
@@ -382,6 +394,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : wmsInPutawayOrderDets) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInPutawayOrderDet.getJobOrderId());
+            if(wmsInnerJobOrder.getStatus()==6){
+                wmsInnerJobOrder.setStatus((byte)3);
+            }
             if(wmsInnerJobOrder.getOrderStatus()==(byte)5){
                 throw new BizErrorException("单据确认已完成");
             }
@@ -443,6 +458,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(ws.getActualQty())){
                     ws.setActualQty(new BigDecimal("0.00"));
                 }
+                ws.setWorkerId(sysUser.getUserId());
                 ws.setActualQty(ws.getActualQty().add(aqty));
                 ws.setModifiedUserId(sysUser.getUserId());
                 ws.setModifiedTime(new Date());
@@ -455,6 +471,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(ws.getActualQty())){
                     ws.setActualQty(new BigDecimal("0.00"));
                 }
+                ws.setWorkerId(sysUser.getUserId());
                 ws.setActualQty(ws.getActualQty().add(aqty));
                 ws.setOrderStatus((byte)4);
                 ws.setModifiedUserId(sysUser.getUserId());
@@ -474,14 +491,23 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         return num;
     }
 
+    /**
+     * 校验条码
+     * @param barCode
+     * @return 包装数量
+     */
     @Override
-    public String checkBarcode(String barCode) {
-        //查询是否存在条码
-        Map<String,Object> map = InBarcodeUtil.checkBarCode(barCode);
-//        if(StringUtils.isEmpty(map)){
-//            throw new BizErrorException(ErrorCodeEnum.PDA40012000);
-//        }
-        return null;
+    public BigDecimal checkBarcode(String barCode,Long jobOrderDetId) {
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        //获取完工入库记录的工单
+        WmsInAsnOrderDet wms = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
+                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                .build()).getData().get(0);
+        BigDecimal qty = InBarcodeUtil.checkBarCode(wms.getSourceOrderId(),barCode);
+        return qty;
     }
 
     /**
@@ -492,8 +518,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId) {
+    public WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId,BigDecimal qty) {
         SysUser sysUser = currentUser();
+        if(StringUtils.isEmpty(qty)){
+            throw new BizErrorException("上架数量不能小于1");
+        }
         //通过储位编码查询储位id
         ResponseEntity<List<BaseStorage>> list = baseFeignApi.findList(SearchBaseStorage.builder()
                 .storageCode(storageCode)
@@ -503,20 +532,30 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"库位查询失败");
         }
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
+            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
+        }
+        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
+            throw new BizErrorException("上架数量不能大于分配数量");
+        }
         BaseStorage baseStorage = list.getData().get(0);
 
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
         WmsInnerJobOrderDetDto oldDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-
-        int num = wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+        Byte status = 4;
+        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
+            status = (byte)5;
+        }
+        WmsInnerJobOrderDet wms =WmsInnerJobOrderDet.builder()
                 .jobOrderDetId(jobOrderDetId)
                 .inStorageId(baseStorage.getStorageId())
-                .actualQty(wmsInnerJobOrderDet.getDistributionQty())
-                .orderStatus((byte)5)
+                .actualQty(qty)
+                .orderStatus(status)
                 .modifiedTime(new Date())
                 .modifiedUserId(sysUser.getUserId())
-                .build());
+                .build();
+        int num = wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wms);
         if(num==0){
             throw new BizErrorException("上架失败");
         }
@@ -534,7 +573,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
 
 
-        WmsInnerJobOrderDet wms= new WmsInnerJobOrderDet();
+        wms= new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
         int count = wmsInPutawayOrderDetMapper.selectCount(wms);
         wms.setOrderStatus((byte)5);
@@ -549,6 +588,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
             ws.setWorkEndtTime(new Date());
+            ws.setWorkerId(sysUser.getUserId());
             num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }else{
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
@@ -557,6 +597,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setActualQty(resQty);
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
+            ws.setWorkerId(sysUser.getUserId());
             if(StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())){
                 ws.setWorkStartTime(new Date());
             }
@@ -606,7 +647,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int activation(Long jobOrderId) {
+        WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
+        if(StringUtils.isEmpty(wmsInnerJobOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
         Example example = new Example(WmsInnerJobOrderReMspp.class);
         example.createCriteria().andEqualTo("jobOrderId",jobOrderId);
         WmsInnerJobOrderReMspp wmsInnerJobOrderReMspp  = wmsInnerJobOrderReMsppMapper.selectOneByExample(example);
@@ -618,7 +664,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(responseEntity.getCode()!=0){
             throw new BizErrorException("激活失败");
         }
-        return 1;
+        //更新待作业状态
+        wmsInnerJobOrder.setStatus((byte)3);
+        int num = wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+        return num;
     }
 
     @Override
