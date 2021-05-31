@@ -44,6 +44,9 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
 
     @Override
     public List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
+        if(StringUtils.isEmpty(searchBaseInspectionExemptedList.getMaterialCode())){
+            throw new BizErrorException("产品料号不能为空");
+        }
 
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
