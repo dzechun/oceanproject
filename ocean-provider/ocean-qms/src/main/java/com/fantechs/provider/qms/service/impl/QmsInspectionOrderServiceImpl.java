@@ -30,10 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -76,6 +74,37 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         return qmsInspectionOrders;
+    }
+
+    @Override
+    public List<QmsInspectionOrderDet> getNewInspectionOrderDet(Long inspectionOrderId, BigDecimal orderQty) {
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
+        if (StringUtils.isEmpty(qmsInspectionOrder)) {
+            throw new BizErrorException("不存在该检验单");
+        }
+
+        SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
+        searchQmsInspectionOrderDet.setInspectionOrderId(inspectionOrderId);
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+        if(StringUtils.isNotEmpty(qmsInspectionOrderDets)) {
+            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets) {
+                //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+                if (qmsInspectionOrderDet.getSampleProcessType() != null && qmsInspectionOrderDet.getSampleProcessType() == (byte) 4) {
+                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), orderQty).getData();
+                    qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                    qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                    qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                    //清空样本值
+                    Example example = new Example(QmsInspectionOrderDetSample.class);
+                    Example.Criteria criteria = example.createCriteria();
+                    criteria.andEqualTo("inspectionOrderDetId", qmsInspectionOrderDet.getInspectionOrderDetId());
+                    qmsInspectionOrderDetSampleMapper.deleteByExample(example);
+                }
+            }
+            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
+        }
+
+        return qmsInspectionOrderDets;
     }
 
     @Override

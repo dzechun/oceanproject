@@ -2,6 +2,7 @@ package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -76,6 +78,14 @@ public class QmsInspectionOrderController {
         Page<Object> page = PageHelper.startPage(searchQmsInspectionOrder.getStartPage(),searchQmsInspectionOrder.getPageSize());
         List<QmsInspectionOrder> list = qmsInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("获取新的明细")
+    @PostMapping("/getNewInspectionOrderDet")
+    public ResponseEntity<List<QmsInspectionOrderDet>> getNewInspectionOrderDet(@ApiParam(value = "检验单id",required = true)@RequestParam  @NotNull(message="检验单id不能为空") Long inspectionOrderId,
+                                                                                @ApiParam(value = "单据数量",required = true)@RequestParam  @NotNull(message="单据数量不能为空") BigDecimal orderQty) {
+        List<QmsInspectionOrderDet> list = qmsInspectionOrderService.getNewInspectionOrderDet(inspectionOrderId,orderQty);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @ApiOperation("历史列表")
