@@ -2,28 +2,25 @@ package com.fantechs.provider.client.server.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
-import com.fantechs.common.base.electronic.dto.SmtLoadingDetDto;
-import com.fantechs.common.base.electronic.dto.SmtSortingDto;
-import com.fantechs.common.base.electronic.entity.SmtLoading;
-import com.fantechs.common.base.electronic.entity.SmtLoadingDet;
-import com.fantechs.common.base.electronic.entity.SmtPaddingMaterial;
-import com.fantechs.common.base.electronic.entity.SmtSorting;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtElectronicTagStorage;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtLoading;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtLoadingDet;
-import com.fantechs.common.base.electronic.entity.search.SearchSmtSorting;
+import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.dto.PtlLoadingDetDto;
+import com.fantechs.common.base.electronic.dto.PtlSortingDto;
+import com.fantechs.common.base.electronic.entity.PtlLoading;
+import com.fantechs.common.base.electronic.entity.PtlLoadingDet;
+import com.fantechs.common.base.electronic.entity.PtlSorting;
+import com.fantechs.common.base.electronic.entity.search.SearchPtlElectronicTagStorage;
+import com.fantechs.common.base.electronic.entity.search.SearchPtlLoading;
+import com.fantechs.common.base.electronic.entity.search.SearchPtlLoadingDet;
+import com.fantechs.common.base.electronic.entity.search.SearchPtlSorting;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -54,15 +51,13 @@ import java.util.List;
  */
 @Service
 public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageService {
-    private static final Logger log = LoggerFactory.getLogger(ElectronicTagReceiver.class);
+    private static final Logger log = LoggerFactory.getLogger(ElectronicTagStorageServiceImpl.class);
     @Resource
     private FanoutSender fanoutSender;
     @Resource
     private ElectronicTagFeignApi electronicTagFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
-    @Resource
-    private InnerFeignApi innerFeignApi;
 
     @Value("${mesAPI.resApi}")
     private String resApiUrl;
@@ -74,129 +69,84 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public List<SmtSortingDto> sendElectronicTagStorage(String sortingCode) throws Exception {
+    public List<PtlSortingDto> sendElectronicTagStorage(String sortingCode, Long warehouseAreaId) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        List<SmtSortingDto> sortingDtoList = new LinkedList<>();
+        List<PtlSortingDto> sortingDtoList = new LinkedList<>();
         synchronized (ElectronicTagStorageServiceImpl.class) {
             //是否有在做单据
-            SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
-            searchSmtSorting.setStatus((byte) 1);
-            searchSmtSorting.setNotEqualSortingCode(sortingCode);
-            List<SmtSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+            SearchPtlSorting searchPtlSorting = new SearchPtlSorting();
+            searchPtlSorting.setStatus((byte) 1);
+            searchPtlSorting.setWarehouseAreaId(warehouseAreaId);
+            searchPtlSorting.setNotEqualSortingCode(sortingCode);
+            List<PtlSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchPtlSorting).getData();
             if (StringUtils.isNotEmpty(smtSortingList)) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他分拣单，请稍后再试");
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他任务单，请稍后再试");
             }
-            SearchSmtLoading searchSmtLoading = new SearchSmtLoading();
-            searchSmtLoading.setStatus((byte) 1);
-            List<SmtLoading> smtLoadingList = electronicTagFeignApi.findLoadingList(searchSmtLoading).getData();
-            if (StringUtils.isNotEmpty(smtLoadingList)) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他上料单，请稍后再试");
-            }
+//            SearchPtlLoading searchPtlLoading = new SearchPtlLoading();
+//            searchPtlLoading.setStatus((byte) 1);
+//            List<PtlLoading> ptlLoadingList = electronicTagFeignApi.findLoadingList(searchPtlLoading).getData();
+//            if (StringUtils.isNotEmpty(ptlLoadingList)) {
+//                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他上料单，请稍后再试");
+//            }
 
-            searchSmtSorting = new SearchSmtSorting();
-            searchSmtSorting.setSortingCode(sortingCode);
-            searchSmtSorting.setNotEqualstatus((byte) 2);
-            sortingDtoList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+            searchPtlSorting = new SearchPtlSorting();
+            searchPtlSorting.setSortingCode(sortingCode);
+            searchPtlSorting.setNotEqualstatus((byte) 0);
+            sortingDtoList = electronicTagFeignApi.findSortingList(searchPtlSorting).getData();
             if (StringUtils.isEmpty(sortingDtoList)) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该分拣单没有可拣料的物料");
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该任务单没有待激活的物料");
             }
         }
 
-        List<SmtElectronicTagStorageDto> list = new LinkedList<>();
-        List<SmtSorting> smtSortingList = new LinkedList<>();
-        for (SmtSorting sorting : sortingDtoList) {
+        List<PtlElectronicTagStorageDto> list = new LinkedList<>();
+        List<PtlSorting> ptlSortingList = new LinkedList<>();
+        for (PtlSorting sorting : sortingDtoList) {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
             List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
-            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+            SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+            searchPtlElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
+            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
             }
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
             }
-            smtElectronicTagStorageDtoList.get(0).setQuantity(sorting.getQuantity());
-            smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
-            list.add(smtElectronicTagStorageDtoList.get(0));
+            ptlElectronicTagStorageDtoList.get(0).setQuantity(sorting.getSortingQty());
+            ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
+            list.add(ptlElectronicTagStorageDtoList.get(0));
 
-            // 查询物料库存，库存不足不能进行拣料
-            /*SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-            searchSmtStorageInventory.setMaterialId(smtElectronicTagStorageDtoList.get(0).getMaterialId());
-            searchSmtStorageInventory.setStorageId(smtElectronicTagStorageDtoList.get(0).getStorageId());
-            searchSmtStorageInventory.setStatus((byte) 1);
-            List<SmtStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findStorageInventoryList(searchSmtStorageInventory).getData();
-            if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料：" + sorting.getMaterialCode() + " 对应的库存信息");
-            }
-            if (smtStorageInventoryDtoList.get(0).getQuantity().compareTo(sorting.getQuantity()) == -1) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "物料：" + sorting.getMaterialCode() + " 库存不足不能进行拣料！");
-            }*/
-
-            SmtSorting smtSorting = new SmtSorting();
-            smtSorting.setSortingId(sorting.getSortingId());
-            smtSorting.setStatus((byte) 1);
-            smtSorting.setModifiedUserId(currentUser.getUserId());
-            smtSorting.setModifiedTime(new Date());
-            smtSortingList.add(smtSorting);
+            PtlSorting ptlSorting = new PtlSorting();
+            ptlSorting.setSortingId(sorting.getSortingId());
+            ptlSorting.setStatus((byte) 1);
+            ptlSorting.setModifiedUserId(currentUser.getUserId());
+            ptlSorting.setModifiedTime(new Date());
+            ptlSortingList.add(ptlSorting);
         }
 
-        for (SmtElectronicTagStorageDto smtElectronicTagStorageDto : list) {
+        for (PtlElectronicTagStorageDto ptlElectronicTagStorageDto : list) {
 
             //不同的标签可能对应的队列不一样，最终一条一条发给客户端
-            fanoutSender(1001, smtElectronicTagStorageDto);
-            if (StringUtils.isNotEmpty(smtElectronicTagStorageDto.getEquipmentAreaId())) {
-                fanoutSender(1002, smtElectronicTagStorageDto);
+            fanoutSender(1001, ptlElectronicTagStorageDto);
+            if (StringUtils.isNotEmpty(ptlElectronicTagStorageDto.getEquipmentAreaId())) {
+                fanoutSender(1002, ptlElectronicTagStorageDto);
             }
         }
 
-        if (StringUtils.isNotEmpty(smtSortingList)) {
-            electronicTagFeignApi.batchUpdateSorting(smtSortingList).getCount();
+        if (StringUtils.isNotEmpty(ptlSortingList)) {
+            electronicTagFeignApi.batchUpdateSorting(ptlSortingList).getCount();
         }
 
         return sortingDtoList;
-    }
-
-    @Override
-    public SmtElectronicTagStorageDto sendPlaceMaterials(String materialCode) {
-        if (StringUtils.isEmpty(materialCode)) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100);
-        }
-        SearchBaseStorageMaterial searchBaseStorageMaterial = new SearchBaseStorageMaterial();
-        searchBaseStorageMaterial.setMaterialCode(materialCode);
-        List<BaseStorageMaterial> storageMaterialList = baseFeignApi.findStorageMaterialList(searchBaseStorageMaterial).getData();
-        if (StringUtils.isEmpty(storageMaterialList)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
-        }
-
-        SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-        searchSmtElectronicTagStorage.setMaterialId(storageMaterialList.get(0).getMaterialId().toString());
-        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
-        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护物料对应储位的信息");
-        }
-        SmtPaddingMaterial smtPaddingMaterial = new SmtPaddingMaterial();
-        smtPaddingMaterial.setMaterialCode(materialCode);
-        smtPaddingMaterial.setQuantity(BigDecimal.ZERO);
-        smtPaddingMaterial.setStatus((byte) 2);
-        smtPaddingMaterial.setPaddingMaterialCode(CodeUtils.getScheduleNo("PM-"));
-        electronicTagFeignApi.addPaddingMaterial(smtPaddingMaterial);
-//        MQResponseEntity mQResponseEntity =  new MQResponseEntity<>();
-//        mQResponseEntity.setCode(1001);
-//        smtElectronicTagStorageDtoList.get(0).setQuantity(BigDecimal.ZERO);
-//        mQResponseEntity.setData(smtElectronicTagStorageDtoList.get(0));
-//        fanoutSender.send(smtElectronicTagStorageDtoList.get(0).getQueueName(),
-//                JSONObject.toJSONString(mQResponseEntity));
-        return smtElectronicTagStorageDtoList.get(0);
     }
 
     @Override
@@ -208,39 +158,61 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int createSorting(List<SmtSorting> sortingList) throws Exception {
+    public int createSorting(List<PtlSortingDTO> ptlSortingDTOList) throws Exception {
 
-        List<SmtSorting> list = new LinkedList<>();
-        for (SmtSorting sorting : sortingList) {
-            SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
-            searchSmtSorting.setSortingCode(sorting.getSortingCode());
-            List<SmtSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+        List<PtlSorting> list = new LinkedList<>();
+        for (PtlSortingDTO sortingDTO : ptlSortingDTOList) {
+            SearchPtlSorting searchPtlSorting = new SearchPtlSorting();
+            searchPtlSorting.setSortingCode(sortingDTO.getTaskNo());
+            List<PtlSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchPtlSorting).getData();
             if (StringUtils.isNotEmpty(smtSortingList)) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
             }
-            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-            searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
-            List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
-            if (StringUtils.isEmpty(baseMaterials)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
-            }
-            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+            for (PtlSortingDetailDTO ptlSortingDetailDTO : sortingDTO.getDetails()) {
+                SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+                searchBaseMaterial.setMaterialCode(ptlSortingDetailDTO.getGoodsCode());
+                List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+                if (StringUtils.isEmpty(baseMaterials)) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
+                }
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setStorageCode(ptlSortingDetailDTO.getLocationCode());
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if (StringUtils.isEmpty(baseStorages)) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应库位信息");
+                }
+                SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+                searchPtlElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
+                searchPtlElectronicTagStorage.setStorageId(baseStorages.get(0).getStorageId().toString());
+                List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
+                if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位和物料以及对应的电子标签关联信息");
+                }
+                if (!sortingDTO.getWarehouseCode().equals(ptlElectronicTagStorageDtoList.get(0).getWarehouseCode())) {
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "任务号：" + sortingDTO.getTaskNo() + "对应明细储位："
+                            + ptlSortingDetailDTO.getLocationCode() + "没有找到与仓库：" + sortingDTO.getWarehouseCode() + "的关联关系");
+                }
 
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
+                PtlSorting ptlSorting = new PtlSorting();
+                ptlSorting.setSortingCode(sortingDTO.getTaskNo());
+                ptlSorting.setRelatedOrderCode(sortingDTO.getCustomerNo());
+                ptlSorting.setMaterialId(baseMaterials.get(0).getMaterialId());
+                ptlSorting.setMaterialCode(baseMaterials.get(0).getMaterialCode());
+                ptlSorting.setMaterialName(baseMaterials.get(0).getMaterialName());
+                ptlSorting.setWarehouseId(Long.valueOf(ptlElectronicTagStorageDtoList.get(0).getWarehouseId()));
+                ptlSorting.setWarehouseName(ptlElectronicTagStorageDtoList.get(0).getWarehouseName());
+                ptlSorting.setStorageId(Long.valueOf(ptlElectronicTagStorageDtoList.get(0).getStorageId()));
+                ptlSorting.setStorageCode(ptlSortingDetailDTO.getLocationCode());
+                ptlSorting.setSortingQty(BigDecimal.valueOf(ptlSortingDetailDTO.getQty()));
+                ptlSorting.setPackingUnitName(ptlSortingDetailDTO.getUnit());
+                ptlSorting.setWholeOrScattered(Byte.valueOf(sortingDTO.getIsWhole()));
+                ptlSorting.setIfAlreadyPrint((byte) 0);
+                ptlSorting.setStatus((byte) 0);
+                ptlSorting.setCreateTime(new Date());
+                ptlSorting.setModifiedTime(new Date());
+                ptlSorting.setIsDetele((byte) 1);
+                list.add(ptlSorting);
             }
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
-            }
-
-            sorting.setStatus((byte) 0);
-            sorting.setCreateTime(new Date());
-            sorting.setModifiedTime(new Date());
-            sorting.setIsDetele((byte) 1);
-            list.add(sorting);
-
         }
         if (StringUtils.isNotEmpty(list)) {
             electronicTagFeignApi.batchInsertSmtSorting(list).getCount();
@@ -252,88 +224,88 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int createLoading(List<SmtLoading> smtLoadingList) throws Exception {
+    public int createLoading(List<PtlLoading> ptlLoadingList) throws Exception {
 
-        for (SmtLoading smtLoading : smtLoadingList) {
+        for (PtlLoading ptlLoading : ptlLoadingList) {
 
-            SearchSmtLoading searchSmtLoading = new SearchSmtLoading();
-            searchSmtLoading.setLoadingCode(smtLoading.getLoadingCode());
-            List<SmtLoading> smtLoadings = electronicTagFeignApi.findLoadingList(searchSmtLoading).getData();
-            if (StringUtils.isNotEmpty(smtLoadings) && smtLoading.getOrderType() != 1) {
+            SearchPtlLoading searchPtlLoading = new SearchPtlLoading();
+            searchPtlLoading.setLoadingCode(ptlLoading.getLoadingCode());
+            List<PtlLoading> ptlLoadings = electronicTagFeignApi.findLoadingList(searchPtlLoading).getData();
+            if (StringUtils.isNotEmpty(ptlLoadings) && ptlLoading.getOrderType() != 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复入库单");
             }
-            if (StringUtils.isNotEmpty(smtLoadings) && smtLoadings.get(0).getStatus() == 1) {
+            if (StringUtils.isNotEmpty(ptlLoadings) && ptlLoadings.get(0).getStatus() == 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该上料单正在进行上料操作，请稍后再进行同步！");
             }
-            if (StringUtils.isNotEmpty(smtLoadings) && smtLoadings.get(0).getStatus() != 0 && smtLoading.getOrderType() != 1) {
+            if (StringUtils.isNotEmpty(ptlLoadings) && ptlLoadings.get(0).getStatus() != 0 && ptlLoading.getOrderType() != 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该上料单已进行上料操作");
             }
-            if (smtLoading.getOrderType() == 1 && StringUtils.isNotEmpty(smtLoadings)) {
+            if (ptlLoading.getOrderType() == 1 && StringUtils.isNotEmpty(ptlLoadings)) {
                 // 查询本次传入采购订单物料明细比较上次是否有删减
-                SearchSmtLoadingDet searchSmtLoadingDet = new SearchSmtLoadingDet();
-                searchSmtLoadingDet.setLoadingCode(smtLoading.getLoadingCode());
-                List<SmtLoadingDetDto> smtLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchSmtLoadingDet).getData();
-                for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
+                SearchPtlLoadingDet searchPtlLoadingDet = new SearchPtlLoadingDet();
+                searchPtlLoadingDet.setLoadingCode(ptlLoading.getLoadingCode());
+                List<PtlLoadingDetDto> ptlLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchPtlLoadingDet).getData();
+                for (PtlLoadingDetDto ptlLoadingDetDto : ptlLoadingDetDtoList) {
                     Boolean deleteBoolean = true;
-                    for (SmtLoadingDetDto smtLoadingDetDto2 : smtLoading.getSmtLoadingDetDtoList()) {
-                        if (smtLoadingDetDto.getMaterialCode().equals(smtLoadingDetDto2.getMaterialCode())) {
+                    for (PtlLoadingDetDto ptlLoadingDetDto2 : ptlLoading.getPtlLoadingDetDtoList()) {
+                        if (ptlLoadingDetDto.getMaterialCode().equals(ptlLoadingDetDto2.getMaterialCode())) {
                             deleteBoolean = false;
                             break;
                         }
                     }
                     if (deleteBoolean) {
-                        SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
-                        smtLoadingDet.setLoadingDetId(smtLoadingDetDto.getLoadingDetId());
-                        smtLoadingDet.setIsDetele((byte) 0);
-                        electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+                        PtlLoadingDet ptlLoadingDet = new PtlLoadingDet();
+                        ptlLoadingDet.setLoadingDetId(ptlLoadingDetDto.getLoadingDetId());
+                        ptlLoadingDet.setIsDetele((byte) 0);
+                        electronicTagFeignApi.updateLoadingDet(ptlLoadingDet);
                     }
                 }
             }
-            if (StringUtils.isEmpty(smtLoadings)) {
-                smtLoading = electronicTagFeignApi.addSmtLoading(smtLoading).getData();
+            if (StringUtils.isEmpty(ptlLoadings)) {
+                ptlLoading = electronicTagFeignApi.addSmtLoading(ptlLoading).getData();
             } else {
-                smtLoading.setLoadingId(smtLoadings.get(0).getLoadingId());
+                ptlLoading.setLoadingId(ptlLoadings.get(0).getLoadingId());
             }
 
-            for (SmtLoadingDetDto smtLoadingDetDto : smtLoading.getSmtLoadingDetDtoList()) {
+            for (PtlLoadingDetDto ptlLoadingDetDto : ptlLoading.getPtlLoadingDetDtoList()) {
 
                 SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-                searchBaseMaterial.setMaterialCode(smtLoadingDetDto.getMaterialCode());
+                searchBaseMaterial.setMaterialCode(ptlLoadingDetDto.getMaterialCode());
                 List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterials)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
                 }
-                SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-                searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
-                List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+                SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+                searchPtlElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
+                List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-                if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+                if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
                 }
-                if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+                if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
                 }
 
-                List<SmtLoadingDetDto> smtLoadingDetDtoList = new LinkedList<>();
-                if (smtLoading.getOrderType() == 1) {
-                    SearchSmtLoadingDet searchSmtLoadingDet = new SearchSmtLoadingDet();
-                    searchSmtLoadingDet.setLoadingId(smtLoading.getLoadingId());
-                    searchSmtLoadingDet.setMaterialCode(smtLoadingDetDto.getMaterialCode());
-                    smtLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchSmtLoadingDet).getData();
+                List<PtlLoadingDetDto> ptlLoadingDetDtoList = new LinkedList<>();
+                if (ptlLoading.getOrderType() == 1) {
+                    SearchPtlLoadingDet searchPtlLoadingDet = new SearchPtlLoadingDet();
+                    searchPtlLoadingDet.setLoadingId(ptlLoading.getLoadingId());
+                    searchPtlLoadingDet.setMaterialCode(ptlLoadingDetDto.getMaterialCode());
+                    ptlLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchPtlLoadingDet).getData();
                 }
 
-                SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
-                smtLoadingDet.setLoadingId(smtLoading.getLoadingId());
-                smtLoadingDet.setMaterialId(baseMaterials.get(0).getMaterialId());
-                smtLoadingDet.setPlanQty(smtLoadingDetDto.getPlanQty());
-                if (StringUtils.isEmpty(smtLoadingDetDtoList)) {
-                    electronicTagFeignApi.addSmtLoadingDet(smtLoadingDet);
+                PtlLoadingDet ptlLoadingDet = new PtlLoadingDet();
+                ptlLoadingDet.setLoadingId(ptlLoading.getLoadingId());
+                ptlLoadingDet.setMaterialId(baseMaterials.get(0).getMaterialId());
+                ptlLoadingDet.setPlanQty(ptlLoadingDetDto.getPlanQty());
+                if (StringUtils.isEmpty(ptlLoadingDetDtoList)) {
+                    electronicTagFeignApi.addSmtLoadingDet(ptlLoadingDet);
                 } else {
-                    smtLoadingDet.setLoadingDetId(smtLoadingDetDtoList.get(0).getLoadingDetId());
-                    if (smtLoadingDetDtoList.get(0).getStatus() == 3 && smtLoadingDetDto.getPlanQty().compareTo(smtLoadingDetDtoList.get(0).getActualQty()) == 1) {
-                        smtLoadingDet.setStatus((byte) 2);
+                    ptlLoadingDet.setLoadingDetId(ptlLoadingDetDtoList.get(0).getLoadingDetId());
+                    if (ptlLoadingDetDtoList.get(0).getStatus() == 3 && ptlLoadingDetDto.getPlanQty().compareTo(ptlLoadingDetDtoList.get(0).getActualQty()) == 1) {
+                        ptlLoadingDet.setStatus((byte) 2);
                     }
-                    electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+                    electronicTagFeignApi.updateLoadingDet(ptlLoadingDet);
                 }
             }
         }
@@ -344,213 +316,171 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public List<SmtLoadingDetDto> sendLoadingElectronicTagStorage(String loadingCode) throws Exception {
+    public List<PtlLoadingDetDto> sendLoadingElectronicTagStorage(String loadingCode) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         // 判断是否有其他上料单正在进行中
-        List<SmtLoading> smtLoadingList = new LinkedList<>();
-        List<SmtLoadingDetDto> smtLoadingDetDtoList = new LinkedList<>();
+        List<PtlLoading> ptlLoadingList = new LinkedList<>();
+        List<PtlLoadingDetDto> ptlLoadingDetDtoList = new LinkedList<>();
         synchronized (ElectronicTagStorageServiceImpl.class) {
-            SearchSmtLoading searchSmtLoading = new SearchSmtLoading();
-            searchSmtLoading.setStatus((byte) 1);
-            smtLoadingList = electronicTagFeignApi.findLoadingList(searchSmtLoading).getData();
-            if (StringUtils.isNotEmpty(smtLoadingList) && (smtLoadingList.size() > 1 || !loadingCode.equals(smtLoadingList.get(0).getLoadingCode()))) {
+            SearchPtlLoading searchPtlLoading = new SearchPtlLoading();
+            searchPtlLoading.setStatus((byte) 1);
+            ptlLoadingList = electronicTagFeignApi.findLoadingList(searchPtlLoading).getData();
+            if (StringUtils.isNotEmpty(ptlLoadingList) && (ptlLoadingList.size() > 1 || !loadingCode.equals(ptlLoadingList.get(0).getLoadingCode()))) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他上料单，请稍后再试");
             }
-            if (StringUtils.isNotEmpty(smtLoadingList) && smtLoadingList.get(0).getStatus() == 3) {
+            if (StringUtils.isNotEmpty(ptlLoadingList) && ptlLoadingList.get(0).getStatus() == 3) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该上料单已经完成！");
             }
-            SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
-            searchSmtSorting.setStatus((byte) 1);
-            List<SmtSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
+            SearchPtlSorting searchPtlSorting = new SearchPtlSorting();
+            searchPtlSorting.setStatus((byte) 1);
+            List<PtlSortingDto> smtSortingList = electronicTagFeignApi.findSortingList(searchPtlSorting).getData();
             if (StringUtils.isNotEmpty(smtSortingList)) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他分拣单，请稍后再试");
             }
 
-            SearchSmtLoadingDet searchSmtLoadingDet = new SearchSmtLoadingDet();
-            searchSmtLoadingDet.setLoadingCode(loadingCode);
-            searchSmtLoadingDet.setNotEqualstatus((byte) 3);
-            smtLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchSmtLoadingDet).getData();
-            if (StringUtils.isEmpty(smtLoadingDetDtoList)) {
+            SearchPtlLoadingDet searchPtlLoadingDet = new SearchPtlLoadingDet();
+            searchPtlLoadingDet.setLoadingCode(loadingCode);
+            searchPtlLoadingDet.setNotEqualstatus((byte) 3);
+            ptlLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchPtlLoadingDet).getData();
+            if (StringUtils.isEmpty(ptlLoadingDetDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "该上料单没有可上料的物料");
             }
         }
 
-        SmtLoading smtLoading = new SmtLoading();
-        smtLoading.setLoadingId(smtLoadingDetDtoList.get(0).getLoadingId());
-        smtLoading.setStatus((byte) 1);
-        smtLoading.setModifiedUserId(currentUser.getUserId());
-        electronicTagFeignApi.updateLoading(smtLoading);
+        PtlLoading ptlLoading = new PtlLoading();
+        ptlLoading.setLoadingId(ptlLoadingDetDtoList.get(0).getLoadingId());
+        ptlLoading.setStatus((byte) 1);
+        ptlLoading.setModifiedUserId(currentUser.getUserId());
+        electronicTagFeignApi.updateLoading(ptlLoading);
 
-        for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
-            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(smtLoadingDetDto.getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+        for (PtlLoadingDetDto ptlLoadingDetDto : ptlLoadingDetDtoList) {
+            SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+            searchPtlElectronicTagStorage.setMaterialId(ptlLoadingDetDto.getMaterialId().toString());
+            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
             }
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
             }
-            smtElectronicTagStorageDtoList.get(0).setQuantity(smtLoadingDetDto.getPlanQty().subtract(smtLoadingDetDto.getActualQty()));
-            smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
+            ptlElectronicTagStorageDtoList.get(0).setQuantity(ptlLoadingDetDto.getPlanQty().subtract(ptlLoadingDetDto.getActualQty()));
+            ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
 
-            SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
-            smtLoadingDet.setLoadingDetId(smtLoadingDetDto.getLoadingDetId());
-            smtLoadingDet.setStatus((byte) 1);
-            smtLoadingDet.setModifiedUserId(currentUser.getUserId());
-            electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+            PtlLoadingDet ptlLoadingDet = new PtlLoadingDet();
+            ptlLoadingDet.setLoadingDetId(ptlLoadingDetDto.getLoadingDetId());
+            ptlLoadingDet.setStatus((byte) 1);
+            ptlLoadingDet.setModifiedUserId(currentUser.getUserId());
+            electronicTagFeignApi.updateLoadingDet(ptlLoadingDet);
 
             // 不同的标签可能对应的队列不一样，最终一条一条发给客户端，控制biao亮灯
-            fanoutSender(1001, smtElectronicTagStorageDtoList.get(0));
+            fanoutSender(1001, ptlElectronicTagStorageDtoList.get(0));
             // 控制区域灯亮灯
-            if (StringUtils.isNotEmpty(smtElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
-                fanoutSender(1002, smtElectronicTagStorageDtoList.get(0));
+            if (StringUtils.isNotEmpty(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
+                fanoutSender(1002, ptlElectronicTagStorageDtoList.get(0));
             }
         }
 
-        return smtLoadingDetDtoList;
+        return ptlLoadingDetDtoList;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int submitLoadingDet(List<SmtLoadingDetDto> smtLoadingDetDtoList) throws Exception {
+    public int submitLoadingDet(List<PtlLoadingDetDto> ptlLoadingDetDtoList) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        SearchSmtLoading searchSmtLoading = new SearchSmtLoading();
-        searchSmtLoading.setLoadingCode(smtLoadingDetDtoList.get(0).getLoadingCode());
-        List<SmtLoading> smtLoadingList = electronicTagFeignApi.findLoadingList(searchSmtLoading).getData();
-        if (StringUtils.isEmpty(smtLoadingList)) {
+        SearchPtlLoading searchPtlLoading = new SearchPtlLoading();
+        searchPtlLoading.setLoadingCode(ptlLoadingDetDtoList.get(0).getLoadingCode());
+        List<PtlLoading> ptlLoadingList = electronicTagFeignApi.findLoadingList(searchPtlLoading).getData();
+        if (StringUtils.isEmpty(ptlLoadingList)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到该上料单！");
-        } else if (smtLoadingList.get(0).getStatus() == 0){
+        } else if (ptlLoadingList.get(0).getStatus() == 0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "该上料单物料明细电子标签尚未亮灯，请先进行亮灯！");
-        } else if (smtLoadingList.get(0).getStatus() == 3){
+        } else if (ptlLoadingList.get(0).getStatus() == 3){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "该上料单已完成！");
         }
 
         // 回传MES/QIS上料单
         PtlLoadingDTO ptlLoadingDTO = new PtlLoadingDTO();
-        ptlLoadingDTO.setLoadingCode(smtLoadingDetDtoList.get(0).getLoadingCode());
+        ptlLoadingDTO.setLoadingCode(ptlLoadingDetDtoList.get(0).getLoadingCode());
         if (StringUtils.isNotEmpty(currentUser)) {
             ptlLoadingDTO.setUser(currentUser.getUserCode());
         }
 
         List<PtlLoadingDetDTO> ptlLoadingDetDTOList = new LinkedList<>();
-        SmtLoading smtLoading = new SmtLoading();
-        smtLoading.setLoadingId(smtLoadingList.get(0).getLoadingId());
+        PtlLoading ptlLoading = new PtlLoading();
+        ptlLoading.setLoadingId(ptlLoadingList.get(0).getLoadingId());
         Byte status = 3;
-        for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
+        for (PtlLoadingDetDto ptlLoadingDetDto : ptlLoadingDetDtoList) {
 
-            SmtLoadingDet smtLoadingDet = electronicTagFeignApi.detailSmtLoadingDet(smtLoadingDetDto.getLoadingDetId()).getData();
-            BigDecimal qty = smtLoadingDet.getPlanQty().subtract(smtLoadingDet.getActualQty());
+            PtlLoadingDet ptlLoadingDet = electronicTagFeignApi.detailSmtLoadingDet(ptlLoadingDetDto.getLoadingDetId()).getData();
+            BigDecimal qty = ptlLoadingDet.getPlanQty().subtract(ptlLoadingDet.getActualQty());
             System.out.println("qty：" + qty + "====================================");
-            System.out.println("smtLoadingDetDto.getActualQty()：" + smtLoadingDetDto.getActualQty() + "==============================");
-            System.out.println(qty.compareTo(smtLoadingDetDto.getActualQty()) + "===========================================");
-            if (qty.compareTo(smtLoadingDetDto.getActualQty()) < 0) {
+            System.out.println("smtLoadingDetDto.getActualQty()：" + ptlLoadingDetDto.getActualQty() + "==============================");
+            System.out.println(qty.compareTo(ptlLoadingDetDto.getActualQty()) + "===========================================");
+            if (qty.compareTo(ptlLoadingDetDto.getActualQty()) < 0) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "实际上料数量不能超过计划上料数量！");
             }
-            if (qty.compareTo(smtLoadingDetDto.getActualQty()) != 0) {
-                if (smtLoadingList.get(0).getOrderType() != 1) {
+            if (qty.compareTo(ptlLoadingDetDto.getActualQty()) != 0) {
+                if (ptlLoadingList.get(0).getOrderType() != 1) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "当前单据来源不是采购订单，不能分批入库，实际上料数量不能小于计划上料数量！");
                 }
                 status = 2;
-                smtLoadingDet.setStatus((byte) 2);
+                ptlLoadingDet.setStatus((byte) 2);
             } else {
-                smtLoadingDet.setStatus((byte) 3);
+                ptlLoadingDet.setStatus((byte) 3);
             }
-            smtLoadingDet.setActualQty(smtLoadingDet.getActualQty().add(smtLoadingDetDto.getActualQty()));
-            electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+            ptlLoadingDet.setActualQty(ptlLoadingDet.getActualQty().add(ptlLoadingDetDto.getActualQty()));
+            electronicTagFeignApi.updateLoadingDet(ptlLoadingDet);
 
-            // 查询物料库存
-            SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
-            searchWmsInnerStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
-            searchWmsInnerStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
-            searchWmsInnerStorageInventory.setStatus((byte) 1);
-            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getData();
+            SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+            searchPtlElectronicTagStorage.setMaterialId(ptlLoadingDetDto.getMaterialId().toString());
+            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-            List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtoList = new LinkedList<>();
-            // 更新物料库存信息
-            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
-            wmsInnerStorageInventory.setMaterialId(smtLoadingDetDto.getMaterialId());
-            wmsInnerStorageInventory.setStorageId(smtLoadingDetDto.getStorageId());
-            if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
-                wmsInnerStorageInventory.setQuantity(smtLoadingDetDto.getActualQty());
-                wmsInnerStorageInventory = innerFeignApi.add(wmsInnerStorageInventory).getData();
-            } else {
-                wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-                wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().add(smtLoadingDetDto.getActualQty()));
-                innerFeignApi.update(wmsInnerStorageInventory);
-
-                // 查询物料入库明细
-                SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
-                searchWmsInnerStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-                searchWmsInnerStorageInventoryDet.setGodownEntry(smtLoadingDetDto.getLoadingCode());
-                searchWmsInnerStorageInventoryDet.setStatus((byte) 1);
-                wmsInnerStorageInventoryDetDtoList = innerFeignApi.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
-            }
-
-            // 更新物料入库明细
-            WmsInnerStorageInventoryDet smtStorageInventoryDet = new WmsInnerStorageInventoryDet();
-            smtStorageInventoryDet.setStorageInventoryId(wmsInnerStorageInventory.getStorageInventoryId());
-            smtStorageInventoryDet.setMaterialBarcodeCode(smtLoadingDetDto.getMaterialCode());
-            smtStorageInventoryDet.setGodownEntry(smtLoadingDetDto.getLoadingCode());
-            if (StringUtils.isEmpty(wmsInnerStorageInventoryDetDtoList)) {
-                smtStorageInventoryDet.setMaterialQuantity(smtLoadingDetDto.getActualQty());
-                innerFeignApi.add(smtStorageInventoryDet);
-            } else {
-                smtStorageInventoryDet.setStorageInventoryDetId(wmsInnerStorageInventoryDetDtoList.get(0).getStorageInventoryDetId());
-                smtStorageInventoryDet.setMaterialQuantity(wmsInnerStorageInventoryDetDtoList.get(0).getMaterialQuantity().add(smtLoadingDetDto.getActualQty()));
-                innerFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
-            }
-
-            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(smtLoadingDetDto.getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
-
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
             }
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
             }
-            smtElectronicTagStorageDtoList.get(0).setQuantity(smtLoadingDetDto.getPlanQty().subtract(smtLoadingDetDto.getActualQty()));
-            smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
+            ptlElectronicTagStorageDtoList.get(0).setQuantity(ptlLoadingDetDto.getPlanQty().subtract(ptlLoadingDetDto.getActualQty()));
+            ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
 
             // 发给客户端，控制灭灯
-            fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
+            fanoutSender(1003, ptlElectronicTagStorageDtoList.get(0));
             // 控制区域灯亮灯
-            if (StringUtils.isNotEmpty(smtElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
-                fanoutSender(1004, smtElectronicTagStorageDtoList.get(0));
+            if (StringUtils.isNotEmpty(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
+                fanoutSender(1004, ptlElectronicTagStorageDtoList.get(0));
             }
 
-            if (BigDecimal.ZERO.compareTo(smtLoadingDetDto.getActualQty()) != 0) {
+            if (BigDecimal.ZERO.compareTo(ptlLoadingDetDto.getActualQty()) != 0) {
                 PtlLoadingDetDTO ptlLoadingDetDTO = new PtlLoadingDetDTO();
-                ptlLoadingDetDTO.setMaterialCode(smtLoadingDetDto.getMaterialCode());
-                ptlLoadingDetDTO.setActualQty(smtLoadingDetDto.getActualQty());
-                ptlLoadingDetDTO.setStorageCode(smtElectronicTagStorageDtoList.get(0).getStorageCode());
+                ptlLoadingDetDTO.setMaterialCode(ptlLoadingDetDto.getMaterialCode());
+                ptlLoadingDetDTO.setActualQty(ptlLoadingDetDto.getActualQty());
+                ptlLoadingDetDTO.setStorageCode(ptlElectronicTagStorageDtoList.get(0).getStorageCode());
                 ptlLoadingDetDTOList.add(ptlLoadingDetDTO);
             }
 
-            ptlLoadingDTO.setWarehouseCode(smtElectronicTagStorageDtoList.get(0).getWarehouseCode());
+            ptlLoadingDTO.setWarehouseCode(ptlElectronicTagStorageDtoList.get(0).getWarehouseCode());
         }
 
-        smtLoading.setStatus(status);
-        electronicTagFeignApi.updateLoading(smtLoading);
-        smtLoading = electronicTagFeignApi.detailSmtLoading(smtLoading.getLoadingId()).getData();
+        ptlLoading.setStatus(status);
+        electronicTagFeignApi.updateLoading(ptlLoading);
+        ptlLoading = electronicTagFeignApi.detailSmtLoading(ptlLoading.getLoadingId()).getData();
 
         ptlLoadingDTO.setPtlLoadingDetDTOList(ptlLoadingDetDTOList);
 
         log.info("上料单号处理完，回传给MES：" + JSONObject.toJSONString(ptlLoadingDTO));
         String url = "";
-        if ("MES".equals(smtLoading.getSourceSys())) {
+        if ("MES".equals(ptlLoading.getSourceSys())) {
             url = "";
-        } else if ("QIS".equals(smtLoading.getSourceSys())) {
+        } else if ("QIS".equals(ptlLoading.getSourceSys())) {
             url = confirmInBillOrderUrl;
         }
         String result = RestTemplateUtil.postJsonStrForString(ptlLoadingDTO, url);
@@ -567,43 +497,43 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     public int revokeLoading(String loadingCode) throws Exception {
 
-        SearchSmtLoadingDet searchSmtLoadingDet = new SearchSmtLoadingDet();
-        searchSmtLoadingDet.setLoadingCode(loadingCode);
-        searchSmtLoadingDet.setStatus((byte) 1);
-        List<SmtLoadingDetDto> smtLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchSmtLoadingDet).getData();
-        if (StringUtils.isEmpty(smtLoadingDetDtoList)) {
+        SearchPtlLoadingDet searchPtlLoadingDet = new SearchPtlLoadingDet();
+        searchPtlLoadingDet.setLoadingCode(loadingCode);
+        searchPtlLoadingDet.setStatus((byte) 1);
+        List<PtlLoadingDetDto> ptlLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchPtlLoadingDet).getData();
+        if (StringUtils.isEmpty(ptlLoadingDetDtoList)) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "当前上料单不存在未上料的物料，无需撤销！");
         }
 
-        SmtLoading smtLoading = new SmtLoading();
-        smtLoading.setLoadingId(smtLoadingDetDtoList.get(0).getLoadingId());
-        smtLoading.setStatus((byte) 2);
-        electronicTagFeignApi.updateLoading(smtLoading);
+        PtlLoading ptlLoading = new PtlLoading();
+        ptlLoading.setLoadingId(ptlLoadingDetDtoList.get(0).getLoadingId());
+        ptlLoading.setStatus((byte) 2);
+        electronicTagFeignApi.updateLoading(ptlLoading);
 
-        for (SmtLoadingDetDto smtLoadingDetDto : smtLoadingDetDtoList) {
-            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(smtLoadingDetDto.getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+        for (PtlLoadingDetDto ptlLoadingDetDto : ptlLoadingDetDtoList) {
+            SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+            searchPtlElectronicTagStorage.setMaterialId(ptlLoadingDetDto.getMaterialId().toString());
+            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
             }
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
             }
-            smtElectronicTagStorageDtoList.get(0).setQuantity(smtLoadingDetDto.getPlanQty().subtract(smtLoadingDetDto.getActualQty()));
-            smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
+            ptlElectronicTagStorageDtoList.get(0).setQuantity(ptlLoadingDetDto.getPlanQty().subtract(ptlLoadingDetDto.getActualQty()));
+            ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
 
-            SmtLoadingDet smtLoadingDet = new SmtLoadingDet();
-            smtLoadingDet.setLoadingDetId(smtLoadingDetDto.getLoadingDetId());
-            smtLoadingDet.setStatus((byte) 2);
-            electronicTagFeignApi.updateLoadingDet(smtLoadingDet);
+            PtlLoadingDet ptlLoadingDet = new PtlLoadingDet();
+            ptlLoadingDet.setLoadingDetId(ptlLoadingDetDto.getLoadingDetId());
+            ptlLoadingDet.setStatus((byte) 2);
+            electronicTagFeignApi.updateLoadingDet(ptlLoadingDet);
 
             // 不同的标签可能对应的队列不一样，最终一条一条发给客户端，控制灭灯
-            fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
+            fanoutSender(1003, ptlElectronicTagStorageDtoList.get(0));
             // 控制区域灯亮灯
-            if (StringUtils.isNotEmpty(smtElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
-                fanoutSender(1004, smtElectronicTagStorageDtoList.get(0));
+            if (StringUtils.isNotEmpty(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaId())) {
+                fanoutSender(1004, ptlElectronicTagStorageDtoList.get(0));
             }
         }
 
@@ -611,62 +541,62 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     }
 
     @Override
-    public int comfirmLoadingDet(SmtLoadingDetDto smtLoadingDetDto) throws Exception {
+    public int comfirmLoadingDet(PtlLoadingDetDto ptlLoadingDetDto) throws Exception {
 
-        SearchSmtLoading searchSmtLoading = new SearchSmtLoading();
-        searchSmtLoading.setLoadingCode(smtLoadingDetDto.getLoadingCode());
-        List<SmtLoading> smtLoadingList = electronicTagFeignApi.findLoadingList(searchSmtLoading).getData();
-        if (smtLoadingList.isEmpty()) {
+        SearchPtlLoading searchPtlLoading = new SearchPtlLoading();
+        searchPtlLoading.setLoadingCode(ptlLoadingDetDto.getLoadingCode());
+        List<PtlLoading> ptlLoadingList = electronicTagFeignApi.findLoadingList(searchPtlLoading).getData();
+        if (ptlLoadingList.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "没有找到对应的上料单！");
         }
-        if (smtLoadingList.get(0).getOrderType() == 2 && smtLoadingDetDto.getPlanQty().compareTo(smtLoadingDetDto.getActualQty()) != 0) {
+        if (ptlLoadingList.get(0).getOrderType() == 2 && ptlLoadingDetDto.getPlanQty().compareTo(ptlLoadingDetDto.getActualQty()) != 0) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "当前单据来源不是采购订单，不能分批入库，实际上料数量不能小于计划上料数量！");
         }
 
-        SearchSmtLoadingDet searchSmtLoadingDet = new SearchSmtLoadingDet();
-        searchSmtLoadingDet.setLoadingCode(smtLoadingDetDto.getLoadingCode());
-        searchSmtLoadingDet.setMaterialId(smtLoadingDetDto.getMaterialId());
-        searchSmtLoadingDet.setStatus((byte) 1);
-        List<SmtLoadingDetDto> smtLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchSmtLoadingDet).getData();
-        if (StringUtils.isEmpty(smtLoadingDetDtoList)) {
+        SearchPtlLoadingDet searchPtlLoadingDet = new SearchPtlLoadingDet();
+        searchPtlLoadingDet.setLoadingCode(ptlLoadingDetDto.getLoadingCode());
+        searchPtlLoadingDet.setMaterialId(ptlLoadingDetDto.getMaterialId());
+        searchPtlLoadingDet.setStatus((byte) 1);
+        List<PtlLoadingDetDto> ptlLoadingDetDtoList = electronicTagFeignApi.findLoadingDetList(searchPtlLoadingDet).getData();
+        if (StringUtils.isEmpty(ptlLoadingDetDtoList)) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "当前物料已上料灭灯，无需再次确认！");
         }
 
-        SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-        searchSmtElectronicTagStorage.setMaterialId(smtLoadingDetDto.getMaterialId().toString());
-        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+        SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+        searchPtlElectronicTagStorage.setMaterialId(ptlLoadingDetDto.getMaterialId().toString());
+        List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+        if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
         }
-        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+        if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
         }
-        BigDecimal qty = smtLoadingDetDtoList.get(0).getPlanQty().subtract(smtLoadingDetDtoList.get(0).getActualQty());
-        smtElectronicTagStorageDtoList.get(0).setQuantity(qty.subtract(smtLoadingDetDto.getActualQty()));
-        smtElectronicTagStorageDtoList.get(0).setActualQty(smtLoadingDetDto.getActualQty());
-        smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
+        BigDecimal qty = ptlLoadingDetDtoList.get(0).getPlanQty().subtract(ptlLoadingDetDtoList.get(0).getActualQty());
+        ptlElectronicTagStorageDtoList.get(0).setQuantity(qty.subtract(ptlLoadingDetDto.getActualQty()));
+        ptlElectronicTagStorageDtoList.get(0).setActualQty(ptlLoadingDetDto.getActualQty());
+        ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 2);
 
         // 发给客户端，控制灭灯
-        fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
+        fanoutSender(1003, ptlElectronicTagStorageDtoList.get(0));
 
         return 1;
     }
 
-    public void fanoutSender(Integer code, SmtElectronicTagStorageDto smtElectronicTagStorageDto) throws Exception{
+    public void fanoutSender(Integer code, PtlElectronicTagStorageDto ptlElectronicTagStorageDto) throws Exception{
 
         //不同的标签可能对应的队列不一样，最终一条一条发给客户端
         MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
         mQResponseEntity.setCode(code);
-        mQResponseEntity.setData(smtElectronicTagStorageDto);
+        mQResponseEntity.setData(ptlElectronicTagStorageDto);
         log.info("===========开始发送消息给客户端===============");
         //发送给PDA修改数据状态
         fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PDA,
                 JSONObject.toJSONString(mQResponseEntity));
         //发送给客户端控制亮/灭灯
-        fanoutSender.send(smtElectronicTagStorageDto.getQueueName(),
+        fanoutSender.send(ptlElectronicTagStorageDto.getQueueName(),
                 JSONObject.toJSONString(mQResponseEntity));
-        log.info("===========队列名称:" + smtElectronicTagStorageDto.getQueueName());
+        log.info("===========队列名称:" + ptlElectronicTagStorageDto.getQueueName());
         log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
         log.info("===========发送消息给客户端完成===============");
     }
@@ -674,87 +604,63 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public List<SmtSortingDto> sendElectronicTagStorageTest(String sortingCode) throws Exception {
+    public List<PtlSortingDto> sendElectronicTagStorageTest(String sortingCode) throws Exception {
 
-        List<SmtSortingDto> sortingDtoList = new LinkedList<>();
-        SearchSmtSorting searchSmtSorting = new SearchSmtSorting();
-        searchSmtSorting.setSortingCode(sortingCode);
-        searchSmtSorting.setStatus((byte) 1);
-        sortingDtoList = electronicTagFeignApi.findSortingList(searchSmtSorting).getData();
-        SmtSorting smtSorting = new SmtSorting();
-        BeanUtils.copyProperties(sortingDtoList.get(0), smtSorting);
-        smtSorting.setStatus((byte) 2);
-        smtSorting.setUpdateStatus((byte) 0);
-        electronicTagFeignApi.updateSmtSorting(smtSorting);
+        List<PtlSortingDto> sortingDtoList = new LinkedList<>();
+        SearchPtlSorting searchPtlSorting = new SearchPtlSorting();
+        searchPtlSorting.setSortingCode(sortingCode);
+        searchPtlSorting.setStatus((byte) 1);
+        sortingDtoList = electronicTagFeignApi.findSortingList(searchPtlSorting).getData();
+        PtlSorting ptlSorting = new PtlSorting();
+        BeanUtils.copyProperties(sortingDtoList.get(0), ptlSorting);
+        ptlSorting.setStatus((byte) 2);
+        ptlSorting.setUpdateStatus((byte) 0);
+        electronicTagFeignApi.updateSmtSorting(ptlSorting);
 
-        for (SmtSorting sorting : sortingDtoList) {
+        for (PtlSorting sorting : sortingDtoList) {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(sorting.getMaterialCode());
             List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
             }
-            SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-            searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
-            List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+            SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+            searchPtlElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
+            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
             }
-            if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+            if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
             }
-            smtElectronicTagStorageDtoList.get(0).setQuantity(sorting.getQuantity());
-            smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
-
-            // 查询物料库存
-            SearchWmsInnerStorageInventory searchWmsInnerStorageInventory = new SearchWmsInnerStorageInventory();
-            searchWmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-            searchWmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-            searchWmsInnerStorageInventory.setStatus((byte) 1);
-            List<WmsInnerStorageInventoryDto> smtStorageInventoryDtoList = innerFeignApi.findList(searchWmsInnerStorageInventory).getData();
-            if (StringUtils.isEmpty(smtStorageInventoryDtoList)) {
-//                   throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的库存信息");
-                // 允许负库存
-                WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
-                wmsInnerStorageInventory.setMaterialId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getMaterialId()));
-                wmsInnerStorageInventory.setStorageId(Long.parseLong(smtElectronicTagStorageDtoList.get(0).getStorageId()));
-                wmsInnerStorageInventory.setQuantity(sorting.getQuantity().negate());
-                wmsInnerStorageInventory.setStatus((byte) 1);
-                innerFeignApi.add(wmsInnerStorageInventory);
-            }
-
-            // 更新物料库存信息
-            WmsInnerStorageInventory wmsInnerStorageInventory = new WmsInnerStorageInventory();
-            wmsInnerStorageInventory.setStorageInventoryId(smtStorageInventoryDtoList.get(0).getStorageInventoryId());
-            wmsInnerStorageInventory.setQuantity(smtStorageInventoryDtoList.get(0).getQuantity().subtract(sorting.getQuantity()));
-            innerFeignApi.update(wmsInnerStorageInventory);
+            ptlElectronicTagStorageDtoList.get(0).setQuantity(sorting.getSortingQty());
+            ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
 
             //不同的标签可能对应的队列不一样，最终一条一条发给客户端
-            fanoutSender(1003, smtElectronicTagStorageDtoList.get(0));
+            fanoutSender(1003, ptlElectronicTagStorageDtoList.get(0));
 
             //熄灭时，根据单号查询是否做完
-            SearchSmtSorting searchSmtSorting1 = new SearchSmtSorting();
-            searchSmtSorting1.setSortingCode(sorting.getSortingCode());
-            searchSmtSorting1.setStatus((byte) 1);
-            List<SmtSortingDto> findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
+            SearchPtlSorting searchPtlSorting1 = new SearchPtlSorting();
+            searchPtlSorting1.setSortingCode(sorting.getSortingCode());
+            searchPtlSorting1.setStatus((byte) 1);
+            List<PtlSortingDto> findSortingList = electronicTagFeignApi.findSortingList(searchPtlSorting1).getData();
             //分拣单号处理完，回传给MES
             if (StringUtils.isEmpty(findSortingList)) {
                 PtlSortingDTO ptlSortingDTO = new PtlSortingDTO();
-                searchSmtSorting1.setStatus(null);
-                searchSmtSorting1.setPageSize(99999);
+                searchPtlSorting1.setStatus(null);
+                searchPtlSorting1.setPageSize(99999);
                 //获取分拣单号的所有物料、储位信息回传MES
-                findSortingList = electronicTagFeignApi.findSortingList(searchSmtSorting1).getData();
+                findSortingList = electronicTagFeignApi.findSortingList(searchPtlSorting1).getData();
                 List<PtlSortingDetailDTO> ptlSortingDetailDTOList = new LinkedList<>();
-                for (SmtSortingDto smtSortingDto1 : findSortingList) {
+                for (PtlSortingDto ptlSortingDto1 : findSortingList) {
                     PtlSortingDetailDTO ptlSortingDetailDTO = new PtlSortingDetailDTO();
-                    ptlSortingDetailDTO.setCwWarehouseCode(smtSortingDto1.getStorageCode());
-                    ptlSortingDetailDTO.setMaterialCode(smtSortingDto1.getMaterialCode());
+                    ptlSortingDetailDTO.setLocationCode(ptlSortingDto1.getStorageCode());
+                    ptlSortingDetailDTO.setGoodsCode(ptlSortingDto1.getMaterialCode());
                     ptlSortingDetailDTOList.add(ptlSortingDetailDTO);
                 }
-                ptlSortingDTO.setSortingCode(sorting.getSortingCode());
-                ptlSortingDTO.setPtlSortingDetailDTOList(ptlSortingDetailDTOList);
-                ptlSortingDTO.setUser(findSortingList.get(0).getModifiedUserCode());
+                ptlSortingDTO.setTaskNo(sorting.getSortingCode());
+                ptlSortingDTO.setDetails(ptlSortingDetailDTOList);
                 log.info("分拣单号处理完，回传给MES：" + ptlSortingDTO);
                 String url = "";
                 if ("MES".equals(findSortingList.get(0).getSourceSys())) {
@@ -779,21 +685,21 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (StringUtils.isEmpty(baseMaterials)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
         }
-        SearchSmtElectronicTagStorage searchSmtElectronicTagStorage = new SearchSmtElectronicTagStorage();
-        searchSmtElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
-        List<SmtElectronicTagStorageDto> smtElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchSmtElectronicTagStorage).getData();
+        SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
+        searchPtlElectronicTagStorage.setMaterialId(baseMaterials.get(0).getMaterialId().toString());
+        List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtoList = electronicTagFeignApi.findElectronicTagStorageList(searchPtlElectronicTagStorage).getData();
 
-        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList)) {
+        if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位对应的电子标签信息");
         }
-        if (StringUtils.isEmpty(smtElectronicTagStorageDtoList.get(0).getStorageCode())) {
+        if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList.get(0).getStorageCode())) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到物料对应的储位信息");
         }
-        smtElectronicTagStorageDtoList.get(0).setQuantity(BigDecimal.valueOf(100));
-        smtElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
+        ptlElectronicTagStorageDtoList.get(0).setQuantity(BigDecimal.valueOf(100));
+        ptlElectronicTagStorageDtoList.get(0).setOrderType((byte) 1);
 
         //不同的标签可能对应的队列不一样，最终一条一条发给客户端
-        fanoutSender(code, smtElectronicTagStorageDtoList.get(0));
+        fanoutSender(code, ptlElectronicTagStorageDtoList.get(0));
 
         return "0";
     }
