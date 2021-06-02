@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseHtProcessInspectionItemMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtProcessInspectionItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_process_inspection_item_id" jdbcType="BIGINT" property="htProcessInspectionItemId" />
+    <result column="process_inspection_item_id" jdbcType="BIGINT" property="processInspectionItemId" />
+    <result column="process_inspection_item_code" jdbcType="VARCHAR" property="processInspectionItemCode" />
+    <result column="process_inspection_item_desc" jdbcType="VARCHAR" property="processInspectionItemDesc" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="process_inspection_item_type" jdbcType="TINYINT" property="processInspectionItemType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bhpii.ht_process_inspection_item_id,
+    bhpii.process_inspection_item_id,
+    bhpii.process_inspection_item_code,
+    bhpii.process_inspection_item_desc,
+    bhpii.material_id,
+    bhpii.process_inspection_item_type,
+    bhpii.`status`,
+    bhpii.remark,
+    bhpii.org_id,
+    bhpii.create_user_id,
+    bhpii.create_time,
+    bhpii.modified_user_id,
+    bhpii.modified_time,
+    bhpii.is_delete
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bm.material_code,bm.material_desc,bm.material_version,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_ht_process_inspection_item bhpii
+    left join fantech_imes_v2.base_material bm on bhpii.material_id=bm.material_id
+    left join ocean_v2.sys_user u on bhpii.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bhpii.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bhpii.org_id = bo.organization_id
+    <where>
+      <if test="processInspectionItemCode!=null and processInspectionItemCode!=''">
+        and bhpii.process_inspection_item_code like CONCAT('%', #{processInspectionItemCode}, '%')
+      </if>
+      <if test="processInspectionItemDesc!=null and processInspectionItemDesc!=''">
+        and bhpii.process_inspection_item_desc like CONCAT('%', #{processInspectionItemDesc}, '%')
+      </if>
+      <if test="processInspectionItemType!=null">
+        and bhpii.process_inspection_item_type = #{processInspectionItemType}
+      </if>
+      <if test="materialId!=null">
+        and bhpii.material_id = #{materialId}
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="status!=null">
+        and bhpii.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bhpii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bhpii.create_time desc
+  </select>
+</mapper>
