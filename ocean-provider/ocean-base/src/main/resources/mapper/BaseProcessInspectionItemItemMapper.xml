@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProcessInspectionItemItemMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProcessInspectionItemItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="process_inspection_item_item_id" jdbcType="BIGINT" property="processInspectionItemItemId" />
+    <result column="process_inspection_item_id" jdbcType="BIGINT" property="processInspectionItemId" />
+    <result column="process_inspection_item_item_name" jdbcType="VARCHAR" property="processInspectionItemItemName" />
+    <result column="process_inspection_item_item_content" jdbcType="VARCHAR" property="processInspectionItemItemContent" />
+    <result column="standard" jdbcType="VARCHAR" property="standard" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bpiii.process_inspection_item_item_id,
+    bpiii.process_inspection_item_id,
+    bpiii.process_inspection_item_item_name,
+    bpiii.process_inspection_item_item_content,
+    bpiii.standard,
+    bpiii.`status`,
+    bpiii.remark,
+    bpiii.org_id,
+    bpiii.create_user_id,
+    bpiii.create_time,
+    bpiii.modified_user_id,
+    bpiii.modified_time,
+    bpiii.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_process_inspection_item_item bpiii
+    left join ocean_v2.sys_user u on bpiii.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bpiii.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bpiii.org_id = bo.organization_id
+    <where>
+      <if test="processInspectionItemId!=null">
+        and bpiii.process_inspection_item_id = #{processInspectionItemId}
+      </if>
+      <if test="status!=null">
+        and bpiii.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpiii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bpiii.create_time desc
+  </select>
+</mapper>
