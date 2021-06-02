@@ -80,14 +80,6 @@ public class QmsInspectionOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("获取新的明细")
-    @PostMapping("/getNewInspectionOrderDet")
-    public ResponseEntity<List<QmsInspectionOrderDet>> getNewInspectionOrderDet(@ApiParam(value = "检验单id",required = true)@RequestParam  @NotNull(message="检验单id不能为空") Long inspectionOrderId,
-                                                                                @ApiParam(value = "单据数量",required = true)@RequestParam  @NotNull(message="单据数量不能为空") BigDecimal orderQty) {
-        List<QmsInspectionOrderDet> list = qmsInspectionOrderService.getNewInspectionOrderDet(inspectionOrderId,orderQty);
-        return ControllerUtil.returnDataSuccess(list,list.size());
-    }
-
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<QmsHtInspectionOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionOrder searchQmsInspectionOrder) {
