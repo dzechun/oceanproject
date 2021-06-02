@@ -180,5 +180,13 @@ public class BaseHtProcessInspectionItem extends ValidGroup implements Serializa
     @Excel(name = "产品版本", height = 20, width = 30,orderNum="2")
     private String materialVersion;
 
+    /**
+     * 产品型号
+     */
+    @ApiModelProperty(name="productModelName" ,value="产品型号")
+    @Transient
+    @Excel(name = "产品型号", height = 20, width = 30,orderNum="6")
+    private String productModelName;
+
     private static final long serialVersionUID = 1L;
 }
