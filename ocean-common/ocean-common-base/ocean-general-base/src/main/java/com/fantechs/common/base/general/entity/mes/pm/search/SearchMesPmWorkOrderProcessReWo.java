@@ -41,6 +41,12 @@ public class SearchMesPmWorkOrderProcessReWo extends BaseQuery implements Serial
     private String materialDesc;
 
     /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    private String processId;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -86,7 +85,7 @@ public class MesSfcBarcodeOperationController {
                 BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
                         .barcode(vo.getCartonCode())
                         .labelTypeCode("09")
-                        .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
+                        .labelCategoryId(sfcWorkOrderBarcodeDto.getLabelCategoryId())
                         .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
                         .build());
             }

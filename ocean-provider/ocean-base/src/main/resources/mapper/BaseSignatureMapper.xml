@@ -67,6 +67,11 @@
             <if test="status!=null">
                 and ss.status=#{status}
             </if>
+            <if test="materialIds!=null">
+                <foreach collection="materialIds" index="index" item="item" open="and ss.material_id in (" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
         </where>
         order by ss.create_time desc
     </select>

@@ -76,12 +76,7 @@ public class BarcodeUtils {
 
 
     /**
-     * 1．传【产品条码、工序ID】参数；
-     * 2．系统检查产品条码是否正确，不正确返回错误信息结束；
-     * 3．系统检查条码流程是否正确，不正确返回错误信息结束；
-     * 4．系统检查条码状态是否正确，如是否挂起、维修、完工等状态返回错误信息结束；
-     * 5．系统检查条码工单状态是否正确，如是否挂起、完工、投产数量>=工单数等状态返回错误信息结束；
-     * 6．系统条码检查OK；
+     * 校验条码以及工单
      *
      * @return
      */
@@ -372,9 +367,6 @@ public class BarcodeUtils {
             if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, mesSfcBarcodeProcess.getBarcode(), mesSfcBarcodeProcess.getNextProcessCode());
             }
-//            if (!stationId.equals(mesSfcBarcodeProcess.getStationId())) {
-//                throw new BizErrorException(ErrorCodeEnum.PDA40012013, mesSfcBarcodeProcess.getProcessCode(), mesSfcBarcodeProcess.getStationId(), stationId);
-//            }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
         }

@@ -11,7 +11,7 @@
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
     <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
-    <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
+      <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -38,7 +38,7 @@
   mswob.work_order_id,
   mswob.work_order_code,
   mswob.barcode_status,
-  mswob.barcode_type,
+  mswob.label_category_id,
   mswob.remark,
   mswob.org_id,
   mswob.create_user_id,
@@ -59,7 +59,7 @@
             and mswob.work_order_id = #{workOrderId}
         </if>
         <if test="barcodeType != null">
-            and mswob.barcode_type = #{barcodeType}
+            and mswob.labelCategoryId = #{barcodeType}
         </if>
         <if test="barcode != null and barcode != ''">
             and mswob.barcode like CONCAT('%',#{barcode},'%')

@@ -1,15 +1,19 @@
 package com.fantechs.provider.mes.sfc.service;
 
-import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonAnnexDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonRecordDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PdaPutIntoProductionDto;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCarton;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface MesSfcBarcodeOperationService {
+
+    /**
+     * 包箱作业
+     * @param dto
+     * @return
+     */
+    int pdaCartonWork(PdaCartonWorkDto dto) throws Exception;
 
     /**
      * 投产作业

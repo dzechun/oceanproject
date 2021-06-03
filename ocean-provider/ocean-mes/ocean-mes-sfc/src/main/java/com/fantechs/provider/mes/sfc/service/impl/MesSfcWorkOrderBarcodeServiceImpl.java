@@ -86,33 +86,28 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //查询模版信息
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectByPrimaryKey(s);
             LabelRuteDto labelRuteDto = null;
-            switch (mesSfcWorkOrderBarcode.getBarcodeType()){
-                case 2:
-                    //获取工单类别模版
-                    labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01",mesSfcWorkOrderBarcode.getWorkOrderId());
-                    if(StringUtils.isEmpty(labelRuteDto)&&StringUtils.isEmpty(labelRuteDto.getLabelName())){
-                        //获取默认模版
-                        labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
+            if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 2) {//获取工单类别模版
+                labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01", mesSfcWorkOrderBarcode.getWorkOrderId());
+                if (StringUtils.isEmpty(labelRuteDto) && StringUtils.isEmpty(labelRuteDto.getLabelName())) {
+                    //获取默认模版
+                    labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
+                }
+            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 4) {//获取销售类别模版
+                labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02", mesSfcWorkOrderBarcode.getWorkOrderId());
+                if (StringUtils.isEmpty(labelRuteDto) || StringUtils.isEmpty(labelRuteDto.getLabelName())) {
+                    //获取默认模版
+                    labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
+                    if (StringUtils.isEmpty(labelRuteDto)) {
+                        throw new BizErrorException("未匹配到默认模版");
                     }
-                    break;
-                case 4:
-                    //获取销售类别模版
-                    labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",mesSfcWorkOrderBarcode.getWorkOrderId());
-                    if(StringUtils.isEmpty(labelRuteDto) ||StringUtils.isEmpty(labelRuteDto.getLabelName())){
-                        //获取默认模版
-                        labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
-                        if(StringUtils.isEmpty(labelRuteDto)){
-                            throw new BizErrorException("未匹配到默认模版");
-                        }
-                    }
-                    break;
+                }
             }
-            PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getBarcodeType(),mesSfcWorkOrderBarcode.getWorkOrderId());
+            PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getLabelCategoryId(), mesSfcWorkOrderBarcode.getWorkOrderId());
             //printModel.setSize(labelRuteDto.getOncePrintQty());
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
-            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getBarcodeType()==(byte)2 &&printType==(byte)1){
+            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getLabelCategoryId()==(byte)2 &&printType==(byte)1){
                 //生成条码过站记录
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
                 mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
@@ -243,7 +238,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 //            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
 //        }
         //判断条码产生数量不能大于工单数量
-        Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
+        Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getLabelCategoryId(),record.getWorkOrderId());
         if(count+ record.getQty()>record.getWorkOrderQty().doubleValue()){
             throw new BizErrorException(ErrorCodeEnum.OPT20012009);
         }
