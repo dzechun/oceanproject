@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsHtIpqcInspectionOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.history.QmsHtIpqcInspectionOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_ipqc_inspection_order_det_id" jdbcType="BIGINT" property="htIpqcInspectionOrderDetId" />
+    <result column="ipqc_inspection_order_det_id" jdbcType="BIGINT" property="ipqcInspectionOrderDetId" />
+    <result column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
+    <result column="process_inspection_item_item_id" jdbcType="BIGINT" property="processInspectionItemItemId" />
+    <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult" />
+    <result column="inspection_time" jdbcType="TIMESTAMP" property="inspectionTime" />
+    <result column="problem_record" jdbcType="VARCHAR" property="problemRecord" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qhiiod.ht_ipqc_inspection_order_det_id,
+    qhiiod.ipqc_inspection_order_det_id,
+    qhiiod.ipqc_inspection_order_id,
+    qhiiod.process_inspection_item_item_id,
+    qhiiod.inspection_result,
+    qhiiod.inspection_time,
+    qhiiod.problem_record,
+    qhiiod.`status`,
+    qhiiod.remark,
+    qhiiod.org_id,
+    qhiiod.create_user_id,
+    qhiiod.create_time,
+    qhiiod.modified_user_id,
+    qhiiod.modified_time,
+    qhiiod.is_delete,
+    qhiiod.option1,
+    qhiiod.option2,
+    qhiiod.option3
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bpiii.process_inspection_item_item_content,bpiii.standard,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.qms_ht_ipqc_inspection_order_det qhiiod
+    left join fantech_imes_v2.base_process_inspection_item_item bpiii on qhiiod.process_inspection_item_item_id=bpiii.process_inspection_item_item_id
+    left join ocean_v2.sys_user u on qhiiod.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qhiiod.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON qhiiod.org_id = bo.organization_id
+    <where>
+      <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
+        and qhiiod.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
+      </if>
+      <if test="status!=null">
+        and qhiiod.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qhiiod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by qhiiod.create_time desc
+  </select>
+</mapper>

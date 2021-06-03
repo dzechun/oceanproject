@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
+    <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="process_inspection_item_id" jdbcType="BIGINT" property="processInspectionItemId" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="approve_status" jdbcType="TINYINT" property="approveStatus" />
+    <result column="approve_user_id" jdbcType="BIGINT" property="approveUserId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <collection property="qmsIpqcInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet"
+                column="{ipqcInspectionOrderId=ipqc_inspection_order_id}" select="com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper.findList">
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qiio.ipqc_inspection_order_id,
+    qiio.ipqc_inspection_order_code,
+    qiio.work_order_id,
+    qiio.work_order_barcode_id,
+    qiio.process_inspection_item_id,
+    qiio.dept_id,
+    qiio.approve_status,
+    qiio.approve_user_id,
+    qiio.`status`,
+    qiio.remark,
+    qiio.org_id,
+    qiio.create_user_id,
+    qiio.create_time,
+    qiio.modified_user_id,
+    qiio.modified_time,
+    qiio.is_delete,
+    qiio.option1,
+    qiio.option2,
+    qiio.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    mpwo.work_order_code,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.qms_ipqc_inspection_order qiio
+    left join fantech_imes_v2.mes_pm_work_order mpwo on qiio.work_order_id=mpwo.work_order_id
+    left join fantech_imes_v2.mes_sfc_work_order_barcode mswob on qiio.work_order_barcode_id=mswob.work_order_barcode_id
+    left join fantech_imes_v2.base_process_inspection_item bpii on qiio.process_inspection_item_id=bpii.process_inspection_item_id
+    left join fantech_imes_v2.base_dept bd on qiio.dept_id=bd.dept_id
+    left join ocean_v2.sys_user su on qiio.approve_user_id=su.user_id
+    left join ocean_v2.sys_user u on qiio.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qiio.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON qiio.org_id = bo.organization_id
+    <where>
+      <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
+        and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
+      </if>
+      <if test="status!=null">
+        and qiio.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiio.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by qiio.create_time desc
+  </select>
+</mapper>
