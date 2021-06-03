@@ -67,8 +67,6 @@
   </resultMap>
 
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseTabDto" extends="BaseResultMap">
-        <result column="inspection_item_code" jdbcType="VARCHAR" property="inspectionItemCode" />
-        <result column="inspection_item_name" jdbcType="VARCHAR" property="inspectionItemName" />
         <result column="inspection_type_code" jdbcType="VARCHAR" property="inspectionTypeCode" />
         <result column="inspection_type_name" jdbcType="VARCHAR" property="inspectionTypeName" />
         <result column="package_specification_code" jdbcType="VARCHAR" property="packageSpecificationCode" />
@@ -148,7 +146,6 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>,
-      qii.inspection_item_code,qii.inspection_item_name,
       qit.inspection_type_code,qit.inspection_type_name,
       sps.package_specification_code,sps.package_specification_name,sps.package_specification_quantity,
       spm.product_model_code,spm.product_model_name,
@@ -156,7 +153,6 @@
       bl.label_code,bl.label_name,
       ss.supplier_name,ss.supplier_code
     FROM fantech_imes_v2.base_material_tab bmt
-    LEFT JOIN fantech_imes_v2.base_inspection_item qii ON bmt.inspection_item_id = qii.inspection_item_id
     LEFT JOIN fantech_imes_v2.base_inspection_type qit ON bmt.inspection_type_id = qit.inspection_type_id
     LEFT JOIN fantech_imes_v2.base_package_specification sps ON bmt.package_specification_id = sps.package_specification_id
     LEFT JOIN fantech_imes_v2.base_product_model spm ON bmt.product_model_id = spm.product_model_id

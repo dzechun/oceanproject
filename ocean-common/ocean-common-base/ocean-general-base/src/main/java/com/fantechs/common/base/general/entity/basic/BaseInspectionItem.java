@@ -9,15 +9,21 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+;
+;
 
 /**
  * 检验项目表
- * @date 2020-12-25 13:42:51
+ * base_inspection_item
+ * @author admin
+ * @date 2021-06-03 16:26:34
  */
 @Data
 @Table(name = "base_inspection_item")
@@ -31,109 +37,55 @@ public class BaseInspectionItem extends ValidGroup implements Serializable {
     private Long inspectionItemId;
 
     /**
-     * 检验项目单号
+     * 父ID
      */
-    @ApiModelProperty(name="inspectionItemCode",value = "检验项目单号")
-    @Excel(name = "检验项目单号", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="parentId",value = "父ID")
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    /**
+     * 检验项目编码
+     */
+    @ApiModelProperty(name="inspectionItemCode",value = "检验项目编码")
+    @Excel(name = "检验项目编码", height = 20, width = 30,orderNum="1")
     @Column(name = "inspection_item_code")
     private String inspectionItemCode;
 
     /**
-     * 检验项目名称
+     * 检验项目标准
      */
-    @ApiModelProperty(name="inspectionItemName",value = "检验项目名称")
-    @Excel(name = "检验项目名称", height = 20, width = 30,orderNum="2")
-    @Column(name = "inspection_item_name")
-    @NotBlank(message = "质检项目名称不能为空")
-    private String inspectionItemName;
+    @ApiModelProperty(name="inspectionItemStandard",value = "检验项目标准")
+    @Column(name = "inspection_item_standard")
+    private String inspectionItemStandard;
 
     /**
-     * 检验项目水平
+     * 检验项目类型(1-大类 2-小类)
      */
-    @ApiModelProperty(name="inspectionItemLevel",value = "检验项目水平")
-    @Column(name = "inspection_item_level")
-    @NotNull(message = "检验项目水平不能为空")
-    private Long inspectionItemLevel;
+    @ApiModelProperty(name="inspectionItemType",value = "检验项目类型(1-大类 2-小类)")
+    @Excel(name = "检验项目类型(1-大类 2-小类)", height = 20, width = 30,orderNum="3")
+    @Column(name = "inspection_item_type")
+    private Byte inspectionItemType;
 
     /**
-     * 检验工具
+     * 检验项目描述
      */
-    @ApiModelProperty(name="inspectionTool",value = "检验工具")
-    @Column(name = "inspection_tool")
-    @NotNull(message = "检验工具不能为空")
-    private Long inspectionTool;
+    @ApiModelProperty(name="inspectionItemDesc",value = "检验项目描述")
+    @Excel(name = "检验项目描述", height = 20, width = 30,orderNum="2")
+    @Column(name = "inspection_item_desc")
+    private String inspectionItemDesc;
 
     /**
-     * 检验标准
+     * 备注
      */
-    @ApiModelProperty(name="inspectionStandard",value = "检验标准")
-    @Excel(name = "检验标准", height = 20, width = 30,orderNum="5")
-    @Column(name = "inspection_standard")
-    @NotBlank(message = "检验标准不能为空")
-    private String inspectionStandard;
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
 
     /**
-     * 检验项
+     * 状态（0、无效 1、有效）
      */
-    @ApiModelProperty(name="inspectionNape",value = "检验项")
-    @Column(name = "inspection_nape")
-    @NotNull(message = "检验项不能为空")
-    private Long inspectionNape;
-
-    /**
-     * 批量
-     */
-    @ApiModelProperty(name="batch",value = "批量")
-    @Excel(name = "批量", height = 20, width = 30,orderNum="7")
-    @NotNull(message = "批量不能为空")
-    private BigDecimal batch;
-
-    /**
-     * AQL
-     */
-    @ApiModelProperty(name="aql",value = "AQL")
-    @Excel(name = "AQL", height = 20, width = 30,orderNum="8")
-    @NotNull(message = "AQL不能为空")
-    private BigDecimal aql;
-
-    /**
-     * 抽样数量
-     */
-    @ApiModelProperty(name="samplingAmount",value = "抽样数量")
-    @Excel(name = "抽样数量", height = 20, width = 30,orderNum="9")
-    @Column(name = "sampling_amount")
-    private BigDecimal samplingAmount;
-
-    /**
-     * AC
-     */
-    @ApiModelProperty(name="ac",value = "AC")
-    @Excel(name = "AC", height = 20, width = 30,orderNum="10")
-    private BigDecimal ac;
-
-    /**
-     * RE
-     */
-    @ApiModelProperty(name="re",value = "RE")
-    @Excel(name = "RE", height = 20, width = 30,orderNum="11")
-    private BigDecimal re;
-
-    /**
-     * 测试方法
-     */
-    @ApiModelProperty(name="testMethod",value = "测试方法")
-    @Column(name = "test_method")
-    @NotNull(message = "测试方法不能为空")
-    private Long testMethod;
-
-    /**
-     * 测试次数
-     */
-    @ApiModelProperty(name="testTimes",value = "测试次数")
-    @Excel(name = "测试次数", height = 20, width = 30,orderNum="13")
-    @Column(name = "test_times")
-    @NotNull(message = "测试次数不能为空")
-    private BigDecimal testTimes;
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="4")
+    private Byte status;
 
     /**
      * 组织id
@@ -141,19 +93,6 @@ public class BaseInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Column(name = "organization_id")
     private Long organizationId;
-
-    /**
-     * 备注
-     */
-    @ApiModelProperty(name="remark",value = "备注")
-    @Column(name = "remark")
-    private String remark;
-
-    /**
-     * 状态（0、无效 1、有效）
-     */
-    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    private Byte status;
 
     /**
      * 创建人ID
@@ -166,7 +105,7 @@ public class BaseInspectionItem extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -182,7 +121,7 @@ public class BaseInspectionItem extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -193,6 +132,36 @@ public class BaseInspectionItem extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 修改人名称
+     */
+    @ApiModelProperty(name="modifiedUserName" ,value="修改人名称")
+    @Transient
+    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="7")
+    private String modifiedUserName;
+
+    /**
+     * 创建人名称
+     */
+    @ApiModelProperty(name="createUserName" ,value="创建人名称")
+    @Transient
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="5")
+    private String createUserName;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="organizationName" ,value="组织名称")
+    @Transient
+    private String organizationName;
+
+    /**
+     * 检验项目小类
+     */
+    @Transient
+    @ApiModelProperty(name="baseInspectionItemDets",value = "检验项目小类")
+    private List<BaseInspectionItem> baseInspectionItemDets = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

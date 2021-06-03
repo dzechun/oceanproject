@@ -6,62 +6,68 @@
       WARNING - @mbg.generated
     -->
     <id column="ht_inspection_item_id" jdbcType="BIGINT" property="htInspectionItemId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
     <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
     <result column="inspection_item_code" jdbcType="VARCHAR" property="inspectionItemCode" />
-    <result column="inspection_item_name" jdbcType="VARCHAR" property="inspectionItemName" />
-    <result column="inspection_item_level" jdbcType="BIGINT" property="inspectionItemLevel" />
-    <result column="inspection_tool" jdbcType="BIGINT" property="inspectionTool" />
-    <result column="inspection_standard" jdbcType="VARCHAR" property="inspectionStandard" />
-    <result column="inspection_nape" jdbcType="BIGINT" property="inspectionNape" />
-    <result column="batch" jdbcType="DECIMAL" property="batch" />
-    <result column="aql" jdbcType="DECIMAL" property="aql" />
-    <result column="sampling_amount" jdbcType="DECIMAL" property="samplingAmount" />
-    <result column="ac" jdbcType="DECIMAL" property="ac" />
-    <result column="re" jdbcType="DECIMAL" property="re" />
-    <result column="test_method" jdbcType="BIGINT" property="testMethod" />
-    <result column="test_times" jdbcType="DECIMAL" property="testTimes" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard" />
+    <result column="inspection_item_type" jdbcType="TINYINT" property="inspectionItemType" />
+    <result column="inspection_item_desc" jdbcType="VARCHAR" property="inspectionItemDesc" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
 
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    qhii.ht_inspection_item_id,qhii.inspection_item_id,qhii.inspection_item_code,qhii.inspection_item_name,
-    qhii.inspection_item_level,qhii.inspection_tool,qhii.inspection_standard,qhii.inspection_nape,
-    qhii.batch,qhii.aql,qhii.sampling_amount,qhii.ac,qhii.re,qhii.test_method,qhii.test_times,qhii.remark,
-    qhii.status,qhii.create_user_id,qhii.create_time,qhii.modified_user_id,qhii.modified_time,qhii.is_delete,
-    qhii.organization_id
+    bhii.ht_inspection_item_id,
+    bhii.inspection_item_id,
+    bhii.parent_id,
+    bhii.inspection_item_code,
+    bhii.inspection_item_standard,
+    bhii.inspection_item_type,
+    bhii.inspection_item_desc,
+    bhii.`status`,
+    bhii.remark,
+    bhii.organization_id,
+    bhii.create_user_id,
+    bhii.create_time,
+    bhii.modified_user_id,
+    bhii.modified_time,
+    bhii.is_delete
   </sql>
 
-  <select id="findHtList" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/>, bo.organization_name
-    from fantech_imes_v2.base_ht_inspection_item qhii
-    LEFT JOIN fantech_imes_v2.base_organization bo ON qhii.organization_id = bo.organization_id
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_ht_inspection_item bhii
+    left join ocean_v2.sys_user u on bhii.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bhii.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bhii.organization_id = bo.organization_id
     <where>
-      <if test="inspectionItemCode != null and inspectionItemCode != ''">
-        and qhii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')
+      bhii.inspection_item_type = 1
+      <if test="inspectionItemCode!=null and inspectionItemCode!= ''">
+        and bhii.inspection_item_code = #{inspectionItemCode}
       </if>
-      <if test="inspectionItemName != null and inspectionItemName != ''">
-        and qhii.inspection_item_name like CONCAT('%', #{inspectionItemName}, '%')
+      <if test="inspectionItemDesc!=null and inspectionItemDesc!= ''">
+        and bhii.inspection_item_desc = #{inspectionItemDesc}
       </if>
-      <if test="inspectionItemLevel != null and inspectionItemLevel != ''">
-        and qhii.inspection_item_level like CONCAT('%', #{inspectionItemLevel}, '%')
-      </if>
-      <if test="inspectionNape != null and inspectionNape != ''">
-        and qhii.inspection_nape like CONCAT('%', #{inspectionNape}, '%')
+      <if test="status!=null">
+        and bhii.status=#{status}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qhii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        and date_format(bhii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
-    order by create_time desc
+    order by bhii.create_time desc
   </select>
-
 </mapper>

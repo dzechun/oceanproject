@@ -83,6 +83,13 @@ public class BaseHtInspectionStandard extends ValidGroup implements Serializable
     private Byte inspectionType;
 
     /**
+     * 检验方式ID
+     */
+    @ApiModelProperty(name="inspectionWayId",value = "检验方式ID")
+    @Column(name = "inspection_way_id")
+    private Long inspectionWayId;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
@@ -192,6 +199,14 @@ public class BaseHtInspectionStandard extends ValidGroup implements Serializable
     @Transient
     @Excel(name = "客户", height = 20, width = 30,orderNum="7")
     private String supplierName;
+
+    /**
+     * 检验方式
+     */
+    @ApiModelProperty(name="inspectionWayCode" ,value="检验方式")
+    @Transient
+    @Excel(name = "检验方式", height = 20, width = 30,orderNum="7")
+    private String inspectionWayCode;
 
     private static final long serialVersionUID = 1L;
 }
