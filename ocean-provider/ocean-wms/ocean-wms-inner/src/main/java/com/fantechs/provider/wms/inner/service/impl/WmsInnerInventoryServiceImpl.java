@@ -126,8 +126,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("relevanceOrderCode"))){
             criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode"));
         }
-        if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
-            criteria.andEqualTo("warehouseName",map.get("warehouseName")).andEqualTo("storageName",map.get("storageName"));
+        if(!StringUtils.isEmpty(map.get("storageId")) && !StringUtils.isEmpty(map.get("warehouseId"))){
+            criteria.andEqualTo("warehouseId",map.get("warehouseId")).andEqualTo("storageId",map.get("storageId"));
         }
         if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
             criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
@@ -149,8 +149,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("batchCode"))){
             criteria.andEqualTo("batchCode",map.get("batchCode"));
         }
-        if(!StringUtils.isEmpty(map.get("storageName")) && !StringUtils.isEmpty(map.get("warehouseName"))){
-            criteria.andEqualTo("storageName",map.get("storageName")).andEqualTo("warehouseName",map.get("warehouseName"));
+        if(!StringUtils.isEmpty(map.get("storageId")) && !StringUtils.isEmpty(map.get("warehouseId"))){
+            criteria.andEqualTo("storageId",map.get("storageId")).andEqualTo("warehouseId",map.get("warehouseId"));
         }
         if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
             criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));

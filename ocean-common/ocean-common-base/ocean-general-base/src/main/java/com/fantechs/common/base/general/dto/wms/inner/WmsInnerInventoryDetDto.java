@@ -1,39 +1,19 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.support.ValidGroup;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
+/**
+ * @Author mr.lei
+ * @Date 2021/6/2
+ */
 @Data
-public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializable {
-
-    /**
-     * 货主名称
-     */
-    @Transient
-    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
-    private String materialOwnerName;
-
-    /**
-     * 仓库名称
-     */
-    @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
-    @Transient
-    private String warehouseName;
-
+public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Serializable {
     /**
      * 库位名称
      */
@@ -89,14 +69,4 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
     @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "31")
     @Transient
     private String modifiedUserName;
-
-    /**
-     * 库存状态名称
-     */
-    @ApiModelProperty(name="inventoryStatusName",value = "库存状态名称")
-    @Excel(name = "库存状态名称", height = 20, width = 30,orderNum = "31")
-    @Transient
-    private String inventoryStatusName;
-
-    private static final long serialVersionUID = 1L;
 }

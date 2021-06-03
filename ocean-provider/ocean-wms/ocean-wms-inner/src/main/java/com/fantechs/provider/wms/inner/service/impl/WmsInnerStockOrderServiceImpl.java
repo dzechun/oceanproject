@@ -178,8 +178,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setInventoryVerificationId(id);
                 wmsInventoryVerificationDet.setMaterialId(wmsInnerInventory.getMaterialId());
                 //获取库位id
-                Long storageId  = wmsInventoryVerificationMapper.findStorageId(wmsInnerInventory.getStorageName());
-                wmsInventoryVerificationDet.setStorageId(storageId);
+                wmsInventoryVerificationDet.setStorageId(wmsInnerInventory.getStorageId());
                 wmsInventoryVerificationDet.setRegister((byte)2);
                 wmsInventoryVerificationDet.setOriginalQty(wmsInnerInventory.getPackingQty());
                 wmsInventoryVerificationDet.setCreateTime(new Date());
