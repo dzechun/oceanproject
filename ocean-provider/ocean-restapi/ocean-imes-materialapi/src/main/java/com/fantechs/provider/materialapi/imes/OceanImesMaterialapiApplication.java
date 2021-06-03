@@ -1,6 +1,5 @@
 package com.fantechs.provider.materialapi.imes;
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -13,7 +12,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class,
-        DruidDataSourceAutoConfigure.class ,
         HibernateJpaAutoConfiguration.class})
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.materialapi.imes","com.fantechs.common"})

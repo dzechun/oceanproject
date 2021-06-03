@@ -7,7 +7,7 @@
         <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
         <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="status" jdbcType="BIT" property="status"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>

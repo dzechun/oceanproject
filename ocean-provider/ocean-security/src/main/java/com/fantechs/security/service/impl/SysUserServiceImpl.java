@@ -2,19 +2,17 @@ package com.fantechs.security.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
-import com.fantechs.common.base.general.entity.basic.BaseDept;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
+import com.fantechs.common.base.general.entity.basic.BaseDept;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.security.mapper.SysHtUserMapper;
 import com.fantechs.security.mapper.SysUserMapper;
@@ -79,6 +77,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
             throw new BizErrorException("该用户的帐号/工号已存在。");
         }
 
+        sysUser.setUserId(SnowFlakeUtil.getUid());
         sysUser.setCreateUserId(currentUser.getUserId());
         sysUser.setCreateTime(new Date());
         sysUser.setModifiedUserId(currentUser.getUserId());
@@ -86,12 +85,11 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         sysUser.setIsDelete(StringUtils.isEmpty(sysUser.getIsDelete())?(byte)0:sysUser.getIsDelete());
         sysUser.setStatus(StringUtils.isEmpty(sysUser.getStatus())?1:sysUser.getStatus());
 
-        sysUserMapper.insertUseGeneratedKeys(sysUser);
+        sysUserMapper.insertSelective(sysUser);
 
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
         BeanUtils.copyProperties(sysUser,sysHtUser);
-
         return  sysHtUserMapper.insertSelective(sysHtUser);
     }
 
@@ -101,7 +99,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            //return ErrorCodeEnum.UAC10011039.getCode();
         }
 
         SysUser user = sysUserMapper.selectByPrimaryKey(sysUser.getUserId());
@@ -261,8 +258,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
                 }
                 sysUser.setCreateUserId(currentUser.getUserId());
                 sysUser.setCreateTime(new Date());
-                sysUser.setIsDelete((byte) 1);
-                sysUser.setStatus(1);
+                sysUser.setIsDelete((byte)1);
+                sysUser.setStatus((byte)1);
                 list.add(sysUser);
             }
 

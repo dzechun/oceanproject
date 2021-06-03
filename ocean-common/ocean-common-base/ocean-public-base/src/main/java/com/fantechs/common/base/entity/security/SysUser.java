@@ -6,13 +6,16 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Table(name = "sys_user")
 @Data
@@ -86,7 +89,7 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="status" ,value="用户状态(0-无效 1-有效)")
     @Excel(name="状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
-    private Integer status;
+    private Byte status;
 
     /**
      * 厂别id

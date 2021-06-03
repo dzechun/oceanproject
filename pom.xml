@@ -24,7 +24,7 @@
         <module>ocean-provider-api</module>  <!-- feign对外接口 -->
         <module>ocean-gateway</module>  <!-- 网关 -->
         <module>ocean-generator</module>  <!-- 代码生成器 -->
-        <module>ocean-ureport</module>
+<!--        <module>ocean-ureport</module>-->
     </modules>
 
     <!-- 整合依赖版本管理-->
@@ -35,7 +35,7 @@
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
         <smt-core.version>0.0.1-SNAPSHOT</smt-core.version>
         <swagger.version>2.7.0</swagger.version>
-        <druid.version>1.1.10</druid.version>
+        <druid.version>1.1.21</druid.version>
         <mybati.version>1.1.1</mybati.version>
         <mybati.mapper.version>4.1.5</mybati.mapper.version>
         <freemarker.version>2.3.28</freemarker.version>
@@ -83,7 +83,7 @@
         -->
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <artifactId>druid</artifactId>
             <version>${druid.version}</version>
         </dependency>
 
@@ -285,6 +285,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+            <version>4.0.0-RC1</version>
         </dependency>
     </dependencies>
     <!--管理springcloud版本，引入openfeign时不用添加version-->

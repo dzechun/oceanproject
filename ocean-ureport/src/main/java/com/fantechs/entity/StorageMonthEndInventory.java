@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 月末库存表
@@ -127,11 +126,11 @@ public class StorageMonthEndInventory extends ValidGroup implements Serializable
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    /**
-     * 库存明细
-     */
-    @ApiModelProperty(name = "list", value = "库存明细")
-    private List<WmsInnerStorageInventoryDetDto> list;
+//    /**
+//     * 库存明细
+//     */
+//    @ApiModelProperty(name = "list", value = "库存明细")
+//    private List<WmsInnerStorageInventoryDetDto> list;
 
     private static final long serialVersionUID = 1L;
 }
