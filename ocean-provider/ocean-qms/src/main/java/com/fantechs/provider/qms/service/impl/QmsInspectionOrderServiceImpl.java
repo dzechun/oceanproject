@@ -30,10 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -76,6 +74,28 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         return qmsInspectionOrders;
+    }
+
+    @Override
+    public QmsInspectionOrder selectByKey(Object key) {
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(key);
+        SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
+        searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+        if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
+            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+                //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+                if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
+                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
+                    qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                    qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                    qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                }
+            }
+            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
+        }
+
+        return qmsInspectionOrder;
     }
 
     @Override
@@ -148,7 +168,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
             }
         }
-
 
         //删除原明细
         Example example1 = new Example(QmsInspectionOrderDet.class);

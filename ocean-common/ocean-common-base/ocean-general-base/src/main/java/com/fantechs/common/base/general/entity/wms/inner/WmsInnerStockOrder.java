@@ -22,19 +22,27 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     /**
      * 库存盘点ID
      */
-    @ApiModelProperty(name="inventoryVerificationId",value = "库存盘点ID")
+    @ApiModelProperty(name="stockOrderId",value = "库存盘点ID")
     @Excel(name = "库存盘点ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "inventory_verification_id")
-    private Long inventoryVerificationId;
+    @Column(name = "stock_order_id")
+    private Long stockOrderId;
 
     /**
      * 盘点单号
      */
-    @ApiModelProperty(name="inventoryVerificationCode",value = "盘点单号")
+    @ApiModelProperty(name="stockOrderCode",value = "盘点单号")
     @Excel(name = "盘点单号", height = 20, width = 30,orderNum="") 
-    @Column(name = "inventory_verification_code")
-    private String inventoryVerificationCode;
+    @Column(name = "stock_order_code")
+    private String stockOrderCode;
+
+    /**
+     * 货主
+     */
+    @ApiModelProperty(name = "materialOwnerId",value = "货主")
+    @Excel(name = "货主", height = 20, width = 30,orderNum="")
+    @Column(name = "material_owner_id")
+    private Long materialOwnerId;
 
     /**
      * 相关单号
@@ -47,10 +55,10 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     /**
      * 盘点类型：1-货品 2-库位 3-全盘
      */
-    @ApiModelProperty(name="inventoryVerificationType",value = "盘点类型：1-货品 2-库位 3-全盘")
+    @ApiModelProperty(name="stockType",value = "盘点类型：1-货品 2-库位 3-全盘")
     @Excel(name = "1-仓库 2-库位", height = 20, width = 30,orderNum="") 
-    @Column(name = "inventory_verification_type")
-    private Byte inventoryVerificationType;
+    @Column(name = "stock_type")
+    private Byte stockType;
 
     /**
      * 1-盘点 2-复盘
@@ -71,24 +79,25 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     /**
      * 1-打开 2-待作业 3-作业中 4-作废 5完成
      */
-    @ApiModelProperty(name="status",value = "1-打开 2-待作业 3-作业中 4-作废 5完成")
-    @Excel(name = "1-打开 2-待作业 3-作业中 4-作废 5完成", height = 20, width = 30,orderNum="") 
-    private Byte status;
+    @ApiModelProperty(name="orderStatus",value = "1-打开 2-待作业 3-作业中 4-作废 5完成")
+    @Excel(name = "1-打开 2-待作业 3-作业中 4-作废 5完成", height = 20, width = 30,orderNum="")
+    @Column(name = "order_status")
+    private Byte orderStatus;
 
     /**
      * 盘点方式 1-PDA盘点 2-纸质盘点
      */
-    @ApiModelProperty(name="inventoryVerificationMode",value = "盘点方式 1-PDA盘点 2-纸质盘点")
+    @ApiModelProperty(name="stockMode",value = "盘点方式 1-PDA盘点 2-纸质盘点")
     @Excel(name = "盘点方式 1-PDA盘点 2-纸质盘点", height = 20, width = 30,orderNum="") 
-    @Column(name = "`inventory_verification_ mode`")
-    private Byte inventoryVerificationMode;
+    @Column(name = "`stock_mode`")
+    private Byte stockMode;
 
     /**
      * 盲盘 1-是 2-否
      */
     @ApiModelProperty(name="blind",value = "盲盘 1-是 2-否")
     @Excel(name = "盲盘 1-是 2-否", height = 20, width = 30,orderNum="") 
-    private String blind;
+    private String ifBlindStock;
 
     @Column(name = "max_storage_count")
     private Integer maxStorageCount;

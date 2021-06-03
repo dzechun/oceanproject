@@ -242,13 +242,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getPackingQty());
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
-            wmsInnerInventory.setMaterialOwnerName(wmsInAsnOrderDto.getMaterialOwnerName());
+            wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
             wmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
-            wmsInnerInventory.setMaterialCode(wmsInAsnOrderDetDto.getMaterialCode());
-            wmsInnerInventory.setMaterialName(wmsInAsnOrderDetDto.getMaterialName());
-            wmsInnerInventory.setWarehouseName(wmsInAsnOrderDetDto.getWarehouseName());
-            wmsInnerInventory.setStorageName(wmsInAsnOrderDetDto.getStorageName());
+            wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
+            wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setReceivingDate(new Date());
             wmsInnerInventory.setProductionDate(wmsInAsnOrderDetDto.getProductionDate());
             wmsInnerInventory.setJobStatus((byte)1);
@@ -352,8 +350,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         map.put("materialId",wmsInAsnOrderDetDto.getMaterialId());
         map.put("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         map.put("actualQty",wmsInAsnOrderDetDto.getActualQty());
-        map.put("warehouseName",wmsInAsnOrderDetDto.getWarehouseName());
-        map.put("storageName",wmsInAsnOrderDetDto.getStorageName());
+        map.put("warehouseId",wmsInAsnOrderDetDto.getWarehouseId());
+        map.put("storageId",wmsInAsnOrderDetDto.getStorageId());
         WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
         if(StringUtils.isEmpty(wmsInnerInventory)){
             //添加库存
@@ -363,13 +361,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
-            wmsInnerInventory.setMaterialOwnerName(wmsInAsnOrderDto.getMaterialOwnerName());
+            wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
             wmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
-            wmsInnerInventory.setMaterialCode(wmsInAsnOrderDetDto.getMaterialCode());
-            wmsInnerInventory.setMaterialName(wmsInAsnOrderDetDto.getMaterialName());
-            wmsInnerInventory.setWarehouseName(wmsInAsnOrderDetDto.getWarehouseName());
-            wmsInnerInventory.setStorageName(wmsInAsnOrderDetDto.getStorageName());
+            wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
+            wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setJobStatus((byte)1);
             wmsInnerInventory.setCreateTime(new Date());
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
@@ -399,6 +395,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setOrderStatus((byte)1);
         record.setAsnCode(CodeUtils.getId("ASN-"));
         record.setCreateTime(new Date());
+        record.setOrderTypeId((long)1);
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
@@ -542,12 +539,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(StringUtils.isEmpty(wmsInAsnOrder)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
+            wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getProductPalletId());
             Example example = new Example(WmsInAsnOrderDet.class);
             example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",palletAutoAsnDto.getMaterialId()).andEqualTo("batchCode",palletAutoAsnDto.getBatchCode());
             WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectOneByExample(example);
             if(StringUtils.isNotEmpty(wms)){
                 wms.setPackingQty(wms.getPackingQty().add(palletAutoAsnDto.getPackingQty()));
-                wms.setPutawayQty(wms.getActualQty().add(palletAutoAsnDto.getPackingQty()));
+                wms.setActualQty(wms.getActualQty().add(palletAutoAsnDto.getPackingQty()));
                 wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
             }else{
                 wms = palletAutoAsnDto;
@@ -562,6 +560,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             //更新库存
             int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId());
             //新增上架作业单
+            wms.setActualQty(palletAutoAsnDto.getActualQty());
             res = this.createJobOrder(wmsInAsnOrder,wms);
             return 1;
         }else{
@@ -574,8 +573,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .createTime(new Date())
                     .createUserId(sysUser.getUserId())
                     .orderStatus((byte)3)
+                    .orderTypeId((long)106)
                     .startReceivingDate(new Date())
                     .endReceivingDate(new Date())
+                    .productPalletId(palletAutoAsnDto.getProductPalletId())
                     .build();
             int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
             if(num<1){

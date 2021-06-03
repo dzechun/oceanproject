@@ -91,8 +91,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = innerFeignApi.findList(searchWmsInnerJobOrderDet).getData().get(0);
                     Map<String,Object> map = new HashMap<>();
                     map.put("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
-                    map.put("warehouseName",wmsInnerJobOrder.getWarehouseName());
-                    map.put("storageName",wmsInnerJobOrderDetDto.getInStorageName());
+                    map.put("warehouseId",wmsInnerJobOrder.getWarehouseId());
+                    map.put("storageId",wmsInnerJobOrderDetDto.getInStorageId());
                     map.put("materialId",wmsInnerJobOrderDetDto.getMaterialId());
                     map.put("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
                     map.put("jobOrderDetId",wmsInnerJobOrderDetDto.getJobOrderDetId());

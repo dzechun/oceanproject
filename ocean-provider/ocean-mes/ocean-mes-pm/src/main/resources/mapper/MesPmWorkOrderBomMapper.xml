@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.pm.MesPmWorkOrderBomMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_order_bom_id" jdbcType="BIGINT" property="workOrderBomId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId" />
+    <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="single_qty" jdbcType="DECIMAL" property="singleQty" />
+    <result column="usage_qty" jdbcType="DECIMAL" property="usageQty" />
+    <result column="base_qty" jdbcType="DECIMAL" property="baseQty" />
+    <result column="delivered_qty" jdbcType="DECIMAL" property="deliveredQty" />
+    <result column="undelivered_qty" jdbcType="DECIMAL" property="undeliveredQty" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+</mapper>

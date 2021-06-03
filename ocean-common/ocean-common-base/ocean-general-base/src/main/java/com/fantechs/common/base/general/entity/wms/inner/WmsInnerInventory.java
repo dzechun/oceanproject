@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -51,28 +52,30 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     private String makeCode;
 
     /**
-     * 货主名称
+     * 货主id
      */
-    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
-    @Column(name = "material_owner_name")
-    private String materialOwnerName;
+    @Transient
+    @ApiModelProperty(name="materialOwnerId",value = "货主id")
+    @Excel(name = "货主id", height = 20, width = 30,orderNum="3")
+    @Column(name = "material_owner_id")
+    private Long materialOwnerId;
 
     /**
-     * 仓库名称
+     * 仓库id
      */
-    @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
-    @Column(name = "warehouse_name")
-    private String warehouseName;
+    @ApiModelProperty(name="warehouseId",value = "仓库id")
+    @Excel(name = "仓库id", height = 20, width = 30,orderNum="4")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
 
     /**
-     * 库位名称
+     * 库位id
      */
-    @ApiModelProperty(name="storageName",value = "库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30,orderNum="5")
-    @Column(name = "storage_name")
-    private String storageName;
+    @ApiModelProperty(name="storageId",value = "库位id")
+    @Excel(name = "库位id", height = 20, width = 30,orderNum="5")
+    @Column(name = "storage_id")
+    private Long storageId;
+
 
     /**
      * 作业状态(1-待入 2-正常 3-待出)
@@ -88,22 +91,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Column(name = "material_id")
     private Long materialId;
-
-    /**
-     * 物料编码
-     */
-    @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="7")
-    @Column(name = "material_code")
-    private String materialCode;
-
-    /**
-     * 物料名称
-     */
-    @ApiModelProperty(name="materialName",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="8")
-    @Column(name = "material_name")
-    private String materialName;
 
     /**
      * 相关单号
@@ -249,12 +236,12 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     private String salesOrderCode;
 
     /**
-     * 供应商名称
+     * 供应商id
      */
-    @ApiModelProperty(name="supplierName",value = "供应商名称")
+    @ApiModelProperty(name="supplierId",value = "供应商名称")
     @Excel(name = "供应商名称", height = 20, width = 30,orderNum="27")
-    @Column(name = "supplier_name")
-    private String supplierName;
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     /**
      * 状态(0无效，1有效)

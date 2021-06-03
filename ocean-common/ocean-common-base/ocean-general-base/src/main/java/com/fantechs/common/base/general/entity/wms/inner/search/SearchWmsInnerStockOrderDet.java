@@ -16,8 +16,8 @@ public class SearchWmsInnerStockOrderDet extends BaseQuery implements Serializab
     /**
      * id
      */
-    @ApiModelProperty(name = "inventoryVerificationId",value = "id")
-    private Long inventoryVerificationId;
+    @ApiModelProperty(name = "stockOrderId",value = "id")
+    private Long stockOrderId;
 
     /**
      * 储位
