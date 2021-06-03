@@ -15,5 +15,8 @@ import java.util.List;
  */
 
 public interface MesPmDailyPlanService extends IService<MesPmDailyPlan> {
+
     List<MesPmDailyPlanDto> findList(SearchMesPmDailyPlan searchMesPmDailyPlan);
+
+    int batchRemove(List<MesPmDailyPlan> list);
 }
