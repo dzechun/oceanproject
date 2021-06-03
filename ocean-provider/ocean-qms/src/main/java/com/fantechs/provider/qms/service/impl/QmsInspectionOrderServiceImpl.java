@@ -30,10 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -170,7 +168,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
             }
         }
-
 
         //删除原明细
         Example example1 = new Example(QmsInspectionOrderDet.class);

@@ -193,9 +193,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         MesPmWorkOrder mesPmWorkOrderOld = this.selectByKey(mesPmWorkOrder.getWorkOrderId());
         if(StringUtils.isEmpty(mesPmWorkOrderOld)){
             try {
-                mesPmWorkOrder.setCreateTime(new Date());
-                mesPmWorkOrder.setModifiedTime(new Date());
-                mesPmWorkOrder.setIsDelete((byte) 1);
+                if(StringUtils.isEmpty(mesPmWorkOrder.getCreateTime())) mesPmWorkOrder.setCreateTime(new Date());
                 if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0){
                     return 0;
                 }
@@ -211,8 +209,6 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             mesPmHtWorkOrder.setModifiedTime(new Date());
             smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
 
-            mesPmWorkOrder.setModifiedTime(new Date());
-            mesPmWorkOrder.setCreateTime(null);
             n = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
             return n;
         }
