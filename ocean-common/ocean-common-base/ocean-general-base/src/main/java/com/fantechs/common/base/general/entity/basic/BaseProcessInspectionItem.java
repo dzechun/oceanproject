@@ -174,6 +174,14 @@ public class BaseProcessInspectionItem extends ValidGroup implements Serializabl
     private String materialVersion;
 
     /**
+     * 产品型号
+     */
+    @ApiModelProperty(name="productModelName" ,value="产品型号")
+    @Transient
+    @Excel(name = "产品型号", height = 20, width = 30,orderNum="6")
+    private String productModelName;
+
+    /**
      * 过程检验项目检验项
      */
     @ApiModelProperty(name="baseProcessInspectionItemItemList" ,value="过程检验项目检验项")

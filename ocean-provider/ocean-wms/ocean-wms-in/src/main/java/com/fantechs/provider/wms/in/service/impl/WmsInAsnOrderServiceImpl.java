@@ -242,13 +242,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getPackingQty());
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
-            wmsInnerInventory.setMaterialOwnerName(wmsInAsnOrderDto.getMaterialOwnerName());
+            wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
             wmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
-            wmsInnerInventory.setMaterialCode(wmsInAsnOrderDetDto.getMaterialCode());
-            wmsInnerInventory.setMaterialName(wmsInAsnOrderDetDto.getMaterialName());
-            wmsInnerInventory.setWarehouseName(wmsInAsnOrderDetDto.getWarehouseName());
-            wmsInnerInventory.setStorageName(wmsInAsnOrderDetDto.getStorageName());
+            wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
+            wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setReceivingDate(new Date());
             wmsInnerInventory.setProductionDate(wmsInAsnOrderDetDto.getProductionDate());
             wmsInnerInventory.setJobStatus((byte)1);
@@ -352,8 +350,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         map.put("materialId",wmsInAsnOrderDetDto.getMaterialId());
         map.put("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         map.put("actualQty",wmsInAsnOrderDetDto.getActualQty());
-        map.put("warehouseName",wmsInAsnOrderDetDto.getWarehouseName());
-        map.put("storageName",wmsInAsnOrderDetDto.getStorageName());
+        map.put("warehouseId",wmsInAsnOrderDetDto.getWarehouseId());
+        map.put("storageId",wmsInAsnOrderDetDto.getStorageId());
         WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
         if(StringUtils.isEmpty(wmsInnerInventory)){
             //添加库存
@@ -363,13 +361,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
-            wmsInnerInventory.setMaterialOwnerName(wmsInAsnOrderDto.getMaterialOwnerName());
+            wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
             wmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
-            wmsInnerInventory.setMaterialCode(wmsInAsnOrderDetDto.getMaterialCode());
-            wmsInnerInventory.setMaterialName(wmsInAsnOrderDetDto.getMaterialName());
-            wmsInnerInventory.setWarehouseName(wmsInAsnOrderDetDto.getWarehouseName());
-            wmsInnerInventory.setStorageName(wmsInAsnOrderDetDto.getStorageName());
+            wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
+            wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setJobStatus((byte)1);
             wmsInnerInventory.setCreateTime(new Date());
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());

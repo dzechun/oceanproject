@@ -115,16 +115,33 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
         baseProcessInspectionItem.setOrgId(user.getOrganizationId());
         int i=baseProcessInspectionItemMapper.updateByPrimaryKeySelective(baseProcessInspectionItem);
 
+        //原来有的检验项只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<BaseProcessInspectionItemItem> baseProcessInspectionItemItemList = baseProcessInspectionItem.getBaseProcessInspectionItemItemList();
+        if(StringUtils.isNotEmpty(baseProcessInspectionItemItemList)) {
+            for (BaseProcessInspectionItemItem baseProcessInspectionItemItem : baseProcessInspectionItemItemList) {
+                if (StringUtils.isNotEmpty(baseProcessInspectionItemItem.getProcessInspectionItemItemId())) {
+                    baseProcessInspectionItemItemMapper.updateByPrimaryKeySelective(baseProcessInspectionItemItem);
+                    idList.add(baseProcessInspectionItemItem.getProcessInspectionItemItemId());
+                }
+            }
+        }
+
         //删除原有过程检验项目检验项
         Example example1 = new Example(BaseProcessInspectionItemItem.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("processInspectionItemId", baseProcessInspectionItem.getProcessInspectionItemId());
+        if(idList.size()>0){
+            criteria1.andNotIn("processInspectionItemItemId",idList);
+        }
         baseProcessInspectionItemItemMapper.deleteByExample(example1);
 
         //新增过程检验项目检验项
-        List<BaseProcessInspectionItemItem> baseProcessInspectionItemItemList = baseProcessInspectionItem.getBaseProcessInspectionItemItemList();
         if(StringUtils.isNotEmpty(baseProcessInspectionItemItemList)){
             for (BaseProcessInspectionItemItem baseProcessInspectionItemItem:baseProcessInspectionItemItemList){
+                if(idList.contains(baseProcessInspectionItemItem.getProcessInspectionItemItemId())){
+                    continue;
+                }
                 baseProcessInspectionItemItem.setProcessInspectionItemId(baseProcessInspectionItem.getProcessInspectionItemId());
                 baseProcessInspectionItemItem.setCreateUserId(user.getUserId());
                 baseProcessInspectionItemItem.setCreateTime(new Date());
@@ -132,8 +149,8 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
                 baseProcessInspectionItemItem.setModifiedTime(new Date());
                 baseProcessInspectionItemItem.setStatus(StringUtils.isEmpty(baseProcessInspectionItemItem.getStatus())?1:baseProcessInspectionItemItem.getStatus());
                 baseProcessInspectionItemItem.setOrgId(user.getOrganizationId());
+                baseProcessInspectionItemItemMapper.insert(baseProcessInspectionItemItem);
             }
-            baseProcessInspectionItemItemMapper.insertList(baseProcessInspectionItemItemList);
         }
 
         //履历

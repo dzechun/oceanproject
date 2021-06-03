@@ -67,7 +67,7 @@
   </select>
 
   <delete id="deleteUserByOrganization" parameterType="long">
-    DELETE FROM ocean_v2.sys_organization_user WHERE organization_user_id = #{organizationId}
+    DELETE FROM ocean_v2.sys_organization_user WHERE organization_id = #{organizationId}
   </delete>
 
   <insert id="insertUser" parameterType="java.util.List">

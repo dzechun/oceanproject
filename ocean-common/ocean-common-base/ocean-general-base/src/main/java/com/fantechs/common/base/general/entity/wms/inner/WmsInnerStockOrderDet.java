@@ -17,14 +17,14 @@ import lombok.Data;
  * @date 2021-05-27 18:21:54
  */
 @Data
-@Table(name = "wms_inventory_verification_det")
+@Table(name = "wms_inner_stock_order_det")
 public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     @Id
-    @Column(name = "inventory_verification_det_id")
-    private Long inventoryVerificationDetId;
+    @Column(name = "stock_order_det_id")
+    private Long stockOrderDetId;
 
-    @Column(name = "inventory_verification_id")
-    private Long inventoryVerificationId;
+    @Column(name = "stock_order_id")
+    private Long stockOrderId;
 
     /**
      * 相关明细ID
@@ -61,26 +61,26 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     /**
      * 盘点数量
      */
-    @ApiModelProperty(name="inventoryQty",value = "盘点数量")
+    @ApiModelProperty(name="stockQty",value = "盘点数量")
     @Excel(name = "盘点数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "inventory_qty")
-    private BigDecimal inventoryQty;
+    @Column(name = "stock_qty")
+    private BigDecimal stockQty;
 
     /**
      * 差异数量
      */
-    @ApiModelProperty(name="discrepancyQty",value = "差异数量")
+    @ApiModelProperty(name="varianceQty",value = "差异数量")
     @Excel(name = "差异数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "discrepancy_qty")
-    private BigDecimal discrepancyQty;
+    @Column(name = "variance_qty")
+    private BigDecimal varianceQty;
 
     /**
      * 上次差异数量
      */
-    @ApiModelProperty(name="upDiscrepancyQty",value = "上次差异数量")
+    @ApiModelProperty(name="lastTimeVarianceQty",value = "上次差异数量")
     @Excel(name = "差异数量", height = 20, width = 30,orderNum="")
-    @Column(name = "up_discrepancy_qty")
-    private BigDecimal upDiscrepancyQty;
+    @Column(name = "last_time_variance_qty")
+    private BigDecimal lastTimeVarianceQty;
 
     /**
      * 批次号
@@ -90,20 +90,17 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     @Column(name = "batch_code")
     private String batchCode;
 
-    /**
-     * 作业员
-     */
-    @ApiModelProperty(name="workName",value = "作业员")
-    @Excel(name = "作业员", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_name")
-    private String workName;
+    @ApiModelProperty(name = "stockUserId",value = "盘点人员id")
+    @Excel(name = "盘点人员id",height = 20,width = 30,orderNum = "")
+    @Column(name = "stock_user_id")
+    private Long stockUserId;
 
     /**
      * 是否登记 1-是 2-否
      */
-    @ApiModelProperty(name="register",value = "是否登记 1-是 2-否")
+    @ApiModelProperty(name="ifRegister",value = "是否登记 1-是 2-否")
     @Excel(name = "是否登记 1-是 2-否", height = 20, width = 30,orderNum="") 
-    private Byte register;
+    private Byte ifRegister;
 
     /**
      * 备注

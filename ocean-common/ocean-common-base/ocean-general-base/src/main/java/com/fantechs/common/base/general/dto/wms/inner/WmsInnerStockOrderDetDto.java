@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -14,6 +15,13 @@ import java.io.Serializable;
  */
 @Data
 public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements Serializable {
+
+    /**
+     * 作业员
+     */
+    @Transient
+    @ApiModelProperty(name="workName",value = "作业员")
+    private String workName;
     /**
      * 组织名称
      */

@@ -48,7 +48,8 @@ wiv.modified_user_id,
 wiv.modified_time
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,sw.warehouse_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM wms_inventory_verification wiv
+    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,sw.warehouse_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    FROM wms_inner_stock_order wiv
     LEFT JOIN base_material_owner bmo ON wiv.material_owner_id=bmo.material_owner_id
     LEFT JOIN smt_warehouse sw ON wiv.warehouse_id = sw.warehouse_id
     LEFT JOIN ocean.sys_user su  ON wiv.create_user_id = su.user_id
