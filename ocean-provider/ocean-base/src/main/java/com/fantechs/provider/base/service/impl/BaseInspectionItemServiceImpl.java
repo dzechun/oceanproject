@@ -65,13 +65,27 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //检验项目小类
+        List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
+
         //判断编码是否重复
+        List<String> codeList = new ArrayList<>();
+        codeList.add(baseInspectionItem.getInspectionItemCode());
+        if(StringUtils.isNotEmpty(baseInspectionItems)) {
+            for (BaseInspectionItem inspectionItem : baseInspectionItems) {
+                if (codeList.contains(inspectionItem.getInspectionItemCode())) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                } else {
+                    codeList.add(inspectionItem.getInspectionItemCode());
+                }
+            }
+        }
+
         Example example = new Example(BaseInspectionItem.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("inspectionItemCode", baseInspectionItem.getInspectionItemCode())
-                .andEqualTo("inspectionItemType",(byte)1);
-        BaseInspectionItem baseInspectionItem1 = baseInspectionItemMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseInspectionItem1)){
+        criteria.andIn("inspectionItemCode", codeList);
+        List<BaseInspectionItem> baseInspectionItems1 = baseInspectionItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseInspectionItems1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
@@ -86,7 +100,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
         int i = baseInspectionItemMapper.insertUseGeneratedKeys(baseInspectionItem);
 
         //新增检验项目明细
-        List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
         if(StringUtils.isNotEmpty(baseInspectionItems)){
             for (BaseInspectionItem baseInspectionItem2:baseInspectionItems){
                 baseInspectionItem2.setParentId(baseInspectionItem.getInspectionItemId());
@@ -116,14 +129,33 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //检验项目小类
+        List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
+
         //判断编码是否重复
+        List<String> codeList = new ArrayList<>();
+        List<Long> idList = new ArrayList<>();
+        codeList.add(baseInspectionItem.getInspectionItemCode());
+        idList.add(baseInspectionItem.getInspectionItemId());
+        if(StringUtils.isNotEmpty(baseInspectionItems)) {
+            for (BaseInspectionItem inspectionItem : baseInspectionItems) {
+                if (codeList.contains(inspectionItem.getInspectionItemCode())) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                } else {
+                    codeList.add(inspectionItem.getInspectionItemCode());
+                }
+                if(StringUtils.isNotEmpty(inspectionItem.getInspectionItemId())){
+                    idList.add(inspectionItem.getInspectionItemId());
+                }
+            }
+        }
+
         Example example = new Example(BaseInspectionItem.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("inspectionItemCode", baseInspectionItem.getInspectionItemCode())
-                .andEqualTo("inspectionItemType",(byte)1)
-                .andNotEqualTo("inspectionItemId",baseInspectionItem.getInspectionItemId());
-        BaseInspectionItem baseInspectionItem1 = baseInspectionItemMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseInspectionItem1)){
+        criteria.andIn("inspectionItemCode", codeList)
+                .andNotIn("inspectionItemId",idList);
+        List<BaseInspectionItem> baseInspectionItems1 = baseInspectionItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseInspectionItems1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
@@ -137,11 +169,10 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
         //删除原有检验项目明细
         Example example1 = new Example(BaseInspectionItem.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("parentId", baseInspectionItem.getInspectionItemCode());
+        criteria1.andEqualTo("parentId", baseInspectionItem.getInspectionItemId());
         baseInspectionItemMapper.deleteByExample(example1);
 
         //新增检验项目明细
-        List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
         if(StringUtils.isNotEmpty(baseInspectionItems)){
             for (BaseInspectionItem baseInspectionItem2:baseInspectionItems){
                 baseInspectionItem2.setParentId(baseInspectionItem.getInspectionItemId());

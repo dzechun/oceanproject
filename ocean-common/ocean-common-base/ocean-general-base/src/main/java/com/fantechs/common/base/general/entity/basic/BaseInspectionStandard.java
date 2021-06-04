@@ -193,10 +193,10 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
     /**
      * 检验方式
      */
-    @ApiModelProperty(name="inspectionWayCode" ,value="检验方式")
+    @ApiModelProperty(name="inspectionWayDesc" ,value="检验方式")
     @Transient
     @Excel(name = "检验方式", height = 20, width = 30,orderNum="7")
-    private String inspectionWayCode;
+    private String inspectionWayDesc;
 
     /**
      * 检验标准明细
