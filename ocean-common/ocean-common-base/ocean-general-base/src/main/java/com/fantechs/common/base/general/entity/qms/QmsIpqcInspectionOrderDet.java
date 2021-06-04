@@ -43,37 +43,45 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     private Long ipqcInspectionOrderId;
 
     /**
-     * 过程检验项目检验项ID
+     * 抽样方案AC/RE值表ID
      */
-    @ApiModelProperty(name="processInspectionItemItemId",value = "过程检验项目检验项ID")
-    @Excel(name = "过程检验项目检验项ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "process_inspection_item_item_id")
-    private Long processInspectionItemItemId;
+    @ApiModelProperty(name="samplePlanAcReId",value = "抽样方案AC/RE值表ID")
+    @Excel(name = "抽样方案AC/RE值表ID", height = 20, width = 30,orderNum="")
+    @Column(name = "sample_plan_ac_re_id")
+    private Long samplePlanAcReId;
 
     /**
-     * 检验结果
+     * 不良数量
      */
-    @ApiModelProperty(name="inspectionResult",value = "检验结果")
-    @Excel(name = "检验结果", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="badnessQty",value = "不良数量")
+    @Excel(name = "不良数量", height = 20, width = 30,orderNum="")
+    @Column(name = "badness_qty")
+    private Long badnessQty;
+
+    /**
+     * 检验结果(0-不合格 1-合格)
+     */
+    @ApiModelProperty(name="inspectionResult",value = "检验结果(0-不合格 1-合格)")
+    @Excel(name = "检验结果(0-不合格 1-合格)", height = 20, width = 30,orderNum="")
     @Column(name = "inspection_result")
-    private String inspectionResult;
+    private Byte inspectionResult;
 
     /**
      * 检验时间
      */
     @ApiModelProperty(name="inspectionTime",value = "检验时间")
-    @Excel(name = "检验时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "检验时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "inspection_time")
     private Date inspectionTime;
 
     /**
-     * 问题记录
+     * 不良类别ID
      */
-    @ApiModelProperty(name="problemRecord",value = "问题记录")
-    @Excel(name = "问题记录", height = 20, width = 30,orderNum="") 
-    @Column(name = "problem_record")
-    private String problemRecord;
+    @ApiModelProperty(name="badnessCategoryId",value = "不良类别ID")
+    @Excel(name = "不良类别ID", height = 20, width = 30,orderNum="")
+    @Column(name = "badness_category_id")
+    private Long badnessCategoryId;
 
     /**
      * 状态(0无效，1有效)
