@@ -90,6 +90,12 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandard.getBaseInspectionStandardDets();
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets) {
+                if(baseInspectionStandardDet.getInspectionTag()==(byte)2) {
+                    if (baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == -1
+                            || baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == 0) {
+                        throw new BizErrorException("规格上限必须大于规格下限");
+                    }
+                }
                 baseInspectionStandardDet.setInspectionStandardId(baseInspectionStandard.getInspectionStandardId());
                 baseInspectionStandardDet.setCreateUserId(user.getUserId());
                 baseInspectionStandardDet.setCreateTime(new Date());
@@ -148,8 +154,10 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         //删除原有检验标准明细
         Example example1 = new Example(BaseInspectionStandardDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inspectionStandardId", baseInspectionStandard.getInspectionStandardId())
-                .andNotIn("inspectionStandardDetId",idList);
+        criteria1.andEqualTo("inspectionStandardId", baseInspectionStandard.getInspectionStandardId());
+        if(idList.size()>0){
+            criteria1.andNotIn("inspectionStandardDetId",idList);
+        }
         baseInspectionStandardDetMapper.deleteByExample(example1);
 
         //新增检验标准明细

@@ -17,6 +17,55 @@ import java.util.Date;
 
 @Data
 public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializable {
+
+    /**
+     * 货主名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
+    @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
+    private String materialOwnerName;
+
+    /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="4")
+    @Transient
+    private String warehouseName;
+
+    /**
+     * 库位名称
+     */
+    @ApiModelProperty(name="storageName",value = "库位名称")
+    @Excel(name = "库位名称", height = 20, width = 30,orderNum="5")
+    @Transient
+    private String storageName;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="7")
+    @Transient
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="8")
+    @Transient
+    private String materialName;
+
+    /**
+     * 供应商名称
+     */
+    @ApiModelProperty(name="supplierName",value = "供应商名称")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="27")
+    @Transient
+    private String supplierName;
+
     /**
      * 组织名称
      */

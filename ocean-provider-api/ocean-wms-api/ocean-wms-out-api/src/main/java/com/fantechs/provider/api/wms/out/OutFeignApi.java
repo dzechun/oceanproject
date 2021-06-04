@@ -10,6 +10,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -24,5 +27,9 @@ public interface OutFeignApi {
     @ApiOperation("修改销售出库明细")
     @PostMapping("/wmsOutDeliveryOrderDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutDeliveryOrderDet.update.class) WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet);
+
+    @ApiOperation("获取详情")
+    @PostMapping("/wmsOutDeliveryOrderDet/detail")
+    ResponseEntity<WmsOutDeliveryOrderDet> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id);
 
 }

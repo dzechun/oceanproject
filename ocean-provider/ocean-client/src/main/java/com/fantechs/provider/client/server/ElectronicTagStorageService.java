@@ -1,13 +1,10 @@
 package com.fantechs.provider.client.server;
 
-import com.fantechs.common.base.electronic.dto.SmtElectronicTagStorageDto;
-import com.fantechs.common.base.electronic.dto.SmtLoadingDetDto;
-import com.fantechs.common.base.electronic.dto.SmtSortingDto;
-import com.fantechs.common.base.electronic.entity.SmtLoading;
-import com.fantechs.common.base.electronic.entity.SmtLoadingDet;
-import com.fantechs.common.base.electronic.entity.SmtSorting;
+import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
+import com.fantechs.common.base.electronic.entity.PtlJobOrder;
+import com.fantechs.provider.client.dto.PtlJobOrderDTO;
+import com.fantechs.provider.client.dto.RabbitMQDTO;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -15,15 +12,10 @@ import java.util.List;
  */
 public interface ElectronicTagStorageService {
 
-    List<SmtSortingDto> sendElectronicTagStorage(String sortingCode) throws Exception;
-    SmtElectronicTagStorageDto sendPlaceMaterials(String materialCode);
-    int batchSortingDelete(List<String> sortingList) throws Exception;
-    int createSorting(List<SmtSorting> sortingList) throws Exception;
-    int createLoading(List<SmtLoading> smtLoadingList)throws Exception;
-    List<SmtLoadingDetDto> sendLoadingElectronicTagStorage(String loadingCode) throws Exception;
-    int submitLoadingDet(List<SmtLoadingDetDto> smtLoadingDetDtoList) throws Exception;
-    int revokeLoading(String loadingCode) throws Exception;
-    int comfirmLoadingDet(SmtLoadingDetDto smtLoadingDetDto) throws Exception;
-    List<SmtSortingDto> sendElectronicTagStorageTest(String sortingCode) throws Exception;
+    PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId) throws Exception;
+    int createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception;
     String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception;
+    PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId, String status) throws Exception;
+    void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO) throws Exception;
+    String intercepting(String s, int number);
 }

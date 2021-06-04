@@ -2,6 +2,7 @@ package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -38,6 +40,12 @@ public class QmsInspectionOrderController {
     private QmsInspectionOrderService qmsInspectionOrderService;
     @Resource
     private QmsHtInspectionOrderService qmsHtInspectionOrderService;
+
+    @ApiOperation("PDA提交")
+    @PostMapping("/PDASubmit")
+    public ResponseEntity PDASubmit(@ApiParam(value = "检验单id",required = true) @RequestParam @NotNull(message="检验单id不能为空") Long inspectionOrderId) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.writeBack(inspectionOrderId));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

@@ -74,6 +74,14 @@ public class QmsInspectionOrderDetSampleController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("检查条码")
+    @PostMapping("/checkBarcode")
+    public ResponseEntity<Boolean> checkBarcode(@ApiParam(value = "条码值",required = true)@RequestParam  @NotNull(message="条码值不能为空") String barcode,
+                                               @ApiParam(value = "检验项目明细id",required = true)@RequestParam  @NotNull(message="检验项目明细id不能为空") Long qmsInspectionOrderDetId) {
+        Boolean bool = qmsInspectionOrderDetSampleService.checkBarcode(barcode, qmsInspectionOrderDetId);
+        return ControllerUtil.returnDataSuccess(bool,1);
+    }
+
     /*@ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<QmsInspectionOrderDetSample>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionOrderDetSample searchQmsInspectionOrderDetSample) {

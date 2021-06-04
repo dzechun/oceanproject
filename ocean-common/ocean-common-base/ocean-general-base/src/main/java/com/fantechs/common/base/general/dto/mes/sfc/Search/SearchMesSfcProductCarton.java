@@ -20,4 +20,7 @@ public class SearchMesSfcProductCarton extends BaseQuery implements Serializable
 
     @ApiModelProperty(name="stationId",value = "工位ID")
     private Long stationId;
+
+    @ApiModelProperty(name="closeStatus",value = "关箱状态(0-未关闭 1-已关闭)")
+    private Byte closeStatus;
 }

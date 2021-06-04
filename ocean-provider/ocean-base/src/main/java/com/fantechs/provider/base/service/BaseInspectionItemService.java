@@ -9,12 +9,10 @@ import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2020/12/25.
+ * Created by leifengzhi on 2021/06/03.
  */
 
 public interface BaseInspectionItemService extends IService<BaseInspectionItem> {
-
-    List<BaseInspectionItemDto> findList(Map<String, Object> map);
-
-    List<BaseInspectionItemDto> exportExcel(Map<String, Object> map);
+    List<BaseInspectionItem> findList(Map<String, Object> map);
+    List<BaseInspectionItem> findDetList(Map<String, Object> map);
 }

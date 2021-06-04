@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,18 +41,19 @@ public class PDAWmsInnerJobOrderController {
     @Resource
     private PickingOrderService pickingOrderService;
 
-    @ApiOperation("/PDA上架作业单列表")
+    @ApiOperation("PDA上架作业单列表")
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerJobOrderDto>> findList(@RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInnerJobOrder){
         List<Byte> bytes= new ArrayList<>();
         bytes.add((byte)3);
         bytes.add((byte)4);
+        bytes.add((byte)6);
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
         List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
     }
 
-    @ApiOperation("/PDA上架作业明细列表")
+    @ApiOperation("PDA上架作业明细列表")
     @PostMapping("/findDetList")
     public ResponseEntity<List<WmsInnerJobOrderDetDto>> findDetList(@RequestBody(required = false) SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet){
         List<Byte> bytes= new ArrayList<>();
@@ -61,20 +64,21 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
-    @ApiOperation("PDA扫码库位返回数量")
+    @ApiOperation("PDA扫码库位上架")
     @PostMapping("/scanStorageBackQty")
-    public ResponseEntity<WmsInnerJobOrderDet> scanStorageBackQty(@ApiParam(value = "库位编码")@RequestParam @NotNull(message = "库位编码不能为空") String storageCode,
-                                                                  @ApiParam(value = "明细id")@RequestParam @NotNull(message = "明细唯一标识不能为空") Long jobOrderDetId){
-        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId);
+    public ResponseEntity<WmsInnerJobOrderDet> scanStorageBackQty(@ApiParam(value = "库位编码")@RequestParam @NotBlank(message = "库位编码不能为空") String storageCode,
+                                                                  @ApiParam(value = "明细id")@RequestParam @NotBlank(message = "明细唯一标识不能为空") Long jobOrderDetId,
+                                                                  @ApiParam(value = "确认数量")@RequestParam @NotBlank(message = "确认数量不能小于1") BigDecimal qty){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId,qty);
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }
 
     @ApiOperation("标签校验")
-    @ApiIgnore
     @PostMapping("/checkBarcode")
-    public ResponseEntity<String> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode){
-        String id = wmsInnerJobOrderService.checkBarcode(barCode);
-        return ControllerUtil.returnDataSuccess(id,StringUtils.isEmpty(id)?0:1);
+    public ResponseEntity<BigDecimal> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode,
+                                                   @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
+        BigDecimal qty = wmsInnerJobOrderService.checkBarcode(barCode,jobOrderDetId);
+        return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }
 
     @ApiOperation("单一确认")
@@ -86,8 +90,10 @@ public class PDAWmsInnerJobOrderController {
 
     @ApiOperation("PDA拣货确认")
     @PostMapping("/pickingOrder")
-    public ResponseEntity pickingOrder(@RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId,String barCode){
-        return ControllerUtil.returnCRUD(pickingOrderService.scanAffirmQty(jobOrderDetId,barCode));
+    public ResponseEntity<WmsInnerJobOrderDet> pickingOrder(@ApiParam("条码")@RequestParam String barCode,
+                                       @RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = pickingOrderService.scanAffirmQty(barCode, jobOrderDetId);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?1:0);
     }
 
     @ApiOperation("PDA激活关闭栈板")

@@ -9,13 +9,11 @@
     <result column="parent_inventory_id" jdbcType="BIGINT" property="parentInventoryId" />
     <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
     <result column="make_code" jdbcType="VARCHAR" property="makeCode" />
-    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName" />
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+    <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
     <result column="job_status" jdbcType="TINYINT" property="jobStatus" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="relevance_order_code" jdbcType="VARCHAR" property="relevanceOrderCode" />
     <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
     <result column="lock_status" jdbcType="TINYINT" property="lockStatus" />
@@ -34,7 +32,7 @@
     <result column="po_code" jdbcType="VARCHAR" property="poCode" />
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
     <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
-    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -47,6 +45,12 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto" extends="BaseResultMap">
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
@@ -58,13 +62,11 @@
     wii.parent_inventory_id,
     wii.sales_code,
     wii.make_code,
-    wii.material_owner_name,
-    wii.warehouse_name,
-    wii.storage_name,
+wii.material_owner_id,
+wii.warehouse_id,
+wii.storage_id,
     wii.job_status,
     wii.material_id,
-    wii.material_code,
-    wii.material_name,
     wii.relevance_order_code,
     wii.inventory_status_id,
     wii.lock_status,
@@ -83,7 +85,7 @@
     wii.po_code,
     wii.work_order_code,
     wii.sales_order_code,
-    wii.supplier_name,
+    wii.supplier_id,
 	wii.`status`,
 	wii.remark,
 	wii.org_id,
@@ -95,9 +97,14 @@
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
     ,bis.inventory_status_name
     from wms_inner_inventory wii
+    LEFT JOIN base_material_owner bmo ON wii.material_owner_id = bmo.material_owner_id
+    LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
+    LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
+    LEFT JOIN base_material bm ON wii.material_id = bm.material_id
+    LEFT JOIN base_supplier bss ON wii.supplier_id = bss.supplier_id
     LEFT JOIN ocean_v2.sys_user su  ON wii.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wii.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wii.org_id = bo.organization_id

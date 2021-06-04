@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -42,13 +41,6 @@ public class MesSfcBarcodeOperationController {
     @Autowired
     MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
 
-    @ApiOperation("PDA投产作业")
-    @PostMapping("/pdaPutIntoProduction")
-    public ResponseEntity pdaPutIntoProduction(@ApiParam(value = "PDA作业对象") @RequestBody PdaPutIntoProductionDto vo) throws Exception {
-        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.pdaPutIntoProduction(vo));
-    }
-
-
     @ApiOperation("PDA包箱作业-查询上次作业数据")
         @PostMapping("/findLastCarton")
     public ResponseEntity<PdaCartonRecordDto> findLastCarton(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "processId不能为空") Long processId,
@@ -57,50 +49,10 @@ public class MesSfcBarcodeOperationController {
         return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.findLastCarton(processId, stationId, packType));
     }
 
-    @ApiOperation("PDA包箱作业-条码提交")
+    @ApiOperation("PDA包箱作业")
     @PostMapping("/cartonOperation")
-    public ResponseEntity cartonOperation(@ApiParam(value = "包箱扫条码", required = true) @RequestBody PdaCartonDto vo) throws Exception {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        // 未满箱提交，关箱
-        if (vo.getCloseOrNot()) {
-            if (StringUtils.isEmpty(vo.getProductCartonId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012025);
-            }
-            MesSfcProductCarton mesSfcProductCarton = mesSfcProductCartonService.selectByKey(vo.getProductCartonId());
-            mesSfcProductCarton.setCloseStatus((byte) 1);
-            mesSfcProductCarton.setCloseCartonUserId(user.getUserId());
-            mesSfcProductCarton.setCloseCartonTime(new Date());
-            mesSfcProductCarton.setModifiedUserId(user.getUserId());
-            mesSfcProductCarton.setModifiedTime(new Date());
-            if (vo.getPrint()) {
-                List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
-                        .findList(SearchMesSfcWorkOrderBarcode.builder()
-                                .barcode(vo.getBarCode())
-                                .build());
-                MesSfcWorkOrderBarcodeDto sfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
-                // 关箱后才能打印条码
-                BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
-                        .barcode(vo.getCartonCode())
-                        .labelTypeCode("09")
-                        .barcodeType(sfcWorkOrderBarcodeDto.getBarcodeType())
-                        .workOrderId(sfcWorkOrderBarcodeDto.getWorkOrderId())
-                        .build());
-            }
-            return ControllerUtil.returnCRUD(mesSfcProductCartonService.update(mesSfcProductCarton));
-        }
-        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.cartonOperation(vo));
-
-    }
-
-    @ApiOperation("PDA包箱作业-附件码提交")
-    @PostMapping("/cartonAnnexOperation")
-    public ResponseEntity cartonAnnexOperation(@ApiParam(value = "包箱扫附件条码", required = true) @RequestBody PdaCartonAnnexDto vo) throws Exception {
-        // 构造返回值
-        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.cartonAnnexOperation(vo));
+    public ResponseEntity cartonOperation(@ApiParam(value = "包箱扫条码", required = true) @RequestBody PdaCartonWorkDto dto) throws Exception {
+        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.pdaCartonWork(dto));
     }
 
     @ApiOperation("PDA包箱作业-修改包箱规格数量")
@@ -120,6 +72,12 @@ public class MesSfcBarcodeOperationController {
         } else {
             return ControllerUtil.returnFail(ErrorCodeEnum.PDA40012027);
         }
+    }
+
+    @ApiOperation("未满箱提交关箱")
+    @PostMapping("/closeCarton")
+    public ResponseEntity closeCarton(@ApiParam(value = "关箱", required = true) @RequestBody CloseCartonDto dto) throws Exception{
+        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.closeCarton(dto));
     }
 
 }

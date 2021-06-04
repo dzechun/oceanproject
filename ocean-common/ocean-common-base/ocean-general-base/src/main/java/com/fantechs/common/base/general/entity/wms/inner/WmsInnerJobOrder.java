@@ -143,9 +143,9 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     private Date workEndtTime;
 
     /**
-     * 单据状态(1-待分配2-待作业 3-作业中 4-作业完成)
+     * 单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待分配2-待作业 3-作业中 4-作业完成)")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)")
     @Excel(name = "单据状态(1-待作业 2-作业中 3-作业完成)", height = 20, width = 30,orderNum="") 
     @Column(name = "order_status")
     private Byte orderStatus;

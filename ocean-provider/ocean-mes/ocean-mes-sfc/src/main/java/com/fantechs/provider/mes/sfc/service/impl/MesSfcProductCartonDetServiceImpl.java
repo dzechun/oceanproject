@@ -25,4 +25,9 @@ public class MesSfcProductCartonDetServiceImpl extends BaseService<MesSfcProduct
     public List<MesSfcProductCartonDetDto> findList(Map<String, Object> map) {
         return mesSfcProductCartonDetMapper.findList(map);
     }
+
+    @Override
+    public List<MesSfcProductCartonDetDto> findRelationList(Map<String, Object> map) {
+        return mesSfcProductCartonDetMapper.findRelationList(map);
+    }
 }

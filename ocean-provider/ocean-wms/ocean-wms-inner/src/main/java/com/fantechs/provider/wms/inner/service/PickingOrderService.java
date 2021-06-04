@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public interface PickingOrderService {
      * 拣货单PDA确认
      * @return
      */
-    int scanAffirmQty(Long jobOrderDetId,String barCode);
+    WmsInnerJobOrderDet scanAffirmQty(String barCode, Long jobOrderDetId);
 
     /**
      * 拣货单自动分配

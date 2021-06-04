@@ -76,12 +76,7 @@ public class BarcodeUtils {
 
 
     /**
-     * 1．传【产品条码、工序ID】参数；
-     * 2．系统检查产品条码是否正确，不正确返回错误信息结束；
-     * 3．系统检查条码流程是否正确，不正确返回错误信息结束；
-     * 4．系统检查条码状态是否正确，如是否挂起、维修、完工等状态返回错误信息结束；
-     * 5．系统检查条码工单状态是否正确，如是否挂起、完工、投产数量>=工单数等状态返回错误信息结束；
-     * 6．系统条码检查OK；
+     * 校验条码以及工单
      *
      * @return
      */
@@ -94,28 +89,13 @@ public class BarcodeUtils {
         if (record.getProcessId() != null) {
             checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
         }
-        // 3、判断是否已有工单，若有则校验配置
-        if (StringUtils.isNotEmpty(record.getWorkOrderId())) {
-            // 2.1、判断是否同一工单
-            if ("1".equals(record.getPackType()) && !mesSfcWorkOrderBarcodeDto.getWorkOrderId().equals(record.getWorkOrderId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012018, mesSfcWorkOrderBarcodeDto.getWorkOrderId(), record.getWorkOrderId());
-            }
-            // 2.2、判断是否同一料号
-            // PDA当前作业工单
-            MesPmWorkOrder mesPmWorkOrderById = barcodeUtils.pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
-            // 条码对应
-            MesPmWorkOrder mesPmWorkOrderByCode = barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDto.getWorkOrderId()).getData();
-            if ("2".equals(record.getPackType()) && !mesPmWorkOrderByCode.getMaterialId().equals(mesPmWorkOrderById.getMaterialId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrderByCode.getMaterialId(), mesPmWorkOrderById.getMaterialId());
-            }
-        }
 
-        // 4、系统检查条码工单状态是否正确（工单表）
+        // 3、系统检查条码工单状态是否正确（工单表）
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
             checkOrder(mesSfcWorkOrderBarcodeDto);
         }
 
-        // 5、是否检查排程
+        // 4、是否检查排程
         if (record.getCheckOrNot()) {
 
         }
@@ -372,9 +352,6 @@ public class BarcodeUtils {
             if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, mesSfcBarcodeProcess.getBarcode(), mesSfcBarcodeProcess.getNextProcessCode());
             }
-//            if (!stationId.equals(mesSfcBarcodeProcess.getStationId())) {
-//                throw new BizErrorException(ErrorCodeEnum.PDA40012013, mesSfcBarcodeProcess.getProcessCode(), mesSfcBarcodeProcess.getStationId(), stationId);
-//            }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
         }

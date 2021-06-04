@@ -1,11 +1,11 @@
 package com.fantechs.provider.materialapi.imes.service;
 
 
+import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import java.util.List;
 
@@ -14,17 +14,14 @@ import java.util.List;
 )
 public interface MaterialService {
 
-    @WebMethod
-    String testMethod(String testName);
+    @WebMethod(action="http://imes.materialapi.provider.fantechs.com/MaterialService")
+    String testMethod(@WebParam(name ="testName")String testName);
 
     @WebMethod
     String syncMaterial(List<BaseMaterial> baseMaterials);
 
     @WebMethod
-    String findWorkOrder(SearchMesPmWorkOrder searchMesPmWorkOrder);
-
-    @WebMethod
-    String saveWorkOrder(MesPmWorkOrder mesPmWorkOrder);
+    String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto);
 
 
 }

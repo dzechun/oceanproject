@@ -11,6 +11,7 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="inspection_type" jdbcType="TINYINT" property="inspectionType" />
+    <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -26,6 +27,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+    <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -35,6 +37,7 @@
     bis.material_id,
     bis.supplier_id,
     bis.inspection_type,
+    bis.inspection_way_id,
     bis.`status`,
     bis.remark,
     bis.org_id,
@@ -47,10 +50,11 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bm.material_code,bm.material_name,bs.supplier_name,
+    bm.material_code,bm.material_name,bs.supplier_name,biw.inspection_way_desc,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_inspection_standard bis
+    left join fantech_imes_v2.base_inspection_way biw on bis.inspection_way_id=biw.inspection_way_id
     left join fantech_imes_v2.base_material bm on bis.material_id=bm.material_id
     left join fantech_imes_v2.base_supplier bs on bis.supplier_id=bs.supplier_id
     left join ocean_v2.sys_user u on bis.create_user_id=u.user_id
@@ -77,6 +81,9 @@
       </if>
       <if test="materialId!=null">
         and bis.material_id = #{materialId}
+      </if>
+      <if test="inspectionWayId!=null">
+        and bis.inspection_way_id = #{inspectionWayId}
       </if>
       <if test="inspectionStandardId!=null">
         and bis.inspection_standard_id = #{inspectionStandardId}

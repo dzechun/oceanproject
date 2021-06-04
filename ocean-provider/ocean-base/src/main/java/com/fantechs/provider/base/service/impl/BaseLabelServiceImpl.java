@@ -95,12 +95,10 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(!StringUtils.isEmpty(baseLabel1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-        //获取文件名
-        String fileName = file.getOriginalFilename().substring(0,file.getOriginalFilename().indexOf("."));
-        //标签名由文件名和标签编码组成
-        baseLabel.setLabelName(fileName+baseLabel.getLabelCode());
-        baseLabel.setLabelVersion("0.0.1");
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(baseLabel.getLabelCategoryId());
+        //标签名=标签类别+标签编码+版本号
+        baseLabel.setLabelName(baseLabelCategory.getLabelCategoryName()+"|"+baseLabel.getLabelCode()+"|"+baseLabel.getLabelVersion());
+        baseLabel.setLabelVersion("0.0.1");
 
         //以标签的版本号生成文件夹
         this.MkdirDocByVersion(baseLabel.getLabelVersion(),baseLabelCategory.getLabelCategoryName());
@@ -149,7 +147,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
             baseLabel.setLabelVersion(this.generationVersion(baseLabel.getLabelVersion()));
             this.MkdirDocByVersion(baseLabel.getLabelVersion(),baseLabelCategory.getLabelCategoryName());
             //文件上传
-            baseLabel.setLabelName(file.getOriginalFilename());
+            baseLabel.setLabelName(baseLabelCategory.getLabelCategoryName()+"|"+baseLabel.getLabelCode()+"|"+baseLabel.getLabelVersion());
             String path = this.UploadFile(baseLabelCategory.getLabelCategoryName(),file,baseLabel.getLabelName(),baseLabel.getLabelVersion());
             baseLabel.setSavePath(path);
         }

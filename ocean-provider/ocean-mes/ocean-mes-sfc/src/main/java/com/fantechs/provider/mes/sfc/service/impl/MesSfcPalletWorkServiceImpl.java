@@ -7,35 +7,26 @@ import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialSupplierDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
-import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.provider.mes.sfc.service.MesSfcKeyPartRelevanceService;
-import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
-import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
-import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
-import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -114,10 +105,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
             Long workOrderBarcodeId = null;
             // 产品条码
-            if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 2) {
+            if (mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId() == 2) {
                 workOrderBarcodeId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId();
                 // 销售订单条码
-            } else if (mesSfcWorkOrderBarcodeDtoList.get(0).getBarcodeType() == 4) {
+            } else if (mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId() == 4) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("partBarcode", requestPalletWorkScanDto.getBarcode());
                 List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
@@ -314,7 +305,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             //完工入库
             PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
-            ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner());
+            SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+            searchBaseMaterialOwner.setAsc((byte)1);
+            ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
             if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
                 palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
                 palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
@@ -342,8 +335,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
             palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
             palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
-            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons));
-            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons));
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
+            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
             palletAutoAsnDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
@@ -452,7 +445,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
                 //完工入库
                 PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
-                ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner());
+                SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+                searchBaseMaterialOwner.setAsc((byte)1);
+                ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
                 if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
                     palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
                     palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
@@ -480,8 +475,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
                 palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
                 palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
-                palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons));
-                palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons));
+                palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
+                palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
                 inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
             }
         }catch (Exception e){
@@ -522,6 +517,52 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPallet.setCloseStatus((byte) 1);
             mesSfcProductPallet.setClosePalletUserId(user.getUserId());
             mesSfcProductPallet.setClosePalletTime(new Date());
+
+            //获取工单信息
+            MesSfcProductPallet mspp = mesSfcProductPalletService.selectByKey(productPalletId);
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(mspp.getWorkOrderId());
+            List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            if (mesPmWorkOrderDtoList.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "没有找到条码绑定的工单");
+            }
+            MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtoList.get(0);
+
+            //完工入库
+            PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
+            SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+            searchBaseMaterialOwner.setAsc((byte)1);
+            ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
+            if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
+                palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
+                palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
+            }else{
+                throw new BizErrorException("未查询到货主信息");
+            }
+            SearchBaseConsignee searchBaseConsignee = new SearchBaseConsignee();
+            searchBaseConsignee.setMaterialOwnerId(palletAutoAsnDto.getMaterialOwnerId());
+            ResponseEntity<List<BaseConsignee>> baseConsignees = baseFeignApi.findList(searchBaseConsignee);
+            if(StringUtils.isNotEmpty(baseConsignees.getData())){
+                BeanUtils.autoFillEqFields(baseConsignees.getData().get(0),palletAutoAsnDto);
+            }else{
+                throw new BizErrorException("未查询到收货人信息");
+            }
+
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setMinSurplusCanPutSalver(0);
+            ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
+            if(StringUtils.isNotEmpty(baseStorages.getData())){
+                palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
+                palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
+            }else{
+                throw new BizErrorException(ErrorCodeEnum.STO30012000);
+            }
+            palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
+            palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+            palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
+            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
+            inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
         mesSfcProductPallet.setModifiedTime(new Date());
         mesSfcProductPallet.setModifiedUserId(user.getUserId());
