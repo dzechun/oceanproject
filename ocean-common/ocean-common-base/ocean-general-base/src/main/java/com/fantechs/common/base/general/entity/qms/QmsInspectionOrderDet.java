@@ -236,6 +236,30 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "sampleProcessId",value = "抽样过程id")
     private Long sampleProcessId;
 
+    /**
+     * 检验项目-小类
+     */
+    @ApiModelProperty(name="inspectionItemDescSmall" ,value="检验项目-小类")
+    @Transient
+    @Excel(name = "检验项目-小类", height = 20, width = 30,orderNum="5")
+    private String inspectionItemDescSmall;
+
+    /**
+     * 检验项目-大类
+     */
+    @ApiModelProperty(name="inspectionItemDescBig" ,value="检验项目-大类")
+    @Transient
+    @Excel(name = "检验项目-大类", height = 20, width = 30,orderNum="5")
+    private String inspectionItemDescBig;
+
+    /**
+     * 检验标准
+     */
+    @ApiModelProperty(name="inspectionItemStandard" ,value="检验标准")
+    @Transient
+    @Excel(name = "检验标准", height = 20, width = 30,orderNum="5")
+    private String inspectionItemStandard;
+
     private String option1;
 
     private String option2;

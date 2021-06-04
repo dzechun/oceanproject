@@ -59,4 +59,10 @@ public class SearchBaseInspectionStandard extends BaseQuery implements Serializa
     @ApiModelProperty(name="inspectionStandardId" ,value="检验标准id")
     private Long inspectionStandardId;
 
+    /**
+     * 检验方式id
+     */
+    @ApiModelProperty(name="inspectionWayId" ,value="检验方式id")
+    private Long inspectionWayId;
+
 }

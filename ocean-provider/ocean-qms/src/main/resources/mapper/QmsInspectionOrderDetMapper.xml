@@ -26,7 +26,9 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection"/>
-    <result column="inspection_item" jdbcType="VARCHAR" property="inspectionItem"/>
+    <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
+    <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
+    <result column="inspection_item_desc_big" jdbcType="VARCHAR" property="inspectionItemDescBig"/>
     <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag"/>
     <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit"/>
     <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor"/>
@@ -60,13 +62,17 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bisd.if_must_inspection,bisd.inspection_item,bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
+    bisd.if_must_inspection,bii.inspection_item_standard,
+    bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
+    bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
     bsp.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.qms_inspection_order_det qiod
     left join fantech_imes_v2.base_inspection_standard_det bisd on qiod.inspection_standard_det_id=bisd.inspection_standard_det_id
+    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
+    left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
     left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
     left join ocean_v2.sys_user u on qiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiod.modified_user_id=s.user_id
