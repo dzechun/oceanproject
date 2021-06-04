@@ -30,7 +30,7 @@ public class MesPmWorkOrderBomController {
 
 
     @ApiOperation(value = "新增",notes = "新增")
-    @PostMapping("/ ")
+    @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesPmWorkOrderBom mesPmWorkOrderBom) {
         return ControllerUtil.returnCRUD(mesPmWorkOrderBomService.save(mesPmWorkOrderBom));
     }
