@@ -27,4 +27,77 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto">
+    <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+    <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBomDto"
+          resultMap="BaseResultMapDto">
+    SELECT
+    mpwob.work_order_bom_id,
+    mpwob.work_order_id,
+    mpwo.work_order_code,
+    mpwob.part_material_id,
+    bm.material_code AS part_material_code,
+    bm.material_name,
+    bm.material_version,
+    bm.material_desc,
+    mpwob.sub_material_id,
+    bml.material_code AS sub_material_code,
+    mpwob.process_id,
+    bp.process_name,
+    mpwob.single_qty,
+    mpwob.usage_qty,
+    mpwob.base_qty,
+    mpwob.position,
+    mpwob.create_user_id,
+    u.user_name AS create_user_name,
+    mpwob.create_time,
+    mpwob.modified_user_id,
+    s.user_name AS modified_user_name,
+    mpwob.modified_time,
+    mpwob.is_delete,
+    mpwob.org_id,
+    mpwob.remark,
+    bo.organization_name
+    FROM
+    mes_pm_work_order_bom mpwob
+    LEFT JOIN mes_pm_work_order mpwo ON mpwob.work_order_id = mpwo.work_order_id
+    LEFT JOIN base_material bm ON mpwob.part_material_id = bm.material_id
+    LEFT JOIN base_material bml ON mpwob.sub_material_id = bml.material_id
+    LEFT JOIN base_process bp ON mpwob.process_id = bp.process_id
+    LEFT JOIN ocean_v2.sys_user u ON mpwob.create_user_id = u.user_id
+    LEFT JOIN ocean_v2.sys_user s ON mpwob.modified_user_id = s.user_id
+    LEFT JOIN base_organization bo ON mpwob.org_id = bo.organization_id
+    <where>
+      1=1
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(mpwob.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="workOrderId!=null and workOrderId!=''">
+        and mpwob.work_order_id=#{workOrderId}
+      </if>
+      <if test="partMaterialId!=null and partMaterialId!=''">
+        and mpwob.part_material_id=#{partMaterialId}
+      </if>
+      <if test="partMaterialCode!=null and partMaterialCode!=''">
+        and bm.material_code like CONCAT('%', #{partMaterialCode}, '%')
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+    </where>
+    order by mpwob.create_time desc
+  </select>
+
 </mapper>
