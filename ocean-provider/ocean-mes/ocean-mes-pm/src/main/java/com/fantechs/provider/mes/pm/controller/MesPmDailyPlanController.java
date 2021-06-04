@@ -29,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/06/02.
  */
 @RestController
-@Api(tags = "mesPmDailyPlan控制器")
+@Api(tags = "工单日计划")
 @RequestMapping("/mesPmDailyPlan")
 @Validated
 public class MesPmDailyPlanController {

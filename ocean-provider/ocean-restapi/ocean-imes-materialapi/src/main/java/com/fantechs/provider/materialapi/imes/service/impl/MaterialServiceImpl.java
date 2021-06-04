@@ -16,6 +16,7 @@ import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -66,13 +67,15 @@ public class MaterialServiceImpl implements MaterialService {
         mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd",restapiWorkOrderApiDto.getGLTRP()));
         mesPmWorkOrder.setCreateTime(DateUtils.getStrToDate("yyyyMMdd",restapiWorkOrderApiDto.getERDAT()));
         mesPmWorkOrder.setMaterialId(baseMaterial.getMaterialId());
-        pmFeignApi.updateById(mesPmWorkOrder);
+        ResponseEntity mesPmWorkOrderDate = pmFeignApi.updateById(mesPmWorkOrder);
 
         for(RestapiWorkOrderBomApiDto dto : restapiWorkOrderApiDto.getWorkOrderBom()) {
 
           //  ResponseEntity oldMesPmWorkOrderBom = pmFeignApi.findMesPmWorkOrderBom(mesPmWorkOrderBom.getWorkOrderBomId());
             MesPmWorkOrderBom mesPmWorkOrderBom = new MesPmWorkOrderBom();
-            //mesPmWorkOrderBom.setUsageQty(dto.set);
+            mesPmWorkOrderBom.setUsageQty(new BigDecimal(dto.getMENGE()));
+            System.out.println("---mesPmWorkOrder.getWorkOrderId()---"+mesPmWorkOrder.getWorkOrderId());
+            mesPmWorkOrderBom.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
             pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBom);
             /*if(StringUtils.isEmpty(oldMesPmWorkOrderBom.getData())){
                 if(StringUtils.isEmpty(mesPmWorkOrderBom.getCreateTime())) mesPmWorkOrderBom.setCreateTime(new Date());

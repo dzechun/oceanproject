@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "mesPmWorkOrderBom控制器")
+@Api(tags = "工单Bom")
 @RequestMapping("/mesPmWorkOrderBom")
 @Validated
 public class MesPmWorkOrderBomController {

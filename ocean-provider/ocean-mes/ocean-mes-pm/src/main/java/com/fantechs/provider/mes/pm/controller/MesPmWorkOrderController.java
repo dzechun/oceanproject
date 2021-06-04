@@ -112,7 +112,8 @@ public class MesPmWorkOrderController {
 
     @ApiOperation(value = "接口更新",notes = "接口更新")
     @PostMapping("/updateById")
-    public ResponseEntity updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder) {
-        return ControllerUtil.returnCRUD(mesPmWorkOrderService.updateById(mesPmWorkOrder));
+    public ResponseEntity<MesPmWorkOrder> updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder) {
+        mesPmWorkOrder = mesPmWorkOrderService.updateById(mesPmWorkOrder);
+        return ControllerUtil.returnDataSuccess(mesPmWorkOrder,StringUtils.isEmpty(mesPmWorkOrder)?0:1);
     }
 }

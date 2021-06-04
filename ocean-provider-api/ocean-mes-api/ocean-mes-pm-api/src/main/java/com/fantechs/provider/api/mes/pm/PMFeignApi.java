@@ -59,7 +59,7 @@ public interface PMFeignApi {
 
     @ApiOperation("接口修改或更新工单")
     @PostMapping("/mesPmWorkOrder/updateById")
-    ResponseEntity updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder);
+    ResponseEntity<MesPmWorkOrder> updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder);
 
     @ApiOperation("修改工单Bom")
     @PostMapping("/mesPmWorkOrderBom/update")
