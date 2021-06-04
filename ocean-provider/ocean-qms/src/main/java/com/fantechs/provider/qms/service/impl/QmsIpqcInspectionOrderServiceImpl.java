@@ -3,13 +3,19 @@ package com.fantechs.provider.qms.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIpqcInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
@@ -38,10 +44,32 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     private QmsIpqcInspectionOrderDetMapper qmsIpqcInspectionOrderDetMapper;
     @Resource
     private QmsHtIpqcInspectionOrderMapper qmsHtIpqcInspectionOrderMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<QmsIpqcInspectionOrder> findList(Map<String, Object> map) {
-        return qmsIpqcInspectionOrderMapper.findList(map);
+        List<QmsIpqcInspectionOrder> qmsIpqcInspectionOrders = qmsIpqcInspectionOrderMapper.findList(map);
+        SearchQmsIpqcInspectionOrderDet searchIpqcQmsInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
+
+        for (QmsIpqcInspectionOrder qmsIpqcInspectionOrder:qmsIpqcInspectionOrders){
+            searchIpqcQmsInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
+            List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchIpqcQmsInspectionOrderDet));
+            if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
+                for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
+                    //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
+                    if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
+                        BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
+                        qmsIpqcInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                        qmsIpqcInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                        qmsIpqcInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                    }
+                }
+                qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
+            }
+        }
+
+        return qmsIpqcInspectionOrders;
     }
 
     @Override
