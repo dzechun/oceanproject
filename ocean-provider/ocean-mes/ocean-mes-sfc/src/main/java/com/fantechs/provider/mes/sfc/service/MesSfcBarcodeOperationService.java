@@ -16,28 +16,13 @@ public interface MesSfcBarcodeOperationService {
     int pdaCartonWork(PdaCartonWorkDto dto) throws Exception;
 
     /**
-     * 投产作业
-     * @param vo
+     * 查找包箱数据
+     * @param processId
+     * @param stationId
+     * @param packType
      * @return
      */
-    int pdaPutIntoProduction(PdaPutIntoProductionDto vo) throws Exception;
-
-
     PdaCartonRecordDto findLastCarton(Long processId, Long stationId, String packType);
-
-    /**
-     * 包箱作业-扫条码
-     * @param vo
-     * @return
-     */
-    int cartonOperation(PdaCartonDto vo) throws Exception;
-
-    /**
-     * 包箱作业-扫附件码
-     * @param vo
-     * @return
-     */
-    int cartonAnnexOperation(PdaCartonAnnexDto vo) throws Exception;
 
     /**
      * 包箱作业-修改包箱规格数量
@@ -53,4 +38,12 @@ public interface MesSfcBarcodeOperationService {
      * @return
      */
     List<MesSfcProductCarton> findCartonByStationId(Long stationId);
+
+    /**
+     * 未满箱提交关箱
+     * 必须条码跟附件码是满足工单清单的情况才允许关箱
+     * @param dto
+     * @return
+     */
+    int closeCarton(CloseCartonDto dto) throws Exception;
 }
