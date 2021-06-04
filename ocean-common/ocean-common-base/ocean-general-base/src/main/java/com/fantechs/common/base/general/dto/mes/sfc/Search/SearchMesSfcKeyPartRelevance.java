@@ -27,6 +27,9 @@ public class SearchMesSfcKeyPartRelevance extends BaseQuery implements Serializa
     @ApiModelProperty(name="processId",value = "工序ID")
     private Long processId;
 
+    @ApiModelProperty(name="materialId",value = "产品物料ID")
+    private Long materialId;
+
     @ApiModelProperty(name="stationId",value = "工位ID")
     private Long stationId;
 

@@ -78,6 +78,9 @@
       <if test="materialDesc != null and materialDesc != ''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="processId != null">
+        and bp.process_id = #{processId}
+      </if>
       <if test="status != null">
         and mpwoprw.status = #{status}
       </if>

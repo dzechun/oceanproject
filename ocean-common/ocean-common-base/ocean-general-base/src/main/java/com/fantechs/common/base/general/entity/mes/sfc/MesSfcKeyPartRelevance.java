@@ -142,7 +142,7 @@ public class MesSfcKeyPartRelevance extends ValidGroup implements Serializable {
      * 产品ID
      */
     @ApiModelProperty(name="materialId",value = "产品ID")
-    @Excel(name = "产品ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "零件ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -150,7 +150,7 @@ public class MesSfcKeyPartRelevance extends ValidGroup implements Serializable {
      * 产品编码
      */
     @ApiModelProperty(name="materialCode",value = "产品编码")
-    @Excel(name = "产品编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "零件编码", height = 20, width = 30,orderNum="")
     @Column(name = "material_code")
     private String materialCode;
 
@@ -158,7 +158,7 @@ public class MesSfcKeyPartRelevance extends ValidGroup implements Serializable {
      * 产品名称
      */
     @ApiModelProperty(name="materialName",value = "产品名称")
-    @Excel(name = "产品名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "零件名称", height = 20, width = 30,orderNum="")
     @Column(name = "material_name")
     private String materialName;
 
@@ -166,17 +166,17 @@ public class MesSfcKeyPartRelevance extends ValidGroup implements Serializable {
      * 产品编码版本
      */
     @ApiModelProperty(name="materialVer",value = "产品编码版本")
-    @Excel(name = "产品编码版本", height = 20, width = 30,orderNum="") 
+    @Excel(name = "零件编码版本", height = 20, width = 30,orderNum="")
     @Column(name = "material_ver")
     private String materialVer;
 
     /**
-     * 部件条码ID
+     * 标签类别信息ID
      */
-//    @ApiModelProperty(name="workOrderPartBarcodeId",value = "部件条码ID")
-//    @Excel(name = "部件条码ID", height = 20, width = 30,orderNum="")
-//    @Column(name = "work_order_part_barcode_id")
-//    private Long workOrderPartBarcodeId;
+    @ApiModelProperty(name="labelCategoryId",value = "标签类别信息ID")
+    @Excel(name = "标签类别信息ID", height = 20, width = 30,orderNum="")
+    @Column(name = "label_category_id")
+    private Long labelCategoryId;
 
     /**
      * 部件条码

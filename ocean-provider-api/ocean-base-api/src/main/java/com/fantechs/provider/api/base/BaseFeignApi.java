@@ -340,4 +340,8 @@ public interface BaseFeignApi {
     @PostMapping("/baseSampleProcess/getAcReQty")
     ResponseEntity<BaseSampleProcess> getAcReQty(@ApiParam(value = "抽样过程id",required = true) @RequestParam @NotNull(message="抽样过程id不能为空")Long sampleProcessId,
                                                         @ApiParam(value = "单据数量",required = true) @RequestParam @NotNull(message="单据数量不能为空") BigDecimal orderQty);
+
+    @ApiOperation("根据条件查询物料特征码信息列表")
+    @PostMapping("/baseSignature/findList")
+    ResponseEntity<List<BaseSignature>> findSignatureList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature);
 }

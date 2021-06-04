@@ -23,7 +23,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_ver" jdbcType="VARCHAR" property="materialVer" />
-<!--    <result column="work_order_part_barcode_id" jdbcType="BIGINT" property="workOrderPartBarcodeId" />-->
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="part_barcode" jdbcType="VARCHAR" property="partBarcode" />
     <result column="part_customer_barcode" jdbcType="VARCHAR" property="partCustomerBarcode" />
     <result column="m_a_c_barcode" jdbcType="VARCHAR" property="mACBarcode" />
@@ -63,7 +63,7 @@
     mskpr.material_code,
     mskpr.material_name,
     mskpr.material_ver,
---     mskpr.work_order_part_barcode_id,
+    mskpr.label_category_id,
     mskpr.part_barcode,
     mskpr.part_customer_barcode,
     mskpr.m_a_c_barcode,
@@ -97,8 +97,11 @@
       <if test="stationId != null">
         and mskpr.station_id = #{stationId}
       </if>
+      <if test="materialId != null">
+        and mskpr.material_id = #{materialId}
+      </if>
       <if test="partBarcode != null and partBarcode != ''">
-        and mskpr.part_barcode = #{partBarcode}
+        and mskpr.barcode_code = #{partBarcode}
       </if>
     </where>
   </select>

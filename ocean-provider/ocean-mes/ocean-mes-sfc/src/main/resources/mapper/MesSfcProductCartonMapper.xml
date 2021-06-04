@@ -63,6 +63,9 @@
       <if test="cartonCode != null and cartonCode != ''">
         and mspc.carton_code like CONCAT('%',#{cartonCode},'%')
       </if>
+      <if test="closeStatus != null">
+        and mspc.close_status = #{closeStatus}
+      </if>
     </where>
   </select>
 

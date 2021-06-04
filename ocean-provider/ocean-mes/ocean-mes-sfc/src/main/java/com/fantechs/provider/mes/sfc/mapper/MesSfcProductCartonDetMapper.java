@@ -13,4 +13,11 @@ import java.util.Map;
 public interface MesSfcProductCartonDetMapper extends MyMapper<MesSfcProductCartonDet> {
 
     List<MesSfcProductCartonDetDto> findList(Map<String, Object> map);
+
+    /**
+     * 关联查询
+     * @param map
+     * @return
+     */
+    List<MesSfcProductCartonDetDto> findRelationList(Map<String, Object> map);
 }

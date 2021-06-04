@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchBaseSignature extends BaseQuery implements Serializable {
@@ -21,4 +22,10 @@ public class SearchBaseSignature extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     private String materialCode;
+
+    /**
+     * 物料ID集合
+     */
+    @ApiModelProperty(name="materialIds" ,value="物料ID集合")
+    private List<Long> materialIds;
 }
