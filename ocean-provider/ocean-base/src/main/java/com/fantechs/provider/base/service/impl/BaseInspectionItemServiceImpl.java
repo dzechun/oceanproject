@@ -58,6 +58,11 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     }
 
     @Override
+    public List<BaseInspectionItem> findDetList(Map<String, Object> map) {
+        return baseInspectionItemMapper.findDetList(map);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseInspectionItem baseInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

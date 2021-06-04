@@ -14,4 +14,5 @@ import java.util.Map;
 
 public interface BaseInspectionItemService extends IService<BaseInspectionItem> {
     List<BaseInspectionItem> findList(Map<String, Object> map);
+    List<BaseInspectionItem> findDetList(Map<String, Object> map);
 }
