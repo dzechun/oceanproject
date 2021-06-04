@@ -32,7 +32,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 作业单号
      */
     @ApiModelProperty(name="jobOrderCode",value = "任务单号")
-    @Excel(name = "作业单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "任务单号", height = 20, width = 30,orderNum="")
     @Column(name = "job_order_code")
     private String jobOrderCode;
 
@@ -47,10 +47,18 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
     /**
      * 相关单号
      */
-    @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="relatedOrderCode",value = "拣货单号")
+    @Excel(name = "拣货单号", height = 20, width = 30,orderNum="")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
+
+    /**
+     * 发货单号
+     */
+    @ApiModelProperty(name="despatchOrderCode",value = "发货单号")
+    @Excel(name = "发货单号", height = 20, width = 30,orderNum="")
+    @Column(name = "despatch_order_code")
+    private String despatchOrderCode;
 
     /**
      * 仓库ID
@@ -99,14 +107,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
     @Excel(name = "是否已打印条码(0-否 1-是)", height = 20, width = 30,orderNum="") 
     @Column(name = "if_already_print")
     private Byte ifAlreadyPrint;
-
-    /**
-     * 标签类别(1-中文标签 2-英文标签)
-     */
-    @ApiModelProperty(name="labelType",value = "标签类别(1-中文标签 2-英文标签)")
-    @Excel(name = "标签类别(1-中文标签 2-英文标签)", height = 20, width = 30,orderNum="")
-    @Column(name = "label_type")
-    private Byte labelType;
 
     /**
      * 状态(0无效，1有效)
