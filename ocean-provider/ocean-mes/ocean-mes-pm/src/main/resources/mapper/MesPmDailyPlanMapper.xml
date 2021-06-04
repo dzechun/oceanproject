@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="om.fantechs.provider.mes.pm.mapper.MesPmDailyPlanMapper">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmDailyPlanMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan">
     <!--
       WARNING - @mbg.generated
@@ -22,4 +22,54 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+    mpdp.dailyPlanId,
+    mpdp.workOrderId
+    mpdp.scheduleQty,
+    mpdp.finishedQty,
+    mpdp.planTime,
+    mpdp.status,
+    mpdp.createTime
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto">
+  </resultMap>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
+          resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    mpwo.workOrderCode,mpwo.materialId,mpwo.workOrderQty,mpwo.productionQty,mpwo.outputQty,
+    mpwo.workOrderStatus,mpwo.proLineId,mpwo.outputQty,mpwo.scheduledQty,mpwo.proLineId,
+    bpl.proName,bm.materialName
+    from mes_pm_daily_plan mpdp
+    LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
+    LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
+    LEFT JOIN base_material bm ON  mpwo.material_id = bm.material_id
+    <where>
+      <if test="dailyPlanId != null and dailyPlanId != ''">
+        and mpdp.daily_plan_id = #{dailyPlanId}
+      </if>
+      <if test="workOrderId != null and workOrderId != ''">
+        and mpdp.work_order_id = #{workOrderId}
+      </if>
+      <if test="materialId != null and materialId != ''">
+        and mpwo.material_id = #{materialId}
+      </if>
+      <if test="proLineId != null and proLineId != ''">
+        and mpwo.pro_line_id = #{proLineId}
+      </if>
+      <if test="status != null and status != ''">
+        and mpdp.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by mpwoprw.create_time desc
+  </select>
+
+
+
 </mapper>

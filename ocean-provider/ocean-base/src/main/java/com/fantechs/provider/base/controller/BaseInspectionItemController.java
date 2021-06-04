@@ -72,6 +72,14 @@ public class BaseInspectionItemController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("检验项目小类列表")
+    @PostMapping("/findDetList")
+    public ResponseEntity<List<BaseInspectionItem>> findDetList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionItem searchBaseInspectionItem) {
+        Page<Object> page = PageHelper.startPage(searchBaseInspectionItem.getStartPage(),searchBaseInspectionItem.getPageSize());
+        List<BaseInspectionItem> list = baseInspectionItemService.findDetList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionItem));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtInspectionItem>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionItem searchBaseInspectionItem) {

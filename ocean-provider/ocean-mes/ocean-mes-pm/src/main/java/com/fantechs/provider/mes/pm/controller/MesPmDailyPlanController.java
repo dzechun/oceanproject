@@ -1,10 +1,17 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesPmDailyPlan;
+import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,8 +19,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  *
@@ -32,6 +41,18 @@ public class MesPmDailyPlanController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesPmDailyPlan mesPmDailyPlan) {
         return ControllerUtil.returnCRUD(mesPmDailyPlanService.save(mesPmDailyPlan));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list) {
+        return ControllerUtil.returnCRUD(mesPmDailyPlanService.batchSave(list));
+    }
+
+    @ApiOperation(value = "批量移除",notes = "批量移除")
+    @PostMapping("/batchRemove")
+    public ResponseEntity batchRemove(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list) {
+        return ControllerUtil.returnCRUD(mesPmDailyPlanService.batchRemove(list));
     }
 
     @ApiOperation("删除")
@@ -53,19 +74,11 @@ public class MesPmDailyPlanController {
         return  ControllerUtil.returnDataSuccess(mesPmDailyPlan,StringUtils.isEmpty(mesPmDailyPlan)?0:1);
     }
 
-   /* @ApiOperation("列表")
+    @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<MesPmDailyPlanDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmDailyPlan searchMesPmDailyPlan) {
         Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
-        List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmDailyPlan));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
-
-    @ApiOperation("历史列表")
-    @PostMapping("/findHtList")
-    public ResponseEntity<List<MesPmDailyPlan>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmDailyPlan searchMesPmDailyPlan) {
-        Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
-        List<MesPmDailyPlan> list = mesPmDailyPlanService.findHtList(ControllerUtil.dynamicConditionByEntity(searchMesPmDailyPlan));
+        List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(searchMesPmDailyPlan);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -73,12 +86,15 @@ public class MesPmDailyPlanController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchMesPmDailyPlan searchMesPmDailyPlan){
-    List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmDailyPlan));
+    List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(searchMesPmDailyPlan);
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "MesPmDailyPlan信息", MesPmDailyPlanDto.class, "MesPmDailyPlan.xls", response);
         } catch (Exception e) {
-        throw new BizErrorException(e);
+            throw new BizErrorException(e);
         }
-    }*/
+    }
+
+
+
 }
