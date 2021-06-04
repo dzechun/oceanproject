@@ -36,7 +36,7 @@ public class PtlEquipmentServiceImpl extends BaseService<PtlEquipment> implement
 
         Example example = new Example(PtlEquipment.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentCode", ptlEquipment.getEquipmentCode());
+        criteria.andEqualTo("equipmentType", ptlEquipment.getEquipmentType()).andEqualTo("equipmentTagId", ptlEquipment.getEquipmentTagId());
 
         PtlEquipment equipment = ptlEquipmentMapper.selectOneByExample(example);
 

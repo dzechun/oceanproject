@@ -132,20 +132,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private List<WmsInnerStockOrderDet> findInvGoods(Byte type, Long id, List<Long> storageList,Long warehouseId){
         SysUser sysUser = currentUser();
         List<WmsInnerStockOrderDet> list = new ArrayList<>();
-        //获取仓库名称
-        String warehouseName = wmsInventoryVerificationMapper.findWarehouseName(warehouseId);
-        if(StringUtils.isEmpty(warehouseName)){
-            throw new BizErrorException("获取仓库失败");
-        }
         //查询库位下所有库存货品
         //库位盘点
         if(type==2){
             for (Long storageId : storageList) {
                 //获取库位名称
-                String storageName = wmsInventoryVerificationMapper.findStorageName(storageId);
                 Example example = new Example(WmsInnerInventory.class);
                 //盘点锁 0 否 1 是
-                example.createCriteria().andEqualTo("warehouseName",warehouseName).andEqualTo("storageName",storageName).andEqualTo("stockLock",0);
+                example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("storageId",storageId).andEqualTo("stockLock",0);
                 //获取库位库存
                 List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
                 for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
@@ -166,7 +160,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //全盘
             Example example = new Example(WmsInnerInventory.class);
             //盘点锁 0 否 1 是
-            example.createCriteria().andEqualTo("warehouseName",warehouseName).andEqualTo("stockLock",0);
+            example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("stockLock",0);
             //获取库位库存
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
             for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
@@ -215,6 +209,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
              num += this.unlockOrLock((byte) 1,list,wmsInventoryVerification);
              wmsInventoryVerification.setOrderStatus((byte)4);
             }
+            num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
         }
         return num;
     }
@@ -234,6 +229,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             WmsInnerStockOrder wmsInventoryVerification = wmsInventoryVerificationMapper.selectByPrimaryKey(id);
             if (StringUtils.isEmpty(wmsInventoryVerification)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            if(wmsInventoryVerification.getOrderStatus()!=3){
+                throw new BizErrorException("盘点单未登记,无法确认");
             }
             Example example = new Example(WmsInnerStockOrderDet.class);
             example.createCriteria().andEqualTo("stockOrderId", wmsInventoryVerification.getStockOrderId());
@@ -278,6 +276,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if (StringUtils.isEmpty(wmsInventoryVerification)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            if(wmsInventoryVerification.getProjectType()==2){
+                throw new BizErrorException("盘点单为复盘，无需差异出来");
+            }
+            if(wmsInventoryVerification.getOrderStatus()!=5){
+                throw new BizErrorException("盘点单未完成,无法差异处理");
+            }
             Example example = new Example(WmsInnerStockOrderDet.class);
             example.createCriteria().andEqualTo("stockOrderId", wmsInventoryVerification.getStockOrderId());
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
@@ -298,7 +302,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
            num += wmsInventoryVerificationMapper.insertUseGeneratedKeys(ws);
 
             for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
-                if(StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
+                if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
                     WmsInnerStockOrderDet det = new WmsInnerStockOrderDet();
                     det.setStockOrderId(ws.getStockOrderId());
                     det.setSourceDetId(wmsInventoryVerificationDet.getStockOrderDetId());

@@ -118,6 +118,14 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
     private String electronicTagId;
 
     /**
+     * 电子标签语言类别(1-中文 2-英文)
+     */
+    @ApiModelProperty(name="electronicTagLangType",value = "电子标签语言类别(1-中文 2-英文)")
+    @Excel(name = "电子标签语言类别(1-中文 2-英文)", height = 20, width = 30,orderNum="")
+    @Column(name = "electronic_tag_lang_type")
+    private Byte electronicTagLangType;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")

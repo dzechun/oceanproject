@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.electronic.mapper.PtlJobOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.electronic.entity.PtlJobOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+    <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode" />
+    <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType" />
+    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="worker_user_id" jdbcType="BIGINT" property="workerUserId" />
+    <result column="worker_user_name" jdbcType="VARCHAR" property="workerUserName" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="if_already_print" jdbcType="TINYINT" property="ifAlreadyPrint" />
+    <result column="label_type" jdbcType="TINYINT" property="labelType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.warehouse_id, pjo.warehouse_name, pjo.worker_user_id,
+    pjo.worker_user_name, pjo.order_status, pjo.if_already_print, pjo.status, pjo.remark, pjo.org_id, pjo.create_user_id, pjo.create_time,
+    pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.PtlJobOrderDto">
+
+  </resultMap>
+  
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    suw.user_code as workerUserCode,
+    suc.user_code as createUserCode,
+    sum.user_code as modifiedUserCode,
+    bw.warehouse_code as warehouseCode
+    from ptl_job_order pjo
+    LEFT JOIN ocean_v2.sys_user suw ON pjo.worker_user_id = suw.user_id
+    LEFT JOIN ocean_v2.sys_user suc ON pjo.create_user_id = suc.user_id
+    LEFT JOIN ocean_v2.sys_user sum ON pjo.modified_user_id = sum.user_id
+    LEFT JOIN ptl_job_order_det pjod ON pjo.job_order_id = pjod.job_order_id
+    <where>
+      <if test="jobOrderId != null">
+        and pjo.job_order_id = #{jobOrderId}
+      </if>
+      <if test="jobOrderCode != null and jobOrderCode != ''">
+        and pjo.job_order_code = #{jobOrderCode}
+      </if>
+      <if test="relatedOrderCode != null and relatedOrderCode != ''">
+        and pjo.related_order_code like CONCAT('%', #{relatedOrderCode}, '%')
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and pjo.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="workerUserName != null and workerUserName != ''">
+        and pjo.worker_user_name like CONCAT('%', #{workerUserName}, '%')
+      </if>
+      <if test="orderStatus != null">
+        and pjo.order_status = #{orderStatus}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and pjo.create_time between #{startTime} and #{endTime}
+      </if>
+      <if test="warehouseId != null">
+        and bw.warehouse_id = #{warehouseId}
+      </if>
+      <if test="warehouseAreaId != null">
+        and bwa.warehouse_area_id = #{warehouseAreaId}
+      </if>
+    </where>
+  </select>
+</mapper>

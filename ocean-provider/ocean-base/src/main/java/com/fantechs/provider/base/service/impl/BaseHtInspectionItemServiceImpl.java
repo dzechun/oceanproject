@@ -12,14 +12,13 @@ import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2020/12/25.
+ * Created by leifengzhi on 2021/06/03.
  */
 @Service
 public class BaseHtInspectionItemServiceImpl extends BaseService<BaseHtInspectionItem> implements BaseHtInspectionItemService {
 
     @Resource
     private BaseHtInspectionItemMapper baseHtInspectionItemMapper;
-
 
     @Override
     public List<BaseHtInspectionItem> findHtList(Map<String, Object> map) {
