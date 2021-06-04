@@ -2,9 +2,13 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
+import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderBomApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
@@ -12,6 +16,7 @@ import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -44,21 +49,37 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto) {
+    public String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto) throws ParseException {
         String check = check(restapiWorkOrderApiDto);
         if(!check.equals("1")){
             return check;
         }
-        pmFeignApi.updateById(restapiWorkOrderApiDto.getMesPmWorkOrder());
-        for(MesPmWorkOrderBom mesPmWorkOrderBom : restapiWorkOrderApiDto.getMesPmWorkOrderBoms()) {
-            if(StringUtils.isEmpty(mesPmWorkOrderBom.getWorkOrderBomId()))  return "请求失败,工单Bom的id不能为空";
-            ResponseEntity oldMesPmWorkOrderBom = pmFeignApi.findMesPmWorkOrderBom(mesPmWorkOrderBom.getWorkOrderBomId());
-            if(StringUtils.isEmpty(oldMesPmWorkOrderBom.getData())){
+        System.out.println("----restapiWorkOrderApiDto---"+restapiWorkOrderApiDto);
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        searchBaseMaterial.setMaterialCode(restapiWorkOrderApiDto.getMATNR());
+        ResponseEntity<List<BaseMaterial>> baseMaterialList = baseFeignApi.findList(searchBaseMaterial);
+        if(StringUtils.isEmpty(baseMaterialList.getData()))   return "为查询到对应物料号";
+        BaseMaterial baseMaterial = baseMaterialList.getData().get(0);
+        MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
+        mesPmWorkOrder.setWorkOrderCode(restapiWorkOrderApiDto.getAUFNR());
+        mesPmWorkOrder.setPlanStartTime(DateUtils.getStrToDate("yyyyMMdd",restapiWorkOrderApiDto.getGSTRP()));
+        mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd",restapiWorkOrderApiDto.getGLTRP()));
+        mesPmWorkOrder.setCreateTime(DateUtils.getStrToDate("yyyyMMdd",restapiWorkOrderApiDto.getERDAT()));
+        mesPmWorkOrder.setMaterialId(baseMaterial.getMaterialId());
+        pmFeignApi.updateById(mesPmWorkOrder);
+
+        for(RestapiWorkOrderBomApiDto dto : restapiWorkOrderApiDto.getWorkOrderBom()) {
+
+          //  ResponseEntity oldMesPmWorkOrderBom = pmFeignApi.findMesPmWorkOrderBom(mesPmWorkOrderBom.getWorkOrderBomId());
+            MesPmWorkOrderBom mesPmWorkOrderBom = new MesPmWorkOrderBom();
+            //mesPmWorkOrderBom.setUsageQty(dto.set);
+            pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBom);
+            /*if(StringUtils.isEmpty(oldMesPmWorkOrderBom.getData())){
                 if(StringUtils.isEmpty(mesPmWorkOrderBom.getCreateTime())) mesPmWorkOrderBom.setCreateTime(new Date());
                 pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBom);
             }else{
                 pmFeignApi.updateMesPmWorkOrderBom(mesPmWorkOrderBom);
-            }
+            }*/
         }
         return "success";
     }
@@ -68,12 +89,11 @@ public class MaterialServiceImpl implements MaterialService {
 
         if(StringUtils.isEmpty(restapiWorkOrderApiDto))
             return "请求失败,参数为空";
-        if(StringUtils.isEmpty(restapiWorkOrderApiDto.getMesPmWorkOrder()))
-            return "请求失败,工单参数为空";
-        if(StringUtils.isEmpty(restapiWorkOrderApiDto.getMesPmWorkOrderBoms()))
-            return "请求失败,工单Bom参数为空";
-        if(StringUtils.isEmpty(restapiWorkOrderApiDto.getMesPmWorkOrder().getWorkOrderId()))
-            return "请求失败,工单id不能为空";
+        if(StringUtils.isEmpty(restapiWorkOrderApiDto.getAUFNR()))
+            return "请求失败,工单号不能为空";
+        if(StringUtils.isEmpty(restapiWorkOrderApiDto.getMATNR()))
+            return "请求失败,物料号不能为空";
+
         return "1";
     }
 

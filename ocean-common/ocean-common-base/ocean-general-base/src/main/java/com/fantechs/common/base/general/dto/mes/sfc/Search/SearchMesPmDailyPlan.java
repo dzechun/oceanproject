@@ -35,9 +35,9 @@ public class SearchMesPmDailyPlan extends BaseQuery implements Serializable {
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
     private Byte status;
 
-    @ApiModelProperty(name="startTime",value = "排产计划开始时间")
+/*    @ApiModelProperty(name="startTime",value = "排产计划开始时间")
     private Date startTime;
 
     @ApiModelProperty(name="endTime",value = "排产计划结束时间")
-    private Date endTime;
+    private Date endTime;*/
 }
