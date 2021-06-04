@@ -7,7 +7,7 @@
     -->
     <id column="ipqc_inspection_order_det_id" jdbcType="BIGINT" property="ipqcInspectionOrderDetId" />
     <result column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
-    <result column="sample_plan_ac_re_id" jdbcType="BIGINT" property="samplePlanAcReId" />
+    <result column="inspection_standard_det_id" jdbcType="BIGINT" property="inspectionStandardDetId" />
     <result column="badness_qty" jdbcType="BIGINT" property="badnessQty" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="inspection_time" jdbcType="TIMESTAMP" property="inspectionTime" />
@@ -27,12 +27,27 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection"/>
+    <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
+    <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
+    <result column="inspection_item_desc_big" jdbcType="VARCHAR" property="inspectionItemDescBig"/>
+    <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag"/>
+    <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit"/>
+    <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor"/>
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue"/>
+    <result column="ac_value" jdbcType="INTEGER" property="acValue"/>
+    <result column="re_value" jdbcType="INTEGER" property="reValue"/>
+    <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
+    <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
+    <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
+    <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
     qiiod.ipqc_inspection_order_det_id,
     qiiod.ipqc_inspection_order_id,
-    qiiod.sample_plan_ac_re_id,
+    qiiod.inspection_standard_det_id,
     qiiod.badness_qty,
     qiiod.inspection_result,
     qiiod.inspection_time,
@@ -52,10 +67,19 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
+    bisd.if_must_inspection,bii.inspection_item_standard,bbc.badness_category_code,
+    bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
+    bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
+    bsp.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.qms_ipqc_inspection_order_det qiiod
+    left join fantech_imes_v2.base_inspection_standard_det bisd on qiiod.inspection_standard_det_id=bisd.inspection_standard_det_id
+    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
+    left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
+    left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join fantech_imes_v2.base_badness_category bbc on qiiod.badness_category_id=bbc.badness_category_id
     left join ocean_v2.sys_user u on qiiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiiod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qiiod.org_id = bo.organization_id

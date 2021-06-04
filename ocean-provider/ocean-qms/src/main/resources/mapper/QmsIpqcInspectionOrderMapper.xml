@@ -100,6 +100,18 @@
       <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
         and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
       </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="inspectionStatus != null">
+        and qiio.inspection_status = #{inspectionStatus}
+      </if>
+      <if test="inspectionResult != null">
+        and qiio.inspection_result= #{inspectionResult}
+      </if>
       <if test="status!=null">
         and qiio.status = #{status}
       </if>
