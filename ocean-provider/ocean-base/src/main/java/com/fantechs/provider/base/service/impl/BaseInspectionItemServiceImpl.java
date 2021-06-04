@@ -1,35 +1,37 @@
 package com.fantechs.provider.base.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionItem;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionItemDet;
+import com.fantechs.common.base.general.entity.basic.BaseProcessInspectionItem;
+import com.fantechs.common.base.general.entity.basic.BaseProcessInspectionItemItem;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionItem;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionItem;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.BaseHtInspectionItemMapper;
-import com.fantechs.provider.base.mapper.BaseInspectionItemDetMapper;
 import com.fantechs.provider.base.mapper.BaseInspectionItemMapper;
 import com.fantechs.provider.base.service.BaseInspectionItemService;
-import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by leifengzhi on 2020/12/25.
+ *
+ * Created by leifengzhi on 2021/06/03.
  */
 @Service
 public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionItem> implements BaseInspectionItemService {
@@ -38,62 +40,83 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     private BaseInspectionItemMapper baseInspectionItemMapper;
     @Resource
     private BaseHtInspectionItemMapper baseHtInspectionItemMapper;
-    @Resource
-    private BaseInspectionItemDetMapper baseInspectionItemDetMapper;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
 
     @Override
-    public List<BaseInspectionItemDto> findList(Map<String, Object> map) {
-        return baseInspectionItemMapper.findList(map);
-    }
+    public List<BaseInspectionItem> findList(Map<String, Object> map) {
+        List<BaseInspectionItem> baseInspectionItemList = baseInspectionItemMapper.findList(map);
+        SearchBaseInspectionItem searchBaseInspectionItem = new SearchBaseInspectionItem();
 
-    @SneakyThrows
-    @Override
-    public List<BaseInspectionItemDto> exportExcel(Map<String, Object> map) {
-        List<BaseInspectionItemDto> list = this.findList(map);
-
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("inspectionItem");
-        List<SysSpecItem> inspectionItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        searchSysSpecItem.setSpecCode("inspectionLevel");
-        List<SysSpecItem> inspectionLevels = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        searchSysSpecItem.setSpecCode("inspectionTool");
-        List<SysSpecItem> inspectionTools = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        searchSysSpecItem.setSpecCode("testMethod");
-        List<SysSpecItem> testMethods = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-
-        for (BaseInspectionItemDto qmsInspectionItemDto : list) {
-            qmsInspectionItemDto.setInspectionNapeName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionItems.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionNape() + "")))).get("name") + "");
-            qmsInspectionItemDto.setInspectionItemLevelName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionLevels.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionItemLevel() + "")))).get("name") + "");
-            qmsInspectionItemDto.setInspectionToolName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(inspectionTools.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getInspectionTool() + "")))).get("name") + "");
-            qmsInspectionItemDto.setTestMethodName(JSONObject.parseObject(String.valueOf(JSONObject.parseArray(testMethods.get(0).getParaValue()).get(Integer.parseInt(qmsInspectionItemDto.getTestMethod() + "")))).get("name") + "");
+        for (BaseInspectionItem baseInspectionItem : baseInspectionItemList){
+            searchBaseInspectionItem.setParentId(baseInspectionItem.getInspectionItemId());
+            List<BaseInspectionItem> detList = baseInspectionItemMapper.findDetList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionItem));
+            if (StringUtils.isNotEmpty(detList)){
+                baseInspectionItem.setBaseInspectionItemDets(detList);
+            }
         }
 
-        return list;
+        return baseInspectionItemList;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseInspectionItem baseInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
+        if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        baseInspectionItem.setCreateTime(new Date());
-        baseInspectionItem.setCreateUserId(user.getUserId());
-        baseInspectionItem.setModifiedTime(new Date());
-        baseInspectionItem.setModifiedUserId(user.getUserId());
-        baseInspectionItem.setStatus(StringUtils.isEmpty(baseInspectionItem.getStatus()) ? 1 : baseInspectionItem.getStatus());
-        baseInspectionItem.setInspectionItemCode(getOdd());
-        baseInspectionItem.setOrganizationId(user.getOrganizationId());
+        //检验项目小类
+        List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
 
+        //判断编码是否重复
+        List<String> codeList = new ArrayList<>();
+        codeList.add(baseInspectionItem.getInspectionItemCode());
+        if(StringUtils.isNotEmpty(baseInspectionItems)) {
+            for (BaseInspectionItem inspectionItem : baseInspectionItems) {
+                if (codeList.contains(inspectionItem.getInspectionItemCode())) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                } else {
+                    codeList.add(inspectionItem.getInspectionItemCode());
+                }
+            }
+        }
+
+        Example example = new Example(BaseInspectionItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("inspectionItemCode", codeList);
+        List<BaseInspectionItem> baseInspectionItems1 = baseInspectionItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseInspectionItems1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        //新增检验项目
+        baseInspectionItem.setInspectionItemType(StringUtils.isEmpty(baseInspectionItem.getInspectionItemType())?(byte)1:baseInspectionItem.getInspectionItemType());
+        baseInspectionItem.setCreateUserId(user.getUserId());
+        baseInspectionItem.setCreateTime(new Date());
+        baseInspectionItem.setModifiedUserId(user.getUserId());
+        baseInspectionItem.setModifiedTime(new Date());
+        baseInspectionItem.setStatus(StringUtils.isEmpty(baseInspectionItem.getStatus())?1: baseInspectionItem.getStatus());
+        baseInspectionItem.setOrganizationId(user.getOrganizationId());
         int i = baseInspectionItemMapper.insertUseGeneratedKeys(baseInspectionItem);
 
-        BaseHtInspectionItem baseHtProductFamily = new BaseHtInspectionItem();
-        BeanUtils.copyProperties(baseInspectionItem, baseHtProductFamily);
-        baseHtInspectionItemMapper.insert(baseHtProductFamily);
+        //新增检验项目明细
+        if(StringUtils.isNotEmpty(baseInspectionItems)){
+            for (BaseInspectionItem baseInspectionItem2:baseInspectionItems){
+                baseInspectionItem2.setParentId(baseInspectionItem.getInspectionItemId());
+                baseInspectionItem2.setInspectionItemType(StringUtils.isEmpty(baseInspectionItem2.getInspectionItemType())?(byte)2:baseInspectionItem2.getInspectionItemType());
+                baseInspectionItem2.setCreateUserId(user.getUserId());
+                baseInspectionItem2.setCreateTime(new Date());
+                baseInspectionItem2.setModifiedUserId(user.getUserId());
+                baseInspectionItem2.setModifiedTime(new Date());
+                baseInspectionItem2.setStatus(StringUtils.isEmpty(baseInspectionItem2.getStatus())?1:baseInspectionItem2.getStatus());
+                baseInspectionItem2.setOrganizationId(user.getOrganizationId());
+            }
+            baseInspectionItemMapper.insertList(baseInspectionItems);
+        }
+
+        BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
+        BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
+        baseHtInspectionItemMapper.insert(baseHtInspectionItem);
 
         return i;
     }
@@ -102,68 +125,103 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseInspectionItem baseInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
+        if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        //检验项目小类
+        List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
+
+        //判断编码是否重复
+        List<String> codeList = new ArrayList<>();
+        List<Long> idList = new ArrayList<>();
+        codeList.add(baseInspectionItem.getInspectionItemCode());
+        idList.add(baseInspectionItem.getInspectionItemId());
+        if(StringUtils.isNotEmpty(baseInspectionItems)) {
+            for (BaseInspectionItem inspectionItem : baseInspectionItems) {
+                if (codeList.contains(inspectionItem.getInspectionItemCode())) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+                } else {
+                    codeList.add(inspectionItem.getInspectionItemCode());
+                }
+                if(StringUtils.isNotEmpty(inspectionItem.getInspectionItemId())){
+                    idList.add(inspectionItem.getInspectionItemId());
+                }
+            }
+        }
+
+        Example example = new Example(BaseInspectionItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("inspectionItemCode", codeList)
+                .andNotIn("inspectionItemId",idList);
+        List<BaseInspectionItem> baseInspectionItems1 = baseInspectionItemMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseInspectionItems1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        //修改检验项目
+        baseInspectionItem.setInspectionItemType(StringUtils.isEmpty(baseInspectionItem.getInspectionItemType())?(byte)1:baseInspectionItem.getInspectionItemType());
         baseInspectionItem.setModifiedTime(new Date());
         baseInspectionItem.setModifiedUserId(user.getUserId());
         baseInspectionItem.setOrganizationId(user.getOrganizationId());
+        int i = baseInspectionItemMapper.updateByPrimaryKeySelective(baseInspectionItem);
 
-        BaseHtInspectionItem baseHtProductFamily = new BaseHtInspectionItem();
-        BeanUtils.copyProperties(baseInspectionItem, baseHtProductFamily);
-        baseHtInspectionItemMapper.insert(baseHtProductFamily);
+        //删除原有检验项目明细
+        Example example1 = new Example(BaseInspectionItem.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("parentId", baseInspectionItem.getInspectionItemId());
+        baseInspectionItemMapper.deleteByExample(example1);
 
-        return baseInspectionItemMapper.updateByPrimaryKeySelective(baseInspectionItem);
+        //新增检验项目明细
+        if(StringUtils.isNotEmpty(baseInspectionItems)){
+            for (BaseInspectionItem baseInspectionItem2:baseInspectionItems){
+                baseInspectionItem2.setParentId(baseInspectionItem.getInspectionItemId());
+                baseInspectionItem2.setInspectionItemType(StringUtils.isEmpty(baseInspectionItem2.getInspectionItemType())?(byte)2:baseInspectionItem2.getInspectionItemType());
+                baseInspectionItem2.setCreateUserId(user.getUserId());
+                baseInspectionItem2.setCreateTime(new Date());
+                baseInspectionItem2.setModifiedUserId(user.getUserId());
+                baseInspectionItem2.setModifiedTime(new Date());
+                baseInspectionItem2.setStatus(StringUtils.isEmpty(baseInspectionItem2.getStatus())?1:baseInspectionItem2.getStatus());
+                baseInspectionItem2.setOrganizationId(user.getOrganizationId());
+            }
+            baseInspectionItemMapper.insertList(baseInspectionItems);
+        }
+
+        BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
+        BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
+        baseHtInspectionItemMapper.insert(baseHtInspectionItem);
+
+        return i;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
+        if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        List<BaseHtInspectionItem> qmsHtQualityInspections = new ArrayList<>();
-        String[] idsArr = ids.split(",");
-        for (String id : idsArr) {
+
+        List<BaseHtInspectionItem> list = new ArrayList<>();
+        String[] idArry = ids.split(",");
+        for (String id : idArry) {
             BaseInspectionItem baseInspectionItem = baseInspectionItemMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(baseInspectionItem)) {
+            if(StringUtils.isEmpty(baseInspectionItem)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-
             BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
             BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
-            qmsHtQualityInspections.add(baseHtInspectionItem);
+            list.add(baseHtInspectionItem);
+
+            //删除原有检验项目明细
+            Example example1 = new Example(BaseInspectionItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("parentId", baseInspectionItem.getInspectionItemId());
+            baseInspectionItemMapper.deleteByExample(example1);
         }
 
-        baseHtInspectionItemMapper.insertList(qmsHtQualityInspections);
-
-        Example example = new Example(BaseInspectionItemDet.class);
-        Example.Criteria criteria = example.createCriteria();
-        String[] split = ids.split(",");
-        criteria.andIn("inspectionItemId", Arrays.asList(split));
-        baseInspectionItemDetMapper.deleteByExample(example);
+        baseHtInspectionItemMapper.insertList(list);
 
         return baseInspectionItemMapper.deleteByIds(ids);
     }
-
-    /**
-     * 生成检验项目单号
-     *
-     * @return
-     */
-    public String getOdd() {
-        String before = "JYXM";
-        String amongst = new SimpleDateFormat("yyMMdd").format(new Date());
-        BaseInspectionItem baseInspectionItem = baseInspectionItemMapper.getMax();
-        String qmsInspectionItemCode = before + amongst + "0000";
-        if (StringUtils.isNotEmpty(baseInspectionItem)) {
-            qmsInspectionItemCode = baseInspectionItem.getInspectionItemCode();
-        }
-        Integer maxCode = Integer.parseInt(qmsInspectionItemCode.substring(10, qmsInspectionItemCode.length()));
-        String after = String.format("%04d", ++maxCode);
-        String code = before + amongst + after;
-        return code;
-    }
-
 }

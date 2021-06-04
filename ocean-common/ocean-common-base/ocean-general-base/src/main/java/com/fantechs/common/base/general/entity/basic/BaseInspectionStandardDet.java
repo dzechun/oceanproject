@@ -52,12 +52,12 @@ public class BaseInspectionStandardDet extends ValidGroup implements Serializabl
     private Byte ifMustInspection;
 
     /**
-     * 检验项目
+     * 检验项目ID
      */
-    @ApiModelProperty(name="inspectionItem",value = "检验项目")
-    @Excel(name = "检验项目", height = 20, width = 30,orderNum="")
-    @Column(name = "inspection_item")
-    private String inspectionItem;
+    @ApiModelProperty(name="inspectionItemId",value = "检验项目ID")
+    @Excel(name = "检验项目ID", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_item_id")
+    private Long inspectionItemId;
 
     /**
      * 检验工具
@@ -203,12 +203,28 @@ public class BaseInspectionStandardDet extends ValidGroup implements Serializabl
     private String organizationName;
 
     /**
-     * 检验方式
+     * 检验项目-小类
      */
-    @ApiModelProperty(name="inspectionWayCode" ,value="检验方式")
+    @ApiModelProperty(name="inspectionItemDescSmall" ,value="检验项目-小类")
     @Transient
-    @Excel(name = "检验方式", height = 20, width = 30,orderNum="5")
-    private String inspectionWayCode;
+    @Excel(name = "检验项目-小类", height = 20, width = 30,orderNum="5")
+    private String inspectionItemDescSmall;
+
+    /**
+     * 检验项目-大类
+     */
+    @ApiModelProperty(name="inspectionItemDescBig" ,value="检验项目-大类")
+    @Transient
+    @Excel(name = "检验项目-大类", height = 20, width = 30,orderNum="5")
+    private String inspectionItemDescBig;
+
+    /**
+     * 检验标准
+     */
+    @ApiModelProperty(name="inspectionItemStandard" ,value="检验标准")
+    @Transient
+    @Excel(name = "检验标准", height = 20, width = 30,orderNum="5")
+    private String inspectionItemStandard;
 
     /**
      * 抽样过程

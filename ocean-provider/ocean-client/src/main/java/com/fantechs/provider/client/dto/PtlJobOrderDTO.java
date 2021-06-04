@@ -10,7 +10,7 @@ import java.util.List;
  * Created by lfz on 2020/12/10.
  */
 @Data
-public class PtlSortingDTO  implements Serializable {
+public class PtlJobOrderDTO implements Serializable {
 
     @ApiModelProperty(name="taskNo",value = "任务号")
     private String taskNo;
@@ -27,9 +27,9 @@ public class PtlSortingDTO  implements Serializable {
     @ApiModelProperty(name="reviewNumber",value = "复核台编号")
     private String reviewNumber;
 
-    @ApiModelProperty(name="isWhole",value = "是否整零（1-整 0-零）")
-    private String isWhole;
-
     @ApiModelProperty(name="details",value = "任务明细")
-    private List<PtlSortingDetailDTO> details;
+    private List<PtlJobOrderDetDTO> details;
+
+    @ApiModelProperty(name="status",value = "状态(F-完成 E-异常)")
+    private String status;
 }

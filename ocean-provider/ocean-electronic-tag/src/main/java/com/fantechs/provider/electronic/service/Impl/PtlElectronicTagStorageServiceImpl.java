@@ -49,6 +49,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
                 ptlElectronicTagStorage.getElectronicTagId(),
                 ptlElectronicTagStorage.getEquipmentId(),
                 ptlElectronicTagStorage.getEquipmentAreaId(),
+                ptlElectronicTagStorage.getElectronicTagLangType(),
                 ptlElectronicTagStorage.getStorageId(),
                 ptlElectronicTagStorage.getWarehouseId(),
                 ptlElectronicTagStorage.getWarehouseAreaId())) {

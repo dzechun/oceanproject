@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by leifengzhi on 2020/12/25.
+ *
+ * Created by leifengzhi on 2021/06/03.
  */
-public interface BaseHtInspectionItemService extends IService<BaseHtInspectionItem> {
 
+public interface BaseHtInspectionItemService extends IService<BaseHtInspectionItem> {
     List<BaseHtInspectionItem> findHtList(Map<String, Object> map);
 }

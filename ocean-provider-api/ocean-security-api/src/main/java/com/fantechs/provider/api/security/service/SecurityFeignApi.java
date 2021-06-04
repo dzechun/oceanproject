@@ -4,6 +4,7 @@ package com.fantechs.provider.api.security.service;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.github.pagehelper.Page;
@@ -39,5 +40,10 @@ public interface SecurityFeignApi {
     @ApiOperation("根据条件查询程序配置项列表")
     @PostMapping("/sysSpecItem/findList")
     ResponseEntity<List<SysSpecItem>> findSpecItemList(@ApiParam(value = "查询条件，请参考Model说明") @RequestBody(required = false) SearchSysSpecItem searchSysSpecItem);
+
+    @PostMapping("/sysUser/findList")
+    @ApiOperation(value = "查询用户列表",notes = "根据条件查询用户信息")
+    ResponseEntity<List<SysUser>> selectUsers(
+            @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysUser searchSysUser );
 
 }

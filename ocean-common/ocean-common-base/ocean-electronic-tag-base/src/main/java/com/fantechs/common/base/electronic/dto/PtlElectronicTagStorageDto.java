@@ -36,6 +36,11 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
     @Transient
     private String storageName;
 
+    /**
+     * 设备标签ID
+     */
+    @ApiModelProperty(name="equipmentTagId",value = "设备标签ID")
+    private String equipmentTagId;
 
     /**
      * 设备名称
@@ -68,6 +73,44 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
     @Excel(name = "设备端口", height = 20, width = 30,orderNum="20")
     @Transient
     private String equipmentPort;
+
+    /**
+     * 区域设备标签ID
+     */
+    @ApiModelProperty(name="equipmentAreaTagId",value = "区域设备标签ID")
+    private String equipmentAreaTagId;
+
+    /**
+     * 区域设备名称
+     */
+    @ApiModelProperty(name="equipmentName",value = "区域设备名称")
+    @Excel(name = "区域设备名称", height = 20, width = 30,orderNum="")
+    @Transient
+    private String equipmentAreaName;
+
+    /**
+     * 区域设备编码
+     */
+    @ApiModelProperty(name="equipmentCode",value = "区域设备编码")
+    @Excel(name = "区域设备编码", height = 20, width = 30,orderNum="")
+    @Transient
+    private String equipmentAreaCode;
+
+    /**
+     * 区域设备ip
+     */
+    @ApiModelProperty(name="equipmentIp",value = "区域设备ip")
+    @Excel(name = "区域设备ip", height = 20, width = 30,orderNum="")
+    @Transient
+    private String equipmentAreaIp;
+
+    /**
+     * 区域设备端口
+     */
+    @ApiModelProperty(name="equipmentPort",value = "区域设备端口")
+    @Excel(name = "区域设备端口", height = 20, width = 30,orderNum="")
+    @Transient
+    private String equipmentAreaPort;
 
     /**
      * 仓库名称
@@ -104,10 +147,10 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
     /**
      * 物料版本
      */
-    @ApiModelProperty(name="version" ,value="物料版本")
+    @ApiModelProperty(name="materialVersion" ,value="物料版本")
     @Excel(name = "物料版本", height = 20, width = 30,orderNum="12")
     @Transient
-    private String version;
+    private String materialVersion;
 
     /**
      * 创建用户名称
@@ -124,6 +167,9 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改账号", height = 20, width = 30,orderNum="15")
     private String modifiedUserName;
+
+    @ApiModelProperty(name="clientId",value = "客户端id")
+    private Long clientId;
 
     /**
      * 队列名称

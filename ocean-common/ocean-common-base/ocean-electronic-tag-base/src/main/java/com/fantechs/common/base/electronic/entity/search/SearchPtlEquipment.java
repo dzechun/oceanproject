@@ -41,9 +41,9 @@ public class SearchPtlEquipment extends BaseQuery implements Serializable {
     private String equipmentData;
 
     /**
-     * 设备类型
+     * 设备类型(0-控制器 1-区域灯 2-其他)
      */
-    @ApiModelProperty(name="equipmentType",value = "设备类型")
+    @ApiModelProperty(name="equipmentType",value = "设备类型(0-控制器 1-区域灯 2-其他)")
     private Byte equipmentType;
 
     /**

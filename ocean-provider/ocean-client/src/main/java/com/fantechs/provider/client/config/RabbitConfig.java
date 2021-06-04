@@ -4,9 +4,6 @@ import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by lfz on 2020/11/27.
  */
@@ -18,6 +15,7 @@ public class RabbitConfig {
     public static final String TOPIC_QUEUE_PDA = "topic.queue.pda";
     public static final String TOPIC_HEARTBEAT_QUEUE = "topic.heartbeat.queue";
     public static final String TOPIC_EXCHANGE = "topic.exchange";
+    public static final String TOPIC_QUEUE_PTL = "topic.queue.ptl";
 
 
     //fanout
@@ -79,6 +77,11 @@ public class RabbitConfig {
         return new TopicExchange(TOPIC_EXCHANGE);
     }
 
+    @Bean
+    public Queue topicQueuePtl() {
+        return new Queue(TOPIC_QUEUE_PTL);
+    }
+
 //    @Bean
 //    public DirectExchange deadExchange() {
 //        return new DirectExchange(DEAD_EXCHANGE);
@@ -102,6 +105,11 @@ public class RabbitConfig {
     @Bean
     public Binding topicBinding3() {
         return BindingBuilder.bind(topicQueuePda()).to(topicExchange()).with("lzc.#");
+    }
+
+    @Bean
+    public Binding topicBinding4() {
+        return BindingBuilder.bind(topicQueuePtl()).to(topicExchange()).with("lzc.#");
     }
 
 
