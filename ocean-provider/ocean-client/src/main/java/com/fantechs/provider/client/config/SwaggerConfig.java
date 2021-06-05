@@ -31,7 +31,7 @@ public class SwaggerConfig
     private static final String splitor = ";";
     private List<ApiKey> securitySchemes() {
         List<ApiKey> apiKeyList= new ArrayList();
-//        apiKeyList.add(new ApiKey("token", "token", "header"));
+        apiKeyList.add(new ApiKey("token", "token", "header"));
         return apiKeyList;
     }
     /**

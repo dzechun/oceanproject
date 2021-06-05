@@ -31,6 +31,15 @@ public class PtlEquipment extends ValidGroup implements Serializable {
     private Long equipmentId;
 
     /**
+     * 设备标签ID
+     */
+    @ApiModelProperty(name="equipmentTagId",value = "设备标签ID")
+    @Excel(name = "设备标签ID", height = 20, width = 30,orderNum="")
+    @NotNull(groups = update.class, message = "设备标签ID不能为空")
+    @Column(name = "equipment_tag_id")
+    private String equipmentTagId;
+
+    /**
      * 客户端id
      */
     @ApiModelProperty(name="clientId",value = "客户端id")
@@ -81,10 +90,10 @@ public class PtlEquipment extends ValidGroup implements Serializable {
     private String equipmentPort;
 
     /**
-     * 设备类型
+     * 设备类型(0-控制器 1-区域灯 2-其他)
      */
-    @ApiModelProperty(name="equipmentType",value = "设备类型")
-    @Excel(name = "设备类型", height = 20, width = 30,orderNum="6")
+    @ApiModelProperty(name="equipmentType",value = "设备类型(0-控制器 1-区域灯 2-其他)")
+    @Excel(name = "设备类型(0-控制器 1-区域灯 2-其他)", height = 20, width = 30,orderNum="6")
     @Column(name = "equipment_type")
     private Byte equipmentType;
 

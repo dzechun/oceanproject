@@ -70,16 +70,15 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     @Column(name = "barcode_status")
     private Byte barcodeStatus;
 
-    @Transient
-    private Byte barcodeType;
-
     /**
-     * 类别id
+     * 标签类别信息ID
      */
-    @ApiModelProperty(name="labelCategoryId",value = "条码类别")
-    @Excel(name = "条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="labelCategoryId",value = "标签类别信息ID")
+    @Excel(name = "标签类别信息ID", height = 20, width = 30,orderNum="")
     @Column(name = "label_category_id")
     private Long labelCategoryId;
+    @Transient
+    private Byte barcodeType;
 
     /**
      * 备注

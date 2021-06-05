@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "mesPmWorkOrderBom控制器")
+@Api(tags = "工单Bom")
 @RequestMapping("/mesPmWorkOrderBom")
 @Validated
 public class MesPmWorkOrderBomController {
@@ -30,7 +30,7 @@ public class MesPmWorkOrderBomController {
 
 
     @ApiOperation(value = "新增",notes = "新增")
-    @PostMapping("/ ")
+    @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesPmWorkOrderBom mesPmWorkOrderBom) {
         return ControllerUtil.returnCRUD(mesPmWorkOrderBomService.save(mesPmWorkOrderBom));
     }

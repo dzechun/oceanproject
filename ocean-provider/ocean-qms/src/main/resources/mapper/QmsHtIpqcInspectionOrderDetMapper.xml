@@ -7,11 +7,11 @@
     -->
     <id column="ht_ipqc_inspection_order_det_id" jdbcType="BIGINT" property="htIpqcInspectionOrderDetId" />
     <result column="ipqc_inspection_order_det_id" jdbcType="BIGINT" property="ipqcInspectionOrderDetId" />
-    <result column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
-    <result column="process_inspection_item_item_id" jdbcType="BIGINT" property="processInspectionItemItemId" />
-    <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult" />
+    <result column="sample_plan_ac_re_id" jdbcType="BIGINT" property="samplePlanAcReId" />
+    <result column="badness_qty" jdbcType="BIGINT" property="badnessQty" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="inspection_time" jdbcType="TIMESTAMP" property="inspectionTime" />
-    <result column="problem_record" jdbcType="VARCHAR" property="problemRecord" />
+    <result column="badness_category_id" jdbcType="BIGINT" property="badnessCategoryId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -33,10 +33,11 @@
     qhiiod.ht_ipqc_inspection_order_det_id,
     qhiiod.ipqc_inspection_order_det_id,
     qhiiod.ipqc_inspection_order_id,
-    qhiiod.process_inspection_item_item_id,
+    qhiiod.sample_plan_ac_re_id,
+    qhiiod.badness_qty,
     qhiiod.inspection_result,
     qhiiod.inspection_time,
-    qhiiod.problem_record,
+    qhiiod.badness_category_id,
     qhiiod.`status`,
     qhiiod.remark,
     qhiiod.org_id,
@@ -52,19 +53,14 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bpiii.process_inspection_item_item_content,bpiii.standard,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.qms_ht_ipqc_inspection_order_det qhiiod
-    left join fantech_imes_v2.base_process_inspection_item_item bpiii on qhiiod.process_inspection_item_item_id=bpiii.process_inspection_item_item_id
     left join ocean_v2.sys_user u on qhiiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qhiiod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qhiiod.org_id = bo.organization_id
     <where>
-      <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
-        and qhiiod.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
-      </if>
       <if test="status!=null">
         and qhiiod.status = #{status}
       </if>

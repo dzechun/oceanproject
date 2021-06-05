@@ -189,17 +189,16 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     }
 
     @Override
-    public int updateById(MesPmWorkOrder mesPmWorkOrder){
+    public MesPmWorkOrder updateById(MesPmWorkOrder mesPmWorkOrder){
         MesPmWorkOrder mesPmWorkOrderOld = this.selectByKey(mesPmWorkOrder.getWorkOrderId());
         if(StringUtils.isEmpty(mesPmWorkOrderOld)){
             try {
                 if(StringUtils.isEmpty(mesPmWorkOrder.getCreateTime())) mesPmWorkOrder.setCreateTime(new Date());
-                if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0){
-                    return 0;
-                }
+                if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0)
+                    throw new BizErrorException("保存失败");
             } catch (Exception e) {
                 e.printStackTrace();
-                return 0;
+                throw new BizErrorException("保存失败");
             }
         }else{
             int n = 0;
@@ -208,11 +207,10 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             BeanUtils.copyProperties(mesPmWorkOrderOld, mesPmHtWorkOrder);
             mesPmHtWorkOrder.setModifiedTime(new Date());
             smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
-
-            n = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
-            return n;
+            if( mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder)<=0)
+                throw new BizErrorException("新增失败");
         }
-        return 1;
+        return mesPmWorkOrder;
     }
 
 }

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -54,47 +55,86 @@ public class QmsHtIpqcInspectionOrder extends ValidGroup implements Serializable
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工单ID", height = 20, width = 30,orderNum="")
     @Column(name = "work_order_id")
     private Long workOrderId;
 
     /**
-     * 生产订单条码ID
+     * 物料ID
      */
-    @ApiModelProperty(name="workOrderBarcodeId",value = "生产订单条码ID")
-    @Excel(name = "生产订单条码ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_barcode_id")
-    private Long workOrderBarcodeId;
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
+    @Column(name = "material_id")
+    private Long materialId;
 
     /**
-     * 过程检验项目编码ID
+     * 客户ID
      */
-    @ApiModelProperty(name="processInspectionItemId",value = "过程检验项目编码ID")
-    @Excel(name = "过程检验项目编码ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "process_inspection_item_id")
-    private Long processInspectionItemId;
+    @ApiModelProperty(name="supplierId",value = "客户ID")
+    @Excel(name = "客户ID", height = 20, width = 30,orderNum="")
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     /**
-     * 部门ID
+     * 数量
      */
-    @ApiModelProperty(name="deptId",value = "部门ID")
-    @Excel(name = "部门ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "dept_id")
-    private Long deptId;
+    @ApiModelProperty(name="qty",value = "数量")
+    @Excel(name = "数量", height = 20, width = 30,orderNum="")
+    private BigDecimal qty;
+
+    /**
+     * 检验方式ID
+     */
+    @ApiModelProperty(name="inspectionWayId",value = "检验方式ID")
+    @Excel(name = "检验方式ID", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_way_id")
+    private Long inspectionWayId;
+
+    /**
+     * 检验标准ID
+     */
+    @ApiModelProperty(name="inspectionStandardId",value = "检验标准ID")
+    @Excel(name = "检验标准ID", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_standard_id")
+    private Long inspectionStandardId;
+
+    /**
+     * 检验状态(1-待检验 2-检验中 3-已检验)
+     */
+    @ApiModelProperty(name="inspectionStatus",value = "检验状态(1-待检验 2-检验中 3-已检验)")
+    @Excel(name = "检验状态(1-待检验 2-检验中 3-已检验)", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_status")
+    private Byte inspectionStatus;
+
+    /**
+     * 检验结果(1-合格 2-不合格)
+     */
+    @ApiModelProperty(name="inspectionResult",value = "检验结果(1-合格 2-不合格)")
+    @Excel(name = "检验结果(1-合格 2-不合格)", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_result")
+    private Byte inspectionResult;
 
     /**
      * 审批状态(1-待审批 2-已审批)
      */
     @ApiModelProperty(name="approveStatus",value = "审批状态(1-待审批 2-已审批)")
-    @Excel(name = "审批状态(1-待审批 2-已审批)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "审批状态(1-待审批 2-已审批)", height = 20, width = 30,orderNum="")
     @Column(name = "approve_status")
     private Byte approveStatus;
+
+    /**
+     * 审批部门
+     */
+    @ApiModelProperty(name="approveDeptId",value = "审批部门")
+    @Excel(name = "审批部门", height = 20, width = 30,orderNum="")
+    @Column(name = "approve_dept_id")
+    private Long approveDeptId;
 
     /**
      * 审批人ID
      */
     @ApiModelProperty(name="approveUserId",value = "审批人ID")
-    @Excel(name = "审批人ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "审批人ID", height = 20, width = 30,orderNum="")
     @Column(name = "approve_user_id")
     private Long approveUserId;
 
@@ -184,6 +224,86 @@ public class QmsHtIpqcInspectionOrder extends ValidGroup implements Serializable
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 工单号
+     */
+    @Transient
+    @ApiModelProperty(name = "workOrderCode",value = "工单号")
+    @Excel(name = "工单号", height = 20, width = 30,orderNum="13")
+    private String workOrderCode;
+
+    /**
+     * 产品料号
+     */
+    @Transient
+    @ApiModelProperty(name = "materialCode",value = "产品料号")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="13")
+    private String materialCode;
+
+    /**
+     * 产品描述
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "产品描述")
+    @Excel(name = "产品描述", height = 20, width = 30,orderNum="13")
+    private String materialDesc;
+
+    /**
+     * 产品版本
+     */
+    @Transient
+    @ApiModelProperty(name = "materialVersion",value = "产品版本")
+    @Excel(name = "产品版本", height = 20, width = 30,orderNum="13")
+    private String materialVersion;
+
+    /**
+     * 产品型号
+     */
+    @Transient
+    @ApiModelProperty(name = "productModelName",value = "产品型号")
+    @Excel(name = "产品型号", height = 20, width = 30,orderNum="13")
+    private String productModelName;
+
+    /**
+     * 客户
+     */
+    @Transient
+    @ApiModelProperty(name = "supplierName",value = "客户")
+    @Excel(name = "客户", height = 20, width = 30,orderNum="13")
+    private String supplierName;
+
+    /**
+     * 检验方式
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionWayDesc",value = "检验方式")
+    @Excel(name = "检验方式", height = 20, width = 30,orderNum="13")
+    private String inspectionWayDesc;
+
+    /**
+     * 检验标准
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionStandardName",value = "检验标准")
+    @Excel(name = "检验标准", height = 20, width = 30,orderNum="13")
+    private String inspectionStandardName;
+
+    /**
+     * 审核部门
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "审核部门")
+    @Excel(name = "审核部门", height = 20, width = 30,orderNum="13")
+    private String deptName;
+
+    /**
+     * 审核人
+     */
+    @Transient
+    @ApiModelProperty(name = "approveUserName",value = "审核人")
+    @Excel(name = "审核人", height = 20, width = 30,orderNum="13")
+    private String approveUserName;
 
     private String option1;
 

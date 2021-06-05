@@ -1,16 +1,16 @@
 package com.fantechs.provider.client.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.electronic.dto.PtlLoadingDetDto;
-import com.fantechs.common.base.electronic.dto.PtlSortingDto;
-import com.fantechs.common.base.electronic.entity.PtlLoading;
-import com.fantechs.common.base.electronic.entity.PtlSorting;
+import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
+import com.fantechs.common.base.electronic.entity.PtlJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.provider.client.dto.PtlSortingDTO;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.client.dto.PtlJobOrderDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,118 +26,40 @@ public class ElectronicTagStorageController {
     @Autowired
     private ElectronicTagStorageService electronicTagStorageService;
 
-    /**
-     * 生成分拣单
-     */
-    @PostMapping(value = "/createSorting")
-    @ApiOperation(value = "生成分拣单", notes = "生成分拣单")
-    public ResponseEntity createSorting(@RequestBody @Validated List<PtlSortingDTO> ptlSortingDTOList) {
+    @PostMapping(value = "/createPtlJobOrder")
+    @ApiOperation(value = "生成任务单", notes = "生成分拣单")
+    public ResponseEntity createPtlJobOrder(@RequestBody @Validated List<PtlJobOrderDTO> ptlJobOrderDTOList) {
         try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.createSorting(ptlSortingDTOList));
+            return ControllerUtil.returnCRUD(electronicTagStorageService.createPtlJobOrder(ptlJobOrderDTOList));
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
     }
 
-    /**
-     * 生成上料单
-     */
-    @PostMapping(value = "/createLoading")
-    @ApiOperation(value = "生成上料单", notes = "生成上料单")
-    public ResponseEntity createLoading(@RequestBody @Validated List<PtlLoading> ptlLoadingList) {
-        try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.createLoading(ptlLoadingList));
-        } catch (Exception e) {
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-        }
-    }
-
-    /**
-     * 发送需要亮灯的储位、标签信息
-     *
-     * @param sortingCode
-     * @throws Exception
-     */
-    @PostMapping(value = "/sendElectronicTagStorage")
+    @GetMapping(value = "/sendElectronicTagStorage")
     @ApiOperation(value = "激活（拣取发送亮灯）", notes = "激活（拣取发送亮灯）")
-    public ResponseEntity<List<PtlSortingDto>> sendElectronicTagStorage(
-            @RequestParam(value = "任务号") String sortingCode,
-            @RequestParam(value = "仓库区域Id") Long warehouseAreaId) {
+    public ResponseEntity<PtlJobOrder> sendElectronicTagStorage(
+            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "仓库区域Id")@RequestParam(required = false) Long warehouseAreaId) {
         try {
-            List<PtlSortingDto> ptlSortingDtoList = electronicTagStorageService.sendElectronicTagStorage(sortingCode, warehouseAreaId);
-            return ControllerUtil.returnDataSuccess(ptlSortingDtoList, ptlSortingDtoList.size());
+            if (StringUtils.isEmpty(warehouseAreaId)) {
+                warehouseAreaId = Long.valueOf(0);
+            }
+            PtlJobOrder ptlJobOrder = electronicTagStorageService.sendElectronicTagStorage(jobOrderId, warehouseAreaId);
+            return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrder);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
     }
 
-    /**
-     * 批量删除分拣单
-     *
-     * @param sortingCodes
-     * @throws Exception
-     */
-    @PostMapping(value = "/batchDeleteSorting")
-    @ApiOperation(value = "批量删除分拣单", notes = "批量删除分拣单")
-    public ResponseEntity batchSortingDelete(@RequestBody List<String> sortingCodes) {
+    @GetMapping(value = "/writeBackPtlJobOrder")
+    @ApiOperation(value = "回写PTL作业任务单（F-完成 E-缺货异常）", notes = "回写PTL作业任务单（F-完成 E-异常）")
+    public ResponseEntity<PtlJobOrderDto> writeBackPtlJobOrder(
+            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "状态（F-完成 E-异常）", required = true) @RequestParam String status) {
         try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.batchSortingDelete(sortingCodes));
-        } catch (Exception e) {
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-        }
-    }
-
-    @PostMapping("/sendLoadingElectronicTagStorage")
-    @ApiOperation(value = "上料发送亮灯", notes = "上料发送亮灯")
-    public ResponseEntity<List<PtlLoadingDetDto>> sendLoadingElectronicTagStorage(@RequestParam(value = "loadingCode") String loadingCode) {
-        try {
-            List<PtlLoadingDetDto> ptlLoadingDetDtoList =electronicTagStorageService.sendLoadingElectronicTagStorage(loadingCode);
-            return ControllerUtil.returnDataSuccess(ptlLoadingDetDtoList, ptlLoadingDetDtoList.size());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-        }
-    }
-
-    @PostMapping("/submitLoadingDet")
-    @ApiOperation(value = "提交上料单发送灭灯", notes = "提交上料单发送灭灯")
-    public ResponseEntity submitLoadingDet(@RequestBody @Validated(value = PtlLoadingDetDto.submit.class) List<PtlLoadingDetDto> ptlLoadingDetDtoList) {
-        try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.submitLoadingDet(ptlLoadingDetDtoList));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-        }
-    }
-
-    @PostMapping("/revokeLoading")
-    @ApiOperation(value = "撤销上料发送灭灯", notes = "撤销上料发送灭灯")
-    public ResponseEntity revokeLoading(@RequestParam(value = "loadingCode") String loadingCode) {
-        try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.revokeLoading(loadingCode));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-        }
-    }
-
-    @PostMapping("/comfirmLoadingDet")
-    @ApiOperation(value = "确认单个物料上料发送灭灯", notes = "确认单个物料上料发送灭灯")
-    public ResponseEntity comfirmLoadingDet(@RequestBody @Validated(value = PtlLoadingDetDto.submit.class) PtlLoadingDetDto ptlLoadingDetDto) {
-        try {
-            return ControllerUtil.returnCRUD(electronicTagStorageService.comfirmLoadingDet(ptlLoadingDetDto));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-        }
-    }
-
-    @GetMapping(value = "/sendElectronicTagStorageTest")
-    @ApiOperation(value = "拣取发送灭灯测试", notes = "拣取发送灭灯测试")
-    public ResponseEntity<List<PtlSortingDto>> sendElectronicTagStorageTest(@RequestParam(value = "sortingCode") String sortingCode) {
-        try {
-            List<PtlSortingDto> ptlSortingDtoList = electronicTagStorageService.sendElectronicTagStorageTest(sortingCode);
-            return ControllerUtil.returnDataSuccess(ptlSortingDtoList, ptlSortingDtoList.size());
+            PtlJobOrderDto ptlJobOrderDto = electronicTagStorageService.writeBackPtlJobOrder(jobOrderId, status);
+            return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrderDto);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
@@ -147,7 +69,7 @@ public class ElectronicTagStorageController {
     @ApiOperation(value = "发送电子标签亮灯/灭灯测试", notes = "发送电子标签亮灯/灭灯测试")
     public ResponseEntity<String> sendElectronicTagStorageLightTest(
             @RequestParam(value = "materialCode") String materialCode,
-            @RequestParam(value = "code(1001-亮灯 1003-灭灯)") Integer code) {
+            @RequestParam(value = "code(1001-亮灯 1002-灭灯)") Integer code) {
         try {
             String result = electronicTagStorageService.sendElectronicTagStorageLightTest(materialCode, code);
             return ControllerUtil.returnSuccess();

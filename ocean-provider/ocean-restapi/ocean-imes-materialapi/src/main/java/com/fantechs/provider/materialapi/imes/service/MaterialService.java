@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import java.text.ParseException;
 import java.util.List;
 
 @WebService(name = "MaterialService", // 暴露服务名称
@@ -21,7 +22,7 @@ public interface MaterialService {
     String syncMaterial(List<BaseMaterial> baseMaterials);
 
     @WebMethod
-    String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto);
+    String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto) throws ParseException;
 
 
 }

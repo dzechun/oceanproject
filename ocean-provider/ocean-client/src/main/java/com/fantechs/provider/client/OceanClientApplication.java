@@ -13,7 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ComponentScan({"com.fantechs.provider.client","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.client.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider.api")
-//@EnableDistributedTransaction
+@EnableDistributedTransaction
 public class OceanClientApplication{
 
     public static void main(String[] args) {

@@ -34,6 +34,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
+    <result column="label_category_code" jdbcType="TINYINT" property="labelCategoryCode" />
   </resultMap>
 
   <sql id="Base_Column_List">

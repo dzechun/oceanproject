@@ -49,6 +49,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
                 ptlElectronicTagStorage.getElectronicTagId(),
                 ptlElectronicTagStorage.getEquipmentId(),
                 ptlElectronicTagStorage.getEquipmentAreaId(),
+                ptlElectronicTagStorage.getElectronicTagLangType(),
                 ptlElectronicTagStorage.getStorageId(),
                 ptlElectronicTagStorage.getWarehouseId(),
                 ptlElectronicTagStorage.getWarehouseAreaId())) {
@@ -58,7 +59,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
         Example example = new Example(PtlElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
-        criteria.andEqualTo("storageId", ptlElectronicTagStorage.getStorageId());
+        criteria.andEqualTo("storageId", ptlElectronicTagStorage.getStorageId()).andEqualTo("electronicTagLangType", ptlElectronicTagStorage.getElectronicTagLangType());
         criteria1.andEqualTo("equipmentId", ptlElectronicTagStorage.getEquipmentId())
                 .andEqualTo("electronicTagId", ptlElectronicTagStorage.getElectronicTagId());
         example.or(criteria1);
@@ -87,7 +88,8 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
         Example example = new Example(PtlElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId", ptlElectronicTagStorage.getStorageId())
-        .andNotEqualTo("electronicTagStorageId", ptlElectronicTagStorage.getElectronicTagStorageId());
+                .andEqualTo("electronicTagLangType", ptlElectronicTagStorage.getElectronicTagLangType())
+                .andNotEqualTo("electronicTagStorageId", ptlElectronicTagStorage.getElectronicTagStorageId());
         List<PtlElectronicTagStorage> ptlElectronicTagStorages = ptlElectronicTagStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(ptlElectronicTagStorages)){
             throw new BizErrorException("储位id已存在");

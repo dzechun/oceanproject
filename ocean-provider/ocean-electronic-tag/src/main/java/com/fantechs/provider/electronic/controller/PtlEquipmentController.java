@@ -37,7 +37,7 @@ public class PtlEquipmentController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：equipmentCode、equipmentName、clientId", required = true) @RequestBody @Validated PtlEquipment ptlEquipment) {
+    public ResponseEntity add(@ApiParam(value = "必传：equipmentCode、equipmentName、clientId、equipmentTagId", required = true) @RequestBody @Validated PtlEquipment ptlEquipment) {
         return ControllerUtil.returnCRUD(ptlEquipmentService.save(ptlEquipment));
     }
 
