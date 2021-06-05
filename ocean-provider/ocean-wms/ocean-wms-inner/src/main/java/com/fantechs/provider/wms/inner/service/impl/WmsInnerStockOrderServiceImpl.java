@@ -5,13 +5,12 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderMapper;
@@ -40,6 +39,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private WmsInnerStockOrderDetMapper wmsInventoryVerificationDetMapper;
     @Resource
     private WmsInnerInventoryMapper wmsInnerInventoryMapper;
+    @Resource
+    private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
 
     @Override
     public List<WmsInnerStockOrderDto> findList(Map<String, Object> map) {
@@ -331,85 +332,75 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private int unlockOrLock(byte lockType, List<WmsInnerStockOrderDet> list, WmsInnerStockOrder wmsInventoryVerification){
         SysUser sysUser = currentUser();
         int num = 0;
-//        for (WmsInventoryVerificationDet wmsInventoryVerificationDet : list) {
-//            //库存按库位物料上盘点锁
-//            SmtStorageInventory smtStorageInventory = new SmtStorageInventory();
-//            smtStorageInventory.setStorageId(wmsInventoryVerificationDet.getStorageId());
-//            smtStorageInventory.setMaterialId(wmsInventoryVerificationDet.getMaterialId());
-//            smtStorageInventory.setStocktakeLock(lockType==(byte) 2?(byte)2:1);
-//            ResponseEntity responseEntity = storageInventoryFeignApi.lock(smtStorageInventory);
-//            if(responseEntity.getCode()!=0){
-//                throw new BizErrorException(responseEntity.getCode(),"激活失败："+responseEntity.getMessage());
-//            }
-//            //复盘
-//            if(lockType==(byte) 3){
-//                //更新库存 盘盈 根据盘点单生成一条库存 盘亏 按顺序扣减库存
-//                SearchSmtStorageInventory searchSmtStorageInventory = new SearchSmtStorageInventory();
-//                searchSmtStorageInventory.setStorageId(wmsInventoryVerificationDet.getStorageId());
-//                searchSmtStorageInventory.setMaterialId(wmsInventoryVerificationDet.getMaterialId());
-//                searchSmtStorageInventory.setStocktakeLock((byte)2);
-//                ResponseEntity<List<SmtStorageInventoryDto>> res = storageInventoryFeignApi.findList(searchSmtStorageInventory);
-//                if(res.getCode()!=0){
-//                    throw new BizErrorException("获取库存失败");
-//                }
-//                SmtStorageInventoryDto smtStorageInventoryDtos = res.getData().get(0);
-//                //盘点数大于库存数 新增一条盘单库存
-//                if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getInventoryQty()) && wmsInventoryVerificationDet.getInventoryQty().compareTo(smtStorageInventoryDtos.getQuantity())==1){
-//                    SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-//                    smtStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtos.getStorageInventoryId());
-//                    smtStorageInventoryDet.setGodownEntry(wmsInventoryVerification.getInventoryVerificationCode());
-//                    smtStorageInventoryDet.setMaterialQuantity(wmsInventoryVerificationDet.getInventoryQty());
-//                    smtStorageInventoryDet.setProductionCode(wmsInventoryVerificationDet.getBatchCode());
-//                    smtStorageInventoryDet.setCreateUserId(sysUser.getUserId());
-//                    smtStorageInventoryDet.setCreateTime(new Date());
-//                    smtStorageInventoryDet.setModifiedTime(new Date());
-//                    smtStorageInventoryDet.setModifiedUserId(sysUser.getUserId());
-//                }else{
-//                    //盘点数小于库存数 按顺序扣减库存
-//                    SearchSmtStorageInventoryDet searchSmtStorageInventoryDet = new SearchSmtStorageInventoryDet();
-//                    searchSmtStorageInventoryDet.setStorageInventoryId(smtStorageInventoryDtos.getStorageInventoryId());
-//                    ResponseEntity<List<SmtStorageInventoryDetDto>> rs = storageInventoryFeignApi.findStorageInventoryDetList(searchSmtStorageInventoryDet);
-//                    if(rs.getCode()!=0){
-//                        throw new BizErrorException("获取库存失败");
-//                    }
-//                    List<SmtStorageInventoryDetDto> smtStorageInventoryDetDtoList = rs.getData();
-//                    BigDecimal qty = wmsInventoryVerificationDet.getInventoryQty();
-//                    for (SmtStorageInventoryDetDto smtStorageInventoryDetDto : smtStorageInventoryDetDtoList) {
-//                        //如果数量等于0结束
-//                        if(qty.compareTo(BigDecimal.ZERO)==0){
-//                            break;
-//                        }
-//                        if(qty.compareTo(smtStorageInventoryDetDto.getMaterialQuantity())==1){
-//                            //扣减库存
-//                            if(smtStorageInventoryDetDto.getMaterialQuantity().compareTo(BigDecimal.ZERO)==1){
-//                                SmtStorageInventoryDet smtStorageInventoryDet = new SmtStorageInventoryDet();
-//                                smtStorageInventoryDet.setStorageInventoryDetId(smtStorageInventoryDetDto.getStorageInventoryDetId());
-//                                if(qty.compareTo(smtStorageInventoryDetDto.getMaterialQuantity())==1){
-//                                    smtStorageInventoryDet.setMaterialQuantity(BigDecimal.ZERO);
-//                                }else{
-//                                    smtStorageInventoryDet.setMaterialQuantity(smtStorageInventoryDetDto.getMaterialQuantity().subtract(qty));
-//                                }
-//                                qty.subtract(smtStorageInventoryDetDto.getMaterialQuantity());
-//                                ResponseEntity reDet = storageInventoryFeignApi.updateStorageInventoryDet(smtStorageInventoryDet);
-//                                if(reDet.getCode()!=0){
-//                                    throw new BizErrorException("盘点库存失败");
-//                                }
-//                            }
-//                        }
-//                    }
-//                    //更新主表库存数
-//                    smtStorageInventory = new SmtStorageInventory();
-//                    smtStorageInventory.setStorageInventoryId(smtStorageInventoryDtos.getStorageInventoryId());
-//                    smtStorageInventory.setQuantity(smtStorageInventoryDtos.getQuantity().subtract(wmsInventoryVerificationDet.getInventoryQty()));
-//                    ResponseEntity resmt = storageInventoryFeignApi.update(smtStorageInventory);
-//                    if(resmt.getCode()!=0){
-//                        throw new BizErrorException("库存盘点失败");
-//                    }
-//                }
-//            }
-//            num++;
-//        }
+        for (WmsInnerStockOrderDet wmsInnerStockOrderDet : list) {
+            //解锁库存
+            Example example = new Example(WmsInnerInventoryDet.class);
+            example.createCriteria().andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+                    .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId());
+            List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+            for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
+                wmsInnerInventory.setStockLock(lockType==(byte) 2?(byte)2:1);
+                num+=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            }
+
+            //复盘
+            if(lockType==(byte) 3){
+                num+=this.analyse((byte) 1,null,wmsInnerStockOrderDet,wmsInventoryVerification);
+            }
+        }
         return num;
+    }
+
+    /**
+     * 复盘盘盈盘亏
+     * @param type 1不扫条码 3-PDA扫条码盘点
+     * @param wmsInnerStockOrderDet
+     * @return
+     */
+    private int analyse(byte type,String barcode,WmsInnerStockOrderDet wmsInnerStockOrderDet,WmsInnerStockOrder wmsInnerStockOrder){
+            //更新库存 盘盈 根据盘点单生成一条库存 盘亏 按顺序扣减库存
+            //解锁库存
+        int num = 0;
+            Example example = new Example(WmsInnerInventoryDet.class);
+            example.createCriteria().andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+                    .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId());
+            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+                //盘点数大于库存数 原有数量新增
+            if(!StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) && wmsInnerStockOrderDet.getStockQty().compareTo(wmsInnerInventory.getPackingQty())==1){
+                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInnerStockOrderDet.getVarianceQty()));
+                num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            }else{
+                if(wmsInnerInventory.getPackingQty().compareTo(wmsInnerStockOrderDet.getVarianceQty())==-1){
+                    throw new BizErrorException("库存波动，请重新盘点");
+                }
+                //盘点数小于库存
+                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
+                num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            }
+
+            //PDA扫码盘点
+            if(type==3){
+                if(StringUtils.isEmpty(barcode)){
+                    throw new BizErrorException("条码错误");
+                }
+                Example example1 = new Example(WmsInnerInventoryDet.class);
+                example.createCriteria().andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId()).andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
+                        .andEqualTo("productionBatchCode",wmsInnerStockOrderDet.getBatchCode()).andEqualTo("barcode",barcode).andGreaterThan("packingQty",0);
+                WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example1);
+                if(StringUtils.isEmpty(wmsInnerInventoryDet)){
+                    throw new BizErrorException("库存查询失败");
+                }
+                if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty())||wmsInnerInventoryDet.getMaterialQty().compareTo(wmsInnerStockOrderDet.getStockQty())==-1){
+                    //盘盈
+                    wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().add(wmsInnerStockOrderDet.getVarianceQty()));
+                    num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+                }else {
+                    //盘亏
+                    wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
+                    num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+                }
+            }
+            return num;
     }
     /**
      * 获取当前登录用户

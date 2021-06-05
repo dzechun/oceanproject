@@ -5,10 +5,13 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
 public interface WmsInAsnOrderMapper extends MyMapper<WmsInAsnOrder> {
     List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder);
+
+    String findBarCode(@Param("id")Long id);
 }

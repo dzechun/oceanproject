@@ -28,7 +28,9 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     String findByOneLabel(@Param("labelName")String labelName);
 
-    Integer findCountCode(@Param("barcodeType")Byte barcodeType,@Param("workOrderId")Long workOrderId);
+    Integer findCountCode(@Param("barcodeType")Long barcodeType,@Param("workOrderId")Long workOrderId);
 
     String findVersion(@Param("labelName")String labelName);
+
+    Long finByTypeId(@Param("labelCategoryName")String labelCategoryName);
 }

@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.util;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
@@ -7,10 +8,15 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPa
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
 import org.springframework.stereotype.Component;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -28,6 +34,7 @@ public class InBarcodeUtil {
     //Feign
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -50,7 +57,7 @@ public class InBarcodeUtil {
            throw new BizErrorException("不存在该条码");
         }
         //条码是否为工单条码且是否为对应工单
-        if(mesSfcWorkOrderBarcode.getBarcodeType()==(byte)2 && mesSfcWorkOrderBarcode.getWorkOrderId()!=workOrderId){
+        if(mesSfcWorkOrderBarcode.getBarcodeType()==(byte)1 && mesSfcWorkOrderBarcode.getWorkOrderId()!=workOrderId){
             throw new BizErrorException("该条码不属于该工单");
         }
         //查询工单条码关联展板id

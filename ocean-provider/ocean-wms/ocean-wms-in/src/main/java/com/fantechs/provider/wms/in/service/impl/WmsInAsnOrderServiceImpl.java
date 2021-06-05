@@ -1,12 +1,16 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
@@ -14,6 +18,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -59,6 +64,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     private PMFeignApi pmFeignApi;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
@@ -559,8 +566,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             }
             //更新库存
             int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId());
-            //新增上架作业单
             wms.setActualQty(palletAutoAsnDto.getActualQty());
+            //新增库存明细
+            res = this.addInventoryDet(wmsInAsnOrder.getProductPalletId(),wmsInAsnOrder.getAsnCode(),wms);
+            //新增上架作业单
             res = this.createJobOrder(wmsInAsnOrder,wms);
             return 1;
         }else{
@@ -596,6 +605,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(res<1){
                 throw new BizErrorException("库存添加失败");
             }
+
+            //新增库存明细
+            res = this.addInventoryDet(wmsInAsnOrder.getProductPalletId(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
+
             //新增上级作业单
             res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
             //设置新redis 时效为24小时
@@ -663,6 +676,60 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         //使用ChronoUnit.SECONDS.between方法，传入两个LocalDateTime对象即可得到相差的秒数
         long seconds = ChronoUnit.SECONDS.between(currentDateTime, midnight);
         return (int) seconds;
+    }
+
+    /**
+     * 获取工单条码
+     * @param productPalletId
+     * @return
+     */
+    private String checkBarcode(Long productPalletId){
+        SearchMesSfcProductPalletDet searchMesSfcProductPalletDet = new SearchMesSfcProductPalletDet();
+        searchMesSfcProductPalletDet.setProductPalletId(productPalletId);
+        ResponseEntity<List<MesSfcProductPalletDetDto>> responseEntity = sfcFeignApi.findList(searchMesSfcProductPalletDet);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException("检验条码失败");
+        }
+        List<MesSfcProductPalletDetDto> mesSfcProductPalletDetDtos = responseEntity.getData();
+        //获取工单条码
+        String barcode = wmsInAsnOrderMapper.findBarCode(mesSfcProductPalletDetDtos.get(0).getWorkOrderBarcodeId());
+        if(StringUtils.isEmpty(barcode)){
+            throw new BizErrorException("获取工单条码失败");
+        }
+        return barcode;
+    }
+
+    /**
+     * 收货确认新增库存明细
+     * @param productPalletId
+     * @param orderCode
+     * @param wmsInAsnOrderDet
+     * @return
+     */
+    private int addInventoryDet(Long productPalletId,String orderCode,WmsInAsnOrderDet wmsInAsnOrderDet){
+        //获取工单条码
+        String barCode = this.checkBarcode(productPalletId);
+        //按条码查询是否存在库存
+        WmsInnerInventoryDet wmsInnerInventoryDet = innerFeignApi.findByDet(barCode).getData();
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDet)){
+            throw new BizErrorException("重复入库");
+        }
+        List<WmsInnerInventoryDet> wmsInnerInventoryDets = new ArrayList<>();
+        wmsInnerInventoryDet= new WmsInnerInventoryDet();
+        wmsInnerInventoryDet.setStorageId(wmsInAsnOrderDet.getStorageId());
+        wmsInnerInventoryDet.setMaterialId(wmsInnerInventoryDet.getMaterialId());
+        wmsInnerInventoryDet.setBarcode(barCode);
+        wmsInnerInventoryDet.setMaterialQty(wmsInAsnOrderDet.getActualQty());
+        wmsInnerInventoryDet.setInTime(new Date());
+        wmsInnerInventoryDet.setProductionDate(wmsInAsnOrderDet.getProductionDate());
+        wmsInnerInventoryDet.setProductionBatchCode(wmsInnerInventoryDet.getProductionBatchCode());
+        wmsInnerInventoryDet.setRelatedOrderCode(orderCode);
+        wmsInnerInventoryDets.add(wmsInnerInventoryDet);
+        ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException("生成库存明细失败");
+        }
+        return 1;
     }
 
     /**

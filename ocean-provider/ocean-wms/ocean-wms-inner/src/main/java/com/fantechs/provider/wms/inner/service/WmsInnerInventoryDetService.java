@@ -16,5 +16,7 @@ public interface WmsInnerInventoryDetService extends IService<WmsInnerInventoryD
 
     int add(List<WmsInnerInventoryDet> wmsInnerInventoryDets);
 
-    int subtract(List<WmsInnerInventoryDet> wmsInnerInventoryDets);
+    int subtract(WmsInnerInventoryDet wmsInnerInventoryDet);
+
+    WmsInnerInventoryDet findByOne(String barCode);
 }

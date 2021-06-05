@@ -136,4 +136,7 @@ wipo.option3
     <select id="findWarehouseName" resultType="java.lang.String">
         select warehouse_name FROM base_warehouse where warehouse_id = #{warehouseId}
     </select>
+    <select id="findAsnCode" resultType="java.lang.String" parameterType="java.lang.Long">
+        select asn_code FROM  wms_in_asn_order where asn_order_id = #{asnOrderId}
+    </select>
 </mapper>

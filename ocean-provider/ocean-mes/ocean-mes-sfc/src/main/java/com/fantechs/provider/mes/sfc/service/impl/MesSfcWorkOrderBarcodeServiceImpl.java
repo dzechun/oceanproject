@@ -242,8 +242,16 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 //            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
 //            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
 //        }
+        switch (record.getBarcodeType()){
+            case 2:
+                record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"));
+                break;
+            case 4:
+                record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("销售订单条码"));
+                break;
+        }
         //判断条码产生数量不能大于工单数量
-        Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
+        Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getLabelCategoryId(),record.getWorkOrderId());
         if(count+ record.getQty()>record.getWorkOrderQty().doubleValue()){
             throw new BizErrorException(ErrorCodeEnum.OPT20012009);
         }
@@ -302,7 +310,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public MesSfcWorkOrderBarcode findBarcode(String barcode) {
         Example example = new Example(MesSfcWorkOrderBarcode.class);
-        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("barcodeType",(byte)2);
+        example.createCriteria().andEqualTo("barcode",barcode);
         MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectOneByExample(example);
         return mesSfcWorkOrderBarcode;
     }

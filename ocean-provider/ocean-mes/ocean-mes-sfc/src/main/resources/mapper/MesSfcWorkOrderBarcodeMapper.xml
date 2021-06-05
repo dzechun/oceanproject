@@ -11,7 +11,7 @@
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
     <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
-    <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -38,7 +38,7 @@
   mswob.work_order_id,
   mswob.work_order_code,
   mswob.barcode_status,
-  mswob.barcode_type,
+  mswob.label_category_id,
   mswob.remark,
   mswob.org_id,
   mswob.create_user_id,
@@ -104,8 +104,11 @@ select * FROM <choose>
         LEFT JOIN base_label bl ON bl.label_category_id = blc.label_category_id
         where bl.label_Name =#{labelName}
     </select>
+    <select id="finByTypeId" resultType="java.lang.Long">
+        select label_category_id FROM base_label_category where label_category_name = #{labelCategoryName}
+    </select>
     <select id="findCountCode" resultType="java.lang.Integer">
-        select COUNT(*) FROM mes_sfc_work_order_barcode where barcode_type=#{barcodeType} and work_order_id=#{workOrderId}
+        select COUNT(*) FROM mes_sfc_work_order_barcode where label_category_id=#{labelCategoryId} and work_order_id=#{workOrderId}
     </select>
     <select id="findVersion" resultType="java.lang.String">
         select label_version From base_label where label_name=#{labelName}
