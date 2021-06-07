@@ -146,6 +146,14 @@ public class QmsHtIpqcInspectionOrder extends ValidGroup implements Serializable
     private Byte status;
 
     /**
+     * 附件路径
+     */
+    @ApiModelProperty(name="attachmentPath",value = "附件路径")
+    @Excel(name = "附件路径", height = 20, width = 30,orderNum="15")
+    @Column(name = "attachment_path")
+    private String attachmentPath;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

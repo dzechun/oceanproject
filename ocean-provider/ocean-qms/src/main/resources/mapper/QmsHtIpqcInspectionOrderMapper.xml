@@ -20,6 +20,7 @@
     <result column="approve_dept_id" jdbcType="BIGINT" property="approveDeptId" />
     <result column="approve_user_id" jdbcType="BIGINT" property="approveUserId" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="attachment_path" jdbcType="VARCHAR" property="attachmentPath" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -62,6 +63,7 @@
     qhiio.approve_dept_id,
     qhiio.approve_user_id,
     qhiio.`status`,
+    qhiio.attachment_path,
     qhiio.remark,
     qhiio.org_id,
     qhiio.create_user_id,

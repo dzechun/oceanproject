@@ -12,11 +12,13 @@ import com.fantechs.provider.qms.service.QmsHtIpqcInspectionOrderService;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import feign.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -39,10 +41,16 @@ public class QmsIpqcInspectionOrderController {
     @Resource
     private QmsHtIpqcInspectionOrderService qmsHtIpqcInspectionOrderService;
 
+    @ApiOperation("PDA提交")
+    @PostMapping("/PDASubmit")
+    public ResponseEntity PDASubmit(@ApiParam(value = "IPQC检验单id",required = true) @RequestParam @NotNull(message="IPQC检验单id不能为空") Long ipqcInspectionOrderId) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.writeBack(ipqcInspectionOrderId));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
-        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.save(qmsIpqcInspectionOrder));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@Validated QmsIpqcInspectionOrder qmsIpqcInspectionOrder, MultipartFile file) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.save(qmsIpqcInspectionOrder,file));
     }
 
     @ApiOperation("删除")
@@ -53,8 +61,8 @@ public class QmsIpqcInspectionOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsIpqcInspectionOrder.update.class) QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
-        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.update(qmsIpqcInspectionOrder));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@Validated(value=QmsIpqcInspectionOrder.update.class) QmsIpqcInspectionOrder qmsIpqcInspectionOrder, MultipartFile file) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.update(qmsIpqcInspectionOrder,file));
     }
 
     @ApiOperation("获取详情")
@@ -78,6 +86,18 @@ public class QmsIpqcInspectionOrderController {
         Page<Object> page = PageHelper.startPage(searchQmsIpqcInspectionOrder.getStartPage(),searchQmsIpqcInspectionOrder.getPageSize());
         List<QmsHtIpqcInspectionOrder> list = qmsHtIpqcInspectionOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    /**
+     * 文件下载
+     * @param fileUrl  url 开头从组名开始
+     * @param response
+     * @throws Exception
+     */
+    @ApiOperation(value = "文件下载",notes = "文件下载")
+    @PostMapping("/download")
+    public void  download(@ApiParam(value = "传入文件地址",required = true) @RequestParam(value = "fileUrl",required=true) String fileUrl, HttpServletResponse response){
+        qmsIpqcInspectionOrderService.downloadFile(fileUrl,response);
     }
 
     @PostMapping(value = "/export")
