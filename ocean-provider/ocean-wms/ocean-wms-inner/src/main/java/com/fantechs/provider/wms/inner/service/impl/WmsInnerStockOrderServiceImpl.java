@@ -278,7 +278,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             if(wmsInventoryVerification.getProjectType()==2){
-                throw new BizErrorException("盘点单为复盘，无需差异出来");
+                throw new BizErrorException("盘点单为复盘，无需差异处理");
             }
             if(wmsInventoryVerification.getOrderStatus()!=5){
                 throw new BizErrorException("盘点单未完成,无法差异处理");
