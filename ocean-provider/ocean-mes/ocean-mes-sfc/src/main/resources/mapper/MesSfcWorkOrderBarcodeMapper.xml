@@ -88,7 +88,7 @@
 </select>
 <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
 select * FROM <choose>
-    <when test="labelCategoryId==02">
+    <when test="labelCategoryId==2">
         view_workOrder
     </when>
     <when test="labelCategoryId==4">
