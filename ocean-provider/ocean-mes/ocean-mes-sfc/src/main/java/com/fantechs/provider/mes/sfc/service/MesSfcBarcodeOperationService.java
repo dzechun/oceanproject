@@ -13,7 +13,7 @@ public interface MesSfcBarcodeOperationService {
      * @param dto
      * @return
      */
-    int pdaCartonWork(PdaCartonWorkDto dto) throws Exception;
+    Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception;
 
     /**
      * 查找包箱数据

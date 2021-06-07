@@ -58,7 +58,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
 
     @Override
-    public int pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
+    public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -122,6 +122,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .build());
 
         // 5、是否要扫附件码
+        if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
+            return false;
+        }
         if (dto.getAnnex()) {
             Example example = new Example(MesSfcKeyPartRelevance.class);
             Example.Criteria criteria = example.createCriteria();
@@ -144,13 +147,16 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             MesPmWorkOrderProcessReWoDto pmWorkOrderProcessReWoDto = pmWorkOrderProcessReWoDtoList.get(0);
             List<MesPmWorkOrderMaterialRePDto> pmWorkOrderMaterialRePDtoList = pmWorkOrderProcessReWoDto.getList();
             // 零件所有用量
-            BigDecimal usageQty = pmWorkOrderMaterialRePDtoList.stream().map(item -> item.getUsageQty()).reduce(BigDecimal::multiply).get();
+            BigDecimal usageQty = BigDecimal.ZERO;
+            for (MesPmWorkOrderMaterialRePDto workOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
+                usageQty = usageQty.add(workOrderMaterialRePDto.getUsageQty());
+            }
 
             // 关键部件物料清单
             map.clear();
             map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
             map.put("processId", dto.getProcessId());
-            map.put("materialId", mesPmWorkOrder.getMaterialId());
+//            map.put("materialId", mesPmWorkOrder.getMaterialId());
             map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
             List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
 
@@ -168,8 +174,18 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .findList(SearchMesSfcWorkOrderBarcode.builder()
                             .barcode(dto.getBarAnnexCode())
                             .build());
+
+            boolean isBarCode = false;
+            if(sfcWorkOrderAnnexBarcodeDtos != null && sfcWorkOrderAnnexBarcodeDtos.size() > 0){
+                for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto: sfcWorkOrderAnnexBarcodeDtos) {
+                    if(workOrderBarcodeDto.getBarcode().equals(dto.getBarAnnexCode())){
+                        isBarCode = true;
+                        break;
+                    }
+                }
+            }
             boolean iswork = false;
-            if (sfcWorkOrderAnnexBarcodeDtos.size() <= 0) {
+            if (!isBarCode) {
                 List<Long> materialIds = new ArrayList<>();
                 for (MesPmWorkOrderMaterialRePDto pmWorkOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
                     if (pmWorkOrderMaterialRePDto.getMaterialId() != null) {
@@ -241,7 +257,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     }
                 }
                 if (flag) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012031);
+                    return false;
                 }
             } else {
                 // 条码
@@ -295,12 +311,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
             if (iswork) {
                 // 有附件码未作业，直接返回
-                return 1;
+                return false;
             }else {
                 // 有附件码并且已作业
                 if(keyPartRelevanceDtos.size() + 1 < usageQty.intValue()){
                     // 但是附件数量不满足工单清单用量，直接返回
-                    return 1;
+                    return false;
                 }
             }
         }
@@ -364,9 +380,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .workOrderId(mesPmWorkOrder.getWorkOrderId())
                         .build());
             }
-            return update;
         }
-        return 1;
+        return true;
     }
 
     @Override

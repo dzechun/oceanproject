@@ -107,7 +107,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
-            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getLabelCategoryId()==(byte)56 &&printType==(byte)1){
+            if(labelRuteDto.getBarcodeType()==(byte)1 &&printType==(byte)1){
                 //生成条码过站记录
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
                 mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
@@ -144,9 +144,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
                     throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
                 }
-                mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
-                this.update(mesSfcWorkOrderBarcode);
             }
+            mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
+            this.update(mesSfcWorkOrderBarcode);
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelRuteDto.getLabelName());

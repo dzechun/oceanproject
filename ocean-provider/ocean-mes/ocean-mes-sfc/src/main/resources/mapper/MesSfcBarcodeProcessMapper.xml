@@ -42,6 +42,7 @@
     <result column="merge_pallet_code" jdbcType="VARCHAR" property="mergePalletCode" />
     <result column="e_c_n_code" jdbcType="VARCHAR" property="eCNCode" />
     <result column="rework_code" jdbcType="VARCHAR" property="reworkCode" />
+    <result column="rework_order_id" jdbcType="VARCHAR" property="reworkOrderId" />
     <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
     <result column="pass_station_count" jdbcType="INTEGER" property="passStationCount" />

@@ -52,7 +52,7 @@ public class MesSfcBarcodeOperationController {
     @ApiOperation("PDA包箱作业")
     @PostMapping("/cartonOperation")
     public ResponseEntity cartonOperation(@ApiParam(value = "包箱扫条码", required = true) @RequestBody PdaCartonWorkDto dto) throws Exception {
-        return ControllerUtil.returnCRUD(mesSfcBarcodeOperationService.pdaCartonWork(dto));
+        return ControllerUtil.returnDataSuccess("成功", mesSfcBarcodeOperationService.pdaCartonWork(dto));
     }
 
     @ApiOperation("PDA包箱作业-修改包箱规格数量")
