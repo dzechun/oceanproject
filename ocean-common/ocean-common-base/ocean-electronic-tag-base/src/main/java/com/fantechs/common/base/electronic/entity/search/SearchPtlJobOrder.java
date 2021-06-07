@@ -18,6 +18,9 @@ public class SearchPtlJobOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
     private String relatedOrderCode;
 
+    @ApiModelProperty(name="relatedOrderCode",value = "发货单号")
+    private String despatchOrderCode;
+
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     private String warehouseName;
 

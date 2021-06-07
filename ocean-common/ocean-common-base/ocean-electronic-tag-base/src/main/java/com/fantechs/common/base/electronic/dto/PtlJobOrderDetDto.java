@@ -26,4 +26,7 @@ public class PtlJobOrderDetDto extends PtlJobOrderDet implements Serializable {
 
     @ApiModelProperty(name="electronicTagId",value = "区域标签Id")
     private String equipmentAreaTagId;
+
+    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域id")
+    private Long warehouseAreaId;
 }

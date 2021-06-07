@@ -15,8 +15,11 @@ public class PtlJobOrderDTO implements Serializable {
     @ApiModelProperty(name="taskNo",value = "任务号")
     private String taskNo;
 
-    @ApiModelProperty(name="customerNo",value = "相关单号")
+    @ApiModelProperty(name="customerNo",value = "拣货单号")
     private String customerNo;
+
+    @ApiModelProperty(name="deliveryNo",value = "发货单号")
+    private String deliveryNo;
 
     @ApiModelProperty(name="warehouseCode",value = "仓库编码")
     private String warehouseCode;

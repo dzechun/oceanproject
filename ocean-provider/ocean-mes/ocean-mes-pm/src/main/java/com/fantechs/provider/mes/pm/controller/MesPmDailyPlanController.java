@@ -2,9 +2,9 @@ package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -29,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/06/02.
  */
 @RestController
-@Api(tags = "mesPmDailyPlan控制器")
+@Api(tags = "工单日计划")
 @RequestMapping("/mesPmDailyPlan")
 @Validated
 public class MesPmDailyPlanController {

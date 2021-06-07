@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.qms.history;
+package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -17,22 +17,22 @@ import java.util.Date;
 ;
 
 /**
- * IPQC检验单明细履历表
- * qms_ht_ipqc_inspection_order_det
+ * IPQC检验单明细样本值表
+ * qms_ipqc_inspection_order_det_sample
  * @author admin
- * @date 2021-06-02 14:03:33
+ * @date 2021-06-04 15:43:36
  */
 @Data
-@Table(name = "qms_ht_ipqc_inspection_order_det")
-public class QmsHtIpqcInspectionOrderDet extends ValidGroup implements Serializable {
+@Table(name = "qms_ipqc_inspection_order_det_sample")
+public class QmsIpqcInspectionOrderDetSample extends ValidGroup implements Serializable {
     /**
-     * IPQC检验单明细履历ID
+     * 检验单明细样本值ID
      */
-    @ApiModelProperty(name="htIpqcInspectionOrderDetId",value = "IPQC检验单明细履历ID")
-    @Excel(name = "IPQC检验单明细履历ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="inspectionOrderDetSampleId",value = "检验单明细样本值ID")
+    @Excel(name = "检验单明细样本值ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "ht_ipqc_inspection_order_det_id")
-    private Long htIpqcInspectionOrderDetId;
+    @Column(name = "inspection_order_det_sample_id")
+    private Long inspectionOrderDetSampleId;
 
     /**
      * IPQC检验单明细ID
@@ -43,53 +43,27 @@ public class QmsHtIpqcInspectionOrderDet extends ValidGroup implements Serializa
     private Long ipqcInspectionOrderDetId;
 
     /**
-     * IPQC检验单ID
+     * 条码
      */
-    @ApiModelProperty(name="ipqcInspectionOrderId",value = "IPQC检验单ID")
-    @Excel(name = "IPQC检验单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "ipqc_inspection_order_id")
-    private Long ipqcInspectionOrderId;
+    @ApiModelProperty(name="barcode",value = "条码")
+    @Excel(name = "条码", height = 20, width = 30,orderNum="") 
+    private String barcode;
 
     /**
-     * 抽样方案AC/RE值表ID
+     * 样本值
      */
-    @ApiModelProperty(name="samplePlanAcReId",value = "抽样方案AC/RE值表ID")
-    @Excel(name = "抽样方案AC/RE值表ID", height = 20, width = 30,orderNum="")
-    @Column(name = "sample_plan_ac_re_id")
-    private Long samplePlanAcReId;
+    @ApiModelProperty(name="sampleValue",value = "样本值")
+    @Excel(name = "样本值", height = 20, width = 30,orderNum="") 
+    @Column(name = "sample_value")
+    private String sampleValue;
 
     /**
-     * 不良数量
+     * 不良现象ID
      */
-    @ApiModelProperty(name="badnessQty",value = "不良数量")
-    @Excel(name = "不良数量", height = 20, width = 30,orderNum="")
-    @Column(name = "badness_qty")
-    private Long badnessQty;
-
-    /**
-     * 检验结果(0-不合格 1-合格)
-     */
-    @ApiModelProperty(name="inspectionResult",value = "检验结果(0-不合格 1-合格)")
-    @Excel(name = "检验结果(0-不合格 1-合格)", height = 20, width = 30,orderNum="")
-    @Column(name = "inspection_result")
-    private Byte inspectionResult;
-
-    /**
-     * 检验时间
-     */
-    @ApiModelProperty(name="inspectionTime",value = "检验时间")
-    @Excel(name = "检验时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "inspection_time")
-    private Date inspectionTime;
-
-    /**
-     * 不良类别ID
-     */
-    @ApiModelProperty(name="badnessCategoryId",value = "不良类别ID")
-    @Excel(name = "不良类别ID", height = 20, width = 30,orderNum="")
-    @Column(name = "badness_category_id")
-    private Long badnessCategoryId;
+    @ApiModelProperty(name="badnessPhenotypeId",value = "不良现象ID")
+    @Excel(name = "不良现象ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "badness_phenotype_id")
+    private Long badnessPhenotypeId;
 
     /**
      * 状态(0无效，1有效)
@@ -156,27 +130,20 @@ public class QmsHtIpqcInspectionOrderDet extends ValidGroup implements Serializa
     private Byte isDelete;
 
     /**
-     * 创建用户名称
+     * 不良现象代码
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="11")
-    private String createUserName;
+    @ApiModelProperty(name = "badnessPhenotypeCode",value = "不良现象代码")
+    @Excel(name = "不良现象代码", height = 20, width = 30,orderNum="13")
+    private String badnessPhenotypeCode;
 
     /**
-     * 修改用户名称
+     * 不良现象描述
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
-    private String modifiedUserName;
-
-    /**
-     * 组织名称
-     */
-    @Transient
-    @ApiModelProperty(name = "organizationName",value = "组织名称")
-    private String organizationName;
+    @ApiModelProperty(name = "badnessPhenotypeDesc",value = "不良现象描述")
+    @Excel(name = "不良现象描述", height = 20, width = 30,orderNum="13")
+    private String badnessPhenotypeDesc;
 
     private String option1;
 

@@ -45,7 +45,7 @@ public class PtlJobOrderController {
     @LcnTransaction
     public ResponseEntity<PtlJobOrder> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated PtlJobOrder ptlJobOrder) {
         int count = ptlJobOrderService.save(ptlJobOrder);
-        if (count > 1) {
+        if (count > 0) {
             return ControllerUtil.returnSuccess("操作成功", ptlJobOrder);
         }  else {
             return ControllerUtil.returnFail(ErrorCodeEnum.GL99990005);
@@ -71,7 +71,7 @@ public class PtlJobOrderController {
     @PostMapping("/detail")
     public ResponseEntity<PtlJobOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         PtlJobOrder  ptlJobOrder = ptlJobOrderService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(ptlJobOrder,StringUtils.isEmpty(ptlJobOrder)?0:1);
+        return ControllerUtil.returnDataSuccess(ptlJobOrder,StringUtils.isEmpty(ptlJobOrder)?0:1);
     }
 
     @ApiOperation("列表")

@@ -5,6 +5,7 @@ import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
 import com.fantechs.common.base.electronic.entity.PtlJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.client.dto.PtlJobOrderDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import io.swagger.annotations.Api;
@@ -39,8 +40,11 @@ public class ElectronicTagStorageController {
     @ApiOperation(value = "激活（拣取发送亮灯）", notes = "激活（拣取发送亮灯）")
     public ResponseEntity<PtlJobOrder> sendElectronicTagStorage(
             @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
-            @ApiParam(value = "仓库区域Id", required = true)@RequestParam Long warehouseAreaId) {
+            @ApiParam(value = "仓库区域Id")@RequestParam(required = false) Long warehouseAreaId) {
         try {
+            if (StringUtils.isEmpty(warehouseAreaId)) {
+                warehouseAreaId = Long.valueOf(0);
+            }
             PtlJobOrder ptlJobOrder = electronicTagStorageService.sendElectronicTagStorage(jobOrderId, warehouseAreaId);
             return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrder);
         } catch (Exception e) {

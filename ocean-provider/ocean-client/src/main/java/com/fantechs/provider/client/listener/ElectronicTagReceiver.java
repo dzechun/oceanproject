@@ -61,7 +61,7 @@ public class ElectronicTagReceiver {
     private String confirmOutBillOrderUrl;
 
     // 监听标签队列
-    @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
+//    @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public void receiveTopic1(byte[] bytes, Message message, Channel channel) throws Exception {
@@ -136,11 +136,11 @@ public class ElectronicTagReceiver {
                                 if (ptlJobOrderDetDto.getElectronicTagLangType() == 1) {
                                     if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) || ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
                                         materialDesc += ptlJobOrderDetDto.getMaterialName() + ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
-                                        materialDesc = electronicTagStorageService.intercepting(materialDesc, 12);
+                                        materialDesc = electronicTagStorageService.intercepting(materialDesc, 22);
                                     }
                                     if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) || ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
                                         materialDesc2 += ptlJobOrderDetDto.getMaterialName() + ptlJobOrderDetDto.getScatteredQty() + ptlJobOrderDetDto.getScatteredUnitName();
-                                        materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 12);
+                                        materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 22);
                                     }
                                     rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
                                     electronicTagStorageService.fanoutSender(1007, rabbitMQDTO);
@@ -162,13 +162,13 @@ public class ElectronicTagReceiver {
                                         rabbitMQDTO2.setOption3("0");
                                         rabbitMQDTO2.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                                         if (ptlJobOrderDetDto.getElectronicTagLangType() == 1) {
-                                            if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getWholeQty()) || ptlJobOrderDetDto1.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
+                                            if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getWholeQty()) && ptlJobOrderDetDto1.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
                                                 materialDesc += ptlJobOrderDetDto1.getMaterialName() + ptlJobOrderDetDto1.getWholeQty() + ptlJobOrderDetDto1.getWholeUnitName();
-                                                materialDesc = electronicTagStorageService.intercepting(materialDesc, 12);
+                                                materialDesc = electronicTagStorageService.intercepting(materialDesc, 22);
                                             }
-                                            if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getWholeQty()) || ptlJobOrderDetDto1.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
+                                            if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getScatteredQty()) && ptlJobOrderDetDto1.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
                                                 materialDesc2 += ptlJobOrderDetDto1.getMaterialName() + ptlJobOrderDetDto1.getScatteredQty() + ptlJobOrderDetDto1.getScatteredUnitName();
-                                                materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 12);
+                                                materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 22);
                                             }
                                             rabbitMQDTO2.setMaterialDesc(materialDesc + materialDesc2);
                                             electronicTagStorageService.fanoutSender(1007, rabbitMQDTO);
