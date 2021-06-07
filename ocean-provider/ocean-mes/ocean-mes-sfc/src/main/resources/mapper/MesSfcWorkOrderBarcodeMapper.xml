@@ -67,7 +67,7 @@
 </where>
  </select>
  <select id="findMaxCode" resultType="java.lang.String">
- select barcode FROM mes_sfc_work_order_barcode where barcode_type = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id desc LIMIT 1
+ select barcode FROM mes_sfc_work_order_barcode where labelCategoryId = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id desc LIMIT 1
 </select>
 <!--查询条码解析码及标签模版（工单条码打印）-->
 <select id="findRule" resultMap="BaseRuleMap">

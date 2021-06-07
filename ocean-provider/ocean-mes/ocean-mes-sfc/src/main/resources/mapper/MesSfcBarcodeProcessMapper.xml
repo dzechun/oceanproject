@@ -64,6 +64,23 @@
   </resultMap>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
-
+    SELECT
+      *
+    FROM
+      mes_sfc_barcode_process msbp
+    <where>
+      <if test="barcode != null">
+        AND msbp.barcode = #{barcode}
+      </if>
+      <if test="cartonCode != null">
+        AND msbp.carton_code = #{cartonCode}
+      </if>
+      <if test="palletCode != null">
+        AND msbp.pallet_code = #{palletCode}
+      </if>
+      <if test="colorBoxCode != null">
+      AND msbp.color_box_code = #{colorBoxCode}
+      </if>
+    </where>
   </select>
 </mapper>
