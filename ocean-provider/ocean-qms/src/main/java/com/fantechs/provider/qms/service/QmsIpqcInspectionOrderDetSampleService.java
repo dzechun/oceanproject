@@ -1,5 +1,6 @@
 package com.fantechs.provider.qms.service;
 
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.support.IService;
 
@@ -13,4 +14,5 @@ import java.util.Map;
 
 public interface QmsIpqcInspectionOrderDetSampleService extends IService<QmsIpqcInspectionOrderDetSample> {
     List<QmsIpqcInspectionOrderDetSample> findList(Map<String, Object> map);
+    int batchAdd(List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList);
 }

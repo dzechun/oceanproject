@@ -110,9 +110,11 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
         if(qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
             BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), inspectionOrder.getOrderQty()).getData();
-            qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-            qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-            qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+            if(StringUtils.isNotEmpty(baseSampleProcess)) {
+                qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+            }
         }
 
         //当已检验样本数等于样本数时，才计算不良数量、检验结果

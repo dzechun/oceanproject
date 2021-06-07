@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -34,6 +35,12 @@ public class QmsIpqcInspectionOrderDetSampleController {
 
     @Resource
     private QmsIpqcInspectionOrderDetSampleService qmsIpqcInspectionOrderDetSampleService;
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderDetSampleService.batchAdd(qmsIpqcInspectionOrderDetSampleList));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
