@@ -16,6 +16,7 @@ public class RabbitConfig {
     public static final String TOPIC_HEARTBEAT_QUEUE = "topic.heartbeat.queue";
     public static final String TOPIC_EXCHANGE = "topic.exchange";
     public static final String TOPIC_QUEUE_PTL = "topic.queue.ptl";
+    public static final String TOPIC_QUEUE_PRINT = "topic.queue.print";
 
 
     //fanout
@@ -82,6 +83,11 @@ public class RabbitConfig {
         return new Queue(TOPIC_QUEUE_PTL);
     }
 
+    @Bean
+    public Queue topicQueuePrint() {
+        return new Queue(TOPIC_QUEUE_PRINT);
+    }
+
 //    @Bean
 //    public DirectExchange deadExchange() {
 //        return new DirectExchange(DEAD_EXCHANGE);
@@ -110,6 +116,11 @@ public class RabbitConfig {
     @Bean
     public Binding topicBinding4() {
         return BindingBuilder.bind(topicQueuePtl()).to(topicExchange()).with("lzc.#");
+    }
+
+    @Bean
+    public Binding topicBinding5() {
+        return BindingBuilder.bind(topicQueuePrint()).to(topicExchange()).with("lzc.#");
     }
 
 
