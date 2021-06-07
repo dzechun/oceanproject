@@ -58,8 +58,8 @@
         <if test="workOrderId != null">
             and mswob.work_order_id = #{workOrderId}
         </if>
-        <if test="barcodeType != null">
-            and mswob.labelCategoryId = #{barcodeType}
+        <if test="labelCategoryId != null">
+            and mswob.labelCategoryId = #{labelCategoryId}
         </if>
         <if test="barcode != null and barcode != ''">
             and mswob.barcode like CONCAT('%',#{barcode},'%')

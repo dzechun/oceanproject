@@ -27,10 +27,10 @@ public class SearchMesSfcWorkOrderBarcode extends BaseQuery implements Serializa
     private Long workOrderId;
 
     /**
-     * 条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）
+     * 条码类别
      */
-    @ApiModelProperty(name="barcodeType",value = "条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")
-    private Byte barcodeType;
+    @ApiModelProperty(name="labelCategoryId",value = "条码类别")
+    private Long labelCategoryId;
 
     /**
      * 条码
