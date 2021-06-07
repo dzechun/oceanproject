@@ -86,13 +86,13 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //查询模版信息
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectByPrimaryKey(s);
             LabelRuteDto labelRuteDto = null;
-            if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 2) {//获取工单类别模版
+            if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 56) {//获取工单类别模版
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01", mesSfcWorkOrderBarcode.getWorkOrderId());
                 if (StringUtils.isEmpty(labelRuteDto) && StringUtils.isEmpty(labelRuteDto.getLabelName())) {
                     //获取默认模版
                     labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
                 }
-            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 4) {//获取销售类别模版
+            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 57) {//获取销售类别模版
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02", mesSfcWorkOrderBarcode.getWorkOrderId());
                 if (StringUtils.isEmpty(labelRuteDto) || StringUtils.isEmpty(labelRuteDto.getLabelName())) {
                     //获取默认模版
@@ -182,7 +182,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 break;
         }
         if(StringUtils.isEmpty(labelRuteDto)||StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),barcodeType==1?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),barcodeType==2?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
         }
         return labelRuteDto;
     }

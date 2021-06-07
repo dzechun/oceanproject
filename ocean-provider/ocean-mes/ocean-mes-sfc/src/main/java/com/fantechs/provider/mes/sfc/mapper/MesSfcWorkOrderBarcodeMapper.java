@@ -24,7 +24,7 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     LabelRuteDto DefaultLabel(@Param("labelCategoryCode")String labelCategoryCode);
 
-    PrintModel findPrintModel(@Param("barcodeType")Byte barcodeType,@Param("id")Long id);
+    PrintModel findPrintModel(@Param("barcodeType")Long barcodeType,@Param("id")Long id);
 
     String findByOneLabel(@Param("labelName")String labelName);
 

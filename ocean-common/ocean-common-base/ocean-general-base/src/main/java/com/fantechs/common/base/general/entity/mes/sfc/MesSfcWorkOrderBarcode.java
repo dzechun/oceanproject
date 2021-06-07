@@ -77,6 +77,8 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     @Excel(name = "标签类别信息ID", height = 20, width = 30,orderNum="")
     @Column(name = "label_category_id")
     private Long labelCategoryId;
+
+
     @Transient
     private Byte barcodeType;
 
