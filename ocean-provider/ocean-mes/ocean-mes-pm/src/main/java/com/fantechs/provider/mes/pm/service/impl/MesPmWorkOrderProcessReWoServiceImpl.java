@@ -127,8 +127,9 @@ public class MesPmWorkOrderProcessReWoServiceImpl extends BaseService<MesPmWorkO
                 mesPmHtWorkOrderMaterialReP.setWorkOrderProcessReWoId(mesPmHtWorkOrderProcessReWo.getHtWorkOrderProcessReWoId());
                 htList.add(mesPmHtWorkOrderMaterialReP);
             }
+            mesPmWorkOrderMaterialRePMapper.insertList(record.getList());
         }
-        mesPmWorkOrderMaterialRePMapper.insertList(record.getList());
+
         if (StringUtils.isNotEmpty(htList)){
             mesPmHtWorkOrderMaterialRePMapper.insertList(htList);
         }
