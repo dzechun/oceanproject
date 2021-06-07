@@ -30,6 +30,11 @@ public class SearchMesSfcBarcodeProcess extends BaseQuery implements Serializabl
     private String palletCode;
 
     /**
+     * 彩盒号
+     */
+    private String colorBoxCode;
+
+    /**
      * 工单ID
      */
     private Long workOrderId;
