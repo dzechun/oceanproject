@@ -113,7 +113,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(QmsIpqcInspectionOrder qmsIpqcInspectionOrder, MultipartFile file) {
+    public int save(QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -128,14 +128,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         qmsIpqcInspectionOrder.setModifiedTime(new Date());
         qmsIpqcInspectionOrder.setStatus(StringUtils.isEmpty(qmsIpqcInspectionOrder.getStatus())?1:qmsIpqcInspectionOrder.getStatus());
         qmsIpqcInspectionOrder.setOrgId(user.getOrganizationId());
-        //上传附件
-        if(file!=null){
-            Map<String, Object> data = (Map<String, Object>)fileFeignApi.fileUpload(file).getData();
-            if(StringUtils.isNotEmpty(data)){
-                String path = data.get("url").toString();
-                qmsIpqcInspectionOrder.setAttachmentPath(path);
-            }
-        }
         int i = qmsIpqcInspectionOrderMapper.insertUseGeneratedKeys(qmsIpqcInspectionOrder);
 
 
@@ -164,7 +156,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(QmsIpqcInspectionOrder qmsIpqcInspectionOrder, MultipartFile file) {
+    public int update(QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -174,14 +166,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         qmsIpqcInspectionOrder.setModifiedUserId(user.getUserId());
         qmsIpqcInspectionOrder.setModifiedTime(new Date());
         qmsIpqcInspectionOrder.setOrgId(user.getOrganizationId());
-        //上传附件
-        if(file!=null){
-            Map<String, Object> data = (Map<String, Object>)fileFeignApi.fileUpload(file).getData();
-            if(StringUtils.isNotEmpty(data)){
-                String path = data.get("url").toString();
-                qmsIpqcInspectionOrder.setAttachmentPath(path);
-            }
-        }
         int i=qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
 
         //履历
@@ -310,6 +294,14 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String uploadFile(MultipartFile file){
+        Map<String, Object> data = (Map<String, Object>)fileFeignApi.fileUpload(file).getData();
+        String path = data.get("url").toString();
+        return path;
     }
 
     @Override
