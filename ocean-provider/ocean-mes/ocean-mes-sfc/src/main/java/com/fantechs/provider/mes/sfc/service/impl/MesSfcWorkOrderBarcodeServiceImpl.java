@@ -107,7 +107,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
-            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getLabelCategoryId()==(byte)2 &&printType==(byte)1){
+            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getLabelCategoryId()==(byte)56 &&printType==(byte)1){
                 //生成条码过站记录
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
                 mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
