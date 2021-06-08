@@ -17,6 +17,5 @@ import java.util.Map;
 public interface QmsIpqcInspectionOrderService extends IService<QmsIpqcInspectionOrder> {
     List<QmsIpqcInspectionOrder> findList(Map<String, Object> map);
     int writeBack(Long ipqcInspectionOrderId);
-    void downloadFile(String path, HttpServletResponse response);
     String uploadFile(MultipartFile file);
 }
