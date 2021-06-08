@@ -111,4 +111,8 @@
 </where>
 order by wiao.create_time desc
     </select>
+
+  <select id="findBarCode" resultType="java.lang.String" parameterType="java.lang.Long">
+    select barcode FROM mes_sfc_work_order_barcode WHERE work_order_barcode_id=#{id}
+  </select>
 </mapper>

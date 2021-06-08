@@ -18,17 +18,19 @@ import java.util.List;
 public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBarcode> {
     List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
 
-    String findMaxCode(@Param("labelCategoryId") Long labelCategoryId, @Param("workOrderId") Long workOrderId);
+    String findMaxCode(@Param("barcodeType")Byte barcodeType,@Param("workOrderId")Long workOrderId);
 
-    LabelRuteDto findRule(@Param("code") String code, @Param("workOrderId") Long workOrderId);
+    LabelRuteDto findRule(@Param("code")String code, @Param("workOrderId")Long workOrderId);
 
-    LabelRuteDto DefaultLabel(@Param("labelCategoryCode") String labelCategoryCode);
+    LabelRuteDto DefaultLabel(@Param("labelCategoryCode")String labelCategoryCode);
 
-    PrintModel findPrintModel(@Param("labelCategoryId") Long labelCategoryId, @Param("id") Long id);
+    PrintModel findPrintModel(@Param("barcodeType")Long barcodeType,@Param("id")Long id);
 
-    String findByOneLabel(@Param("labelName") String labelName);
+    String findByOneLabel(@Param("labelName")String labelName);
 
-    Integer findCountCode(@Param("labelCategoryId") Long labelCategoryId, @Param("workOrderId") Long workOrderId);
+    Integer findCountCode(@Param("barcodeType")Long barcodeType,@Param("workOrderId")Long workOrderId);
 
-    String findVersion(@Param("labelName") String labelName);
+    String findVersion(@Param("labelName")String labelName);
+
+    Long finByTypeId(@Param("labelCategoryName")String labelCategoryName);
 }

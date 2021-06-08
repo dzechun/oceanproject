@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -122,6 +123,16 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     responseEntity = this.retrographyStatus(wmsInnerJobOrderDetDto);
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    }
+
+                    //扣除库存明细
+                    WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
+                    wmsInnerInventoryDet.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                    wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDetDto.getOutStorageId());
+                    wmsInnerInventoryDet.setMaterialQty(wmsInnerJobOrderDetDto.getActualQty());
+                    rs = innerFeignApi.subtract(wmsInnerInventoryDet);
+                    if(responseEntity.getCode()!=0){
+                        throw new BizErrorException("发运失败");
                     }
                 }
             }

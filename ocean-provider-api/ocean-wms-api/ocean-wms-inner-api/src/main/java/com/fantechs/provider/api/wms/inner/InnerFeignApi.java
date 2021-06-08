@@ -53,4 +53,16 @@ public interface InnerFeignApi {
 
     @PostMapping("/pickingOrder/retrographyStatus")
     ResponseEntity retrographyStatus(@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet);
+
+    @ApiOperation("按条件查询明细")
+    @PostMapping("/wmsInnerInventoryDet/findByDet")
+    ResponseEntity<WmsInnerInventoryDet> findByDet(@RequestParam String barCode);
+
+    @ApiOperation("加库存明细")
+    @PostMapping("/wmsInnerInventoryDet/add")
+    ResponseEntity add(@RequestBody List<WmsInnerInventoryDet> wmsInnerInventoryDets);
+
+    @ApiOperation("减库存明细")
+    @PostMapping("/wmsInnerInventoryDet/subtract")
+    ResponseEntity subtract(@RequestBody WmsInnerInventoryDet wmsInnerInventoryDet);
 }

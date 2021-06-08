@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerIn
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -14,10 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -51,7 +49,14 @@ public class WmsInnerInventoryDetController {
 
     @ApiOperation("减库存明细")
     @PostMapping("/subtract")
-    public ResponseEntity subtract(@RequestBody List<WmsInnerInventoryDet> wmsInnerInventoryDets){
-        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.subtract(wmsInnerInventoryDets));
+    public ResponseEntity subtract(@RequestBody WmsInnerInventoryDet wmsInnerInventoryDet){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.subtract(wmsInnerInventoryDet));
+    }
+
+    @ApiOperation("按条件查询明细")
+    @PostMapping("/findByDet")
+    public ResponseEntity<WmsInnerInventoryDet> findByDet(@RequestParam String barCode){
+        WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetService.findByOne(barCode);
+        return ControllerUtil.returnDataSuccess(wmsInnerInventoryDet, StringUtils.isEmpty(wmsInnerInventoryDet)?0:1);
     }
 }

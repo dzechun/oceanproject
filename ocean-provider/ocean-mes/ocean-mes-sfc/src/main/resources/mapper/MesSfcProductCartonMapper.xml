@@ -32,6 +32,7 @@
   <sql id="BaseColumnList">
     mspc.product_carton_id,
     mspc.carton_code,
+    mspc.now_package_spec_qty,
     mspc.work_order_id,
     mspc.material_id,
     mspc.station_id,

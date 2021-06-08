@@ -21,4 +21,6 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     String findStorageName(@Param("storageId")Long storageId);
 
     String findWarehouseName(@Param("warehouseId")Long warehouseId);
+
+    String findAsnCode(@Param("asnOrderId")Long asnOrderId);
 }

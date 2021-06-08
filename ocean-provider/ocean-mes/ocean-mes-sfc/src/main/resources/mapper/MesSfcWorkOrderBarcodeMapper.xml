@@ -58,8 +58,8 @@
         <if test="workOrderId != null">
             and mswob.work_order_id = #{workOrderId}
         </if>
-        <if test="barcodeType != null">
-            and mswob.labelCategoryId = #{barcodeType}
+        <if test="labelCategoryId != null">
+            and mswob.labelCategoryId = #{labelCategoryId}
         </if>
         <if test="barcode != null and barcode != ''">
             and mswob.barcode like CONCAT('%',#{barcode},'%')
@@ -67,7 +67,7 @@
 </where>
  </select>
  <select id="findMaxCode" resultType="java.lang.String">
- select barcode FROM mes_sfc_work_order_barcode where barcode_type = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id desc LIMIT 1
+ select barcode FROM mes_sfc_work_order_barcode where labelCategoryId = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id desc LIMIT 1
 </select>
 <!--查询条码解析码及标签模版（工单条码打印）-->
 <select id="findRule" resultMap="BaseRuleMap">
@@ -88,10 +88,10 @@
 </select>
 <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
 select * FROM <choose>
-    <when test="barcodeType==2">
+    <when test="barcodeType==56">
         view_workOrder
     </when>
-    <when test="barcodeType==4">
+    <when test="barcodeType==57">
         view_order
     </when>
 </choose>
@@ -104,8 +104,11 @@ select * FROM <choose>
         LEFT JOIN base_label bl ON bl.label_category_id = blc.label_category_id
         where bl.label_Name =#{labelName}
     </select>
+    <select id="finByTypeId" resultType="java.lang.Long">
+        select label_category_id FROM base_label_category where label_category_name = #{labelCategoryName}
+    </select>
     <select id="findCountCode" resultType="java.lang.Integer">
-        select COUNT(*) FROM mes_sfc_work_order_barcode where barcode_type=#{barcodeType} and work_order_id=#{workOrderId}
+        select COUNT(*) FROM mes_sfc_work_order_barcode where label_category_id=#{barcodeType} and work_order_id=#{workOrderId}
     </select>
     <select id="findVersion" resultType="java.lang.String">
         select label_version From base_label where label_name=#{labelName}

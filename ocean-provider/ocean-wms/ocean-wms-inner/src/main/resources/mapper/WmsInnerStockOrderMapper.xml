@@ -80,6 +80,9 @@ wiv.modified_time
     <if test="createUserName !=null and createUserName!=''">
       and su.user_name like CONCAT('%',#{createUserName},'%')
     </if>
+    <if test="isPda==true">
+      and wiv.order_status in (2,3) and wiv.stock_mode = 1
+    </if>
     </where>
 order by wiv.create_time desc
   </select>

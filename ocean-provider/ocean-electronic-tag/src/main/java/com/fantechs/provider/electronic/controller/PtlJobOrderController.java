@@ -63,6 +63,8 @@ public class PtlJobOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=PtlJobOrder.update.class) PtlJobOrder ptlJobOrder) {
         return ControllerUtil.returnCRUD(ptlJobOrderService.update(ptlJobOrder));
     }

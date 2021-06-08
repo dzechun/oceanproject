@@ -86,13 +86,13 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //查询模版信息
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectByPrimaryKey(s);
             LabelRuteDto labelRuteDto = null;
-            if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 2) {//获取工单类别模版
+            if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 56) {//获取工单类别模版
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01", mesSfcWorkOrderBarcode.getWorkOrderId());
                 if (StringUtils.isEmpty(labelRuteDto) && StringUtils.isEmpty(labelRuteDto.getLabelName())) {
                     //获取默认模版
                     labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
                 }
-            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 4) {//获取销售类别模版
+            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 57) {//获取销售类别模版
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02", mesSfcWorkOrderBarcode.getWorkOrderId());
                 if (StringUtils.isEmpty(labelRuteDto) || StringUtils.isEmpty(labelRuteDto.getLabelName())) {
                     //获取默认模版
@@ -107,7 +107,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
-            if(labelRuteDto.getBarcodeType()==(byte)1 &&mesSfcWorkOrderBarcode.getLabelCategoryId()==(byte)2 &&printType==(byte)1){
+            if(labelRuteDto.getBarcodeType()==(byte)1 &&printType==(byte)1){
                 //生成条码过站记录
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
                 mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
@@ -144,9 +144,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
                     throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
                 }
-                mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
-                this.update(mesSfcWorkOrderBarcode);
             }
+            mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
+            this.update(mesSfcWorkOrderBarcode);
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelRuteDto.getLabelName());
@@ -182,7 +182,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 break;
         }
         if(StringUtils.isEmpty(labelRuteDto)||StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),barcodeType==1?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),barcodeType==2?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
         }
         return labelRuteDto;
     }
@@ -199,17 +199,18 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数错误");
         }
-        String fileName =labelName.substring(0,labelName.indexOf("."));
-        String baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(fileName);
+        //String fileName =labelName.substring(0,labelName.indexOf("."));
+        String baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(labelName);
         if(StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
         }
         //查询版本号
-        String version = mesSfcWorkOrderBarcodeMapper.findVersion(fileName);
+        String version = mesSfcWorkOrderBarcodeMapper.findVersion(labelName);
         if(StringUtils.isEmpty(version)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签版本获取失败");
         }
-        Path file = Paths.get("/label/"+ baseLabelCategory+"/"+labelName);
+        labelName = labelName+".btw";
+        Path file = Paths.get("/label/"+ baseLabelCategory+"/"+version+"/"+labelName);
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
@@ -237,6 +238,14 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 //            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
 //            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
 //        }
+        switch (record.getBarcodeType()){
+            case 2:
+                record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"));
+                break;
+            case 4:
+                record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("销售订单条码"));
+                break;
+        }
         //判断条码产生数量不能大于工单数量
         Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getLabelCategoryId(),record.getWorkOrderId());
         if(count+ record.getQty()>record.getWorkOrderQty().doubleValue()){
@@ -297,7 +306,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public MesSfcWorkOrderBarcode findBarcode(String barcode) {
         Example example = new Example(MesSfcWorkOrderBarcode.class);
-        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("barcodeType",(byte)2);
+        example.createCriteria().andEqualTo("barcode",barcode);
         MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectOneByExample(example);
         return mesSfcWorkOrderBarcode;
     }

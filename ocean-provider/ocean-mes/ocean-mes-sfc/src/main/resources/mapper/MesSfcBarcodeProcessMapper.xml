@@ -42,6 +42,7 @@
     <result column="merge_pallet_code" jdbcType="VARCHAR" property="mergePalletCode" />
     <result column="e_c_n_code" jdbcType="VARCHAR" property="eCNCode" />
     <result column="rework_code" jdbcType="VARCHAR" property="reworkCode" />
+    <result column="rework_order_id" jdbcType="VARCHAR" property="reworkOrderId" />
     <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
     <result column="pass_station_count" jdbcType="INTEGER" property="passStationCount" />
@@ -64,6 +65,23 @@
   </resultMap>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
-
+    SELECT
+      *
+    FROM
+      mes_sfc_barcode_process msbp
+    <where>
+      <if test="barcode != null">
+        AND msbp.barcode = #{barcode}
+      </if>
+      <if test="cartonCode != null">
+        AND msbp.carton_code = #{cartonCode}
+      </if>
+      <if test="palletCode != null">
+        AND msbp.pallet_code = #{palletCode}
+      </if>
+      <if test="colorBoxCode != null">
+      AND msbp.color_box_code = #{colorBoxCode}
+      </if>
+    </where>
   </select>
 </mapper>

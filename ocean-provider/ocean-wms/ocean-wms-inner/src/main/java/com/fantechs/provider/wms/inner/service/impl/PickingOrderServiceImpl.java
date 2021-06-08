@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -22,6 +23,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
@@ -55,6 +57,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private RedisUtil redisUtil;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -116,7 +120,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
         //更改库存
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
-
+        //更改库存明细
+        num +=this.addInventoryDet(barCode,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet);
 
         wms= new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -149,6 +154,23 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         return wmsInnerJobOrderDet;
     }
 
+    /**
+     * PDA扫码拣货确认新增库存明细
+     * @return
+     */
+    private int addInventoryDet(String barcode,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet){
+        //获取完工入库单单号
+        Example example = new Example(WmsInnerInventoryDet.class);
+        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId());
+        WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsInnerInventoryDet)){
+            throw new BizErrorException("库存匹配失败");
+        }
+        wmsInnerInventoryDet.setInTime(new Date());
+        wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
+        wmsInnerInventoryDet.setRelatedOrderCode(jobOrderCode);
+        return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+    }
 
     /**
      * 校验条码

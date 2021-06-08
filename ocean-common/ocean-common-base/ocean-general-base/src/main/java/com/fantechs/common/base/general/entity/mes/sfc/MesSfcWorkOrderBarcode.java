@@ -78,6 +78,10 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     @Column(name = "label_category_id")
     private Long labelCategoryId;
 
+
+    @Transient
+    private Byte barcodeType;
+
     /**
      * 备注
      */
