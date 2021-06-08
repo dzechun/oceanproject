@@ -262,42 +262,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void downloadFile(String path, HttpServletResponse response){
-        byte[] buffer = new byte[1024];
-        Response download = fileFeignApi.download(path);
-        InputStream fis = null;
-        BufferedInputStream bis = null;
-        try {
-            fis = download.body().asInputStream();
-            bis = new BufferedInputStream(fis);
-            ServletOutputStream os = response.getOutputStream();
-            int i = bis.read(buffer);
-            while (i != -1) {
-                os.write(buffer, 0, i);
-                i = bis.read(buffer);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public String uploadFile(MultipartFile file){
         Map<String, Object> data = (Map<String, Object>)fileFeignApi.fileUpload(file).getData();
         String path = data.get("url").toString();

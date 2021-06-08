@@ -88,12 +88,6 @@ public class QmsIpqcInspectionOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation(value = "文件下载",notes = "文件下载")
-    @PostMapping("/download")
-    public void  download(@ApiParam(value = "传入文件地址",required = true) @RequestParam(value = "fileUrl",required=true) String fileUrl, HttpServletResponse response){
-        qmsIpqcInspectionOrderService.downloadFile(fileUrl,response);
-    }
-
     @ApiOperation("文件上传")
     @PostMapping("/uploadFile")
     public ResponseEntity<String> uploadFile(@ApiParam(value = "文件必传",required = true) @RequestPart(value = "file") MultipartFile file) {
