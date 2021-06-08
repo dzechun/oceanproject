@@ -5,6 +5,7 @@ import com.fantechs.common.base.electronic.entity.PtlJobOrder;
 import com.fantechs.provider.client.dto.PtlJobOrderDTO;
 import com.fantechs.provider.client.dto.PtlJobOrderDetPrintDTO;
 import com.fantechs.provider.client.dto.RabbitMQDTO;
+import com.fantechs.provider.client.dto.ResponseEntityDTO;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -15,10 +16,12 @@ import java.util.List;
 public interface ElectronicTagStorageService {
 
     PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId) throws Exception;
-    int createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception;
+    ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception;
     String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception;
-    PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId, String status) throws Exception;
+    PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId) throws Exception;
     List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(Long jobOrderId) throws Exception;
+    int hangUpPtlJobOrderDet(String ids) throws Exception;
+    ResponseEntityDTO cancelPtrlJobOrder(PtlJobOrderDTO ptlJobOrderDTO) throws Exception;
     void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception;
     String intercepting(String s, int number) throws UnsupportedEncodingException;
 }

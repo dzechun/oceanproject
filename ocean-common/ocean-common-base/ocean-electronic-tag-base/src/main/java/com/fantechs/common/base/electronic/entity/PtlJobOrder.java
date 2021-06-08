@@ -77,6 +77,14 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
     private String warehouseName;
 
     /**
+     * 周转工具ID
+     */
+    @ApiModelProperty(name="vehicleId",value = "周转工具ID")
+    @Excel(name = "周转工具ID", height = 20, width = 30,orderNum="")
+    @Column(name = "vehicle_id")
+    private Long vehicleId;
+
+    /**
      * 作业人员ID
      */
     @ApiModelProperty(name="workerUserId",value = "作业人员ID")

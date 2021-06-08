@@ -47,7 +47,7 @@ public class PtlJobOrderController {
         int count = ptlJobOrderService.save(ptlJobOrder);
         if (count > 0) {
             return ControllerUtil.returnSuccess("操作成功", ptlJobOrder);
-        }  else {
+        } else {
             return ControllerUtil.returnFail(ErrorCodeEnum.GL99990005);
         }
 
@@ -94,6 +94,18 @@ public class PtlJobOrderController {
         EasyPoiUtils.exportExcel(list, "导出信息", "PtlJobOrder信息", PtlJobOrderDto.class, "PtlJobOrder.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    @ApiOperation("根据拣货单号修改")
+    @PostMapping("/updateByRelatedOrderCode")
+    public ResponseEntity updateByRelatedOrderCode(@ApiParam(value = "对象，Id必传",required = true)@RequestBody PtlJobOrder ptlJobOrder) {
+        try {
+            int i = ptlJobOrderService.updateByRelatedOrderCode(ptlJobOrder);
+            return ControllerUtil.returnCRUD(i);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
     }
 }

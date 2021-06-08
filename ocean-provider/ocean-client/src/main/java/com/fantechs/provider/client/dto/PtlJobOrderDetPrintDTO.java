@@ -27,8 +27,14 @@ public class PtlJobOrderDetPrintDTO {
     @ApiModelProperty(name="storageCode",value = "库位")
     private String storageCode;
 
-    @ApiModelProperty(name="workerUserName",value = "作业人员名称")
+    @ApiModelProperty(name="workerUserName",value = "拣货人员")
     private String workerUserName;
+
+    @ApiModelProperty(name="cartonCode",value = "整件箱号")
+    private String cartonCode;
+
+    @ApiModelProperty(name="vehicleCode",value = "集货号")
+    private String vehicleCode;
 
     @ApiModelProperty(name="wholeOrScattered",value = "整或者零(0-零 1-整)")
     private Byte wholeOrScattered;

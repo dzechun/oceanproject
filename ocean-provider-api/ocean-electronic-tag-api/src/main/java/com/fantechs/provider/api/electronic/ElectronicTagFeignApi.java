@@ -50,6 +50,10 @@ public interface ElectronicTagFeignApi {
     @PostMapping("/ptlJobOrder/update")
     ResponseEntity updatePtlJobOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=PtlJobOrder.update.class) PtlJobOrder ptlJobOrder);
 
+    @ApiOperation("根据拣货单号修改")
+    @PostMapping("/ptlJobOrder/updateByRelatedOrderCode")
+    ResponseEntity updateByRelatedOrderCode(@ApiParam(value = "对象，Id必传",required = true)@RequestBody PtlJobOrder ptlJobOrder);
+
     @ApiOperation("获取详情")
     @PostMapping("/ptlJobOrder/detail")
     ResponseEntity<PtlJobOrder> ptlJobOrderDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
