@@ -7,6 +7,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.client.dto.PtlJobOrderDTO;
+import com.fantechs.provider.client.dto.PtlJobOrderDetPrintDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,11 +66,22 @@ public class ElectronicTagStorageController {
         }
     }
 
+    @GetMapping("/printPtlJobOrderLabel")
+    @ApiOperation(value = "作业任务打印标签", notes = "作业任务打印标签")
+    public ResponseEntity<List<PtlJobOrderDetPrintDTO>> printPtlJobOrderLabel(@ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId) {
+        try {
+            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(jobOrderId);
+            return ControllerUtil.returnDataSuccess(ptlJobOrderDetPrintDTOList, ptlJobOrderDetPrintDTOList.size());
+        } catch (Exception e) {
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
+    }
+
     @GetMapping(value = "/sendElectronicTagStorageLightTest")
     @ApiOperation(value = "发送电子标签亮灯/灭灯测试", notes = "发送电子标签亮灯/灭灯测试")
     public ResponseEntity<String> sendElectronicTagStorageLightTest(
             @RequestParam(value = "materialCode") String materialCode,
-            @RequestParam(value = "code(1001-亮灯 1002-灭灯)") Integer code) {
+            @RequestParam(value = "code(1001-亮灯 1003-灭灯)") Integer code) {
         try {
             String result = electronicTagStorageService.sendElectronicTagStorageLightTest(materialCode, code);
             return ControllerUtil.returnSuccess();

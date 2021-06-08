@@ -47,7 +47,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,
-    bwa.warehouse_area_id as warehouseAreaId,
+    bwa.warehouse_area_id as warehouseAreaId, bwa.warehouse_area_code as warehouseAreaCode, bwa.warehouse_area_name as warehouseAreaName,
     pe.equipment_tag_id as equipmentTagId, pets.electronic_tag_id as electronicTagId, pets.electronic_tag_lang_type as electronicTagLangType,
     pea.equipment_id as equipmentAreaId, pea.equipment_tag_id as equipmentAreaTagId, pcm.queue_name as queueName
     from ptl_job_order_det pjod
@@ -81,7 +81,7 @@
         and pjod.job_status = #{jobStatus}
       </if>
       <if test="equipmentTagId != null and equipmentTagId!=''">
-        and se.equipment_tag_id = #{electronicTagId}
+        and pe.equipment_tag_id = #{equipmentTagId}
       </if>
       <if test="electronicTagId != null and electronicTagId!=''">
         and pets.electronic_tag_id = #{electronicTagId}

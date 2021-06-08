@@ -85,5 +85,6 @@
         and bwa.warehouse_area_id = #{warehouseAreaId}
       </if>
     </where>
+    group by pjo.job_order_id
   </select>
 </mapper>

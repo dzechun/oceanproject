@@ -49,8 +49,8 @@ public class QmsIpqcInspectionOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@Validated QmsIpqcInspectionOrder qmsIpqcInspectionOrder, MultipartFile file) {
-        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.save(qmsIpqcInspectionOrder,file));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.save(qmsIpqcInspectionOrder));
     }
 
     @ApiOperation("删除")
@@ -61,8 +61,8 @@ public class QmsIpqcInspectionOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@Validated(value=QmsIpqcInspectionOrder.update.class) QmsIpqcInspectionOrder qmsIpqcInspectionOrder, MultipartFile file) {
-        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.update(qmsIpqcInspectionOrder,file));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsIpqcInspectionOrder.update.class) QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.update(qmsIpqcInspectionOrder));
     }
 
     @ApiOperation("获取详情")
@@ -88,16 +88,17 @@ public class QmsIpqcInspectionOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    /**
-     * 文件下载
-     * @param fileUrl  url 开头从组名开始
-     * @param response
-     * @throws Exception
-     */
     @ApiOperation(value = "文件下载",notes = "文件下载")
     @PostMapping("/download")
     public void  download(@ApiParam(value = "传入文件地址",required = true) @RequestParam(value = "fileUrl",required=true) String fileUrl, HttpServletResponse response){
         qmsIpqcInspectionOrderService.downloadFile(fileUrl,response);
+    }
+
+    @ApiOperation("文件上传")
+    @PostMapping("/uploadFile")
+    public ResponseEntity<String> uploadFile(@ApiParam(value = "文件必传",required = true) @RequestPart(value = "file") MultipartFile file) {
+        String path = qmsIpqcInspectionOrderService.uploadFile(file);
+        return  ControllerUtil.returnDataSuccess(path,1);
     }
 
     @PostMapping(value = "/export")
