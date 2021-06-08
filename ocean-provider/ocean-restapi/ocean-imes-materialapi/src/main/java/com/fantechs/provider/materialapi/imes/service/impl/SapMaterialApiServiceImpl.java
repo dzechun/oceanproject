@@ -12,11 +12,8 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapMaterialApiService;
 import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
-import com.fantechs.provider.materialapi.imes.utils.SIMESMATERIALQUERYOut;
-import com.fantechs.provider.materialapi.imes.utils.SIMESMATERIALQUERYOutService;
-import org.apache.commons.net.SocketClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOut;
+import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOutService;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;

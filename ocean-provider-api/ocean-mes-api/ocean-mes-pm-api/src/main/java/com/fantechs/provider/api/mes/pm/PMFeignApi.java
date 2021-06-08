@@ -1,10 +1,12 @@
 package com.fantechs.provider.api.mes.pm;
 
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -65,11 +67,11 @@ public interface PMFeignApi {
     @PostMapping("/mesPmWorkOrderBom/update")
     ResponseEntity updateMesPmWorkOrderBom(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrderBom mesPmWorkOrderBom);
 
-    @ApiOperation("修改工单Bom")
+    @ApiOperation("添加工单Bom")
     @PostMapping("/mesPmWorkOrderBom/add")
     ResponseEntity addMesPmWorkOrderBom(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrderBom mesPmWorkOrderBom);
 
-    @ApiOperation("查询工单Bom")
-    @PostMapping("/mesPmWorkOrderBom/detail")
-    ResponseEntity findMesPmWorkOrderBom(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+    @ApiOperation("工单bom列表")
+    @PostMapping("/mesPmWorkOrderBom/findList")
+    ResponseEntity<List<MesPmWorkOrderBomDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderBom searchMesPmWorkOrderBom);
 }

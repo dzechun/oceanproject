@@ -41,7 +41,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
-  <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBomDto"
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom"
           resultMap="BaseResultMapDto">
     SELECT
     mpwob.work_order_bom_id,
@@ -69,7 +69,8 @@
     mpwob.is_delete,
     mpwob.org_id,
     mpwob.remark,
-    bo.organization_name
+    bo.organization_name,
+    mpwob.option1
     FROM
     mes_pm_work_order_bom mpwob
     LEFT JOIN mes_pm_work_order mpwo ON mpwob.work_order_id = mpwo.work_order_id
@@ -95,6 +96,9 @@
       </if>
       <if test="materialDesc!=null and materialDesc!=''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="option1!=null and option1!=''">
+        and mpwob.option1=#{option1}
       </if>
     </where>
     order by mpwob.create_time desc

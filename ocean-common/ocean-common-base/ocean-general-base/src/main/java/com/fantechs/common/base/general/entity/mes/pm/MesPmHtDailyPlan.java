@@ -11,20 +11,28 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 日计划
- * mes_pm_daily_plan
+ * 日计划履历表
+ * mes_pm_ht_daily_plan
  * @author 81947
- * @date 2021-06-02 17:16:18
+ * @date 2021-06-03 20:02:21
  */
 @Data
-@Table(name = "mes_pm_daily_plan")
-public class MesPmDailyPlan extends ValidGroup implements Serializable {
+@Table(name = "mes_pm_ht_daily_plan")
+public class MesPmHtDailyPlan extends ValidGroup implements Serializable {
+    /**
+     * 日计划履历ID
+     */
+    @ApiModelProperty(name="htDailyPlanId",value = "日计划履历ID")
+    @Excel(name = "日计划履历ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "ht_daily_plan_id")
+    private Long htDailyPlanId;
+
     /**
      * 日计划ID
      */
     @ApiModelProperty(name="dailyPlanId",value = "日计划ID")
     @Excel(name = "日计划ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "daily_plan_id")
     private Long dailyPlanId;
 
@@ -56,8 +64,8 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 计划时间
      */
     @ApiModelProperty(name="planTime",value = "计划时间")
-    @Excel(name = "计划时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
+    @Excel(name = "计划时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_time")
     private Date planTime;
 
@@ -132,8 +140,4 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private String option3;
 
     private static final long serialVersionUID = 1L;
-
-    @Transient
-    @ApiModelProperty(name = "planDate",value = "计划日期（yyyy-MM-dd）")
-    private String planDate;
 }

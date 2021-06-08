@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchMesPmWorkOrderBomDto extends BaseQuery implements Serializable {
+public class SearchMesPmWorkOrderBom extends BaseQuery implements Serializable {
 
     /**
      * 工单ID
@@ -36,4 +36,10 @@ public class SearchMesPmWorkOrderBomDto extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
+
+    /**
+     * 预留项目号(雷赛接口)
+     */
+    @ApiModelProperty(name="option1" ,value="预留项目号")
+    private String option1;
 }
