@@ -155,4 +155,10 @@ public class BaseSupplierController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity addOrUpdate(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier) {
+        return ControllerUtil.returnCRUD(baseSupplierService.addOrUpdate(baseSupplier));
+    }
 }
