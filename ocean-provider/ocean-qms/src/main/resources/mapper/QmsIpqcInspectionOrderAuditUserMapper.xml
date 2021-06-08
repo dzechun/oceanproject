@@ -26,7 +26,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
-    <result column="audit_dept_id" jdbcType="BIGINT" property="auditDeptId"/>
+    <result column="audit_dept_name" jdbcType="VARCHAR" property="auditDeptName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -50,12 +50,13 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    su.nick_name as audit_user_name,su.dept_id as audit_dept_id,
+    su.nick_name as audit_user_name,bd.dept_name as audit_dept_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.qms_ipqc_inspection_order_audit_user qiioau
     left join ocean_v2.sys_user su on qiioau.audit_user_id=su.user_id
+    left join fantech_imes_v2.base_dept bd on su.dept_id=bd.dept_id
     left join ocean_v2.sys_user u on qiioau.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiioau.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qiioau.org_id = bo.organization_id

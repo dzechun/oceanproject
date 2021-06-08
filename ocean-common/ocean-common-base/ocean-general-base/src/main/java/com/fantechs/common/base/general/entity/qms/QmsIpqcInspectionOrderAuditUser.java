@@ -162,12 +162,12 @@ public class QmsIpqcInspectionOrderAuditUser extends ValidGroup implements Seria
     private String auditUserName;
 
     /**
-     * 审批人部门id
+     * 审批人部门
      */
     @Transient
-    @ApiModelProperty(name = "auditDeptId",value = "审批人部门id")
-    @Excel(name = "审批人部门id", height = 20, width = 30,orderNum="2")
-    private Long auditDeptId;
+    @ApiModelProperty(name = "auditDeptName",value = "审批人部门")
+    @Excel(name = "审批人部门", height = 20, width = 30,orderNum="2")
+    private String auditDeptName;
 
     private String option1;
 
