@@ -199,17 +199,18 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(labelName)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数错误");
         }
-        String fileName =labelName.substring(0,labelName.indexOf("."));
-        String baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(fileName);
+        //String fileName =labelName.substring(0,labelName.indexOf("."));
+        String baseLabelCategory = mesSfcWorkOrderBarcodeMapper.findByOneLabel(labelName);
         if(StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
         }
         //查询版本号
-        String version = mesSfcWorkOrderBarcodeMapper.findVersion(fileName);
+        String version = mesSfcWorkOrderBarcodeMapper.findVersion(labelName);
         if(StringUtils.isEmpty(version)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签版本获取失败");
         }
-        Path file = Paths.get("/label/"+ baseLabelCategory+"/"+labelName);
+        labelName = labelName+".btw";
+        Path file = Paths.get("/label/"+ baseLabelCategory+"/"+version+"/"+labelName);
         if(Files.exists(file)){
             response.setContentType("application/vnd.android.package-archive");
             try {
