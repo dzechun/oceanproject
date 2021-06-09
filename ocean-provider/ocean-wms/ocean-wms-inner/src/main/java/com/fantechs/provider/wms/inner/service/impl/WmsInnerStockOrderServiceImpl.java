@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -238,6 +239,48 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             example.createCriteria().andEqualTo("stockOrderId", wmsInventoryVerification.getStockOrderId());
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
             List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = new ArrayList<>();
+
+            //有差异生成复盘单
+            if(wmsInventoryVerification.getProjectType()==(byte)1){
+                //判断是否有差异记录
+                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&li.getVarianceQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList()).size()<1){
+                    throw new BizErrorException("没有差异记录");
+                }else{
+                    //新增复盘盘点单
+                    WmsInnerStockOrder ws = new WmsInnerStockOrder();
+                    BeanUtil.copyProperties(wmsInventoryVerification,ws);
+                    ws.setStockOrderId(null);
+                    ws.setProjectType((byte)2);
+                    ws.setRelatedOrderCode(wmsInventoryVerification.getStockOrderCode());
+                    ws.setStockOrderCode(CodeUtils.getId("INPD-"));
+                    ws.setCreateUserId(sysUser.getUserId());
+                    ws.setCreateTime(new Date());
+                    ws.setModifiedTime(new Date());
+                    ws.setModifiedUserId(sysUser.getUserId());
+                    ws.setOrderStatus((byte)2);
+                    num += wmsInventoryVerificationMapper.insertUseGeneratedKeys(ws);
+
+                    for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
+                        if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
+                            WmsInnerStockOrderDet det = new WmsInnerStockOrderDet();
+                            det.setStockOrderId(ws.getStockOrderId());
+                            det.setSourceDetId(wmsInventoryVerificationDet.getStockOrderDetId());
+                            det.setStorageId(wmsInventoryVerificationDet.getStorageId());
+                            det.setMaterialId(wmsInventoryVerificationDet.getMaterialId());
+                            det.setLastTimeVarianceQty(wmsInventoryVerificationDet.getVarianceQty());
+                            det.setOriginalQty(wmsInventoryVerificationDet.getOriginalQty());
+                            det.setIfRegister((byte)2);
+                            det.setCreateUserId(sysUser.getUserId());
+                            det.setCreateTime(new Date());
+                            det.setModifiedTime(new Date());
+                            det.setModifiedUserId(sysUser.getUserId());
+                            wmsInventoryVerificationDets.add(det);
+                        }
+                    }
+                    num+=wmsInventoryVerificationDetMapper.insertList(wmsInventoryVerificationDets);
+                }
+            }
+
             for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
                 //盘点
                 if(wmsInventoryVerification.getProjectType()==(byte)1){
@@ -245,13 +288,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
                         wmsInventoryVerificationDets.add(wmsInventoryVerificationDet);
                     }
-                }else{
-                    //复盘 //解锁更新库存
-                    wmsInventoryVerificationDets.add(wmsInventoryVerificationDet);
                 }
             }
             //解锁及复盘库存
-            num+=this.unlockOrLock(wmsInventoryVerification.getProjectType()==(byte)1?(byte) 1:3,wmsInventoryVerificationDets,wmsInventoryVerification);
+            num+=this.unlockOrLock((byte)1,wmsInventoryVerificationDets,wmsInventoryVerification);
             //更改盘点状态（已完成）
             wmsInventoryVerification.setOrderStatus((byte)5);
             wmsInventoryVerification.setModifiedTime(new Date());
@@ -277,8 +317,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if (StringUtils.isEmpty(wmsInventoryVerification)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            if(wmsInventoryVerification.getProjectType()==2){
-                throw new BizErrorException("盘点单为复盘，无需差异处理");
+            if(wmsInventoryVerification.getOrderStatus()==(byte)6){
+                throw new BizErrorException("盘点已完成");
+            }
+            if(wmsInventoryVerification.getProjectType()==1){
+                throw new BizErrorException("盘点无差异");
             }
             if(wmsInventoryVerification.getOrderStatus()!=5){
                 throw new BizErrorException("盘点单未完成,无法差异处理");
@@ -288,38 +331,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
             List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = new ArrayList<>();
 
-            //新增复盘盘点单
-            WmsInnerStockOrder ws = new WmsInnerStockOrder();
-            BeanUtil.copyProperties(wmsInventoryVerification,ws);
-            ws.setStockOrderId(null);
-            ws.setProjectType((byte)2);
-            ws.setRelatedOrderCode(wmsInventoryVerification.getStockOrderCode());
-            ws.setStockOrderCode(CodeUtils.getId("INPD-"));
-            ws.setCreateUserId(sysUser.getUserId());
-            ws.setCreateTime(new Date());
-            ws.setModifiedTime(new Date());
-            ws.setModifiedUserId(sysUser.getUserId());
-            ws.setOrderStatus((byte)2);
-           num += wmsInventoryVerificationMapper.insertUseGeneratedKeys(ws);
+            //差异处理盘盈盘亏计算
+            num+=this.unlockOrLock((byte) 3,list,wmsInventoryVerification);
 
-            for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
-                if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
-                    WmsInnerStockOrderDet det = new WmsInnerStockOrderDet();
-                    det.setStockOrderId(ws.getStockOrderId());
-                    det.setSourceDetId(wmsInventoryVerificationDet.getStockOrderDetId());
-                    det.setStorageId(wmsInventoryVerificationDet.getStorageId());
-                    det.setMaterialId(wmsInventoryVerificationDet.getMaterialId());
-                    det.setLastTimeVarianceQty(wmsInventoryVerificationDet.getVarianceQty());
-                    det.setOriginalQty(wmsInventoryVerificationDet.getOriginalQty());
-                    det.setIfRegister((byte)2);
-                    det.setCreateUserId(sysUser.getUserId());
-                    det.setCreateTime(new Date());
-                    det.setModifiedTime(new Date());
-                    det.setModifiedUserId(sysUser.getUserId());
-                    wmsInventoryVerificationDets.add(det);
-                }
-            }
-            num+=wmsInventoryVerificationDetMapper.insertList(wmsInventoryVerificationDets);
+            wmsInventoryVerification.setOrderStatus((byte)6);
+            num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
         }
         return num;
     }
