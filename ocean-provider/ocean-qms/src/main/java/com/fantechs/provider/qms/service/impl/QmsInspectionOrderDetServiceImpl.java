@@ -24,29 +24,9 @@ public class QmsInspectionOrderDetServiceImpl extends BaseService<QmsInspectionO
 
     @Resource
     private QmsInspectionOrderDetMapper qmsInspectionOrderDetMapper;
-    @Resource
-    private QmsInspectionOrderMapper qmsInspectionOrderMapper;
-    @Resource
-    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<QmsInspectionOrderDet> findList(Map<String, Object> map) {
-        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(map.get("inspectionOrderId"));
-
-        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(map);
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
-            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
-                //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                if(qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
-                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
-                    if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                        qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                        qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                        qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
-                    }
-                }
-            }
-        }
-        return qmsInspectionOrderDets;
+       return qmsInspectionOrderDetMapper.findList(map);
     }
 }

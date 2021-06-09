@@ -7,9 +7,7 @@ import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleDet;
 import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
+import com.fantechs.common.base.general.entity.qms.*;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -59,20 +57,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         for (QmsInspectionOrder qmsInspectionOrder : qmsInspectionOrders){
             searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
             List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
-            if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
-                for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
-                    //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                    if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
-                        BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
-                        if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                            qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                            qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                            qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
-                        }
-                    }
-                }
-                qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-            }
+            this.getAcReQty(qmsInspectionOrder,qmsInspectionOrderDets);
         }
 
         return qmsInspectionOrders;
@@ -84,6 +69,11 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
         searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+
+        return this.getAcReQty(qmsInspectionOrder,qmsInspectionOrderDets);
+    }
+
+    public QmsInspectionOrder getAcReQty(QmsInspectionOrder qmsInspectionOrder, List<QmsInspectionOrderDet> qmsInspectionOrderDets){
         if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
             for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
@@ -98,7 +88,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
             qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
         }
-
         return qmsInspectionOrder;
     }
 

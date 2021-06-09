@@ -68,20 +68,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         for (QmsIpqcInspectionOrder qmsIpqcInspectionOrder:qmsIpqcInspectionOrders){
             searchIpqcQmsInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
             List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchIpqcQmsInspectionOrderDet));
-            if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
-                for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
-                    //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                    if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
-                        BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
-                        if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                            qmsIpqcInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                            qmsIpqcInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                            qmsIpqcInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
-                        }
-                    }
-                }
-                qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
-            }
+            this.getAcReQty(qmsIpqcInspectionOrder,qmsIpqcInspectionOrderDets);
         }
 
         return qmsIpqcInspectionOrders;
@@ -93,8 +80,14 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
         searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
         List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
-        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDetList)){
-            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDetList){
+
+        return this.getAcReQty(qmsIpqcInspectionOrder,qmsIpqcInspectionOrderDetList);
+    }
+
+
+    public QmsIpqcInspectionOrder getAcReQty(QmsIpqcInspectionOrder qmsIpqcInspectionOrder,List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets){
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
+            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
                 if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
                     BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
@@ -105,9 +98,8 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
                     }
                 }
             }
-            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDetList);
+            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
         }
-
         return qmsIpqcInspectionOrder;
     }
 
