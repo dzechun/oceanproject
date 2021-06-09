@@ -2,8 +2,10 @@ package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -34,4 +36,18 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      * @return
      */
     int difference(String ids);
+
+    /**
+     * PDA盘点确认
+     * @param wmsInnerStockOrderDets
+     * @return
+     */
+    int PdaAscertained(List<WmsInnerStockOrderDet> wmsInnerStockOrderDets);
+
+    /**
+     * PDA扫条码返回数量
+     * @param barcode
+     * @return
+     */
+    BigDecimal scanBarcode(String barcode);
 }

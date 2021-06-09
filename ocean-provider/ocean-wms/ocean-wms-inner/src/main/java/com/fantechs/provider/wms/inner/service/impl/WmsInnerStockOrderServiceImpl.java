@@ -251,7 +251,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 }
             }
             //解锁及复盘库存
-            num+=this.unlockOrLock((byte) 3,wmsInventoryVerificationDets,wmsInventoryVerification);
+            num+=this.unlockOrLock(wmsInventoryVerification.getProjectType()==(byte)1?(byte) 1:3,wmsInventoryVerificationDets,wmsInventoryVerification);
             //更改盘点状态（已完成）
             wmsInventoryVerification.setOrderStatus((byte)5);
             wmsInventoryVerification.setModifiedTime(new Date());
@@ -324,8 +324,57 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         return num;
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int PdaAscertained(List<WmsInnerStockOrderDet> wmsInnerStockOrderDets) {
+        SysUser sysUser = currentUser();
+        int num = 0;
+        for (WmsInnerStockOrderDet wmsInnerStockOrderDet : wmsInnerStockOrderDets) {
+            if(StringUtils.isEmpty(wmsInnerStockOrderDet.getStockOrderId())){
+                wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
+                wmsInnerStockOrderDet.setCreateTime(new Date());
+                wmsInnerStockOrderDet.setCreateUserId(sysUser.getUserId());
+                wmsInnerStockOrderDet.setModifiedTime(new Date());
+                wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
+                num+=wmsInventoryVerificationDetMapper.insertSelective(wmsInnerStockOrderDet);
+            }else{
+                wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
+                wmsInnerStockOrderDet.setModifiedTime(new Date());
+                wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
+                num+=wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(wmsInnerStockOrderDet);
+            }
+        }
+        //盘点确认
+        num+=this.ascertained(wmsInnerStockOrderDets.get(0).getStockOrderId().toString());
+        return 0;
+    }
+
     /**
-     * 库存上锁或解锁 1解锁 2上锁 3复盘
+     * PDA扫码返回数量
+     * @param barcode
+     * @return
+     */
+    @Override
+    public BigDecimal scanBarcode(String barcode) {
+        SysUser sysUser = currentUser();
+        //查询库存明细
+        if(StringUtils.isEmpty(barcode)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+        Example example = new Example(WmsInnerInventoryDet.class);
+        example.createCriteria().andEqualTo("barcode",barcode);
+        List<WmsInnerInventoryDet> list = wmsInnerInventoryDetMapper.selectByExample(example);
+        if(list.size()<1){
+            throw new BizErrorException("条码错误");
+        }
+        BigDecimal qty = list.stream()
+                .map(WmsInnerInventoryDet::getMaterialQty)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+        return qty;
+    }
+
+    /**
+     * 库存上锁或解锁 1解锁 2上锁 3复盘 4-PDA复盘
      * @param list
      * @return
      */
@@ -342,7 +391,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerInventory.setStockLock(lockType==(byte) 2?(byte)2:1);
                 num+=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
             }
-
             //复盘
             if(lockType==(byte) 3){
                 num+=this.analyse((byte) 1,null,wmsInnerStockOrderDet,wmsInventoryVerification);

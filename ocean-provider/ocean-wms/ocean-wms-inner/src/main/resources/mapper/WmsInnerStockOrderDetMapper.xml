@@ -18,11 +18,12 @@
     <result column="stock_user_id" jdbcType="VARCHAR" property="stockUserId" />
     <result column="if_register" jdbcType="TINYINT" property="ifRegister" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto">
     <result column="work_name" jdbcType="VARCHAR" property="workName"/>
@@ -44,33 +45,33 @@ wivd.batch_code,
 wivd.stock_user_id,
 wivd.if_register,
 wivd.remark,
-wivd.organization_id,
+wivd.org_id,
 wivd.create_user_id,
 wivd.create_time,
 wivd.modified_user_id,
-wivd.modified_time
+wivd.modified_time,
+wivd.barcode
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    SELECT <include refid="Base_Column_List"/>,storage_name,sm.material_code,sm.material_name,bt.color,bt.material_quality,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    SELECT <include refid="Base_Column_List"/>,bs.storage_name,bm.material_code,bm.material_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
     FROM wms_inner_stock_order_det wivd
-    LEFT JOIN smt_storage ss ON wivd.storage_id = ss.storage_id
-    LEFT JOIN smt_material sm ON wivd.material_id = sm.material_id
-    LEFT JOIN base_tab bt ON sm.material_id = bt.material_id
+    LEFT JOIN base_storage bs ON wivd.storage_id = bs.storage_id
+    LEFT JOIN base_material bm ON wivd.material_id = bm.material_id
     LEFT JOIN ocean.sys_user su  ON wivd.create_user_id = su.user_id
     LEFT JOIN ocean.sys_user sus ON wivd.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes.base_organization bo ON wivd.organization_id = bo.organization_id
+    LEFT JOIN base_organization bo ON wivd.organization_id = bo.organization_id
     <where>
         <if test="stockOrderId !=null and stockOrderId!=''">
           and wivd.inventory_verification_id = #{inventoryVerificationId}
         </if>
         <if test="storageName!=null and storageName!=''">
-          and ss.storage_name like CONCAT('%',#{storageName},'%')
+          and bs.storage_name like CONCAT('%',#{storageName},'%')
         </if>
         <if test="materialCode!=null and materialCode!=''">
-          and sm.material_code like CONCAT('%',#{materialCode},'%')
+          and bm.material_code like CONCAT('%',#{materialCode},'%')
         </if>
         <if test="materialName!=null and materialName!=''">
-          and sm.material_name like CONCAT('%',#{materialName},'%')
+          and bm.material_name like CONCAT('%',#{materialName},'%')
         </if>
     </where>
   </select>
