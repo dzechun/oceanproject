@@ -1,5 +1,5 @@
 
-package com.fantechs.provider.materialapi.imes.utils;
+package com.fantechs.provider.materialapi.imes.utils.materialApi;
 
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIALQUERYREQ;
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIALQUERYRES;

@@ -3,14 +3,19 @@ package com.fantechs.provider.qms.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.qms.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
@@ -41,10 +46,54 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
     private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<QmsIpqcInspectionOrderDetSample> findList(Map<String, Object> map) {
         return qmsIpqcInspectionOrderDetSampleMapper.findList(map);
+    }
+
+    @Override
+    public Boolean checkBarcode(String barcode, Long qmsIpqcInspectionOrderDetId) {
+        Boolean bool = true;
+        QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDetId);
+        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
+
+        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder.getWorkOrderId())) {
+            if (StringUtils.isEmpty(workOrderBarcode)) {
+                throw new BizErrorException("无该条码对应工单");
+            }
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            if (StringUtils.isEmpty(workOrderList)) {
+                throw new BizErrorException("无该条码对应工单");
+            }
+            MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
+            if (!qmsIpqcInspectionOrder.getWorkOrderId().equals(mesPmWorkOrderDto.getWorkOrderId())) {
+                throw new BizErrorException("该条码对应的工单号与检验单的工单号不一致");
+            }
+        }else if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder.getMaterialId())) {
+            if (StringUtils.isEmpty(workOrderBarcode)) {
+                throw new BizErrorException("无该条码对应工单");
+            }
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            if (StringUtils.isEmpty(workOrderList)) {
+                throw new BizErrorException("无该条码对应工单");
+            }
+            MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
+            if (!qmsIpqcInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())) {
+                throw new BizErrorException("该条码对应的产品料号与检验单的产品料号不一致");
+            }
+        }
+
+        return bool;
     }
 
     @Override

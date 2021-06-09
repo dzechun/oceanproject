@@ -21,6 +21,7 @@ import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.dto.PtlJobOrderDTO;
 import com.fantechs.provider.client.dto.RabbitMQDTO;
+import com.fantechs.provider.client.dto.ResponseEntityDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import com.fantechs.provider.client.server.impl.ElectronicTagStorageServiceImpl;
 import com.fantechs.provider.client.server.impl.FanoutSender;
@@ -54,11 +55,8 @@ public class ElectronicTagReceiver {
     @Autowired
     private ElectronicTagStorageService electronicTagStorageService;
 
-    @Value("${mesAPI.resApi}")
-    private String resApiUrl;
-
-    @Value("${qisAPI.confirmOutBillOrder}")
-    private String confirmOutBillOrderUrl;
+    @Value("${wmsAPI.finishPtlJobOrderUrl}")
+    private String finishPtlJobOrderUrl;
 
     // 监听标签队列
     @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
@@ -110,12 +108,11 @@ public class ElectronicTagReceiver {
                             rabbitMQDTO.setEquipmentTagId(ptlElectronicTagStorageDto.getEquipmentTagId());
                             rabbitMQDTO.setElectronicTagId(ptlElectronicTagStorageDto.getElectronicTagId());
                             rabbitMQDTOS.add(rabbitMQDTO);
-                            //发送给客户端控制灭灯
-                            MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
-                            mQResponseEntity.setCode(1003);
-                            mQResponseEntity.setData(rabbitMQDTO);
                         }
                     }
+                    electronicTagStorageService.fanoutSender(1003, null, rabbitMQDTOS);
+                    log.info("===========发送消息给客户端控制该储位对应的电子标签灭灯完成===============");
+
                     // 判断当前储位是否还有其他物料需要亮灯
                     SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
                     searchPtlJobOrderDet1.setJobOrderId(ptlJobOrderDetDtoList.get(0).getJobOrderId());
@@ -217,31 +214,30 @@ public class ElectronicTagReceiver {
                         electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
 
                         SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
-                        searchPtlJobOrder.setJobOrderId(ptlJobOrderDetDtoList.get(0).getJobOrderId());
+                        searchPtlJobOrder.setRelatedOrderCode(ptlJobOrderDetDtoList.get(0).getRelatedOrderCode());
+                        searchPtlJobOrder.setNotOrderStatus((byte) 3);
                         List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
-                        PtlJobOrderDto ptlJobOrderDto = ptlJobOrderDtoList.get(0);
-                        PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
-                        ptlJobOrderDTO.setTaskNo(ptlJobOrderDto.getJobOrderCode());
-                        ptlJobOrderDTO.setCustomerNo(ptlJobOrderDto.getRelatedOrderCode());
-                        ptlJobOrderDTO.setWarehouseCode(ptlJobOrderDto.getWarehouseCode());
-                        ptlJobOrderDTO.setWorkerCode(ptlJobOrderDto.getWorkerUserCode());
-                        ptlJobOrderDTO.setStatus("F");
-                        // 回写PTL作业任务
-                        log.info("电子作业标签完成，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
-                        String url = "";
-//                        String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, url);
-                        log.info("电子作业标签回写返回信息：" + "result");
-//                        ResponseEntity responseEntity = JsonUtils.jsonToPojo(result, ResponseEntity.class);
-//                        if (responseEntity.getCode() != 0 && responseEntity.getCode() != 200) {
-//                            throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntity.getMessage());
-//                        }
+                        if (ptlJobOrderDtoList.size() == 1) {
+                            PtlJobOrderDto ptlJobOrderDto = ptlJobOrderDtoList.get(0);
+                            PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
+                            ptlJobOrderDTO.setCustomerNo(ptlJobOrderDto.getRelatedOrderCode());
+                            ptlJobOrderDTO.setWarehouseCode(ptlJobOrderDto.getWarehouseCode());
+                            ptlJobOrderDTO.setWorkerCode(ptlJobOrderDto.getWorkerUserCode());
+                            ptlJobOrderDTO.setStatus("F");
+                            // 回写PTL作业任务
+                            log.info("电子作业标签完成，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
+                            String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
+                            log.info("电子作业标签回写返回信息：" + "result");
+                            ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
+                            if (!"s".equals(responseEntityDTO.getSuccess())) {
+                                throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+                            }
+                        }
                     }
                 }
                 channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
                 log.warn("===========手动确认消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
 
-                electronicTagStorageService.fanoutSender(1007, null, rabbitMQDTOS);
-                log.info("===========发送消息给客户端控制该储位对应的电子标签灭灯完成===============");
                 for (RabbitMQDTO rabbitMQDTO : list) {
                     if (rabbitMQDTO.getElectronicTagLangType() == 1) {
                         electronicTagStorageService.fanoutSender(1007, rabbitMQDTO, null);

@@ -40,7 +40,8 @@ public class AuthHeaderFilter extends ZuulFilter {
 	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/refreshtoken," +
 			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/upload,/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
-			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList";
+			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
+			"/ocean-imes-materialapi/material/workOrder,/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
 	/**

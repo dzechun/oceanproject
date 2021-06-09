@@ -15,4 +15,5 @@ import java.util.Map;
 public interface QmsIpqcInspectionOrderDetSampleService extends IService<QmsIpqcInspectionOrderDetSample> {
     List<QmsIpqcInspectionOrderDetSample> findList(Map<String, Object> map);
     int batchAdd(List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList);
+    Boolean checkBarcode(String barcode, Long qmsIpqcInspectionOrderDetId);
 }

@@ -140,10 +140,10 @@ public class PtlJobOrderDet extends ValidGroup implements Serializable {
     private String spec;
 
     /**
-     * 作业状态(1-待作业 2-作业中 3-已完成)
+     * 作业状态(1-待作业 2-作业中 3-已完成 4-挂起)
      */
-    @ApiModelProperty(name="jobStatus",value = "作业状态(1-待作业 2-作业中 3-已完成)")
-    @Excel(name = "作业状态(1-待作业 2-作业中 3-已完成)", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="jobStatus",value = "作业状态(1-待作业 2-作业中 3-已完成 4-挂起)")
+    @Excel(name = "作业状态(1-待作业 2-作业中 3-已完成 4-挂起)", height = 20, width = 30,orderNum="")
     @Column(name = "job_status")
     private Byte jobStatus;
 

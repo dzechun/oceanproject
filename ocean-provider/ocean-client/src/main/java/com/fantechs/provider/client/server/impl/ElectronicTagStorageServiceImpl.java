@@ -32,10 +32,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
-import com.fantechs.provider.client.dto.PtlJobOrderDTO;
-import com.fantechs.provider.client.dto.PtlJobOrderDetDTO;
-import com.fantechs.provider.client.dto.PtlJobOrderDetPrintDTO;
-import com.fantechs.provider.client.dto.RabbitMQDTO;
+import com.fantechs.provider.client.dto.*;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
@@ -66,12 +63,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Resource
     private SecurityFeignApi securityFeignApi;
 
-    @Value("${mesAPI.resApi}")
-    private String resApiUrl;
-    @Value("${qisAPI.confirmOutBillOrder}")
-    private String confirmOutBillOrderUrl;
-    @Value("${qisAPI.confirmInBillOrder}")
-    private String confirmInBillOrderUrl;
+    @Value("${wmsAPI.finishPtlJobOrderUrl}")
+    private String finishPtlJobOrderUrl;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -86,14 +79,13 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (ptlJobOrder.getOrderStatus() == 3) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单已完成");
         }
-        if (ptlJobOrder.getOrderStatus() == 4) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单处于异常状态，不可操作");
-        }
 
         SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet.setJobOrderId(jobOrderId);
         if (ptlJobOrder.getOrderStatus() == 2) {
             searchPtlJobOrderDet.setJobStatus((byte) 2);
+        } else if (ptlJobOrder.getOrderStatus() == 4) {
+            searchPtlJobOrderDet.setIfHangUp((byte) 1);
         }
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
         if (warehouseAreaId == 0) {
@@ -204,7 +196,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception {
+    public ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception {
 
         List<PtlJobOrderDet> list = new LinkedList<>();
         List<RabbitMQDTO> rabbitMQDTOList = new LinkedList<>();
@@ -337,13 +329,18 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             log.info("===========发送消息给客户端控制蜂鸣器开启完成===============");
         }
 
-        return 1;
+        ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
+        responseEntityDTO.setCode(0);
+        responseEntityDTO.setMessage("保存成功");
+        responseEntityDTO.setSuccess("s");
+
+        return responseEntityDTO;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId, String status) throws Exception {
+    public PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
@@ -362,16 +359,17 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             if (ptlJobOrderDto.getOrderStatus() == 3) {
                 message = "该任务单已完成";
             }
-            if (ptlJobOrderDto.getOrderStatus() == 4) {
-                message = "该任务单处于异常状态，不可操作";
-            }
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), message);
         }
 
         // 判断是否还有未关闭的电子标签
         SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet.setJobOrderId(jobOrderId);
-        searchPtlJobOrderDet.setJobStatus((byte) 2);
+        if (ptlJobOrderDto.getOrderStatus() == 4) {
+            searchPtlJobOrderDet.setIfHangUp((byte) 1);
+        } else {
+            searchPtlJobOrderDet.setJobStatus((byte) 2);
+        }
         searchPtlJobOrderDet.setJobStatus((byte) 0);
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
         List<RabbitMQDTO> list = new LinkedList<>();
@@ -384,26 +382,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
         PtlJobOrder ptlJobOrder = new PtlJobOrder();
         ptlJobOrder.setJobOrderId(ptlJobOrderDto.getJobOrderId());
-        if ("F".equals(status)) {
-            ptlJobOrder.setOrderStatus((byte) 3);
-        } else if ("E".equals(status)){
-            ptlJobOrder.setOrderStatus((byte) 4);
-        } else {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100);
-        }
+        ptlJobOrder.setOrderStatus((byte) 3);
         ptlJobOrder.setModifiedUserId(currentUser.getUserId());
         ptlJobOrder.setModifiedTime(new Date());
         electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
 
         PtlJobOrderDet ptlJobOrderDet = new PtlJobOrderDet();
         ptlJobOrderDet.setJobOrderId(jobOrderId);
-        if ("F".equals(status)) {
-            ptlJobOrderDet.setJobStatus((byte) 3);
-        } else if ("E".equals(status)){
-            ptlJobOrderDet.setJobStatus((byte) 4);
-        } else {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100);
-        }
+        ptlJobOrderDet.setJobStatus((byte) 3);
         ptlJobOrderDet.setModifiedUserId(currentUser.getUserId());
         ptlJobOrderDet.setModifiedTime(new Date());
         electronicTagFeignApi.updateByJobOrderId(ptlJobOrderDet);
@@ -422,20 +408,18 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), message);
         }
         PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
-        ptlJobOrderDTO.setTaskNo(ptlJobOrderDto.getJobOrderCode());
         ptlJobOrderDTO.setCustomerNo(ptlJobOrderDto.getRelatedOrderCode());
         ptlJobOrderDTO.setWarehouseCode(ptlJobOrderDto.getWarehouseCode());
         ptlJobOrderDTO.setWorkerCode(ptlJobOrderDto.getWorkerUserCode());
-        ptlJobOrderDTO.setStatus(status);
+        ptlJobOrderDTO.setStatus("F");
         // 回写PTL作业任务
         log.info("电子作业标签完成/异常，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
-        String url = "";
-//        String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, url);
+        String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
         log.info("电子作业标签回写返回信息：" + "result");
-//        ResponseEntity responseEntity = JsonUtils.jsonToPojo(result, ResponseEntity.class);
-//        if (responseEntity.getCode() != 0 && responseEntity.getCode() != 200) {
-//            throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntity.getMessage());
-//        }
+        ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
+        if (!"s".equals(responseEntityDTO.getSuccess())) {
+            throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+        }
 
         if (!list.isEmpty()) {
             fanoutSender(1003, null, list);
@@ -446,26 +430,65 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(Long jobOrderId) throws Exception {
 
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
         PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(jobOrderId).getData();
+        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
+            throw new Exception("该任务单已打印过标签，请不要重复操作");
+        }
         SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet.setJobOrderId(jobOrderId);
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
         List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = new LinkedList<>();
         for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
-            PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
-            ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
-            ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-            ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
-            ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
-            ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
-            ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
-            ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
-            ptlJobOrderDetPrintDTO.setWorkerUserName(ptlJobOrder.getWorkerUserName());
-            ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
-            ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
+            if (ptlJobOrderDetDto.getWholeOrScattered() == 1) {
+                int i = 1;
+                while (ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) > 0) {
+                    PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
+                    ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+                    ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                    ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
+                    ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
+                    ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
+                    ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
+                    ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
+                    ptlJobOrderDetPrintDTO.setWorkerUserName(ptlJobOrder.getWorkerUserName());
+                    ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
+                    ptlJobOrderDetPrintDTO.setCartonCode(i + "-" + Integer.valueOf(ptlJobOrderDetDto.getWholeQty().toString()));
+                    ptlJobOrderDetPrintDTO.setVehicleCode("集货：" + ptlJobOrderDetDto.getVehicleCode());
+                    ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
+
+                    ptlJobOrderDetDto.getWholeQty().subtract(BigDecimal.ONE);
+                    i++;
+                }
+            } else {
+                PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
+                ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+                ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
+                ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
+                ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
+                ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
+                ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
+                ptlJobOrderDetPrintDTO.setWorkerUserName(ptlJobOrder.getWorkerUserName());
+                ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
+                ptlJobOrderDetPrintDTO.setVehicleCode("集货：" + ptlJobOrderDetDto.getVehicleCode());
+                ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
+            }
         }
+
+        ptlJobOrder.setIfAlreadyPrint((byte) 1);
+        ptlJobOrder.setModifiedTime(new Date());
+        ptlJobOrder.setModifiedUserId(currentUser.getUserId());
+        electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
+
         MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
         mQResponseEntity.setCode(1101);
         mQResponseEntity.setData(ptlJobOrderDetPrintDTOList);
@@ -479,7 +502,76 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     }
 
     @Override
-    public void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception{
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int hangUpPtlJobOrderDet(String ids) throws Exception {
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        List<RabbitMQDTO> list = new LinkedList<>();
+        String[] idArray = ids.split(",");
+        for (String jobOrderDetId : idArray) {
+            PtlJobOrderDet ptlJobOrderDet = new PtlJobOrderDet();
+            ptlJobOrderDet.setJobOrderDetId(Long.valueOf(jobOrderDetId));
+            ptlJobOrderDet.setJobStatus((byte) 4);
+            ptlJobOrderDet.setModifiedTime(new Date());
+            ptlJobOrderDet.setModifiedUserId(currentUser.getUserId());
+            electronicTagFeignApi.updatePtlJobOrderDet(ptlJobOrderDet);
+
+            SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
+            searchPtlJobOrderDet.setJobOrderId(Long.valueOf(jobOrderDetId));
+            searchPtlJobOrderDet.setJobStatus((byte) 0);
+            List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
+
+            PtlJobOrder ptlJobOrder = new PtlJobOrder();
+            ptlJobOrder.setJobOrderId(ptlJobOrderDetDtoList.get(0).getJobOrderId());
+            ptlJobOrder.setStatus((byte) 4);
+            ptlJobOrder.setModifiedTime(new Date());
+            ptlJobOrder.setModifiedUserId(currentUser.getUserId());
+            electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
+
+            for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
+                RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
+                rabbitMQDTO.setEquipmentTagId(ptlJobOrderDetDto.getEquipmentTagId());
+                rabbitMQDTO.setElectronicTagId(ptlJobOrderDetDto.getElectronicTagId());
+                rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
+                list.add(rabbitMQDTO);
+            }
+        }
+        fanoutSender(1003, null, list);
+        log.info("===========发送消息给客户端控制挂起电子标签灭灯完成===============");
+
+        return 1;
+    }
+
+    @Override
+    @Transactional
+    @LcnTransaction
+    public ResponseEntityDTO cancelPtrlJobOrder(PtlJobOrderDTO ptlJobOrderDTO) throws Exception {
+
+        if ("C".equals(ptlJobOrderDTO.getStatus())) {
+            PtlJobOrder ptlJobOrder = new PtlJobOrder();
+            ptlJobOrder.setOrderStatus((byte) 3);
+            ptlJobOrder.setRelatedOrderCode(ptlJobOrderDTO.getCustomerNo());
+            ptlJobOrder.setModifiedTime(new Date());
+            electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrder);
+        } else {
+
+        }
+
+        ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
+        responseEntityDTO.setCode(0);
+        responseEntityDTO.setMessage("保存成功");
+        responseEntityDTO.setSuccess("s");
+
+        return responseEntityDTO;
+    }
+
+    @Override
+    public void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception {
 
         MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
         mQResponseEntity.setCode(code);

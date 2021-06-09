@@ -1,5 +1,5 @@
 
-package com.fantechs.provider.materialapi.imes.utils;
+package com.fantechs.provider.materialapi.imes.utils.materialApi;
 
 import java.net.MalformedURLException;
 import java.net.URL;

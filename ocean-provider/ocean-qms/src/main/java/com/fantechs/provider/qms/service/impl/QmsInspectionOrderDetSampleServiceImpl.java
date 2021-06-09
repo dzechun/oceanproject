@@ -58,22 +58,24 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     }
 
     @Override
-    public Boolean checkBarcode(String barcode,Long qmsInspectionOrderDetId){
+    public Boolean checkBarcode(String barcode, Long qmsInspectionOrderDetId) {
         Boolean bool = true;
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.selectByPrimaryKey(qmsInspectionOrderDetId);
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
 
         MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
-        if(StringUtils.isNotEmpty(workOrderBarcode)){
-            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-            searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
-            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
-            if(StringUtils.isNotEmpty(workOrderList)){
-                MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
-                if(!qmsInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())){
-                    bool = false;
-                }
-            }
+        if (StringUtils.isEmpty(workOrderBarcode)) {
+            throw new BizErrorException("无该条码对应工单");
+        }
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
+        List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+        if (StringUtils.isEmpty(workOrderList)) {
+            throw new BizErrorException("无该条码对应工单");
+        }
+        MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
+        if (!qmsInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())) {
+            throw new BizErrorException("该条码对应的产品料号与检验单的产品料号不一致");
         }
 
         return bool;

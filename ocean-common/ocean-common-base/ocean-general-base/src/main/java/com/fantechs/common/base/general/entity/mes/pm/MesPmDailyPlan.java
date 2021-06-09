@@ -56,8 +56,8 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 计划时间
      */
     @ApiModelProperty(name="planTime",value = "计划时间")
-    @Excel(name = "计划时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "计划时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "plan_time")
     private Date planTime;
 
@@ -132,4 +132,8 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private String option3;
 
     private static final long serialVersionUID = 1L;
+
+    @Transient
+    @ApiModelProperty(name = "planDate",value = "计划日期（yyyy-MM-dd）")
+    private String planDate;
 }

@@ -1,5 +1,7 @@
 package com.fantechs.common.base.general.entity.mes.pm.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -32,5 +34,5 @@ public class SearchMesPmDailyPlan extends BaseQuery implements Serializable {
     private Long proLineId;
 
     @ApiModelProperty(name="planTime",value = "计划时间")
-    private Date planTime;
+    private String planTime;
 }

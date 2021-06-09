@@ -165,6 +165,9 @@ wii.storage_id,
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+    <if test="warehouseId!=null and warehouseId!=''">
+      and wii.warehouse_id = #{warehouseId}
+    </if>
     </where>
     order by wii.create_time desc
   </select>

@@ -12,6 +12,7 @@
     <result column="despatch_order_code" jdbcType="VARCHAR" property="despatchOrderCode" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="vehicle_id" jdbcType="BIGINT" property="vehicleId" />
     <result column="worker_user_id" jdbcType="BIGINT" property="workerUserId" />
     <result column="worker_user_name" jdbcType="VARCHAR" property="workerUserName" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
@@ -31,8 +32,8 @@
   
   <sql id="Base_Column_List">
     pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.despatch_order_code, pjo.warehouse_id, pjo.warehouse_name,
-    pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.if_already_print, pjo.status, pjo.remark, pjo.org_id, pjo.create_user_id,
-    pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
+    pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.if_already_print, pjo.status, pjo.remark, pjo.org_id,
+    pjo.create_user_id, pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.PtlJobOrderDto">
@@ -61,10 +62,10 @@
         and pjo.job_order_code = #{jobOrderCode}
       </if>
       <if test="relatedOrderCode != null and relatedOrderCode != ''">
-        and pjo.related_order_code like CONCAT('%', #{relatedOrderCode}, '%')
+        and pjo.related_order_code = #{relatedOrderCode}
       </if>
       <if test="despatchOrderCode != null and despatchOrderCode != ''">
-        and pjo.despatch_order_code like CONCAT('%', #{despatchOrderCode}, '%')
+        and pjo.despatch_order_code = #{despatchOrderCode}
       </if>
       <if test="warehouseName != null and warehouseName != ''">
         and pjo.warehouse_name like CONCAT('%', #{warehouseName}, '%')

@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPla
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmDailyPlanMapper;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +43,10 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<MesPmDailyPlan> list) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+       /* SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        }*/
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(MesPmDailyPlan.class);
             for (MesPmDailyPlan mesPmDailyPlan : list) {
@@ -54,7 +56,14 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                     //TODO添加到履历表
                     mesPmDailyPlanMapper.deleteByExample(example);
                 }
-                this.save(mesPmDailyPlan1);
+                if(StringUtils.isNotEmpty(mesPmDailyPlan.getPlanDate())) {
+                    try {
+                        mesPmDailyPlan.setPlanTime(DateUtils.getStrToDate(mesPmDailyPlan.getPlanDate()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this.save(mesPmDailyPlan);
                 example.clear();
                 }
             }

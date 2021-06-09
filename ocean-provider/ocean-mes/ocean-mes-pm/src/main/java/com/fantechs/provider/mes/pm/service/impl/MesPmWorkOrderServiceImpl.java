@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
@@ -190,7 +191,10 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     public MesPmWorkOrder updateById(MesPmWorkOrder mesPmWorkOrder){
-        MesPmWorkOrder mesPmWorkOrderOld = this.selectByKey(mesPmWorkOrder.getWorkOrderId());
+        Example example = new Example(MesPmWorkOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
+        MesPmWorkOrder mesPmWorkOrderOld = mesPmWorkOrderMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(mesPmWorkOrderOld)){
             try {
                 if(StringUtils.isEmpty(mesPmWorkOrder.getCreateTime())) mesPmWorkOrder.setCreateTime(new Date());
@@ -207,8 +211,9 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             BeanUtils.copyProperties(mesPmWorkOrderOld, mesPmHtWorkOrder);
             mesPmHtWorkOrder.setModifiedTime(new Date());
             smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
+            mesPmWorkOrder.setWorkOrderId(mesPmWorkOrderOld.getWorkOrderId());
             if( mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder)<=0)
-                throw new BizErrorException("新增失败");
+                throw new BizErrorException("更新失败");
         }
         return mesPmWorkOrder;
     }

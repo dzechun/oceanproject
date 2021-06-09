@@ -75,6 +75,13 @@ public class QmsIpqcInspectionOrderDetSampleController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("检查条码")
+    @PostMapping("/checkBarcode")
+    public ResponseEntity<Boolean> checkBarcode(@ApiParam(value = "查询对象")@RequestBody SearchQmsIpqcInspectionOrderDetSample searchQmsIpqcInspectionOrderDetSample) {
+        Boolean bool = qmsIpqcInspectionOrderDetSampleService.checkBarcode(searchQmsIpqcInspectionOrderDetSample.getBarcode(), searchQmsIpqcInspectionOrderDetSample.getIpqcInspectionOrderDetId());
+        return ControllerUtil.returnDataSuccess(bool,1);
+    }
+
     /*@ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<QmsIpqcInspectionOrderDetSample>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchQmsIpqcInspectionOrderDetSample searchQmsIpqcInspectionOrderDetSample) {

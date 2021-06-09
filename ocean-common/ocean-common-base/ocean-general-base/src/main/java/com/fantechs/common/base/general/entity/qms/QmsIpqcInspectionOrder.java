@@ -107,24 +107,24 @@ public class QmsIpqcInspectionOrder extends ValidGroup implements Serializable {
     /**
      * 审批状态(1-待审批 2-已审批)
      */
-    @ApiModelProperty(name="approveStatus",value = "审批状态(1-待审批 2-已审批)")
+    @ApiModelProperty(name="auditStatus",value = "审批状态(1-待审批 2-已审批)")
     @Excel(name = "审批状态(1-待审批 2-已审批)", height = 20, width = 30,orderNum="14")
-    @Column(name = "approve_status")
-    private Byte approveStatus;
+    @Column(name = "audit_status")
+    private Byte auditStatus;
 
     /**
      * 审批部门
      */
-    @ApiModelProperty(name="approveDeptId",value = "审批部门")
-    @Column(name = "approve_dept_id")
-    private Long approveDeptId;
+    @ApiModelProperty(name="auditDeptId",value = "审批部门")
+    @Column(name = "audit_dept_id")
+    private Long auditDeptId;
 
     /**
      * 审批人ID
      */
-    @ApiModelProperty(name="approveUserId",value = "审批人ID")
-    @Column(name = "approve_user_id")
-    private Long approveUserId;
+    @ApiModelProperty(name="auditUserId",value = "审批人ID")
+    @Column(name = "audit_user_id")
+    private Long auditUserId;
 
     /**
      * 状态(0无效，1有效)
@@ -290,8 +290,8 @@ public class QmsIpqcInspectionOrder extends ValidGroup implements Serializable {
      * 审核人
      */
     @Transient
-    @ApiModelProperty(name = "approveUserName",value = "审核人")
-    private String approveUserName;
+    @ApiModelProperty(name = "auditUserName",value = "审核人")
+    private String auditUserName;
 
     /**
      * IPQC检验单明细

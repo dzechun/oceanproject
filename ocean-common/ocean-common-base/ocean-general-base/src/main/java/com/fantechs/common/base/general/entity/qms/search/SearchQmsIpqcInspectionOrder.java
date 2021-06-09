@@ -12,10 +12,16 @@ import java.util.List;
 public class SearchQmsIpqcInspectionOrder extends BaseQuery implements Serializable {
 
     /**
-     * 检验单号
+     * IPQC检验单id
      */
-    @ApiModelProperty(name="inspectionOrderCode",value = "检验单号")
-    private String inspectionOrderCode;
+    @ApiModelProperty(name="ipqcInspectionOrderId",value = "IPQC检验单id")
+    private Long ipqcInspectionOrderId;
+
+    /**
+     * IPQC检验单号
+     */
+    @ApiModelProperty(name="ipqcInspectionOrderCode",value = "IPQC检验单号")
+    private String ipqcInspectionOrderCode;
 
     /**
      * 工单号
@@ -34,6 +40,12 @@ public class SearchQmsIpqcInspectionOrder extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="inspectionStatus",value = "检验状态")
     private Byte inspectionStatus;
+
+    /**
+     * 检验状态集合(1-待检验 2-检验中 3-已检验)
+     */
+    @ApiModelProperty(name="inspectionStatusList",value = "检验状态集合(1-待检验 2-检验中 3-已检验)")
+    private List<Byte> inspectionStatusList;
 
     /**
      * 检验结果

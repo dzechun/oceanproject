@@ -2,7 +2,6 @@ package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
-import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -45,13 +44,13 @@ public class MesPmDailyPlanController {
 
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list) {
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list){
         return ControllerUtil.returnCRUD(mesPmDailyPlanService.batchSave(list));
     }
 
     @ApiOperation(value = "批量移除",notes = "批量移除")
     @PostMapping("/batchRemove")
-    public ResponseEntity batchRemove(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list) {
+    public ResponseEntity batchRemove(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list){
         return ControllerUtil.returnCRUD(mesPmDailyPlanService.batchRemove(list));
     }
 

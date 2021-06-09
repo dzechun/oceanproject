@@ -209,13 +209,19 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(version)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签版本获取失败");
         }
+        String userAgent = request.getHeader("User-Agent");
         labelName = labelName+".btw";
         Path file = Paths.get("/label/"+ baseLabelCategory+"/"+version+"/"+labelName);
         if(Files.exists(file)){
-            response.setContentType("application/vnd.android.package-archive");
+            response.setContentType("application/vnd.android.package-archive;charset=utf-8");
             try {
+                if(userAgent.contains("MSIE")||userAgent.contains("Trident")) {
+                    labelName=java.net.URLEncoder.encode(labelName,"UTF-8");
+                }else {
+                    labelName=new String(labelName.getBytes("UTF-8"),"ISO-8859-1");
+                }
                 response.addHeader("Content-Disposition",
-                        "attachment; filename=" + URLEncoder.encode(labelName+"|"+version, "UTF-8"));
+                        "attachment; filename="+labelName);
 
                 System.out.println("以输出流的形式对外输出提供下载");
                 Files.copy(file, response.getOutputStream());// 以输出流的形式对外输出提供下载

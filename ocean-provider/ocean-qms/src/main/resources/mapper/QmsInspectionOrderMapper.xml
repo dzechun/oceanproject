@@ -78,6 +78,9 @@
     left join ocean_v2.sys_user s on qio.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qio.org_id = bo.organization_id
     <where>
+      <if test="inspectionOrderId != null">
+        and qio.inspection_order_id = #{inspectionOrderId}
+      </if>
       <if test="inspectionOrderCode != null and inspectionOrderCode!=''">
         and qio.inspection_order_code like CONCAT('%', #{inspectionOrderCode}, '%')
       </if>

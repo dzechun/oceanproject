@@ -188,11 +188,11 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     private String inspectionItem;
 
     /**
-     * 检验标识
+     * 检验标识(1-定性 2-定量)
      */
     @Transient
-    @ApiModelProperty(name = "inspectionTag",value = "检验标识")
-    @Excel(name = "检验标识", height = 20, width = 30,orderNum="3")
+    @ApiModelProperty(name = "inspectionTag",value = "检验标识(1-定性 2-定量)")
+    @Excel(name = "检验标识(1-定性 2-定量)", height = 20, width = 30,orderNum="3")
     private Byte inspectionTag;
 
     /**
@@ -296,6 +296,14 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     @Transient
     @Excel(name = "不良类别编码", height = 20, width = 30,orderNum="5")
     private String badnessCategoryCode;
+
+    /**
+     * 不良类别描述
+     */
+    @ApiModelProperty(name="badnessCategoryDesc" ,value="不良类别描述")
+    @Transient
+    @Excel(name = "不良类别描述", height = 20, width = 30,orderNum="5")
+    private String badnessCategoryDesc;
 
     private String option1;
 

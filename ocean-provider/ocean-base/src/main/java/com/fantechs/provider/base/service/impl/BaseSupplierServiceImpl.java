@@ -268,4 +268,28 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+    @Override
+    public int addOrUpdate(BaseSupplier baseSupplier) {
+        Example example = new Example(BaseSupplier.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode()); // 前面的字段等于后面的参数
+        List<BaseSupplier> baseSuppliers = this.selectByExample(example);
+        if (StringUtils.isEmpty(baseSuppliers)){
+            baseSupplier.setCreateTime(new Date());
+            baseSupplier.setCreateUserId((long)1);
+            baseSupplier.setModifiedUserId((long)1);
+            baseSupplier.setModifiedTime(new Date());
+            baseSupplier.setIsDelete((byte) 1);
+
+            int i = baseSupplierMapper.insertUseGeneratedKeys(baseSupplier);
+            return i;
+        }else{
+            baseSupplier.setSupplierId(baseSuppliers.get(0).getSupplierId());
+            baseSupplier.setModifiedTime(new Date());
+            baseSupplier.setModifiedUserId((long)1);
+            int i = baseSupplierMapper.updateByPrimaryKeySelective(baseSupplier);
+            return i;
+        }
+    }
 }

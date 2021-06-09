@@ -18,5 +18,4 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     private Long materialId;
     @ApiModelProperty("条码")
     private String barcode;
-    private boolean isPda;
 }

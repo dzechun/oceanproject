@@ -33,6 +33,6 @@ public class PtlJobOrderDTO implements Serializable {
     @ApiModelProperty(name="details",value = "任务明细")
     private List<PtlJobOrderDetDTO> details;
 
-    @ApiModelProperty(name="status",value = "状态(F-完成 E-异常)")
+    @ApiModelProperty(name="status",value = "状态(F-(复核)完成 C-取消)")
     private String status;
 }

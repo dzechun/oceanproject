@@ -35,10 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -68,20 +65,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         for (QmsIpqcInspectionOrder qmsIpqcInspectionOrder:qmsIpqcInspectionOrders){
             searchIpqcQmsInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
             List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchIpqcQmsInspectionOrderDet));
-            if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
-                for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
-                    //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                    if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
-                        BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
-                        if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                            qmsIpqcInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                            qmsIpqcInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                            qmsIpqcInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
-                        }
-                    }
-                }
-                qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
-            }
+            this.getAcReQty(qmsIpqcInspectionOrder,qmsIpqcInspectionOrderDets);
         }
 
         return qmsIpqcInspectionOrders;
@@ -89,12 +73,20 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
     @Override
     public QmsIpqcInspectionOrder selectByKey(Object key) {
-        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(key);
+        Map<String,Object> map = new HashMap<>();
+        map.put("ipqcInspectionOrderId",key);
+        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.findList(map).get(0);
         SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
         searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
         List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
-        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDetList)){
-            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDetList){
+
+        return this.getAcReQty(qmsIpqcInspectionOrder,qmsIpqcInspectionOrderDetList);
+    }
+
+
+    public QmsIpqcInspectionOrder getAcReQty(QmsIpqcInspectionOrder qmsIpqcInspectionOrder,List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets){
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
+            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
                 if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
                     BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
@@ -105,9 +97,8 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
                     }
                 }
             }
-            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDetList);
+            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
         }
-
         return qmsIpqcInspectionOrder;
     }
 
@@ -258,42 +249,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         }
 
         return 0;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void downloadFile(String path, HttpServletResponse response){
-        byte[] buffer = new byte[1024];
-        Response download = fileFeignApi.download(path);
-        InputStream fis = null;
-        BufferedInputStream bis = null;
-        try {
-            fis = download.body().asInputStream();
-            bis = new BufferedInputStream(fis);
-            ServletOutputStream os = response.getOutputStream();
-            int i = bis.read(buffer);
-            while (i != -1) {
-                os.write(buffer, 0, i);
-                i = bis.read(buffer);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     @Override

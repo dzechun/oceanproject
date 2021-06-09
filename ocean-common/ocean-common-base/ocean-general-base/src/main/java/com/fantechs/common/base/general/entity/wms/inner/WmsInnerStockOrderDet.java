@@ -114,7 +114,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
-    @Column(name = "organization_id")
+    @Column(name = "org_id")
     private Long organizationId;
 
     /**
@@ -150,6 +150,10 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    @ApiModelProperty(name = "barcode",value = "PDA盘点确认条码记录")
+    @Column(name = "barcode")
+    private String barcode;
 
     private static final long serialVersionUID = 1L;
 }

@@ -14,6 +14,12 @@ public class SearchQmsInspectionOrderDetSample extends BaseQuery implements Seri
      * 检验单明细ID
      */
     @ApiModelProperty(name="inspectionOrderDetId",value = "检验单明细ID")
-    private String inspectionOrderDetId;
+    private Long inspectionOrderDetId;
+
+    /**
+     * 条码
+     */
+    @ApiModelProperty(name="barcode",value = "条码")
+    private String barcode;
 
 }

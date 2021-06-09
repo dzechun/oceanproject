@@ -24,50 +24,54 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    mpdp.dailyPlanId,
-    mpdp.workOrderId
-    mpdp.scheduleQty,
-    mpdp.finishedQty,
-    mpdp.planTime,
+    mpdp.daily_plan_id,
+    mpdp.work_order_id,
+    mpdp.schedule_qty,
+    mpdp.finished_qty,
+    mpdp.plan_time,
     mpdp.status,
-    mpdp.createTime
+    mpdp.create_time
   </sql>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto">
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
           resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    mpwo.workOrderCode,mpwo.materialId,mpwo.workOrderQty,mpwo.productionQty,mpwo.outputQty,
-    mpwo.workOrderStatus,mpwo.proLineId,mpwo.outputQty,mpwo.scheduledQty,mpwo.proLineId,
-    bpl.proName,bm.materialName
+    mpwo.material_id,mpwo.work_order_qty AS 'workOrderQty',mpwo.production_qty,mpwo.output_qty,
+    mpwo.work_order_status,mpwo.pro_line_id,mpwo.scheduled_qty,bm.material_code AS materialCode,
+    bm.material_version AS materialVersion,bm.material_desc AS materialDesc,bpl.pro_name AS proName,
+    date_format(mpdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as workOrderCode,
+    bpl.pro_name,bm.material_name,(mpwo.work_order_qty-mpdp.schedule_qty) AS 'noScheduleQty'
     from mes_pm_daily_plan mpdp
     LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
     LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
     LEFT JOIN base_material bm ON  mpwo.material_id = bm.material_id
     <where>
-      <if test="dailyPlanId != null and dailyPlanId != ''">
+      <if test="dailyPlanId!=null and dailyPlanId!=''">
         and mpdp.daily_plan_id = #{dailyPlanId}
       </if>
-      <if test="workOrderId != null and workOrderId != ''">
+      <if test="workOrderId!=null and workOrderId!=''">
         and mpdp.work_order_id = #{workOrderId}
       </if>
-      <if test="materialId != null and materialId != ''">
+      <if test="materialId!=null and materialId!=''">
         and mpwo.material_id = #{materialId}
       </if>
-      <if test="proLineId != null and proLineId != ''">
+      <if test="proLineId!=null and proLineId!=''">
         and mpwo.pro_line_id = #{proLineId}
-      </if>
-      <if test="status != null and status != ''">
+    </if>
+      <if test="status!=null">
         and mpdp.status = #{status}
       </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="planTime!=null and planTime!=''">
+        and date_format(mpdp.plan_time, '%Y-%m-%d') = #{planTime}
       </if>
+     <!-- <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+        and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>-->
     </where>
-    order by mpwoprw.create_time desc
+    order by mpdp.create_time desc
   </select>
 
 

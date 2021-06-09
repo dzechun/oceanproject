@@ -16,4 +16,9 @@ public class SearchQmsIpqcInspectionOrderDetSample extends BaseQuery implements 
     @ApiModelProperty(name="inspectionOrderCode",value = "IPQC检验单明细ID")
     private Long ipqcInspectionOrderDetId;
 
+    /**
+     * 条码
+     */
+    @ApiModelProperty(name="barcode",value = "条码")
+    private String barcode;
 }
