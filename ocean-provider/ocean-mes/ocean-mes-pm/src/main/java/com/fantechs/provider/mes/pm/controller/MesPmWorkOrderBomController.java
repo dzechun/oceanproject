@@ -1,10 +1,16 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderMaterialReP;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderBomService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  *
@@ -52,6 +59,14 @@ public class MesPmWorkOrderBomController {
     public ResponseEntity<MesPmWorkOrderBom> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         MesPmWorkOrderBom  mesPmWorkOrderBom = mesPmWorkOrderBomService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(mesPmWorkOrderBom,StringUtils.isEmpty(mesPmWorkOrderBom)?0:1);
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findList")
+    public ResponseEntity<List<MesPmWorkOrderBomDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderBom searchMesPmWorkOrderBom) {
+        Page<Object> page = PageHelper.startPage(searchMesPmWorkOrderBom.getStartPage(),searchMesPmWorkOrderBom.getPageSize());
+        List<MesPmWorkOrderBomDto> list = mesPmWorkOrderBomService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderBom));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
 }

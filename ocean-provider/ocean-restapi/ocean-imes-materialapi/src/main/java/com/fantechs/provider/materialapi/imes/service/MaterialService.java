@@ -21,8 +21,4 @@ public interface MaterialService {
     @WebMethod
     String syncMaterial(List<BaseMaterial> baseMaterials);
 
-    @WebMethod
-    String saveWorkOrder(RestapiWorkOrderApiDto restapiWorkOrderApiDto) throws ParseException;
-
-
 }

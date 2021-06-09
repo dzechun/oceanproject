@@ -42,6 +42,7 @@
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
     <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode"/>
+    <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -67,7 +68,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bisd.if_must_inspection,bii.inspection_item_standard,bbc.badness_category_code,
+    bisd.if_must_inspection,bii.inspection_item_standard,bbc.badness_category_code,bbc.badness_category_desc,
     bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
     bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
     bsp.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
@@ -84,6 +85,9 @@
     left join ocean_v2.sys_user s on qiiod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qiiod.org_id = bo.organization_id
     <where>
+      <if test="ipqcInspectionOrderId!=null">
+        and qiiod.ipqc_inspection_order_id = #{ipqcInspectionOrderId}
+      </if>
       <if test="status!=null">
         and qiiod.status = #{status}
       </if>

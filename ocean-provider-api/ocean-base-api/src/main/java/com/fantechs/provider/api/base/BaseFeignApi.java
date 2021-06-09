@@ -344,4 +344,8 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询物料特征码信息列表")
     @PostMapping("/baseSignature/findList")
     ResponseEntity<List<BaseSignature>> findSignatureList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature);
+
+    @ApiOperation("接口新增火修改供应商信息")
+    @PostMapping("/baseSupplier/addOrUpdate")
+    ResponseEntity addOrUpdate(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
 }
