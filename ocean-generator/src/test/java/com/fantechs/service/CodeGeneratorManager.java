@@ -73,6 +73,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
         jdbcConnectionConfiguration.setUserId(JDBC_USERNAME);
         jdbcConnectionConfiguration.setPassword(JDBC_PASSWORD);
         jdbcConnectionConfiguration.setDriverClass(JDBC_DRIVER_CLASS_NAME);
+        jdbcConnectionConfiguration.addProperty("nullCatalogMeansCurrent","true");
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
         
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
