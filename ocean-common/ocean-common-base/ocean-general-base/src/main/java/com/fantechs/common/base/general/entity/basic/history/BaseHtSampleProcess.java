@@ -76,12 +76,11 @@ public class BaseHtSampleProcess extends ValidGroup implements Serializable {
     private Long samplePlanId;
 
     /**
-     * AQL值
+     * 抽样方案AQL值表ID
      */
-    @ApiModelProperty(name="aqlValue",value = "AQL值")
-    @Excel(name = "AQL值", height = 20, width = 30,orderNum="") 
-    @Column(name = "aql_value")
-    private BigDecimal aqlValue;
+    @ApiModelProperty(name="samplePlanAqlId",value = "抽样方案AQL值表ID")
+    @Column(name = "sample_plan_aql_id")
+    private Long samplePlanAqlId;
 
     /**
      * 抽样转移规则ID
@@ -225,6 +224,14 @@ public class BaseHtSampleProcess extends ValidGroup implements Serializable {
     @Transient
     @Excel(name = "抽样转移规则", height = 20, width = 30,orderNum="7")
     private String sampleTransitionRuleCode;
+
+    /**
+     * AQL值
+     */
+    @ApiModelProperty(name="aqlValue" ,value="AQL值")
+    @Transient
+    @Excel(name = "AQL值", height = 20, width = 30,orderNum="6")
+    private String aqlValue;
 
     private static final long serialVersionUID = 1L;
 }

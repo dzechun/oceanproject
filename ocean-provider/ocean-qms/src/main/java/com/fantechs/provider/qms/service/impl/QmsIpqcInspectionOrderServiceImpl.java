@@ -35,10 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -76,7 +73,9 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
     @Override
     public QmsIpqcInspectionOrder selectByKey(Object key) {
-        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(key);
+        Map<String,Object> map = new HashMap<>();
+        map.put("ipqcInspectionOrderId",key);
+        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.findList(map).get(0);
         SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
         searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
         List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));

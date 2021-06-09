@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSamplePlanAqlDto;
 import com.fantechs.common.base.general.entity.basic.BaseSamplePlanAcRe;
 import com.fantechs.common.base.general.entity.basic.BaseSamplePlanAql;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +55,47 @@ public class BaseSamplePlanAqlServiceImpl extends BaseService<BaseSamplePlanAql>
     @Override
     public int batchUpdate(List<BaseSamplePlanAql> list) {
         try{
-            if (StringUtils.isNotEmpty(list)){
-                Example example = new Example(BaseSamplePlanAql.class);
-                example.createCriteria().andEqualTo("samplePlanId",list.get(0).getSamplePlanId());
-                baseSamplePlanAqlMapper.deleteByExample(example);
+            //原来有的AQL只更新
+            ArrayList<Long> idList = new ArrayList<>();
+            if (StringUtils.isNotEmpty(list)) {
+                for (BaseSamplePlanAql baseSamplePlanAql : list) {
+                    if (StringUtils.isNotEmpty(baseSamplePlanAql.getSamplePlanAqlId())) {
+                        baseSamplePlanAqlMapper.updateByPrimaryKeySelective(baseSamplePlanAql);
+                        idList.add(baseSamplePlanAql.getSamplePlanAqlId());
+                    }
+                }
             }
+
+            //删除原有AQL
+            Example example = new Example(BaseSamplePlanAql.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("samplePlanId", list.get(0).getSamplePlanId());
+            if (idList.size() > 0) {
+                criteria.andNotIn("samplePlanAqlId", idList);
+            }
+            baseSamplePlanAqlMapper.deleteByExample(example);
+
+            //新增新AQL
             for (BaseSamplePlanAql baseSamplePlanAql : list) {
+                if (idList.contains(baseSamplePlanAql.getSamplePlanAqlId())) {
+                    //只更新的AQL修改其对应AC、RE数据
+                    if (StringUtils.isNotEmpty(baseSamplePlanAql.getList())){
+                        Example example1 = new Example(BaseSamplePlanAcRe.class);
+                        example1.createCriteria().andEqualTo("samplePlanAqlId",baseSamplePlanAql.getSamplePlanAqlId());
+                        baseSamplePlanAcReMapper.deleteByExample(example1);
+
+                        List<BaseSamplePlanAcRe> baseSamplePlanAcReList = baseSamplePlanAql.getList();
+                        for (BaseSamplePlanAcRe baseSamplePlanAcRe : baseSamplePlanAcReList) {
+                            baseSamplePlanAcRe.setSamplePlanAqlId(baseSamplePlanAql.getSamplePlanAqlId());
+                        }
+                        baseSamplePlanAcReMapper.insertList(baseSamplePlanAcReList);
+                    }
+                    continue;
+                }
+
                 this.save(baseSamplePlanAql);
             }
+
             return 1;
         }catch (Exception e){
             return 0;

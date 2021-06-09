@@ -10,7 +10,7 @@
     <result column="sample_process_desc" jdbcType="VARCHAR" property="sampleProcessDesc" />
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType" />
     <result column="sample_plan_id" jdbcType="BIGINT" property="samplePlanId" />
-    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue" />
+    <result column="sample_plan_aql_id" jdbcType="BIGINT" property="samplePlanAqlId" />
     <result column="sample_transition_rule_id" jdbcType="BIGINT" property="sampleTransitionRuleId" />
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty" />
     <result column="sample_percent" jdbcType="DECIMAL" property="samplePercent" />
@@ -30,6 +30,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="sample_plan_code" jdbcType="VARCHAR" property="samplePlanCode" />
     <result column="sample_transition_rule_code" jdbcType="VARCHAR" property="sampleTransitionRuleCode" />
+    <result column="aql_value" jdbcType="VARCHAR" property="aqlValue" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -38,7 +39,7 @@
     bsp.sample_process_desc,
     bsp.sample_process_type,
     bsp.sample_plan_id,
-    bsp.aql_value,
+    bsp.sample_plan_aql_id,
     bsp.sample_transition_rule_id,
     bsp.sample_qty,
     bsp.sample_percent,
@@ -56,12 +57,13 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    sp.sample_plan_code,bstr.sample_transition_rule_code,
+    sp.sample_plan_code,bstr.sample_transition_rule_code,bspa.aql_value,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_sample_process bsp
     left join fantech_imes_v2.base_sample_plan sp on bsp.sample_plan_id=sp.sample_plan_id
     left join fantech_imes_v2.base_sample_transition_rule bstr on bsp.sample_transition_rule_id=bstr.sample_transition_rule_id
+    left join fantech_imes_v2.base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
     left join ocean_v2.sys_user u on bsp.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bsp.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo on bsp.org_id = bo.organization_id

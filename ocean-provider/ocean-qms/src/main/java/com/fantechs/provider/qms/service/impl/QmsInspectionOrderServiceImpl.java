@@ -65,7 +65,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     public QmsInspectionOrder selectByKey(Object key) {
-        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(key);
+        Map<String,Object> map = new HashMap<>();
+        map.put("inspectionOrderId",key);
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.findList(map).get(0);
         SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
         searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));

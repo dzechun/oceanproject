@@ -11,7 +11,7 @@
     <result column="sample_process_desc" jdbcType="VARCHAR" property="sampleProcessDesc" />
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType" />
     <result column="sample_plan_id" jdbcType="BIGINT" property="samplePlanId" />
-    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue" />
+    <result column="sample_plan_aql_id" jdbcType="BIGINT" property="samplePlanAqlId" />
     <result column="sample_transition_rule_id" jdbcType="BIGINT" property="sampleTransitionRuleId" />
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty" />
     <result column="sample_percent" jdbcType="DECIMAL" property="samplePercent" />
@@ -40,7 +40,7 @@
     bhsp.sample_process_desc,
     bhsp.sample_process_type,
     bhsp.sample_plan_id,
-    bhsp.aql_value,
+    bhsp.sample_plan_aql_id,
     bhsp.sample_transition_rule_id,
     bhsp.sample_qty,
     bhsp.sample_percent,
@@ -58,12 +58,13 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    sp.sample_plan_code,bstr.sample_transition_rule_code,
+    sp.sample_plan_code,bstr.sample_transition_rule_code,bspa.aql_value,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.base_ht_sample_process bhsp
     left join fantech_imes_v2.base_sample_plan sp on bhsp.sample_plan_id=sp.sample_plan_id
     left join fantech_imes_v2.base_sample_transition_rule bstr on bhsp.sample_transition_rule_id=bstr.sample_transition_rule_id
+    left join fantech_imes_v2.base_sample_plan_aql bspa on bhsp.sample_plan_aql_id=bspa.sample_plan_aql_id
     left join ocean_v2.sys_user u on bhsp.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bhsp.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo on bhsp.org_id = bo.organization_id

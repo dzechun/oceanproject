@@ -12,6 +12,12 @@ import java.util.List;
 public class SearchQmsInspectionOrder extends BaseQuery implements Serializable {
 
     /**
+     * 检验单id
+     */
+    @ApiModelProperty(name="inspectionOrderId",value = "检验单id")
+    private Long inspectionOrderId;
+
+    /**
      * 检验单号
      */
     @ApiModelProperty(name="inspectionOrderCode",value = "检验单号")

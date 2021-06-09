@@ -65,7 +65,7 @@
     bisd.if_must_inspection,bii.inspection_item_standard,
     bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
     bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
-    bsp.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
+    bspa.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -74,6 +74,7 @@
     left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
     left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
     left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join fantech_imes_v2.base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
     left join ocean_v2.sys_user u on qiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qiod.org_id = bo.organization_id
