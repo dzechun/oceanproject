@@ -364,7 +364,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
                 .cartonCode(sfcProductCarton.getCartonCode())
                 .build());
-        if (mesSfcBarcodeProcessList.size() + 1 >= sfcProductCarton.getNowPackageSpecQty().intValue()) {
+        if (mesSfcBarcodeProcessList.size() >= sfcProductCarton.getNowPackageSpecQty().intValue()) {
             // 包箱已满，关箱
             sfcProductCarton.setCloseStatus((byte) 1);
             sfcProductCarton.setCloseCartonUserId(user.getUserId());
