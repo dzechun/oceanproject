@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class PtlJobOrderDetPrintDTO {
 
+    @ApiModelProperty(name="jobOrderCode",value = "任务单号")
+    private String jobOrderCode;
+
     @ApiModelProperty(name="despatchOrderCode",value = "发货单号")
     private String despatchOrderCode;
 

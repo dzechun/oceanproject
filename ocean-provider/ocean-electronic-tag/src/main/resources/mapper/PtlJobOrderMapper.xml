@@ -76,6 +76,12 @@
       <if test="orderStatus != null">
         and pjo.order_status = #{orderStatus}
       </if>
+      <if test="notOrderStatus != null">
+        and pjo.order_status <![CDATA[ != ]]> #{notOrderStatus}
+      </if>
+      <if test="orderStatusList != null">
+        and pjo.order_status in (2,4,5)
+      </if>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and pjo.create_time between #{startTime} and #{endTime}
       </if>

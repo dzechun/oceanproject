@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-/**
- * Created by lfz on 2020/11/27.
- */
 @RestController
 @Api(tags = "电子标签控制器")
 public class ElectronicTagStorageController {
@@ -109,14 +106,13 @@ public class ElectronicTagStorageController {
         }
     }
 
-    @GetMapping(value = "/sendElectronicTagStorageLightTest")
-    @ApiOperation(value = "发送电子标签亮灯/灭灯测试", notes = "发送电子标签亮灯/灭灯测试")
-    public ResponseEntity<String> sendElectronicTagStorageLightTest(
-            @RequestParam(value = "materialCode") String materialCode,
-            @RequestParam(value = "code(1001-亮灯 1003-灭灯)") Integer code) {
+    @GetMapping(value = "/ptlJobOrderLightOff")
+    @ApiOperation(value = "作业任务单灭灯", notes = "作业任务单灭灯")
+    public ResponseEntity ptlJobOrderLightOff(
+            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId) {
         try {
-            String result = electronicTagStorageService.sendElectronicTagStorageLightTest(materialCode, code);
-            return ControllerUtil.returnSuccess();
+            int i = electronicTagStorageService.ptlJobOrderLightOff(jobOrderId);
+            return ControllerUtil.returnCRUD(i);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }

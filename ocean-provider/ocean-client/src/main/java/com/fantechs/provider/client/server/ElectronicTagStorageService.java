@@ -17,11 +17,11 @@ public interface ElectronicTagStorageService {
 
     PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId) throws Exception;
     ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception;
-    String sendElectronicTagStorageLightTest(String materialCode, Integer code) throws Exception;
     PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId) throws Exception;
     List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(Long jobOrderId) throws Exception;
     int hangUpPtlJobOrderDet(String ids) throws Exception;
     ResponseEntityDTO cancelPtrlJobOrder(PtlJobOrderDTO ptlJobOrderDTO) throws Exception;
+    int ptlJobOrderLightOff(Long jobOrderId) throws Exception;
     void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception;
     String intercepting(String s, int number) throws UnsupportedEncodingException;
 }
