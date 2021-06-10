@@ -53,6 +53,12 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api</groupId>
+            <artifactId>ocean-tem-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -65,14 +71,10 @@
                 <configuration>
                     <layout>ZIP</layout>
                     <includes>
-                        <!--此处可以指定包含jar包-->
+                        <!--只包含自己-->
                         <include>
-                            <groupId>com.fantechs.common.base</groupId>
-                            <artifactId>ocean-imes-base</artifactId>
-                        </include>
-                        <include>
-                            <groupId>com.fantechs.common.config</groupId>
-                            <artifactId>ocean-imes-config</artifactId>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${artifactId}</artifactId>
                         </include>
                     </includes>
                 </configuration>

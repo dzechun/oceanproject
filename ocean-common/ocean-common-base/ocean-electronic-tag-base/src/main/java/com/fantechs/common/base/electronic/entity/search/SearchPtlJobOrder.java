@@ -27,11 +27,14 @@ public class SearchPtlJobOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="workerUserName",value = "作业人员名称")
     private String workerUserName;
 
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-异常)")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-异常 5-已取消)")
     private Byte orderStatus;
 
-    @ApiModelProperty(name="notOrderStatus",value = "不等于该单据状态(1-待激活、2-已激活、3-完成、4-异常)")
+    @ApiModelProperty(name="notOrderStatus",value = "不等于该单据状态(1-待激活、2-已激活、3-完成、4-异常 5-已取消)")
     private Byte notOrderStatus;
+
+    @ApiModelProperty(name="orderStatusList",value = "等于1，查询状态 in (2,4,5)")
+    private Byte orderStatusList;
 
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
     private Long warehouseId;

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.tem.mapper.TemVehicleMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.tem.TemVehicle">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="vehicle_id" jdbcType="BIGINT" property="vehicleId" />
+    <result column="vehicle_code" jdbcType="VARCHAR" property="vehicleCode" />
+    <result column="vehicle_name" jdbcType="VARCHAR" property="vehicleName" />
+    <result column="vehicle_status" jdbcType="TINYINT" property="vehicleStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    tv.vehicle_id, tv.vehicle_code, tv.vehicle_name, tv.vehicle_status, tv.status, tv.remark, tv.org_id, tv.create_user_id, tv.create_time,
+    tv.modified_user_id, tv.modified_time
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.tem.TemVehicleDto">
+
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    suc.user_code as createUserCode,
+    sum.user_code as modifiedUserCode
+    from tem_vehicle tv
+    LEFT JOIN ocean_v2.sys_user suc ON pjo.create_user_id = suc.user_id
+    LEFT JOIN ocean_v2.sys_user sum ON pjo.modified_user_id = sum.user_id
+    <where>
+      <if test="vehicleCode != null and vehicleCode != ''">
+        and tv.vehicle_code = #{vehicleCode}
+      </if>
+      <if test="vehicleName != null and vehicleName != ''">
+        and tv.vehicle_name like CONCAT('%', #{vehicleName}, '%')
+      </if>
+      <if test="vehicleStatus != null">
+        and tv.vehicle_status = #{vehicleStatus}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and tv.create_time between #{startTime} and #{endTime}
+      </if>
+    </where>
+  </select>
+</mapper>

@@ -103,8 +103,8 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
     /**
      * 单据状态(1-待激活、2-已激活、3-完成、4-异常)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-异常)")
-    @Excel(name = "单据状态(1-待激活、2-已激活、3-完成、4-异常)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-异常 5-已取消)")
+    @Excel(name = "单据状态(1-待激活、2-已激活、3-完成、4-异常 5-已取消)", height = 20, width = 30,orderNum="")
     @Column(name = "order_status")
     private Byte orderStatus;
 

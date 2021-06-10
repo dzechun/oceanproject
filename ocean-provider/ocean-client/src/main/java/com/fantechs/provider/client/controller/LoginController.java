@@ -14,9 +14,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-/**
- * Created by lfz on 2020/11/30.
- */
 @RestController
 public class LoginController {
 

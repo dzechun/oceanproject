@@ -16,7 +16,7 @@ spring:
     datasource:
       names: master0,master0slave0
       master0:
-        url: jdbc:mysql://localhost:3306/ocean_v2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
+        url: jdbc:mysql://192.168.204.164:3306/ocean_v2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
         username: root
