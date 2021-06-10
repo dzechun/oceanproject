@@ -3,32 +3,22 @@
 <mapper namespace="com.fantechs.provider.base.mapper.BaseProductBomMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductBom">
         <id column="product_bom_id" jdbcType="BIGINT" property="productBomId"/>
-        <result column="product_bom_code" jdbcType="VARCHAR" property="productBomCode"/>
-        <result column="parent_bom_id" jdbcType="BIGINT" property="parentBomId"/>
-        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
-        <result column="process_id" jdbcType="BIGINT" property="processId"/>
-        <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId"/>
-        <result column="delivery_mode" jdbcType="TINYINT" property="deliveryMode"/>
-        <result column="issue_method" jdbcType="TINYINT" property="issueMethod"/>
-        <result column="loss_rate" jdbcType="DECIMAL" property="lossRate"/>
-        <result column="takt" jdbcType="INTEGER" property="takt"/>
-        <result column="transfer_quantity" jdbcType="INTEGER" property="transferQuantity"/>
-        <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
-        <result column="base_quantity" jdbcType="DECIMAL" property="baseQuantity"/>
-        <result column="position" jdbcType="VARCHAR" property="position"/>
-        <result column="bom_status" jdbcType="TINYINT" property="bomStatus"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
-        <result column="remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
-        <result column="option1" jdbcType="VARCHAR" property="option1"/>
-        <result column="option2" jdbcType="VARCHAR" property="option2"/>
-        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="product_bom_code" jdbcType="VARCHAR" property="productBomCode" />
+        <result column="product_bom_version" jdbcType="VARCHAR" property="productBomVersion" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="takt" jdbcType="INTEGER" property="takt" />
+        <result column="bom_status" jdbcType="TINYINT" property="bomStatus" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
         <!--        <collection property="baseProductBomDets"
                             ofType="com.fantechs.common.base.general.entity.basic.BaseProductBomDet"
                             select="com.fantechs.provider.base.mapper.BaseProductBomDetMapper.findFirstLevelProductBomDet"
@@ -58,23 +48,13 @@
     <sql id="Base_Column_List">
         spb.product_bom_id,
         spb.product_bom_code,
+        spb.product_bom_version,
         spb.material_id,
-        spb.pro_line_id,
-        spb.delivery_mode,
-        spb.issue_method,
-        spb.loss_rate,
         spb.takt,
-        spb.transfer_quantity,
         spb.bom_status,
-        spb.sub_material_id,
-        spb.base_quantity,
-        spb.process_id,
-        spb.quantity,
-        spb.position,
-        spb.`status`,
+        spb.status,
         spb.remark,
         spb.org_id,
-        spb.parent_bom_id,
         spb.create_user_id,
         spb.create_time,
         spb.modified_user_id,
@@ -94,14 +74,11 @@
         spl.pro_code,spl.pro_name,spl.pro_desc,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.base_product_bom spb
-        left join fantech_imes_v2.base_material sm on spb.material_id=sm.material_id
-        left join fantech_imes_v2.base_material sms on spb.sub_material_id=sms.material_id
+        from base_product_bom spb
+        left join base_material sm on spb.material_id=sm.material_id
         left join ocean_v2.sys_user u on spb.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spb.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spb.org_id = bo.organization_id
-        LEFT JOIN fantech_imes_v2.base_pro_line spl ON spb.pro_line_id = spl.pro_line_id
-        LEFT JOIN fantech_imes_v2.base_process sp ON spb.process_id = sp.process_id
+        left join base_organization bo ON spb.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -109,24 +86,17 @@
             <if test="productBomCode!=null and productBomCode!=''">
                 and spb.product_bom_code like CONCAT('%', #{productBomCode}, '%')
             </if>
-            <if test="materialId!=null and materialId!='' and (isBomDet==null or isBomDet=='')">
+            <if test="materialId!=null and materialId!=''">
                 and spb.material_id=#{materialId}
             </if>
-            <if test="isBomDet!=null and isBomDet!='' and materialId!=null and materialId!=''">
-                and spb.parent_bom_id IN (SELECT product_bom_id FROM base_product_bom
-                WHERE material_id =#{materialId})
+            <if test="productBomVersion!=null and productBomVersion!=''">
+                and spb.product_bom_version=#{productBomVersion}
             </if>
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
-            </if>
-            <if test="productBomId!=null and productBomId!=''">
-                and spb.parent_bom_id=#{productBomId}
-            </if>
-            <if test="(productBomId == null or productBomId =='') and (isBomDet==null or isBomDet=='') and (productBomCode == null or productBomCode == '')">
-                and spb.parent_bom_id is null
             </if>
             <if test="status!=null">
                 and spb.status=#{status}

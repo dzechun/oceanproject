@@ -3,6 +3,7 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBom;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductBomImport;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
@@ -123,5 +124,12 @@ public class BaseProductBomController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseProductBom> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBom baseProductBom) {
+        BaseProductBom baseProductBoms = baseProductBomService.addOrUpdate(baseProductBom);
+        return ControllerUtil.returnDataSuccess(baseProductBoms, StringUtils.isEmpty(baseProductBoms) ? 0 : 1);
     }
 }

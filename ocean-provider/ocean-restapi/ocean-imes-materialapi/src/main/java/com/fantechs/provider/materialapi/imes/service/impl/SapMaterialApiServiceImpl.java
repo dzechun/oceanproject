@@ -74,11 +74,13 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
             baseMaterial.setCreateTime(new Date());
             baseMaterial.setModifiedTime(new Date());
             baseMaterial.setStatus((byte)1);
+            baseMaterial.setSystemSource("ERP");
             addList.add(baseMaterial);
         }else{
             baseMaterial = list.getData().get(0);
             baseMaterial.setMaterialName(material.getMAKTX());
             baseMaterial.setMaterialDesc(material.getMAKTX());
+            baseMaterial.setSystemSource("ERP");
             updateList.add(baseMaterial);
         }
 
