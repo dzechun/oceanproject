@@ -28,7 +28,7 @@ public class ElectronicTagStorageController {
 
     @PostMapping(value = "/createPtlJobOrder")
     @ApiOperation(value = "生成任务单", notes = "生成分拣单")
-    public ResponseEntityDTO createPtlJobOrder(@RequestBody @Validated List<PtlJobOrderDTO> ptlJobOrderDTOList) {
+    public ResponseEntityDTO createPtlJobOrder(@RequestBody List<PtlJobOrderDTO> ptlJobOrderDTOList) {
         try {
             return electronicTagStorageService.createPtlJobOrder(ptlJobOrderDTOList);
         } catch (Exception e) {
@@ -70,9 +70,11 @@ public class ElectronicTagStorageController {
 
     @GetMapping("/printPtlJobOrderLabel")
     @ApiOperation(value = "作业任务打印标签", notes = "作业任务打印标签")
-    public ResponseEntity<List<PtlJobOrderDetPrintDTO>> printPtlJobOrderLabel(@ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId) {
+    public ResponseEntity<List<PtlJobOrderDetPrintDTO>> printPtlJobOrderLabel(
+            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "作业人员名称") @RequestParam(required = false, defaultValue = "") String workUserName) {
         try {
-            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(jobOrderId);
+            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(jobOrderId, workUserName);
             return ControllerUtil.returnDataSuccess(ptlJobOrderDetPrintDTOList, ptlJobOrderDetPrintDTOList.size());
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());

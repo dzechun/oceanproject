@@ -18,7 +18,7 @@ public interface ElectronicTagStorageService {
     PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId) throws Exception;
     ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception;
     PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId) throws Exception;
-    List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(Long jobOrderId) throws Exception;
+    List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(Long jobOrderId, String workUserName) throws Exception;
     int hangUpPtlJobOrderDet(String ids) throws Exception;
     ResponseEntityDTO cancelPtrlJobOrder(PtlJobOrderDTO ptlJobOrderDTO) throws Exception;
     int ptlJobOrderLightOff(Long jobOrderId) throws Exception;

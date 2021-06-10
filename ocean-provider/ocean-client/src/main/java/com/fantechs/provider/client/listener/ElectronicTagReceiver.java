@@ -83,6 +83,7 @@ public class ElectronicTagReceiver {
                 searchPtlJobOrderDet.setEquipmentTagId(equipmentTagId);
                 searchPtlJobOrderDet.setJobStatus((byte) 2);
                 List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
+                RabbitMQDTO rabbitMQDTOArea = new RabbitMQDTO();
                 if (StringUtils.isNotEmpty(ptlJobOrderDetDtoList)) {
 
                     PtlJobOrderDet ptlJobOrderDet = new PtlJobOrderDet();
@@ -107,8 +108,6 @@ public class ElectronicTagReceiver {
                             rabbitMQDTOS.add(rabbitMQDTO);
                         }
                     }
-                    electronicTagStorageService.fanoutSender(1003, null, rabbitMQDTOS);
-                    log.info("===========发送消息给客户端控制该储位对应的电子标签灭灯完成===============");
 
                     // 判断当前储位是否还有其他物料需要亮灯
                     SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
@@ -132,11 +131,11 @@ public class ElectronicTagReceiver {
                                 rabbitMQDTO.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                                 if (ptlJobOrderDetDto.getElectronicTagLangType() == 1) {
                                     if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) || ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                                        materialDesc += ptlJobOrderDetDto.getMaterialName() + ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
+                                        materialDesc += ptlJobOrderDetDto.getMaterialName() + " " + ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
                                         materialDesc = electronicTagStorageService.intercepting(materialDesc, 23);
                                     }
                                     if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) || ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                                        materialDesc2 += ptlJobOrderDetDto.getMaterialName() + ptlJobOrderDetDto.getScatteredQty() + ptlJobOrderDetDto.getScatteredUnitName();
+                                        materialDesc2 += ptlJobOrderDetDto.getMaterialName() + " " + ptlJobOrderDetDto.getScatteredQty() + ptlJobOrderDetDto.getScatteredUnitName();
                                         materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 24);
                                     }
                                     rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
@@ -144,13 +143,6 @@ public class ElectronicTagReceiver {
                                     rabbitMQDTO.setMaterialDesc(electronicTagStorageService.intercepting(ptlJobOrderDetDto.getMaterialCode(), 8));
                                 }
                                 rabbitMQDTO.setElectronicTagLangType(ptlJobOrderDetDto.getElectronicTagLangType());
-                                if (rabbitMQDTO.getElectronicTagLangType() == 1) {
-                                    electronicTagStorageService.fanoutSender(1007, rabbitMQDTO, null);
-                                    log.info("===========发送消息给客户端控制该储位对应的另一个物料中文标签亮灯完成===============");
-                                } else {
-                                    electronicTagStorageService.fanoutSender(1008, rabbitMQDTO, null);
-                                    log.info("===========发送消息给客户端控制该储位对应的另一个物料英文标签亮灯完成===============");
-                                }
                                 list.add(rabbitMQDTO);
                                 materialDesc = "";
                                 materialDesc2 = "";
@@ -165,11 +157,11 @@ public class ElectronicTagReceiver {
                                         rabbitMQDTO2.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                                         if (ptlJobOrderDetDto1.getElectronicTagLangType() == 1) {
                                             if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getWholeQty()) && ptlJobOrderDetDto1.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                                                materialDesc += ptlJobOrderDetDto1.getMaterialName() + ptlJobOrderDetDto1.getWholeQty() + ptlJobOrderDetDto1.getWholeUnitName();
+                                                materialDesc += ptlJobOrderDetDto1.getMaterialName() + " " + ptlJobOrderDetDto1.getWholeQty() + ptlJobOrderDetDto1.getWholeUnitName();
                                                 materialDesc = electronicTagStorageService.intercepting(materialDesc, 23);
                                             }
                                             if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getScatteredQty()) && ptlJobOrderDetDto1.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
-                                                materialDesc2 += ptlJobOrderDetDto1.getMaterialName() + ptlJobOrderDetDto1.getScatteredQty() + ptlJobOrderDetDto1.getScatteredUnitName();
+                                                materialDesc2 += ptlJobOrderDetDto1.getMaterialName() + " " + ptlJobOrderDetDto1.getScatteredQty() + ptlJobOrderDetDto1.getScatteredUnitName();
                                                 materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 24);
                                             }
                                             rabbitMQDTO2.setMaterialDesc(materialDesc + materialDesc2);
@@ -177,13 +169,6 @@ public class ElectronicTagReceiver {
                                             rabbitMQDTO2.setMaterialDesc(electronicTagStorageService.intercepting(ptlJobOrderDetDto1.getMaterialCode(), 8));
                                         }
                                         rabbitMQDTO2.setElectronicTagLangType(ptlJobOrderDetDto1.getElectronicTagLangType());
-                                        if (rabbitMQDTO2.getElectronicTagLangType() == 1) {
-                                            electronicTagStorageService.fanoutSender(1007, rabbitMQDTO2, null);
-                                            log.info("===========发送消息给客户端控制该储位对应的另一个物料中文标签亮灯完成===============");
-                                        } else {
-                                            electronicTagStorageService.fanoutSender(1008, rabbitMQDTO2, null);
-                                            log.info("===========发送消息给客户端控制该储位对应的另一个物料英文标签亮灯完成===============");
-                                        }
                                         list.add(rabbitMQDTO2);
                                         break;
                                     }
@@ -200,13 +185,10 @@ public class ElectronicTagReceiver {
                         searchPtlJobOrderDet2.setIfHangUp((byte) 1);
                         List<PtlJobOrderDetDto> ptlJobOrderDetDtos = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet2).getData();
                         if (ptlJobOrderDetDtos.size() == 1) {
-                            RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
-                            rabbitMQDTO.setEquipmentTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentTagId());
-                            rabbitMQDTO.setElectronicTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaTagId());
-                            rabbitMQDTO.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                             //发送给客户端控制通道灯灭灯
-                            electronicTagStorageService.fanoutSender(1002, rabbitMQDTO, null);
-                            log.info("===========发送给客户端控制通道灯灭灯===============");
+                            rabbitMQDTOArea.setEquipmentTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentTagId());
+                            rabbitMQDTOArea.setElectronicTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaTagId());
+                            rabbitMQDTOArea.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                         }
                     }
 
@@ -237,27 +219,37 @@ public class ElectronicTagReceiver {
                             ptlJobOrderDTO.setStatus("F");
                             // 回写PTL作业任务
                             log.info("电子作业标签完成，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
-                            String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
+//                            String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
                             log.info("电子作业标签回写返回信息：" + "result");
-                            ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
-                            if (!"s".equals(responseEntityDTO.getSuccess())) {
-                                throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
-                            }
+//                            ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
+//                            if (!"s".equals(responseEntityDTO.getSuccess())) {
+//                                throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+//                            }
                         }
                     }
                 }
                 channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
                 log.warn("===========手动确认消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
 
-//                for (RabbitMQDTO rabbitMQDTO : list) {
-//                    if (rabbitMQDTO.getElectronicTagLangType() == 1) {
-//                        electronicTagStorageService.fanoutSender(1007, rabbitMQDTO, null);
-//                        log.info("===========发送消息给客户端控制该储位对应的另一个物料中文标签亮灯完成===============");
-//                    } else {
-//                        electronicTagStorageService.fanoutSender(1008, rabbitMQDTO, null);
-//                        log.info("===========发送消息给客户端控制该储位对应的另一个物料英文标签亮灯完成===============");
-//                    }
-//                }
+                if (StringUtils.isNotEmpty(rabbitMQDTOS)) {
+                    electronicTagStorageService.fanoutSender(1003, null, rabbitMQDTOS);
+                    log.info("===========发送消息给客户端控制该储位对应的电子标签灭灯完成===============");
+                }
+
+                if (StringUtils.isNotEmpty(rabbitMQDTOArea.getElectronicTagId())) {
+                    electronicTagStorageService.fanoutSender(1002, rabbitMQDTOArea, null);
+                    log.info("===========发送给客户端控制通道灯灭灯===============");
+                }
+
+                for (RabbitMQDTO rabbitMQDTO : list) {
+                    if (rabbitMQDTO.getElectronicTagLangType() == 1) {
+                        electronicTagStorageService.fanoutSender(1007, rabbitMQDTO, null);
+                        log.info("===========发送消息给客户端控制该储位对应的另一个物料中文标签亮灯完成===============");
+                    } else {
+                        electronicTagStorageService.fanoutSender(1008, rabbitMQDTO, null);
+                        log.info("===========发送消息给客户端控制该储位对应的另一个物料英文标签亮灯完成===============");
+                    }
+                }
             }
         } catch (Exception e) {
             MQResponseEntity mQResponseEntity = new MQResponseEntity<>();

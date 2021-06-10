@@ -32,8 +32,8 @@
     suc.user_code as createUserCode,
     sum.user_code as modifiedUserCode
     from tem_vehicle tv
-    LEFT JOIN ocean_v2.sys_user suc ON pjo.create_user_id = suc.user_id
-    LEFT JOIN ocean_v2.sys_user sum ON pjo.modified_user_id = sum.user_id
+    LEFT JOIN ocean_v2.sys_user suc ON tv.create_user_id = suc.user_id
+    LEFT JOIN ocean_v2.sys_user sum ON tv.modified_user_id = sum.user_id
     <where>
       <if test="vehicleCode != null and vehicleCode != ''">
         and tv.vehicle_code = #{vehicleCode}

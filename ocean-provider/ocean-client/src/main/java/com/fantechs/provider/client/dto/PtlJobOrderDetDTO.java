@@ -23,10 +23,10 @@ public class PtlJobOrderDetDTO implements Serializable{
     @ApiModelProperty(name="w_unit",value = "整件单位")
     private String w_unit;
 
-    @ApiModelProperty(name="w_qty",value = "散件数量")
+    @ApiModelProperty(name="l_qty",value = "散件数量")
     private Double l_qty;
 
-    @ApiModelProperty(name="w_unit",value = "散件单位")
+    @ApiModelProperty(name="l_unit",value = "散件单位")
     private String l_unit;
 
     @ApiModelProperty(name="specification",value = "规格")

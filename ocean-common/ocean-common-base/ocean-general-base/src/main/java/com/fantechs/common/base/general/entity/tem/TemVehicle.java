@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -25,6 +27,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
     @Excel(name = "周转工具ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "vehicle_id")
+    @NotNull(groups = update.class, message = "周转工具ID不能为空")
     private Long vehicleId;
 
     /**

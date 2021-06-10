@@ -1,5 +1,6 @@
 package com.fantechs.provider.tem.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.tem.TemVehicleDto;
@@ -15,6 +16,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +53,8 @@ public class TemVehicleController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
+    @Transactional
+    @LcnTransaction
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=TemVehicle.update.class) TemVehicle temVehicle) {
         return ControllerUtil.returnCRUD(temVehicleService.update(temVehicle));
     }
