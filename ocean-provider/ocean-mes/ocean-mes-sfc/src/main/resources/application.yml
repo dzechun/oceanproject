@@ -15,7 +15,7 @@ spring:
   rabbitmq:
     #host: 192.168.61.55
     host: 192.168.204.164
-    #host: 192.168.204.159
+    #host: 192.168.5.85
     port: 5672
     username: admin
     #password: admin
