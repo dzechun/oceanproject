@@ -89,6 +89,9 @@
       <if test="ipqcInspectionOrderId!=null">
         and qiiod.ipqc_inspection_order_id = #{ipqcInspectionOrderId}
       </if>
+      <if test="ipqcInspectionOrderDetId!=null">
+        and qiiod.ipqc_inspection_order_det_id = #{ipqcInspectionOrderDetId}
+      </if>
       <if test="status!=null">
         and qiiod.status = #{status}
       </if>
@@ -96,6 +99,5 @@
         and date_format(qiiod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
-    order by qiiod.create_time desc
   </select>
 </mapper>
