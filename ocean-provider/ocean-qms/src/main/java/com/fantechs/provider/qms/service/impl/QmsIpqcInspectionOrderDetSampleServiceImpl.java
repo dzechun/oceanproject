@@ -121,7 +121,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
         }
 
         Map<String,Object> map = new HashMap();
-        map.put("inspectionOrderDetId",ipqcInspectionOrderDetId);
+        map.put("ipqcInspectionOrderDetId",ipqcInspectionOrderDetId);
         QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.findList(map).get(0);
         QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
         //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
@@ -163,12 +163,14 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(QmsIpqcInspectionOrderDetSample.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("barcode", record.getBarcode());
-        List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSamples = qmsIpqcInspectionOrderDetSampleMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDetSamples)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        if(StringUtils.isNotEmpty(record.getBarcode())) {
+            Example example = new Example(QmsIpqcInspectionOrderDetSample.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("barcode", record.getBarcode());
+            List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSamples = qmsIpqcInspectionOrderDetSampleMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(qmsIpqcInspectionOrderDetSamples)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            }
         }
 
         //新增IPQC检验单明细样本

@@ -24,6 +24,11 @@ public class SearchBaseWorker extends BaseQuery implements Serializable {
     @ApiModelProperty(name="userCode",value = "工号")
     private String userCode;
     /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
+    /**
      * 仓库名称
      */
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
