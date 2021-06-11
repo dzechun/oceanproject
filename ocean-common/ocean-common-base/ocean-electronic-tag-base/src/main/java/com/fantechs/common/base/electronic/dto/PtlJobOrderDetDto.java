@@ -18,9 +18,6 @@ public class PtlJobOrderDetDto extends PtlJobOrderDet implements Serializable {
     @ApiModelProperty(name="relatedOrderCode",value = "发货单号")
     private String despatchOrderCode;
 
-    @ApiModelProperty(name="vehicleCode",value = "集货号")
-    private String vehicleCode;
-
     @ApiModelProperty(name="equipmentTagId",value = "设备标签ID")
     private String equipmentTagId;
 

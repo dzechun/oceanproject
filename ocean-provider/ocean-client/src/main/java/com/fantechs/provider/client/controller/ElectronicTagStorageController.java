@@ -72,9 +72,9 @@ public class ElectronicTagStorageController {
     @ApiOperation(value = "作业任务打印标签", notes = "作业任务打印标签")
     public ResponseEntity<List<PtlJobOrderDetPrintDTO>> printPtlJobOrderLabel(
             @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
-            @ApiParam(value = "作业人员名称") @RequestParam(required = false, defaultValue = "") String workUserName) {
+            @ApiParam(value = "作业人员Id", required = true) @RequestParam Long workUserId) {
         try {
-            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(jobOrderId, workUserName);
+            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(jobOrderId, workUserId);
             return ControllerUtil.returnDataSuccess(ptlJobOrderDetPrintDTOList, ptlJobOrderDetPrintDTOList.size());
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
